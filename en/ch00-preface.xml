@@ -1,0 +1,11 @@
+<preface id="hs.preface">
+  <title>Preface</title>
+
+  <para>Blah blah.</para>
+</preface>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->

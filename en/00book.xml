@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE book SYSTEM "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+<!ENTITY ch00     SYSTEM "ch00-preface.xml">
+<!ENTITY index    SYSTEM "book-index.xml">
+]>
+
+<book id="hs">
+  <title>Real-World Haskell</title>
+
+  <bookinfo>
+
+    <subtitle>Some Clever-Clever Subtitle</subtitle>
+
+    <!-- XXX -->
+
+    <isbn>?-?????-???-?</isbn>
+    <authorgroup>
+
+      <author>
+        <firstname>Bryan</firstname>
+        <surname>O'Sullivan</surname>
+      </author>
+
+      <author>
+        <firstname>Don</firstname>
+        <surname>Stewart</surname>
+      </author>
+
+      <author>
+        <firstname>John</firstname>
+        <surname>Goerzen</surname>
+      </author>
+
+    </authorgroup>
+
+    <editor>
+      <firstname>Mike</firstname>
+      <surname>Loukides</surname>
+    </editor>
+
+    <copyright>
+      <year>2007</year>
+      <year>2008</year>
+      <holder>Bryan O'Sullivan</holder>
+      <holder>Don Stewart</holder>
+      <holder>John Goerzen</holder>
+    </copyright>
+
+    <!-- XXX -->
+
+    <legalnotice><para>This work is licensed under a Creative
+      Commons Attribution License.  To view a copy of this license,
+      visit <ulink url="http://foldr.com/"/>
+      or send a letter to Creative Commons, 559 Nathan Abbott Way,
+      Stanford, California 94305, USA.</para></legalnotice>
+
+  </bookinfo>
+
+  <!-- External entity refs -->
+
+  &ch00;
+  &index;
+
+</book>

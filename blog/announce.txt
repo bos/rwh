@@ -1,0 +1,89 @@
+Real-world Haskell: it's time!
+
+Bryan O'Sullivan, Don Stewart and John Goerzen are pleased, and
+frankly, very excited to announce that we're developing a new book for
+O'Reilly, on practical Haskell programming.  The working title is
+"Real-World Haskell".
+
+The plan is to cover the major techniques used to write serious,
+real-world Haskell code, so that programmers can just get to work in
+the language.  By the end of the book readers should be able to write
+real libraries and applications in Haskell, and be able to:
+
+* design data structures
+* know how to write, and when to use, monads and monad transformers
+* use Haskell's concurrency and parallelism abstractions
+* be able to write parsers for custom formats in Parsec.
+* be able to do IO and binary IO of all forms
+* be able to bind Haskell to foreign functions in C
+* be able to do database, network and gui programming
+* know how to do exception and error handling in Haskell
+* have a good knowledge of the core libraries
+* be able to use the type system to track and prevent errors
+* take advantage of tools like QuickCheck, Cabal and Haddock
+* understand advanced parts of the language, such as GADTs and MPTCs.
+
+That is, you should be able to just write Haskell!
+
+The existing handful of books about Haskell are all aimed at teaching
+programming to early undergraduate audiences, so they are ill-suited
+to people who already know how to code.  And while there's a huge body
+of introductory material available on the web, you have to be both
+tremendously motivated and skilled to find the "good stuff" and apply
+it to your own learning needs.
+
+The time has come for the advanced, practical Haskell book.
+
+Here's the proposed chapter outline:
+     
+1.  Why functional programming?  Why Haskell?
+2.  Getting started: compiler, interpreter, values, simple functions,
+    and types
+3.  Syntax, type system basics, type class basics 
+4.  Write a real library: the rope data structure, cabal, building
+    projects
+5.  Typeclasses and their use
+6.  Bringing it all together: file name matching and regular
+    expressions
+7.  All about I/O
+8.  I/O case study: a DSL for searching the filesystem
+9.  Code case study: barcode recognition
+10. Testing the Haskell way: QuickCheck
+11. Handling binary files and formats
+12. Designing and using data structures
+13. Monads
+14. Monad case study: refactoring the filesystem seacher
+15. Monad transformers
+16. Using parsec: parsing a bioinformatics format
+17. Interfacing with C: the FFI
+18. Error handling
+19. Haskell for systems programming
+20. Talking to databases: Data.Typeable
+21. Web client programming: client/server networking
+22. GUI programming: gtk2hs
+23. Data mining and web applications
+24. Basics of concurrent and parallel Haskell
+25. Advanced concurrent and parallel programming
+26. Concurrency case study: a lockless database with STM
+27. Performance and efficiency: profiling
+28. Advanced Haskell: MPTCs, TH, strong typing, GADTs
+29. Appendices
+
+We're seeking technical reviewers from both inside and outside the
+Haskell community, to help review and improve the content, with the
+intent that this text will become the standard reference for those
+seeking to learn serious Haskell.  If you'd like to be a reviewer,
+please drop us a line at
+[book-review-interest@realworldhaskell.org](mailto:book-review-interest@realworldhaskell.org),
+and let us know a little about your background and areas of interest.
+
+Finally, a very exciting aspect of this project is that O'Reilly has
+agreed to publish chapters online, under a Creative Commons License!
+We'll be publishing chapters incrementally, and seeking feedback from
+our reviewers and readers as we go.
+
+You can find more details and updates at the following locations:
+
+* [The web site](http://www.realworldhaskell.org/blog/welcome/)
+* [The authors](http://www.realworldhaskell.org/blog/about/)
+* [The blog](http://www.realworldhaskell.org/blog/)

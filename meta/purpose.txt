@@ -1,0 +1,85 @@
+The Haskell book I want to read
+
+I've spent a lot of time recently thinking about the Haskell book I'd
+like to read.  There's a surprising amount of buzz about Haskell in
+the programming community; I'd guess that it's the most popular
+aspirational language out there.  But it's stuck in the negative sense
+of "aspirational", in that few people actually make it past the first
+step of merely hoping to learn the language.
+
+The existing handful of books about Haskell are all aimed at teaching
+programming to early undergraduate audiences, so they are ill-suited
+to people who already have a background with imperative languages (the
+pace is too slow, and they cover essentially no practical details of
+writing real code).  And while there's a huge body of introductory
+material available on the web, you have to be both tremendously
+motivated and skilled to find the "good stuff" and apply it to your
+own learning needs.
+
+I think of these as accidental reasons why Haskell is hard to learn.
+There's no single good source you can turn to that provides a coherent
+narrative.
+
+The great thing about not writing a book is that you can carefully
+choose the audience you're not writing for, and thereby save yourself
+a lot of hand-wringing over restricting the size of your potential
+non-market.
+
+* They already know how to program.  They're familiar with one or more
+  of the usual suspects: C, C++, Java, Ruby, Perl, or Python.
+
+* Maybe they've done a little functional programming, but if so, it
+  was a long time ago.
+
+* They're smart, and curious about what functional programming in
+  general, and Haskell in particular, might "buy" them.
+
+So the broad goals of a Haskell book for such an audience might look
+like this:
+
+* The book is about writing software that lives in the real world.
+
+* It is aimed at bright people who can already program.
+
+* It introduces functional programming to people who have little or no
+  FP background.  It describes how functional programming is a
+  discipline unto itself, much as object-oriented programming is.
+
+* It talks about why functional programming is important; how it's
+  different; and that it's *fun*.
+
+* It gets over the simple stuff pretty quickly.  You're bright; you'll
+  pick it up.  You want to write real applications, there's a lot to
+  learn.
+
+* It talks about the double-edged sword that is lazy evaluation.
+  Reasoning about space and time usage can be hard.
+
+* It contains two interwoven narratives.  One is the conceptual story
+  of how to think functionally.  The other is the concrete tale of
+  structuring, writing, debugging, testing, and optimising programs in
+  Haskell.
+
+* It keeps at hand just how alien the material will feel to people
+  with imperative backgrounds.  It carefully uses analogy and contrast
+  where possible.
+
+* It talks about concurrency.  Hooray STM!
+
+* Since people need to know how to diddle regexps, use databases, deal
+  with web stuff, and write UIs, it discusses these subjects.  But
+  these domains deserve *deep* coverage only when the ways you
+  approach them in Haskell are especially weird compared to the usual
+  imperative approaches.
+
+There are a few non-goals, too.
+
+* Language advocacy bugs the hell out of me.  So enthusiasm is in, but
+  cheerleading is out.
+
+* The book doesn't shy away from theory, because there's so much
+  beautiful literature around Haskell.  However, the ultimate goal is
+  to show readers how to design and produce code.
+
+* It avoids the Haskell language traps, by not going on too much about
+  parsers, backtracking search, or category theory.

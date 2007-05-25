@@ -1,0 +1,584 @@
+-*- outline -*-
+
+* Main body
+
+
+** Why functional programming?  Why Haskell?
+
+  Introduce functional programming (FP), and compare it with
+  traditional programming.  Assert that it's interesting and useful;
+  defer proof to the rest of the book.  Talk about strong typing,
+  purity, modularity, expressiveness, and composability. Other key
+  Haskell attributes are robustness and correctness.
+
+  Talk about some things it doesn't have: for, while, mutable variables.
+  Haskell doesn't have these because it doesn't need to.
+
+  Introduce Haskell.  Describe its roots in research.  Mention the
+  perception that it's not a practical language; claim that the book
+  will refute this notion.
+
+  Describe the goals of the book.  The emphasis will be practical: on
+  using FP and Haskell to design, write, and fix real programs.  The
+  audience is people who can already program.  There will be plenty of
+  examples and exercises.
+
+  Mention the Haskell environment that the book assumes (GHC 6.6+).
+  Describe how to obtain and install it.  Refer to alternative Haskell
+  implementations (Hugs), but leave any detail to an appendix.
+
+  Provide pointers to long-lived web sites, mailing lists, and IRC
+  channels for help and social interaction with other Haskell people.
+
+
+** Getting started: the interpreter, values, functions, and types
+
+  How to download and install GHC for Windows, OS X, and Linux.  Not
+  much detail, since details bitrot fast.
+
+  How to run ghci, the Haskell interpreter, and evaluate simple
+  expressions.  Introduce a few simple built-in data types: numbers,
+  lists, strings.
+
+  What Haskell source files look like.  How to write a simple
+  function.  Hey, functions look different from traditional languages!
+  How to get ghci to load the source file; using the definitions from
+  it.
+
+  Introduce types.  Use ghci to inspect the types of a few values and
+  functions.  Describe what the "->" means.  Note the difference in
+  case between the first character of types and functions/values.
+  Take the type information ghci gave us; put it in the source file;
+  reload.  Notice that ghci is still happy.
+
+
+** More about functions and types
+
+  Explain Haskell is strongly, statically typed, but has type inference?
+
+  Introduce pattern matching.  Show how to write a function as a
+  series of clauses, each predicated on its patterns.
+
+  Type basics: products (tuples), sums (Maybe,Either), recursive types
+  (lists). Give us enough glue to pattern match on.
+
+  Introduce guards.  Show that guards and patterns can be used
+  together or independently.
+
+  Bring in "if" and "case" expressions.
+
+  Add local definitions via "let" and "where".
+
+  Example: run-length encoding.  Use to show how looping can be done
+  via tail recursion.
+
+  Infix functions.  Using and defining them, and infix use of normal
+  functions.
+
+  Discuss type inference: what it is and how it can save a lot of work.
+
+  Introduce type classes.  Show how ghci infers types with
+  constraints. Define some functions that use type class
+  constraints. Talk about when it's appropriate to write explicit
+  signatures. 
+
+  Small example would be a finite map data structure API, with a list
+  and tree implementation (different complexity, same api). Ties
+  together basic types, small functions, top level functions.
+
+      class Map m where
+	new     :: m k v
+	insert  :: k -> v -> m k v -> m k v
+	lookup  :: k -> m k v -> v
+
+      -- simple, O(n)
+
+      data Map1 k v = [(k,v)]
+
+      -- less simple, O(log n)
+
+      data Map2 k v = Node k v (Map2 k v) (Map2 k v)
+		    | Empty
+
+** Writing a (real) library: the rope
+
+  Many Haskell string operations are expensive, especially
+  concatenation.  Even ByteString has this problem.
+
+  Introduce ropes (via Hans-J Boehm) as a nice data structure for
+  efficient string handling.  Ropes are trees with fragments of string
+  hanging off their leaves.
+
+  Show how to write some QuickCheck properties for ropes (e.g. for map f
+  . map g == map (f.g)). High assurance, precise development methodology.
+
+  Write two kinds of fold over the rope tree structure.  Show some
+  string operations expressed normally, as a simple fold, and as a
+  more ambitious fold. 
+
+  Introduce inline API documentation using Haddock.  Building the rope
+  library using Haskell's Cabal package management system.
+
+  Now that we've seen a rope of our own, show ropes implemented using
+  finger trees.
+
+
+** More detail on typeclasses
+
+  (a) Defining new typeclasses
+
+  (c) Declaring typeclass instances
+
+  (d) Using typeclasses
+
+  (e) Well-known typeclasses
+
+    i. Read and Show
+
+    ii. Numeric types
+
+    iv. Equality, ordering, enum, and comparisons
+
+
+** Bringing it all together: file name matching and regular expressions
+
+  Haskell doesn't provide a standard way to match file names against
+  patterns.
+
+  Way #1: turn a glob pattern into a regular expression.
+
+  Long detour: how to use regular expressions in Haskell.
+
+  Way #2: write a glob pattern matcher directly.
+  (idea: a polymorphic pattern globber that work for IO actions, or
+  normal strings, using typeclasses, similar to =~)
+
+
+** All about I/O
+
+  Classic IO overview, interact/getLine/putChar etc.
+
+    Sidebar: Is Haskell really imperative or are we being tricked?
+
+  How to read and write files.
+
+  Describe the difference between strict and lazy reading of a file.
+  Talk about how side effects and lazy evaluation can be a poor mix.
+
+  Use of "let" in the IO Monad.
+
+  getArgs
+
+  environment variables
+
+
+** I/O case study: a domain-specific language for finding files
+
+  Construct a function in Haskell that acts like the Unix "find"
+  command.  Give a naive implementation, which we can later rewrite
+  using monads.  Use filepath for portable file name management.  Try
+  to avoid the POSIX APIs.
+
+  Introduce unsafeInterleaveIO to generate the list of files lazily.
+
+
+** Code case study: barcode recognition
+
+  Describe barcodes, and EAN-13 encoding.
+
+  Talk about currying.  Describe function composition.  Talk about
+  point-free notation: you'll see it a lot, so best get used to it.
+
+  Show how to think about barcode recognition as pattern matching
+  over run-length encoded data.
+
+  Introduce the idea of the list fold.  Write RLE as a fold.
+
+  Show that pattern matching on barcodes can't tolerate errors in a
+  scanned barcode.  Introduce a recogniser that is more robust.
+
+
+** Testing, the Haskell way
+
+  Introduce QuickCheck.  Show how to easily verify that both barcode
+  recognisers can recognise all valid EAN-13 barcodes.
+
+  See what happens when we introduce errors into the barcode data: the
+  pattern-matching version breaks immediately, while the more robust
+  version can tolerate some errors.
+
+  Write a QuickCheck verifier for the glob recogniser.  Write another
+  for ropes.
+
+  Mention that having QuickCheck around makes it much easier to
+  quickly and cheaply verify invariants and safety when rewriting,
+  refactoring, or optimising code.
+
+  Show how QuickCheck subsumes unit testing.
+
+
+** Dealing with simple binary files (and formats)
+
+  Where do we get barcode data from?  Read them from a file for now.
+  How to read a file.  The PNM graphics format.  Parsing a greymap PNM
+  file (a PGM).
+
+  Why is the PGM parser so hard to read?  Every point of potential
+  failure has to be handled explicitly.  How can we make the code less
+  complex?  Let's hide some of the failure handling, using the Maybe
+  type.  Ah, that's better.
+
+  But now we're still passing around this chunk of string that we're
+  parsing.  Let's hide it, too!  Wow, now our code is really tidy.
+
+  But wait: what if we want to parse a colour PNM?  Need to make the
+  types more polymorphic.  OK.
+
+  Extend the barcode recogniser to read a PNM file, maybe convert
+  colour to B&W, then find the best match from a series of scanlines.
+
+  Write a QuickCheck verifier for the PNM parser.  This illustrates
+  how it can be beneficial to separate computation from I/O.
+  Binary parsing.
+
+** Representing Data
+
+  Defining and using records
+
+  Association lists and Data.Map
+
+  Mutable storage with MVars
+
+** Stepping back a bit: monads
+
+  The code that we wrote to tidy up PNM file error handling so that
+  the guts were hidden actually used a monad, Maybe.  And the hiding
+  of the string we were parsing used a different monad: 
+
+     State (with Maybe glommed in there).
+
+  What are monads for?  Hiding plumbing; abstracting away bits of
+  computation you don't want to have shoved in your face.
+
+  Here's another simple monad: the List monad.
+
+  Notice that these monads differ in the details of what they do, but
+  they have a few common functions that all have similar effects.
+
+** Monad case study: refactoring the "find" program
+
+  Initial naive "find" code is hard to extend: try adding another datum
+  that clauses might want to look at.
+
+  Show off clauses implemented as a newtype-rederived State monad.
+  This lets us introduce rederivation of existing typeclasses.
+
+  Notice how much more compact the new "find" code is, and how easy to
+  extend.  *This* is a strong reason to care about monads.
+
+
+** Monad transformers
+
+  Back to that State-like monad we defined in the PNM parsing chapter.
+  Interesting that it used Maybe, and that Maybe is a monad in its own
+  right.  Can we somehow pull the two apart?  Yes!
+
+  Now our pulled-apart bits are a normal State monad and something
+  else that looks a bit like Maybe.  But we can use this Maybe-like
+  thing with the List monad, and as it turns out, with all other
+  monads too.  We have a monad transformer!
+
+  Talk about why monad transformers are useful: they add features to
+  existing monads, without the need to write much extra code.
+
+  Discuss how they can be a pain: they have to be composed in a
+  specific order, and modifying a stack of them is tricky.
+
+  Show how and when to use StateT, the State monad transformer, and
+  ContT, the continuation passing monad transformer. StateT IO s a is
+  the most practically applicable monad stack.
+
+
+** Parsing a bioinformatics file format with Parsec
+
+  Show off Parsec with some grotty underspecified ambiguous bio file
+  format, like FASTA, EMBL, NBRF, MolGen or GenBank.
+
+  Coverage of Parsec should include:
+
+    Using combinators
+
+    Expressing choices and errors
+
+    Look-ahead techniques
+
+    Writing new combinators
+
+    Parsing non-character data
+
+    example for parsing a configuration file
+
+** Interfacing to C with the FFI
+
+  A simple example: calling into the math library.
+
+  Slightly more complex: wrapping the OpenSSL library's EVP* calls to
+  hash data.  Discuss use of unsafePerformIO to wrap pure foreign
+  code.
+
+  Use hsc2hs to implement an interface to one of the common database
+  libraries, most likely BerkeleyDB.
+
+  cover unsafePerformIO
+
+
+** Using Haskell for systems programming
+
+  Build an embedded language to do "shell programming" in Haskell, as
+  HSH does.
+
+  Extend the embedded language to handle awk- and sed-like tasks.
+
+  Hey, look!  We have something like Perl, only strongly typed, and
+  fast!
+
+  Getting directory information and performing date/time parsing/arithmetic
+
+** Talking to databases
+
+  Interfacing to databases: HDBC.
+
+  Example for all of this: storage for a podcast aggregator.  Build
+  that module up as we go through this chapter, and use it later.
+
+  Overview of HDBC
+
+  Installing HDBC & drivers
+
+  Connecting to databases
+
+  Simple queries
+
+  Prepared queries
+
+  Reading results
+
+  System meta-data
+
+  Error handling
+
+  Threading
+
+  Provide a left fold interface over query results, as Takusen does.
+  Discuss the perils of lazy evaluation mixed with side effects, and
+  how the fold helps.
+
+
+** Web client programming: a podcast downloader
+
+  Use HTTP and HaXml.  Maybe store metadata in SQLite database?
+
+  Describe file and directory handling.
+
+  Show handling of command-line arguments.
+
+** Low-level networking: Sockets and Syslog
+
+  * Basic networking concepts: sockets, connections, UDP vs. TCP briefly
+
+  * UDP example: syslog
+
+    * Nature of UDP
+
+    * UDP client programming w/syslog
+
+    * UDP syslog server
+
+  * TCP
+    
+    * differences from UDP
+
+    * reimplementation of syslog protocol in TCP
+
+      * multithreading to handle multiple connections
+
+    * Reverse HTTP proxy in TCP
+
+** GUI programming: a Z curve DNA sequence viewer
+
+  See http://tubic.tju.edu.cn/zcurve/ for info about the Z curve.
+
+  This has the possible advantage (or drawback?) of using OpenGL as
+  well as plain GTK.
+
+
+** Data mining and web apps: collaborative filtering
+
+  Introduce the HappS web app framework.
+
+  Build on database and web introductions to show how to decompose a
+  real-world app into pure and impure components, while keeping the
+  code tiny, and well specified via QuickCheck.  The prediction
+  algorithm to use is "slope one" for simplicity and purity.
+
+  An obvious target app would be a reddit-alike.
+
+
+** Basics of concurrent and parallel programming
+
+  Basic concurrency. 
+
+  How to run threads on multiple CPUs:
+
+     forkIO
+
+  (Look!  IO actions are first class, so it's trivial to run them in
+  other threads).
+
+  Traditional synchronisation techniques: 
+
+     shared state:    MVar,
+     message passing: Chan.
+
+  Example: Multithreaded, multicore web crawler.
+
+  forkOS and differences from forkIO
+
+  differences between threaded and non-threaded RTS
+
+  Possible lazy message passing example: unsafeInterleaveIO and Chan.
+
+
+** Advanced concurrent and parallel programming
+
+  New generation:
+     Software transactional memory.  
+
+  What motivates STM?  Why is the loss of control actually good?
+  Building composable software.
+
+  Implicit parallelism: `par`
+
+  Nested data parallelism: the next frontier.
+
+
+** What to do when things go wrong
+
+  Dealing with "normal" problems.  Throwing exceptions from pure code
+  and the IO monad.
+
+    error
+    throwTo
+
+  Catching exceptions.  Cleanly releasing resources when exceptions
+  occur.  Rethrowing exceptions.
+
+    catch
+    handle
+    block
+    finally
+
+  Haskell's umpteen conventions for handling errors.
+
+    ErrorT
+
+  Data.Dynamic and dynamically-typed exceptions
+
+  What about buggy code?  Debugging via trace statements.
+
+    trace
+
+  Space leaks count as a common Haskell bug, which leads nicely to ...
+
+
+** Advanced concurrency: a lockless database using STM
+
+  Topics to cover:
+    Serialising values using Data.Binary
+    Low-level network programming
+    Runtime typing with Typeable?
+    Automatic generation of serial numbers for types with TH?
+
+  This might not even need to serialise to disk.  E.g. memcached is
+  hugely popular, and like Erlang's Mnesia, it's in-memory only.
+
+
+** Making your code more efficient
+
+  First rule: don't even think about optimising until you know you
+  need to.
+
+  Introduce Norvig's spellchecker as a nice slow, leaky example?
+  Naive version uses String, lazy left fold, lazy model updates.
+
+  Getting space and time profiles out of GHC.  Annotating your source
+  code to add "cost centres", so you can see the internals of
+  functions.
+
+    ghc -prof -auto-all
+
+  When and how to introduce strictness into your code.  Striking a
+  balance between strictness and laziness.
+
+  Try a right fold in the spellchecker.  Not much improvement.  Use a
+  strict left fold.  Explain why this helps.
+
+  Notice another leak, in model updates.
+
+    bang patterns
+    `seq`
+    Understanding strictness
+
+  Convert the spellchecker from String to ByteString.  Faster!
+
+  Compiler directives that control optimisation.
+
+    Understanding Core 
+    Key optimisations
+
+
+** Advanced crazy stuff
+
+  Tying the knot: building circular data structures in Haskell.
+  Parsing complex graphs in a single pass using the fixpoint
+  combinator.
+
+  Why Haskell isn't an object oriented language.  How to program as if
+  it was.  Reducing the amount of boilerplate in your code.
+
+  Multiparameter type classes.  Functional dependencies between type
+  parameters.  Avoid if you possibly can, but if you must, here's what
+  you need to know.
+
+  Metaprogramming with Template Haskell.
+
+  Strong typing: proofs in the type system.
+
+
+* Appendices
+
+
+** The Hugs interpreter
+
+
+** POSIX extensions
+
+   Why we might have to use them
+
+   POSIX process management
+
+   Signals
+
+   File descriptors
+
+   Pipes
+
+   Files and directories
+
+** Darcs and Version Control
+
+   Discuss why version control is important.  How to use Darcs to
+   manage your code.  Using Darcs to collaborate with others.
+
+   Darcs is written in Haskell.  Talk about its design, use of laziness,
+   ByteString, etc.

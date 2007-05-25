@@ -1,0 +1,51 @@
+A couple of additional notes on the outline.
+
+IO: You have a chapter on talking to the outside world, which covers
+databases, web programming, and GUI programming.  But what about less
+elaborate kinds of IO, like reading and writing files?  Facilities for
+writing data to files and for formatting data are crucial parts of
+every language I've ever seen.
+
+Somewhere in this chain of email, I think you mention something like
+USB.  If you can tell the reader how to deal with USB ports, serial
+ports, and all that kind of gunk, you'd be doing a great service.
+There's obviously tons of code that deals with physical devices.  And
+one of the ways in which "academic languages" are least satisfactory
+is that they typically don't have libraries for dealing with devices.
+If that's an area where you call out to C, I suppose that's better
+than nothing.  (You talk about bar code recognition, but bar codes all
+come from somewhere.  This implies that you can talk to bar code
+scanners, which probably have serial or USB interfaces.  But I see
+that you say, "Read [the bar code data] from a file for now."
+
+Concurrent programming: I just wanted to say that this is a really
+important area.  If you'd want to give it a couple of chapters rather
+than just one, that would be a good idea.
+
+Mike
+
+
+
+On Tue, 20 Mar 2007, Bryan O'Sullivan wrote:
+
+> Hi, Mike -
+>
+> As promised, here's an approximation to a book proposal about
+> programming in Haskell.  It's quite skeletal, because even the skeleton
+> of a book proposal is plenty of work, particularly with a teething kid
+> and another book to put to bed.  And a day job.
+>
+> Please have a read over what I've send and tell me if it's
+> comprehensible.  As I'm sure you'll see, even a not-especially-deep
+> Haskell book looks pretty alien and highly technical compared to, say, a
+> Ruby book.
+>
+> If there's more information, or a different presentation, needed before
+> you can circulate this on O'Reilly's internal "does it smell right?"
+> lists, let me know.
+>
+> Cheers,
+>
+> 	<b
+>
+
