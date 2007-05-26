@@ -35,26 +35,21 @@ all: pdf html
 .PHONY: all
 pdf: $(obj-pdf)
 
-$(obj-pdf): valid index/index.xml
+$(obj-pdf): valid book-index.xml
 	#$(xmlto) $(xmlto-opts) pdf $(src-master)
-#	if test -d index; then rm -r index; fi
-#	mkdir index
-#	collateindex.pl -i ch.index -N -o index/index.xml
-#	docbook-2-html -D jade -O -V -O html-index $(src-master)
-#	mv rwh-html/HTML.index index/
-#	rm -r rwh-html
-#	collateindex.pl -i ch.index -g -o index/sgml index/HTML.index
 	docbook-2-pdf -D jade -q -O -V -O paper-size=Letter \
 		-s local=printlocal $(src-master)
 
 .PHONY: html
 html: html/index.html
 
-$(obj-html)/index.html: valid index/index.xml
+$(obj-html)/index.html: valid book-index.xml
 	mkdir -p $(obj-html)
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
 
-index/index.xml: $(src-files)
+.PHONY: index
+index: book-index.xml
+book-index.xml: $(src-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
