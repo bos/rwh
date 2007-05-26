@@ -1,0 +1,4 @@
+On Debian:
+
+apt-get install jade xmlto sgml2x
+
