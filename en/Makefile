@@ -44,13 +44,13 @@ all: pdf html
 .PHONY: all
 pdf: $(obj-pdf)
 
-$(obj-pdf): valid
+$(obj-pdf): .validated
 	$(call xml-to-pdf,$(src-master))
 
 .PHONY: html
 html: html/index.html
 
-$(obj-html)/index.html: valid
+$(obj-html)/index.html: .validated
 	mkdir -p $(obj-html)
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
 
