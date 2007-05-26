@@ -1,8 +1,9 @@
 # Sources.
 
 src-master := 00book.xml
-chapter-files := $(wildcard ch*.xml)
-src-files := $(src-master) book-index.xml $(chapter-files)
+src-files := $(src-master) \
+	book-index.xml \
+	ch00-preface.xml
 
 # Objects.
 
