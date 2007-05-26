@@ -36,7 +36,16 @@ all: pdf html
 pdf: $(obj-pdf)
 
 $(obj-pdf): valid
-	$(xmlto) $(xmlto-opts) pdf $(src-master)
+	#$(xmlto) $(xmlto-opts) pdf $(src-master)
+#	if test -d index; then rm -r index; fi
+#	mkdir index
+#	collateindex.pl -i ch.index -N -o index/index.xml
+#	docbook-2-html -D jade -O -V -O html-index $(src-master)
+#	mv rwh-html/HTML.index index/
+#	rm -r rwh-html
+#	collateindex.pl -i ch.index -g -o index/sgml index/HTML.index
+	docbook-2-pdf -D jade -q -O -V -O paper-size=Letter \
+		-s local=printlocal $(src-master)
 
 .PHONY: html
 html: html/index.html
@@ -55,3 +64,4 @@ valid: .validated
 clean:
 	-rm -f .validated $(obj-pdf)
 	-rm -rf $(obj-html)
+	-rm -f *.aux *.log
