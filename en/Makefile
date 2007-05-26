@@ -37,7 +37,7 @@ pdf: $(obj-pdf)
 $(obj-pdf): valid book-index.xml
 	#$(xmlto) $(xmlto-opts) pdf $(src-master)
 	docbook-2-pdf -D jade -q -O -V -O paper-size=Letter \
-		-s local=printlocal $(src-master)
+		-s local=printlocal $(src-master) > /dev/null
 
 .PHONY: html
 html: html/index.html
@@ -69,7 +69,7 @@ valid: .validated
 clean:
 	-rm -f .validated $(obj-pdf)
 	-rm -rf $(obj-html)
-	-rm -f *.aux *.log *.jtex *.out jadetex.cfg
+	-rm -f *.aux *.log *.jtex *.out jadetex.cfg *.fot
 	-rm -rf index
 	-find . -name "*~" -exec rm {} \;
 
