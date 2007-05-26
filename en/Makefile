@@ -58,7 +58,7 @@ book-index.xml: $(src-master) $(chapter-files)
 	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
 	mv index/index.xml book-index.xml
 	rm -r index
-	
+
 .PHONY: valid
 valid: .validated
 
