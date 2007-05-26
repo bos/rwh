@@ -71,5 +71,4 @@ clean:
 	-rm -rf $(obj-html)
 	-rm -f *.aux *.log *.jtex *.out jadetex.cfg *.fot
 	-rm -rf index
-	-find . -name "*~" -exec rm {} \;
-
+	-find . -name "*~" -print0 | xargs -0r rm -f
