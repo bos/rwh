@@ -52,7 +52,7 @@ book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
-	docbook-2-html -D jade -O -V -O html-index $(src-master)
+	docbook-2-html -q -D jade -O -V -O html-index $(src-master)
 	mv 00book-html/HTML.index index/
 	rm -r 00book-html
 	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
