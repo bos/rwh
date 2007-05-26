@@ -62,6 +62,8 @@ index/index.xml: $(src-files)
 	mv 00book-html/HTML.index index/
 	rm -r 00book-html
 	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
+	mv index/index.xml book-index.xml
+	rm -r index
 	
 .PHONY: valid
 valid: .validated
@@ -75,4 +77,5 @@ clean:
 	-rm -rf $(obj-html)
 	-rm -f *.aux *.log *.jtex *.out jadetex.cfg
 	-rm -rf index
+	-find . -name "*~" -exec rm {} \;
 
