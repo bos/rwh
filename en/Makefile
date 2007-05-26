@@ -36,7 +36,7 @@ pdf: $(obj-pdf)
 
 $(obj-pdf): valid book-index.xml
 	#$(xmlto) $(xmlto-opts) pdf $(src-master)
-	docbook-2-pdf -D jade -q -O -V -O paper-size=Letter \
+	docbook-2-pdf -D openjade -q -O -V -O paper-size=Letter \
 		-s local=printlocal $(src-master) > /dev/null
 
 .PHONY: html
@@ -52,7 +52,7 @@ book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
-	docbook-2-html -q -D jade -O -V -O html-index $(src-master)
+	docbook-2-html -q -D openjade -O -V -O html-index $(src-master)
 	mv 00book-html/HTML.index index/
 	rm -r 00book-html
 	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index

@@ -1,4 +1,4 @@
 On Debian:
 
-apt-get install jade xmlto sgml2x
+apt-get install openjade1.3 xmlto sgml2x docbook-xml docbook-dsssl
 
