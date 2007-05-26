@@ -35,7 +35,7 @@ all: pdf html
 .PHONY: all
 pdf: $(obj-pdf)
 
-$(obj-pdf): valid
+$(obj-pdf): valid index/index.xml
 	#$(xmlto) $(xmlto-opts) pdf $(src-master)
 #	if test -d index; then rm -r index; fi
 #	mkdir index
@@ -50,10 +50,19 @@ $(obj-pdf): valid
 .PHONY: html
 html: html/index.html
 
-$(obj-html)/index.html: valid
+$(obj-html)/index.html: valid index/index.xml
 	mkdir -p $(obj-html)
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
 
+index/index.xml: $(src-files)
+	rm -rf index
+	mkdir index
+	collateindex.pl -i hs.index -N -o index/index.xml
+	docbook-2-html -D jade -O -V -O html-index $(src-master)
+	mv 00book-html/HTML.index index/
+	rm -r 00book-html
+	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
+	
 .PHONY: valid
 valid: .validated
 
@@ -65,4 +74,5 @@ clean:
 	-rm -f .validated $(obj-pdf)
 	-rm -rf $(obj-html)
 	-rm -f *.aux *.log *.jtex *.out jadetex.cfg
+	-rm -rf index
 
