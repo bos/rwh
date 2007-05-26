@@ -64,4 +64,5 @@ valid: .validated
 clean:
 	-rm -f .validated $(obj-pdf)
 	-rm -rf $(obj-html)
-	-rm -f *.aux *.log
+	-rm -f *.aux *.log *.jtex *.out jadetex.cfg
+
