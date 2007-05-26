@@ -17,6 +17,15 @@ xmlto := xmlto
 
 xmlto-opts := --skip-validation
 
+docbook2pdf := $(shell which docbook-2-pdf 2>/dev/null)
+
+ifeq ($(docbook2pdf),)
+xml-to-pdf = $(xmlto) $(xmlto-opts) pdf $(1)
+else
+xml-to-pdf = $(docbook2pdf) -D openjade -q -O -V -O paper-size=Letter \
+		-s local=printlocal $(1) > /dev/null
+endif
+
 # Bletcherousness.
 
 ifneq ($(wildcard /usr/share/sgml/docbook/xml-dtd-4.4-*),)
@@ -36,9 +45,7 @@ all: pdf html
 pdf: $(obj-pdf)
 
 $(obj-pdf): valid book-index.xml
-	#$(xmlto) $(xmlto-opts) pdf $(src-master)
-	docbook-2-pdf -D openjade -q -O -V -O paper-size=Letter \
-		-s local=printlocal $(src-master) > /dev/null
+	$(call xml-to-pdf,$(src-master))
 
 .PHONY: html
 html: html/index.html
