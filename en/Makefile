@@ -1,9 +1,8 @@
 # Sources.
 
 src-master := 00book.xml
-src-files := $(src-master) \
-	book-index.xml \
-	ch00-preface.xml
+chapter-files := $(wildcard ch*.xml)
+src-files := $(src-master) book-index.xml $(chapter-files)
 
 # Objects.
 
@@ -49,7 +48,7 @@ $(obj-html)/index.html: valid book-index.xml
 
 .PHONY: index
 index: book-index.xml
-book-index.xml: $(src-files)
+book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
