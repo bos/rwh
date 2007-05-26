@@ -1,4 +1,7 @@
 On Debian:
 
-apt-get install openjade1.3 xmlto sgml2x docbook-xml docbook-dsssl
+apt-get install openjade1.3 xmlto sgml2x docbook-xml docbook-dsssl docbook-utils
 
+On Fedora:
+
+docbook-style-dsssl docbook-utils
