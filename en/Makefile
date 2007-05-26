@@ -36,16 +36,15 @@ pdf: $(obj-pdf)
 
 $(obj-pdf): valid book-index.xml
 	#$(xmlto) $(xmlto-opts) pdf $(src-master)
-	docbook2pdf -p "`which openjade`" -V paper-size=Letter \
-		-d printlocal.dsl $(src-master) > /dev/null
+	docbook-2-pdf -D openjade -q -O -V -O paper-size=Letter \
+		-s local=printlocal $(src-master) > /dev/null
 
 .PHONY: html
 html: html/index.html
 
 $(obj-html)/index.html: valid book-index.xml
 	mkdir -p $(obj-html)
-	#$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
-	docbook2html -p "`which openjade`" -o $(obj-html) $(src-master)
+	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
 
 .PHONY: index
 index: book-index.xml
@@ -53,11 +52,12 @@ book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
-	jw -V html-index -f docbook -b html -o 00book-html $(src-master)
+	docbook-2-html -q -D openjade -O -V -O html-index $(src-master)
 	mv 00book-html/HTML.index index/
 	rm -r 00book-html
 	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
 	mv index/index.xml book-index.xml
+	rm -r index
 	
 .PHONY: valid
 valid: .validated
