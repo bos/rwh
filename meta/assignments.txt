@@ -30,7 +30,8 @@ DONS      25. Advanced concurrent and parallel programming
 DONS      26. Concurrency case study: a lockless database with STM
 DONS      27. Performance and efficiency: profiling
 DONS      28. Advanced Haskell: MPTCs, TH, strong typing, GADTs
-JG        29. Sockets, Syslog, and Reverse HTTP Proxy   (agreed to)
+JG        29. Sockets, Syslog   (agreed to)
+BOS       30. Reverse HTTP Proxy example
 JG     APP A. HUGS  (??)
 JG     APP B. Posix
 
