@@ -55,8 +55,8 @@ $(obj-html)/index.html: .validated
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
 
 .PHONY: index
-index: book-index.xml
-book-index.xml: $(src-master) $(chapter-files)
+index: xxx-book-index.xml
+xxx-book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
 	collateindex.pl -i hs.index -N -o index/index.xml
