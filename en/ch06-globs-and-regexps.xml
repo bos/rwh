@@ -1,0 +1,30 @@
+<chapter id="hs.glob">
+  <title>Case study: regular expressions and file name matching</title>
+
+  <para>Working with text strings is a fundamental tool in the
+    programmer's toolbox.  We've already been introduced to
+    bytestrings and ropes as efficient ways to work with large text
+    strings.  Throughout this book, we'll be returning to string
+    manipulation over and again, to show off the breadth of different
+    techniques and libraries you can use to tackle different problems
+    that happen to involve working with strings.</para>
+
+  <para>In this chapter, we'll develop a library that can match file
+    names against succinct <quote>glob-style</quote> patterns.  This
+    is a common feature of command shells on popular platforms.  To
+    begin, we'll introduce the pattern language that we'll be working
+    with.  The first version of our library will translate these
+    patterns into regular expressions, so we'll need to understand how
+    to use regular expressions in Haskell.  We'll then write an
+    interpreter for the pattern language directly, so that we can
+    avoid the regular expression library.  Finally, we'll talk about
+    how to use Haskell's standard directory listing functions with
+    this library.  Along the way, we'll talk a little about writing
+    portable code in Haskell.</para>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
