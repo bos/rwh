@@ -3,7 +3,13 @@
 src-master := 00book.xml
 src-files := $(src-master) \
 	book-index.xml \
-	ch00-preface.xml
+	ch00-preface.xml \
+	ch06-globs-and-regexps.xml
+
+src-examples := \
+	ch06/glob-to-regexp/GlobWithRegex.hs
+
+stamp-examples := $(addprefix .stamp-,$(notdir $(src-examples)))
 
 # Objects.
 

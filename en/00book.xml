@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE book SYSTEM "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
+<!-- Below are references to files in this directory. -->
+
 <!ENTITY ch00     SYSTEM "ch00-preface.xml">
+<!ENTITY ch06     SYSTEM "ch06-globs-and-regexps.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 ]>
 
@@ -60,6 +63,7 @@
   <!-- External entity refs -->
 
   &ch00;
+  &ch06;
   &index;
 
 </book>
