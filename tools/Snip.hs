@@ -6,19 +6,35 @@
 module Main where
 
 import Control.Monad (forM_, liftM)
+import Data.Char (isSpace)
 import Snippet (Snippet(..), parseSnippets)
 import System.Environment (getArgs)
-import System.FilePath (splitExtension)
-import qualified Data.ByteString.Lazy.Char8 as B
+import System.FilePath (takeFileName)
+import System.IO (putStrLn)
+-- Don't use lazy ByteStrings, due to the bug in "lines".
+import qualified Data.ByteString.Char8 as B
 
-main :: IO ()
+programListing :: String -> B.ByteString -> B.ByteString
+               -> (String, B.ByteString)
 
-main = getArgs >>= snipFiles
+programListing mod snipName body =
+    (tag, B.concat [header, rstrip body, footer])
+  where header = B.pack ("<programlisting id=" ++ show tag ++ ">\n<![CDATA[\n")
+        tag = mod ++ ':' : B.unpack snipName
+        footer = B.pack "\n]]>\n</programlisting>\n"
+        rstrip = B.reverse . B.dropWhile isSpace . B.reverse
 
 snipFiles :: [FilePath] -> IO ()
 
 snipFiles names = forM_ names $ \fileName -> do
     snips <- parseSnippets `liftM` B.readFile fileName
-    let (name, ext) = splitExtension fileName
-    forM_ snips $ \(Snippet snip content) ->
-        B.writeFile (name ++ "__" ++ B.unpack snip ++ ext) content
+    let name = takeFileName fileName
+    forM_ snips $ \(Snippet snip content) -> do
+        let (entity, listing) = programListing name snip content
+            outName = entity ++ ".xml"
+        putStrLn ("<!ENTITY " ++ entity ++ " SYSTEM " ++ show outName ++ ">")
+        B.writeFile outName listing
+
+main :: IO ()
+
+main = getArgs >>= snipFiles
