@@ -76,13 +76,28 @@ xxx-book-index.xml: $(src-master) $(chapter-files)
 .PHONY: valid
 valid: .validated
 
-.validated: $(src-files)
+.PHONY: tools
+tools: ../tools/.setup-config
+	cd ../tools && runghc Setup build && runghc Setup install
+
+../tools/.setup-config: ../tools/tools.cabal
+	cd ../tools && runghc Setup configure --prefix=`pwd`
+
+.validated: tools $(src-files) $(stamp-examples)
+	cat .stamp-*.hs | sort > all-entities.txt
+	grep '^<!ENTITY .*\.hs:.*\.xml' 00book.xml | sort > book-entities.txt
+	diff -u book-entities.txt all-entities.txt
 	$(xmllint) --path '$(dtd-dir)' --noout --nonet --valid $(src-master)
 	touch .validated
 
 clean:
-	-rm -f .validated $(obj-pdf)
-	-rm -rf $(obj-html)
+	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf)
+	-rm -rf $(obj-html) index
 	-rm -f *.aux *.log *.jtex *.out jadetex.cfg *.fot
-	-rm -rf index
 	-find . -name "*~" -print0 | xargs -0r rm -f
+
+vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
+vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
+
+.stamp-%: %
+	../tools/bin/snippets $< > $@

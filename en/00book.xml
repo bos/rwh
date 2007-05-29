@@ -6,6 +6,16 @@
 <!ENTITY ch00     SYSTEM "ch00-preface.xml">
 <!ENTITY ch06     SYSTEM "ch06-globs-and-regexps.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
+
+<!-- The following are references to snippets of source code.  The
+     snippets are generated automatically from Haskell source files.
+     This list is checked automatically during "make valid", but must
+     be maintained by hand.  If "make valid" fails, you should simply
+     be able to add or remove the appropriate entity declarations as
+     presented in the diff output. -->
+
+<!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
+<!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
 ]>
 
 <book id="hs">
