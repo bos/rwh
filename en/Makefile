@@ -18,6 +18,10 @@ obj-html := html
 
 # Tools.
 
+tools := snippets
+
+runhaskell ?= runghc
+
 xmllint := xmllint
 xmlto := xmlto
 
@@ -77,13 +81,15 @@ xxx-book-index.xml: $(src-master) $(chapter-files)
 valid: .validated
 
 .PHONY: tools
-tools: ../tools/.setup-config
-	cd ../tools && runghc Setup build && runghc Setup install
+tools: $(tools:%=../tools/bin/%)
+
+$(tools:%=../tools/bin/%): ../tools/.setup-config
+	cd ../tools && $(runhaskell) Setup build && $(runhaskell) Setup install
 
 ../tools/.setup-config: ../tools/tools.cabal
-	cd ../tools && runghc Setup configure --prefix=`pwd`
+	cd ../tools && $(runhaskell) Setup configure --prefix=`pwd`
 
-.validated: tools $(src-files) $(stamp-examples)
+.validated: $(tools:%=../tools/bin/%) $(src-files) $(stamp-examples)
 	cat .stamp-*.hs | sort > all-entities.txt
 	grep '^<!ENTITY .*\.hs:.*\.xml' 00book.xml | sort > book-entities.txt
 	diff -u book-entities.txt all-entities.txt
@@ -92,7 +98,7 @@ tools: ../tools/.setup-config
 
 clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf)
-	-rm -rf $(obj-html) index
+	-rm -rf $(obj-html) index ../tools/dist ../tools/bin
 	-rm -f *.aux *.log *.jtex *.out jadetex.cfg *.fot
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
