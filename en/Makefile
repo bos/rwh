@@ -99,7 +99,7 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf)
 	-rm -rf $(obj-html) index ../tools/dist ../tools/bin
-	-rm -f *.aux *.log *.jtex *.out jadetex.cfg *.fot
+	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
