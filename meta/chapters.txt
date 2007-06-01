@@ -140,20 +140,6 @@
     iv. Equality, ordering, enum, and comparisons
 
 
-** Bringing it all together: file name matching and regular expressions
-
-  Haskell doesn't provide a standard way to match file names against
-  patterns.
-
-  Way #1: turn a glob pattern into a regular expression.
-
-  Long detour: how to use regular expressions in Haskell.
-
-  Way #2: write a glob pattern matcher directly.
-  (idea: a polymorphic pattern globber that work for IO actions, or
-  normal strings, using typeclasses, similar to =~)
-
-
 ** All about I/O
 
   Classic IO overview, interact/getLine/putChar etc.
@@ -170,6 +156,20 @@
   getArgs
 
   environment variables
+
+
+** Bringing it all together: file name matching and regular expressions
+
+  Haskell doesn't provide a standard way to match file names against
+  patterns.
+
+  Way #1: turn a glob pattern into a regular expression.
+
+  Long detour: how to use regular expressions in Haskell.
+
+  Way #2: write a glob pattern matcher directly.
+  (idea: a polymorphic pattern globber that work for IO actions, or
+  normal strings, using typeclasses, similar to =~)
 
 
 ** I/O case study: a domain-specific language for finding files

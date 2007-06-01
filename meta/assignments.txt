@@ -5,9 +5,9 @@ Shared     3. Syntax, type system basics, type class basics
 BOS/DONS   4. Write a real library: the rope data structure, cabal,
               building  projects
 JG         5. Typeclasses and their use
-BOS        6. Bringing it all together: file name matching and 
+JG         6. All about I/O
+BOS        7. Bringing it all together: file name matching and 
               regular expressions
-JG         7. All about I/O
 BOS        8. I/O case study: a DSL for searching the filesystem
 BOS        9. Code case study: barcode recognition
 DONS      10. Testing the Haskell way: QuickCheck
