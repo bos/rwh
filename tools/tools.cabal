@@ -7,7 +7,8 @@ Maintainer: Bryan O'Sullivan <bos@serpentine.com>
 Copyright: 2007 Bryan O'Sullivan <bos@serpentine.com>
 Stability: Experimental
 Category: Real World Haskell
-Build-depends: base, mtl
+Build-type: Simple
+Build-depends: base, filepath, mtl
 Synopsis: Tools for building the Real World Haskell book.
 Description:
   The snippets program pulls named snippets out of Haskell source
