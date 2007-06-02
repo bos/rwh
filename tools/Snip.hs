@@ -9,10 +9,14 @@ import Control.Monad (forM_, liftM)
 import Data.Char (isSpace)
 import Snippet (Snippet(..), parseSnippets)
 import System.Environment (getArgs)
-import System.FilePath (takeFileName)
 import System.IO (putStrLn)
 -- Don't use lazy ByteStrings, due to the bug in "lines".
 import qualified Data.ByteString.Char8 as B
+
+-- We'd prefer to use the filepath library's version of this function,
+-- but ghc 6.6.1 doesn't seem to be widely available yet.  Sigh.
+takeFileName :: FilePath -> String
+takeFileName = reverse . takeWhile (/='/') . reverse
 
 programListing :: String -> B.ByteString -> B.ByteString
                -> (String, B.ByteString)
