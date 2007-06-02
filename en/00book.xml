@@ -4,6 +4,7 @@
 <!-- Below are references to files in this directory. -->
 
 <!ENTITY ch00     SYSTEM "ch00-preface.xml">
+<!ENTITY ch05     SYSTEM "ch05-typeclasses.xml">
 <!ENTITY ch07     SYSTEM "ch07-globs-and-regexps.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
@@ -73,6 +74,7 @@
   <!-- External entity refs -->
 
   &ch00;
+  &ch05;
   &ch07;
   &index;
 

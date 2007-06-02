@@ -1,0 +1,54 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab : -->
+
+<chapter id="hs.typeclasses">
+  <title>Using Typeclasses</title>
+
+  <sect1 id="hs.typeclasses.defining">
+    <title>Defining new typeclasses</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
+
+  <sect1 id="hs.typeclasses.instances">
+    <title>Declaring typeclass instances</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
+
+  <sect1 id="hs.typeclasses.wellknown">
+    <title>Well-known typeclasses</title>
+
+    <para>
+      FIXME
+    </para>
+
+    <sect2 id="hs.typeclasses.wellknown.readshow">
+      <title>Read and Show</title>
+      <para>
+        FIXME
+      </para>
+    </sect2>
+
+    <sect2 id="hs.typeclasses.wellknown.numeric">
+      <title>Numeric Types</title>
+      <para>
+        FIXME
+      </para>
+    </sect2>
+
+    <sect2 id="hs.typeclasses.wellknown.equality">
+      <title>Equality, Ordering, Enum, and Comparisons</title>
+      <para>
+        FIXME
+      </para>
+    </sect2>
+  </sect1>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
