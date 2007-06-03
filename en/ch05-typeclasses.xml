@@ -3,6 +3,27 @@
 <chapter id="hs.typeclasses">
   <title>Using Typeclasses</title>
 
+  <para>
+    Typeclasses are one of the most powerful features in Haskell.  They
+    are also at the heart of some basic language features such as equality
+    testing and numeric operators.  Before we talk about what exactly
+    typeclasses are, though, we'd like to first explain the need for them.
+  </para>
+
+  <sect1 id="hs.typeclasses.need">
+    <title>The need for typeclasses</title>
+    <para>
+      Let's imaging that for some unfathomable reason, the designers of the
+      Haskell language neglected to implement the equality test
+      <function>==</function>.  Once you got over your shock at hearing this, 
+      you resolved to implement your own equality tests.  Your program
+      consisted of a simple <type>Color</type> type, and so your first
+      equality test is for this type.  Your first attempt might look like
+      this:
+    </para>
+  </sect1>
+
+
   <sect1 id="hs.typeclasses.defining">
     <title>Defining new typeclasses</title>
     <para>
@@ -45,6 +66,21 @@
       </para>
     </sect2>
   </sect1>
+
+  <sect1 id="hs.typeclasses.overlapping">
+    <title>Overlapping Instances</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
+
+  <sect1 id="hs.typeclasses.undecidable">
+    <title>Undecidable Instances</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
+
 </chapter>
 
 <!--
