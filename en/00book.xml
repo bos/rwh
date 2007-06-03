@@ -20,6 +20,7 @@
 <!ENTITY naiveeq.hs:string SYSTEM "naiveeq.hs:string.xml">
 <!ENTITY eqclasses.hs:basiceq SYSTEM "eqclasses.hs:basiceq.xml">
 <!ENTITY eqclasses.hs:basiceq2 SYSTEM "eqclasses.hs:basiceq2.xml">
+<!ENTITY eqclasses.hs:basiceq3 SYSTEM "eqclasses.hs:basiceq3.xml">
 <!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
 <!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
 ]>

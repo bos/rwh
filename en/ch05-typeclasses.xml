@@ -150,6 +150,51 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       be required to define two functions: <function>isEqual2</function> and
       <function>isNotEqual2</function>.
     </para>
+    <para>
+      While our definition of <varname>BasicEq2</varname> is fine, it seems
+      that we're making extra work for ourselves.  Logically speaking, if we
+      know what <function>isEqual</function> or
+      <function>isNotEqual</function> would return, we know how to figure out
+      what the other function would return, for all types.  Rather than
+      making users of the typeclass define both functions for all types, we
+      can provide default implementations for them.  Then, users will only
+      have to implement one function.  <xref linkend="hs.typeclasses.ex.basiceq3"/> shows how
+      to do this.
+    </para>
+    <example id="hs.typeclasses.ex.basiceq3">
+      <title>BasicEq3 Typeclass Definition (eqclasses.hs)</title>
+      &eqclasses.hs:basiceq3;
+    </example>
+    <para>
+      People implementing this class must provide an implementation of at
+      least one function.  They can implement both if they wish, but they
+      will not be required to.
+    </para>
+    <para>
+      With <varname>BasicEq3</varname>, we have provided a class that does
+      very much the same thing as Haskell's built-in <function>==</function>
+      and <function>/=</function> operators.  In fact, these operators are
+      defined by a typeclass that looks almost identical to
+      <varname>BasicEq3</varname>.  The Haskell 98 Report <remark>FIXME: add
+        reference? --jg</remark> defines a typeclass that implements equality
+      comparison.  See <xref linkend="hs.typeclasses.ex.eq"/> for the built-in
+        <varname>Eq</varname> typeclass, and note how similar it is to our
+        <varname>BasicEq3</varname> typeclass.
+    </para>
+    <remark>FIXME: do we have rights to quote this?  I figure it is probably
+    fair use in any case. -- jg</remark>
+    <example id="hs.typeclasses.ex.eq">
+      <title>Haskell Standard Eq Typeclass</title>
+      <programlisting>
+class  Eq a  where
+    (==), (/=) :: a -> a -> Bool
+
+        -- Minimal complete definition:
+        --      (==) or (/=)
+    x /= y     =  not (x == y)
+    x == y     =  not (x /= y)
+       </programlisting>
+     </example>
 
   </sect1>
 
