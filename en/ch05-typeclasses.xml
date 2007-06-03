@@ -95,8 +95,62 @@ False
   <sect1 id="hs.typeclasses.defining">
     <title>Defining new typeclasses</title>
     <para>
-      FIXME
+      Let's use typeclasses to solve our equality dilemma from earlier in the
+      chapter.  The first thing that we need to do is define the typeclass
+      itself.  What we want is a function that takes two parameters, both the
+      same type, and returns a <type>Bool</type> indicating whether or not
+      they are equal.  Here's our first definition of a typeclass:
     </para>
+    <remark>FIXME: Should we make this a formal example even though it's short? 
+    --jg</remark>
+    &eqclasses.hs:basiceq;
+    <para>
+      This says that we are declaring a typeclass named
+      <varname>BasicEq</varname>, and we'll refer to instance types with the
+      letter <parameter>a</parameter>.  This typeclass defines one function.
+      That function takes two parameters -- both corresponding to instance
+      types -- and returns a <type>Bool</type>.
+    </para>
+    <para>
+      On the first line, the name of the parameter <parameter>a</parameter>
+      was chosen arbitrarily.  We could have used any name.  The key is that,
+      when you list the types of your functions, you must use that name to
+      refer to instance types.
+    </para>
+    <para>
+      Let's look at this in <application>ghci</application>.  <remark>FIXME:
+        insert reference to where this is defined</remark>
+      Recall that you
+      can type <command>:t</command> in <application>ghci</application> to 
+      have it show you the type of something.  Let's see what it says about
+      <function>isEqual</function>:
+    </para>
+    <screen>
+$ <userinput>ghci eqclasses.hs</userinput>
+[1 of 1] Compiling Main             ( eqclasses.hs, interpreted )
+Ok, modules loaded: Main.
+*Main&gt; <userinput>:t isEqual</userinput>
+isEqual :: (BasicEq a) => a -> a -> Bool
+    </screen>
+    <para>
+      You can read that this way: "For all types of <type>a</type>, so
+      long as <type>a</type> is an instance of
+      <varname>BasicEq</varname>, <function>isEqual</function> takes two
+      parameters of type <type>a</type> and returns a <type>Bool</type>".
+    </para>
+    <para>
+      Now that we've seen a very simple typeclass, let's expand it a bit.  
+      A not-equal-to function might be useful.
+      Here's what we might say to define a typeclass with two functions:
+    </para>
+    <remark>FIXME: formal example? --jg</remark>
+    &eqclasses.hs:basiceq2;
+    <para>
+      Someone providing an instance of <varname>BasicEq2</varname> will
+      be required to define two functions: <function>isEqual2</function> and
+      <function>isNotEqual2</function>.
+    </para>
+
   </sect1>
 
   <sect1 id="hs.typeclasses.instances">
