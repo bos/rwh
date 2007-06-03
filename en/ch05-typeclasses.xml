@@ -44,10 +44,51 @@ False
       <type>String</type>s.
       Since a Haskell <type>String</type> is a list of characters, we can
       write a simple function to perform that test, as seen in <xref
-        linkend="hs.typeclasses.ex.naiveeq.strings"/>.  For simplicity, we
+        linkend="hs.typeclasses.ex.naiveeq.string"/>.  For simplicity, we
       cheat a bit and use the <function>==</function> operator a couple
       of times.
     </para>
+    <example id="hs.typeclasses.ex.naiveeq.string">
+      <title>Naive Equality -- Strings (naiveeq.hs)</title>
+      &naiveeq.hs:string;
+    </example>
+    <para>
+      You should now be able to see a problem: we have to define a new
+      function for every different type that we want to be able to compare.
+      That's inefficient and annoying.  It's much more convenient to be able
+      to just use <function>==</function> to compare anything.  As it turns
+      out, this is exactly what Haskell's typeclasses are for.  
+    </para>
+  </sect1>
+  <sect1 id="hs.typeclasses.whatarethey">
+    <title>What are typeclasses?</title>
+    <remark>FIXME: I don't like this explanation, or maybe just not here..
+    maybe move to later on. --jg</remark>
+    <para>
+      Typeclasses define a set of functions that can operate on more than one
+      type of data.  A typeclass defines an interface, and perhaps even
+      default implementations of functions.  You then create an instance for
+      each type that should conform to the typeclass.  Once that is done, a
+      function that's part of the typeclass definition can be called with any
+      type that's an instance of the typeclass as a parameter.
+    </para>
+    <para>
+      Those familiar with object-oriented programming can think of
+      typeclasses as objects in reverse.  In OOP, when you define an object,
+      you define what its parent classes are at that time.  You must also
+      define how it implements the methods in the parent class, if you need a
+      custom implementation.
+    </para>
+    <para>
+      With typeclasses, you have greater freedom.  Let's say that you have a
+      type from a third party.  Perhaps that third party didn't make it part
+      of a typeclass that you'd like it to be part of.  No problem; you can
+      define an instance yourself.  With OOP, the best you can do is subclass
+      an object and use multiple inheritance (or, in Java, interfaces) to
+      make the child object behave as you like.  But you're still stuck if
+      you have a parent object from somewhere.
+    </para>
+
   </sect1>
 
 

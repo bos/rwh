@@ -17,6 +17,7 @@
      presented in the diff output. -->
 
 <!ENTITY naiveeq.hs:color SYSTEM "naiveeq.hs:color.xml">
+<!ENTITY naiveeq.hs:string SYSTEM "naiveeq.hs:string.xml">
 <!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
 <!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
 ]>

@@ -54,6 +54,9 @@ all: pdf html
 .PHONY: all
 pdf: $(obj-pdf)
 
+xpdf: $(obj-pdf)
+	xpdf $(obj-pdf)
+
 $(obj-pdf): .validated
 	$(call xml-to-pdf,$(src-master))
 
