@@ -22,7 +22,7 @@
       <xref linkend="hs.typeclasses.ex.naiveeq"/>.
     </para>
     <example id="hs.typeclasses.ex.naiveeq">
-      <title>Naive Equality naiveeq.hs</title>
+      <title>Naive Equality -- Colors (naiveeq.hs)</title>
       &naiveeq.hs:color;
     </example>
     <para>
@@ -40,7 +40,13 @@ True
 False
 </screen>
     <para>
-      Now, let's say that you want to add 
+      Now, let's say that you want to add an equality test for
+      <type>String</type>s.
+      Since a Haskell <type>String</type> is a list of characters, we can
+      write a simple function to perform that test, as seen in <xref
+        linkend="hs.typeclasses.ex.naiveeq.strings"/>.  For simplicity, we
+      cheat a bit and use the <function>==</function> operator a couple
+      of times.
     </para>
   </sect1>
 
