@@ -16,10 +16,31 @@
       Let's imaging that for some unfathomable reason, the designers of the
       Haskell language neglected to implement the equality test
       <function>==</function>.  Once you got over your shock at hearing this, 
-      you resolved to implement your own equality tests.  Your program
+      you resolved to implement your own equality tests.  Your application
       consisted of a simple <type>Color</type> type, and so your first
       equality test is for this type.  Your first attempt might look like
-      this:
+      <xref linkend="hs.typeclasses.ex.naiveeq"/>.
+    </para>
+    <example id="hs.typeclasses.ex.naiveeq">
+      <title>Naive Equality naiveeq.hs</title>
+      &naiveeq.hs:color;
+    </example>
+    <para>
+      You can test this with <application>ghci</application> or
+      <application>hugs</application>:
+    </para>
+    <screen>
+$ <userinput>ghci naiveeq.hs</userinput>
+Loading package base ... linking ... done.
+[1 of 1] Compiling Main             ( naiveeq.hs, interpreted )
+Ok, modules loaded: Main.
+*Main&gt; <userinput>colorEq Red Red</userinput>
+True
+*Main&gt; <userinput>colorEq Red Blue</userinput>
+False
+</screen>
+    <para>
+      Now, let's say that you want to add 
     </para>
   </sect1>
 

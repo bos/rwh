@@ -16,6 +16,7 @@
      be able to add or remove the appropriate entity declarations as
      presented in the diff output. -->
 
+<!ENTITY naiveeq.hs:color SYSTEM "naiveeq.hs:color.xml">
 <!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
 <!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
 ]>
