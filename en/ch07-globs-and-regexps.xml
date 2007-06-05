@@ -23,6 +23,71 @@
     how to use Haskell's standard directory listing functions with
     this library.  Along the way, we'll talk a little about writing
     portable code in Haskell.</para>
+
+  <sect1>
+    <title>File name matching</title>
+
+    <para>Many <quote>system-oriented</quote> programming languages
+      provide library routines that let you match a file name against
+      a pattern, or that will give a list of files that match the
+      pattern.  Although Haskell's standard library generally has good
+      <quote>system programming</quote> facilities, it doesn't provide
+      these kinds of pattern matching functions.  We'll take this as
+      an opportunity to develop our own.</para>
+
+    <para>The kinds of patterns we'll be dealing with are commonly
+      referred to as <quote>glob patterns</quote>, <quote>wildcard
+	patterns</quote>, or <quote>shell-style patterns</quote>.
+      These patterns have just a few simple rules.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Matching a string against a pattern starts at the
+	  beginning of a string, and finishes at the end.</para>
+      </listitem>
+      <listitem>
+	<para>Most literal characters match themselves.  For example,
+	the text <literal>foo</literal> in a pattern will match
+	<literal>foo</literal>, and only <literal>foo</literal>, in an
+	input string.</para>
+      </listitem>
+      <listitem>
+	<para>The <literal>*</literal> (asterisk) character means
+	  <quote>match anything</quote>; it will match any text,
+	  including the empty string.</para>
+      </listitem>
+      <listitem>
+	<para>The <literal>?</literal> (question mark) character means
+	  <quote>match any single character</quote>.</para>
+      </listitem>
+      <listitem>
+	<para>A <literal>[</literal> (open square bracket) character
+	  begins a <emphasis>character class</emphasis>, which is
+	  ended by a <literal>]</literal>.  Its meaning is
+	  <quote>match any character in this class</quote>.  A
+	  character class can be <emphasis>negated</emphasis> by
+	  following the opening <literal>[</literal> with a
+	  <literal>!</literal>, so that it means <quote>match any
+	  character <emphasis>not</emphasis> in this
+	  class</quote>.</para>
+	<para>As a shorthand, a character followed by a
+	  <literal>-</literal> (dash), followed by another character,
+	  denotes a <emphasis>range</emphasis>: <quote>match any
+	  character within this set</quote>.</para>
+	<para>Character classes have an added subtlety; they can't be
+	  empty.  The first character after the opening
+	  <literal>[</literal> or <literal>[!</literal> is part of the
+	  class.</para>
+      </listitem>
+      <listitem>
+	<para>Outside of a character class, there is an <quote>escape
+	  character</quote> (<literal>\</literal> on Unix-like
+	  systems), the character following it takes its normal
+	  literal meaning (so <literal>\*</literal> matches an
+	  asterisk, not any text).</para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
 </chapter>
 
 <!--
