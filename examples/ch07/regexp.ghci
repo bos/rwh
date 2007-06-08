@@ -1,0 +1,3 @@
+--# typetwiddle
+:module +Text.Regex.Posix
+:type (=~)
