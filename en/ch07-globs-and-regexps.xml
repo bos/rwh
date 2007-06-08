@@ -36,9 +36,10 @@
       an opportunity to develop our own.</para>
 
     <para>The kinds of patterns we'll be dealing with are commonly
-      referred to as <quote>glob patterns</quote>, <quote>wildcard
-	patterns</quote>, or <quote>shell-style patterns</quote>.
-      These patterns have just a few simple rules.</para>
+      referred to as <quote>glob patterns</quote> (the term we'll
+      use), <quote>wildcard patterns</quote>, or <quote>shell-style
+	patterns</quote>.  These patterns have just a few simple
+      rules.</para>
 
     <itemizedlist>
       <listitem>
@@ -87,6 +88,31 @@
 	  asterisk, not any text).</para>
       </listitem>
     </itemizedlist>
+
+    <para>While Haskell doesn't provide a glob matching function, it
+      has excellent regular expression matching facilities.  Glob
+      patterns are nothing more than restricted regular expressions
+      with slightly different syntax.  It's easy to convert glob
+      patterns into regular expressions, so we'll take that tack
+      initially.  But in order to do so, we must first understand how
+      to use regular expressions in Haskell.</para>
+  </sect1>
+
+  <sect1>
+    <title>Regular expressions in Haskell</title>
+
+    <para>In this section, I'll be assuming that you are already
+      familiar with regular expressions (which I'll abbreviate as
+      <emphasis>regexps</emphasis> from here on) by way of some other
+      language, such as Python, Perl, or Java.  Rather than introduce
+      them as something new, I'll be focusing on what's different
+      about regexp handling in Haskell, compared to imperative
+      languages.</para>
+
+    <para>The first hurdle to overcome is that Haskell's regexp
+      library makes heavy use of polymorphism; as a result, many of
+      its type signatures are difficult to understand.</para>
+&regexp.ghci:typetwiddle;
   </sect1>
 </chapter>
 

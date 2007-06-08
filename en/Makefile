@@ -5,9 +5,12 @@ src-files := $(src-master) \
 	book-index.xml \
 	$(wildcard ch*.xml)
 
-src-examples = \
+src-examples := \
 	$(wildcard ../examples/ch05/*.hs) \
-	ch07/glob-to-regexp/GlobWithRegex.hs
+	ch07/glob-to-regexp/GlobWithRegex.hs \
+	ch07/regexp.ghci
+
+src-ghci := $(filter %.ghci,$(src-examples))
 
 stamp-examples := $(addprefix .stamp-,$(notdir $(src-examples)))
 
@@ -25,7 +28,7 @@ runhaskell ?= runghc
 xmllint := xmllint
 xmlto := xmlto
 
-xmlto-opts := --skip-validation
+xmlto-opts := --skip-validation --searchpath '$(CURDIR)'
 
 docbook2pdf := $(shell which docbook-2-pdf 2>/dev/null)
 
@@ -93,8 +96,8 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 	cd ../tools && $(runhaskell) Setup configure --prefix=`pwd`
 
 .validated: $(tools:%=../tools/bin/%) $(src-files) $(stamp-examples)
-	cat .stamp-*.hs | sort > all-entities.txt
-	grep '^<!ENTITY .*\.hs:.*\.xml' 00book.xml | sort > book-entities.txt
+	cat .stamp-*.ghci .stamp-*.hs | sort > all-entities.txt
+	grep '^<!ENTITY .*\.[a-z]*:.*\.xml' 00book.xml | sort > book-entities.txt
 	diff -u book-entities.txt all-entities.txt
 	$(xmllint) --path '$(dtd-dir)' --noout --nonet --valid $(src-master)
 	touch .validated
@@ -107,6 +110,10 @@ clean:
 
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
+vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
-.stamp-%: %
+.stamp-%.hs: %.hs
 	../tools/bin/snippets $< > $@
+
+.stamp-%.ghci: %.ghci
+	../tools/bin/ghcisession $(CURDIR) $< > $@
