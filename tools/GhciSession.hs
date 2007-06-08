@@ -4,14 +4,20 @@ module GhciSession
       runScript
     ) where
 
-import Control.Monad (liftM, liftM2, mapM_)
+import Control.Monad (liftM, mapM_)
+import Control.Monad.Reader (MonadReader(..), ReaderT(..), asks)
 import Control.Monad.State (MonadState(..), StateT(..), gets, modify)
 import Control.Monad.Trans (MonadIO(..))
 import Data.Char (isSpace)
-import Data.List (inits, isPrefixOf, tails)
 import Pty (executePseudoTerminal)
 import System.Posix.Process (ProcessStatus(..), getProcessStatus)
 import System.IO
+import Util (baseName, dropSuffix, findInfix, strip)
+
+data SessionConfig = SessionConfig
+    {
+      targetName :: FilePath
+    }
 
 data SessionState = SessionState
     {
@@ -20,32 +26,39 @@ data SessionState = SessionState
     , output :: String
     }
 
-initialState :: Handle -> String -> SessionState
-initialState h s = SessionState
-                     {
-                       transcript = Nothing
-                     , pty = h
-                     , output = s
-                     }
+mkState :: Handle -> String -> SessionState
+mkState h s = SessionState
+              {
+                transcript = Nothing
+              , pty = h
+              , output = s
+              }
 
-newtype Session a = Session ((StateT SessionState IO) a)
-    deriving (Monad, MonadIO, MonadState SessionState)
+mkConfig :: FilePath -> SessionConfig
+mkConfig p = SessionConfig p
 
-runSession :: SessionState -> Session a -> IO ()
-runSession st (Session a) = runStateT a st >> return ()
+newtype Session a = Session (ReaderT SessionConfig (StateT SessionState IO) a)
+    deriving (Monad, MonadIO, MonadReader SessionConfig,
+              MonadState SessionState)
+
+runSession :: SessionConfig -> SessionState -> Session a -> IO ()
+runSession cfg st (Session a) = runStateT (runReaderT a cfg) st >> return ()
 
 io :: IO a -> Session a
 io = liftIO
 
-runScript :: FilePath -> IO (Maybe ProcessStatus)
+runScript :: FilePath -> FilePath -> IO (Maybe ProcessStatus)
 
-runScript name = do
+runScript tgtDir name = do
     script <- readFile name
     (h, pid) <- executePseudoTerminal "ghci" True [] Nothing
     hs <- hGetContents h
-    runSession (initialState h hs) $ do
+    let state = mkState h hs
+        config = mkConfig (tgtDir ++ '/' : baseName name)
+    runSession config state $ do
         setPrompt
         mapM_ processLine (lines script)
+        closeTranscript
     hClose h
     getProcessStatus True False pid
 
@@ -65,17 +78,6 @@ putGhci s = do
     debug Write s
     h <- gets pty
     io $ hPutStr h (s ++ "\n")
-
-anyM :: Monad m => (a -> Bool) -> [a] -> m a
-anyM _ []                 = fail "no match"
-anyM p (x:xs) | p x       = return x
-              | otherwise = anyM p xs
-
-findInfix :: Eq a => [a] -> [a] -> Either [a] ([a],[a])
-findInfix needle haystack =
-    maybe (Left haystack) Right $
-          anyM (isPrefixOf needle . snd)
-               (liftM2 zip inits tails haystack)
 
 putTranscript :: String -> Session ()
 putTranscript s = do
@@ -103,24 +105,48 @@ data DebugEvent = Write
                 | Trace
                   deriving (Eq, Show)
 
-debug :: Show a => DebugEvent -> a -> Session ()
-debug Write a = io $ putStrLn ("-> " ++ show a)
-debug Read a = io $ putStrLn ("<- " ++ show a)
-debug Trace a = io $ putStrLn ("-- " ++ show a)
+withDebug :: IO () -> Session ()
+withDebug f = if False
+              then io f
+              else return ()
 
-strip :: String -> String
-strip = dropWhile isSpace . reverse . dropWhile isSpace
+debug :: Show a => DebugEvent -> a -> Session ()
+debug Write a = withDebug $ putStrLn ("-> " ++ show a)
+debug Read a = withDebug $ putStrLn ("<- " ++ show a)
+debug Trace a = withDebug $ putStrLn ("-- " ++ show a)
+
+closeTranscript :: Session ()
+closeTranscript = gets transcript >>= maybe (return ()) (\h -> io $ do
+    hPutStrLn h "</programlisting>"
+    hClose h)
 
 changeTranscript :: String -> Session ()
 changeTranscript name = do
-    oldH <- gets transcript
-    maybe (return ()) (io . hClose) oldH
+    closeTranscript
     case name of
       [] -> modify (\st -> st{transcript=Nothing})
-      baseName -> do
-        let fileName = baseName ++ ".xml"
-        newH <- io $ openFile fileName WriteMode
+      idName -> do
+        tgtName <- asks targetName
+        let filePath = tgtName ++ ':' : baseName idName ++ ".xml"
+            fileBase = baseName filePath
+            tag = dropSuffix fileBase
+        newH <- io $ openFile filePath WriteMode
+        io $ hPutStrLn newH ("<programlisting id=" ++ show tag ++ ">\n")
+        io $ putStrLn ("<!ENTITY " ++ tag ++
+                       " SYSTEM " ++ show fileBase ++ ">")
         modify (\st -> st{transcript=Just newH})
+
+q :: String -> String
+q ('<':cs) = "&lt;" ++ q cs
+q ('>':cs) = "&gt;" ++ q cs
+q ('&':cs) = "&amp;" ++ q cs
+q (c:cs) = c : q cs
+q [] = []
+
+u :: String -> String
+u cs = "<userinput>" ++ q cs ++ "</userinput>"
+
+-- FIXME: expand tabs.
 
 processLine :: String -> Session ()
 processLine ('-':'-':'#':name) = changeTranscript (strip name)
@@ -128,8 +154,9 @@ processLine ('-':'-':_) = return ()
 processLine s | all isSpace s = return ()
               | otherwise = do
     putGhci s
-    putTranscript ("ghci> " ++ s ++ "\n")
+    putTranscript (ghciPrompt ++ u s ++ "\n")
     findOutput (s ++ "\r\n")
     r <- filter (/= '\r') `liftM` findOutput prompt
     debug Read r
-    putTranscript r
+    putTranscript (q r)
+  where ghciPrompt = "<prompt>ghci&gt; </prompt>"
