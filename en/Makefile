@@ -18,7 +18,7 @@ obj-html := html
 
 # Tools.
 
-tools := snippets
+tools := ghcisession snippets
 
 runhaskell ?= runghc
 

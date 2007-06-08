@@ -7,7 +7,7 @@ Maintainer: Bryan O'Sullivan <bos@serpentine.com>
 Copyright: 2007 Bryan O'Sullivan <bos@serpentine.com>
 Stability: Experimental
 Category: Real World Haskell
-Build-depends: base, mtl
+Build-depends: base, mtl, unix
 Synopsis: Tools for building the Real World Haskell book.
 Description:
   The snippets program pulls named snippets out of Haskell source
@@ -18,3 +18,12 @@ Main-Is: Snip.hs
 Other-Modules:
     Snippet
 GHC-options: -Wall -O2
+
+Executable: ghcisession
+Main-Is: GhciMain.hs
+Other-Modules:
+    GhciSession
+    Pty
+GHC-options: -Wall -O2
+Include-Dirs: include
+Includes: Pty.h
