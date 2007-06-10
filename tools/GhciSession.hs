@@ -87,7 +87,7 @@ setPrompt = do
     let cmd = ":set prompt \"" ++ prompt ++ "\""
     putGhci cmd
     findOutput cmd
-    findOutput cmd
+    findOutput (cmd ++ "\r\n")
     return ()
 
 putGhci :: String -> Session ()
