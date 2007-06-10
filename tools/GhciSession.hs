@@ -1,10 +1,12 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module GhciSession
     (
-      runScript
+      SessionOptions(..)
+    , mkOptions
+    , runScript
     ) where
 
-import Control.Monad (liftM, mapM_)
+import Control.Monad (liftM, mapM_, when)
 import Control.Monad.Reader (MonadReader(..), ReaderT(..), asks)
 import Control.Monad.State (MonadState(..), StateT(..), gets, modify)
 import Control.Monad.Trans (MonadIO(..))
@@ -14,10 +16,28 @@ import System.Posix.Process (ProcessStatus(..), getProcessStatus)
 import System.IO
 import Util (baseName, dropSuffix, findInfix, strip)
 
+data SessionOptions = SessionOptions
+    {
+      optHelp :: Bool
+    , optVerbose :: Bool
+    }
+
+
+mkOptions :: SessionOptions
+mkOptions = SessionOptions
+            {
+              optHelp = False
+            , optVerbose = False
+            }
+
 data SessionConfig = SessionConfig
     {
-      targetName :: FilePath
+      options :: SessionOptions
+    , targetName :: FilePath
     }
+
+mkConfig :: SessionOptions -> FilePath -> SessionConfig
+mkConfig o p = SessionConfig o p
 
 data SessionState = SessionState
     {
@@ -34,9 +54,6 @@ mkState h s = SessionState
               , output = s
               }
 
-mkConfig :: FilePath -> SessionConfig
-mkConfig p = SessionConfig p
-
 newtype Session a = Session (ReaderT SessionConfig (StateT SessionState IO) a)
     deriving (Monad, MonadIO, MonadReader SessionConfig,
               MonadState SessionState)
@@ -47,14 +64,14 @@ runSession cfg st (Session a) = runStateT (runReaderT a cfg) st >> return ()
 io :: IO a -> Session a
 io = liftIO
 
-runScript :: FilePath -> FilePath -> IO (Maybe ProcessStatus)
+runScript :: SessionOptions -> FilePath -> FilePath -> IO (Maybe ProcessStatus)
 
-runScript tgtDir name = do
+runScript opts tgtDir name = do
     script <- readFile name
     (h, pid) <- executePseudoTerminal "ghci" True [] Nothing
     hs <- hGetContents h
     let state = mkState h hs
-        config = mkConfig (tgtDir ++ '/' : baseName name)
+        config = mkConfig opts (tgtDir ++ '/' : baseName name)
     runSession config state $ do
         setPrompt
         mapM_ processLine (lines script)
@@ -75,7 +92,7 @@ setPrompt = do
 
 putGhci :: String -> Session ()
 putGhci s = do
-    debug Write s
+    debug (Write s)
     h <- gets pty
     io $ hPutStr h (s ++ "\n")
 
@@ -93,6 +110,7 @@ dropLength (_:xs) (_:ys) = dropLength xs ys
 
 findOutput :: String -> Session String
 findOutput s = do
+    debug (Trace $ "waiting for " ++ show s)
     out <- gets output
     case findInfix s out of
       Left _ -> fail "could not find a match"
@@ -100,25 +118,31 @@ findOutput s = do
           modify (\st -> st{output=dropLength s prest})
           return pfx
 
-data DebugEvent = Write
-                | Read
-                | Trace
+data DebugEvent = Write String
+                | Read String
+                | Trace String
                   deriving (Eq, Show)
 
 withDebug :: IO () -> Session ()
-withDebug f = if False
-              then io f
-              else return ()
+withDebug f = do
+    verbose <- askOpt optVerbose
+    when verbose $
+        io f
 
-debug :: Show a => DebugEvent -> a -> Session ()
-debug Write a = withDebug $ putStrLn ("-> " ++ show a)
-debug Read a = withDebug $ putStrLn ("<- " ++ show a)
-debug Trace a = withDebug $ putStrLn ("-- " ++ show a)
+debug :: DebugEvent -> Session ()
+debug (Write a) = withDebug $ hPutStrLn stderr ("-> " ++ show a)
+debug (Read a) = withDebug $ hPutStrLn stderr ("<- " ++ show a)
+debug (Trace a) = withDebug $ hPutStrLn stderr ("-- " ++ a)
 
 closeTranscript :: Session ()
-closeTranscript = gets transcript >>= maybe (return ()) (\h -> io $ do
+closeTranscript = gets transcript >>= maybe (return ()) (\h -> do
+  debug $ Trace ("closing " ++ show h)
+  io $ do
     hPutStrLn h "</programlisting>"
     hClose h)
+
+askOpt :: (SessionOptions -> a) -> Session a
+askOpt f = f `liftM` asks options
 
 changeTranscript :: String -> Session ()
 changeTranscript name = do
@@ -130,6 +154,7 @@ changeTranscript name = do
         let filePath = tgtName ++ ':' : baseName idName ++ ".xml"
             fileBase = baseName filePath
             tag = dropSuffix fileBase
+        debug $ Trace ("opening " ++ filePath)
         newH <- io $ openFile filePath WriteMode
         io $ hPutStrLn newH ("<programlisting id=" ++ show tag ++ ">\n")
         io $ putStrLn ("<!ENTITY " ++ tag ++
@@ -155,8 +180,9 @@ processLine s | all isSpace s = return ()
               | otherwise = do
     putGhci s
     putTranscript (ghciPrompt ++ u s ++ "\n")
-    findOutput (s ++ "\r\n")
+    echo <- findOutput "\r\n"
+    debug (Trace $ "ghci echoed " ++ show echo)
     r <- filter (/= '\r') `liftM` findOutput prompt
-    debug Read r
+    debug (Read r)
     putTranscript (q r)
   where ghciPrompt = "<prompt>ghci&gt; </prompt>"
