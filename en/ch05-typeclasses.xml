@@ -201,8 +201,42 @@ class  Eq a  where
   <sect1 id="hs.typeclasses.instances">
     <title>Declaring typeclass instances</title>
     <para>
-      FIXME
+      Now that you know how to define typeclasses, it's time to learn how to
+      define instances of typeclasses.  An instance is just a type.  Making
+      it an instance of a particular typeclass means implementing the
+      functions necessary for that typeclass.
     </para>
+    <para>
+      Recall our attempt to create a test for equality over a
+      <literal>Color</literal> type back in <xref
+      linkend="hs.typeclasses.ex.naiveeq"/>. <remark>FIXME:
+      how can we insert the page number here? --jg</remark>
+      Now let's see how we could make that same <literal>Color</literal>
+      type a member of the <literal>BasicEq3</literal> class.
+    </para>
+    &eqclasses.hs:basiceq3inst;
+    <para>
+      Notice that we provide essentially the same function as we used
+      back in <xref linkend="hs.typeclasses.ex.naiveeq"/>.  In fact, the
+      implementation is identical.  However, in this case, we can use
+      <literal>isEqual3</literal> on <emphasis>any</emphasis> type that
+      we declare is an instance of <literal>BasicEq3</literal>, not just
+      this one color type.  We could define equality tests for any anything
+      from numbers to graphics using the same basic pattern.  In fact, as you
+      will see in <xref linkend="hs.typeclasses.wellknown.equality"/>, this
+      works the same as making Haskell's <literal>==</literal> operator
+      work for your own custom types.
+    </para>
+    <para>
+      Note also that the <literal>BasicEq3</literal> class defined both
+      <literal>isEqual3</literal> and <literal>isNotEqual3</literal>, but we
+      defined only one of them.  That's because of the default implementation
+      contained in <literal>BasicEq3</literal>.  Since we didn't explicitly
+      define <literal>isNotEqual3</literal>, the compiler automatically uses
+      the default implementation given in the <literal>BasicEq3</literal>
+      declaration.
+    </para>
+
   </sect1>
 
   <sect1 id="hs.typeclasses.wellknown">
@@ -232,6 +266,13 @@ class  Eq a  where
         FIXME
       </para>
     </sect2>
+  </sect1>
+
+  <sect1 id="hs.typeclasses.auto.derivation">
+    <title>Automatic Derivation</title>
+    <para>
+      FIXME
+    </para>
   </sect1>
 
   <sect1 id="hs.typeclasses.overlapping">
