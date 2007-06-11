@@ -41,8 +41,8 @@ False
 </screen>
     <para>
       Now, let's say that you want to add an equality test for
-      <type>String</type>s.
-      Since a Haskell <type>String</type> is a list of characters, we can
+      &String;s.
+      Since a Haskell &String; is a list of characters, we can
       write a simple function to perform that test, as seen in <xref
         linkend="hs.typeclasses.ex.naiveeq.string"/>.  For simplicity, we
       cheat a bit and use the <function>==</function> operator a couple
@@ -255,15 +255,15 @@ class  Eq a  where
       <title>Show</title>
       <para>
         The <literal>Show</literal> typeclass is used to convert types to
-        <literal>String</literal>s.  It is perhaps most commonly used to
-        convert numbers to <literal>String</literal>s, but it is defined for
+        &String;s.  It is perhaps most commonly used to
+        convert numbers to &String;s, but it is defined for
         so many types that it can be used to convert quite a bit more.  You
         can also, of course, define instances for your own types as well.
       </para>
       <para>
         The most important function of <literal>Show</literal> is
         <literal>show</literal>.  It takes one argument: the type to convert.
-        It returns a <literal>String</literal> representing that type.
+        It returns a &String; representing that type.
         &ghci; reports that this way:
       </para>
 
@@ -284,16 +284,16 @@ class  Eq a  where
       &show.ghci:printshowex;
       <para>
         You can also use <literal>show</literal> on
-        <literal>String</literal>s:
+        &String;s:
       </para>
       &show.ghci:showstr;
       <para>
-        Running <literal>show</literal> on <literal>String</literal>s can be
+        Running <literal>show</literal> on &String;s can be
         confusing.  Since <literal>show</literal> generates a result that
         is suitable for a Haskell literal, <literal>show</literal> adds
         quotes and escaping suitable for inclusion in a Haskell program.
         &ghci; also uses <literal>show</literal> to
-        display results, so quotes and escaping get added twice.  Usint
+        display results, so quotes and escaping get added twice.  Using
         <literal>putStrLn</literal> can help make this difference clear.
       </para>
 
@@ -318,7 +318,8 @@ class  Eq a  where
     <sect2 id="hs.typeclasses.wellknown.read">
       <title>Read</title>
       <para>
-        FIXME
+        The &Read; typeclass is essentially the opposite of &Show;: it will
+        take a &String;, parse it, and return data in a native Haskell type.
       </para>
     </sect2>
 

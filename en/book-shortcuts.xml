@@ -1,2 +1,4 @@
 <!ENTITY ghci "<command>ghci</command>">
-
+<!ENTITY read "<literal>read</literal>">
+<!ENTITY Read "<literal>Read</literal>">
+<!ENTITY String "<literal>String</literal>">
