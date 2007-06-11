@@ -105,8 +105,6 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 	$(xmllint) --path '$(dtd-dir)' --noout --nonet --valid $(src-master)
 	touch .validated
 
-.PHONY: upload
-
 00book.zip: .validated
 	rm -f $@
 	zip -q -8 $@ $(src-files) $(xml-examples)
