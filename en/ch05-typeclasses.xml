@@ -26,7 +26,7 @@
       &naiveeq.hs:color;
     </example>
     <para>
-      You can test this with <application>ghci</application> or
+      You can test this with &ghci; or
       <application>hugs</application>:
     </para>
     <screen>
@@ -118,10 +118,10 @@ False
       refer to instance types.
     </para>
     <para>
-      Let's look at this in <application>ghci</application>.  <remark>FIXME:
+      Let's look at this in &ghci;.  <remark>FIXME:
         insert reference to where this is defined</remark>
       Recall that you
-      can type <command>:t</command> in <application>ghci</application> to 
+      can type <command>:t</command> in &ghci; to 
       have it show you the type of something.  Let's see what it says about
       <function>isEqual</function>:
     </para>
@@ -264,7 +264,7 @@ class  Eq a  where
         The most important function of <literal>Show</literal> is
         <literal>show</literal>.  It takes one argument: the type to convert.
         It returns a <literal>String</literal> representing that type.
-        <command>ghci</command> reports that this way:
+        &ghci; reports that this way:
       </para>
 
       &show.ghci:showtype;
@@ -274,7 +274,7 @@ class  Eq a  where
       </para>
       &show.ghci:showex;
       <para>
-        Remember that <command>ghci</command> displays results as they would
+        Remember that &ghci; displays results as they would
         be entered into Haskell.  So the expression <literal>show 1</literal>
         returns a single-character string containing the digit
         <literal>1</literal>.  That is, the quotes are not part of the string
@@ -292,7 +292,7 @@ class  Eq a  where
         confusing.  Since <literal>show</literal> generates a result that
         is suitable for a Haskell literal, <literal>show</literal> adds
         quotes and escaping suitable for inclusion in a Haskell program.
-        <command>ghci</command> also uses <literal>show</literal> to
+        &ghci; also uses <literal>show</literal> to
         display results, so quotes and escaping get added twice.  Usint
         <literal>putStrLn</literal> can help make this difference clear.
       </para>

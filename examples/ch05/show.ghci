@@ -14,3 +14,8 @@ show ['H', 'i']
 putStrLn (show "Hi")
 show "Hi, \"Jane\""
 putStrLn (show "Hi, \"Jane\"")
+--# junk
+:l eqclasses.hs
+--# color
+show Red
+

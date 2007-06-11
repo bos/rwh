@@ -9,6 +9,11 @@
 <!ENTITY ch07     SYSTEM "ch07-globs-and-regexps.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
+<!-- Include our standard shortcuts -->
+
+  <!ENTITY % SHORTCUTMAC SYSTEM "book-shortcuts.xml">
+  %SHORTCUTMAC;
+
 <!-- The following are references to snippets of source code.  The
      snippets are generated automatically from Haskell source files.
      This list is checked automatically during "make valid", but must
@@ -39,6 +44,8 @@
 <!ENTITY show.ghci:showex SYSTEM "show.ghci:showex.xml">
 <!ENTITY show.ghci:printshowex SYSTEM "show.ghci:printshowex.xml">
 <!ENTITY show.ghci:showstr SYSTEM "show.ghci:showstr.xml">
+<!ENTITY show.ghci:junk SYSTEM "show.ghci:junk.xml">
+<!ENTITY show.ghci:color SYSTEM "show.ghci:color.xml">
 <!ENTITY glob-regexp.ghci:tiny SYSTEM "glob-regexp.ghci:tiny.xml">
 <!ENTITY regexp.ghci:2tuple.match SYSTEM "regexp.ghci:2tuple.match.xml">
 <!ENTITY regexp.ghci:2tuple.nomatch SYSTEM "regexp.ghci:2tuple.nomatch.xml">
