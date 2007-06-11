@@ -243,11 +243,35 @@ class  Eq a  where
     <title>Well-known typeclasses</title>
 
     <para>
-      FIXME
+      Now that you're familiar with defining your own typeclasses and making
+      your types instances of typeclasses, it's time to introduce you to
+      typeclasses that are a standard part of Haskell.  As we mentioned at
+      the beginning of this chapter, typeclasses are at the core of some
+      imporant aspects of the language.  We'll cover the most common ones
+      here.
     </para>
 
-    <sect2 id="hs.typeclasses.wellknown.readshow">
-      <title>Read and Show</title>
+    <sect2 id="hs.typeclasses.wellknown.show">
+      <title>Show</title>
+      <para>
+        The <literal>Show</literal> typeclass is used to convert types to
+        <literal>String</literal>s.  It is perhaps most commonly used to
+        convert numbers to <literal>String</literal>s, but it is defined for
+        so many types that it can be used to convert quite a bit more.  You
+        can also, of course, define instances for your own types as well.
+      </para>
+      <para>
+        The most important function of <literal>Show</literal> is
+        <literal>show</literal>.  It takes one argument: the type to convert.
+        It returns a <literal>String</literal> representing that type.
+      </para>
+      <para>
+        Here is an example usage, from taken from a quick session with ghci:
+      </para>
+    </sect2>
+
+    <sect2 id="hs.typeclasses.wellknown.read">
+      <title>Read</title>
       <para>
         FIXME
       </para>

@@ -1,0 +1,10 @@
+--# typetwiddle
+show 1
+show [1, 2, 3]
+show (1, 2)
+show "Hello!"
+putStrLn (show "Hello!")
+show ['H', 'i']
+putStrLn (show "Hi")
+show "Hi, \"Jane\""
+putStrLn (show "Hi, \"Jane\"")
