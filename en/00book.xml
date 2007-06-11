@@ -17,15 +17,32 @@
      presented in the diff output.
 
      Please keep this section sorted lexicographically, otherwise it
-     gets unwieldy fast. -->
+     gets unwieldy fast, and the merges become heinous. -->
 
 <!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
 <!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
 <!ENTITY eqclasses.hs:basiceq SYSTEM "eqclasses.hs:basiceq.xml">
 <!ENTITY eqclasses.hs:basiceq2 SYSTEM "eqclasses.hs:basiceq2.xml">
 <!ENTITY eqclasses.hs:basiceq3 SYSTEM "eqclasses.hs:basiceq3.xml">
-<!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
-<!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
+<!ENTITY eqclasses.hs:basiceq3inst SYSTEM "eqclasses.hs:basiceq3inst.xml">
+<!ENTITY naiveeq.hs:color SYSTEM "naiveeq.hs:color.xml">
+<!ENTITY naiveeq.hs:string SYSTEM "naiveeq.hs:string.xml">
+<!ENTITY regexp.ghci:2tuple.match SYSTEM "regexp.ghci:2tuple.match.xml">
+<!ENTITY regexp.ghci:2tuple.nomatch SYSTEM "regexp.ghci:2tuple.nomatch.xml">
+<!ENTITY regexp.ghci:3tuple.match SYSTEM "regexp.ghci:3tuple.match.xml">
+<!ENTITY regexp.ghci:3tuple.nomatch SYSTEM "regexp.ghci:3tuple.nomatch.xml">
+<!ENTITY regexp.ghci:4tuple SYSTEM "regexp.ghci:4tuple.xml">
+<!ENTITY regexp.ghci:bool.passfail SYSTEM "regexp.ghci:bool.passfail.xml">
+<!ENTITY regexp.ghci:int.count SYSTEM "regexp.ghci:int.count.xml">
+<!ENTITY regexp.ghci:let SYSTEM "regexp.ghci:let.xml">
+<!ENTITY regexp.ghci:list.string SYSTEM "regexp.ghci:list.string.xml">
+<!ENTITY regexp.ghci:load SYSTEM "regexp.ghci:load.xml">
+<!ENTITY regexp.ghci:mix.match SYSTEM "regexp.ghci:mix.match.xml">
+<!ENTITY regexp.ghci:mix.nomatch SYSTEM "regexp.ghci:mix.nomatch.xml">
+<!ENTITY regexp.ghci:mix.rematch SYSTEM "regexp.ghci:mix.rematch.xml">
+<!ENTITY regexp.ghci:mix.simple SYSTEM "regexp.ghci:mix.simple.xml">
+<!ENTITY regexp.ghci:noreturn SYSTEM "regexp.ghci:noreturn.xml">
+<!ENTITY regexp.ghci:string SYSTEM "regexp.ghci:string.xml">
 <!ENTITY regexp.ghci:typetwiddle SYSTEM "regexp.ghci:typetwiddle.xml">
 ]>
 
