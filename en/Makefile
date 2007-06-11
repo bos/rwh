@@ -40,8 +40,8 @@ docbook2pdf := $(shell which docbook-2-pdf 2>/dev/null)
 ifeq ($(docbook2pdf),)
 xml-to-pdf = $(xmlto) $(xmlto-opts) pdf $(1)
 else
-xml-to-pdf = $(docbook2pdf) -D openjade -q -O -V -O paper-size=Letter \
-		-s local=printlocal $(1) > /dev/null
+xml-to-pdf = SGML_SEARCH_PATH='$(xml-path)' $(docbook2pdf) -D openjade -q \
+		-O -V -O paper-size=Letter -s local=printlocal $(1) > /dev/null
 endif
 
 # Bletcherousness.
