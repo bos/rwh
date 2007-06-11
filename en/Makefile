@@ -11,7 +11,7 @@ src-examples := \
 	ch07/glob-regexp.ghci \
 	ch07/regexp.ghci
 
-xml-examples := $(sort $(addsuffix :*.xml,$(notdir $(src-examples))))
+xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
 src-ghci := $(filter %.ghci,$(src-examples))
 
@@ -31,7 +31,9 @@ runhaskell ?= runghc
 xmllint := xmllint
 xmlto := xmlto
 
-xmlto-opts := --skip-validation --searchpath '$(CURDIR)'
+xml-path := $(CURDIR):$(CURDIR)/x
+
+xmlto-opts := --skip-validation --searchpath '$(xml-path)'
 
 docbook2pdf := $(shell which docbook-2-pdf 2>/dev/null)
 
@@ -102,7 +104,7 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 	cat .stamp-*.ghci .stamp-*.hs | sort > all-entities.txt
 	grep '^<!ENTITY .*\.[a-z]*:.*\.xml' 00book.xml | sort > book-entities.txt
 	diff -u book-entities.txt all-entities.txt
-	$(xmllint) --path '$(dtd-dir)' --noout --nonet --valid $(src-master)
+	$(xmllint) --path '$(dtd-dir):$(xml-path)' --noout --nonet --valid $(src-master)
 	touch .validated
 
 00book.zip: .validated
@@ -111,7 +113,7 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 
 clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
-	-rm -rf $(obj-html) index ../tools/dist ../tools/bin
+	-rm -rf x $(obj-html) index ../tools/dist ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
@@ -120,7 +122,7 @@ vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
 .stamp-%.hs: %.hs
-	../tools/bin/snippets $< > $@
+	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 .stamp-%.ghci: %.ghci
-	../tools/bin/ghcisession $(CURDIR) $< > $@
+	../tools/bin/ghcisession $(CURDIR)/x $< > $@

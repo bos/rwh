@@ -8,6 +8,7 @@ module Main where
 import Control.Monad (forM_, liftM)
 import Data.Char (isSpace)
 import Snippet (Snippet(..), parseSnippets)
+import System.Directory (createDirectoryIfMissing)
 import System.Environment (getArgs)
 import System.IO (putStrLn)
 -- Don't use lazy ByteStrings, due to the bug in "lines".
@@ -28,17 +29,20 @@ programListing mod snipName body =
         footer = B.pack "\n]]>\n</programlisting>\n"
         rstrip = B.reverse . B.dropWhile isSpace . B.reverse
 
-snipFiles :: [FilePath] -> IO ()
+snipFile :: FilePath -> FilePath -> IO ()
 
-snipFiles names = forM_ names $ \fileName -> do
+snipFile tgtDir fileName = do
     snips <- parseSnippets `liftM` B.readFile fileName
     let name = takeFileName fileName
     forM_ snips $ \(Snippet snip content) -> do
         let (entity, listing) = programListing name snip content
             outName = entity ++ ".xml"
         putStrLn ("<!ENTITY " ++ entity ++ " SYSTEM " ++ show outName ++ ">")
-        B.writeFile outName listing
+        B.writeFile (tgtDir ++ '/' : outName) listing
 
 main :: IO ()
 
-main = getArgs >>= snipFiles
+main = do
+    (tgtDir:args) <- getArgs
+    createDirectoryIfMissing False tgtDir
+    mapM_ (snipFile tgtDir) args
