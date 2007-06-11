@@ -264,10 +264,55 @@ class  Eq a  where
         The most important function of <literal>Show</literal> is
         <literal>show</literal>.  It takes one argument: the type to convert.
         It returns a <literal>String</literal> representing that type.
+        <command>ghci</command> reports that this way:
       </para>
+
+      &show.ghci:showtype;
+
       <para>
-        Here is an example usage, from taken from a quick session with ghci:
+        Let's look at some examples of converting numbers to strings:
       </para>
+      &show.ghci:showex;
+      <para>
+        Remember that <command>ghci</command> displays results as they would
+        be entered into Haskell.  So the expression <literal>show 1</literal>
+        returns a single-character string containing the digit
+        <literal>1</literal>.  That is, the quotes are not part of the string
+        itself.  We can make that clear by using
+        <literal>printStrLn</literal>:
+      </para>
+      &show.ghci:printshowex;
+      <para>
+        You can also use <literal>show</literal> on
+        <literal>String</literal>s:
+      </para>
+      &show.ghci:showstr;
+      <para>
+        Running <literal>show</literal> on <literal>String</literal>s can be
+        confusing.  Since <literal>show</literal> generates a result that
+        is suitable for a Haskell literal, <literal>show</literal> adds
+        quotes and escaping suitable for inclusion in a Haskell program.
+        <command>ghci</command> also uses <literal>show</literal> to
+        display results, so quotes and escaping get added twice.  Usint
+        <literal>putStrLn</literal> can help make this difference clear.
+      </para>
+
+      <para>
+        You can define a <literal>Show</literal> instance for your own types
+        easily.  Here's an example:
+      </para>
+
+      &eqclasses.hs:show;
+
+      <para>
+        This example defines an instance of <literal>Show</literal> for our
+        type 
+        <literal>Color</literal> (see <xref
+          linkend="hs.typeclasses.ex.naiveeq"/>).  The implementation is
+        simple: we define a function <literal>show</literal> and that's all
+        that's needed.
+      </para>
+
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.read">

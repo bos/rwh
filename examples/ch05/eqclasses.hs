@@ -51,3 +51,9 @@ instance BasicEq3 Color where
     isEqual3 Blue _ = False
 {-- /snippet basiceq3inst --}
 
+{-- snippet show --}
+instance Show Color where
+    show Red = "Red"
+    show Green = "Green"
+    show Blue = "Blue"
+{-- /snippet show --}
