@@ -19,12 +19,20 @@
      Please keep this section sorted lexicographically, otherwise it
      gets unwieldy fast, and the merges become heinous. -->
 
-<!ENTITY GlobWithRegex.hs:header SYSTEM "GlobWithRegex.hs:header.xml">
-<!ENTITY GlobWithRegex.hs:imports SYSTEM "GlobWithRegex.hs:imports.xml">
+<!ENTITY GlobRegex.hs:asterisk SYSTEM "GlobRegex.hs:asterisk.xml">
+<!ENTITY GlobRegex.hs:header SYSTEM "GlobRegex.hs:header.xml">
+<!ENTITY GlobRegex.hs:charClass SYSTEM "GlobRegex.hs:charClass.xml">
+<!ENTITY GlobRegex.hs:class SYSTEM "GlobRegex.hs:class.xml">
+<!ENTITY GlobRegex.hs:imports SYSTEM "GlobRegex.hs:imports.xml">
+<!ENTITY GlobRegex.hs:question SYSTEM "GlobRegex.hs:question.xml">
+<!ENTITY GlobRegex.hs:rest SYSTEM "GlobRegex.hs:rest.xml">
+<!ENTITY GlobRegex.hs:rooted SYSTEM "GlobRegex.hs:rooted.xml">
+<!ENTITY GlobRegex.hs:type SYSTEM "GlobRegex.hs:type.xml">
 <!ENTITY eqclasses.hs:basiceq SYSTEM "eqclasses.hs:basiceq.xml">
 <!ENTITY eqclasses.hs:basiceq2 SYSTEM "eqclasses.hs:basiceq2.xml">
 <!ENTITY eqclasses.hs:basiceq3 SYSTEM "eqclasses.hs:basiceq3.xml">
 <!ENTITY eqclasses.hs:basiceq3inst SYSTEM "eqclasses.hs:basiceq3inst.xml">
+<!ENTITY glob-regexp.ghci:tiny SYSTEM "glob-regexp.ghci:tiny.xml">
 <!ENTITY naiveeq.hs:color SYSTEM "naiveeq.hs:color.xml">
 <!ENTITY naiveeq.hs:string SYSTEM "naiveeq.hs:string.xml">
 <!ENTITY regexp.ghci:2tuple.match SYSTEM "regexp.ghci:2tuple.match.xml">

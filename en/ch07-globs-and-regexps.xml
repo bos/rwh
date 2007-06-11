@@ -290,7 +290,7 @@
     </sect2>
 
     <sect2>
-      <title>Other regular expression packages</title>
+      <title>Other things you should know</title>
 
       <para>When you look through Haskell library documentation,
 	you'll see several regexp-related modules.  The modules under
@@ -317,9 +317,9 @@
 	  greediest match.  What this means is that given a regexp of
 	  <literal>(foo|fo*)</literal> and a text string of
 	  <literal>foooooo</literal>, a Perl-style engine will give a
-	  match of <literal>foo</literal>, while a POSIX engine will
-	  match the entire string (the second branch of the
-	  alternative in the regexp).</para>
+	  match of <literal>foo</literal> (the leftmost match), while
+	  a POSIX engine will match the entire string (the greediest
+	  match).</para>
 
 	<para>POSIX regexps have less uniform syntax
 	  than Perl-style regexps.  They also lack a number of
@@ -338,6 +338,114 @@
 
   </sect1>
 
+  <sect1>
+    <title>Translating a glob pattern into a regular expression</title>
+
+    <para>Now that we've seen the myriad of ways to match text against
+      regular expressions, let's turn our attention back to glob
+      patterns.  We want to write a function that will take a glob
+      pattern and return its representation as a regular expression.
+      Both glob patterns and regexps are text strings, so the type
+      that our function ought to have seems clear.</para>
+
+    &GlobRegex.hs:type;
+
+    <para>We start our definition of the
+      <function>globToRegex</function> function by recalling that a
+      text string must match a glob pattern must match.  Thus before
+      we attempt to convert any part of the glob pattern, we need to
+      have a <quote>rooted</quote> regular expression.</para>
+    
+    &GlobRegex.hs:rooted;
+
+    <para>Recall that the <type>String</type> is just a synonym for
+      <type>[Char]</type>, a list of <type>Char</type>s.  The
+      <function>:</function> operator puts a value (the
+      <literal>^</literal> character in this case) onto the front of a
+      list, where the list is the value returned by the yet-to-be-seen
+      <function>globToRegex'</function> function.</para>
+
+    <note>
+      <para>It's perfectly normal for a Haskell function to refer to
+	functions or values that follow, rather than precede, it in a
+	source file.  The Haskell compiler doesn't care about ordering
+	at this level.  This grants you the flexibility to structure
+	your code in the manner that makes most logical sense to you,
+	as opposed to a way that makes the compiler writer's life
+	easiest.</para>
+    </note>
+
+    <para>With the regular expression rooted, the
+      <function>globToRegex'</function> function will do the bulk of
+      the translation work.  We'll use the convenience of Haskell's
+      pattern matching to enumerate each of the cases we'll need to
+      cover.</para>
+
+    &GlobRegex.hs:asterisk;
+
+    <para>We now have a very minimal glob translator.  Our first
+      clause requires that if we hit the end of our glob pattern, we
+      return <literal>$</literal>, the regular expression symbol for
+      <quote>match end-of-line</quote>.  The second gets us to
+      substitute the string <literal>.*</literal> every time we see a
+      <literal>*</literal> in our input list.  And the third passes
+      every other character through, unaltered.</para>
+
+    <para>We can immediately save our new source file (let's call it
+      <filename>GlobRegexTiny.hs</filename> and start playing with it
+      in <command>ghci</command>.  This is a great way to do
+      exploratory programming: write a little code, load it into the
+
+      interpreter, and see what happens.</para>
+
+    &glob-regexp.ghci:tiny;
+
+    <para>These results might seem trivial, but we have received
+      immediate feedback on two fronts: our code passes the scrutiny
+      of the typechecker, and it produces sensible-looking results.
+      Monkeying around with code in the interpreter early and often is
+      consistently worthwhile.</para>
+
+    <para>The remaining cases for a complete definition of
+      <function>globToRegex'</function> are easy to enumerate.  First,
+      we get <literal>?</literal> out of the way.</para>
+
+    &GlobRegex.hs:question;
+
+    <para>More interesting is how we handle character classes.</para>
+
+    &GlobRegex.hs:class;
+
+    <para>We take advantage of two behaviours of Haskell's pattern
+      matcher here.  The first is that it will match patterns in the
+      order in which we declare them, so we place the most specific
+      patterns first, and the least specific last.  Secondly, there's
+      no limit to the <quote>depth</quote> of a pattern: we can
+      <quote>peek</quote> forwards into a list as far as we need
+      to.</para>
+
+    <para>Here, the first pattern matches on three consecutive items
+      of its input to ensure that a <quote>negative</quote> character
+      class cannot be empty.  The second pattern matches on only two
+      items, so ensure that a <quote>positive</quote> character class
+      cannot be empty.  The final clause can only match if it's given
+      a syntactically invalid character class.</para>
+
+    <para>Finally, all other characters can be passed through, but
+      they may need to be escaped, so that the regexp engine won't
+      treat them specially.</para>
+
+    &GlobRegex.hs:rest;
+
+    <para>The <function>charClass</function> helper function does
+      nothing more than ensure that a character class is correctly
+      terminated.  It passes its input through unmolested until it
+      hits a <literal>]</literal>, when it hands control back to
+      <function>globToRegex'</function>.</para>
+
+    &GlobRegex.hs:charClass;
+
+  </sect1>
 </chapter>
 
 <!--

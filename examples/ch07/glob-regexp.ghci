@@ -1,0 +1,9 @@
+--# tiny
+
+:load glob-to-regexp/GlobRegexTiny.hs
+
+globToRegex "*"
+
+globToRegex ""
+
+globToRegex "**"
