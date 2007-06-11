@@ -3,6 +3,7 @@ module Util
     (
       anyM
     , baseName
+    , dirName
     , dropSuffix
     , findInfix
     , strip
@@ -26,6 +27,11 @@ findInfix needle haystack =
 
 baseName :: FilePath -> String
 baseName = reverse . either id fst . findInfix "/" . reverse
+
+dirName :: FilePath -> FilePath
+dirName = reverse . either (const ".") (tidy . snd) . findInfix "/" . reverse
+    where tidy ('/':cs@(_:_)) = cs
+          tidy cs = cs
 
 dropSuffix :: String -> String
 dropSuffix = reverse . either id (tail . snd) . findInfix "." . reverse

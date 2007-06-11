@@ -5,6 +5,7 @@ import Data.List (foldl')
 import GhciSession (SessionOptions(..), mkOptions, runScript)
 import System.Console.GetOpt (ArgDescr(..), ArgOrder(..), OptDescr(..),
                               getOpt', usageInfo)
+import System.Directory (canonicalizePath)
 import System.Environment (getArgs)
 import System.Exit (ExitCode(..), exitWith)
 import System.IO (Handle, hPutStr, hPutStrLn, stderr)
@@ -42,4 +43,5 @@ main = do
     when (length args < 2) $
         usage stderr 1
     let (tgtDir:scripts) = args
-    mapM_ (runScript opts tgtDir) scripts
+    target <- canonicalizePath tgtDir
+    mapM_ (runScript opts target) scripts

@@ -6,15 +6,17 @@ module GhciSession
     , runScript
     ) where
 
+import Control.Exception (bracket)
 import Control.Monad (liftM, mapM_, when)
 import Control.Monad.Reader (MonadReader(..), ReaderT(..), asks)
 import Control.Monad.State (MonadState(..), StateT(..), gets, modify)
 import Control.Monad.Trans (MonadIO(..))
 import Data.Char (isSpace)
 import Pty (executePseudoTerminal)
+import System.Directory (getCurrentDirectory, setCurrentDirectory)
 import System.Posix.Process (ProcessStatus(..), getProcessStatus)
 import System.IO
-import Util (baseName, dropSuffix, findInfix, strip)
+import Util (baseName, dirName, dropSuffix, findInfix, strip)
 
 data SessionOptions = SessionOptions
     {
@@ -68,13 +70,25 @@ runScript :: SessionOptions -> FilePath -> FilePath -> IO (Maybe ProcessStatus)
 
 runScript opts tgtDir name = do
     script <- readFile name
+    bracket getCurrentDirectory
+            (\prevCwd -> do
+               cwd <- getCurrentDirectory
+               when (cwd /= prevCwd) (setCurrentDirectory prevCwd))
+            (\_ -> do
+               when ('/' `elem` name) $ do
+                   setCurrentDirectory (dirName name)
+               runScript' opts tgtDir (baseName name) (lines script))
+
+runScript' :: SessionOptions -> FilePath -> String -> [String]
+          -> IO (Maybe ProcessStatus)
+runScript' opts tgtDir name script = do
     (h, pid) <- executePseudoTerminal "ghci" True [] Nothing
     hs <- hGetContents h
     let state = mkState h hs
-        config = mkConfig opts (tgtDir ++ '/' : baseName name)
+        config = mkConfig opts (tgtDir ++ '/' : name)
     runSession config state $ do
         setPrompt
-        mapM_ processLine (lines script)
+        mapM_ processLine script
         closeTranscript
     hClose h
     getProcessStatus True False pid
