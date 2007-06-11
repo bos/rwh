@@ -320,7 +320,11 @@ class  Eq a  where
       <para>
         The &Read; typeclass is essentially the opposite of &Show;: it will
         take a &String;, parse it, and return data in a native Haskell type.
+        You can ask &ghci; for its type like this:
       </para>
+
+      &read.ghci:readtype;
+
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.numeric">
