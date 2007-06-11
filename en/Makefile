@@ -10,6 +10,8 @@ src-examples := \
 	ch07/glob-to-regexp/GlobWithRegex.hs \
 	ch07/regexp.ghci
 
+xml-examples := $(sort $(addsuffix :*.xml,$(notdir $(src-examples))))
+
 src-ghci := $(filter %.ghci,$(src-examples))
 
 stamp-examples := $(addprefix .stamp-,$(notdir $(src-examples)))
@@ -102,8 +104,14 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 	$(xmllint) --path '$(dtd-dir)' --noout --nonet --valid $(src-master)
 	touch .validated
 
+.PHONY: upload
+
+00book.zip: .validated
+	rm -f $@
+	zip -q -8 $@ $(src-files) $(xml-examples)
+
 clean:
-	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf)
+	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
 	-rm -rf $(obj-html) index ../tools/dist ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
