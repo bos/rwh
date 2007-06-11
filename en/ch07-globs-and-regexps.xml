@@ -107,13 +107,237 @@
       language, such as Python, Perl, or Java.  Rather than introduce
       them as something new, I'll be focusing on what's different
       about regexp handling in Haskell, compared to imperative
-      languages.</para>
+      languages.  Haskell's regular expression matching libraries are
+      a lot more expressive than those of other languages, so there's
+      plenty to talk about.</para>
 
-    <para>The first hurdle to overcome is that Haskell's regexp
-      library makes heavy use of polymorphism; as a result, many of
-      its type signatures are difficult to understand.</para>
-&regexp.ghci:typetwiddle;
+    <para>To begin our use of the regexp libraries, the only module
+      we'll need to work with is <classname
+	role="module">Text.Regex.Posix</classname>.  As usual, the
+      most convenient way to explore this module is by interacting
+      with it via <command>ghci</command>.</para>
+
+    &regexp.ghci:load;
+
+    <para>The only function that
+      we're likely to need for normal use is the regexp matching
+      function, an infix operator named <function>=~</function>
+      (borrowed from Perl.  The first hurdle to overcome is that
+      Haskell's regexp libraries make heavy use of polymorphism.  As a
+      result, the type signature of the <function>=~</function>
+      operator is a bit difficult to understand.  Let's drop into
+      <command>ghci</command> and see what it looks like.</para>
+
+    &regexp.ghci:typetwiddle;
+
+    <para>Ouch!  Rather than pick apart what this convoluted
+      definition means, let's take a shortcut.  The
+      <function>=~</function> operator uses typeclasses for both of
+      its arguments, and also for its return type.  The first argument
+      (on the left of the <function>=~</function>) is the text to
+      match; the second (on the right) is the regular expression to
+      match against.  We can pass either a <type>String</type> or a
+      <type>Data.ByteString</type> as either argument.</para>
+
+    <sect2>
+      <title>The many types of result</title>
+
+      <para>The <function>=~</function> operator is polymorphic in its
+	return type, so the Haskell compiler needs some way to know
+        what type of result we would like.  In real code, it may be
+        able to infer the right type, due to the way we subsequently
+        use the result.  But such cues are often lacking when we're
+        exploring with <command>ghci</command>.  If we omit a specific
+        type for the result, we'll get an intimidating-looking error
+	message.  Here's what <command>ghci</command> tells us if we
+	try to do a regexp match but omit the return type.</para>
+
+      &regexp.ghci:noreturn;
+
+      <para>That's quite an impenetrable error message, but what it
+	means is that <command>ghci</command> can't infer what type of
+	result to give back to us.  (This is the same kind of error
+	that a compiler would print if it couldn't infer the correct
+	type in a real program.)  Here's the key to dealing with this
+	error.  When <command>ghci</command> can't infer the <varname
+	condition="tyvar">target</varname> type, we tell it what we'd
+	like the type to be.  If we want an expression of type
+	<type>Bool</type>, we'll get a pass/fail result.</para>
+
+      &regexp.ghci:bool.passfail;
+
+      <para>In the bowels of the base regexp library, there's a
+	typeclass named <classname>RegexContext</classname> that
+	describes how a <varname
+	  condition="tyvar">target</varname> type should behave; the
+	base library defines many instances of this typeclass for us.
+	The <type>Bool</type> type is an instance of this typeclass,
+	so we get back a usable result.  Another such instance is
+	<type>Int</type>, which gives us a count of the number of
+	times the regexp matches.</para>
+
+      &regexp.ghci:int.count;
+
+      <para>If we ask for a <type>String</type> result, we'll get the
+        first substring that matches, or an empty string if nothing
+        matches.</para>
+
+      &regexp.ghci:string;
+
+      <note>
+	<para>Getting back an empty string for <quote>no match</quote>
+	  poses an obvious difficulty if the empty string could be a
+	  valid match for the regexp.</para>
+
+	<remark>FIXME: Find some place to mention the monadic
+	  <function>=~~</function> operator.</remark>
+      </note>
+
+      <para>Another valid type of result is <type>[String]</type>,
+	which returns a list of <emphasis>all</emphasis> matching
+	strings.</para>
+
+      &regexp.ghci:list.string;
+      
+      <para>That's about it for <quote>simple</quote> result types,
+	but we're not by any means finished.  Before we continue,
+	let's use a single pattern for our remaining examples.</para>
+      
+      &regexp.ghci:let;
+
+      <para>We can obtain quite a lot of information about the
+        context in which a match occurs.  If we ask for a
+        three-element tuple, we'll get back the text
+	<emphasis>before</emphasis> the first match, the text
+	<emphasis>of</emphasis> that match, and the text that
+	<emphasis>follows</emphasis> it.</para>
+
+      &regexp.ghci:3tuple.match;
+
+      <para>If the match fails, the entire text is returned as the
+	<quote>before</quote> element of the tuple, with the other two
+	elements left empty.</para>
+
+      &regexp.ghci:3tuple.nomatch;
+
+      <para>Asking for a four-element tuple gives us a fourth element
+	that's a list of all groups in the pattern that
+	matched.</para>
+
+      &regexp.ghci:4tuple;
+
+      <para>We can get  numeric information about matches,
+        too.  A pair of <type>Int</type>s gives us the starting offset
+        of the first match, and its length.  If we ask for a list of
+        these pairs, we'll get this information for all
+        matches.</para>
+
+      &regexp.ghci:2tuple.match;
+
+      <para>A failed match is represented by the value
+	<literal>-1</literal> as the first element of the tuple (the
+	match offset), or an empty list of tuples.</para>
+
+      &regexp.ghci:2tuple.nomatch;
+
+      <para>Believe it or not, this is <emphasis>not</emphasis> a
+	comprehensive list of built-in instances of the
+	<classname>RegexContext</classname> typeclass.  For a complete
+	list, see the documentation for the <classname
+	role="module">Text.Regex.Base.Context</classname>
+	module.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Mixing and matching string types</title>
+
+      <para>As we noted earlier, the <function>=~</function> operator
+	uses typeclasses for its argument types and its return type.
+	Any combination of <type>String</type> and
+	<type>ByteString</type> will work for the types of both the
+	regular expression and the text to match against.</para>
+
+      &regexp.ghci:mix.simple;
+      
+      <para>However, be aware that if you want a string
+	value in the result of a match, the text you're matching
+	against must be the same type of string.  Let's see what this
+	means in practice.</para>
+
+      &regexp.ghci:mix.match;
+
+      <para>In the above example, we've used the
+	<function>pack</function> to turn a <type>String</type> into a
+	<type>ByteString</type>.  The typechecker accepts this because
+	<type>ByteString</type> appears in the result type.  But if we
+	try getting a <type>String</type> out, that
+	<emphasis>won't</emphasis> work.</para>
+
+      &regexp.ghci:mix.nomatch;
+
+      <para>And ouch!  That's quite an error message.  Don't let its
+	verbosity confound you; we can easily fix this problem by
+	making the string types of the left hand side and the result
+	match once again.</para>
+
+      &regexp.ghci:mix.rematch;
+
+      <para>This restriction does <emphasis>not</emphasis> apply to
+	the type of the regexp to match against.  It can be either a
+	<type>String</type> or <type>ByteString</type>, unconstrained
+	by the other types in use.</para>
+    </sect2>
+
+    <sect2>
+      <title>Other regular expression packages</title>
+
+      <para>When you look through Haskell library documentation,
+	you'll see several regexp-related modules.  The modules under
+	<classname role="module">Text.Regex.Base</classname> define
+	the common API adhered to by all of the other regexp modules.
+	It's possible to have multiple implementations of the regexp
+	API installed at one time.  At the time of writing,
+	<application>GHC</application> is bundled with one
+	implementation, <classname
+	role="module">Text.Regex.Posix</classname>.  As its name
+	suggests, this package provides POSIX regexp semantics.</para>
+
+      <note>
+	<para>If you're coming to Haskell from a language like Perl,
+	  Python, or Java, and you've used regular expressions in one
+	  of those languages, you should be aware that the POSIX
+	  regexps handled by the <classname
+	  role="module">Text.Regex.Posix</classname> module are
+	  different in some significant ways from Perl-style
+	  regexps.  Here are a few of the more notable differences.</para>
+
+	<para>Perl regexp engines do left-biased matching when
+	  matching alternatives, whereas POSIX engines choose the
+	  greediest match.  What this means is that given a regexp of
+	  <literal>(foo|fo*)</literal> and a text string of
+	  <literal>foooooo</literal>, a Perl-style engine will give a
+	  match of <literal>foo</literal>, while a POSIX engine will
+	  match the entire string (the second branch of the
+	  alternative in the regexp).</para>
+
+	<para>POSIX regexps have less uniform syntax
+	  than Perl-style regexps.  They also lack a number of
+	  capabilities provided by Perl-style regexps, such as
+	  zero-width assertions and control over greedy
+	  matching.</para>
+      </note>
+
+      <para>Other Haskell regexp packages are available for download
+	on the Internet.  Some provide faster engines than the current
+	POSIX engine; others provide Perl-style matching capabilities.
+	All follow the standard API that we have covered in this
+	section.</para>
+
+    </sect2>
+
   </sect1>
+
 </chapter>
 
 <!--
