@@ -8,3 +8,12 @@ read "5"
 --# readtypes
 (read "5.0")::Double
 (read "5.0")::Integer
+--# junk
+:l eqclasses.hs
+--# readcolor
+(read "Red")::Color
+(read "Green")::Color
+(read "Blue")::Color
+(read "[Red]")::[Color]
+(read "[Red,Red,Blue]")::[Color]
+(read "[Red, Red, Blue]")::[Color]

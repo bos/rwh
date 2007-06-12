@@ -59,8 +59,11 @@ instance Show Color where
 {-- /snippet show --}
 {-- snippet read --}
 instance Read Color where
-    readsPrec _ "Red" = [(Red, "")]
-    readsPrec _ "Green" = [(Green, "")]
-    readsPrec _ "Blue" = [(Blue, "")]
-    readsPrec _ _ = []
+    readsPrec _ value = 
+        tryParse [("Red", Red), ("Green", Green), ("Blue", Blue)]
+        where tryParse [] = []
+              tryParse ((attempt, result):xs) =
+                      if (take (length attempt) value) == attempt
+                         then [(result, drop (length attempt) value)]
+                         else tryParse xs
 {-- /snippet read --}

@@ -379,8 +379,16 @@ class  Eq a  where
       <para>
         This example handles the known cases for the three colors.  It
         returns an empty list (resulting in a "no parse" message) for others.
-        The empty &String; you see in the tuple is supposed to represet the
-        remaining unparsed parts of the &String;.
+        The function is supposed to return the part of the input that was not
+        parsed, so that the system can integrate the parsing of different
+        types together.  Here's an example of using this new instance of
+        &Read;:
+      </para>
+      &read.ghci:readcolor;
+      <para>
+        Notice the error on the final attempt.  That's because our parser is
+        not smart enough to handle leading spaces yet.  If we modified it to
+        accept leading spaces, that attempt would work.
       </para>
     </sect2>
 
