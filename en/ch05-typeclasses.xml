@@ -365,7 +365,23 @@ class  Eq a  where
         Integer.  The compiler selected a different parser there because the
         return value of &read; was expected to be of a different type.
       </para>
-
+      <para>
+        The &Read; class provides for some fairly complicated parsers.  Most
+        people, however, choose to use Parsec for complicated parsers these
+        days.  <remark>FIXME: insert xref to parsec</remark>  You can 
+        define a simple parser by providing an implementation for the
+        <literal>readsPrec</literal> function.  Your implementation can
+        return a list containing exactly one tuple on a successful parse, or
+        an empty list on an unsuccessful parse.  Here's an example
+        implementation:
+      </para>
+      &eqclasses.hs:read;
+      <para>
+        This example handles the known cases for the three colors.  It
+        returns an empty list (resulting in a "no parse" message) for others.
+        The empty &String; you see in the tuple is supposed to represet the
+        remaining unparsed parts of the &String;.
+      </para>
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.numeric">

@@ -57,3 +57,10 @@ instance Show Color where
     show Green = "Green"
     show Blue = "Blue"
 {-- /snippet show --}
+{-- snippet read --}
+instance Read Color where
+    readsPrec _ "Red" = [(Red, "")]
+    readsPrec _ "Green" = [(Green, "")]
+    readsPrec _ "Blue" = [(Blue, "")]
+    readsPrec _ _ = []
+{-- /snippet read --}
