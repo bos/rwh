@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
-<!DOCTYPE book SYSTEM "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
 <!-- Below are references to files in this directory. -->
 
