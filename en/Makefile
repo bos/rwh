@@ -108,9 +108,21 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' --noout --nonet --valid $(src-master)
 	touch .validated
 
-00book.zip: .validated
-	rm -f $@
-	zip -q -8 $@ $(src-files) $(xml-examples)
+# Generate a zip file with the kind of contents required by nostromo's
+# AH server.
+
+.PHONY: zip
+zip: book.zip
+
+book.zip: .validated
+	rm -rf $@ bookzip
+	mkdir -p bookzip
+	cp $(src-files) $(xml-examples) bookzip
+	mv bookzip/00book.xml bookzip/book.xml
+	perl -pi -e 's,:([a-z0-9_.-]+\.xml">),.\1,i' bookzip/book.xml
+	cd bookzip; for i in *:*.xml; do mv $$i $$(echo $$i | tr : .); done
+	cd bookzip; zip -q -8 ../book.zip *
+	rm -r bookzip
 
 clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
