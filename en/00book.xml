@@ -10,62 +10,15 @@
 <!ENTITY ch07     SYSTEM "ch07-globs-and-regexps.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
-<!-- Include our standard shortcuts -->
+<!-- Include our standard shortcuts. -->
 
-  <!ENTITY % SHORTCUTMAC SYSTEM "book-shortcuts.xml">
-  %SHORTCUTMAC;
+<!ENTITY % SHORTCUTS SYSTEM "book-shortcuts.xml">
+%SHORTCUTS;
 
-<!-- The following are references to snippets of source code.  The
-     snippets are generated automatically from Haskell source files.
-     This list is checked automatically during "make valid", but must
-     be maintained by hand.  If "make valid" fails, you should simply
-     be able to add or remove the appropriate entity declarations as
-     presented in the diff output.
+<!-- Include automatically generated code snippets. -->
 
-     Please keep this section sorted lexicographically, otherwise it
-     gets unwieldy fast, and the merges become heinous. -->
-
-<!ENTITY GlobRegex.hs:asterisk SYSTEM "GlobRegex.hs:asterisk.xml">
-<!ENTITY GlobRegex.hs:header SYSTEM "GlobRegex.hs:header.xml">
-<!ENTITY GlobRegex.hs:charClass SYSTEM "GlobRegex.hs:charClass.xml">
-<!ENTITY GlobRegex.hs:class SYSTEM "GlobRegex.hs:class.xml">
-<!ENTITY GlobRegex.hs:imports SYSTEM "GlobRegex.hs:imports.xml">
-<!ENTITY GlobRegex.hs:question SYSTEM "GlobRegex.hs:question.xml">
-<!ENTITY GlobRegex.hs:rest SYSTEM "GlobRegex.hs:rest.xml">
-<!ENTITY GlobRegex.hs:rooted SYSTEM "GlobRegex.hs:rooted.xml">
-<!ENTITY GlobRegex.hs:type SYSTEM "GlobRegex.hs:type.xml">
-<!ENTITY eqclasses.hs:basiceq SYSTEM "eqclasses.hs:basiceq.xml">
-<!ENTITY eqclasses.hs:show SYSTEM "eqclasses.hs:show.xml">
-<!ENTITY eqclasses.hs:basiceq2 SYSTEM "eqclasses.hs:basiceq2.xml">
-<!ENTITY eqclasses.hs:basiceq3 SYSTEM "eqclasses.hs:basiceq3.xml">
-<!ENTITY eqclasses.hs:basiceq3inst SYSTEM "eqclasses.hs:basiceq3inst.xml">
-<!ENTITY naiveeq.hs:color SYSTEM "naiveeq.hs:color.xml">
-<!ENTITY naiveeq.hs:string SYSTEM "naiveeq.hs:string.xml">
-<!ENTITY show.ghci:showtype SYSTEM "show.ghci:showtype.xml">
-<!ENTITY show.ghci:showex SYSTEM "show.ghci:showex.xml">
-<!ENTITY show.ghci:printshowex SYSTEM "show.ghci:printshowex.xml">
-<!ENTITY show.ghci:showstr SYSTEM "show.ghci:showstr.xml">
-<!ENTITY show.ghci:junk SYSTEM "show.ghci:junk.xml">
-<!ENTITY show.ghci:color SYSTEM "show.ghci:color.xml">
-<!ENTITY read.ghci:readtype SYSTEM "read.ghci:readtype.xml">
-<!ENTITY glob-regexp.ghci:tiny SYSTEM "glob-regexp.ghci:tiny.xml">
-<!ENTITY regexp.ghci:2tuple.match SYSTEM "regexp.ghci:2tuple.match.xml">
-<!ENTITY regexp.ghci:2tuple.nomatch SYSTEM "regexp.ghci:2tuple.nomatch.xml">
-<!ENTITY regexp.ghci:3tuple.match SYSTEM "regexp.ghci:3tuple.match.xml">
-<!ENTITY regexp.ghci:3tuple.nomatch SYSTEM "regexp.ghci:3tuple.nomatch.xml">
-<!ENTITY regexp.ghci:4tuple SYSTEM "regexp.ghci:4tuple.xml">
-<!ENTITY regexp.ghci:bool.passfail SYSTEM "regexp.ghci:bool.passfail.xml">
-<!ENTITY regexp.ghci:int.count SYSTEM "regexp.ghci:int.count.xml">
-<!ENTITY regexp.ghci:let SYSTEM "regexp.ghci:let.xml">
-<!ENTITY regexp.ghci:list.string SYSTEM "regexp.ghci:list.string.xml">
-<!ENTITY regexp.ghci:load SYSTEM "regexp.ghci:load.xml">
-<!ENTITY regexp.ghci:mix.match SYSTEM "regexp.ghci:mix.match.xml">
-<!ENTITY regexp.ghci:mix.nomatch SYSTEM "regexp.ghci:mix.nomatch.xml">
-<!ENTITY regexp.ghci:mix.rematch SYSTEM "regexp.ghci:mix.rematch.xml">
-<!ENTITY regexp.ghci:mix.simple SYSTEM "regexp.ghci:mix.simple.xml">
-<!ENTITY regexp.ghci:noreturn SYSTEM "regexp.ghci:noreturn.xml">
-<!ENTITY regexp.ghci:string SYSTEM "regexp.ghci:string.xml">
-<!ENTITY regexp.ghci:typetwiddle SYSTEM "regexp.ghci:typetwiddle.xml">
+<!ENTITY % SNIPPETS SYSTEM "auto-snippets.xml">
+%SNIPPETS;
 ]>
 
 <book id="hs">

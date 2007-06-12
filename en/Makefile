@@ -3,6 +3,8 @@
 src-master := 00book.xml
 src-files := $(src-master) \
 	book-index.xml \
+	book-shortcuts.xml \
+	auto-snippets.xml \
 	$(wildcard ch*.xml)
 
 src-examples := \
@@ -101,10 +103,11 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config
 ../tools/.setup-config: ../tools/tools.cabal
 	cd ../tools && $(runhaskell) Setup configure --prefix=`pwd`
 
-.validated: $(tools:%=../tools/bin/%) $(src-files) $(stamp-examples)
-	cat .stamp-*.ghci .stamp-*.hs | sort > all-entities.txt
-	grep '^<!ENTITY .*\.[a-z]*:.*\.xml' 00book.xml | sort > book-entities.txt
-	diff -u book-entities.txt all-entities.txt
+auto-snippets.xml: $(stamp-examples)
+	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
+	cat $^ | sort >> $@
+
+.validated: $(tools:%=../tools/bin/%) $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' --noout --nonet --valid $(src-master)
 	touch .validated
 
