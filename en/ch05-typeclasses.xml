@@ -492,39 +492,194 @@ class  Eq a  where
       <remark>FIXME: how to sort the operators?</remark>
 
       <table id="hs.numerictypes.funcs" tocentry="1">
-        <title>Selected Numeric Functions</title>
+        <title>Selected Numeric Functions and Constants</title>
         <tgroup cols='3' align='left'>
           <colspec colname='c1'/>
           <colspec colname='c2'/>
           <colspec colname='c3'/>
           <thead>
             <row>
-              <entry>Function</entry>
+              <entry>Item</entry>
               <entry>Type</entry>
               <entry>Description</entry>
             </row>
           </thead>
           <tbody>
             <row>
+              <entry><literal>(+)</literal></entry>
+              <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry>Addition</entry>
+            </row>
+            <row>
+              <entry><literal>(-)</literal></entry>
+              <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry>Subtraction</entry>
+            </row>
+            <row>
+              <entry><literal>(*)</literal></entry>
+              <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry>Multiplication</entry>
+            </row>
+            <row>
+              <entry><literal>(/)</literal></entry>
+              <entry><literal>Fractional a => a -> a -> a</literal></entry>
+              <entry>Fractional division</entry>
+            </row>
+            <row>
+              <entry><literal>(**)</literal></entry>
+              <entry><literal>Floating a => a -> a -> a</literal></entry>
+              <entry>Raise to the power of</entry>
+            </row>
+            <row>
+              <entry><literal>(%)</literal></entry>
+              <entry><literal>Integral a => a -> a -> Ratio a</literal></entry>
+              <entry>Ratio composition</entry>
+            </row>
+
+            <row>
               <entry><literal>(.&amp;.)</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
-              <entry><literal>Bitwise and</literal></entry>
+              <entry>Bitwise and</entry>
             </row>
             <row>
               <entry><literal>(.|.)</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
-              <entry><literal>Bitwise or</literal></entry>
+              <entry>Bitwise or</entry>
+            </row>
+            <row>
+              <entry><literal>abs</literal></entry>
+              <entry><literal>Num a => a -> a</literal></entry>
+              <entry>Absolute value</entry>
+            </row>
+            <row>
+              <entry><literal>approxRational</literal></entry>
+              <entry><literal>RealFrac a => a -> a ->
+                  Rational</literal></entry>
+              <entry>Approximate rational composition based on fractional numerators and
+                denominators</entry>
+            </row>
+
+            <row>
+              <entry><literal>cos</literal></entry>
+              <entry><literal>Floating a => a -> a</literal></entry>
+              <entry>Cosine.  Also provided are <literal>acos</literal>,
+                <literal>cosh</literal>, and <literal>acosh</literal>, with
+                the same type.</entry>
+            </row>
+            <row>
+              <entry><literal>div</literal></entry>
+              <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry>Integer division always truncated down; see also
+                <literal>quot</literal></entry>
+            </row>
+            <row>
+              <entry><literal>fromInteger</literal></entry>
+              <entry><literal>Num a => Integer -> a</literal></entry>
+              <entry>Conversion from an &Integer; to any numeric type</entry>
+            </row>
+            <row>
+              <entry><literal>fromRational</literal></entry>
+              <entry><literal>Fractional a => Rational -> a</literal></entry>
+              <entry>Conversional from a &Rational;.  May be lossy.</entry>
+            </row>
+            <row>
+              <entry><literal>log</literal></entry>
+              <entry><literal>Floating a => a -> a</literal></entry>
+              <entry>Natural logarithm</entry>
+            </row>
+            <row>
+              <entry><literal>logBase</literal></entry>
+              <entry><literal>Floating a => a -> a -> a</literal></entry>
+              <entry>Log with explicit base</entry>
+            </row>
+            <row>
+              <entry><literal>maxBound</literal></entry>
+              <entry><literal>Bounded a => a</literal></entry>
+              <entry>The maximum value of a bounded
+                  type</entry>
+            </row>
+            <row>
+              <entry><literal>minBound</literal></entry>
+              <entry><literal>Bounded a => a</literal></entry>
+              <entry>The minimum value of a bounded
+                  type</entry>
+            </row>
+            <row>
+              <entry><literal>mod</literal></entry>
+              <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry>Integer modulus</entry>
+            </row>
+            <row>
+              <entry><literal>pi</literal></entry>
+              <entry><literal>Floating a => a</literal></entry>
+              <entry>Mathematical constant pi</entry>
+            </row>
+            <row>
+              <entry><literal>quot</literal></entry>
+              <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry>Integer division; fractional part of quotient
+                  truncated towards zero</entry>
+            </row>
+            <row>
+              <entry><literal>recip</literal></entry>
+              <entry><literal>Fractional a => a -> a</literal></entry>
+              <entry>Reciprocal</entry>
+            </row>
+            <row>
+              <entry><literal>rem</literal></entry>
+              <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry>Remainder of integer division</entry>
+            </row>
+            <row>
+              <entry><literal>round</literal></entry>
+              <entry><literal>(RealFrac a, Integral b) => a -> b</literal></entry>
+              <entry>Rounds to nearest integer</entry>
             </row>
             <row>
               <entry><literal>shift</literal></entry>
               <entry><literal>Bits a => a -> Int -> a</literal></entry>
-              <entry><literal>Shift left by the specified number of bits,
-                  which may be negative for a right shift.</literal></entry>
+              <entry>Shift left by the specified number of bits,
+                  which may be negative for a right shift.</entry>
+            </row>
+            <row>
+              <entry><literal>sin</literal></entry>
+              <entry><literal>Floating a => a -> a</literal></entry>
+              <entry>Sine.  Also provided are <literal>asin</literal>,
+                <literal>sinh</literal>, and <literal>asinh</literal>, with
+                the same type.</entry>
+            </row>
+            <row>
+              <entry><literal>sqrt</literal></entry>
+              <entry><literal>Floating a => a -> a</literal></entry>
+              <entry>Square root</entry>
+            </row>
+
+            <row>
+              <entry><literal>tan</literal></entry>
+              <entry><literal>Floating a => a -> a</literal></entry>
+              <entry>Tangent.  Also provided are <literal>atan</literal>,
+                <literal>tanh</literal>, and <literal>atanh</literal>, with
+                the same type.</entry>
+            </row>
+            <row>
+              <entry><literal>toInteger</literal></entry>
+              <entry><literal>Integral a => a -> Integer</literal></entry>
+              <entry>Convert any &Integral; to an &Integer;</entry>
+            </row>
+            <row>
+              <entry><literal>toRational</literal></entry>
+              <entry><literal>Real a => a -> Rational</literal></entry>
+              <entry>Convert losslessly to &Rational;</entry>
+            </row>
+            <row>
+              <entry><literal>truncate</literal></entry>
+              <entry><literal>(RealFrac a, Integral b) => a -> b</literal></entry>
+              <entry>Truncates number towards zero</entry>
             </row>
             <row>
               <entry><literal>xor</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
-              <entry><literal>Bitwise exclusive or</literal></entry>
+              <entry>Bitwise exclusive or</entry>
             </row>
           </tbody>
         </tgroup>
@@ -534,6 +689,17 @@ class  Eq a  where
             <!-- classes:
 
             Bits
+            Bounded
+            Integral
+            Num
+            Real
+            Floating
+            Fractional
+            RealFrac
+            Ratio
+
+
+            Ord
             -->
 
     </sect2>

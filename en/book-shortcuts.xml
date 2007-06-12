@@ -16,3 +16,5 @@
 <!ENTITY Float "<literal>Float</literal>">
 <!ENTITY Double "<literal>Double</literal>">
 <!ENTITY Rational "<literal>Rational</literal>">
+<!ENTITY Integral "<literal>Integral</literal>">
+
