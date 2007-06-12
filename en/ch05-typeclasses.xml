@@ -395,8 +395,61 @@ class  Eq a  where
     <sect2 id="hs.typeclasses.wellknown.numeric">
       <title>Numeric Types</title>
       <para>
-        FIXME
+        Haskell has a powerful set of numeric types.  You can using everyting
+        from fast 32-bit or 64-bit integers to arbitrary-precision rational
+        numbers.  Yet you probably know that operators such as
+        <literal>+</literal> can work with just about all of these.  This
+        feature is implemented using typeclasses.  As a side benefit, it
+        allows you to define your own numeric types and make them first-class
+        citizens in Haskell.
       </para>
+      <para>
+        Let's begin our discussion of the typeclasses surrounding nmeric
+        types with an examination of the types themselves.  <xref
+          linkend="hs.numerictypes.summary"/> describes the most
+        commonly-used numeric types in Haskell.  Note that there are also
+        many more numeric types available for specific purposes such as
+        interfacing to C.
+      </para>
+      <table id="hs.numerictypes.summary" tocentry="1">
+        <title>Selected Numeric Types</title>
+        <tgroup cols='2' align='left'>
+          <colspec colname='c1'/>
+          <colspec colname='c2'/>
+          <thead>
+            <row>
+              <entry>Type</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>&Double;</entry>
+              <entry>Double-precision floating point</entry>
+            </row>
+            <row>
+              <entry>&Float;</entry>
+              <entry>Single-precision floating point</entry>
+            </row>
+            <row>
+              <entry>&Int;</entry>
+              <entry>Fixed-precision integer; minimum range [-2^29..2^29-1]</entry>
+            </row>
+            <row>
+              <entry>&Integer;</entry>
+              <entry>Arbitrary-precision integer; range limited only by
+                machine resources</entry>
+            </row>
+            <row>
+              <entry>&Rational;</entry>
+              <entry>Arbitrary-precision rational numbers.  Stored as a
+                ratio of two &Integer;s.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.equality">

@@ -5,3 +5,7 @@
 <!ENTITY Show "<literal>Show</literal>">
 <!ENTITY String "<literal>String</literal>">
 <!ENTITY Integer "<literal>Integer</literal>">
+<!ENTITY Int "<literal>Int</literal>">
+<!ENTITY Float "<literal>Float</literal>">
+<!ENTITY Double "<literal>Double</literal>">
+<!ENTITY Rational "<literal>Rational</literal>">
