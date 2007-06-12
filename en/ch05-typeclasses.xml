@@ -330,6 +330,42 @@ class  Eq a  where
         Here's an example illustrating the use of &read; and &show;:
       </para>
 
+      &read.hs:read;
+
+      <para>
+        This is a simple example of &read; and &show; together.  Notice that
+        we gave an explicit typecast to &Integer; when processing the &read;.
+        That's because &read; returns a value of type
+        <literal>Read a => a</literal> and &show; expects a value of type
+        <literal>Show a => a</literal>.  There are many, many types that are
+        defined for both &Read; and &Show;.  Without knowing a specific type,
+        the compiler can't possibly guess from these many types which one is
+        needed -- at least not in this case.  Therefore, we give an explicit
+        cast.
+      </para>
+      <para>
+        You can see the same effect at work if you try to use &read; on the
+        &ghci; command line.  &ghci; internally uses &show; to display
+        results, meaning that you can hit this ambiguous typing problem there
+        as well.  You'll need to explicitly cast your &read; results in
+        &ghci; as shown here:
+      </para>
+      &read.ghci:readerrors;
+      <para>
+        Recall the type of &read;:
+        <literal>(Read a) => String -&gt; a</literal>.  The
+        <literal>a</literal> here is the type of each instance of &Read;.
+        Which particular parsing function is called depends upon the type
+        that is expected from the return value of &read;.  Let's see how that
+        works:
+      </para>
+      &read.ghci:readtypes;
+      <para>
+        Notice the error when trying to parse <literal>5.0</literal> as an
+        Integer.  The compiler selected a different parser there because the
+        return value of &read; was expected to be of a different type.
+      </para>
+
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.numeric">

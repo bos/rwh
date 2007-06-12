@@ -1,3 +1,10 @@
 --# readtype
 :t read
-
+--# readerrors
+read "5"
+:t (read "5")
+(read "5")::Integer
+(read "5")::Double
+--# readtypes
+(read "5.0")::Double
+(read "5.0")::Integer
