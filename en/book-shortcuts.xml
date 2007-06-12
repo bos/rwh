@@ -6,6 +6,13 @@
 <!ENTITY String "<literal>String</literal>">
 <!ENTITY Integer "<literal>Integer</literal>">
 <!ENTITY Int "<literal>Int</literal>">
+<!ENTITY Int16 "<literal>Int16</literal>">
+<!ENTITY Int32 "<literal>Int32</literal>">
+<!ENTITY Int64 "<literal>Int64</literal>">
+<!ENTITY Word "<literal>Word</literal>">
+<!ENTITY Word16 "<literal>Word16</literal>">
+<!ENTITY Word32 "<literal>Word32</literal>">
+<!ENTITY Word64 "<literal>Word64</literal>">
 <!ENTITY Float "<literal>Float</literal>">
 <!ENTITY Double "<literal>Double</literal>">
 <!ENTITY Rational "<literal>Rational</literal>">
