@@ -17,4 +17,5 @@
 <!ENTITY Double "<literal>Double</literal>">
 <!ENTITY Rational "<literal>Rational</literal>">
 <!ENTITY Integral "<literal>Integral</literal>">
+<!ENTITY Ratio "<literal>Ratio</literal>">
 

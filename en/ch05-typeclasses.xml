@@ -484,9 +484,9 @@ class  Eq a  where
         There are others, such as <literal>asin</literal>, that only apply to
         floating-point types.  <xref linkend="hs.numerictypes.funcs"/>
         summarizes the different functions that operate on numeric types,
-        <!-- fixme and
+        and
         <xref linkend="hs.numerictypes.typeclasses"/> matches the types with
-        their respective typeclasses. -->
+        their respective typeclasses.
       </para>
 
       <remark>FIXME: how to sort the operators?</remark>
@@ -685,23 +685,129 @@ class  Eq a  where
         </tgroup>
       </table>
 
-
-            <!-- classes:
-
-            Bits
-            Bounded
-            Integral
-            Num
-            Real
-            Floating
-            Fractional
-            RealFrac
-            Ratio
-
-
-            Ord
-            -->
-
+      <table id="hs.numerictypes.typeclasses" tocentry="1" pgwide="1">
+        <title>Typeclass Instances for Numeric Types</title>
+        <tgroup cols='9' align='left'>
+          <colspec colname='ctype'/>
+          <colspec colname='cbits'/>
+          <colspec colname='cbounded'/>
+          <colspec colname='cfloating'/>
+          <colspec colname='cfractional'/>
+          <colspec colname='cintegral'/>
+          <colspec colname='cnum'/>
+          <colspec colname='creal'/>
+          <colspec colname='crealfrac'/>
+          <thead>
+            <row>
+              <entry>Type</entry>
+              <entry><literal>Bits</literal></entry>
+              <entry><literal>Bounded</literal></entry>
+              <entry><literal>Floating</literal></entry>
+              <entry><literal>Fractional</literal></entry>
+              <entry><literal>Integral</literal></entry>
+              <entry><literal>Num</literal></entry>
+              <entry><literal>Real</literal></entry>
+              <entry><literal>RealFrac</literal></entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>&Double;</entry>
+              <entry colname="cfloating">X</entry>
+              <entry colname="cfractional">X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+              <entry colname='crealfrac'>X</entry>
+            </row>
+            <row>
+              <entry>&Float;</entry>
+              <entry colname="cfloating">X</entry>
+              <entry colname="cfractional">X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+              <entry colname='crealfrac'>X</entry>
+            </row>
+            <row>
+              <entry>&Int;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Int16;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Int32;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Int64;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Integer;</entry>
+              <entry colname='cbits'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Rational; or any &Ratio;</entry>
+              <entry colname='cfractional'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+              <entry colname='crealfrac'>X</entry>
+            </row>
+            <row>
+              <entry>&Word;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Word16;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Word32;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+            <row>
+              <entry>&Word64;</entry>
+              <entry colname="cbits">X</entry>
+              <entry colname='cbounded'>X</entry>
+              <entry colname='cintegral'>X</entry>
+              <entry colname='cnum'>X</entry>
+              <entry colname='creal'>X</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.equality">
