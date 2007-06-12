@@ -808,6 +808,71 @@ class  Eq a  where
           </tbody>
         </tgroup>
       </table>
+      <para>
+        One other question regarding Haskell's numeric types is conversion
+        between them.  <xref linkend="hs.numerictypes.funcs"/> listed many
+        functions that can be used for conversion.  However, it is not always
+        obvious how to apply them to convert between two arbitrary types.  To
+        help you out, <xref linkend="hs.numerictypes.conversion"/> provides
+        information on converting between different types.
+      </para>
+      <table id='hs.numerictypes.conversion' tocentry='1'>
+        <title>Conversion Between Numeric Types</title>
+        <tgroup cols='5'>
+          <colspec colname='source'/>
+          <colspec colname='float'/>
+          <colspec colname='int'/>
+          <colspec colname='integer'/>
+          <colspec colname='rational'/>
+
+          <thead>
+            <row>
+              <entry morerows='1'>Source Type</entry>
+              <entry align='center' namest='float' nameend='rational'>Destination
+                Type</entry>
+            </row>
+            <row>
+              <entry colname='float'>&Double;, &Float;</entry>
+              <entry colname='int'>&Int;s, &Word;s</entry>
+              <entry colname="integer">&Integer;</entry>
+              <entry colname="rational">&Rational;</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>&Double;, &Float;</entry>
+              <entry colname='float'><literal>fromRational . toRational</literal></entry>
+              <entry colname='int'><literal>truncate</literal></entry>
+              <entry colname='integer'><literal>truncate</literal></entry>
+              <entry colname='rational'><literal>toRational</literal></entry>
+            </row>
+            <row>
+              <entry>&Int;s, &Word;s</entry>
+              <entry colname='float'><literal>fromIntegral</literal></entry>
+              <entry colname='int'><literal>fromIntegral</literal></entry>
+              <entry colname='integer'><literal>fromIntegral</literal> or
+                <literal>toInteger</literal></entry>
+              <entry colname='rational'><literal>fromIntegral</literal></entry>
+            </row>
+            <row>
+              <entry>&Integer;</entry>
+              <entry colname='float'><literal>fromIntegral</literal></entry>
+              <entry colname='int'><literal>fromIntegral</literal></entry>
+              <entry colname='integer'>N/A</entry>
+              <entry colname='rational'><literal>fromIntegral</literal></entry>
+            </row>
+            <row>
+              <entry>&Rational;</entry>
+              <entry colname='float'><literal>fromRational</literal></entry>
+              <entry colname='int'><literal>truncate</literal></entry>
+              <entry colname='integer'><literal>truncate</literal></entry>
+              <entry colname='rational'>N/A</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.equality">
