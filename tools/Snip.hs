@@ -16,13 +16,18 @@ import Util (baseName)
 import qualified Data.ByteString.Char8 as B
 
 programListing :: String -> B.ByteString -> B.ByteString
-               -> (String, B.ByteString)
+               -> [(String, B.ByteString)]
 
-programListing mod snipName body =
-    (tag, B.concat [header, rstrip body, footer])
-  where header = B.pack ("<programlisting id=" ++ show tag ++ ">\n<![CDATA[\n")
-        tag = mod ++ ':' : B.unpack snipName
-        footer = B.pack "\n]]>\n</programlisting>\n"
+programListing modName snipName body =
+    [(tag ++ ".code",
+      B.concat [B.pack "<![CDATA[\n", rstrip body, B.pack "\n]]>\n"]),
+     (tag ++ ".noid", B.pack ("<programlisting>\n" ++
+                              "&" ++ tag ++ ".code;\n" ++
+                              "</programlisting>\n")),
+     (tag, B.pack ("<programlisting id=" ++ show tag ++ ">\n" ++
+                   "&" ++ tag ++ ".code;\n" ++
+                   "</programlisting>\n"))]
+  where tag = modName ++ ':' : B.unpack snipName
         rstrip = B.reverse . B.dropWhile isSpace . B.reverse
 
 snipFile :: FilePath -> FilePath -> IO ()
@@ -31,10 +36,10 @@ snipFile tgtDir fileName = do
     snips <- parseSnippets `liftM` B.readFile fileName
     let name = baseName fileName
     forM_ snips $ \(Snippet snip content) -> do
-        let (entity, listing) = programListing name snip content
-            outName = entity ++ ".xml"
-        putStrLn ("<!ENTITY " ++ entity ++ " SYSTEM " ++ show outName ++ ">")
-        B.writeFile (tgtDir ++ '/' : outName) listing
+        forM_ (programListing name snip content) $ \(entity, listing) -> do
+            let outName = entity ++ ".xml"
+            putStrLn ("<!ENTITY " ++ entity ++ " SYSTEM " ++ show outName ++ ">")
+            B.writeFile (tgtDir ++ '/' : outName) listing
 
 main :: IO ()
 
