@@ -138,8 +138,8 @@ vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
-.stamp-%.hs: %.hs
+.stamp-%.hs: %.hs ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-.stamp-%.ghci: %.ghci
+.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
