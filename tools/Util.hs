@@ -26,7 +26,7 @@ findInfix needle haystack =
                (liftM2 zip inits tails haystack)
 
 baseName :: FilePath -> String
-baseName = reverse . either id fst . findInfix "/" . reverse
+baseName = reverse . takeWhile (/='/') . reverse
 
 dirName :: FilePath -> FilePath
 dirName = reverse . either (const ".") (tidy . snd) . findInfix "/" . reverse
