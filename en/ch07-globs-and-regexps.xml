@@ -479,7 +479,7 @@
       To see why, let's examine its final clause again (several of its
       other clauses are structured similarly).</para>
 
-      &GlobRegex.hs:last;
+      &GlobRegex.hs:last.noid;
 
     <para>It calls itself recursively, but this
       <emphasis>isn't</emphasis> the last thing the function does.
@@ -551,7 +551,7 @@
       look again at the definition of
       <function>escape</function>.</para>
 
-    &GlobRegex.hs:escape;
+    &GlobRegex.hs:escape.noid;
 
     <para>This will return a list whose first element is either the
       <literal>\</literal> character or the character it was passed.
