@@ -954,6 +954,7 @@ class  Eq a  where
     </para>
   </sect1>
 
+  <!-- FIXME: cover these? 
   <sect1 id="hs.typeclasses.overlapping">
     <title>Overlapping Instances</title>
     <para>
@@ -967,6 +968,7 @@ class  Eq a  where
       FIXME
     </para>
   </sect1>
+  -->
 
 </chapter>
 
