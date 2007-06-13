@@ -1,7 +1,8 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="hs.glob">
-  <title>Case study: regular expressions and file name matching</title>
+  <title>Case study: regular expressions and file name
+    matching</title>
 
   <para>Working with text strings is a fundamental tool in the
     programmer's toolbox.  We've already been introduced to
@@ -48,9 +49,9 @@
       </listitem>
       <listitem>
 	<para>Most literal characters match themselves.  For example,
-	the text <literal>foo</literal> in a pattern will match
-	<literal>foo</literal>, and only <literal>foo</literal>, in an
-	input string.</para>
+	  the text <literal>foo</literal> in a pattern will match
+	  <literal>foo</literal>, and only <literal>foo</literal>, in
+	  an input string.</para>
       </listitem>
       <listitem>
 	<para>The <literal>*</literal> (asterisk) character means
@@ -69,12 +70,12 @@
 	  character class can be <emphasis>negated</emphasis> by
 	  following the opening <literal>[</literal> with a
 	  <literal>!</literal>, so that it means <quote>match any
-	  character <emphasis>not</emphasis> in this
-	  class</quote>.</para>
+	    character <emphasis>not</emphasis> in this
+	    class</quote>.</para>
 	<para>As a shorthand, a character followed by a
 	  <literal>-</literal> (dash), followed by another character,
 	  denotes a <emphasis>range</emphasis>: <quote>match any
-	  character within this set</quote>.</para>
+	    character within this set</quote>.</para>
 	<para>Character classes have an added subtlety; they can't be
 	  empty.  The first character after the opening
 	  <literal>[</literal> or <literal>[!</literal> is part of the
@@ -82,7 +83,7 @@
       </listitem>
       <listitem>
 	<para>Outside of a character class, there is an <quote>escape
-	  character</quote> (<literal>\</literal> on Unix-like
+	    character</quote> (<literal>\</literal> on Unix-like
 	  systems), the character following it takes its normal
 	  literal meaning (so <literal>\*</literal> matches an
 	  asterisk, not any text).</para>
@@ -119,14 +120,14 @@
 
     &regexp.ghci:load;
 
-    <para>The only function that
-      we're likely to need for normal use is the regexp matching
-      function, an infix operator named <function>=~</function>
-      (borrowed from Perl.  The first hurdle to overcome is that
-      Haskell's regexp libraries make heavy use of polymorphism.  As a
-      result, the type signature of the <function>=~</function>
-      operator is a bit difficult to understand.  Let's drop into
-      <command>ghci</command> and see what it looks like.</para>
+    <para>The only function that we're likely to need for normal use
+      is the regexp matching function, an infix operator named
+      <function>=~</function> (borrowed from Perl.  The first hurdle
+      to overcome is that Haskell's regexp libraries make heavy use of
+      polymorphism.  As a result, the type signature of the
+      <function>=~</function> operator is a bit difficult to
+      understand.  Let's drop into <command>ghci</command> and see
+      what it looks like.</para>
 
     &regexp.ghci:typetwiddle;
 
@@ -144,11 +145,11 @@
 
       <para>The <function>=~</function> operator is polymorphic in its
 	return type, so the Haskell compiler needs some way to know
-        what type of result we would like.  In real code, it may be
-        able to infer the right type, due to the way we subsequently
-        use the result.  But such cues are often lacking when we're
-        exploring with <command>ghci</command>.  If we omit a specific
-        type for the result, we'll get an intimidating-looking error
+	what type of result we would like.  In real code, it may be
+	able to infer the right type, due to the way we subsequently
+	use the result.  But such cues are often lacking when we're
+	exploring with <command>ghci</command>.  If we omit a specific
+	type for the result, we'll get an intimidating-looking error
 	message.  Here's what <command>ghci</command> tells us if we
 	try to do a regexp match but omit the return type.</para>
 
@@ -160,27 +161,26 @@
 	that a compiler would print if it couldn't infer the correct
 	type in a real program.)  Here's the key to dealing with this
 	error.  When <command>ghci</command> can't infer the <varname
-	condition="tyvar">target</varname> type, we tell it what we'd
-	like the type to be.  If we want an expression of type
+	  condition="tyvar">target</varname> type, we tell it what
+	we'd like the type to be.  If we want an expression of type
 	<type>Bool</type>, we'll get a pass/fail result.</para>
 
       &regexp.ghci:bool.passfail;
 
       <para>In the bowels of the base regexp library, there's a
 	typeclass named <classname>RegexContext</classname> that
-	describes how a <varname
-	  condition="tyvar">target</varname> type should behave; the
-	base library defines many instances of this typeclass for us.
-	The <type>Bool</type> type is an instance of this typeclass,
-	so we get back a usable result.  Another such instance is
-	<type>Int</type>, which gives us a count of the number of
-	times the regexp matches.</para>
+	describes how a <varname condition="tyvar">target</varname>
+	type should behave; the base library defines many instances of
+	this typeclass for us. The <type>Bool</type> type is an
+	instance of this typeclass, so we get back a usable result.
+	Another such instance is <type>Int</type>, which gives us a
+	count of the number of times the regexp matches.</para>
 
       &regexp.ghci:int.count;
 
       <para>If we ask for a <type>String</type> result, we'll get the
-        first substring that matches, or an empty string if nothing
-        matches.</para>
+	first substring that matches, or an empty string if nothing
+	matches.</para>
 
       &regexp.ghci:string;
 
@@ -205,12 +205,11 @@
       
       &regexp.ghci:let;
 
-      <para>We can obtain quite a lot of information about the
-        context in which a match occurs.  If we ask for a
-        three-element tuple, we'll get back the text
-	<emphasis>before</emphasis> the first match, the text
-	<emphasis>of</emphasis> that match, and the text that
-	<emphasis>follows</emphasis> it.</para>
+      <para>We can obtain quite a lot of information about the context
+	in which a match occurs.  If we ask for a three-element tuple,
+	we'll get back the text <emphasis>before</emphasis> the first
+	match, the text <emphasis>of</emphasis> that match, and the
+	text that <emphasis>follows</emphasis> it.</para>
 
       &regexp.ghci:3tuple.match;
 
@@ -226,11 +225,10 @@
 
       &regexp.ghci:4tuple;
 
-      <para>We can get  numeric information about matches,
-        too.  A pair of <type>Int</type>s gives us the starting offset
-        of the first match, and its length.  If we ask for a list of
-        these pairs, we'll get this information for all
-        matches.</para>
+      <para>We can get  numeric information about matches, too.  A
+	pair of <type>Int</type>s gives us the starting offset of the
+	first match, and its length.  If we ask for a list of these
+	pairs, we'll get this information for all matches.</para>
 
       &regexp.ghci:2tuple.match;
 
@@ -244,7 +242,7 @@
 	comprehensive list of built-in instances of the
 	<classname>RegexContext</classname> typeclass.  For a complete
 	list, see the documentation for the <classname
-	role="module">Text.Regex.Base.Context</classname>
+	  role="module">Text.Regex.Base.Context</classname>
 	module.</para>
 
     </sect2>
@@ -260,10 +258,10 @@
 
       &regexp.ghci:mix.simple;
       
-      <para>However, be aware that if you want a string
-	value in the result of a match, the text you're matching
-	against must be the same type of string.  Let's see what this
-	means in practice.</para>
+      <para>However, be aware that if you want a string value in the
+	result of a match, the text you're matching against must be
+	the same type of string.  Let's see what this means in
+	practice.</para>
 
       &regexp.ghci:mix.match;
 
@@ -300,7 +298,7 @@
 	API installed at one time.  At the time of writing,
 	<application>GHC</application> is bundled with one
 	implementation, <classname
-	role="module">Text.Regex.Posix</classname>.  As its name
+	  role="module">Text.Regex.Posix</classname>.  As its name
 	suggests, this package provides POSIX regexp semantics.</para>
 
       <note>
@@ -308,9 +306,9 @@
 	  Python, or Java, and you've used regular expressions in one
 	  of those languages, you should be aware that the POSIX
 	  regexps handled by the <classname
-	  role="module">Text.Regex.Posix</classname> module are
-	  different in some significant ways from Perl-style
-	  regexps.  Here are a few of the more notable differences.</para>
+	    role="module">Text.Regex.Posix</classname> module are
+	  different in some significant ways from Perl-style regexps.
+	  Here are a few of the more notable differences.</para>
 
 	<para>Perl regexp engines do left-biased matching when
 	  matching alternatives, whereas POSIX engines choose the
@@ -321,11 +319,10 @@
 	  a POSIX engine will match the entire string (the greediest
 	  match).</para>
 
-	<para>POSIX regexps have less uniform syntax
-	  than Perl-style regexps.  They also lack a number of
-	  capabilities provided by Perl-style regexps, such as
-	  zero-width assertions and control over greedy
-	  matching.</para>
+	<para>POSIX regexps have less uniform syntax than Perl-style
+	  regexps.  They also lack a number of capabilities provided
+	  by Perl-style regexps, such as zero-width assertions and
+	  control over greedy matching.</para>
       </note>
 
       <para>Other Haskell regexp packages are available for download
@@ -339,7 +336,8 @@
   </sect1>
 
   <sect1>
-    <title>Translating a glob pattern into a regular expression</title>
+    <title>Translating a glob pattern into a regular
+      expression</title>
 
     <para>Now that we've seen the myriad of ways to match text against
       regular expressions, let's turn our attention back to glob
@@ -395,7 +393,6 @@
       <filename>GlobRegexTiny.hs</filename> and start playing with it
       in <command>ghci</command>.  This is a great way to do
       exploratory programming: write a little code, load it into the
-
       interpreter, and see what happens.</para>
 
     &glob-regexp.ghci:tiny;
@@ -432,10 +429,15 @@
       a syntactically invalid character class.</para>
 
     <para>Finally, all other characters can be passed through, but
-      they may need to be escaped, so that the regexp engine won't
-      treat them specially.</para>
+      they may need to be escaped.</para>
 
-    &GlobRegex.hs:rest;
+    &GlobRegex.hs:last;
+
+    <para>The <function>escape</function> function ensures that the
+      regexp engine will not interpret certain characters as pieces of
+      regular expression syntax.</para>
+
+    &GlobRegex.hs:escape;
 
     <para>The <function>charClass</function> helper function does
       nothing more than ensure that a character class is correctly
@@ -445,6 +447,151 @@
 
     &GlobRegex.hs:charClass;
 
+  </sect1>
+
+  <sect1>
+    <title>Writing lazy functions</title>
+
+    <para>In an imperative language, the
+      <function>globToRegex</function> function is one that we'd
+      usually express as a loop. For example, Python's standard
+      <package>fnmatch</package> module includes a function named
+      <function>translate</function> that does exactly the same job as
+      our <function>globToRegex</function> function.  It's written as
+      a loop.</para>
+
+    <para>If you've been exposed to functional programming through a
+      language such as Scheme or ML, you've probably had drilled into
+      your head the notion that <quote>the way to emulate a loop is
+	via tail recursion</quote>.  A function
+      usually needs a little local scratch storage when it executes.
+      A tail recursive function must either return a plain value, or
+      make a recursive call as the last thing it does (these kinds of
+      call are called <quote>tail calls</quote>).  Since a function
+      making a tail call can by definition never use any of its local
+      scratch storage again, a language implementation can reuse that
+      space when it makes the tail call. This means that a series of
+      tail calls can execute in constant space, just as we take for
+      granted with a loop.</para>
+
+    <para>Looking at the <function>globToRegex'</function> function,
+      we can see that it is <emphasis>not</emphasis> tail recursive.
+      To see why, let's examine its final clause again (several of its
+      other clauses are structured similarly).</para>
+
+      &GlobRegex.hs:last;
+
+    <para>It calls itself recursively, but this
+      <emphasis>isn't</emphasis> the last thing the function does.
+      The result of the recursive call is a parameter to the
+      <function>(++)</function> function.</para>
+
+    <para>So what's going on here?  Why are we not writing a tail
+      recursive definition for this function?  The answer lies with
+      Haskell's non-strict evaluation strategy.  Before we start
+      talking about that, let's quickly talk about why, in a
+      traditional language, we'd be trying to avoid this kind of
+      recursive definition.</para>
+
+    <para>Returning to the clause above,
+      <function>globToRegex'</function> computes a little bit of its
+      result, then calls itself recursively, then returns the complete
+      result.  In a traditional language, each recursive call is going
+      to require the allocation of temporary scratch memory until it
+      returns.</para>
+
+    <remark>Image: stack allocation for a recursive call to
+      <function>globToRegex'</function>.</remark>
+
+    <para>Compound these scratch allocations over a large number of
+      recursive calls, and the amount of space we use while processing
+      grows linearly with the size of the list we must process.</para>
+
+    <remark>Image: stack allocation for a pile of recursive
+      calls.</remark>
+
+    <para>For a problem like glob-to-regexp conversion, where we'll
+      always be dealing with very small amounts of data, this overhead
+      is insignificant.  But if we had a hundred million elements to
+      process, and used plain recursion rather than tail recursion or
+      a loop to process them, we'd have a severe problem.</para>
+
+    <para>Haskell neatly defangs this problem by deferring the
+      evaluation of an expression until its result is needed.  To
+      understand how this deferred evaluation works, let's walk
+      through what happens when the final clause of the
+      <function>globToRegex'</function> is called.  (As you read, bear
+      in mind that this is a simplified description.)</para>
+
+    <para>In order to determine that this clause must be called, the
+      pattern matcher must inspect a little bit of the list it was
+      passed.  The pattern requires it to do nothing more than
+      determine whether it has been given an empty list (in which case
+      the clause will not be evaluated), or a non-empty list (the case
+      we're interested in).  Once the pattern matcher has established
+      that the list isn't empty, it goes no deeper.  It doesn't look
+      inside <varname>c</varname>, the head of the list.  It doesn't
+      follow <varname>cs</varname>, the tail.</para>
+
+    <para>We have now decided to evaluate the right hand side of
+      the clause.  The first expression we must evaluate is the call
+      to the list append function, <function>(++)</function>.
+      (Because we don't need the results of <code>escape c</code> or
+      <code>globToRegex' cs</code> yet, we suspend the evaluation of
+      those functions, to evaluate when we'll need them.)  So let's
+      remind ourselves what <function>(++)</function> looks
+      like:</para>
+
+      &append.hs:append;
+
+    <para>As the argument to <function>(++)</function> is not an
+      empty list, the second clause matches, so we must evaluate
+      <varname>x</varname>.  This requires that we evaluate
+      <code>escape c</code>, which we had earlier deferred.  Let's
+      look again at the definition of
+      <function>escape</function>.</para>
+
+    &GlobRegex.hs:escape;
+
+    <para>This will return a list whose first element is either the
+      <literal>\</literal> character or the character it was passed.
+      Once we've constructed the first element of this list, we'll
+      defer constructing the rest of it until our caller needs it.  We
+      suspend the evaluation of the rest of
+      <function>escape</function> so that we can pass this datum back
+      to our caller.  Haskell implementations do this by saving away
+      enough information to resume the evaluation later; this saved
+      package of information is called a <quote>thunk</quote>.</para>
+
+    <para>Not only is the evaluation of <function>escape</function>
+      suspended; so too are the evaluation of its callers,
+      <function>(++)</function> and <function>globToRegex'</function>,
+      and so on up the call chain until some expression needs to
+      inspect the value.</para>
+
+    <para>What would happen if the caller of
+      <function>globToRegex'</function> was for some reason the
+      function <function>null</function>?  <function>null</function>
+      only cares whether its argument is an empty list: once it finds
+      this out, it's never going to look at the remainder of the
+      result of <function>globToRegex'</function>.  None of the work
+      we deferred in order to get a partial result back to
+      <function>null</function> will ever actually occur.</para>
+
+    <para>Remarkably, given this kind of evaluation strategy, our
+      recursive definition of <function>globToRegex'</function> will
+      execute in constant space (more or less).  To see why, look at
+      the definition of <function>(++)</function>; although it's
+      simpler, it has a similar recursive structure.</para>
+
+    <para>If we put on our implementor's hats and think about how we
+      might suspend the evaluation of <function>(++)</function> in a
+      thunk, all we need to store are the current heads of the left
+      and right lists; the result of the next evaluation step depends
+      on nothing more.  On each resumption of the thunk, we could
+      simply peel off the head of the left list and update the thunk
+      with the new head, repeating until we reach its end.  Therefore,
+      we can execute in constant space.</para>
   </sect1>
 </chapter>
 

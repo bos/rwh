@@ -34,15 +34,17 @@ globToRegex' ('[':'!':c:cs) = "[^" ++ c : charClass cs
 globToRegex' ('[':c:cs) = '[' : c : charClass cs
 globToRegex' ('[':_) = error "unterminated character class"
 {-- /snippet class --}
-{-- snippet rest --}
+{-- snippet last --}
 globToRegex' (c:cs) = escape c ++ globToRegex' cs
+{-- /snippet last --}
 
+{-- snippet escape --}
 escape :: Char -> String
 escape c
     | c `elem` regexChars = '\\' : [c]
     | otherwise = [c]
     where regexChars = "\\+()^$.{}]|"
-{-- /snippet rest --}
+{-- /snippet escape --}
 
 {-- snippet charClass --}
 charClass :: String -> String
@@ -52,4 +54,4 @@ charClass [] = error "unterminated character class"
 {-- /snippet charClass --}
 
 matchesPattern :: String -> String -> Bool
-name `matchesPattern` pat = name =~ (globToRegex pat)
+name `matchesPattern` pat = name =~ globToRegex pat

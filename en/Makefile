@@ -10,6 +10,7 @@ src-files := $(src-master) \
 src-examples := \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
+	ch07/append.hs \
 	ch07/glob-to-regexp/GlobRegex.hs \
 	ch07/glob-regexp.ghci \
 	ch07/regexp.ghci
