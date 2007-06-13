@@ -151,9 +151,7 @@ debug (Trace a) = withDebug $ hPutStrLn stderr ("-- " ++ a)
 closeTranscript :: Session ()
 closeTranscript = gets transcript >>= maybe (return ()) (\h -> do
   debug $ Trace ("closing " ++ show h)
-  io $ do
-    hPutStrLn h "</programlisting>"
-    hClose h)
+  io $ hClose h)
 
 askOpt :: (SessionOptions -> a) -> Session a
 askOpt f = f `liftM` asks options
@@ -165,14 +163,25 @@ changeTranscript name = do
       [] -> modify (\st -> st{transcript=Nothing})
       idName -> do
         tgtName <- asks targetName
-        let filePath = tgtName ++ ':' : baseName idName ++ ".xml"
-            fileBase = baseName filePath
-            tag = dropSuffix fileBase
-        debug $ Trace ("opening " ++ filePath)
-        newH <- io $ openFile filePath WriteMode
-        io $ hPutStrLn newH ("<programlisting id=" ++ show tag ++ ">\n")
-        io $ putStrLn ("<!ENTITY " ++ tag ++
-                       " SYSTEM " ++ show fileBase ++ ">")
+        let codePath = tgtName ++ ':' : baseName idName ++ ".xml"
+            idPath = tgtName ++ ':' : baseName idName ++ ".id.xml"
+            noidPath = tgtName ++ ':' : baseName idName ++ ".noid.xml"
+            codeBase = baseName codePath
+            entity = dropSuffix codeBase
+        debug $ Trace ("opening " ++ codePath)
+        newH <- io $ openFile codePath WriteMode
+        io $ writeFile idPath ("<programlisting id=" ++ show entity ++ ">\n" ++
+                               "&" ++ entity ++ ".code;\n" ++
+                               "</programlisting>\n")
+        io $ writeFile noidPath ("<programlisting>\n" ++
+                                 "&" ++ entity ++ ".code;\n" ++
+                                 "</programlisting>\n")
+        io $ putStrLn ("<!ENTITY " ++ entity ++ ".code" ++
+                       " SYSTEM " ++ show (baseName codePath) ++ ">")
+        io $ putStrLn ("<!ENTITY " ++ entity ++
+                       " SYSTEM " ++ show (baseName idPath) ++ ">")
+        io $ putStrLn ("<!ENTITY " ++ entity ++ ".noid" ++
+                       " SYSTEM " ++ show (baseName noidPath) ++ ">")
         modify (\st -> st{transcript=Just newH})
 
 q :: String -> String
