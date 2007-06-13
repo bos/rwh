@@ -11,13 +11,9 @@ import Snippet (Snippet(..), parseSnippets)
 import System.Directory (createDirectoryIfMissing)
 import System.Environment (getArgs)
 import System.IO (putStrLn)
+import Util (baseName)
 -- Don't use lazy ByteStrings, due to the bug in "lines".
 import qualified Data.ByteString.Char8 as B
-
--- We'd prefer to use the filepath library's version of this function,
--- but ghc 6.6.1 doesn't seem to be widely available yet.  Sigh.
-takeFileName :: FilePath -> String
-takeFileName = reverse . takeWhile (/='/') . reverse
 
 programListing :: String -> B.ByteString -> B.ByteString
                -> (String, B.ByteString)
@@ -33,7 +29,7 @@ snipFile :: FilePath -> FilePath -> IO ()
 
 snipFile tgtDir fileName = do
     snips <- parseSnippets `liftM` B.readFile fileName
-    let name = takeFileName fileName
+    let name = baseName fileName
     forM_ snips $ \(Snippet snip content) -> do
         let (entity, listing) = programListing name snip content
             outName = entity ++ ".xml"
