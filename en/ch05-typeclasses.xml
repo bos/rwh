@@ -30,10 +30,6 @@
       <application>hugs</application>:
     </para>
     <screen>
-$ <userinput>ghci naiveeq.hs</userinput>
-Loading package base ... linking ... done.
-[1 of 1] Compiling Main             ( naiveeq.hs, interpreted )
-Ok, modules loaded: Main.
 *Main&gt; <userinput>colorEq Red Red</userinput>
 True
 *Main&gt; <userinput>colorEq Red Blue</userinput>
@@ -88,7 +84,34 @@ False
       make the child object behave as you like.  But you're still stuck if
       you have a parent object from somewhere.
     </para>
-
+    <para>
+      In case that wasn't all clear, let's consider an example.  Imagine you have a
+      basket of fruit.  There are things that you might want to do 
+      with just about all
+      fruit: eat it, peel it, or maybe remove the seeds.  If you were to
+      model these actions in a Haskell library, you'd set up a <literal>Fruit</literal>
+      typeclass.  You might define functions such as <literal>eat</literal>,
+      <literal>peel</literal>, and <literal>removeSeeds</literal> in that
+      typeclass.
+    </para>
+    <para>
+      Now, your <literal>Apple</literal> type could be an instance of
+      <literal>Fruit</literal>, implementing the three functions.  It could
+      describe removing the core of the apple to get rid of the seeds.  You
+      might also define a <literal>Peach</literal> instance that describes
+      removing the one big seed at the center.  Now, you can release Fruit
+      v1.0.  Yum!
+    </para>
+    <para>
+      Now, some of your friends download your library.  They think that
+      apples and peaches are fine, but maybe they'd also like to be able to
+      eat oranges.  No problem; they define an <literal>Orange</literal> type
+      and make it an instance of <literal>Fruit</literal>.  It's not
+      necessary to modify your code to do this; anything that can operate on
+      a <literal>Fruit</literal> can now automatically operate an an
+      <literal>Orange</literal> as well.  Thanks to typeclasses, you'll have
+      the best fruit salad out there.
+    </para>
   </sect1>
 
 
@@ -101,8 +124,6 @@ False
       same type, and returns a <type>Bool</type> indicating whether or not
       they are equal.  Here's our first definition of a typeclass:
     </para>
-    <remark>FIXME: Should we make this a formal example even though it's short? 
-    --jg</remark>
     &eqclasses.hs:basiceq;
     <para>
       This says that we are declaring a typeclass named
@@ -486,7 +507,11 @@ class  Eq a  where
         summarizes the different functions that operate on numeric types,
         and
         <xref linkend="hs.numerictypes.typeclasses"/> matches the types with
-        their respective typeclasses.
+        their respective typeclasses.  As you read that table, keep in mind
+        that Haskell operators are just functions: you can say either
+        <literal>(+) 2 3</literal> or <literal>2 + 3</literal> with the same
+        result.  By convention, when referring to an operator as a function,
+        it is written in parenthesis as seen in this table.
       </para>
 
       <remark>FIXME: how to sort the operators?</remark>
@@ -876,17 +901,56 @@ class  Eq a  where
     </sect2>
 
     <sect2 id="hs.typeclasses.wellknown.equality">
-      <title>Equality, Ordering, Enum, and Comparisons</title>
+      <title>Equality, Ordering, and Comparisons</title>
       <para>
-        FIXME
+        We've already talked about the arithmetic operators such as
+        <literal>+</literal> that can be used for all sorts of different
+        numbers.  But there are some even more widely-applied operators in
+        Haskell.  The most obvious, of course, are the equality tests:
+        <literal>==</literal> and <literal>/=</literal>.  Any type that can
+        be evaluated for equality is a member of &Eq;, which defines those
+        operators.
       </para>
+      <para>
+        There are also comparison operators such as <literal>>=</literal> and
+        <literal>&lt;=</literal>.  These are defined by the &Ord; typeclass.
+        These are in a separate typeclass because there are some types, such
+        as &Handle;, where an equality test makes sense, but there is no way
+        to express a particular ordering.  Anything that is an instance of
+        &Ord; can be sorted by <literal>Data.List.sort</literal>.
+      </para>
+      <para>
+        Virtually all Haskell types are instances of &Eq;, and almost as many
+        are instances of &Ord;.
+      </para>
+
     </sect2>
   </sect1>
 
   <sect1 id="hs.typeclasses.auto.derivation">
     <title>Automatic Derivation</title>
     <para>
-      FIXME
+      For many simple data types, the Haskell compiler can automatically
+      derive instances of &Read;, &Show;, &Bounded;, &Eq;, and &Ord; for you.
+      This saves you the effort of having to manually write parsers and
+      display code for each type.  Here's an example:
+    </para>
+    &colorderived.hs:all;
+    <para>
+      Let's take a look at how these derived instances work for us:
+    </para>
+    &derived.ghci:all;
+    <para>
+      Notice that the derived instance of &Read; actually works better than
+      our hand-written version did: it successfully parsed a list with
+      embedded whitespace.
+    </para>
+    <para>
+      Automatic derivation is not always possible.  For instance, if you
+      defined a type <literal>Data MyType = MyType (Int -> Bool)</literal>,
+      the compiler will not be able to derive an instance of &Show; because
+      it doesn't know how to render a function.  You will get a compilation
+      error in such a situation.
     </para>
   </sect1>
 

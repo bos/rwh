@@ -18,4 +18,7 @@
 <!ENTITY Rational "<literal>Rational</literal>">
 <!ENTITY Integral "<literal>Integral</literal>">
 <!ENTITY Ratio "<literal>Ratio</literal>">
-
+<!ENTITY Eq "<literal>Eq</literal>">
+<!ENTITY Ord "<literal>Ord</literal>">
+<!ENTITY Handle "<literal>Handle</literal>">
+<!ENTITY Bounded "<literal>Bounded</literal>">
