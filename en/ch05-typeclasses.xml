@@ -39,15 +39,12 @@ False
       Now, let's say that you want to add an equality test for
       &String;s.
       Since a Haskell &String; is a list of characters, we can
-      write a simple function to perform that test, as seen in <xref
-        linkend="hs.typeclasses.ex.naiveeq.string"/>.  For simplicity, we
+      write a simple function to perform that test.
+        For simplicity, we
       cheat a bit and use the <function>==</function> operator a couple
       of times.
     </para>
-    <example id="hs.typeclasses.ex.naiveeq.string">
-      <title>Naive Equality -- Strings (naiveeq.hs)</title>
-      &naiveeq.hs:string;
-    </example>
+    &naiveeq.hs:string;
     <para>
       You should now be able to see a problem: we have to define a new
       function for every different type that we want to be able to compare.
@@ -58,8 +55,6 @@ False
   </sect1>
   <sect1 id="hs.typeclasses.whatarethey">
     <title>What are typeclasses?</title>
-    <remark>FIXME: I don't like this explanation, or maybe just not here..
-    maybe move to later on. --jg</remark>
     <para>
       Typeclasses define a set of functions that can operate on more than one
       type of data.  A typeclass defines an interface, and perhaps even
@@ -147,9 +142,6 @@ False
       <function>isEqual</function>:
     </para>
     <screen>
-$ <userinput>ghci eqclasses.hs</userinput>
-[1 of 1] Compiling Main             ( eqclasses.hs, interpreted )
-Ok, modules loaded: Main.
 *Main&gt; <userinput>:t isEqual</userinput>
 isEqual :: (BasicEq a) => a -> a -> Bool
     </screen>
@@ -164,7 +156,6 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       A not-equal-to function might be useful.
       Here's what we might say to define a typeclass with two functions:
     </para>
-    <remark>FIXME: formal example? --jg</remark>
     &eqclasses.hs:basiceq2;
     <para>
       Someone providing an instance of <varname>BasicEq2</varname> will
@@ -179,13 +170,10 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       what the other function would return, for all types.  Rather than
       making users of the typeclass define both functions for all types, we
       can provide default implementations for them.  Then, users will only
-      have to implement one function.  <xref linkend="hs.typeclasses.ex.basiceq3"/> shows how
-      to do this.
+      have to implement one function.  Here's an example that shows how to do
+      this.
     </para>
-    <example id="hs.typeclasses.ex.basiceq3">
-      <title>BasicEq3 Typeclass Definition (eqclasses.hs)</title>
-      &eqclasses.hs:basiceq3;
-    </example>
+    &eqclasses.hs:basiceq3;
     <para>
       People implementing this class must provide an implementation of at
       least one function.  They can implement both if they wish, but they
@@ -202,8 +190,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
         <varname>Eq</varname> typeclass, and note how similar it is to our
         <varname>BasicEq3</varname> typeclass.
     </para>
-    <remark>FIXME: do we have rights to quote this?  I figure it is probably
-    fair use in any case. -- jg</remark>
+    <remark>FIXME: How to cite sources on this? -- jg</remark>
     <example id="hs.typeclasses.ex.eq">
       <title>Haskell Standard Eq Typeclass</title>
       <programlisting>
@@ -415,6 +402,9 @@ class  Eq a  where
 
     <sect2 id="hs.typeclasses.wellknown.numeric">
       <title>Numeric Types</title>
+      <remark>FIXME: some of these tables don't render well under sgml2x.
+      Will need to verify that they look good under the O'Reilly
+      renderer.</remark>
       <para>
         Haskell has a powerful set of numeric types.  You can using everyting
         from fast 32-bit or 64-bit integers to arbitrary-precision rational
