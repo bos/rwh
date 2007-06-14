@@ -18,12 +18,12 @@
     begin, we'll introduce the pattern language that we'll be working
     with.  The first version of our library will translate these
     patterns into regular expressions, so we'll need to understand how
-    to use regular expressions in Haskell.  We'll then write an
-    interpreter for the pattern language directly, so that we can
-    avoid the regular expression library.  Finally, we'll talk about
-    how to use Haskell's standard directory listing functions with
-    this library.  Along the way, we'll talk a little about writing
-    portable code in Haskell.</para>
+    to use regular expressions in Haskell.  Next, we'll talk about how
+    to use Haskell's standard directory listing functions with this
+    library.  We'll then write an interpreter for the pattern language
+    directly, so that we can avoid the regular expression library.
+    Along the way, we'll talk a little about writing portable code in
+    Haskell.</para>
 
   <sect1>
     <title>File name matching</title>
@@ -31,10 +31,12 @@
     <para>Many <quote>system-oriented</quote> programming languages
       provide library routines that let you match a file name against
       a pattern, or that will give a list of files that match the
-      pattern.  Although Haskell's standard library generally has good
-      <quote>system programming</quote> facilities, it doesn't provide
-      these kinds of pattern matching functions.  We'll take this as
-      an opportunity to develop our own.</para>
+      pattern.  (In other languages, this function is often named
+      <function>fnmatch</function>.)  Although Haskell's standard
+      library generally has good <quote>system programming</quote>
+      facilities, it doesn't provide these kinds of pattern matching
+      functions.  We'll take this as an opportunity to develop our
+      own.</para>
 
     <para>The kinds of patterns we'll be dealing with are commonly
       referred to as <quote>glob patterns</quote> (the term we'll
@@ -397,11 +399,11 @@
 
     &glob-regexp.ghci:tiny;
 
-    <para>These results might seem trivial, but we have received
-      immediate feedback on two fronts: our code passes the scrutiny
-      of the typechecker, and it produces sensible-looking results.
-      Monkeying around with code in the interpreter early and often is
-      consistently worthwhile.</para>
+    <para>These few lines of interaction might look trivial, but we
+      have received immediate feedback on two fronts: our code passes
+      the daunting scrutiny of Haskell's typechecker, and it produces
+      sensible-looking results. Monkeying around with code in the
+      interpreter early and often is consistently worthwhile.</para>
 
     <para>The remaining cases for a complete definition of
       <function>globToRegex'</function> are easy to enumerate.  First,
@@ -447,13 +449,40 @@
 
     &GlobRegex.hs:charClass;
 
+    <para>Now that we've finished defining
+      <function>globToRegex</function> and its helpers, let's load it
+      into &ghci; and try it out.</para>
+
+    &glob-regexp.ghci:real;
+
+    <para>Sure enough, that looks like a reasonable regexp.  Can we
+      use it to match against a string?</para>
+
+    &glob-regexp.ghci:matches;
+
+    <para>It works!  Now let's play around a little with &ghci;.  We
+      can create a temporary definition for
+      <function>fnmatch</function> and try it out.  (This is another
+      example of how &ghci; is great for exploratory
+      programming.)</para>
+
+    &glob-regexp.ghci:fnmatch;
+
+    <para>The name <quote><function>fnmatch</function></quote> doesn't
+      really have the <quote>Haskell nature</quote>, though.  The
+      typical Haskell style is for functions to have descriptive,
+      camel cased names.  In our library, we'll give this function the
+      name <function>matchesGlob</function>.</para>
+
+    &GlobRegex.hs:matchesGlob;
+
   </sect1>
 
   <sect1>
-    <title>Writing lazy functions</title>
+    <title>An important aside: writing lazy functions</title>
 
     <para>In an imperative language, the
-      <function>globToRegex</function> function is one that we'd
+      <function>globToRegex'</function> function is one that we'd
       usually express as a loop. For example, Python's standard
       <package>fnmatch</package> module includes a function named
       <function>translate</function> that does exactly the same job as
@@ -593,6 +622,26 @@
       with the new head, repeating until we reach its end.  Therefore,
       we can execute in constant space.</para>
   </sect1>
+
+  <sect1>
+    <title>Making use of our pattern matcher</title>
+
+    <para>It's all very well to have a function that can match
+      glob patterns, but we'd like to be able to put this to practical
+      use.  On Unix-like systems, the <function>glob</function>
+      function returns the names of all files and directories that
+      match a given glob pattern.</para>
+
+    <para>Since directories and files live in the <quote>real
+	world</quote>, our globbing function will have to have
+      <classname>IO</classname> in its result type.  Following the
+      Haskell norm of descriptive naming, we'll call our function
+      <function>namesMatching</function>.</para>
+
+    &Glob.hs:type;
+
+  </sect1>
+
 </chapter>
 
 <!--

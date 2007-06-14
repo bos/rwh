@@ -1,15 +1,10 @@
-{-- snippet header --}
 module GlobRegex
     (
       globToRegex
-    , matchesPattern
+    , matchesGlob
     ) where
-{-- /snippet header --}
 
-{-- snippet imports --}
-import System.FilePath (pathSeparator)
 import Text.Regex.Posix ((=~))
-{-- /snippet imports --}
 
 {-- snippet type --}
 globToRegex :: String -> String
@@ -53,5 +48,7 @@ charClass (c:cs) = c: charClass cs
 charClass [] = error "unterminated character class"
 {-- /snippet charClass --}
 
-matchesPattern :: String -> String -> Bool
-name `matchesPattern` pat = name =~ globToRegex pat
+{-- snippet matchesGlob --}
+matchesGlob :: FilePath -> String -> Bool
+name `matchesGlob` pat = name =~ globToRegex pat
+{-- /snippet matchesGlob --}
