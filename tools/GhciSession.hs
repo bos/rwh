@@ -170,12 +170,12 @@ changeTranscript name = do
             entity = dropSuffix codeBase
         debug $ Trace ("opening " ++ codePath)
         newH <- io $ openFile codePath WriteMode
-        io $ writeFile idPath ("<programlisting id=" ++ show entity ++ ">\n" ++
+        io $ writeFile idPath ("<screen id=" ++ show entity ++ ">\n" ++
                                "&" ++ entity ++ ".code;\n" ++
-                               "</programlisting>\n")
-        io $ writeFile noidPath ("<programlisting>\n" ++
+                               "</screen>\n")
+        io $ writeFile noidPath ("<screen>\n" ++
                                  "&" ++ entity ++ ".code;\n" ++
-                                 "</programlisting>\n")
+                                 "</screen>\n")
         io $ putStrLn ("<!ENTITY " ++ entity ++ ".code" ++
                        " SYSTEM " ++ show (baseName codePath) ++ ">")
         io $ putStrLn ("<!ENTITY " ++ entity ++
