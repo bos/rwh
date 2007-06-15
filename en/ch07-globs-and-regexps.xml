@@ -476,6 +476,32 @@
 
     &GlobRegex.hs:matchesGlob;
 
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+
+	<qandaentry>
+	  <question>
+	    <para>Use &ghci; to explore what happens if you pass a
+	      malformed pattern, such as <literal>[</literal>, to
+	      <function>globToRegex</function>.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>While filesystems on Unix are usually sensitive to
+	      case (e.g. <quote>G</quote> vs. <quote>g</quote>) in
+	      file names, Windows filesystems are not. Add a parameter
+	      to the <function>globToRegex</function> and
+	      <function>matchesGlob</function> functions that allows
+	      control over case sensitive matching.</para>
+	  </question>
+	</qandaentry>
+
+      </qandaset>
+    </sect2>
   </sect1>
 
   <sect1>
@@ -626,22 +652,237 @@
   <sect1>
     <title>Making use of our pattern matcher</title>
 
-    <para>It's all very well to have a function that can match
-      glob patterns, but we'd like to be able to put this to practical
-      use.  On Unix-like systems, the <function>glob</function>
-      function returns the names of all files and directories that
-      match a given glob pattern.</para>
+    <para>It's all very well to have a function that can match glob
+      patterns, but we'd like to be able to put this to practical use.
+      On Unix-like systems, the <function>glob</function> function
+      returns the names of all files and directories that match a
+      given glob pattern.  Let's build a similar function in Haskell.
+      Following the Haskell norm of descriptive naming, we'll call our
+      function <function>namesMatching</function>.</para>
+
+    &Glob.hs:module;
+
+    <para>This function will obviously have to manipulate filesystem
+      paths a lot, splicing and joining them as it goes.  We'll need
+      to use a few previously unfamiliar modules along the way.</para>
+
+    <para>The <classname role="module">System.Directory</classname>
+      module provides standard functions for working with directories
+      and their contents.</para>
+
+    &Glob.hs:import.directory;
+
+    <para>The <classname role="module">System.FilePath</classname>
+      module abstracts the details of an operating system's path name
+      conventions.  Using this together with the <classname
+	role="module">System.Directory</classname> module, we can
+      write a portable <function>namesMatching</function> function
+      that will run on both Unix-like and Windows systems.</para>
+
+    &Glob.hs:import.filepath;
+
+    <para>Finally, we'll be emulating a <quote>for</quote> loop;
+      getting our first taste of exception handline in Haskell; and of
+      course using the <function>matchesGlob</function> function we
+      just wrote.</para>
+
+    &Glob.hs:import.rest;
 
     <para>Since directories and files live in the <quote>real
-	world</quote>, our globbing function will have to have
-      <classname>IO</classname> in its result type.  Following the
-      Haskell norm of descriptive naming, we'll call our function
-      <function>namesMatching</function>.</para>
+	world</quote> of activities that have effects, our globbing
+      function will have to have <classname>IO</classname> in its
+      result type.</para>
 
     &Glob.hs:type;
 
+    <para>If the string we're passed doesn't contain any pattern
+      characters, all we need to do is check that the given name
+      exists in the filesystem.  (Notice that we use Haskell's
+      function guard syntax here to write a nice tidy definition.  An
+      <quote>if</quote> would do, but isn't as aestheticall
+      pleasing.)</para>
+
+    &Glob.hs:mundane;
+
+    <para>(You might have noticed that the function
+      <function>doesNameExist</function> that we use here isn't in the
+      list of functions we imported from <classname
+	role="module">System.Directory</classname>.  We'll define it
+      shortly.)</para>
+
+    <para>What if the string <emphasis>is</emphasis> a glob
+      pattern?</para>
+
+    &Glob.hs:otherwise;
+
+    <para>We use <function>splitFileName</function> to split the
+      string into a pair of <quote>everything but the final
+	name</quote> and <quote>the final name</quote>.  If the first
+      element is empty, we're looking for a pattern in the current
+      directory.</para>
+
+    &Glob.hs:curdir;
+
+    <para>Otherwise, we must check the directory name and see if it
+      contains patterns.  If it does not, we create a singleton list
+      of theb directory name.  If it contains a pattern, we list all
+      of the matching directories.</para>
+
+    &Glob.hs:pats;
+
+    <remark>Point out the use of <function>return</function> above.
+      This will be one of the first times the reader will have
+      encountered it.  Even if we've already discussed this topic
+      earlier, we should repeat ourselves.</remark>
+
+    <note>
+      <para>Using the <classname
+	  role="module">System.FilePath</classname> module can be a
+	litle tricky.  Above is a case in point; let's use &ghci; to
+	illustrate the problem.  The
+	<function>splitFileName</function> function leaves a trailing
+	slash on the end of the directory name that it returns.</para>
+
+      &glob.ghci:split;
+
+      <para>If we didn't remember (or know enough) to remove that
+	slash, we'd recurse endlessly in that call to
+	<function>namesMatching</function> above, because of the
+	following behaviour of
+	<function>splitFileName</function>.</para>
+
+      &glob.ghci:tricksy;
+
+      <para>You can guess why this note got to be written!</para>
+    </note>
+
+    <para>Finally, we collect all matches in every directory, giving
+      us a list of lists, and concatenate them into a single list of
+      names.</para>
+
+    &Glob.hs:glue;
+
+    <para>The unfamiliar <function>forM</function> function above acts
+      a little like a <quote>for</quote> loop: it maps its second
+      argument (an action) over its first (a list), and returns the
+      resulting list.</para>
+
+    <para>We have a few loose ends to clean up.  The first is the
+      definition of the <function>doesNameExist</function> function,
+      used above.  The <classname
+	role="module">System.Directory</classname> doesn't let us
+      check to see if a name exists in the filesystem.  It forces us
+      to think about whether we want to check for the existence of a
+      file or a directory, even if we don't care what kind of thing
+      the name is.  In the name of portability, we make the check for
+      a file first, since files are far more common than
+      directories.</para>
+
+    &Glob.hs:doesNameExist;
+
+    <remark>Fill these out:</remark>
+    &Glob.hs:listPlain;
+    &Glob.hs:listMatches;
+
+    <sect2>
+      <title>Exercises</title>
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Although we've gone to some lengths to write a
+	      portable <function>namesMatching</function> function,
+	      the function uses our case sensitive
+	      <function>globToRegex</function> function.  Find a way
+	      to modify <function>namesMatching</function> to be case
+	      sensitive on Unix, and case insensitive on Windows,
+	      without modifying its type signature.</para>
+	  </question>
+	  <answer>
+	    <para><emphasis>Hint</emphasis>: think about looking
+	      through the documentation for <classname
+		role="module">System.FilePath</classname> for a
+	      variable that tells you whether you're running on a
+	      Unix-like system, or on Windows.</para>
+	  </answer>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>If you're on a Unix-like system, look through the
+	      documentation for the <classname
+		role="module">System.Posix.Files</classname> module,
+	      and see if you can find a replacement for the
+	      <function>doesNameExist</function> function.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
+  <sect1>
+    <title>Handling errors through API design</title>
+
+    <para>It's not necessarily a disaster if our
+      <function>globToRegex</function> is passed a malformed pattern.
+      Perhaps a user mistyped a pattern, in which case we'd like to be
+      able to report a meaningful error message.</para>
+
+    <para>Calling the <function>error</function> function when this
+      kind of problem happens can be a drastic response.  The
+      <function>error</function> throws an exception.  Pure Haskell
+      code cannot deal with exceptions, so control is going to rocket
+      out of your pure code into the nearest caller that lives in
+      <classname>IO</classname> and has an appropriate exception
+      handler installed.  If no such handler is installed, the default
+      action is to terminate your program (or print a nasty error
+      message, in &ghci;).</para>
+
+    <para>So calling <function>error</function> is a little like
+      pulling the handle of a fighter plane's ejection seat.  You're
+      bailing out of a catastrophic situation that you can't deal with
+      more gracefully, and there's likely to be a lot of flaming
+      wreckage involved.</para>
+
+    <para>We've established that <function>error</function> is for
+      disasters, but we're still using it in
+      <function>globToRegex</function>, where malformed input should
+      be rejected, but not turned into a big deal.  What would be a
+      better way to handle this?</para>
+
+    <para>Haskell's type system to the rescue!  We can encode the
+      possibility of failure in the type signature of
+      <function>globToRegex</function>, using the predefined
+      <type>Either</type> type.</para>
+
+    &GlobRegexEither.hs:type;
+
+    <para>A value returned by <function>globToRegex</function> will
+      now be either <literal>Left "an error message"</literal> or
+      <literal>Right "a valid regexp"</literal>.  This return type
+      forces our callers to deal with the possibility of error.</para>
+
+    <sect2>
+      <title>Exercises</title>
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Write a version of <function>globToRegex</function>
+	      that uses the type signature above.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Modify the type signature of
+	      <function>namesMatching</function> so that it encodes
+	      the possibility of a bad pattern, and make it call your
+	      rewritten <function>globToRegex</function>
+	      function.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+  </sect1>
 </chapter>
 
 <!--
