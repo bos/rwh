@@ -408,6 +408,55 @@ class  Eq a  where
       </para>
     </sect2>
 
+    <sect2 id="hs.typeclasses.wellknown.serialization">
+      <title>Serialization with Read and Show</title>
+      <para>
+        Often times, you may have a data structure in memory that you need to
+        store on disk for later retrieval or send across the network.  The
+        process of converting data in memory to a flat series of bits for
+        storage is called <emphasis>serialization</emphasis>.
+      </para>
+      <para>
+        It turns out that &read; and &show; make excellent tools for
+        serialization.  &show; produces output that is both human-readable and
+        machine-readable.  It also mostly matches Haskell syntax.
+      </para>
+      <para>
+        Let's try it out in &ghci;:
+      </para>
+      &serialization.ghci:ex1;
+      <para>
+        First, we assign <literal>d1</literal> to be a list.  Next, we print
+        out the result of <literal>show d1</literal> so we can see what it
+        generates.  Then, we write the result of <literal>show d1</literal>
+        to a file named <literal>/tmp/test</literal>.
+      </para>
+      <para>
+        Let's try reading it back.
+      </para>
+      &serialization.ghci:ex2;
+      <para>
+        First, we ask Haskell to read the file back.<footnote><para>As you will see
+          in <remark>FIXME: insert ref</remark>, Haskell doesn't actually
+          read the entire file at this point.  But for the purposes of this
+          example, we can ignore that distinction.</para></footnote>  Then,
+        we try to assign the result of <literal>read input</literal> to
+        <literal>d2</literal>.  That generates an error.  The reason is that
+        the interpreter doesn't know what type <literal>d2</literal> is meant
+        to be, so it doesn't know how to parse the input.  If we give it an
+        explicit cast, it works, and we can verify that the two sets of data
+        are equal.
+      </para>
+      <para>
+        Since so many different types are instances of &Read; and &Show; by
+        default (and others can be made instances easily; see <xref
+          linkend="hs.typeclasses.auto.derivation"/>), you can use it for
+        some really complex data structures.  Here are a few examples of
+        slightly more complex data structures:
+      </para>
+      &serialization.ghci:ex3;
+    </sect2>
+
     <sect2 id="hs.typeclasses.wellknown.numeric">
       <title>Numeric Types</title>
       <remark>FIXME: some of these tables don't render well under sgml2x.
