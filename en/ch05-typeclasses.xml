@@ -170,7 +170,16 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       what the other function would return, for all types.  Rather than
       making users of the typeclass define both functions for all types, we
       can provide default implementations for them.  Then, users will only
-      have to implement one function.  Here's an example that shows how to do
+      have to implement one function.
+      <footnote>
+        <para>
+          We provided a default implementation of both functions, which gives
+          implementators of instances choice: they can pick which one they
+          implement.  We could have provided a default for only one function,
+          which would have forced users to implement the other every time.
+        </para>
+      </footnote>
+      Here's an example that shows how to do
       this.
     </para>
     &eqclasses.hs:basiceq3;
@@ -217,8 +226,7 @@ class  Eq a  where
     <para>
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
-      linkend="hs.typeclasses.ex.naiveeq"/>. <remark>FIXME:
-      how can we insert the page number here? --jg</remark>
+      linkend="hs.typeclasses.ex.naiveeq"/>.
       Now let's see how we could make that same <literal>Color</literal>
       type a member of the <literal>BasicEq3</literal> class.
     </para>
