@@ -20,10 +20,9 @@
     patterns into regular expressions, so we'll need to understand how
     to use regular expressions in Haskell.  Next, we'll talk about how
     to use Haskell's standard directory listing functions with this
-    library.  We'll then write an interpreter for the pattern language
-    directly, so that we can avoid the regular expression library.
-    Along the way, we'll talk a little about writing portable code in
-    Haskell.</para>
+    library. Along the way, we'll talk a little about writing portable
+    code, good API design, and constructing code from small building
+    blocks.</para>
 
   <sect1>
     <title>File name matching</title>
@@ -987,6 +986,19 @@
       <function>replaceExtension</function> in &ghci; to see why).
       The <function>=&lt;&lt;</function> function feeds the result of
       its right hand side as an argument to its left.</para>
+  </sect1>
+
+  <sect1>
+    <title>Exercises</title>
+    <qandaset>
+      <qandaentry>
+	<question>
+	  <para>Glob patterns are simple enough to interpret that it's
+	    easy to write a matcher directly in Haskell, rather than
+	    going through the regexp machinery.  Give it a try.</para>
+	</question>
+      </qandaentry>
+    </qandaset>
   </sect1>
 </chapter>
 
