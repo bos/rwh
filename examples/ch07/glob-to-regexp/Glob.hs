@@ -53,16 +53,7 @@ namesMatching pat
           return (concat pathNames)
 {-- /snippet glue  --}
 
-{-- snippet listPlain --}
-listPlain :: FilePath -> String -> IO [String]
-listPlain dirName baseName = do
-    exists <- if null baseName
-              then doesDirectoryExist dirName
-              else doesNameExist (dirName </> baseName)
-    return (if exists then [baseName] else [])
-{-- /snippet listPlain --}
-
-{-- snippet listMatches --}
+{-- snippet listfuncs --}
 listMatches :: FilePath -> String -> IO [String]
 listMatches dirName pat = do
     dirName' <- if null dirName
@@ -74,12 +65,20 @@ listMatches dirName pat = do
                      then filter isHidden names
                      else filter (not . isHidden) names
         return (filter (`matchesGlob` pat) names')
-{-- /snippet listMatches --}
 
-{-- snippet notHidden --}
+listPlain :: FilePath -> String -> IO [String]
+listPlain dirName baseName = do
+    exists <- if null baseName
+              then doesDirectoryExist dirName
+              else doesNameExist (dirName </> baseName)
+    return (if exists then [baseName] else [])
+{-- /snippet listfuncs --}
+
+{-- snippet isHidden --}
 isHidden :: String -> Bool
-isHidden name = take 1 name == "."
-{-- /snippet notHidden --}
+isHidden ('.':_) = True
+isHidden _ = False
+{-- /snippet isHidden --}
 
 {-- snippet doesNameExist --}
 doesNameExist :: FilePath -> IO Bool

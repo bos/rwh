@@ -14,8 +14,10 @@ src-examples := \
 	ch07/glob-to-regexp/GlobRegex.hs \
 	ch07/glob-to-regexp/GlobRegexEither.hs \
 	ch07/glob-to-regexp/Glob.hs \
+	ch07/glob-to-regexp/Useful.hs \
 	ch07/glob-regexp.ghci \
 	ch07/glob.ghci \
+	ch07/handle.ghci \
 	ch07/regexp.ghci
 
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))

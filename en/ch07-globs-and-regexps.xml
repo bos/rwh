@@ -352,9 +352,9 @@
 
     <para>We start our definition of the
       <function>globToRegex</function> function by recalling that a
-      text string must match a glob pattern must match.  Thus before
-      we attempt to convert any part of the glob pattern, we need to
-      have a <quote>rooted</quote> regular expression.</para>
+      text string must match a glob pattern.  Before we attempt to
+      convert any part of the glob pattern, we need to have a
+      <quote>rooted</quote> regular expression.</para>
     
     &GlobRegex.hs:rooted;
 
@@ -364,6 +364,14 @@
       <literal>^</literal> character in this case) onto the front of a
       list, where the list is the value returned by the yet-to-be-seen
       <function>globToRegex'</function> function.</para>
+
+    <para>That single-quote character in the name
+      <function>globToRegex'</function>is not a typo, by the way;
+      Haskell is unusual in allowing single quotes as parts of
+      identifiers. They usually appear at the ends of names, and are
+      then most often pronounced as <quote>prime</quote>.  But you
+      could, if you wanted to, name a function
+      <function>head'n'tail</function>.</para>
 
     <note>
       <para>It's perfectly normal for a Haskell function to refer to
@@ -774,15 +782,57 @@
       check to see if a name exists in the filesystem.  It forces us
       to think about whether we want to check for the existence of a
       file or a directory, even if we don't care what kind of thing
-      the name is.  In the name of portability, we make the check for
-      a file first, since files are far more common than
-      directories.</para>
+      the name is.  We react by rolling the two into a single
+      function, so that we can ignore this library peculiarity.  In
+      the name of performance, we make the check for a file first,
+      since files are far more common than directories.</para>
 
     &Glob.hs:doesNameExist;
 
-    <remark>Fill these out:</remark>
-    &Glob.hs:listPlain;
-    &Glob.hs:listMatches;
+    <para>We have two other functions to define, each of which returns
+      a list of names in a directory.  The
+      <function>listMatches</function> function returns a list of all
+      files matching the given glob pattern in a directory, while the
+      <function>listPlain</function> function returns either an empty
+      or singleton list, depending on whether the single name it's
+      passed exists.</para>
+
+    &Glob.hs:listfuncs;
+
+    <para>If you looked closely at the definition of
+      <function>listMatches</function> above, you'll see a call to a
+      function named <function>handle</function>.  Earlier on, we
+      imported this from the <classname
+	role="module">Control.Exception</classname> module; as that
+      import implies, this gives us our first taste of exception
+      handling in Haskell.  Let's drop into &ghci; and see what we can
+      find out.</para>
+
+    &handle.ghci:type.handle;
+
+    <para>This is telling us that <function>handle</function> takes
+      two arguments.  The first is a function that is passed an
+      exception value, and can do I/O (we can see this because of the
+      <type>IO</type> type in its return value); this is the handler
+      to run if an exception is thrown.  The second argument is the
+      code to run that might throw an exception.</para>
+
+    <para>As for the exception handler, the type of the
+      <function>handle</function> constrains it to return the same
+      type of value as the body of code that threw the exception.  So
+      its choices are to either throw an exception or, as in our case,
+      return a list of <type>String</type>s.</para>
+
+    <para>The <function>const</function> function takes two arguments;
+      it always returns its first argument, no matter what its second
+      argument is.</para>
+
+    &handle.ghci:type.handle;
+
+    <para>We won't have anything more to say about exception handling
+      here.  There's plenty more to cover, though, so we'll be
+      returning to the subject of exceptions in chapter
+      <remark>FIXME</remark>.</para>
 
     <sect2>
       <title>Exercises</title>
@@ -798,10 +848,10 @@
 	      without modifying its type signature.</para>
 	  </question>
 	  <answer>
-	    <para><emphasis>Hint</emphasis>: think about looking
-	      through the documentation for <classname
-		role="module">System.FilePath</classname> for a
-	      variable that tells you whether you're running on a
+	    <para><emphasis>Hint</emphasis>: consider reading the
+	      documentation for <classname
+		role="module">System.FilePath</classname> to look for
+	      a variable that tells you whether you're running on a
 	      Unix-like system, or on Windows.</para>
 	  </answer>
 	</qandaentry>
@@ -813,6 +863,19 @@
 		role="module">System.Posix.Files</classname> module,
 	      and see if you can find a replacement for the
 	      <function>doesNameExist</function> function.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>The <literal>*</literal> wildcard only matches names
+	      within a single directory.  Many shells have an extended
+	      wildcard syntax, <literal>**</literal>, that matches
+	      names recursively in all directories.  For example,
+	      <literal>**.c</literal> would mean <quote>match a name
+		ending in <literal>.c</literal> in this directory or
+		any subdirectory at any depth</quote>.  Implement
+	      matching on <literal>**</literal> wildcards.</para>
 	  </question>
 	</qandaentry>
       </qandaset>
@@ -882,6 +945,48 @@
 	</qandaentry>
       </qandaset>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Putting our code to work</title>
+
+    <para>The <function>namesMatching</function> function isn't very
+      exciting by itself, but it's a useful building block.  Combine
+      it with a few more functions, and we can start to do interesting
+      things.</para>
+
+    <para>Here's one such example.  Let's define a
+      <function>renameWith</function> function that, instead of simply
+      renaming a file, applies a function to the file's name, and
+      renames the file to whatever that function returns.</para>
+
+    &Useful.hs:renameWith;
+
+    <para>Once again, we work around Haskell's ungainly file/directory
+      split with a helper function:</para>
+
+    &Useful.hs:rename;
+
+    <para>The <classname role="module">System.FilePath</classname>
+      module provides many useful functions for manipulating file
+      names.  They mesh nicely with our
+      <function>renameWith</function> and
+      <function>namesMatching</function>functions, so that we can
+      quickly create functions with complex behaviour.  This terse
+      function changes the file name suffixing convention for C++
+      source files.</para>
+
+    &Useful.hs:cc2cpp;
+
+    <para>The <function>cc2cpp</function> function uses a few
+      functions we'll be seeing over and over.  The
+      <function>mapM</function> function maps a function that can do
+      I/O over a list.  The <function>flip</function> function takes
+      another function as argument, and swaps the order of its
+      arguments (inspect the type of
+      <function>replaceExtension</function> in &ghci; to see why).
+      The <function>=&lt;&lt;</function> function feeds the result of
+      its right hand side as an argument to its left.</para>
   </sect1>
 </chapter>
 
