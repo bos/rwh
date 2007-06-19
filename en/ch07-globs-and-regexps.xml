@@ -826,7 +826,7 @@
       it always returns its first argument, no matter what its second
       argument is.</para>
 
-    &handle.ghci:type.handle;
+    &handle.ghci:type.const;
 
     <para>We won't have anything more to say about exception handling
       here.  There's plenty more to cover, though, so we'll be
