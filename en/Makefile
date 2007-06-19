@@ -137,6 +137,7 @@ clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
 	-rm -rf x $(obj-html) index ../tools/dist ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
+	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
