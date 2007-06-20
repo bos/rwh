@@ -1,0 +1,107 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.funcstypes">
+  <title>Types and Functions</title>
+
+  <sect1 id="hs.funcstypes.strong">
+    <title>Strong &amp; Static Typing With Inference</title>
+    <remark>FIXME</remark>
+    <para>See also <xref linkend="hs.funcstypes.inference"/>.</para>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.patternmatching">
+    <title>Pattern Matching</title>
+
+    <remark>FIXME: 
+  Introduce pattern matching.  Show how to write a function as a
+  series of clauses, each predicated on its patterns.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.basictypes">
+    <title>Basic Types</title>
+    <remark>FIXME: 
+  Type basics: products (tuples), sums (Maybe,Either), recursive types
+  (lists). Give us enough glue to pattern match on.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.guards">
+    <title>Guards</title>
+    <remark>FIXME:   Introduce guards.  Show that guards and patterns can be used
+  together or independently.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.ifcase">
+    <title>Conditionals: &if; and &case;</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.local">
+    <title>Local definitions: &let; and &where;</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.rle">
+    <title>Example: Run-Length Encoding</title>
+    <remark>FIXME:   Example: run-length encoding.  Use to show how looping can be done
+  via tail recursion.
+     </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.infix">
+    <title>Infix Functions</title>
+    <remark>FIXME:  Infix functions.  Using and defining them, and infix use of normal
+  functions.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.inference">
+    <title>Type Inference</title>
+    <remark>FIXME: 
+  Discuss type inference: what it is and how it can save a lot of work.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.typeclasses">
+    <title>Typeclasses</title>
+    <remark>FIXME: 
+  Introduce type classes.  Show how ghci infers types with
+  constraints. Define some functions that use type class
+  constraints. Talk about when it's appropriate to write explicit
+  signatures. 
+    </remark>
+    <para>See also <xref linkend="hs.typeclasses"/>.</para>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.mapapi">
+    <title>Example: Data.Map API</title>
+    <remark>FIXME:
+  Small example would be a finite map data structure API, with a list
+  and tree implementation (different complexity, same api). Ties
+  together basic types, small functions, top level functions.
+
+      class Map m where
+	new     :: m k v
+	insert  :: k -> v -> m k v -> m k v
+	lookup  :: k -> m k v -> v
+
+      -- simple, O(n)
+
+      data Map1 k v = [(k,v)]
+
+      -- less simple, O(log n)
+
+      data Map2 k v = Node k v (Map2 k v) (Map2 k v)
+		    | Empty
+
+    </remark>
+  </sect1>
+
+</chapter>
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->

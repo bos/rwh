@@ -1,0 +1,47 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.starting">
+  <title>Getting Started</title>
+
+  <sect1 id="hs.starting.ghc">
+    <title>Installing GHC</title>
+    <remark>FIXME:   How to download and install GHC for Windows, OS X, and Linux.  Not
+  much detail, since details bitrot fast.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.starting.ghci">
+    <title>Using &ghci;</title>
+    <remark>FIXME:   How to run ghci, the Haskell interpreter, and evaluate simple
+  expressions.  Introduce a few simple built-in data types: numbers,
+  lists, strings.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.starting.functions">
+    <title>Haskell Programs: Source Files &amp; Functions</title>
+    <remark>FIXME: What Haskell source files look like.  How to write a simple
+  function.  Hey, functions look different from traditional languages!
+  How to get ghci to load the source file; using the definitions from
+  it.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.starting.types">
+    <title>Types</title>
+    <remark>FIXME: 
+  Introduce types.  Use ghci to inspect the types of a few values and
+  functions.  Describe what the "->" means.  Note the difference in
+  case between the first character of types and functions/values.
+  Take the type information ghci gave us; put it in the source file;
+  reload.  Notice that ghci is still happy.
+    </remark>
+  </sect1>
+</chapter>
+
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->

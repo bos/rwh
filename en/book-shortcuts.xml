@@ -22,3 +22,8 @@
 <!ENTITY Ord "<literal>Ord</literal>">
 <!ENTITY Handle "<literal>Handle</literal>">
 <!ENTITY Bounded "<literal>Bounded</literal>">
+<!ENTITY let "<literal>let</literal>">
+<!ENTITY where "<literal>where</literal>">
+<!ENTITY if "<literal>if</literal>">
+<!ENTITY case "<literal>case</literal>">
+

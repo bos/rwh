@@ -1,0 +1,105 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.whyfp">
+  <title>Why Functional Programming?  Why Haskell?</title>
+  <remark>FIXME</remark>
+  <remark>FIXME: goals of this book.   The emphasis will be practical: on
+  using FP and Haskell to design, write, and fix real programs.  The
+  audience is people who can already program.  There will be plenty of
+  examples and exercises.
+  </remark>
+
+  <sect1 id="hs.whyfp.fp">
+    <title>The Nature of Functional Programming</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.whyfp.haskell">
+    <title>Features of Haskell</title>
+    <remark>FIXME</remark>
+    <remark>FIXME: roots in research</remark>
+    <remark>FIXME: perception that it's not practical; this book will
+    refute</remark>
+    
+
+    <sect2 id="hs.whyfp.haskell.typing">
+      <title>Strong Typing &amp; Type Inference</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.laziness">
+      <title>Laziness</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.compilation">
+      <title>Compiled or Interpreted</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+
+    <sect2 id="hs.whyfp.haskell.purity">
+      <title>Purity</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.modularity">
+      <title>Modularity</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.expressiveness">
+      <title>Expressiveness</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.composability">
+      <title>Composability</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.haskell.robustness">
+      <title>Robustness &amp; Correctness</title>
+      <remark>FIXME</remark>
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="hs.whyfp.noths">
+    <title>Things Haskell Doesn't Have (Or Need)</title>
+
+    <sect2 id="hs.whyfp.noths.loops">
+      <title>Looping with <literal>for</literal> or
+      <literal>while</literal></title>
+      <remark>FIXME</remark>
+    </sect2>
+
+    <sect2 id="hs.whyfp.noths.vars">
+      <title>Mutable Variables</title>
+      <remark>FIXME</remark>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.whyfp.environment">
+    <title>Haskell Environment</title>
+    <remark>FIXME: 
+  Mention the Haskell environment that the book assumes (GHC 6.6+).
+  Describe how to obtain and install it.  Refer to alternative Haskell
+  implementations (Hugs), but leave any detail to an appendix.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.whyfp.resources">
+    <title>Helpful Resources</title>
+    <remark>FIXME: 
+  Provide pointers to long-lived web sites, mailing lists, and IRC
+  channels for help and social interaction with other Haskell people.
+    </remark>
+  </sect1>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
