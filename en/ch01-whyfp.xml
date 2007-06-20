@@ -2,12 +2,17 @@
 
 <chapter id="hs.whyfp">
   <title>Why Functional Programming?  Why Haskell?</title>
+
   <remark>FIXME</remark>
+
+  <sect1 id="hs.whyfp.goals">
+    <title>Goals of Real-World Haskell</title>
   <remark>FIXME: goals of this book.   The emphasis will be practical: on
   using FP and Haskell to design, write, and fix real programs.  The
   audience is people who can already program.  There will be plenty of
   examples and exercises.
   </remark>
+  </sect1>
 
   <sect1 id="hs.whyfp.fp">
     <title>The Nature of Functional Programming</title>
