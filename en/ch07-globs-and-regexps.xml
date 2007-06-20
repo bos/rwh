@@ -531,8 +531,8 @@
 
       <qandaset defaultlabel="number">
 
-	<qandaentry id="ch07.q.error">
-	  <question>
+	<qandaentry>
+          <question id="ch07.q.error">
 	    <para>Use &ghci; to explore what happens if you pass a
 	      malformed pattern, such as <literal>[</literal>, to
 	      <function>globToRegex</function>.  Write a small
