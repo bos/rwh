@@ -55,18 +55,20 @@ let pat = "(foo[a-z]*bar|quux)"
 --# 2tuple.match
 
 "before foodiebar after" =~ pat :: (Int,Int)
-"before foodiebar after" =~ pat :: [(Int,Int)]
+"i foobarbar a quux" =~ pat :: [(Int,Int)]
 
 --# 2tuple.nomatch
 
 "eleemosynary" =~ pat :: (Int,Int)
 "mondegreen" =~ pat :: [(Int,Int)]
 
---# mix.simple
+--# mix.pack
 
 :module +Data.ByteString.Char8
 
 :type pack "foo"
+
+--# mix.simple
 
 pack "foo" =~ "bar" :: Bool
 "foo" =~ pack "bar" :: Int

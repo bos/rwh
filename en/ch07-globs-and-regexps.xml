@@ -9,27 +9,26 @@
     bytestrings and ropes as efficient ways to work with large text
     strings.  Throughout this book, we'll be returning to string
     manipulation over and again, to show off the breadth of different
-    techniques and libraries you can use to tackle different problems
-    that happen to involve working with strings.</para>
+    techniques and libraries we can use to tackle a variety of
+    problems that happen to involve working with strings.</para>
 
   <para>In this chapter, we'll develop a library that can match file
-    names against succinct <quote>glob-style</quote> patterns.  This
-    is a common feature of command shells on popular platforms.  To
-    begin, we'll introduce the pattern language that we'll be working
-    with.  The first version of our library will translate these
-    patterns into regular expressions, so we'll need to understand how
-    to use regular expressions in Haskell.  Next, we'll talk about how
-    to use Haskell's standard directory listing functions with this
-    library. Along the way, we'll talk a little about writing portable
-    code, good API design, and constructing code from small building
-    blocks.</para>
+    names against <quote>glob-style</quote> file name patterns.  These
+    patterns are a common feature of command shells.  To begin, we'll
+    introduce the pattern language that we'll be working with.  Our
+    library will translate these patterns into regular expressions, so
+    we'll need to understand how to use regular expressions in
+    Haskell.  Next, we'll talk about how to use Haskell's standard
+    directory listing functions with this library. Along the way,
+    we'll talk a little about writing portable code, good API design,
+    and constructing code from small building blocks.</para>
 
   <sect1>
     <title>File name matching</title>
 
     <para>Many <quote>system-oriented</quote> programming languages
-      provide library routines that let you match a file name against
-      a pattern, or that will give a list of files that match the
+      provide library routines that let us match a file name against a
+      pattern, or that will give a list of files that match the
       pattern.  (In other languages, this function is often named
       <function>fnmatch</function>.)  Although Haskell's standard
       library generally has good <quote>system programming</quote>
@@ -41,12 +40,13 @@
       referred to as <quote>glob patterns</quote> (the term we'll
       use), <quote>wildcard patterns</quote>, or <quote>shell-style
 	patterns</quote>.  These patterns have just a few simple
-      rules.</para>
+      rules.  You probably already know them, but we'll quickly recap
+      here.</para>
 
     <itemizedlist>
       <listitem>
 	<para>Matching a string against a pattern starts at the
-	  beginning of a string, and finishes at the end.</para>
+	  beginning of the string, and finishes at the end.</para>
       </listitem>
       <listitem>
 	<para>Most literal characters match themselves.  For example,
@@ -80,24 +80,20 @@
 	<para>Character classes have an added subtlety; they can't be
 	  empty.  The first character after the opening
 	  <literal>[</literal> or <literal>[!</literal> is part of the
-	  class.</para>
-      </listitem>
-      <listitem>
-	<para>Outside of a character class, there is an <quote>escape
-	    character</quote> (<literal>\</literal> on Unix-like
-	  systems), the character following it takes its normal
-	  literal meaning (so <literal>\*</literal> matches an
-	  asterisk, not any text).</para>
+	  class, so we can write a class containing the
+	  <literal>]</literal> character as
+	  <literal>[]aeiou]</literal>.</para>
       </listitem>
     </itemizedlist>
 
-    <para>While Haskell doesn't provide a glob matching function, it
-      has excellent regular expression matching facilities.  Glob
-      patterns are nothing more than restricted regular expressions
-      with slightly different syntax.  It's easy to convert glob
-      patterns into regular expressions, so we'll take that tack
-      initially.  But in order to do so, we must first understand how
-      to use regular expressions in Haskell.</para>
+    <para>While Haskell doesn't provide a way to match glob patterns
+      among its standard libraries, it has excellent regular
+      expression matching facilities.  Glob patterns are nothing more
+      than cut-down regular expressions with slightly different
+      syntax.  It's easy to convert glob patterns into regular
+      expressions, so that's what we'll do.  But in order to do so, we
+      must first understand how to use regular expressions in
+      Haskell.</para>
   </sect1>
 
   <sect1>
@@ -108,13 +104,13 @@
       <emphasis>regexps</emphasis> from here on) by way of some other
       language, such as Python, Perl, or Java.  Rather than introduce
       them as something new, I'll be focusing on what's different
-      about regexp handling in Haskell, compared to imperative
-      languages.  Haskell's regular expression matching libraries are
-      a lot more expressive than those of other languages, so there's
-      plenty to talk about.</para>
+      about regexp handling in Haskell, compared to other languages.
+      Haskell's regular expression matching libraries are a lot more
+      expressive than those of other languages, so there's plenty to
+      talk about.</para>
 
-    <para>To begin our use of the regexp libraries, the only module
-      we'll need to work with is <classname
+    <para>To begin our exploration of the regexp libraries, the only
+      module we'll need to work with is <classname
 	role="module">Text.Regex.Posix</classname>.  As usual, the
       most convenient way to explore this module is by interacting
       with it via <command>ghci</command>.</para>
@@ -185,24 +181,29 @@
 
       &regexp.ghci:string;
 
-      <note>
-	<para>Getting back an empty string for <quote>no match</quote>
-	  poses an obvious difficulty if the empty string could be a
-	  valid match for the regexp.</para>
-
-	<remark>FIXME: Find some place to mention the monadic
-	  <function>=~~</function> operator.</remark>
-      </note>
-
       <para>Another valid type of result is <type>[String]</type>,
 	which returns a list of <emphasis>all</emphasis> matching
 	strings.</para>
 
       &regexp.ghci:list.string;
+
+      <note>
+	<para>If you want a result that's a plain <type>String</type>,
+	  beware.  Since <function>(=~)</function> returns an empty
+	  string to signify <quote>no match</quote>, this poses an
+	  obvious difficulty if the empty string could also be a valid
+	  match for the regexp.  If such a case arises, you should use
+	  a different return type instead.</para>
+
+	<remark>FIXME: Find some place to mention the monadic
+	  <function>=~~</function> operator.</remark>
+      </note>
       
       <para>That's about it for <quote>simple</quote> result types,
 	but we're not by any means finished.  Before we continue,
-	let's use a single pattern for our remaining examples.</para>
+	let's use a single pattern for our remaining examples.  We can
+	define this pattern as a variable in &ghci;, to save a little
+	typing.</para>
       
       &regexp.ghci:let;
 
@@ -235,7 +236,8 @@
 
       <para>A failed match is represented by the value
 	<literal>-1</literal> as the first element of the tuple (the
-	match offset), or an empty list of tuples.</para>
+	match offset) if we've asked for a single tuple, or an empty
+	list if we've asked for a list of tuples.</para>
 
       &regexp.ghci:2tuple.nomatch;
 
@@ -255,14 +257,23 @@
 	uses typeclasses for its argument types and its return type.
 	Any combination of <type>String</type> and
 	<type>ByteString</type> will work for the types of both the
-	regular expression and the text to match against.</para>
+	regular expression and the text to match against.  Recall,
+	from our coverage of bytestrings in chapter
+	<remark>FIXME</remark>, that the <function>pack</function>
+	function takes a <type>String</type> and returns its
+	corresponding <type>ByteString</type>.</para>
+
+      &regexp.ghci:mix.pack;
+      
+      <para>We can then try using different combinations of
+	<type>String</type> and <type>ByteString</type>.</para>
 
       &regexp.ghci:mix.simple;
-      
-      <para>However, be aware that if you want a string value in the
-	result of a match, the text you're matching against must be
-	the same type of string.  Let's see what this means in
-	practice.</para>
+
+      <para>However, we need to be aware that if we want a string
+	value in the result of a match, the text we're matching
+	against must be the same type of string.  Let's see what this
+	means in practice.</para>
 
       &regexp.ghci:mix.match;
 
@@ -283,9 +294,9 @@
       &regexp.ghci:mix.rematch;
 
       <para>This restriction does <emphasis>not</emphasis> apply to
-	the type of the regexp to match against.  It can be either a
-	<type>String</type> or <type>ByteString</type>, unconstrained
-	by the other types in use.</para>
+	the type of the regexp we're matching against.  It can be
+	either a <type>String</type> or <type>ByteString</type>,
+	unconstrained by the other types in use.</para>
     </sect2>
 
     <sect2>
@@ -367,19 +378,28 @@
     <para>That single-quote character in the name
       <function>globToRegex'</function>is not a typo, by the way;
       Haskell is unusual in allowing single quotes as parts of
-      identifiers. They usually appear at the ends of names, and are
-      then most often pronounced as <quote>prime</quote>.  But you
-      could, if you wanted to, name a function
-      <function>head'n'tail</function>.</para>
+      identifiers. A single quote is most likely to appear at the end
+      of a name, where it's often pronounced <quote>prime</quote>. (We
+      could, if we wanted to, name a function
+      <function>head'n'tail'n'such</function>, but that's pretty
+      unusual.)</para>
 
     <note>
-      <para>It's perfectly normal for a Haskell function to refer to
-	functions or values that follow, rather than precede, it in a
-	source file.  The Haskell compiler doesn't care about ordering
-	at this level.  This grants you the flexibility to structure
-	your code in the manner that makes most logical sense to you,
-	as opposed to a way that makes the compiler writer's life
-	easiest.</para>
+      <para>Haskell does not require that a value or function be
+	declared or defined in a source file before it's used.  It's
+	perfectly normal for a definition to come
+	<emphasis>after</emphasis> the first place it's used.  The
+	Haskell compiler doesn't care about ordering at this level.
+	This grants us the flexibility to structure your code in the
+	manner that makes most logical sense to us, as opposed to a
+	way that makes the compiler writer's life easiest.</para>
+
+      <para>Haskell module writers often use this flexibility to put
+	<quote>more important</quote> code earlier in a source file,
+	relegating <quote>plumbing</quote> to later.  In fact, that's
+	exactly how we're presenting the
+	<function>globToRegex</function> function and its helpers
+	here.</para>
     </note>
 
     <para>With the regular expression rooted, the
@@ -391,8 +411,9 @@
     &GlobRegex.hs:asterisk;
 
     <para>We now have a very minimal glob translator.  Our first
-      clause requires that if we hit the end of our glob pattern, we
-      return <literal>$</literal>, the regular expression symbol for
+      clause stipulates that if we hit the end of our glob pattern (by
+      which time we'll be looking at the empty string), we return
+      <literal>$</literal>, the regular expression symbol for
       <quote>match end-of-line</quote>.  The second gets us to
       substitute the string <literal>.*</literal> every time we see a
       <literal>*</literal> in our input list.  And the third passes
@@ -418,6 +439,10 @@
 
     &GlobRegex.hs:question;
 
+    <remark>Should we revisit the different types of the
+      <function>(++)</function> and <function>(:)</function> operators
+      here?  Newcomers often get confused over which to use.</remark>
+
     <para>More interesting is how we handle character classes.</para>
 
     &GlobRegex.hs:class;
@@ -427,8 +452,9 @@
       order in which we declare them, so we place the most specific
       patterns first, and the least specific last.  Secondly, there's
       no limit to the <quote>depth</quote> of a pattern: we can
-      <quote>peek</quote> forwards into a list as far as we need
-      to.</para>
+      <quote>peek</quote> forwards into a list as far as we need to.
+      (This isn't limited to simple lists, either.  We can use the
+      same capability to look inside nested structures.)</para>
 
     <para>Here, the first pattern matches on three consecutive items
       of its input to ensure that a <quote>negative</quote> character
@@ -437,8 +463,8 @@
       cannot be empty.  The final clause can only match if it's given
       a syntactically invalid character class.</para>
 
-    <para>Finally, all other characters can be passed through, but
-      they may need to be escaped.</para>
+    <para>Finally, we may need to escape some characters before we
+      return them.</para>
 
     &GlobRegex.hs:last;
 
@@ -470,29 +496,48 @@
     <para>It works!  Now let's play around a little with &ghci;.  We
       can create a temporary definition for
       <function>fnmatch</function> and try it out.  (This is another
-      example of how &ghci; is great for exploratory
-      programming.)</para>
+      example of how &ghci; is great for exploratory programming.
+      We're not limited to defining temporary variables; we can also
+      introduce temporary functions when we need to.)</para>
 
     &glob-regexp.ghci:fnmatch;
 
     <para>The name <quote><function>fnmatch</function></quote> doesn't
       really have the <quote>Haskell nature</quote>, though.  The
       typical Haskell style is for functions to have descriptive,
-      camel cased names.  In our library, we'll give this function the
+      <quote>camel cased</quote> names.  Camel casing name smashes
+      words together, capitalising each word in the resulting name;
+      the name comes from the <quote>humps</quote> introduced by the
+      capital letters.  In our library, we'll give this function the
       name <function>matchesGlob</function>.</para>
 
     &GlobRegex.hs:matchesGlob;
+
+    <note>
+      <para>The choice of naming conventions and coding styles is a
+	perennial source of heated discussion, perhaps because the
+	stakes are so low that everyone feels entitled to an opinion.
+	When we introduce style-related notions like camel cased
+	identifiers, we're showing you what Haskell convention looks
+	like.  We're not making a statement about the relative merits
+	of different people's preferences.  All we
+	<emphasis>do</emphasis> claim is that it's better to fit in
+	with an existing <quote>house style</quote> than to forge off
+	in a novel stylistic direction.</para>
+    </note>
 
     <sect2>
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
 
-	<qandaentry>
+	<qandaentry id="ch07.q.error">
 	  <question>
 	    <para>Use &ghci; to explore what happens if you pass a
 	      malformed pattern, such as <literal>[</literal>, to
-	      <function>globToRegex</function>.</para>
+	      <function>globToRegex</function>.  Write a small
+	      function that calls <function>globToRegex</function>,
+	      and pass it a malformed pattern.  What happens?</para>
 	  </question>
 	</qandaentry>
 
@@ -781,10 +826,11 @@
       check to see if a name exists in the filesystem.  It forces us
       to think about whether we want to check for the existence of a
       file or a directory, even if we don't care what kind of thing
-      the name is.  We react by rolling the two into a single
-      function, so that we can ignore this library peculiarity.  In
-      the name of performance, we make the check for a file first,
-      since files are far more common than directories.</para>
+      the name is.  This ungainly API is brought upon us by Windows.
+      We react by rolling the two checks into a single function, so
+      that we can ignore this portability quirk.  In the name of
+      performance, we make the check for a file first, since files are
+      far more common than directories.</para>
 
     &Glob.hs:doesNameExist;
 
@@ -798,8 +844,8 @@
 
     &Glob.hs:listfuncs;
 
-    <para>If you looked closely at the definition of
-      <function>listMatches</function> above, you'll see a call to a
+    <para>If we look closely at the definition of
+      <function>listMatches</function> above, we'll see a call to a
       function named <function>handle</function>.  Earlier on, we
       imported this from the <classname
 	role="module">Control.Exception</classname> module; as that
@@ -850,7 +896,7 @@
 	    <para><emphasis>Hint</emphasis>: consider reading the
 	      documentation for <classname
 		role="module">System.FilePath</classname> to look for
-	      a variable that tells you whether you're running on a
+	      a variable that tells us whether we're running on a
 	      Unix-like system, or on Windows.</para>
 	  </answer>
 	</qandaentry>
@@ -890,29 +936,31 @@
       able to report a meaningful error message.</para>
 
     <para>Calling the <function>error</function> function when this
-      kind of problem happens can be a drastic response.  The
-      <function>error</function> throws an exception.  Pure Haskell
-      code cannot deal with exceptions, so control is going to rocket
-      out of your pure code into the nearest caller that lives in
-      <classname>IO</classname> and has an appropriate exception
-      handler installed.  If no such handler is installed, the default
-      action is to terminate your program (or print a nasty error
-      message, in &ghci;).</para>
+      kind of problem occurs can be a drastic response (exploring its
+      consequences was the focus of exercise <xref
+	linkend="ch07.q.error"/>).  The <function>error</function>
+      throws an exception.  Pure Haskell code cannot deal with
+      exceptions, so control is going to rocket out of our pure code
+      into the nearest caller that lives in <classname>IO</classname>
+      and has an appropriate exception handler installed.  If no such
+      handler is installed, the Haskell runtime will default to
+      terminating our program (or print a nasty error message, in
+      &ghci;).</para>
 
     <para>So calling <function>error</function> is a little like
-      pulling the handle of a fighter plane's ejection seat.  You're
-      bailing out of a catastrophic situation that you can't deal with
-      more gracefully, and there's likely to be a lot of flaming
-      wreckage involved.</para>
+      pulling the handle of a fighter plane's ejection seat.  We're
+      bailing out of a catastrophic situation that we can't deal with
+      gracefully, and there's likely to be a lot of flaming wreckage
+      strewn about by the time we hit the ground.</para>
 
     <para>We've established that <function>error</function> is for
       disasters, but we're still using it in
-      <function>globToRegex</function>, where malformed input should
-      be rejected, but not turned into a big deal.  What would be a
-      better way to handle this?</para>
+      <function>globToRegex</function>.  In that case, malformed input
+      should be rejected, but not turned into a big deal.  What would
+      be a better way to handle this?</para>
 
-    <para>Haskell's type system to the rescue!  We can encode the
-      possibility of failure in the type signature of
+    <para>Haskell's type system and libraries to the rescue!  We can
+      encode the possibility of failure in the type signature of
       <function>globToRegex</function>, using the predefined
       <type>Either</type> type.</para>
 
@@ -921,7 +969,9 @@
     <para>A value returned by <function>globToRegex</function> will
       now be either <literal>Left "an error message"</literal> or
       <literal>Right "a valid regexp"</literal>.  This return type
-      forces our callers to deal with the possibility of error.</para>
+      forces our callers to deal with the possibility of error.
+      (You'll find that this use of the <type>Either</type> type
+      occurs frequently in Haskell code.)</para>
 
     <sect2>
       <title>Exercises</title>
@@ -961,19 +1011,21 @@
 
     &Useful.hs:renameWith;
 
-    <para>Once again, we work around Haskell's ungainly file/directory
-      split with a helper function:</para>
+    <para>Once again, we work around the ungainly file/directory split
+      that portability has forced upon <classname
+	role="module">System.Directory</classname> with a helper
+      function:</para>
 
     &Useful.hs:rename;
 
     <para>The <classname role="module">System.FilePath</classname>
       module provides many useful functions for manipulating file
-      names.  They mesh nicely with our
+      names.  These functions mesh nicely with our
       <function>renameWith</function> and
       <function>namesMatching</function>functions, so that we can
-      quickly create functions with complex behaviour.  This terse
-      function changes the file name suffixing convention for C++
-      source files.</para>
+      quickly use them to create functions with complex behaviour.  As
+      an example, this terse function changes the file name suffixing
+      convention for C++ source files.</para>
 
     &Useful.hs:cc2cpp;
 
