@@ -1,10 +1,10 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<preface id="hs.preface">
-  <title>Preface</title>
+<chapter id="hs.library">
+  <title>Writing a Library</title>
 
   <remark>FIXME</remark>
-</preface>
+</chapter>
 
 <!--
 local variables: 
