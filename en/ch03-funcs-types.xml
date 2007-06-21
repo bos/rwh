@@ -64,6 +64,16 @@
     </remark>
   </sect1>
 
+  <sect1 id="hs.funcstypes.anonymous">
+    <title>Anonymous (Lambda) Functions</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.partialapp">
+    <title>Partial Application</title>
+    <remark>FIXME</remark>
+  </sect1>
+
   <sect1 id="hs.funcstypes.typeclasses">
     <title>Typeclasses</title>
     <remark>FIXME: 
