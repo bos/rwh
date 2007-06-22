@@ -1,0 +1,8 @@
+We're using a variety of tools to convert our DocBook XML sources into
+readable bits.  Each tool has its own set of limitations and
+surprises.
+
+xsltproc generates bad TeX (for PDF) if section titles contain markup.
+
+openjade requires that an <xref> point to a <question>, not its parent
+<qandaentry>.
