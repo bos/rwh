@@ -11,7 +11,7 @@
   </sect1>
 
   <sect1 id="hs.starting.ghci">
-    <title>Using &ghci;</title>
+    <title>Using ghci</title>
     <remark>FIXME:   How to run ghci, the Haskell interpreter, and evaluate simple
   expressions.  Introduce a few simple built-in data types: numbers,
   lists, strings.
@@ -19,7 +19,7 @@
   </sect1>
 
   <sect1 id="hs.starting.functions">
-    <title>Haskell Programs: Source Files &amp; Functions</title>
+    <title>Haskell Programs: Source Files and Functions</title>
     <remark>FIXME: What Haskell source files look like.  How to write a simple
   function.  Hey, functions look different from traditional languages!
   How to get ghci to load the source file; using the definitions from

@@ -28,7 +28,7 @@
     
 
     <sect2 id="hs.whyfp.haskell.typing">
-      <title>Strong Typing &amp; Type Inference</title>
+      <title>Strong Typing and Type Inference</title>
       <remark>FIXME</remark>
     </sect2>
 
@@ -64,7 +64,7 @@
     </sect2>
 
     <sect2 id="hs.whyfp.haskell.robustness">
-      <title>Robustness &amp; Correctness</title>
+      <title>Robustness and Correctness</title>
       <remark>FIXME</remark>
     </sect2>
 
@@ -74,8 +74,8 @@
     <title>Things Haskell Doesn't Have (Or Need)</title>
 
     <sect2 id="hs.whyfp.noths.loops">
-      <title>Looping with <literal>for</literal> or
-      <literal>while</literal></title>
+      <title>Looping with for or
+      while</title>
       <remark>FIXME</remark>
     </sect2>
 

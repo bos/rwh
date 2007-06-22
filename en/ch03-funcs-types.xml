@@ -4,7 +4,7 @@
   <title>Types and Functions</title>
 
   <sect1 id="hs.funcstypes.strong">
-    <title>Strong &amp; Static Typing With Inference</title>
+    <title>Strong and Static Typing With Inference</title>
     <remark>FIXME</remark>
     <para>See also <xref linkend="hs.funcstypes.inference"/>.</para>
   </sect1>
@@ -34,12 +34,12 @@
   </sect1>
 
   <sect1 id="hs.funcstypes.ifcase">
-    <title>Conditionals: &if; and &case;</title>
+    <title>Conditionals: if and case</title>
     <remark>FIXME</remark>
   </sect1>
 
   <sect1 id="hs.funcstypes.local">
-    <title>Local definitions: &let; and &where;</title>
+    <title>Local definitions: let and where</title>
     <remark>FIXME</remark>
   </sect1>
 
