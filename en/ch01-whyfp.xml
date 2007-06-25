@@ -73,16 +73,67 @@
   <sect1 id="hs.whyfp.noths">
     <title>Things Haskell Doesn't Have (Or Need)</title>
 
-    <sect2 id="hs.whyfp.noths.loops">
-      <title>Looping with for or
-      while</title>
-      <remark>FIXME</remark>
-    </sect2>
-
     <sect2 id="hs.whyfp.noths.vars">
       <title>Mutable Variables</title>
-      <remark>FIXME</remark>
+      <para>
+        In a language such as C, you might see a statement such as
+        <literal>x = x * 5 + y</literal>.  This statement modifies the place
+        in memory where <literal>x</literal> is stored and changes it to
+        the result of the computation.  Many, many other languages work the
+        same way.  For instance, a Python programmer might say
+        <literal>mylist[5] = 10</literal>, which will set the value of the
+        fifth element in <literal>mylist</literal> to <literal>10</literal>.
+      </para>
+      <para>
+        In Haskell, all data is immutable -- it cannot be modified.  If you
+        need to modify an element of a list, you'll get a copy of the
+        original list returned -- except for the one changed element.  Then
+        you will probably ignore the original list.
+      </para>
+      <para>
+        You might start to think that this could be slow to execute.
+        That turns out not to be the case, as the Haskell compiler can
+        optimize this sort of usage quite well.
+      </para>
+      <para>
+        It also turns out to be a powerful way to code: it makes it easy to
+        "chain" functions together, the result of one being taken as input to
+        another.  POSIX programmers can think of this as similar to pipes in
+        the shell.  
+      </para>
+      <para>
+        There's another benefit of this: a lack of side-effects.  A common
+        source of bugs in many languages is calling a function that does
+        something unexpected: modifies a global or a class variable, for
+        instance.  Later code then could behave in unexpected ways.
+      </para>
+      <para>
+        Some languages have partial immutability.  For instance, strings are
+        immutable in Java; if you want to add something to a string in Java,
+        you combine two strings and the result is a new string -- not a
+        modification of an existing string.  Haskell takes immutability much
+        farther.  The only exception in Haskell deals with I/O, which is
+        encapsulated in a special way; this will be discussed later.
+      </para>
     </sect2>
+
+    <sect2 id="hs.whyfp.noths.loops">
+      <title>Looping with for or while</title>
+      <para>
+        Chances are that most languages you've used before have the notion
+        of <literal>for</literal> or <literal>while</literal>.  These
+        tools are often used for performing actions a fixed number of times,
+        for doing something over and over until some state changes, or for
+        simply repeating infinitely until the program is killed.
+      </para>
+      <para>
+        Haskell has no <literal>for</literal> or <literal>while</literal>.
+        That's not an oversight; Haskell doesn't have <literal>for</literal>
+        or <literal>while</literal> because Haskell doesn't need them.
+      </para>
+
+    </sect2>
+
   </sect1>
 
   <sect1 id="hs.whyfp.environment">
