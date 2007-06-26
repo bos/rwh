@@ -8,6 +8,7 @@ src-files := $(src-master) \
 	$(wildcard ch*.xml)
 
 src-examples := \
+	$(wildcard ../examples/ch01/*.hs) \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
 	ch07/append.hs \

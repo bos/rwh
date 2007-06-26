@@ -131,6 +131,58 @@
         That's not an oversight; Haskell doesn't have <literal>for</literal>
         or <literal>while</literal> because Haskell doesn't need them.
       </para>
+      <para>
+        Let's consider a simple program to output the numbers from 1 to 10 on
+        the screen.  A C programmer might work this way:
+      </para>
+      <programlisting><![CDATA[
+#include <stdio.h>
+
+void main(void) {
+    int i;
+    for (i = 1; i <= 10; i++) {
+        printf("%d\n", i);
+    }
+}
+]]>
+      </programlisting>
+      <para>
+        This assigns the value 1 to <literal>i</literal> on the first time,
+        then modifies that place in memory each time through, incrementing
+        <literal>i</literal> until it reaches 10.
+      </para>
+      <para>
+        A Haskell programmer could simply say:
+      </para>
+      &counter1.hs:all;
+      <para>
+        The <literal>[1..10]</literal> generates an <emphasis>lazy</emphasis>
+        list of numbers from 1 to 10.  Each element will be created only when
+        demanded.  You could just as easily say
+        <literal>[1..1000000]</literal> and you'll use no more memory.
+      </para>
+      <para>
+        The call to <literal>mapM_</literal> takes an I/O function and runs
+        it once for each element passed in.  So we never need to directly
+        modify memory, yet we can express the entire operation more compactly
+        than in C.
+      </para>
+      <para>
+        A Haskell programmer could also express this without using
+        <literal>mapM_</literal> like this:
+      </para>
+      &counter2.hs:all;
+      <para>
+        This function uses recursion and pattern matching to achieve the
+        result.  You'll learn more about these techniques in the next few
+        chapters in the book.
+      </para>
+      <para>
+        While Haskell's approach may seem foreign at first, we think that
+        you'll grow to appreciate its speed and robustness as you learn about
+        it.  You'll see why Haskell doesn't have loops because loops would be
+        less useful!
+      </para>
 
     </sect2>
 

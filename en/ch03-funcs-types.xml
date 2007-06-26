@@ -43,6 +43,11 @@
     <remark>FIXME</remark>
   </sect1>
 
+  <sect1 id="hs.funcstypes.recursion">
+    <title>Recursion</title>
+    <remark>FIXME</remark>
+  </sect1>
+
   <sect1 id="hs.funcstypes.rle">
     <title>Example: Run-Length Encoding</title>
     <remark>FIXME:   Example: run-length encoding.  Use to show how looping can be done
