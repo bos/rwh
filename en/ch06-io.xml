@@ -3,7 +3,47 @@
 <chapter id="hs.io">
   <title>I/O</title>
 
-  <remark>FIXME</remark>
+  <sect1 id="hs.io.basics">
+    <title>Classic I/O in Haskell</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.files">
+    <title>Working With Files</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.lazy">
+    <title>Lazy I/O</title>
+    <remark>FIXME</remark>
+    <remark>comment on side-effects potentially being problematic</remark>
+  </sect1>
+
+  <sect1 id="hs.io.monad">
+    <title>The IO Monad</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.imperative">
+    <title>Is Haskell Really Imperative?</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.let">
+    <title>let in the IO Monad</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.args">
+    <title>Reading Command-Line Arguments</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.io.environ">
+    <title>Environment Variables</title>
+    <remark>FIXME</remark>
+  </sect1>
+
 </chapter>
  
 
