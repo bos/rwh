@@ -3,6 +3,27 @@
 <chapter id="hs.io">
   <title>I/O</title>
 
+  <para>
+    Just about any program of any consequence is going to have to deal with
+    input and output at some point.  Many programs, in fact, are devoted to
+    reading data, processing it, and writing it back out.
+  </para>
+
+  <para>
+    Haskell's I/O system is powerful and expressive.  It is easy to work
+    with and important to understand.  I/O is the one area where the rest of
+    Haskell's lack of side effects doesn't always apply.  Haskell provides
+    nice tools for separating I/O from computation, which helps isolate code
+    that could introduce side effects.
+  </para>
+
+  <para>
+    We'll begin this chapter with simple, standard-looking I/O in Haskell.
+    Then we'll discuss some of the more powerful options as well as provide
+    more detail on how I/O fits into the pure, lazy, functional Haskell
+    world.
+  </para>
+
   <sect1 id="hs.io.basics">
     <title>Classic I/O in Haskell</title>
     <remark>FIXME</remark>
@@ -21,6 +42,42 @@
 
   <sect1 id="hs.io.monad">
     <title>The IO Monad</title>
+    <para>
+      You may recall from <remark>FIXME: add ref</remark> that Haskell is a
+      pure language.  That is, if you give a certain function a specific
+      argument, the function will return the same result every time you give
+      it that argument.  Moreover, the function will not change anything
+      about the program's overall state.
+    </para>
+    <para>
+      You may be wondering, then, how I/O fits into this picture.  Surely if
+      you want to read a line of input from the keyboard, the function to
+      read input can't possibly return the same result every time it is run,
+      right?  Moreover, I/O is all about changing state.  I/O could cause
+      pixels on a terminal to light up, to cause paper to start coming out of
+      a printer, or even to cause a package to be shipped from a warehouse on
+      a different continent.  I/O doesn't just change the state of a program.
+      You can think of I/O as changing the state of the world.
+    </para>
+    <para>
+      Most languages do not make a distinction between a pure function and an
+      impure one.  Haskell has functions in the mathematical sense: they are
+      purely computations which cannot be impacted by anything external.
+      Moreover, the computation can be performed at any time -- or even
+      never, if its result is never needed.
+    </para>
+    <para>
+      Clearly, then, we need some other tool to work with I/O.  That tool in
+      Haskell is called <emphasis>actions</emphasis>.  Actions resemble
+      functions.  They do nothing when they are defined, but perform some
+      task when they are invoked.  I/O actions are defined within the &IO;
+      monad.  Monads are actually a powerful way of chaining data together
+      purely and are covered in <remark>FIXME: insert ref</remark>.  It's not
+      necessary to understand monads in order to understand I/O.  Just
+      understand that the return value of actions is "tagged" with 
+      <remark>IO</remark>.
+    </para>
+
     <remark>FIXME</remark>
   </sect1>
 
