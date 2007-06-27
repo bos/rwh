@@ -75,7 +75,7 @@
       purely and are covered in <remark>FIXME: insert ref</remark>.  It's not
       necessary to understand monads in order to understand I/O.  Just
       understand that the return value of actions is "tagged" with 
-      <remark>IO</remark>.
+      &IO;.  Let's take a look at some types:
     </para>
 
     <remark>FIXME</remark>
