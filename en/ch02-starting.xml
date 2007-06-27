@@ -4,14 +4,136 @@
   <title>Getting Started</title>
 
   <sect1 id="hs.starting.ghc">
-    <title>Installing GHC</title>
-    <remark>FIXME:   How to download and install GHC for Windows, OS X, and Linux.  Not
-  much detail, since details bitrot fast.
-    </remark>
+    <title>Your Haskell environment</title>
+
+    <para>There's a number of Haskell implementations available, of
+      which two are in wide use.  Hugs 98 is an interpreter that is
+      primarily used for teaching.  For real applications, the Glasgow
+      Haskell Compiler, or &GHC; as it's usually known, is much more
+      popular.</para>
+
+    <para>&GHC; has two complementary components: &ghc;, a compiler
+      that generates native code, and &ghci;, an interpreter that can
+      run either interactively or in <quote>batch</quote> mode.</para>
+
+    <note>
+      <para>When we talk about the package as a whole, we'll refer to
+	&GHC;.  If we're talking about one or other command, we'll
+	mention either &ghc; or &ghci;.</para>
+    </note>
+
+    <para>In this book, we assume that you're using at least version
+      6.6.1 of &GHC;.  To obtain a copy of &GHC; for your platform,
+      visit <ulink url="http://www.haskell.org/ghc/download.html">the
+	&GHC; download page</ulink>, and look for the list of binary
+      packages.  If you're using Windows or Mac OS X, these binary
+      packages are the best ones to use.</para>
+
+    <para>Many Linux distributions, and BSD and other Unix variants,
+      make pre-packaged versions of &GHC; available.  Because they are
+      built specifically for each environment, these packages are less
+      hassle to use than the generic binary packages. You can find a
+      list of such packages at the &GHC; <ulink
+	url="http://www.haskell.org/ghc/distribution_packages.html">distribution 
+	packages</ulink> page.</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Installing GHC on your platform</title>
+
+    <para>We are providing the instructions below based on our
+      experience installing &GHC; in mid-2007.  Installation
+      instructions inevitably become dated quickly; please bear this
+      in mind as you read.</para>
+
+    <para>Because &GHC; runs on a large number of platforms, we've
+      focused on a handful of the most popular.</para>
+
+    <sect2>
+      <title>Windows</title>
+
+      <para>The prebuilt binary packages of &GHC; should work on
+	versions of Windows as old as ME, and on all newer versions
+	(NT, 2000, XP, and Vista).  We have installed &GHC; 6.6.1
+	under Windows XP Service Pack 2.</para>
+
+      <para>Our first step is to visit the &GHC; <ulink
+	  url="http://www.haskell.org/ghc/download.html">download
+	  page</ulink>, and follow the link to the current stable
+	release.  Scroll down to the section entitled <quote>Binary
+	  packages</quote>, and then again to the subsection for
+	Windows.  Download the installer.</para>
+
+      <remark>FIXME: actual content.</remark>
+    </sect2>
+
+    <sect2>
+      <title>Mac OS X</title>
+
+      <para>Installing &GHC; on Mac OS X takes a few steps.  We have
+	installed &GHC; 6.6.1 under Mac OS X 10.4, on an Intel-based
+	MacBook.</para>
+
+      <para>Our first step is to visit the &GHC; <ulink
+	  url="http://www.haskell.org/ghc/download.html">download
+	  page</ulink>, and follow the link to the current stable
+	release.  Scroll down to the section entitled <quote>Binary
+	  packages</quote>, and then again to the subsection for Mac
+	OS X.  There are three components to download.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>The <filename>GNUreadline</filename> framework
+	    provides flexible command line editing.</para>
+	</listitem>
+	<listitem>
+	  <para>The <filename>GMP</filename> framework is required for
+	    arbitrary-precision integer support.</para>
+	</listitem>
+	<listitem>
+	  <para>The &GHC; package itself.  This will not work unless
+	    both of the preceding frameworks are installed.</para>
+	</listitem>
+      </itemizedlist>
+
+      <remark>FIXME: actual content.</remark>
+    </sect2>
+
+    <sect2>
+      <title>Ubuntu and Debian Linux</title>
+      
+      <remark>FIXME: actual content.</remark>
+    </sect2>
+
+    <sect2>
+      <title>Fedora Linux</title>
+      
+      <para>&GHC; is packaged for Fedora.  From a shell, all you need
+	to do is run <userinput>sudo yum -y install ghc ghc-doc
+	  ghc661-prof</userinput>.  The base package, containing the
+	&ghc; and &ghci; commands and libraries, is
+	<filename>ghc</filename>.  The <filename>ghc-doc</filename>
+	package contains the &GHC; user guide, and command and library
+	documentation.  The <filename>ghc661-prof</filename> package
+	contains profiling-capable versions of the standard libraries
+	(note: its version number may have changed by the time you
+	read this).</para>
+
+      <para>Once installation has finished, you should be able to run
+	&ghci; from the shell immediately.  You won't need to change
+	your shell's search path, or set any environment
+	variables.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.starting.ghci">
-    <title>Using ghci</title>
+    <title>Getting started with ghci, the interpreter</title>
+
+    <para>The interactive interpreter for &GHC; is a program named
+      &ghci;.  It lets you enter and evaluate Haskell expressions, and
+      explore modules and type information.</para>
+
     <remark>FIXME:   How to run ghci, the Haskell interpreter, and evaluate simple
   expressions.  Introduce a few simple built-in data types: numbers,
   lists, strings.
