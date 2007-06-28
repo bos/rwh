@@ -56,16 +56,66 @@
       <para>The prebuilt binary packages of &GHC; should work on
 	versions of Windows as old as ME, and on all newer versions
 	(NT, 2000, XP, and Vista).  We have installed &GHC; 6.6.1
-	under Windows XP Service Pack 2.</para>
+	under Windows XP Service Pack 2; here are the steps we
+	followed.</para>
 
+      <note>
+	<para>On Windows, &GHC; requires almost 340MB of disk
+	  space.</para>
+      </note>
+  
       <para>Our first step is to visit the &GHC; <ulink
 	  url="http://www.haskell.org/ghc/download.html">download
 	  page</ulink>, and follow the link to the current stable
 	release.  Scroll down to the section entitled <quote>Binary
 	  packages</quote>, and then again to the subsection for
-	Windows.  Download the installer.</para>
+	Windows.  Download the installer; in our case, it's named
+	<filename>ghc-6.6.1-i386-windows.exe</filename>.</para>
 
-      <remark>FIXME: actual content.</remark>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="screenshots/win32-download.png"/>
+	</imageobject>
+      </mediaobject>
+
+      <para>After the installer has downloaded, double-clicking on it
+	starts the installation process.  This simply involves
+	stepping through a normal Windows installer wizard.</para>
+
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="screenshots/win32-wizard1.png"/>
+	</imageobject>
+      </mediaobject>
+
+      <para>Once the installer has finished, the Start Menu's
+	<quote>All Programs</quote> submenu should have a &GHC;
+	folder, inside of which you'll find an icon that you can
+	double-click on to run &ghci;.</para>
+
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="screenshots/win32-start-menu.png"/>
+	</imageobject>
+      </mediaobject>
+
+      <para>Clicking on the &ghci; icon brings up a normal Windows
+	console window, running &ghci;.</para>
+
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="screenshots/win32-ghci.png"/>
+	</imageobject>
+      </mediaobject>
+
+      <note>
+	<para>The &GHC; installer automatically modifies your user
+	  account's <envar>PATH</envar> environment variable so that
+	  commands like &ghc; will be present in the command shell's
+	  search path (i.e. you can type a &GHC; command name without
+	  typing its complete path).  This change will not take effect
+	  until you log out and back in again.</para>
+      </note>
     </sect2>
 
     <sect2>
