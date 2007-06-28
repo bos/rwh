@@ -72,41 +72,33 @@
 	Windows.  Download the installer; in our case, it's named
 	<filename>ghc-6.6.1-i386-windows.exe</filename>.</para>
 
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="screenshots/win32-download.png"/>
-	</imageobject>
-      </mediaobject>
+      <informalfigure>
+	<graphic fileref="screenshots/win32-download.png"/>
+      </informalfigure>
 
       <para>After the installer has downloaded, double-clicking on it
 	starts the installation process.  This simply involves
 	stepping through a normal Windows installer wizard.</para>
 
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="screenshots/win32-wizard1.png"/>
-	</imageobject>
-      </mediaobject>
+      <informalfigure>
+	<graphic fileref="screenshots/win32-wizard1.png"/>
+      </informalfigure>
 
       <para>Once the installer has finished, the Start Menu's
 	<quote>All Programs</quote> submenu should have a &GHC;
 	folder, inside of which you'll find an icon that you can
 	double-click on to run &ghci;.</para>
 
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="screenshots/win32-start-menu.png"/>
-	</imageobject>
-      </mediaobject>
+      <informalfigure>
+	<graphic fileref="screenshots/win32-start-menu.png"/>
+      </informalfigure>
 
       <para>Clicking on the &ghci; icon brings up a normal Windows
 	console window, running &ghci;.</para>
 
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="screenshots/win32-ghci.png"/>
-	</imageobject>
-      </mediaobject>
+      <informalfigure>
+	<graphic fileref="screenshots/win32-ghci.png"/>
+      </informalfigure>
 
       <note>
 	<para>The &GHC; installer automatically modifies your user
