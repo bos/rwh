@@ -17,9 +17,9 @@
       run either interactively or in <quote>batch</quote> mode.</para>
 
     <note>
-      <para>When we talk about the package as a whole, we'll refer to
-	&GHC;.  If we're talking about one or other command, we'll
-	mention either &ghc; or &ghci;.</para>
+      <para>When we discuss the package as a whole, we'll refer to it
+	as &GHC;.  If we're talking about one or another command,
+	we'll mention either &ghc; or &ghci;.</para>
     </note>
 
     <para>In this book, we assume that you're using at least version
@@ -175,6 +175,58 @@
     <para>The interactive interpreter for &GHC; is a program named
       &ghci;.  It lets you enter and evaluate Haskell expressions, and
       explore modules and type information.</para>
+
+    <para>When we run &ghci;, it displays a startup banner, followed
+      by a <prompt>Prelude&gt;</prompt> prompt.</para>
+
+    <screen>
+<prompt>$</prompt> <userinput>ghci</userinput>
+   ___         ___ _
+  / _ \ /\  /\/ __(_)
+ / /_\// /_/ / /  | |      GHC Interactive, version 6.6.1, for Haskell 98.
+/ /_\\/ __  / /___| |      http://www.haskell.org/ghc/
+\____/\/ /_/\____/|_|      Type :? for help.
+
+Loading package base ... linking ... done.
+<prompt>Prelude&gt;</prompt>
+</screen>
+
+    <note>
+      <para>The prompt displayed by &ghci; changes depending on what
+	we're doing, and can often grow long enough to leave little
+	visual room on a single line for our input.  For brevity, we
+	have replaced &ghci;'s default prompts throughout this book
+	with the prompt string <prompt>ghci&gt;</prompt>.</para>
+    </note>
+
+    <para>We can immediately start typing expressions, to see what
+      &ghci; will do with them.  Basic arithmetic works as we'd
+      expect.</para>
+    
+    &basics.ghci:arithmetic;
+
+    <para>&ghci; defines at least one well-known mathematical constant
+      for us.</para>
+
+    &basics.ghci:pi;
+
+    <para>But the constants defined are few, as we can see.</para>
+
+    &basics.ghci:e;
+
+    <para>If this <quote>not in scope</quote> error message seems a
+      little daunting, don't worry.  All it means is that there is no
+      variable defined with the name <varname>e</varname>.</para>
+
+    <para>We can define <varname>e</varname> ourselves; the &let;
+      construct allows us to introduce a new variable.</para>
+
+    &basics.ghci:let;
+
+    <para>We can then use our <varname>e</varname> in arithmetic
+      expressions.</para>
+
+    &basics.ghci:epipi;
 
     <remark>FIXME:   How to run ghci, the Haskell interpreter, and evaluate simple
   expressions.  Introduce a few simple built-in data types: numbers,

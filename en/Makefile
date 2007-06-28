@@ -9,6 +9,7 @@ src-files := $(src-master) \
 
 src-examples := \
 	$(wildcard ../examples/ch01/*.hs) \
+	$(wildcard ../examples/ch02/*.ghci) \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
 	ch07/append.hs \
@@ -84,6 +85,7 @@ html: html/index.html
 $(obj-html)/index.html: .validated
 	mkdir -p $(obj-html)
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
+	cp -rf screenshots $(obj-html)
 
 .PHONY: index
 index: xxx-book-index.xml
