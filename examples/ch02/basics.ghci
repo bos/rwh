@@ -1,0 +1,19 @@
+--# arithmetic
+
+2 + 2
+
+--# pi
+
+pi
+
+--# e
+
+e
+
+--# let
+
+let e = 2.7182818284590451
+
+--# epipi
+
+(e ** pi) - pi
