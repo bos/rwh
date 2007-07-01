@@ -1,6 +1,30 @@
 --# arithmetic
 
 2 + 2
+31337 * 101
+7/2
+
+--# bignum
+
+31337 ^ 15
+
+--# neg
+
+-3
+2 + -3
+2 + (-3)
+
+--# whitespace.ok
+
+2+3
+
+--# whitespace.eek
+
+2+-3
+
+--# whitespace.whew
+
+2+(-3)
 
 --# pi
 
@@ -17,3 +41,56 @@ let e = 2.7182818284590451
 --# epipi
 
 (e ** pi) - pi
+
+--# parens
+
+(4 * 4) + 1
+4 * 4 + 1
+
+--# module
+
+:module Data.Ratio
+
+--# ratio
+
+7 % 2
+
+--# ratarith
+
+7 % 2 + 2 % 3
+
+--# denom
+
+(22 % 7) * 7
+
+--# denom.bad
+
+22 % 7  *  7 % 22
+
+--# denom.good
+
+(22 % 7)  *  (7 % 22)
+
+--# intpower
+
+12 ^ 2
+12.1 ^ 2
+12 ^ 2.1
+
+--# exponent.bad
+
+12 ^ 2
+12 ^ (-2)
+
+--# exponent.zero
+
+12 ^ 0
+
+--# exponent.neg
+
+12 ^^ (-2)
+(12%1) ^^ (-2)
+
+--# exponent.float
+
+12.2 ** 2.1

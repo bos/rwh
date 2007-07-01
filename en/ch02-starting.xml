@@ -199,39 +199,276 @@ Loading package base ... linking ... done.
 	with the prompt string <prompt>ghci&gt;</prompt>.</para>
     </note>
 
-    <para>We can immediately start typing expressions, to see what
-      &ghci; will do with them.  Basic arithmetic works as we'd
-      expect.</para>
+    <sect2>
+      <title>Simple arithmetic</title>
+
+      <para>We can immediately start typing expressions, to see what
+	&ghci; will do with them.  Basic arithmetic works as we'd
+	expect.</para>
     
-    &basics.ghci:arithmetic;
+      &basics.ghci:arithmetic;
 
-    <para>&ghci; defines at least one well-known mathematical constant
-      for us.</para>
+      <para>As the expressions above imply, Haskell has a notion of
+	integers and floating point numbers.  In fact, it allows us to
+	use arbitrarily large integers.  Here, the
+	<function>(^)</function> is the exponentiation
+	operator.</para>
 
-    &basics.ghci:pi;
+      &basics.ghci:bignum;
 
-    <para>But the constants defined are few, as we can see.</para>
+      <para>Like other languages that use infix notation to write
+	mathematical expressions, Haskell has a notion of operator
+	precedence.  This allows us to get rid of a few parentheses.
+	For example, the multiplication operator has a higher
+	precedence than the addition operator, so Haskell treats the
+	two following expressions as equivalent.</para>
 
-    &basics.ghci:e;
+      &basics.ghci:parens;
 
-    <para>If this <quote>not in scope</quote> error message seems a
-      little daunting, don't worry.  All it means is that there is no
-      variable defined with the name <varname>e</varname>.</para>
+      <note>
+	<para>As in other languages, it's often better to leave at
+	  least some parentheses in place, even when Haskell allows us
+	  to omit them.  Their presence can help future readers
+	  (including ourselves) to understand what we intended.</para>
 
-    <para>We can define <varname>e</varname> ourselves; the &let;
-      construct allows us to introduce a new variable.</para>
+	<para>Even more importantly, complex expressions that rely on
+	  operator precedence are notorious sources of bugs.  A
+	  compiler and a human can easily end up with different
+	  notions of what a long, parenthesis-free expression is
+	  supposed to do.</para>
+      </note>
+    </sect2>
 
-    &basics.ghci:let;
+    <sect2>
+      <title>An arithmetic quirk: writing negative numbers</title>
 
-    <para>We can then use our <varname>e</varname> in arithmetic
-      expressions.</para>
+      <para>Haskell presents us with one peculiarity in how we must
+	write numbers: it's often necessary to enclose a negative
+	number in parentheses.  This affects us as soon as we move
+	past writing the simplest of expressions.</para>
 
-    &basics.ghci:epipi;
+      &basics.ghci:neg;
 
-    <remark>FIXME:   How to run ghci, the Haskell interpreter, and evaluate simple
-  expressions.  Introduce a few simple built-in data types: numbers,
-  lists, strings.
-    </remark>
+      <para>Later on, we'll be seeing how Haskell lets us devise
+	entirely new infix operators.  Now that we've been forewarned,
+	the following may not prove too surprising.</para>
+
+      <para><emphasis>Most</emphasis> of the time, we can omit
+	whitespace from expressions, and Haskell will parse them as we
+	intended.  But not always.  Here's an expression that
+	works:</para>
+
+      &basics.ghci:whitespace.ok;
+
+      <para>And here's one that similar to the problematic negative
+	number example above, but results in a different error
+	message.</para>
+
+      &basics.ghci:whitespace.eek;
+
+      <para>What's happening here is that the Haskell parser is
+	reading <literal>+-</literal> as a single token, and trying to
+	use it as an operator.  Once again, parentheses save the
+	day.</para>
+
+      &basics.ghci:whitespace.whew;
+
+      <para>Compared to other languages, this unusual treatment of
+	negative numbers is an annoyance, for sure, but it at least
+	represents a reasoned tradeoff.  As we mentioned, Haskell lets
+	us define new operators at any time, and choose the precedence
+	and associativity of those operators.  The language designers
+	chose to accept a slightly cumbersome syntax for negative
+	numbers in exchange for this expressive power.</para>
+    </sect2>
+
+    <sect2>
+      <title>Undefined values, and introducing variables</title>
+
+      <para>&ghci; defines at least one well-known mathematical
+	constant for us.</para>
+
+      &basics.ghci:pi;
+
+      <para>But its coverage of mathematical constants is not great,
+	as we can quickly see.  Let's see if Euler's number,
+	<varname>e</varname>, is available.</para>
+
+      &basics.ghci:e;
+
+      <para>Oh well.</para>
+
+      <note>
+	<para>If the above <quote>not in scope</quote> error message
+	  seems a little daunting, don't worry.  All it means is that
+	  there is no variable defined with the name
+	  <varname>e</varname>.</para>
+      </note>
+
+      <para>We can define <varname>e</varname> ourselves; the &let;
+	construct allows us to introduce a new variable.</para>
+
+      &basics.ghci:let;
+
+      <para>We can then use our definition of <varname>e</varname> in
+	arithmetic expressions.</para>
+
+      &basics.ghci:epipi;
+
+    </sect2>
+
+    <sect2>
+      <title>Rational numbers, the Haskell prelude, and modules</title>
+
+      <para>In addition to integers and floating point numbers,
+	Haskell supports rational numbers.  Haskell coders collect
+	self-contained hunks of code into
+	<emphasis>modules</emphasis>.  The integer and floating point
+	numbers, and the operators we've seen so far, are packaged in
+	a standard module named <classname
+	  role="module">Prelude</classname>.</para>
+
+      <note>
+	<para>The <classname role="module">Prelude</classname> module
+	  is most often referred to simply as <emphasis>the
+	    prelude</emphasis> (or occasionally, as the
+	  <emphasis>standard</emphasis> prelude).</para>
+      </note>
+
+      <para>The prelude is always implicitly available; we don't need
+	to take any actions to use the types, values, or functions it
+	defines.  But to use definitions from other modules, we must
+	<emphasis>import</emphasis> them.  To use rational numbers,
+	the module we need to import is named <classname
+	  role="module">Data.Ratio</classname>.  We can use a &ghci;
+	directive named <userinput>:module</userinput> to import
+	it.</para>
+
+      &basics.ghci:module;
+
+      <para>The notation for writing a rational number is as
+	follows.</para>
+
+      &basics.ghci:ratio;
+
+      <para>The <function>(%)</function> operator above takes two
+	integers and constructs a rational number from them.</para>
+
+      <para>Arithmetic on rational numbers works in the same way as on
+	other types of number, even allowing the same
+	operators.</para>
+      
+      &basics.ghci:ratarith;
+      
+      <para>Haskell represents a rational number with the lowest
+	denominator it can.  For example, the result of the following
+	expression is simplified from <literal>254%7</literal> to
+	something easier to read.</para>
+
+      &basics.ghci:denom;
+
+    </sect2>
+
+    <sect2>
+      <title>Don't sweat the error messages</title>
+
+      <para>Remember the point we made earlier about explicit
+	parentheses often being good?  Here's an example of that idea
+	in action, except here the parentheses are
+	<emphasis>necessary</emphasis>, not merely a good idea.</para>
+
+      &basics.ghci:denom.bad;
+
+      <para>Look at that scary error message!  We're new to Haskell!
+	How are we supposed to interpret all of that?  The first thing
+	we must do is take a deep breath and not worry about the
+	details.</para>
+
+      <para>If we step back and gloss over the error message, we can
+	see that &ghci; is displaying for us the expression that it
+	had trouble with.  And it has helpfully added parentheses back
+	into the expression, only look!  <emphasis>They're in the wrong
+	  places</emphasis></para>
+
+      <para>This isn't the fault of &ghci;.  It just happens that the
+	<function>(%)</function> and <function>(*)</function>
+	operators have the same precedences, so &ghci; parses the
+	expession from left to right.  As a result, it tries to
+	construct a rational from another rational and an integer,
+	instead of from a pair of integers.  (If
+	<function>(%)</function> had a higher precedence than
+	<function>(*)</function>, the expression would be parsed the
+	way we might have hoped.)</para>
+
+      <para>All we have to do to correct this problem is add some
+	explicit parentheses to say what we really mean.</para>
+
+      &basics.ghci:denom.good;
+
+      <note>
+	<para>The important lesson here is one that we'll be repeating
+	  over and over throughout the early sections of this book. If
+	  you run into problems, <emphasis>don't panic</emphasis>. You
+	  do not need to understand every little detail of what's
+	  going on.  Early on, all you have to do is figure out enough
+	  to make progress through a problem.  Complete understanding
+	  can wait.</para>
+      </note>
+
+    </sect2>
+
+    <sect2>
+      <title>Aside: the faces of exponentiation</title>
+
+      <remark>Is it too early to introduce this?  Does it disrupt the
+	flow?</remark>
+
+      <para>We've already seen an exponentiation operator in Haskell:
+	<function>(^)</function> raises a number to an integer power.
+	The word <emphasis>integer</emphasis> is significant here: if
+	we try to raise a number to the power of a floating point
+	number using the <function>(^)</function> operator, exciting
+	things will happen.</para>
+
+      &basics.ghci:intpower;
+
+      <para>Notice from the second example that it doesn't matter
+	whether or not the base is an integer, only that the exponent
+	must be.</para>
+
+      <para>There's a further constraint on the exponent that is not
+	immediately obvious: it must be not just an integer, but a
+	<emphasis>non-negative</emphasis> integer.</para>
+
+      &basics.ghci:exponent.bad;
+
+      <para>If you think about the simplest definition of
+	exponentiation, which is a number repeatedly multiplied by
+	itself a given number of times, this restriction makes
+	sense.</para>
+
+      <para>Haskell's exponentiation operator follows the convention
+	that a number raised to the zeroth power is one.  This is why
+	the restriction on the exponent is that it must be
+	non-negative, and not that it must be positive.</para>
+
+      &basics.ghci:exponent.zero;
+
+      <para>Haskell also provides a generalised integer exponentiation
+	operator, <function>(^^)</function>.  This accepts both
+	positive and negative exponents, following the rule that a
+	number raised to a negative exponent is the reciprocal of the
+	number raised to the positive exponent.  Let's try this with
+	both integer and rational bases.</para>
+
+      &basics.ghci:exponent.neg;
+      
+      <para>Finally, Haskell also gives us a floating point
+	exponentiation operator, <function>(**)</function>.</para>
+
+      &basics.ghci:exponent.float;
+
+    </sect2>
   </sect1>
 
   <sect1 id="hs.starting.functions">
