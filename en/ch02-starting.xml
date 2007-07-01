@@ -199,6 +199,16 @@ Loading package base ... linking ... done.
 	with the prompt string <prompt>ghci&gt;</prompt>.</para>
     </note>
 
+  </sect1>
+
+  <sect1>
+    <title>Basic interaction: using ghci as a calculator</title>
+
+    <para>Where some people might run a calculator program, I often
+      drop into &ghci; to perform simple calculations.  Using it this
+      way serves as a good way to become familiar with &ghci; itself,
+      and with the basics of Haskell expressions.</para>
+
     <sect2>
       <title>Simple arithmetic</title>
 
@@ -325,15 +335,14 @@ Loading package base ... linking ... done.
 	self-contained hunks of code into
 	<emphasis>modules</emphasis>.  The integer and floating point
 	numbers, and the operators we've seen so far, are packaged in
-	a standard module named <classname
+	a module named <classname
 	  role="module">Prelude</classname>.</para>
 
-      <note>
-	<para>The <classname role="module">Prelude</classname> module
-	  is most often referred to simply as <emphasis>the
-	    prelude</emphasis> (or occasionally, as the
-	  <emphasis>standard</emphasis> prelude).</para>
-      </note>
+      <para>(The <classname role="module">Prelude</classname> module
+	is often referred to as <quote>the standard prelude</quote>,
+	because its contents are defined by the Haskell 98 standard.
+	Sometimes, it's simply shortened to <quote>the
+	  prelude</quote>.)</para>
 
       <para>The prelude is always implicitly available; we don't need
 	to take any actions to use the types, values, or functions it
@@ -369,53 +378,6 @@ Loading package base ... linking ... done.
 
     </sect2>
 
-    <sect2>
-      <title>Don't sweat the error messages</title>
-
-      <para>Remember the point we made earlier about explicit
-	parentheses often being good?  Here's an example of that idea
-	in action, except here the parentheses are
-	<emphasis>necessary</emphasis>, not merely a good idea.</para>
-
-      &basics.ghci:denom.bad;
-
-      <para>Look at that scary error message!  We're new to Haskell!
-	How are we supposed to interpret all of that?  The first thing
-	we must do is take a deep breath and not worry about the
-	details.</para>
-
-      <para>If we step back and gloss over the error message, we can
-	see that &ghci; is displaying for us the expression that it
-	had trouble with.  And it has helpfully added parentheses back
-	into the expression, only look!  <emphasis>They're in the wrong
-	  places</emphasis></para>
-
-      <para>This isn't the fault of &ghci;.  It just happens that the
-	<function>(%)</function> and <function>(*)</function>
-	operators have the same precedences, so &ghci; parses the
-	expession from left to right.  As a result, it tries to
-	construct a rational from another rational and an integer,
-	instead of from a pair of integers.  (If
-	<function>(%)</function> had a higher precedence than
-	<function>(*)</function>, the expression would be parsed the
-	way we might have hoped.)</para>
-
-      <para>All we have to do to correct this problem is add some
-	explicit parentheses to say what we really mean.</para>
-
-      &basics.ghci:denom.good;
-
-      <note>
-	<para>The important lesson here is one that we'll be repeating
-	  over and over throughout the early sections of this book. If
-	  you run into problems, <emphasis>don't panic</emphasis>. You
-	  do not need to understand every little detail of what's
-	  going on.  Early on, all you have to do is figure out enough
-	  to make progress through a problem.  Complete understanding
-	  can wait.</para>
-      </note>
-
-    </sect2>
 
     <sect2>
       <title>Aside: the faces of exponentiation</title>
@@ -469,6 +431,55 @@ Loading package base ... linking ... done.
       &basics.ghci:exponent.float;
 
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Don't sweat those error messages</title>
+
+    <para>Remember the point we made earlier about explicit
+      parentheses often being good?  Here's an example of that idea in
+      action, except here the parentheses are
+      <emphasis>necessary</emphasis>, not merely a good idea.</para>
+
+    &basics.ghci:denom.bad;
+
+    <para>Look at that error message; it's detailed, and mentions a
+      lot of concepts we haven't covered yet.  We're new to Haskell!
+      How are we supposed to interpret all of that?  The first thing
+      we must do is take a deep breath and not worry about the
+      details.</para>
+
+    <para>If we step back and gloss over the error message, we can see
+      that &ghci; is displaying for us the expression that it had
+      trouble with.  And it has helpfully added parentheses back into
+      the expression, only look!  <emphasis>They're in the wrong
+	places</emphasis></para>
+
+    <para>This isn't the fault of &ghci;.  It just happens that the
+      <function>(%)</function> and <function>(*)</function> operators
+      have the same precedences, so &ghci; parses the expession from
+      left to right.  As a result, it tries to construct a rational
+      from another rational and an integer, instead of from a pair of
+      integers.  (If <function>(%)</function> had a higher precedence
+      than <function>(*)</function>, the expression would be parsed
+      the way we might have hoped.)</para>
+
+    <para>All we have to do to correct this problem is add some
+      explicit parentheses to say what we really mean.</para>
+
+    &basics.ghci:denom.good;
+
+    <note>
+      <para>The important lesson here is one that we'll be repeating
+	over and over throughout the early sections of this book. If
+	you run into problems, <emphasis>don't panic</emphasis>. You
+	do not need to understand every little detail of what's going
+	on.  Early on, all you have to do is figure out enough to make
+	progress through a problem.  You don't need instantaneous
+	complete understanding, so don't worry if you don't have
+	it.</para>
+    </note>
+
   </sect1>
 
   <sect1 id="hs.starting.functions">
