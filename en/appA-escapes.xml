@@ -1,0 +1,467 @@
+<appendix id="hs.escapes">
+  <title>Characters, strings, and escaping rules</title>
+
+  <para>This appendix covers the escaping rules used to represent
+    non-ASCII characters in Haskell character and string literals.
+    Haskell's escaping rules follow the pattern established by the C
+    programming language, but expand considerably upon them.</para>
+
+  <sect1>
+    <title>Writing character and string literals</title>
+    
+    <para>A single character is surrounded by ASCII single quotes,
+      <literal>'</literal>, and has type <type>Char</type>.</para>
+
+    &text.ghci:char;
+
+    <para>A string literal is surrounded by double quotes,
+      <literal>"</literal>, and has type <type>[Char]</type> (more
+      often written as <type>String</type>).</para>
+
+    &text.ghci:string;
+
+    <para>The double-quoted form of a string literal is just syntactic
+      sugar for list notation.</para>
+
+    &text.ghci:stringlist;
+
+  </sect1>
+
+  <sect1>
+    <title>International language support</title>
+
+    <para>Haskell uses Unicode internally for its <type>Char</type>
+      data type.  Since <type>String</type> is just an alias for
+      <type>[Char]</type>, a list of <type>Char</type>s, Unicode is
+      also used to represent strings.</para>
+
+    <para>Different Haskell implementations place limitations on the
+      character sets they can accept in source files.  &GHC; allows
+      source files to be written in the UTF-8 encoding of Unicode, so
+      in a source file, you can use UTF-8 literals inside a character
+      or string constant.  Do be aware that if you use UTF-8, other
+      Haskell implementations may not be able to parse your source
+      files.</para>
+
+    <para>When you run the &ghci; interpreter interactively, it may
+      not be able to deal with international characters in character
+      or string literals that you enter at the keyboard.</para>
+
+    <note>
+      <para>Although Haskell represents characters and strings
+	internally using Unicode, there is no standardised way to do
+	I/O on files that contain Unicode data.  Haskell's standard
+	text I/O functions treat text as a sequence of 8-bit
+	characters, and do not perform any character set
+	conversion.</para>
+
+      <para>There exist third-party libraries that will convert
+	between the many different encodings used in files and
+	Haskell's internal Unicode representation.</para>
+    </note>
+
+  </sect1>
+
+  <sect1>
+    <title>Escaping text</title>
+
+    <para>Some characters must be escaped to be represented inside a
+      character or string literal.  For example, a double quote
+      character inside a string literal must be escaped, or else it
+      will be treated as the end of the string.</para>
+
+    <sect2>
+      <title>Single-character escape codes</title>
+
+      <para>Haskell uses essentially the same single-character escapes
+	as the C language and many other popular languages.</para>
+
+      <table>
+	<title>Single-character escape codes</title>
+	<tgroup cols="4">
+	  <thead>
+	    <row>
+	      <entry>Escape</entry>
+	      <entry>Value</entry>
+	      <entry>Character</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry><literal>\0</literal></entry>
+	      <entry>U+0000</entry>
+	      <entry>null character</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\a</literal></entry>
+	      <entry>U+0007</entry>
+	      <entry>alert</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\b</literal></entry>
+	    </row>
+	    <row>
+	      <entry>U+0008</entry>
+	      <entry>backspace</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\f</literal></entry>
+	      <entry>U+000C</entry>
+	      <entry>form feed</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\n</literal></entry>
+	      <entry>U+000A</entry>
+	      <entry>newline (line feed)</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\r</literal></entry>
+	      <entry>U+000D</entry>
+	      <entry>carriage return</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\t</literal></entry>
+	      <entry>U+0009</entry>
+	      <entry>horizontal tab</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\v</literal></entry>
+	      <entry>U+000B</entry>
+	      <entry>vertical tab</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\"</literal></entry>
+	      <entry>U+0022</entry>
+	      <entry>double quote</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\&amp;</literal></entry>
+	      <entry><emphasis>n/a</emphasis></entry>
+	      <entry>empty string</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\'</literal></entry>
+	      <entry>U+0027</entry>
+	      <entry>single quote</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\\</literal></entry>
+	      <entry>U+005C</entry>
+	      <entry>backslash</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+
+    </sect2>
+
+    <sect2>
+      <title>Multiline string literals</title>
+
+      <para>To write a string literal that spans multiple lines,
+	terminate one line with a backslash, and resume the string
+	with another backslash.  An arbitrary amount of whitespace (of
+	any kind) can fill the gap between the two backslashes.</para>
+
+      <programlisting><![CDATA[
+"this is a \
+	\long string,\
+    \ spanning multiple lines"
+]]></programlisting>
+
+    </sect2>
+    <sect2>
+      <title>ASCII control codes</title>
+
+      <para>Haskell recognises the escaped use of the standard two-
+	and three-letter abbreviations of ASCII control codes.</para>
+
+      <table>
+	<title>ASCII control code abbreviations</title>
+	<tgroup cols="3">
+	  <thead>
+	    <row>
+	      <entry>Escape</entry>
+	      <entry>Unicode</entry>
+	      <entry>Meaning</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry><literal>\NUL</literal></entry>
+	      <entry>U+0000</entry>
+	      <entry>null character</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SOH</literal></entry>
+	      <entry>U+0001</entry>
+	      <entry>start of heading</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\STX</literal></entry>
+	      <entry>U+0002</entry>
+	      <entry>start of text</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\ETX</literal></entry>
+	      <entry>U+0003</entry>
+	      <entry>end of text</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\EOT</literal></entry>
+	      <entry>U+0004</entry>
+	      <entry>end of transmission</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\ENQ</literal></entry>
+	      <entry>U+0005</entry>
+	      <entry>enquiry</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\ACK</literal></entry>
+	      <entry>U+0006</entry>
+	      <entry>acknowledge</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\BEL</literal></entry>
+	      <entry>U+0007</entry>
+	      <entry>bell</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\BS</literal></entry>
+	      <entry>U+0008</entry>
+	      <entry>backspace</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\HT</literal></entry>
+	      <entry>U+0009</entry>
+	      <entry>horizontal tab</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\LF</literal></entry>
+	      <entry>U+000A</entry>
+	      <entry>line feed (newline)</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\VT</literal></entry>
+	      <entry>U+000B</entry>
+	      <entry>vertical tab</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\FF</literal></entry>
+	      <entry>U+000C</entry>
+	      <entry>form feed</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\CR</literal></entry>
+	      <entry>U+000D</entry>
+	      <entry>carriage return</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SO</literal></entry>
+	      <entry>U+000E</entry>
+	      <entry>shift out</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SI</literal></entry>
+	      <entry>U+000F</entry>
+	      <entry>shift in</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DLE</literal></entry>
+	      <entry>U+0010</entry>
+	      <entry>data link escape</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DC1</literal></entry>
+	      <entry>U+0011</entry>
+	      <entry>device control 1</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DC2</literal></entry>
+	      <entry>U+0012</entry>
+	      <entry>device control 2</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DC3</literal></entry>
+	      <entry>U+0013</entry>
+	      <entry>device control 3</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DC4</literal></entry>
+	      <entry>U+0014</entry>
+	      <entry>device control 4</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\NAK</literal></entry>
+	      <entry>U+0015</entry>
+	      <entry>negative acknowledge</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SYN</literal></entry>
+	      <entry>U+0016</entry>
+	      <entry>synchronous idle</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\ETB</literal></entry>
+	      <entry>U+0017</entry>
+	      <entry>end of transmission block</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\CAN</literal></entry>
+	      <entry>U+0018</entry>
+	      <entry>cancel</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\EM</literal></entry>
+	      <entry>U+0019</entry>
+	      <entry>end of medium</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SUB</literal></entry>
+	      <entry>U+001A</entry>
+	      <entry>substitute</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\ESC</literal></entry>
+	      <entry>U+001B</entry>
+	      <entry>escape</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\FS</literal></entry>
+	      <entry>U+001C</entry>
+	      <entry>file separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\GS</literal></entry>
+	      <entry>U+001D</entry>
+	      <entry>group separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\RS</literal></entry>
+	      <entry>U+001E</entry>
+	      <entry>record separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\US</literal></entry>
+	      <entry>U+001F</entry>
+	      <entry>unit separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\SP</literal></entry>
+	      <entry>U+0020</entry>
+	      <entry>space</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\DEL</literal></entry>
+	      <entry>U+007F</entry>
+	      <entry>delete</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+    </sect2>
+
+    <sect2>
+      <title>Control-with-character escapes</title>
+
+      <para>Haskell recognises an alternate notation for control
+	characters, which represents the archaic effect of pressing
+	the <keycap function="control">control</keycap> key on a
+	keyboard and chording it with another key.  These sequences
+	begin with the characters <literal>\^</literal>, followed by a
+	symbol or uppercase letter.</para>
+
+      <table>
+	<title>Control-with-character escapes</title>
+	<tgroup cols="3">
+	  <thead>
+	    <row>
+	      <entry>Escape</entry>
+	      <entry>Unicode</entry>
+	      <entry>Meaning</entry>
+	    </row>
+	  </thead>
+	  <tbody>
+	    <row>
+	      <entry><literal>\^@</literal></entry>
+	      <entry>U+0000</entry>
+	      <entry>null character</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^A</literal> through <literal>\^Z</literal></entry>
+	      <entry>U+0001 through U+001A</entry>
+	      <entry>control codes</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^[</literal></entry>
+	      <entry>U+001B</entry>
+	      <entry>escape</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^\</literal></entry>
+	      <entry>U+001C</entry>
+	      <entry>file separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^]</literal></entry>
+	      <entry>U+001D</entry>
+	      <entry>group separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^^</literal></entry>
+	      <entry>U+001E</entry>
+	      <entry>record separator</entry>
+	    </row>
+	    <row>
+	      <entry><literal>\^_</literal></entry>
+	      <entry>U+001F</entry>
+	      <entry>unit separator</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+    </sect2>
+
+    <sect2>
+      <title>Numeric escapes</title>
+
+      <para>Haskell allows Unicode characters to be written using
+	numeric escapes.  A decimal character begins with a digit,
+	e.g. <literal>\1234</literal>.  A hexadecimal character begins
+	with an <literal>x</literal>, e.g. <literal>\xbeef</literal>.
+	An octal character begins with an <literal>o</literal>,
+	e.g. <literal>\o1234</literal>.</para>
+
+      <para>The maximum value of a numeric literal is
+	<literal>\1114111</literal>, which may also be written
+	<literal>\x10ffff</literal> or
+	<literal>\o4177777</literal>.</para>
+    </sect2>
+
+    <sect2>
+      <title>The zero-width escape sequence</title>
+
+      <para>String literals can contain a zero-width escape sequence,
+	written <literal>\&amp;</literal>.  This is not a real
+	character, as it represents the empty string.</para>
+
+      &text.ghci:empty;
+
+      <para>The purpose of this escape sequence is to make it possible
+	to write a numeric escape followed immediately by a regular
+	ASCII digit.</para>
+
+      &text.ghci:empty.example;
+
+      <para>Because the empty escape sequence represents an empty
+	string, it is not legal in a character literal.</para>
+    </sect2>
+  </sect1>
+</appendix>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->

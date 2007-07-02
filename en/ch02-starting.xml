@@ -199,6 +199,32 @@ Loading package base ... linking ... done.
 	with the prompt string <prompt>ghci&gt;</prompt>.</para>
     </note>
 
+    <sect2>
+      <title>Command line editing</title>
+
+      <para>On most systems, &ghci; has some amount of command line
+	editing ability.  On Unix-like systems, it uses the GNU
+	readline library, which is powerful and customisable.  On
+	Windows, &ghci;'s command line editing capabilities are
+	provided by the <command>doskey</command> command.</para>
+
+      <para>If you haven't used command line editing before, it's a
+	huge time saver.  The basics are common to both Unix-like and
+	Windows systems.  Pressing the <keycap
+	  function="up">up</keycap> arrow key on your keyboard recalls
+	the last line of input you entered; pressing <keycap
+	  function="up">up</keycap> repeatedly cycles through earlier
+	lines of input. You can use the <keycap
+	  function="left">left</keycap> and <keycap
+	  function="right">right</keycap> arrow keys to move around
+	inside a line of input.</para>
+
+      <para>Just knowing this much will save you a lot of repeated
+	typing.  If you want to learn more about command line editing
+	on your system, consult the readline or
+	<command>doskey</command> documentation.</para>
+    </sect2>
+
   </sect1>
 
   <sect1>
@@ -328,6 +354,32 @@ Loading package base ... linking ... done.
     </sect2>
 
     <sect2>
+      <title>Comparison and boolean operators</title>
+
+      <para>Haskell gives us the usual operators for working with
+	boolean values.</para>
+
+      &basics.ghci:boolean;
+
+      <para>Unlike some other languages, Haskell does not treat the
+	number zero as synonymous with <literal>False</literal>, nor
+	does it accept non-zero as <literal>True</literal>.</para>
+
+      &basics.ghci:boolean.bad;
+
+      <para>Comparison operators are mostly familiar from other
+	languages.</para>
+
+      &basics.ghci:comparison;
+
+      <para>There's one exception: the <quote>is not equal</quote>
+	operator is <function>(/=)</function>.</para>
+
+      &basics.ghci:neq;
+
+    </sect2>
+
+    <sect2>
       <title>Rational numbers, the Haskell prelude, and modules</title>
 
       <para>In addition to integers and floating point numbers,
@@ -377,7 +429,6 @@ Loading package base ... linking ... done.
       &basics.ghci:denom;
 
     </sect2>
-
 
     <sect2>
       <title>Aside: the faces of exponentiation</title>
@@ -479,6 +530,68 @@ Loading package base ... linking ... done.
 	complete understanding, so don't worry if you don't have
 	it.</para>
     </note>
+
+  </sect1>
+
+  <sect1>
+    <title>Text, strings and lists</title>
+
+    <para>If you are familiar with a language like Python, you'll find
+      Haskell's notations for strings, lists and tuples
+      familiar.</para>
+
+    <para>A text string is surrounded by double quotes.</para>
+
+    &basics.ghci:string;
+
+    <para>As in many languages, we can represent hard-to-print
+      characters by <quote>escaping</quote> them.  Haskell's escape
+      characters and escaping rules expand on the conventions
+      established by the C language (for details, see
+      <xref linkend="hs.escapes"/>).</para>
+
+    &basics.ghci:newline;
+    
+    <para>A list is surrounded by square brackets, with elements
+      separated by commas.</para>
+
+    &basics.ghci:list;
+
+    <para>A list can be any length.</para>
+
+    &basics.ghci:list.shortlong;
+
+    <para>All elements of a list must have the same type.</para>
+
+    &basics.ghci:list.bad;
+    
+    <para>Once again, &ghci;'s error message is verbose, but it's
+      simply telling us that it can't figure out how to turn the
+      string into a number, so the list isn't properly typed.</para>
+    
+    <para>When it makes sense to do so, we can write a range of
+      elements, and Haskell will fill in the contents of the list for
+      us.</para>
+    
+    &basics.ghci:range;
+
+    <para>We can specify the size of the step to use by giving the
+      first two elements, followed by the value at which to stop
+      generating the range.</para>
+
+    &basics.ghci:range.step;
+
+    <para>Haskell makes a distinction between single characters and
+      text strings.  A single character is enclosed in single
+      quotes.</para>
+
+    &basics.ghci:char;
+
+    <para>In fact, a text string is simply a list of individual
+      characters.  Here's a painful way to write a short
+      string.</para>
+
+    &basics.ghci:work;
 
   </sect1>
 

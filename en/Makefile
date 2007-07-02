@@ -5,13 +5,15 @@ src-files := $(src-master) \
 	book-index.xml \
 	book-shortcuts.xml \
 	auto-snippets.xml \
-	$(wildcard ch*.xml)
+	$(wildcard ch*.xml) \
+	$(wildcard app*.xml)
 
 src-examples := \
 	$(wildcard ../examples/ch01/*.hs) \
 	$(wildcard ../examples/ch02/*.ghci) \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
+	$(wildcard ../examples/appA/*.ghci) \
 	ch07/append.hs \
 	ch07/glob-to-regexp/GlobRegex.hs \
 	ch07/glob-to-regexp/GlobRegexEither.hs \

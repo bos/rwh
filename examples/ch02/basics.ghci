@@ -42,6 +42,27 @@ let e = 2.7182818284590451
 
 (e ** pi) - pi
 
+--# boolean
+
+True
+False
+True && False
+False || True
+
+--# boolean.bad
+
+True && 1
+
+--# comparison
+
+1 == 1
+2 < 3
+4 >= 3.99
+
+--# neq
+
+2 /= 3
+
 --# parens
 
 (4 * 4) + 1
@@ -94,3 +115,47 @@ let e = 2.7182818284590451
 --# exponent.float
 
 12.2 ** 2.1
+
+--# string
+
+"This is a string."
+
+--# newline
+
+"Here's a newline -->\n<-- See?"
+
+--# list
+
+[1, 2, 3]
+
+--# list.shortlong
+
+[]
+["foo", "bar", "baz", "quux", "fnord", "xyzzy"]
+
+--# list.bad
+
+[1, 2, "buckle my shoe"]
+
+--# range
+
+[1..10]
+
+--# range.step
+
+[1.0,1.25..2.0]
+[1,4..15]
+
+--# char
+
+'a'
+
+--# range.char
+
+['a','e'..'z']
+
+--# work
+
+let a = ['l', 'o', 't', 's', ' ', 'o', 'f', ' ', 'w', 'o', 'r', 'k']
+a
+a == "lots of work"
