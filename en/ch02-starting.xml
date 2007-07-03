@@ -113,18 +113,28 @@
     <sect2>
       <title>Mac OS X</title>
 
-      <para>Installing &GHC; on Mac OS X takes a few steps.  We have
+      <para>Installing &GHC; on Mac OS X takes several steps, as &GHC;
+	does not yet have a standard OS X installer.  We have
 	installed &GHC; 6.6.1 under Mac OS X 10.4, on an Intel-based
-	MacBook.</para>
+	MacBook.  We're not regular Mac users, and had never tried
+	installing &GHC; on OS X before, and everything worked for us
+	on the first try, so take heart if these instructions seem
+	daunting.  The process is neither difficult nor especially
+	time-consuming.</para>
 
       <para>Our first step is to visit the &GHC; <ulink
 	  url="http://www.haskell.org/ghc/download.html">download
 	  page</ulink>, and follow the link to the current stable
 	release.  Scroll down to the section entitled <quote>Binary
 	  packages</quote>, and then again to the subsection for Mac
-	OS X.  There are three components to download.</para>
+	OS X.  There are four components to download, all of which
+	are necessary.</para>
 
       <itemizedlist>
+	<listitem>
+	  <para>Apple's Xcode development software.  This provides
+	    compiler toolchain support that &GHC; needs.</para>
+	</listitem>
 	<listitem>
 	  <para>The <filename>GNUreadline</filename> framework
 	    provides flexible command line editing.</para>
@@ -139,7 +149,87 @@
 	</listitem>
       </itemizedlist>
 
-      <remark>FIXME: actual content.</remark>
+      <para>The Xcode software installer may have come bundled on a
+	DVD with your Mac.  If not (or you can't find it), you can
+	download it from Apple and install it.  Once you've finished
+	installing Xcode, continue on to download the remaining three
+	packages.</para>
+
+      <para>After these downloads complete, you'll have three archive
+	icons on your desktop.</para>
+
+      <informalfigure>
+	<graphic fileref="figs/osx-archives.png"/>
+      </informalfigure>
+
+      <para>Double click on each one to unpack it, giving you three
+	folders.</para>
+
+      <informalfigure>
+	<graphic fileref="figs/osx-folders.png"/>
+      </informalfigure>
+
+      <para>Open a <application>Finder</application> window with
+	<keycombo>
+	  <keycap function="command">command</keycap>
+	  <keycap>n</keycap>
+	</keycombo>.  In the left sidebar, click on your system's main
+	hard disk icon (often named <quote>Macintosh HD</quote>).  In
+	the main portion of the window, double click on
+	<filename>System</filename> to open that folder, then on
+	<filename>Library</filename>.  Select the
+	<filename>GMP.framework</filename> and
+	<filename>GNUreadline.framework</filename> folders on your
+	desktop, and drag them onto the
+	<filename>Frameworks</filename> folder in the Finder window
+	that is visiting <filename>/System/Library</filename>.  If the
+	Finder refuses to install them because you don't have
+	permission, it will probably display an
+	<quote>Authenticate</quote> button in the alert it displays.
+	Click it, enter your password, and installation can
+	proceed.</para>
+
+      <informalfigure>
+	<graphic fileref="figs/osx-folders.png"/>
+      </informalfigure>
+
+      <para>With the prerequisites in place, you can turn to
+	installing &GHC;. You'll need to open a &Terminal; window (you
+	can find it in
+	<filename>/Applications/Utilities</filename>).</para>
+
+      <note>
+	<para>Since most of your interactions with &GHC; will be
+	  through a &Terminal; window, this might be a good time to
+	  add the &Terminal; application to your dock, if you haven't
+	  already done so.</para>
+      </note>
+
+      <informalfigure>
+	<graphic fileref="figs/osx-ghc-install.png"/>
+      </informalfigure>
+
+      <para>Inside the &Terminal; window, change directory to
+	<filename>Desktop/ghc-6.6.1</filename>, and run
+	<userinput>./configure</userinput> to set up the command line
+	installer.  This configures &GHC; to install to
+	<filename>/usr/local</filename>.  When the
+	<command>configure</command> script finishes, run
+	<userinput>sudo make install</userinput>, and type your
+	password when you are prompted for it.</para>
+
+      <para>The installation process should take a minute or
+	two.  If you don't already have
+	<filename>/usr/local/bin</filename> in your shell's search
+	path, add it.</para>
+
+      <para>Finally, you should be able to successfully run the &ghci;
+	command from your shell prompt.</para>
+
+      <informalfigure>
+	<graphic fileref="figs/osx-ghci.png"/>
+      </informalfigure>
+
     </sect2>
 
     <sect2>

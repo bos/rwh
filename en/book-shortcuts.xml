@@ -18,6 +18,7 @@
 <!ENTITY Read "<literal>Read</literal>">
 <!ENTITY Show "<literal>Show</literal>">
 <!ENTITY String "<literal>String</literal>">
+<!ENTITY Terminal "<application>Terminal</application>">
 <!ENTITY Word "<literal>Word</literal>">
 <!ENTITY Word16 "<literal>Word16</literal>">
 <!ENTITY Word32 "<literal>Word32</literal>">
