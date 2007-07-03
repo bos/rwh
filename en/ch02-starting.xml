@@ -394,8 +394,8 @@ Loading package base ... linking ... done.
 
       <para>What's happening here is that the Haskell parser is
 	reading <literal>+-</literal> as a single token, and trying to
-	use it as an operator.  Once again, parentheses save the
-	day.</para>
+	use it as an operator.  Once again, a few parentheses get us
+	and &ghci; looking at the expression in the same way.</para>
 
       &basics.ghci:whitespace.whew;
 
@@ -678,8 +678,8 @@ Loading package base ... linking ... done.
     &basics.ghci:char;
 
     <para>In fact, a text string is simply a list of individual
-      characters.  Here's a painful way to write a short
-      string.</para>
+      characters.  Here's a painful way to write a short string, which
+      &ghci; gives back to us in a more familiar form.</para>
 
     &basics.ghci:work;
 
