@@ -24,6 +24,9 @@ src-examples := \
 	ch07/handle.ghci \
 	ch07/regexp.ghci
 
+src-figs := \
+	$(wildcard figs/*.png)
+
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
 src-ghci := $(filter %.ghci,$(src-examples))
@@ -78,7 +81,7 @@ pdf: $(obj-pdf)
 xpdf: $(obj-pdf)
 	xpdf $(obj-pdf)
 
-$(obj-pdf): .validated
+$(obj-pdf): .validated $(src-figs)
 	$(call xml-to-pdf,$(src-master))
 
 .PHONY: html
@@ -87,7 +90,7 @@ html: html/index.html
 $(obj-html)/index.html: .validated
 	mkdir -p $(obj-html)
 	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
-	cp -rf screenshots $(obj-html)
+	cp -rf figs $(obj-html)
 
 .PHONY: index
 index: xxx-book-index.xml
@@ -128,14 +131,15 @@ auto-snippets.xml: $(stamp-examples)
 .PHONY: zip
 zip: book.zip
 
-book.zip: .validated
+book.zip: .validated $(src-figs)
 	rm -rf $@ bookzip
-	mkdir -p bookzip
+	mkdir -p bookzip/figs
 	cp $(src-files) $(xml-examples) bookzip
+	cp $(src-figs) bookzip/figs
 	mv bookzip/00book.xml bookzip/book.xml
 	perl -pi -e 's,:([a-z0-9_.-]+\.xml">),.\1,i' bookzip/book.xml
 	cd bookzip; for i in *:*.xml; do mv $$i $$(echo $$i | tr : .); done
-	cd bookzip; zip -q -8 ../book.zip *
+	cd bookzip; zip -qr8 ../book.zip .
 	rm -r bookzip
 
 clean:

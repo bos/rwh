@@ -73,7 +73,7 @@
 	<filename>ghc-6.6.1-i386-windows.exe</filename>.</para>
 
       <informalfigure>
-	<graphic fileref="screenshots/win32-download.png"/>
+	<graphic fileref="figs/win32-download.png"/>
       </informalfigure>
 
       <para>After the installer has downloaded, double-clicking on it
@@ -81,7 +81,7 @@
 	stepping through a normal Windows installer wizard.</para>
 
       <informalfigure>
-	<graphic fileref="screenshots/win32-wizard1.png"/>
+	<graphic fileref="figs/win32-wizard1.png"/>
       </informalfigure>
 
       <para>Once the installer has finished, the Start Menu's
@@ -90,14 +90,14 @@
 	double-click on to run &ghci;.</para>
 
       <informalfigure>
-	<graphic fileref="screenshots/win32-start-menu.png"/>
+	<graphic fileref="figs/win32-start-menu.png"/>
       </informalfigure>
 
       <para>Clicking on the &ghci; icon brings up a normal Windows
 	console window, running &ghci;.</para>
 
       <informalfigure>
-	<graphic fileref="screenshots/win32-ghci.png"/>
+	<graphic fileref="figs/win32-ghci.png"/>
       </informalfigure>
 
       <note>
