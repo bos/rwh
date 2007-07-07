@@ -538,8 +538,92 @@ Your name contains 4 characters.
   <sect1 id="hs.io.example">
     <title>Extended Example: Functional I/O and Temporary Files</title>
     <para>
-      asdf
+      Here's a larger example that puts together some concepts from this
+      chapter, from some earlier chapters, and a few you haven't seen yet.
+      Take a look at the program and see if you can figure out what it does
+      and how it works.
     </para>
+
+    &tempfile.hs:all;
+
+    <para>
+      Let's start looking at this program from the end.  The
+      <literal>withTempFile</literal> function demonstrates that Haskell
+      doesn't forget its functional nature when I/O is introduced.  This
+      function takes a &String; and another function.  The passed function is
+      passed the name and &Handle; of a temporary file.  When that function
+      exits, the temporary file is closed and deleted.
+    </para>
+    <para>
+      There is some exception handling going on to make the program more
+      robust in the face of errors.  You normally want the temporary files to
+      be deleted all the time, even if something went wrong.  So we make sure
+      that happens.  For more on exception handling, and the use of &catch;
+      and &finally; see <remark>FIXME: add ref (ch 18 or 24?)</remark>.
+    </para>
+    <para>Let's return to the start of the program.  &main; is defined simply
+      as <literal>withTempFile "mytemp.txt" myAction</literal>.
+      <literal>myAction</literal>, then, will be invoked with the name and
+      &Handle; of the temporary file.
+    </para>
+    <para>
+      <literal>myAction</literal> displays some information to the terminal,
+      writes some data to the file, seeks to the beginning of the file, 
+      and reads the data back with
+      &hGetContents;.<footnote><para>&hGetContents; will be discussed in
+          <xref linkend="hs.io.lazy"/></para></footnote>  It then displays
+      the contents of the file byte-for-byte, and also as a Haskell literal
+      via <literal>print c</literal>.  That's the same as <literal>putStrLn
+        (show c)</literal>.
+    </para>
+    <para>
+      Let's look at the output:
+    </para>
+    <screen>
+$ <userinput>runhaskell tempfile.hs</userinput>
+Welcome to tempfile.hs
+I have a temporary file at /tmp/mytemp8572.txt
+My initial position is 0
+Writing one line containing 22 bytes: [1,2,3,4,5,6,7,8,9,10]
+After writing, my new position is 23
+The file content is:
+[1,2,3,4,5,6,7,8,9,10]
+
+Which could be expressed as this Haskell literal:
+"[1,2,3,4,5,6,7,8,9,10]\n"
+    </screen>
+    <para>
+      Every time you run this program, your temporary file name should be
+      slightly different since it contains a randomly-generated component.
+      Looking at this output, there are a few questions that might occur to
+      you:
+    </para>
+    <itemizedlist>
+      <listitem><para>Why is your position 23 after writing a line with 22
+          bytes?</para></listitem>
+      <listitem><para>Why is there an empty line after the file content
+          display?</para></listitem>
+      <listitem><para>Why is there a <literal>\n</literal> at the end of the
+          Haskell literal display?</para></listitem>
+    </itemizedlist>
+    <para>
+      You might be able to guess that the answers to all three questions are
+      related.  See if you can work out the answers for a moment.  If you
+      need some help, here are the explanations:
+    </para>
+    <itemizedlist>
+      <listitem><para>That's because we used &hPutStrLn; instead of &hPutStr;
+          to write the data.  &hPutStrLn; always terminates the line by
+          writing a <literal>\n</literal> at the end, which didn't appear in
+          <literal>tempdata</literal>.</para></listitem>
+      <listitem><para>We used <literal>putStrLn c</literal> to display the
+          file contents <literal>c</literal>.  Because the data was written
+          originally with &hPutStrLn;, <literal>c</literal> ends with the
+          newline character, and &putStrLn; adds a second newline character.
+          The result is a blank line.</para></listitem>
+      <listitem><para>The <literal>\n</literal> is the newline character from
+          the original &hPutStrLn;.</para></listitem>
+    </itemizedlist>
   </sect1>
 
   <sect1 id="hs.io.lazy">

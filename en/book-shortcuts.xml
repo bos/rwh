@@ -68,4 +68,8 @@
 <!ENTITY removeFile "<literal>removeFile</literal>">
 <!ENTITY renameFile "<literal>renameFile</literal>">
 <!ENTITY print "<literal>print</literal>">
+<!ENTITY catch "<literal>catch</literal>">
+<!ENTITY finally "<literal>finally</literal>">
+<!ENTITY hGetContents "<literal>hGetContents</literal>">
+<!ENTITY hPutStr "<literal>hPutStr</literal>">
 
