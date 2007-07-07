@@ -59,12 +59,111 @@ Welcome to Haskell, John!
       <literal>++</literal> to join the input string with our own text.
     </para>
     <para>
-      After looking at this example program, you may be wondering if Haskell
+      &do; is a convenient way to define a sequence of actions.  As you'll
+      see later, there are other ways.  When you use &do; in this way,
+      indentation is significant; make sure you line up your actions
+      properly.
+    </para>
+    <para>
+      Let's take a look at the types of &putStrLn; and &getLine;.  You can
+      find that information in the library reference, or just ask &ghci;:
+    </para>
+    &basicio.ghci:all;
+    <para>
+      Notice that both of these types have &IO; in their return value.  That
+      is your key to knowing that they may have side-effects or return
+      different values at different times.  The type of &putStrLn; looks like
+      a function.  It takes a parameter -- a &String; -- and returns an
+      <literal>IO ()</literal>.  Just what is an <literal>IO ()</literal>
+      though?
+    </para>
+    <para>
+      Anything that is type <literal>IO
+        <replaceable>something</replaceable></literal> is an I/O
+      <emphasis>action</emphasis>.  You can store it and nothing will happen.
+      I could say <literal>writefoo = putStrLn "foo"</literal> and nothing
+      happens right then.  But if I later call <literal>writefoo</literal> in
+      the middle of another I/O action, it will be executed.  The
+      <literal>()</literal> is, essentially, an empty return value; there is
+      no return value to speak of from <literal>putstrLn</literal>.
+    </para>
+    <para>
+      The type of &getLine; may look strange to you.  It looks like a value,
+      rather than a function.  And in fact, that is one way to look at it:
+      &getLine; is storing an I/O action.  When that action is run, you get
+      a &String;.  The &larrow; operator is used to "pull out" the result
+      from an I/O action and store it in a variable.
+    </para>
+    <para>
+      Finally, &main; itself is an I/O action with type <literal>IO
+        ()</literal>.  You can only execute I/O actions or use &larrow; from
+      within other I/O actions.  So all I/O in Haskell programs is driven
+      from the top at &main;, which is where execution of every Haskell
+      program begins.  This, then, is the mechanism that provides
+      isolation from side-effects in Haskell: you perform I/O in
+      your <literal>IO</literal> actions, and call pure (non-I/O) functions
+      from there.
+    </para>
+
+    <para>
+      Let's consider an example of calling pure code from within
+      an I/O action:
+    </para>
+
+    &callingpure.hs:all;
+
+    <para>
+      Notice the <literal>name2reply</literal> function in this example.  It
+      is a regular Haskell function and obeys all the rules we've told you
+      about: it always returns the same result when given the same input, it
+      has no side-effects, and it operates lazily.  It uses other Haskell
+      functions: <literal>(++)</literal>, <literal>show</literal>, and
+      <literal>length</literal>.   You can play with it in &ghci; just as you
+      would any other function.
+    </para>
+    <para>
+      Down in <literal>main</literal>, we assign the result of
+      <literal>name2reply inpStr</literal> to <literal>outStr</literal>.
+      When you're working in a &do; block, remember: you use &larrow; to get
+      results from &IO; actions and &let; to get results from pure code.
+    </para>
+    <para>
+      You can see here how we read from the keyboard the person's name.
+      Then, that data got passed to a pure function, and its result was
+      printed.  In fact, the last line of &main; could have been replaced
+      with <literal>putStrLn (name2reply inpStr)</literal>.  So, while &main;
+      did have side-effects -- it caused things to appear on the terminal,
+      for instance -- <literal>name2reply</literal> did not and could not.
+    </para>
+    <para>
+      Let's examine this with &ghci;:
+    </para>
+
+    &callingpure.ghci:all;
+
+    <para>
+      The <literal>\n</literal> within the string is the end-of-line
+      (newline) character, which causes the terminal to begin a new line in
+      its output.  Just calling <literal>name2reply "John"</literal> in
+      &ghci; will show you the <literal>\n</literal> literally, because it is
+      using &show; to display the return value.  But using &putStrLn; sends
+      it to the terminal, and the terminal interprets <literal>\n</literal>
+      to start a new line.
+    </para>
+    <para>
+      What do you think will happen if you simply type
+      <userinput>main</userinput> at the &ghci; prompt?  Give it a try.
+    </para>
+
+    <para>
+      After looking at these example programs, you may be wondering if Haskell
       is really imperative rather than lazy.  It sure looks like a sequence
       of actions to be followed in order.  There's more to it than that,
-      though.  We'll discuss that question later in this chapter in <xref
-        linkend="hs.io.imperative"/>.
+      though.  We'll discuss that question later in this chapter in 
+        <xref
+          linkend="hs.io.imperative"/> and <xref linkend="hs.io.lazy"/>.
     </para>
+
     <para>
       Haskell defines quite a few basic functions for I/O.  The library
       reference for <literal>System.IO</literal> provides a good summary of
@@ -74,7 +173,10 @@ Welcome to Haskell, John!
 
   <sect1 id="hs.io.files">
     <title>Working With Files</title>
+    <para>
+      You can easily read and write data from specific files.  
     <remark>FIXME</remark>
+    <remark>FIXME: deleting files, renaming them, directory contents</remark>
   </sect1>
 
   <sect1 id="hs.io.lazy">
