@@ -39,3 +39,7 @@
 <!ENTITY putStrLn "<literal>putStrLn</literal>">
 <!ENTITY getLine "<literal>getLine</literal>">
 <!ENTITY do "<literal>do</literal>">
+<!ENTITY openFile "<literal>openFile</literal>">
+<!ENTITY hClose "<literal>hClose</literal>">
+<!ENTITY hPutStrLn "<literal>hPutStrLn</literal>">
+

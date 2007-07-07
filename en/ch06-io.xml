@@ -174,9 +174,22 @@ Welcome to Haskell, John!
   <sect1 id="hs.io.files">
     <title>Working With Files</title>
     <para>
-      You can easily read and write data from specific files.  
+      So far,  you've seen how to work with the terminal.  Of course, you'll
+      often need to manipulate specific files.  That's easy to do, too.  
     </para>
-    <remark>FIXME</remark>
+    <para>
+      You can easily read and write data from specific files.  You will
+      generally begin by using &openFile;, which will give you a file &Handle;.
+      That &Handle; is then used to perform specific operations on the file.
+      Haskell provides functions such as &hPutStrLn; that work just like
+      &putStrLn; but take an additional argument -- a &Handle; -- that
+      specifies which file to operate upon.  When you're done, you'll use
+      &hClose; to close the &Handle; again.  These functions are all defined
+      in <literal>System.IO</literal>, so you'll need to import that module
+      when working with files.
+    </para>
+
+    <remark>FIXME: stdin / stdout</remark>
     <remark>FIXME: deleting files, renaming them, directory contents</remark>
   </sect1>
 
@@ -245,7 +258,9 @@ Welcome to Haskell, John!
   <sect1 id="hs.io.environ">
     <title>Environment Variables</title>
     <remark>FIXME</remark>
+  <remark>FIXME: buffering</remark>
   </sect1>
+
 
 </chapter>
  
