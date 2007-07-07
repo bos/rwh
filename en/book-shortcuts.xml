@@ -35,3 +35,7 @@
 <!ENTITY runghc "<literal>runghc</literal>">
 <!ENTITY main "<literal>main</literal>"> 
 <!ENTITY IO "<literal>IO</literal>">
+<!ENTITY larrow "<literal>&lt;-</literal>">
+<!ENTITY putStrLn "<literal>putStrLn</literal>">
+<!ENTITY getLine "<literal>getLine</literal>">
+

@@ -47,9 +47,29 @@ Greetings!  What is your name?
 Welcome to Haskell, John!
 </screen>
     <para>
-      That's a fairly simple, obvious result.
+      That's a fairly simple, obvious result.  You can see that &putStrLn;
+      writes out a &String;, followed by an end-of-line character.  &getLine;
+      reads a line from standard input.  The &larrow; operator may be new to
+      you.  Put simply, that operator assigns the result from executing an
+      I/O action to a name.
+      <footnote><para>You will later see that it has a more
+        broad application, but it is sufficient to think of it in these terms
+        for now.</para></footnote>
+      We use the simple list concatenation operator
+      <literal>++</literal> to join the input string with our own text.
     </para>
-
+    <para>
+      After looking at this example program, you may be wondering if Haskell
+      is really imperative rather than lazy.  It sure looks like a sequence
+      of actions to be followed in order.  There's more to it than that,
+      though.  We'll discuss that question later in this chapter in <xref
+        linkend="hs.io.imperative"/>.
+    </para>
+    <para>
+      Haskell defines quite a few basic functions for I/O.  The library
+      reference for <literal>System.IO</literal> provides a good summary of
+      them all, should you need one that we haven't demonstrated here.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.files">
