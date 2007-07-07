@@ -38,4 +38,4 @@
 <!ENTITY larrow "<literal>&lt;-</literal>">
 <!ENTITY putStrLn "<literal>putStrLn</literal>">
 <!ENTITY getLine "<literal>getLine</literal>">
-
+<!ENTITY do "<literal>do</literal>">

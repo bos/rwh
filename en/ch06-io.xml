@@ -175,6 +175,7 @@ Welcome to Haskell, John!
     <title>Working With Files</title>
     <para>
       You can easily read and write data from specific files.  
+    </para>
     <remark>FIXME</remark>
     <remark>FIXME: deleting files, renaming them, directory contents</remark>
   </sect1>

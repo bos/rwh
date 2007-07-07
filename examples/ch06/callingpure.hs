@@ -13,4 +13,4 @@ main = do
        inpStr <- getLine
        let outStr = name2reply inpStr
        putStrLn outStr
-
+{-- /snippet all --}
