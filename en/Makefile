@@ -13,6 +13,8 @@ src-examples := \
 	$(wildcard ../examples/ch02/*.ghci) \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
+	$(wildcard ../examples/ch06/*.hs) \
+	$(wildcard ../examples/ch06/*.ghci) \
 	$(wildcard ../examples/appA/*.ghci) \
 	ch07/append.hs \
 	ch07/glob-to-regexp/GlobRegex.hs \

@@ -26,7 +26,30 @@
 
   <sect1 id="hs.io.basics">
     <title>Classic I/O in Haskell</title>
-    <remark>FIXME</remark>
+    <remark>FIXME: have we already explained main?</remark>
+    <remark>FIXME: have we already explained $ ?</remark>
+    <para>
+      Let's get started with I/O by looking at a program that looks
+      surprisingly similar to I/O in other languages.
+    </para>
+    &basicio.hs:all;
+    <remark>FIXME: have we explained how to compile to a standalone
+    program?</remark>
+    <para>
+      You can compile this program to a standalone executable, run it with
+      &runghc;, run it with &hugs;, or invoke &main; from within &ghci;.
+      Here's a sample session using &runghc;:
+    </para>
+    <screen>
+$ <userinput>runghc basicio.hs</userinput>
+Greetings!  What is your name?
+<userinput>John</userinput>
+Welcome to Haskell, John!
+</screen>
+    <para>
+      That's a fairly simple, obvious result.
+    </para>
+
   </sect1>
 
   <sect1 id="hs.io.files">

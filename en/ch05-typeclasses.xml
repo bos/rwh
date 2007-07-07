@@ -348,6 +348,8 @@ class  Eq a  where
 
       &read.hs:read;
 
+      <remark>FIXME: have we already explained main?</remark>
+
       <para>
         This is a simple example of &read; and &show; together.  Notice that
         we gave an explicit typecast to &Integer; when processing the &read;.
