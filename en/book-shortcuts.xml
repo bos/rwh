@@ -40,6 +40,7 @@
 <!ENTITY getLine "<literal>getLine</literal>">
 <!ENTITY do "<literal>do</literal>">
 <!ENTITY openFile "<literal>openFile</literal>">
+<!ENTITY openBinaryFile "<literal>openBinaryFile</literal>">
 <!ENTITY hClose "<literal>hClose</literal>">
 <!ENTITY hPutStrLn "<literal>hPutStrLn</literal>">
 <!ENTITY return "<literal>return</literal>">
@@ -49,4 +50,22 @@
 <!ENTITY WriteMode "<literal>WriteMode</literal>">
 <!ENTITY ReadWriteMode "<literal>ReadWriteMode</literal>">
 <!ENTITY AppendMode "<literal>AppendMode</literal>">
+<!ENTITY hPrint "<literal>hPrint</literal>">
+<!ENTITY hSeek "<literal>hSeek</literal>">
+<!ENTITY hTell "<literal>hTell</literal>">
+<!ENTITY SeekMode "<literal>SeekMode</literal>">
+<!ENTITY AbsoluteSeek "<literal>AbsoluteSeek</literal>">
+<!ENTITY RelativeSeek "<literal>RelativeSeek</literal>">
+<!ENTITY SeekFromEnd "<literal>SeekFromEnd</literal>">
+<!ENTITY hIsSeekable "<literal>hIsSeekable</literal>">
+<!ENTITY stdin "<literal>stdin</literal>">
+<!ENTITY stdout "<literal>stdout</literal>">
+<!ENTITY stderr "<literal>stderr</literal>">
+<!ENTITY openTempFile "<literal>openTempFile</literal>">
+<!ENTITY openBinaryTempFile "<literal>openBinaryTempFile</literal>">
+<!ENTITY System.Directory "<literal>System.Directory</literal>">
+<!ENTITY System.IO "<literal>System.IO</literal>">
+<!ENTITY removeFile "<literal>removeFile</literal>">
+<!ENTITY renameFile "<literal>renameFile</literal>">
+<!ENTITY print "<literal>print</literal>">
 
