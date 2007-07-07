@@ -189,12 +189,146 @@ Welcome to Haskell, John!
       when working with files.
     </para>
 
-    <remark>FIXME: stdin / stdout</remark>
-    <remark>FIXME: deleting files, renaming them, directory contents</remark>
+    <para>
+      Let's start with an imperative way to read and write files.  This will
+      probably seem familiar to a <literal>while</literal> loop that you may
+      find in other languages.  This isn't the best way to write it in
+      Haskell; later, you'll see examples of more Haskellish approaches.
+    </para>
+
+    &toupper-imp.hs:all;
+
+    <para>
+      Like every Haskell program, execution of this program begins as
+      <literal>main</literal>.  Two files are opened:
+      <literal>input.txt</literal> is opened for reading, and
+      <literal>output.txt</literal> is opened for writing.  Then we call
+      <literal>mainloop</literal>.
+    </para>
+    <para>
+      <literal>mainloop</literal> begins by checking to see if we're at the
+      end of file (EOF) for the input.  If we are, then we <literal>return
+        ()</literal> -- this function doesn't return any other specific
+      value.  Otherwise, we read a line from the input.  We write out the
+      same line to the output, after first converting it to uppercase.  Then
+      we recursively call <literal>mainloop</literal> again to continue
+      processing the file.
+    </para>
+    <para>
+      Notice that &return; call.  This is not really the same as &return; in
+      C or Python.  In those languages, &return; is used to terminate
+      execution of the current function immediately, and to return a value to
+      the caller.  In Haskell, &return; is the opposite of &larrow;.  That
+      is, &return; takes a pure value and wraps it inside &IO;.  Since every
+      I/O action must return some &IO; type, if your result came from pure
+      computation, you must use &return; to wrap it in &IO;.
+    </para>
+    <para>
+      Let's try running the program.  We've got a file named
+      <literal>input.txt</literal> that looks like this:
+    </para>
+    <programlisting>
+This is ch06/input.txt
+
+Test Input
+I like Haskell
+Haskell is great
+I/O is fun
+
+123456789
+    </programlisting>
+    <para>
+      Now, you can use <literal>runghc toupper-imp.hs</literal> and you'll
+      find <literal>output.txt</literal> in your directory.  It should look
+      like this:
+    </para>
+    <programlisting>
+THIS IS CH06/INPUT.TXT
+
+TEST INPUT
+I LIKE HASKELL
+HASKELL IS GREAT
+I/O IS FUN
+
+123456789
+    </programlisting>
+    <sect2 id="hs.io.files.openFile">
+      <title>More on openFile</title>
+      <para>
+        Let's use &ghci; to check on the type of &openFile;:
+      </para>
+      &openFile.ghci:all;
+      <para>
+        &FilePath; is simply another name for &String;.  It is used in the
+        types of I/O functions to help clarify that the parameter is being
+        used as a filename, and not as regular data.
+      </para>
+      <para>
+        &IOMode; specifies how the file is to be managed.  The possible
+        values for &IOMode; are listed in <xref
+          linkend="hs.io.files.openFile.IOModes"/>.
+      </para>
+      <remark>FIXME: check formatting on this table for final book; openjade
+      doesn't render it well</remark>
+      <table id="hs.io.files.openFile.IOModes" tocentry="1">
+        <title>Possible IOMode Values</title>
+        <tgroup cols='4' align='left'>
+          <colspec colname='c1'/>
+          <colspec colname='c2'/>
+          <colspec colname='c3'/>
+          <colspec colname='c4'/>
+          <colspec colname='c5'/>
+          <thead>
+            <row>
+              <entry>&IOMode;</entry>
+              <entry>Can read?</entry>
+              <entry>Can write?</entry>
+              <entry>Starting position</entry>
+              <entry>Notes</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>&ReadMode;</entry>
+              <entry>Yes</entry>
+              <entry>No</entry>
+              <entry>Beginning of file</entry>
+              <entry>File must exist already</entry>
+            </row>
+            <row>
+              <entry>&WriteMode;</entry>
+              <entry>No</entry>
+              <entry>Yes</entry>
+              <entry>Beginning of file</entry>
+              <entry>File is truncated if it already existed</entry>
+            </row>
+            <row>
+              <entry>&ReadWriteMode;</entry>
+              <entry>Yes</entry>
+              <entry>Yes</entry>
+              <entry>Beginning of file</entry>
+              <entry>File is created if it didn't exist; otherwise, existing
+                data is left intact</entry>
+            </row>
+            <row>
+              <entry>&AppendMode;</entry>
+              <entry>No</entry>
+              <entry>Yes</entry>
+              <entry>End of file</entry>
+              <entry>File is created if it didn't exist; otherwise, existing
+                data is left intact.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+    </sect2>
   </sect1>
 
   <sect1 id="hs.io.lazy">
     <title>Lazy I/O</title>
+    <remark>FIXME: stdin / stdout</remark>
+    <remark>FIXME: deleting files, renaming them, directory contents</remark>
     <remark>FIXME</remark>
     <remark>comment on side-effects potentially being problematic</remark>
   </sect1>
@@ -259,6 +393,7 @@ Welcome to Haskell, John!
     <title>Environment Variables</title>
     <remark>FIXME</remark>
   <remark>FIXME: buffering</remark>
+  <remark>FIXME: return</remark>
   </sect1>
 
 

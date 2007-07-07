@@ -42,4 +42,11 @@
 <!ENTITY openFile "<literal>openFile</literal>">
 <!ENTITY hClose "<literal>hClose</literal>">
 <!ENTITY hPutStrLn "<literal>hPutStrLn</literal>">
+<!ENTITY return "<literal>return</literal>">
+<!ENTITY FilePath "<literal>FilePath</literal>">
+<!ENTITY IOMode "<literal>IOMode</literal>">
+<!ENTITY ReadMode "<literal>ReadMode</literal>">
+<!ENTITY WriteMode "<literal>WriteMode</literal>">
+<!ENTITY ReadWriteMode "<literal>ReadWriteMode</literal>">
+<!ENTITY AppendMode "<literal>AppendMode</literal>">
 
