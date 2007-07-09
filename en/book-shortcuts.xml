@@ -72,4 +72,8 @@
 <!ENTITY finally "<literal>finally</literal>">
 <!ENTITY hGetContents "<literal>hGetContents</literal>">
 <!ENTITY hPutStr "<literal>hPutStr</literal>">
+<!ENTITY readFile "<literal>readFile</literal>">
+<!ENTITY writeFile "<literal>writeFile</literal>">
+<!ENTITY hGetContents "<literal>hGetContents</literal>">
+<!ENTITY getContents "<literal>getContents</literal>">
 

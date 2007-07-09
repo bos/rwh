@@ -647,9 +647,9 @@ Which could be expressed as this Haskell literal:
             input.</para></footnote>  &hGetContents; has the type
         <literal>Handle -> IO String</literal>.  The &String; it returns
         represents the entire data in the file given by the
-        &Handle;.<footnore><para>More precisely, it is the entire data from the
+        &Handle;.<footnote><para>More precisely, it is the entire data from the
             current position of the file pointer to the end of the
-            file.</para></footnore>
+            file.</para></footnote>
       </para>
       <para>
         In an imperative language, use of such a function is often a bad idea.
@@ -669,7 +669,7 @@ Which could be expressed as this Haskell literal:
       </para>
       <para>
         Let's take a quick look at an example.  Back in
-        <xref linkend="toupper-imp.hs:all"/>, you saw an imperative program
+        <xref linkend="hs.io.files"/>, you saw an imperative program
         that converted the entire content of a file to uppercase.  Its
         imperative algorithm was similar to what you'd see in many other
         languages.  Here now is the much simpler lazy algorithm:
