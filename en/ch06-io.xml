@@ -851,22 +851,19 @@ $ <userinput>runghc toupper-lazy4.hs < input.txt</userinput>
   Haskell is great
         </screen>
         <para>
-          Sure enough, you got back the two lines that contain an "a".
+          Sure enough, you got back the two lines that contain an "a".  
+          Lazy filters are a powerful way to use Haskell.  When you think
+          about it, a filter -- such as the standard Unix program
+          <command>grep</command> -- sounds a lot like a function.  It takes
+          some input, applies some computation, and generates a predictable
+          output.  This is a great match for Haskell.
         </para>
       </sect3>
-      <sect3>
-        <title>Interactive Programs with interact</title>
-        <para>
-          Back in <xref linkend="hs.io.basics"/>, you saw a program that asked
-          the user for a name, then printed a greeting.  Do you think we could
-          do that with &interact;?
-        </para>
-
+    <!--
+    <remark>FIXME: comment on side-effects potentially being problematic</remark>
+    -->
     </sect2>
 
-    <!--
-    <remark>comment on side-effects potentially being problematic</remark>
-    -->
   </sect1>
 
   <sect1 id="hs.io.monad">
