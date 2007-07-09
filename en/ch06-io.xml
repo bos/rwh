@@ -771,21 +771,21 @@ Which could be expressed as this Haskell literal:
         and standard input by using <literal>interact</literal>.  Here's one
         way to do that:
       </para>
-      &toupper-lazy4.hs;
+      &toupper-lazy4.hs:all;
       <para>
         Look at that -- <emphasis>one</emphasis> line of code to achieve our
         transformation!  To achieve the same effect as with the previous
         examples, you could run this one like this:
       </para>
       <screen>
-$ <userinput>runghc toupper-lazy4.hs < input.txt &gt; output.txt</userinput>
+$ <userinput>runghc toupper-lazy4.hs &lt; input.txt &gt; output.txt</userinput>
       </screen>
       <para>
         Or, if you'd like to see the output printed to the screen, you could
         type:
       </para>
       <screen>
-$ <userinput>runghc toupper-lazy4.hs < input.txt</userinput>
+$ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       </screen>
       <para>
         If you want to see that Haskell output truly does write out chunks of
@@ -802,7 +802,7 @@ $ <userinput>runghc toupper-lazy4.hs < input.txt</userinput>
         start with a simple example: adding a line of text before the
         uppercase output.
       </para>
-      &toupper-lazy5.hs;
+      &toupper-lazy5.hs:all;
       <para>
         Here we add a string at the beginning of the output.  Can you spot
         the problem, though?
@@ -846,7 +846,7 @@ $ <userinput>runghc toupper-lazy4.hs < input.txt</userinput>
           Try running this over our standard example input:
         </para>
         <screen>
-  $ <userinput>runghc filter.hs < input.txt</userinput>
+  $ <userinput>runghc filter.hs &lt; input.txt</userinput>
   I like Haskell
   Haskell is great
         </screen>

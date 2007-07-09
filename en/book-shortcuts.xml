@@ -76,4 +76,11 @@
 <!ENTITY writeFile "<literal>writeFile</literal>">
 <!ENTITY hGetContents "<literal>hGetContents</literal>">
 <!ENTITY getContents "<literal>getContents</literal>">
+<!ENTITY elem "<literal>elem</literal>">
+<!ENTITY lines "<literal>lines</literal>">
+<!ENTITY unlines "<literal>unlines</literal>">
+<!ENTITY interact "<literal>interact</literal>">
+<!ENTITY True "<literal>True</literal>">
+<!ENTITY False "<literal>False</literal>">
+<!ENTITY putStr "<literal>putStr</literal>">
 
