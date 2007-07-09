@@ -8,12 +8,8 @@ main = do
        inh <- openFile "input.txt" ReadMode
        outh <- openFile "output.txt" WriteMode
        inpStr <- hGetContents inh
-       let result = processData inpStr
-       hPutStr outh result
+       hPutStr outh (map toUpper inpstr)
        hClose inh
        hClose outh
-
-processData :: String -> String
-processData = map toUpper
 {-- /snippet all --}
 
