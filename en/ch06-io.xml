@@ -718,6 +718,123 @@ Which could be expressed as this Haskell literal:
         passed it to &writeFile; for writing.
       </para>
     </sect2>
+    <sect2 id="hs.io.lazy.output">
+      <title>A Word On Lazy Output</title>
+      <para>
+        By now, you should understand how lazy input works in Haskell.  But
+        what about laziness during output?
+      </para>
+      <para>
+        As you know, nothing in Haskell is evaluated before its value is
+        needed.  Since functions such as &putStr; write out the entire
+        &String; passed to them, that entire &String; must be evaluated.  So
+        you are guaranteed that the argument to &putStr; will be evaluated in
+        full.<footnote><para>Excepting I/O errors such as a full
+            disk, of course.</para></footnote> 
+      </para>
+      <para>
+        But what does that mean for laziness of the input?  In the examples
+        above, will the call to &putStr; or &writeFile; force the entire
+        input string to be loaded into memory at once, just to be written
+        out?
+      </para>
+      <para>
+        The answer is no.  &putStr; (and all the similar output functions)
+        write out data as it becomes available.  They also have no need for
+        keeping around data already written, so as long as nothing else in
+        the program needs it, the memory can be freed immediately.
+      </para>
+      <para>
+        You can verify this yourself by generating a large
+        <literal>input.txt</literal> for <literal>toupper-lazy3.hs</literal>.
+        It may take a bit to process, but you should see a constant -- and
+        low -- memory usage while it is being processed.
+      </para>
+    </sect2>
+
+    <sect2 id="hs.io.lazy.interact">
+      <title>interact</title>
+      <para>
+        You learned that &readFile; and &writeFile; address the common situation of
+        reading from one file, making a conversion, and writing to a
+        different file.  There's a situation that's even more common than
+        that: reading from standard input, making a conversion, and writing
+        the result to standard output.  For that situation, there is a
+        function called &interact;.  &interact; takes one argument: a
+        function of type <literal>String -> String</literal>.  That function
+        is passed the result of <literal>getContents</literal> -- that is,
+        standard input read lazily.  The result of that function is sent to
+        stnadard output.
+      </para>
+      <para>
+        We can convert our example program to operate on standard input
+        and standard input by using <literal>interact</literal>.  Here's one
+        way to do that:
+      </para>
+      &toupper-lazy4.hs;
+      <para>
+        Look at that -- <emphasis>one</emphasis> line of code to achieve our
+        transformation!  To achieve the same effect as with the previous
+        examples, you could run this one like this:
+      </para>
+      <screen>
+$ <userinput>runghc toupper-lazy4.hs < input.txt &gt; output.txt</userinput>
+      </screen>
+      <para>
+        Or, if you'd like to see the output printed to the screen, you could
+        type:
+      </para>
+      <screen>
+$ <userinput>runghc toupper-lazy4.hs < input.txt</userinput>
+      </screen>
+      <para>
+        If you want to see that Haskell output truly does write out chunks of
+        data as soon as they are received, run <literal>runghc
+          toupper-lazy4.hs</literal> without any other command-line
+        parameters.  You should see each character echoed back out as soon as
+        you type it, but in uppercase.  Buffering may change this behavior;
+        see <xref linkend="hs.io.buffering"/> later in this chapter for more
+        on buffering.  If you see each line echoed as soon as you type it, or
+        even nothing at all for awhile, buffering is causing this behavior.
+      </para>
+      <para>
+        You can also write interactive programs using &interact;.  Let's
+        start with a simple example: adding a line of text before the
+        uppercase output.
+      </para>
+      &toupper-lazy5.hs;
+      <para>
+        Here we add a string at the beginning of the output.  Can you spot
+        the problem, though?
+      </para>
+      <para>
+        Since we're calling &map; on the <emphasis>result</emphasis> of
+        <literal>(++)</literal>, that header itself will appear in uppercase.
+        We can fix that in this way:
+      </para>
+      &toupper-lazy6.hs:all;
+      <para>
+        This moved the header outside of the &map;.
+      </para>
+      <para>
+        Another common use of &interact; is filtering.  Let's say that you
+        want to write a program that reads a file and prints out every line
+        that contains the character "a".  Here's how you might do that with
+        &interact;:
+      </para>
+      &filter.hs:all;
+      <para>
+        This may have introduced three functions that you aren't familiar
+        with yet.  Let's inspect their types with &ghci;:
+      </para>
+      &filter.ghci:all;
+      <para>
+        Back in <xref linkend="hs.io.basics"/>, you saw a program that asked
+        the user for a name, then printed a greeting.  Do you think we could
+        do that with &interact;?
+      </para>
+
+    </sect2>
 
     <!--
     <remark>comment on side-effects potentially being problematic</remark>
