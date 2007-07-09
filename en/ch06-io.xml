@@ -701,10 +701,27 @@ Which could be expressed as this Haskell literal:
         Haskell programmers use &hGetContents; as a filter quite often.  They
         read from one file, do something to the data, and write the result
         out elsewhere.  This is so common that there are some shortcuts for
-        doing it.  Two are &readFile; and &writeFile;
+        doing it.  &readFile; and &writeFile; are shortcuts for working with
+        files as strings.  They handle all the details of opening files,
+        closing files, reading data, and writing data.  &readFile; uses
+        &hGetContents; internally.
+      </para>
+      <para>
+        Can you guess the Haskell types of these functions?  Let's check with
+        &ghci;:
+      </para>
+      &toupper-lazy3.hs:all;
+      <para>
+        Look at that -- the guts of the program takes up only two lines!
+        &readFile; returned a lazy &String;, which we stored in
+        <literal>inpStr</literal>.  We then took that, processed it, and
+        passed it to &writeFile; for writing.
+      </para>
+    </sect2>
 
-
+    <!--
     <remark>comment on side-effects potentially being problematic</remark>
+    -->
   </sect1>
 
   <sect1 id="hs.io.monad">
