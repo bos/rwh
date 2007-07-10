@@ -139,7 +139,8 @@ book.zip: .validated $(src-figs)
 	cp $(src-files) $(xml-examples) bookzip
 	cp $(src-figs) bookzip/figs
 	mv bookzip/00book.xml bookzip/book.xml
-	perl -pi -e 's,:([a-z0-9_.-]+\.xml">),.\1,i' bookzip/book.xml
+	perl -pi -e 's,:([a-z0-9_.-]+\.xml">),.\1,i' bookzip/book.xml \
+	    bookzip/auto-snippets.xml
 	cd bookzip; for i in *:*.xml; do mv $$i $$(echo $$i | tr : .); done
 	cd bookzip; zip -qr8 ../book.zip .
 	rm -r bookzip
