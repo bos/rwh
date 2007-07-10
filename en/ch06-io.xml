@@ -866,6 +866,11 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
   <sect1 id="hs.io.monad">
     <title>The IO Monad</title>
     <para>
+      You've seen a number of examples of I/O in Haskell by this point.
+      Let's take a moment to step back and think about how I/O relates to the
+      broader Haskell language.
+    </para>
+    <para>
       You may recall from <remark>FIXME: add ref</remark> that Haskell is a
       pure language.  That is, if you give a certain function a specific
       argument, the function will return the same result every time you give
@@ -900,8 +905,41 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       understand that the return value of actions is "tagged" with 
       &IO;.  Let's take a look at some types:
     </para>
-
-    <remark>FIXME</remark>
+    &basicio.ghci:all;
+    <para>
+      The type of &putStrLn; is just another function.  The function takes
+      one parameter and returns an <literal>IO ()</literal>.  This
+      <literal>IO ()</literal> is the action.  You can store and pass actions
+      in pure code, though this is rarely done.  An action doesn't do
+      anything until it is invoked.  Let's look at an example of this:
+    </para>
+    &actions.hs:all;
+    <para>
+      <literal>str2action</literal> is a function that takes one parameter
+      and returns an <literal>IO ()</literal>.  As you can see at the end of
+      &main;, you could use this directly in another action and it will print
+      out a line right away.  But you can store -- but not execute -- the
+      action from pure code.  You can see an example of that in
+      <literal>list2actions</literal> -- we use &map; over
+      <literal>str2action</literal> and return a list of actions, just like
+      we would with other pure data.  You can see that everything up through
+      <literal>printitall</literal> is built up with pure tools.
+    </para>
+    <para>
+      Although we define <literal>printitall</literal>, it doesn't get
+      executed until its action is evaluated somewhere else.  Notice in
+      <literal>main</literal> how we use <literal>str2action</literal> as
+      an I/O action to be executed, but earlier we used it outside of the I/O
+      monad and assembled results into a list.
+    </para>
+    <para>
+      You could think of it this way: every statement, except &let;, in a &do; block must
+      yeild an I/O action which will be executed.
+    </para>
+    <para>
+      The call to &printall; finally executes all those actions.  Actually,
+      since Haskell is lazy, the actions aren't generated until here either.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.imperative">
