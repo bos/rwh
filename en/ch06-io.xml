@@ -85,7 +85,7 @@ Welcome to Haskell, John!
       happens right then.  But if I later call <literal>writefoo</literal> in
       the middle of another I/O action, it will be executed.  The
       <literal>()</literal> is, essentially, an empty return value; there is
-      no return value to speak of from <literal>putstrLn</literal>.
+      no return value to speak of from &putStrLn;.
     </para>
     <para>
       The type of &getLine; may look strange to you.  It looks like a value,
@@ -179,7 +179,7 @@ Welcome to Haskell, John!
       often need to manipulate specific files.  That's easy to do, too.  
     </para>
     <para>
-      You can easily read and write data from specific files.  You will
+      You will
       generally begin by using &openFile;, which will give you a file &Handle;.
       That &Handle; is then used to perform specific operations on the file.
       Haskell provides functions such as &hPutStrLn; that work just like
@@ -352,7 +352,7 @@ I/O IS FUN
         you call &hClose;.
       </para>
       <para>
-        Another reason to make sure to &hClose; files is that open file take
+        Another reason to make sure to &hClose; files is that open files take
         up memory on the system.  If your program runs for a long time, and
         opens many files but fails to close them, it is conceivable that your
         program could even crash due to resource exhaustion.
@@ -370,7 +370,7 @@ I/O IS FUN
       <title>Seek and Tell</title>
       <para>
         When reading and writing from a file, the operating system maintains
-        an internal idea of the current position.  Each time to do another
+        an internal idea of the current position.  Each time you do another
         read, the operating system returns the next chunk of data that begins
         at the current position, and increments the position to reflect the
         data that you read.
@@ -598,20 +598,20 @@ Which could be expressed as this Haskell literal:
       Looking at this output, there are a few questions that might occur to
       you:
     </para>
-    <itemizedlist>
+    <orderedlist>
       <listitem><para>Why is your position 23 after writing a line with 22
           bytes?</para></listitem>
       <listitem><para>Why is there an empty line after the file content
           display?</para></listitem>
       <listitem><para>Why is there a <literal>\n</literal> at the end of the
           Haskell literal display?</para></listitem>
-    </itemizedlist>
+    </orderedlist>
     <para>
       You might be able to guess that the answers to all three questions are
       related.  See if you can work out the answers for a moment.  If you
       need some help, here are the explanations:
     </para>
-    <itemizedlist>
+    <orderedlist>
       <listitem><para>That's because we used &hPutStrLn; instead of &hPutStr;
           to write the data.  &hPutStrLn; always terminates the line by
           writing a <literal>\n</literal> at the end, which didn't appear in
@@ -623,7 +623,7 @@ Which could be expressed as this Haskell literal:
           The result is a blank line.</para></listitem>
       <listitem><para>The <literal>\n</literal> is the newline character from
           the original &hPutStrLn;.</para></listitem>
-    </itemizedlist>
+    </orderedlist>
   </sect1>
 
   <sect1 id="hs.io.lazy">
@@ -798,7 +798,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         even nothing at all for awhile, buffering is causing this behavior.
       </para>
       <para>
-        You can also write interactive programs using &interact;.  Let's
+        You can also write simple interactive programs using &interact;.  Let's
         start with a simple example: adding a line of text before the
         uppercase output.
       </para>
@@ -859,9 +859,6 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           output.  This is a great match for Haskell.
         </para>
       </sect3>
-    <!--
-    <remark>FIXME: comment on side-effects potentially being problematic</remark>
-    -->
     </sect2>
 
   </sect1>
@@ -933,6 +930,9 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
     <remark>CWD</remark>
   </sect1>
 
+  <!--
+  <remark>FIXME: comment on side-effects potentially being problematic</remark>
+  -->
 
 </chapter>
  
