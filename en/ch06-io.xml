@@ -907,7 +907,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         understand that the return value of actions is "tagged" with 
         &IO;.  Let's take a look at some types:
       </para>
-      &basicio.ghci:all;
+      &basicio.ghci:all.noid;
       <para>
         The type of &putStrLn; is just another function.  The function takes
         one parameter and returns an <literal>IO ()</literal>.  This
@@ -939,7 +939,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         yeild an I/O action which will be executed.
       </para>
       <para>
-        The call to &printall; finally executes all those actions.  Actually,
+        The call to <literal>printall</literal>; finally executes all those actions.  Actually,
         since Haskell is lazy, the actions aren't generated until here either.
       </para>
       <para>
@@ -978,23 +978,29 @@ Data: Done!
         These functions actually work for more than just I/O; they work for any
         &Monad;.  For now, wherever you see "m", just think "IO".
       </para>
+      <para>
+        Why a &mapM; when we already have &map;?  Because &map; is a pure
+        function that returns a list.  It doesn't -- and can't -- actually
+        execute anything directly.  &mapM; is a utility that lives in the
+        &IO; monad and thus can actually execute the actions.
+      </para>
     </sect2>
     <sect2>
       <title>Sequencing</title>
       <para>
         We mentioned earlier that &do; blocks are a shortcut notation.  This
         is true.  There are two operators that you can use instead of &do;
-        blocks: &>>; and &>>=;.  Let's look at their types in &ghci;:
+        blocks: &rr; and &rre;.  Let's look at their types in &ghci;:
       </para>
       &sequence.ghci:all;
       <para>
-        &>>; sequences two actions together: the first action is performed,
+        &rr; sequences two actions together: the first action is performed,
         then the second, and the result of the two will be the result of the
         second.  The result of the first is thrown away.  This is similar to
         simply having a new line in a &do; block.
       </para>
       <para>
-        &>>=; runs an action, passes its result to a function that returns an
+        &rre; runs an action, passes its result to a function that returns an
         action.  That action is run as well, and the result of the entire
         expression is the result of that second action.
       </para>
@@ -1016,7 +1022,17 @@ Data: Done!
 
   <sect1 id="hs.io.imperative">
     <title>Is Haskell Really Imperative?</title>
-    <remark>FIXME</remark>
+    <remark>FIXME: does anyone have a better explanation here?</remark>
+    <para>
+      These &do; blocks may look a lot like an imperative language.  After
+      all, you're giving commands to run in sequence most of the time.
+    </para>
+    <para>
+      But Haskell remains a lazy language at its core.  While it is necessary
+      to sequence actions for I/O at times, this is done using tools that are
+      part of Haskell already.  Haskell achieves a nice separation of I/O
+      from the rest of the language through the &IO; monad as well.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.buffering">

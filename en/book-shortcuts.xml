@@ -84,4 +84,9 @@
 <!ENTITY False "<literal>False</literal>">
 <!ENTITY putStr "<literal>putStr</literal>">
 <!ENTITY map "<literal>map</literal>">
+<!ENTITY mapM "<literal>mapM</literal>">
+<!ENTITY mapM_ "<literal>mapM_</literal>">
+<!ENTITY rr "<literal>&gt;&gt;</literal>">
+<!ENTITY rre "<literal>&gt;&gt;=</literal>">
+<!ENTITY Monad "<literal>Monad</literal>">
 
