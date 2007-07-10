@@ -940,6 +940,43 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       The call to &printall; finally executes all those actions.  Actually,
       since Haskell is lazy, the actions aren't generated until here either.
     </para>
+    <para>
+      When you run the program, your output will look like this:
+    </para>
+    <screen>
+Data: Start of the program
+Data: 1
+Data: 2
+Data: 3
+Data: 4
+Data: 5
+Data: 6
+Data: 7
+Data: 8
+Data: 9
+Data: 10
+Data: Done!
+    </screen>
+    <para>
+      We can actually write this in a much more compact way.  Consider this
+      revision of the example:
+    </para>
+    &actions2.hs:all;
+    <para>
+      Notice in <literal>str2action</literal> the use of the standard
+      function composition operator.  In &main;, there's a call to &mapM_;.
+      This function is similar to &map;.  It takes a function and a list.
+      The function supplied to &mapM_; is an I/O action that is executed for
+      every item in the list.  &mapM_; throws out the result of the function,
+      though you can use &mapM; to return a list of I/O results if you want
+      them.  Take a look at their types:
+    </para>
+    &map.ghci:all;
+    <para>
+      These functions actually work for more than just I/O; they work for any
+      &Monad;.  For now, wherever you see "m", just think "IO".
+    </para>
+
   </sect1>
 
   <sect1 id="hs.io.imperative">
