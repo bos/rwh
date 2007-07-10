@@ -887,63 +887,65 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       a different continent.  I/O doesn't just change the state of a program.
       You can think of I/O as changing the state of the world.
     </para>
-    <para>
-      Most languages do not make a distinction between a pure function and an
-      impure one.  Haskell has functions in the mathematical sense: they are
-      purely computations which cannot be impacted by anything external.
-      Moreover, the computation can be performed at any time -- or even
-      never, if its result is never needed.
-    </para>
-    <para>
-      Clearly, then, we need some other tool to work with I/O.  That tool in
-      Haskell is called <emphasis>actions</emphasis>.  Actions resemble
-      functions.  They do nothing when they are defined, but perform some
-      task when they are invoked.  I/O actions are defined within the &IO;
-      monad.  Monads are actually a powerful way of chaining data together
-      purely and are covered in <remark>FIXME: insert ref</remark>.  It's not
-      necessary to understand monads in order to understand I/O.  Just
-      understand that the return value of actions is "tagged" with 
-      &IO;.  Let's take a look at some types:
-    </para>
-    &basicio.ghci:all;
-    <para>
-      The type of &putStrLn; is just another function.  The function takes
-      one parameter and returns an <literal>IO ()</literal>.  This
-      <literal>IO ()</literal> is the action.  You can store and pass actions
-      in pure code, though this is rarely done.  An action doesn't do
-      anything until it is invoked.  Let's look at an example of this:
-    </para>
-    &actions.hs:all;
-    <para>
-      <literal>str2action</literal> is a function that takes one parameter
-      and returns an <literal>IO ()</literal>.  As you can see at the end of
-      &main;, you could use this directly in another action and it will print
-      out a line right away.  But you can store -- but not execute -- the
-      action from pure code.  You can see an example of that in
-      <literal>list2actions</literal> -- we use &map; over
-      <literal>str2action</literal> and return a list of actions, just like
-      we would with other pure data.  You can see that everything up through
-      <literal>printitall</literal> is built up with pure tools.
-    </para>
-    <para>
-      Although we define <literal>printitall</literal>, it doesn't get
-      executed until its action is evaluated somewhere else.  Notice in
-      <literal>main</literal> how we use <literal>str2action</literal> as
-      an I/O action to be executed, but earlier we used it outside of the I/O
-      monad and assembled results into a list.
-    </para>
-    <para>
-      You could think of it this way: every statement, except &let;, in a &do; block must
-      yeild an I/O action which will be executed.
-    </para>
-    <para>
-      The call to &printall; finally executes all those actions.  Actually,
-      since Haskell is lazy, the actions aren't generated until here either.
-    </para>
-    <para>
-      When you run the program, your output will look like this:
-    </para>
-    <screen>
+    <sect2 id="hs.io.monad.actions">
+      <title>Actions</title>
+      <para>
+        Most languages do not make a distinction between a pure function and an
+        impure one.  Haskell has functions in the mathematical sense: they are
+        purely computations which cannot be impacted by anything external.
+        Moreover, the computation can be performed at any time -- or even
+        never, if its result is never needed.
+      </para>
+      <para>
+        Clearly, then, we need some other tool to work with I/O.  That tool in
+        Haskell is called <emphasis>actions</emphasis>.  Actions resemble
+        functions.  They do nothing when they are defined, but perform some
+        task when they are invoked.  I/O actions are defined within the &IO;
+        monad.  Monads are actually a powerful way of chaining data together
+        purely and are covered in <remark>FIXME: insert ref</remark>.  It's not
+        necessary to understand monads in order to understand I/O.  Just
+        understand that the return value of actions is "tagged" with 
+        &IO;.  Let's take a look at some types:
+      </para>
+      &basicio.ghci:all;
+      <para>
+        The type of &putStrLn; is just another function.  The function takes
+        one parameter and returns an <literal>IO ()</literal>.  This
+        <literal>IO ()</literal> is the action.  You can store and pass actions
+        in pure code, though this is rarely done.  An action doesn't do
+        anything until it is invoked.  Let's look at an example of this:
+      </para>
+      &actions.hs:all;
+      <para>
+        <literal>str2action</literal> is a function that takes one parameter
+        and returns an <literal>IO ()</literal>.  As you can see at the end of
+        &main;, you could use this directly in another action and it will print
+        out a line right away.  But you can store -- but not execute -- the
+        action from pure code.  You can see an example of that in
+        <literal>list2actions</literal> -- we use &map; over
+        <literal>str2action</literal> and return a list of actions, just like
+        we would with other pure data.  You can see that everything up through
+        <literal>printitall</literal> is built up with pure tools.
+      </para>
+      <para>
+        Although we define <literal>printitall</literal>, it doesn't get
+        executed until its action is evaluated somewhere else.  Notice in
+        <literal>main</literal> how we use <literal>str2action</literal> as
+        an I/O action to be executed, but earlier we used it outside of the I/O
+        monad and assembled results into a list.
+      </para>
+      <para>
+        You could think of it this way: every statement, except &let;, in a &do; block must
+        yeild an I/O action which will be executed.
+      </para>
+      <para>
+        The call to &printall; finally executes all those actions.  Actually,
+        since Haskell is lazy, the actions aren't generated until here either.
+      </para>
+      <para>
+        When you run the program, your output will look like this:
+      </para>
+      <screen>
 Data: Start of the program
 Data: 1
 Data: 2
@@ -956,27 +958,60 @@ Data: 8
 Data: 9
 Data: 10
 Data: Done!
-    </screen>
-    <para>
-      We can actually write this in a much more compact way.  Consider this
-      revision of the example:
-    </para>
-    &actions2.hs:all;
-    <para>
-      Notice in <literal>str2action</literal> the use of the standard
-      function composition operator.  In &main;, there's a call to &mapM_;.
-      This function is similar to &map;.  It takes a function and a list.
-      The function supplied to &mapM_; is an I/O action that is executed for
-      every item in the list.  &mapM_; throws out the result of the function,
-      though you can use &mapM; to return a list of I/O results if you want
-      them.  Take a look at their types:
-    </para>
-    &map.ghci:all;
-    <para>
-      These functions actually work for more than just I/O; they work for any
-      &Monad;.  For now, wherever you see "m", just think "IO".
-    </para>
-
+      </screen>
+      <para>
+        We can actually write this in a much more compact way.  Consider this
+        revision of the example:
+      </para>
+      &actions2.hs:all;
+      <para>
+        Notice in <literal>str2action</literal> the use of the standard
+        function composition operator.  In &main;, there's a call to &mapM_;.
+        This function is similar to &map;.  It takes a function and a list.
+        The function supplied to &mapM_; is an I/O action that is executed for
+        every item in the list.  &mapM_; throws out the result of the function,
+        though you can use &mapM; to return a list of I/O results if you want
+        them.  Take a look at their types:
+      </para>
+      &map.ghci:all;
+      <para>
+        These functions actually work for more than just I/O; they work for any
+        &Monad;.  For now, wherever you see "m", just think "IO".
+      </para>
+    </sect2>
+    <sect2>
+      <title>Sequencing</title>
+      <para>
+        We mentioned earlier that &do; blocks are a shortcut notation.  This
+        is true.  There are two operators that you can use instead of &do;
+        blocks: &>>; and &>>=;.  Let's look at their types in &ghci;:
+      </para>
+      &sequence.ghci:all;
+      <para>
+        &>>; sequences two actions together: the first action is performed,
+        then the second, and the result of the two will be the result of the
+        second.  The result of the first is thrown away.  This is similar to
+        simply having a new line in a &do; block.
+      </para>
+      <para>
+        &>>=; runs an action, passes its result to a function that returns an
+        action.  That action is run as well, and the result of the entire
+        expression is the result of that second action.
+      </para>
+      <para>
+        Let's re-write one of our examples to avoid &do; blocks.  Remember
+        this example from the start of the chapter?
+      </para>
+      &basicio.hs:all.noid;
+      <para>
+        Let's write that without a &do; block:
+      </para>
+      &basicio-nodo.hs:all;
+      <para>
+        The Haskell compiler is internally performing a translation just like
+        this when you define a &do; block.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.io.imperative">
