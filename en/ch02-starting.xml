@@ -685,24 +685,151 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1 id="hs.starting.functions">
-    <title>Haskell Programs: Source Files and Functions</title>
-    <remark>FIXME: What Haskell source files look like.  How to write a simple
-  function.  Hey, functions look different from traditional languages!
-  How to get ghci to load the source file; using the definitions from
-  it.
-    </remark>
+  <sect1 id="hs.starting.types">
+    <title>First steps with types</title>
+
+    <para>Despite all our talk of types, our interactions with &ghci;
+      have so far been free of much type-related thinking.  We haven't
+      told &ghci; what types we've been using, and it's mostly been
+      willing to accept our input.</para>
+
+    <para>The first thing we can do to start explicitly exploring the
+      world of types is to get &ghci; to tell us more about what it's
+      doing.  &ghci; has a command, <command>:set</command>, that lets
+      us change a few of its default behaviours.  We can tell it to
+      print more type information as follows.</para>
+
+    &types.ghci:set_t_on;
+
+    <para>What the <code>+t</code> does is tell &ghci; to print the
+      type of an expression after  the expression.  That cryptic
+      <varname>it</varname> in the output can be very useful: it's
+      actually the name of a special variable, in which &ghci; stores
+      the result of the last expression we evaluated.  Let's break
+      down the meaning of the last line of &ghci; output, then.</para>
+      
+    <itemizedlist>
+      <listitem>
+	<para>It's telling us about the variable
+	  <varname>it</varname>.</para>
+      </listitem>
+      <listitem>
+	<para>We can read the text <code>::</code> as meaning
+	  <quote>the value on the left has the type on the
+	    right</quote>.</para>
+      </listitem>
+      <listitem>
+	<para>And the value on the right is the type in question,
+	  namely <type>[Char]</type>.</para>
+      </listitem>
+    </itemizedlist>
+
+    <note>
+      <title>The joy of <quote>it</quote></title>
+
+      <para>That <varname>it</varname> variable is wonderfully handy
+	when we want to use the result of a prior expression in a new
+	expression.</para>
+
+      &types.ghci:it;
+
+      <para>When evaluating an expression, &ghci; won't change the
+	value of <varname>it</varname> until after it's finished.  An
+	error in the evaluation will leave <varname>it</varname>
+	untouched, so we can type possibly bogus expressions with a
+	bit of a safety net.</para>
+
+      &types.ghci:it.bad;
+
+      <para>Coupling <varname>it</varname> with liberal use of the
+	arrow keys to recall and edit the last expression we typed,
+	and we have a fairly decent environment for interactive
+	experiments, where the cost of mistakes is very low.  Take
+	advantage of the opportunity to make cheap, plentiful mistakes
+	when you're exploring the language!</para>
+    </note>
+
+    <para>Here are a few more of Haskell's names for types, from
+      expressions of the sort we've already seen.</para>
+
+      &types.ghci:integer;
+
+    <para><type>Integer</type> is Haskell's arbitrary-precision
+      integer type.</para>
+
+    <note>
+      <para>Both of the type names we've seen so far,
+	<type>Char</type> and <type>Integer</type>, have started with
+	capital letters.  This isn't an accident; Haskell requires
+	type names to start with an uppercase letter, and variable
+	names with a lowercase letter.</para>
+    </note>
+
+    <para>Rational numbers don't look quite the same.</para>
+
+    &types.ghci:ratio;
+
+    <para>Notice <emphasis>two</emphasis> words on the right hand side
+      of the <code>::</code> above.  We can read this as a
+      <type>Ratio</type> of <type>Integer</type>, and infer that a
+      <type>Ratio</type> will probably need to have values of type
+      <type>Integer</type> as both numerator and denominator.  Sure
+      enough, if we try to construct a <type>Ratio</type> where the
+      numerator and denominator are of different types, &ghci;
+      complains.</para>
+
+    &types.ghci:ratio.bad;
+
+    <para>Although it's initially useful to have <userinput>:set
+	+t</userinput> giving us type information for every expression
+      we enter, this is a facility we'll quickly outgrow, simply
+      because it will become redundant: after a while, we'll often
+      know what type we expect an expression to have, so why get
+      &ghci; to remind us?  We can turn off the extra type information
+      at any time.</para>
+
+    &types.ghci:set_t_off;
+    
+    <para>Even with this facility turned off,  we can still get that
+      type information easily when we need it, using another &ghci;
+      command.</para>
+
+    &types.ghci:type;
+
+    <para>The <command>:type</command> command will print type
+      information for any expression we give it (including
+      <varname>it</varname>, as we see above).  It won't actually
+      evaluate the expression; it only checks its type and prints
+      that.</para>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>Foo?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
-  <sect1 id="hs.starting.types">
-    <title>Types</title>
-    <remark>FIXME: 
-  Introduce types.  Use ghci to inspect the types of a few values and
-  functions.  Describe what the "->" means.  Note the difference in
-  case between the first character of types and functions/values.
-  Take the type information ghci gave us; put it in the source file;
-  reload.  Notice that ghci is still happy.
-    </remark>
+  <sect1>
+    <title>Conclusion</title>
+
+    <para>In this chapter, we've seen how to install &GHC; for our
+      environment.  We then went on to interactively explore some
+      basic Haskell concepts using &ghci; the interpreter bundled with
+      &GHC;.  We saw how to evaluate simple expressions.</para>
+
+    <para>We dipped a toe into the water of typing.</para>
+    <para>We also had drilled into us the notion that we don't need to
+      understand, or be intimidated by, every single gripe that &ghci;
+      throws our way.  We'll do just fine with a shallow understanding
+      initially, and rely on practice and more reading to round out
+      our knowledge.  Onwards!</para>
+
   </sect1>
 </chapter>
 
