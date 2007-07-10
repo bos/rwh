@@ -47,6 +47,8 @@ tools := ghcisession snippets
 runhaskell ?= runghc
 
 xmllint := xmllint
+xmllint-opts := --noout --nonet --valid
+
 xmlto := xmlto
 
 xml-path := $(CURDIR):$(CURDIR)/x
@@ -124,7 +126,7 @@ auto-snippets.xml: $(stamp-examples)
 	cat $^ | sort >> $@
 
 .validated: $(tools:%=../tools/bin/%) $(src-files)
-	$(xmllint) --path '$(dtd-dir):$(xml-path)' --noout --nonet --valid $(src-master)
+	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $(src-master)
 	touch .validated
 
 # Generate a zip file with the kind of contents required by nostromo's
@@ -143,6 +145,7 @@ book.zip: .validated $(src-figs)
 	    bookzip/auto-snippets.xml
 	cd bookzip; for i in *:*.xml; do mv $$i $$(echo $$i | tr : .); done
 	cd bookzip; zip -qr8 ../book.zip .
+	cd bookzip; $(xmllint) --path '$(dtd-dir):.' $(xmllint-opts) book.xml
 	rm -r bookzip
 
 clean:
