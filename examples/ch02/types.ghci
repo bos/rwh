@@ -1,0 +1,41 @@
+:m Data.Ratio
+
+--# set_t_on
+
+:set +t
+'c'
+"foo"
+
+--# it
+
+it ++ "bar"
+
+--# it.bad
+
+it
+it ++ 3
+it
+it ++ "baz"
+
+--# integer
+
+7 ^ 80
+
+--# ratio
+
+11 % 29
+
+--# ratio.bad
+
+3.14 % 8
+
+--# set_t_off
+
+:set -t
+2
+
+--# type
+
+:type 22 % 7
+"foo"
+:type it
