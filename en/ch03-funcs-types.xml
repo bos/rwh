@@ -3,6 +3,171 @@
 <chapter id="hs.funcstypes">
   <title>Types and Functions</title>
 
+  <sect1>
+    <title>Haskell's type system</title>
+    
+    <para><quote>Haskell has a strong, static type system with
+	inference.</quote> For a short sentence, this one has a lot
+      for us to pore over.  Because Haskell is quite different from
+      mainstream programming languages in how it treats types, let's
+      not assume anything as we talk about types.</para>
+
+    <para>Every value and expression in Haskell has a
+      <emphasis>type</emphasis>.  The type of a value indicates that
+      it shares certain properties with other values that have the
+      same type.  (You'll see us refer to a value <quote>having the
+	type <code>X</code></quote>, or <quote>being of type
+	<code>X</code></quote>.  The two phrases mean the same thing.)
+      All values that have the type <type>Integer</type> have the
+      ability to be added to other values of type
+      <type>Integer</type>, and so on.</para>
+
+    <para>Haskell has a <quote>strong</quote> type system, in which
+      every expression and value has exactly one type.  Where many
+      other programming languages have rules under which they will
+      automatically convert values from one type to another for us,
+      Haskell does not second guess our intentions.  This is another
+      aspect of its notion of strong typing.</para>
+
+    <note>
+      <para>Conversations about type systems can lead to many a
+	misunderstanding among programmers.  Some people say that C
+	has a strong type system; others claim that Python does.
+	Haskell programmers think strong typing is still something
+	else.</para>
+
+      <para>Since there's no universally agreed upon meaning for the
+	phrase <quote>strong types</quote>,  it's best not to assume
+	that someone else shares the same notion of it as you do.  (We
+	also suggest that putting forth one definition as better than
+	another doesn't often lead to enlightened discussion.)</para>
+    </note>
+
+    <para>Having a <quote>static</quote> type system means that the
+      compiler knows the type of every value and expression at compile
+      time, before any code is ever executed.  A Haskell compiler or
+      interpreter will detect when we try to use types inconsistently
+      in our code, and reject the code with an error message.</para>
+
+    &ch03.basics.ghci:error;
+
+    <para>Static typing also means that type errors can't occur when a
+      program is running.</para>
+
+    <para>Finally, <quote>type inference</quote> means what it says:
+      the compiler can automatically figure out the types of most
+      values for us, so that we don't have to explicitly label
+      them.</para>
+
+    <para>We've already briefly seen Haskell's notation for types in
+      <xref linkend="hs.starting.types"/>.  We write <code>expression
+	:: <type>MyType</type></code> to say that
+      <code>expression</code> has the type <type>MyType</type>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Haskell's standard types</title>
+    
+    <para>We've already encountered a few types in <xref
+	linkend="hs.starting.types"/>.  Haskell has a number of
+      built-in types that we'll use all the time.  We can categorise
+      these into <quote>basic</quote> types and
+      <quote>compound</quote> types that we build from basic
+      types.</para>
+
+    <sect2>
+      <title>Basic types</title>
+
+      <para>A <quote>basic</quote> type is simply one that isn't
+	constructed from any simpler types.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>The <type>Char</type> type represents a character.
+	    The values of <type>Char</type> are drawn from the Unicode
+	    character set.</para>
+	</listitem>
+	<listitem>
+	  <para>The <type>Bool</type> type represents a value in
+	    Boolean logic.  The possible values of <type>Bool</type>
+	    are <code>True</code> and <code>False</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>The <type>Int</type> type represents a signed,
+	    fixed-width integer.  The exact range of values
+	    represented by <type>Int</type> depends on the system's
+	    longest <quote>native</quote> integer: on a 32-bit
+	    machine, an <type>Int</type> is usually 32 bits wide,
+	    while on a 64-bit machine, it is usually 64 bits
+	    wide.</para>
+	</listitem>
+	<listitem>
+	  <para>The <type>Integer</type> type represents a signed
+	    integer of arbitrary width.  <type>Integer</type> values
+	    are not used as often as <type>Int</type>s, because
+	    they're a lot more expensive to work with.</para>
+	</listitem>
+	<listitem>
+	  <para>The <type>Double</type> type is the usual type used to
+	    represent floating point numbers.  It is typically 64 bits
+	    wide.</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Boolean values and algebraic data types</title>
+
+      <para>The <type>Bool</type> type that we introduced above is the
+	simplest example of a category called an <emphasis>algebraic
+	  data type</emphasis>. An algebraic data type has a fixed
+	(and usually small) set of possible values, each of which is
+	identified by a name.  Each name is called a
+	<emphasis>constructor</emphasis>.</para>
+
+      <para>In the case of <type>Bool</type>, the type has two
+	constructors, <code>True</code> and <code>False</code>.  We
+	call them constructors because they're what we use to create
+	values.  When we write <code>False</code>, Haskell will
+	construct that value.</para>
+
+      <para>We'll have much more to say about algebraic data types
+	later, but this quick introduction will help us to understand
+	lists, which we're about to encounter again.</para>
+    </sect2>
+
+    <sect2>
+      <title>Lists</title>
+
+      <para>We've already seen the list type mentioned in <xref
+	linkend="hs.starting.string"/>, where we found that Haskell
+	represents a text string as a list of <type>Char</type>
+	values, and that the type <quote>list of
+	  <type>Char</type></quote> is written
+	<type>[Char]</type>.</para>
+
+      <para>More generally, we can write the type <quote>list of
+	  <varname role="type">a</varname></quote> for any type
+	<varname role="type">a</varname> by enclosing it in square
+	brackets, <type>[a]</type>.</para>
+
+      <para>Like the <type>Bool</type> type, a list is an algebraic
+	data type.  There are only two ways to construct a list.  One
+	constructor is the empty list, written <code>[]</code>.</para>
+
+      &list.ghci:empty;
+
+      <para>The other is the <function>:</function> operator, often
+	pronounced <quote>cons</quote> (this is short for
+	<quote>construct</quote>, and borrowed from Lisp).  The
+	<code>:</code> operator takes an element and a list, and
+	constructs a new list.</para>
+
+      &list.ghci:cons;
+
+    </sect2>
+  </sect1>
+
   <sect1 id="hs.funcstypes.strong">
     <title>Strong and Static Typing With Inference</title>
     <remark>FIXME</remark>

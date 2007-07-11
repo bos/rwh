@@ -11,6 +11,7 @@ src-files := $(src-master) \
 src-examples := \
 	$(wildcard ../examples/ch01/*.hs) \
 	$(wildcard ../examples/ch02/*.ghci) \
+	$(wildcard ../examples/ch03/*.ghci) \
 	$(wildcard ../examples/ch05/*.hs) \
 	$(wildcard ../examples/ch05/*.ghci) \
 	$(wildcard ../examples/ch06/*.hs) \
@@ -115,7 +116,7 @@ valid: .validated
 .PHONY: tools
 tools: $(tools:%=../tools/bin/%)
 
-$(tools:%=../tools/bin/%): ../tools/.setup-config
+$(tools:%=../tools/bin/%): ../tools/.setup-config ../tools/*.hs
 	cd ../tools && $(runhaskell) Setup build && $(runhaskell) Setup install
 
 ../tools/.setup-config: ../tools/tools.cabal

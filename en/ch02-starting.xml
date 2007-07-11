@@ -623,7 +623,7 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.starting.string">
     <title>Text, strings and lists</title>
 
     <para>If you are familiar with a language like Python, you'll find
