@@ -1078,7 +1078,34 @@ Data: Done!
 
   <sect1 id="hs.io.buffering">
     <title>Buffering</title>
-    <remark>FIXME</remark>
+    <para>
+      I/O is one of the slowest parts of a modern computer.  Completing a
+      write to disk can take thousands of times as long as a write to memory.
+      A write over the network can be hundreds or thousands of times slower
+      yet.  Even if your operation doesn't directly impact the disk --
+      perhaps because the data is cached -- I/O still involves a system call,
+      which slows things down by itself.
+    </para>
+    <para>
+      For this reason, modern operating systems and programming languages
+      both provide various tools to help programs perform better where I/O is
+      concerned.  The operating system typically performs caching -- storing
+      frequently-used pieces of data in memory for faster access.
+    </para>
+    <para>
+      Programming languages typically perform buffering.  This means that
+      they may request one large chunk of data from the operating system,
+      even if the code underneath is processing data one character at a time.
+      By doing this, they can achieve remarkable performance gains because
+      each request for I/O to the operating system carries a processing cost.
+    </para>
+    <para>
+      Haskell, too, provides buffering.  In many cases, it is even on by
+      default.  Up till now, we have pretended it isn't there.  Haskell
+      usually is good about picking a good default buffering mode.  But this
+      default is rarely the fastest.  If you have speed-critical I/O code,
+      changing buffering could make a significant impact on your program.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.let">
@@ -1096,10 +1123,6 @@ Data: Done!
     <remark>FIXME</remark>
     <remark>CWD</remark>
   </sect1>
-
-  <!--
-  <remark>FIXME: comment on side-effects potentially being problematic</remark>
-  -->
 
 </chapter>
  
