@@ -1022,7 +1022,7 @@ Data: Done!
 
   <sect1 id="hs.io.imperative">
     <title>Is Haskell Really Imperative?</title>
-    <remark>FIXME: does anyone have a better explanation here?</remark>
+    <remark>FIXME: I don't really like this explanation</remark>
     <para>
       These &do; blocks may look a lot like an imperative language.  After
       all, you're giving commands to run in sequence most of the time.
@@ -1033,6 +1033,47 @@ Data: Done!
       part of Haskell already.  Haskell achieves a nice separation of I/O
       from the rest of the language through the &IO; monad as well.
     </para>
+  </sect1>
+
+  <sect1 id="hs.io.sideeffects">
+    <title>Side-Effects with Lazy I/O</title>
+    <para>
+      Earlier in this chapter, you read about &hGetContents;.
+      We explained that the &String; it returns can be used in pure code.
+    </para>
+    <para>
+      We need to get a bit more specific about what side-effects are.  When
+      we say Haskell has no side-effects, what exactly does that mean?
+    </para>
+    <para>
+      At a certain level, side-effects are always possible.  A poorly-written
+      loop, even if written in pure code, could cause the system's RAM to be
+      exhausted and the machine to crash.  Or it could cause data to be
+      swapped to disk.
+    </para>
+    <para>
+      When we speak of no side-effects, we mean that pure code in Haskell
+      can't run commands that trigger side-effects.  Pure functions 
+      can't modify a global variable, request I/O, or run a command to take
+      down a system.
+    </para>
+    <para>
+      When you have a &String; from &hGetContents; that is passed to a pure
+      function, the function has no idea that this &String; is backed by a
+      disk file.  It will behave just as it always would, but processing that
+      &String; may cause the environment to issue I/O commands.  The pure
+      function isn't issuing them; they are happening as a result of the
+      processing the pure function is doing, just as with the example of
+      swapping RAM to disk.
+    </para>
+    <para>
+      In some cases, you may need more control over exactly when your I/O
+      occurs.  Perhaps you are reading data interactively from the user, or
+      via a pipe from another program, and need to communicate directly with
+      the user.  In those cases, &hGetContents; will probably not be
+      appropriate.
+    </para>
+    <remark>I'm not sure I really like this explanation</remark>
   </sect1>
 
   <sect1 id="hs.io.buffering">
