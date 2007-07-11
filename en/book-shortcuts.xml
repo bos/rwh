@@ -89,4 +89,18 @@
 <!ENTITY rr "<literal>&gt;&gt;</literal>">
 <!ENTITY rre "<literal>&gt;&gt;=</literal>">
 <!ENTITY Monad "<literal>Monad</literal>">
+<!ENTITY BufferMode "<literal>BufferMode</literal>">
+<!ENTITY NoBuffering "<literal>NoBuffering</literal>">
+<!ENTITY LineBuffering "<literal>LineBuffering</literal>">
+<!ENTITY BlockBuffering "<literal>BlockBuffering</literal>">
+<!ENTITY Nothing "<literal>Nothing</literal>">
+<!ENTITY Just "<literal>Just</literal>">
+<!ENTITY hSetBuffering "<literal>hSetBuffering</literal>">
+<!ENTITY BufferMode "<literal>BufferMode</literal>">
+<!ENTITY hGetBuffering "<literal>hGetBuffering</literal>">
+<!ENTITY hFlush "<literal>hFlush</literal>">
+<!ENTITY getEnvironment "<literal>getEnvironment</literal>">
+<!ENTITY getEnv "<literal>getEnv</literal>">
+<!ENTITY lookup "<literal>lookup</literal>">
+<!ENTITY hGetLine "<literal>hGetLine</literal>">
 

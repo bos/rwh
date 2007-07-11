@@ -1159,13 +1159,42 @@ Data: Done!
 
   <sect1 id="hs.io.args">
     <title>Reading Command-Line Arguments</title>
-    <remark>FIXME</remark>
+    <para>
+      Many command-line programs are interested in the parameters passed on
+      the command line.  <literal>System.Environment.getArgs</literal>
+      returns a <literal>[String]</literal> listing each argument.  The
+      program name is excluded from this list.  This is the same as
+      <literal>argv[1]</literal> and on in C.
+    </para>
+    <para>
+      You can also call <literal>System.Environment.getProgName</literal> to
+      find the name of the program as it was invoked.
+    </para>
+    <para>
+      The <literal>System.Console.GetOpt</literal> module provides some tools
+      for parsing command-line options.  If you have a program with complex
+      options, you may find it useful.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.environ">
     <title>Environment Variables</title>
-    <remark>FIXME</remark>
-    <remark>CWD</remark>
+    <para>
+      If you need to read environment variables, you can use one of two
+      functions in <literal>System.Environment</literal>: &getEnv; or
+      &getEnvironment;.  &getEnv; looks for a specific variable and raises an
+      exception if it doesn't exist.  &getEnvironment; returns the whole
+      environment as a <literal>[(String, String)]</literal>, and then you
+      can use functions such as &lookup; to find the environment entry you
+      want.
+    </para>
+    <para>
+      Setting environment variables is not defined in a cross-platform way in
+      Haskell.  If you are on a POSIX platform such as Linux, you can use
+      <literal>putEnv</literal> or <literal>setEnv</literal> from the
+      <literal>System.Posix.Env</literal> module.  Environment setting is not
+      defined for Windows.
+    </para>
   </sect1>
 
 </chapter>
