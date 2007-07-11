@@ -1106,11 +1106,55 @@ Data: Done!
       default is rarely the fastest.  If you have speed-critical I/O code,
       changing buffering could make a significant impact on your program.
     </para>
-  </sect1>
-
-  <sect1 id="hs.io.let">
-    <title>let in the IO Monad</title>
-    <remark>FIXME</remark>
+    <sect2>
+      <title>Buffering Modes</title>
+      <para>
+        There are three different buffering modes in Haskell.  They are
+        defined as the &BufferMode; type.
+      </para>
+      <para>&NoBuffering;
+        does just what it sounds like -- no buffering.  Data read via functions
+        like &hGetLine; will be read from the OS one character at a time.  Data
+        written will be written immediately, and also often will be written one
+        character at a time.  For this reason, &NoBuffering; is usually a very
+        poor performer and not suitable for general-purpose use.
+      </para>
+      <para>
+        &LineBuffering; causes the output buffer to be written whenever the
+        newline character is output, or whenever it gets too large.  On
+        input, it will usually attempt to read whatever data is available in
+        chunks until it first sees the newline character.  When reading from
+        the terminal, it should return data immediately after each press of
+        Enter.  It is often a reasonable default.
+      </para>
+      <para>
+        &BlockBuffering; causes Haskell to read or write data in fixed-size
+        chunks when possible.  This is the best performer whe processing
+        large amounts of data in batch, even if that data is line-oriented.
+        However, it is unusable for interactive programs because it will
+        block input until a full block is read.  &BlockBuffering; accepts one
+        parameter: if &Nothing;, it will use an implementation-defined buffer
+        size.  Or, you can use a setting such as <literal>Just 4096</literal> to 
+        set the buffer to 4096 bytes.
+      </para>
+      <para>
+        The default buffering mode is dependant upon the operating system and
+        Haskell implementation.  The current mode can be set with
+        &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  You can
+        ask the system for the current buffering mode by calling
+        &hGetBuffering;.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Flushing The Buffer</title>
+      <para>
+        For any type of buffering, you may sometimes want to force Haskell to
+        write out any data is has saved up in the buffer.  There are few
+        times when this will happen automatically: a call to &hClose;, for
+        instance.  Sometimes you may want to instead call &hFlush;, which
+        will force any pending data to be written immediately.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.io.args">
