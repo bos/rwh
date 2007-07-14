@@ -1,0 +1,18 @@
+--# load
+:load MyType.hs
+
+--# myValue
+myValue
+:type myValue
+
+--# newValue
+
+MyConstructor 1 "foo"
+
+--# info
+
+:info MyType
+
+--# type
+
+:type MyConstructor

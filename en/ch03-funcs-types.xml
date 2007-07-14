@@ -23,11 +23,10 @@
       <type>Integer</type>, and so on.</para>
 
     <para>Haskell has a <quote>strong</quote> type system, in which
-      every expression and value has exactly one type.  Where many
-      other programming languages have rules under which they will
-      automatically convert values from one type to another for us,
-      Haskell does not second guess our intentions.  This is another
-      aspect of its notion of strong typing.</para>
+      every expression and value has exactly one type.  Another aspect
+      of Haskell's view of strong typing is that it will not
+      automatically convert values from one type to another, a feature
+      present in some other languages.</para>
 
     <note>
       <para>Conversations about type systems can lead to many a
@@ -37,7 +36,7 @@
 	else.</para>
 
       <para>Since there's no universally agreed upon meaning for the
-	phrase <quote>strong types</quote>,  it's best not to assume
+	phrase <quote>strong type</quote>,  it's best not to assume
 	that someone else shares the same notion of it as you do.  (We
 	also suggest that putting forth one definition as better than
 	another doesn't often lead to enlightened discussion.)</para>
@@ -51,8 +50,8 @@
 
     &ch03.basics.ghci:error;
 
-    <para>Static typing also means that type errors can't occur when a
-      program is running.</para>
+    <para>Haskell's combination of strong and static typing also makes
+      it impossible for type errors to occur at runtime.</para>
 
     <para>Finally, <quote>type inference</quote> means what it says:
       the compiler can automatically figure out the types of most
@@ -83,8 +82,8 @@
 
       <itemizedlist>
 	<listitem>
-	  <para>The <type>Char</type> type represents a character.
-	    The values of <type>Char</type> are drawn from the Unicode
+	  <para>The <type>Char</type> type represents a character. The
+	    values of <type>Char</type> are drawn from the Unicode
 	    character set.</para>
 	</listitem>
 	<listitem>
@@ -114,58 +113,245 @@
 	</listitem>
       </itemizedlist>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Defining a new data type</title>
+      
+    <para>We introduce a new data type using the <code>data</code>
+      keyword.</para>
+
+    &MyType.hs:MyType;
+
+    <para>The <type>MyType</type> after the <code>data</code> keyword
+      is the name of our new type.  (As we've already mentioned, a
+      type name must start with a capital letter.)  The string
+      <code>MyConstructor</code> is the name of the
+      <emphasis>constructor</emphasis> we'll call to create a value of
+      this type.  (As with a type name, a constructor name must start
+      with a capital letter.)  Finally, the <type>Int</type> and
+      <type>String</type> are the <emphasis>components</emphasis> of
+      the type.  A component serves the same purpose in Haskell as a
+      field in a structure or class would in another language.</para>
+
+    <note>
+      <para>We'll explain the full meaning of <code>deriving
+	  (Show)</code> later, in
+	<xref linkend="hs.typeclasses.wellknown.show"/>.  For now,
+	it's enough to know that we need to tack this onto a type
+	declaration so that &ghci; will automatically know how to
+	print a value of this type.</para>
+    </note>
+
+    <para>We can create a new value of type <type>MyType</type> by
+      treating <function>MyConstructor</function> as a function, and
+      calling it with arguments of types <type>Int</type> and
+      <type>String</type>.</para>
+
+    &MyType.hs:myValue;
+
+    <para>Once we've defined a type, we can experiment with it in
+      &ghci;, starting by using the <command>:load</command> command
+      to load our source file.</para>
+
+    &mytype.ghci:load;
+
+    <para>Remember the <code>myValue</code> variable we
+      defined?  Here it is.</para>
+
+    &mytype.ghci:myValue;
+
+    <para>We can construct new values interactively in &ghci;,
+      too.</para>
+
+    &mytype.ghci:newValue;
+
+    <para>To find out more about a type, we can use some of &ghci;'s
+      browsing capabilities.  The <command>:info</command> command
+      gets &ghci; to tell us us everything it knows about a
+      type.</para>
+    
+    &mytype.ghci:info;
+
+    <para>We can also find out why we use
+      <function>MyConstructor</function> to construct a new value of
+      type <type>MyType</type>.</para>
+
+    &mytype.ghci:type;
+
+    <para>From Haskell's perspective, then, a constructor is just
+      another function, one that happens to return a value of the type
+      we want to construct.</para>
 
     <sect2>
-      <title>Boolean values and algebraic data types</title>
+      <title>Algebraic data types</title>
 
-      <para>The <type>Bool</type> type that we introduced above is the
-	simplest example of a category called an <emphasis>algebraic
-	  data type</emphasis>. An algebraic data type has a fixed
-	(and usually small) set of possible values, each of which is
-	identified by a name.  Each name is called a
-	<emphasis>constructor</emphasis>.</para>
+      <para>The <type>Bool</type> type that we introduced earlier is
+	the simplest example of a sort of type called an
+	<emphasis>algebraic data type</emphasis>. An algebraic data
+	type has a fixed set of possible values, each of which is
+	identified by a distinct constructor.</para>
 
       <para>In the case of <type>Bool</type>, the type has two
-	constructors, <code>True</code> and <code>False</code>.  We
-	call them constructors because they're what we use to create
-	values.  When we write <code>False</code>, Haskell will
-	construct that value.</para>
+	constructors, <code>True</code> and <code>False</code>.  Each
+	constructor is separated by a <literal>|</literal> character,
+	which we can read as <quote>or</quote>.  These are usually
+	referred to as alternatives or cases.</para>
 
-      <para>We'll have much more to say about algebraic data types
-	later, but this quick introduction will help us to understand
-	lists, which we're about to encounter again.</para>
+      &Bool.hs:Bool;
+
+      <para>Each constructor can take zero or more arguments; the
+	numbers and types of the arguments accepted by each
+	constructor are independent.  For example, here's one way we
+	might represent versions of the Windows operating system,
+	where old releases were monolithic, and newer releases have
+	<quote>service pack levels</quote> denoting major updates
+	after their initial releases.</para>
+
+      &OsVersion.hs:WindowsVersion;
+
+      <para>The alternatives that represent older releases don't need
+	arguments, but those for the newer releases need an
+	<type>Int</type> to represent the patch level.</para>
+
     </sect2>
 
     <sect2>
-      <title>Lists</title>
+      <title>Alternatives to algebraic data types in other
+	languages</title>
 
-      <para>We've already seen the list type mentioned in <xref
+      <para>Algebraic data types provide a single structuring
+	mechanism in instances where other languages have several
+	different building blocks.  Here are some analogues from C and
+	C++, which might make it clearer what we can do with algebraic
+	data types.</para>
+
+      <para>With just one constructor, an algebraic data type groups
+	related values into one, and gives that value an identity
+	distinct from other types.  It corresponds to a
+	<code>struct</code> in C or C++, and its components to the
+	fields of a struct.</para>
+
+      <para>If an algebraic data type has multiple alternatives, we
+	can think of it as similar to a <code>union</code> in C or
+	C++.  A big difference between the two is that a union doesn't
+	tell us which alternative is actually present; we have to
+	record which alternative we're using ourselves, usually in
+	another field of a struct.  This means that unions can
+	sometimes be sources of bugs, where our notion of which
+	alternative we should be using is incorrect.</para>
+
+      <para>With an algebraic data type, Haskell stores the
+	constructor that we use in the value that we create, so we
+	don't need to manually sock it away somewhere else.</para>
+
+      <para>Algebraic data types also serve where we'd use an
+	<code>enum</code> in C or C++, to represent a range of
+	discrete symbolic values.</para>
+
+      &Enum.hs:Roygbiv;
+
+    </sect2>
+
+    <sect2>
+      <title>A few final notes</title>
+
+      <para>From reading the preceding sections, it should be clear
+	that <emphasis>all</emphasis> of the data types that we define
+	with the <code>data</code> keyword are algebraic data types.
+	Some may have just one alternative; others have several; but
+	they're all using the same organising principle.</para>
+
+      <para>Another useful thing to know is that it's perfectly okay
+	for the name of an algebraic type and the name of one of its
+	constructors to be the same.  It's always obvious from context
+	whether we're using a name as a type name or as a constructor,
+	so this doesn't introduce any ambiguity.</para>
+
+      <para>Giving a type and its constructor the same name is in fact
+	something that we do frequently when the type has just one
+	constructor.</para>
+
+      &TypeName.hs:PerfectlyNormal;
+
+      <para>While it's also legal to give a constructor the same name
+	as its type when the type has multiple alternatives, this is
+	less common.</para>
+
+      &TypeName.hs:LegalButWeird;
+
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Lists, parameterised types, and recursive types</title>
+
+    <para>We've already seen the list type mentioned in <xref
 	linkend="hs.starting.string"/>, where we found that Haskell
-	represents a text string as a list of <type>Char</type>
-	values, and that the type <quote>list of
-	  <type>Char</type></quote> is written
-	<type>[Char]</type>.</para>
+      represents a text string as a list of <type>Char</type> values,
+      and that the type <quote>list of <type>Char</type></quote> is
+      written <type>[Char]</type>.</para>
 
-      <para>More generally, we can write the type <quote>list of
-	  <varname role="type">a</varname></quote> for any type
-	<varname role="type">a</varname> by enclosing it in square
-	brackets, <type>[a]</type>.</para>
+    <para>More generally, we can write the type <quote>list of
+	<varname role="type">a</varname></quote> for any type <varname
+	role="type">a</varname> by enclosing it in square brackets,
+      <type>[a]</type>.  Lists are strongly typed: a list of one type
+      has a distinct identity from a list of another type.  The type
+      <type>[Int]</type> is a list that can only contain values of
+      type <type>Int</type>, for example.</para>
 
-      <para>Like the <type>Bool</type> type, a list is an algebraic
-	data type.  There are only two ways to construct a list.  One
-	constructor is the empty list, written <code>[]</code>.</para>
+    <para>A list is an algebraic data type, one that happens to be
+      built into the language.  There are only two ways to construct a
+      list.  One constructor is the empty list, written
+      <code>[]</code>.</para>
 
-      &list.ghci:empty;
+    &list.ghci:empty;
 
-      <para>The other is the <function>:</function> operator, often
-	pronounced <quote>cons</quote> (this is short for
-	<quote>construct</quote>, and borrowed from Lisp).  The
-	<code>:</code> operator takes an element and a list, and
-	constructs a new list.</para>
+    <para>The other is the <function>(:)</function> operator, often
+      pronounced <quote>cons</quote> (this is short for
+      <quote>construct</quote>, and borrowed from Lisp).  The
+      <code>:</code> operator takes an element and a list, and
+      constructs a new list.</para>
 
       &list.ghci:cons;
 
+    <sect2>
+      <title>Parameterised types</title>
+
+      <para>In our discussion of lists, we mentioned that we can
+	create a list of any type.  We can define our own types that
+	have this property.  To do this, we introduce one or more
+	variables into a type declaration.</para>
+
+      &Wrapper.hs:Wrapper;
+
+      <para>Here, the variable <varname role="type">a</varname> is not
+	a regular variable; it's called a <emphasis>type
+	  variable</emphasis>, because it indicates that our
+	<type>Wrapper</type> type takes another type as its parameter.
+	What this lets us do is use <type>Wrapper</type> on values of
+	any type.</para>
+
+      &Wrapper.hs:wrappedTypes;
+
+      <para>As usual, we can load our source file into &ghci; and
+	experiment with it.</para>
+
+      &wrapper.ghci:experiment;
+
+   </sect2>
+
+    <sect2>
+      <title>Recursive types</title>
+
+      <para>Because the definition of the list type refers to itself
+	(for example, the <function>(:)</function> operator constructs
+	a new list from an existing list), we refer to it as a
+	<emphasis>recursive</emphasis> data type.</para>
+
+      <para>We can create recursive data types ourselves.</para>
     </sect2>
+
   </sect1>
 
   <sect1 id="hs.funcstypes.strong">
@@ -177,24 +363,24 @@
   <sect1 id="hs.funcstypes.patternmatching">
     <title>Pattern Matching</title>
 
-    <remark>FIXME: 
-  Introduce pattern matching.  Show how to write a function as a
-  series of clauses, each predicated on its patterns.
+    <remark>FIXME: Introduce pattern matching.  Show how to write a
+      function as a series of clauses, each predicated on its
+      patterns.
     </remark>
   </sect1>
 
   <sect1 id="hs.funcstypes.basictypes">
     <title>Basic Types</title>
-    <remark>FIXME: 
-  Type basics: products (tuples), sums (Maybe,Either), recursive types
-  (lists). Give us enough glue to pattern match on.
+    <remark>FIXME: Type basics: products (tuples), sums
+      (Maybe,Either), recursive types (lists). Give us enough glue to
+      pattern match on.
     </remark>
   </sect1>
 
   <sect1 id="hs.funcstypes.guards">
     <title>Guards</title>
-    <remark>FIXME:   Introduce guards.  Show that guards and patterns can be used
-  together or independently.
+    <remark>FIXME:   Introduce guards.  Show that guards and patterns
+      can be used together or independently.
     </remark>
   </sect1>
 
@@ -215,22 +401,22 @@
 
   <sect1 id="hs.funcstypes.rle">
     <title>Example: Run-Length Encoding</title>
-    <remark>FIXME:   Example: run-length encoding.  Use to show how looping can be done
-  via tail recursion.
-     </remark>
+    <remark>FIXME:   Example: run-length encoding.  Use to show how
+      looping can be done via tail recursion.
+    </remark>
   </sect1>
 
   <sect1 id="hs.funcstypes.infix">
     <title>Infix Functions</title>
-    <remark>FIXME:  Infix functions.  Using and defining them, and infix use of normal
-  functions.
+    <remark>FIXME:  Infix functions.  Using and defining them, and
+      infix use of normal functions.
     </remark>
   </sect1>
 
   <sect1 id="hs.funcstypes.inference">
     <title>Type Inference</title>
-    <remark>FIXME: 
-  Discuss type inference: what it is and how it can save a lot of work.
+    <remark>FIXME: Discuss type inference: what it is and how it can
+      save a lot of work.
     </remark>
   </sect1>
 
@@ -246,35 +432,23 @@
 
   <sect1 id="hs.funcstypes.typeclasses">
     <title>Typeclasses</title>
-    <remark>FIXME: 
-  Introduce type classes.  Show how ghci infers types with
-  constraints. Define some functions that use type class
-  constraints. Talk about when it's appropriate to write explicit
-  signatures. 
+    <remark>FIXME: Introduce type classes.  Show how ghci infers types
+      with constraints. Define some functions that use type class
+      constraints. Talk about when it's appropriate to write explicit
+      signatures. 
     </remark>
     <para>See also <xref linkend="hs.typeclasses"/>.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.mapapi">
     <title>Example: Data.Map API</title>
-    <remark>FIXME:
-  Small example would be a finite map data structure API, with a list
-  and tree implementation (different complexity, same api). Ties
-  together basic types, small functions, top level functions.
-
-      class Map m where
-	new     :: m k v
-	insert  :: k -> v -> m k v -> m k v
-	lookup  :: k -> m k v -> v
-
-      -- simple, O(n)
-
-      data Map1 k v = [(k,v)]
-
-      -- less simple, O(log n)
-
-      data Map2 k v = Node k v (Map2 k v) (Map2 k v)
-		    | Empty
+    <remark>FIXME: Small example would be a finite map data structure
+      API, with a list and tree implementation (different complexity,
+      same api). Ties together basic types, small functions, top level
+      functions. class Map m where new     :: m k v insert  :: k -> v
+      -> m k v -> m k v lookup  :: k -> m k v -> v -- simple, O(n)
+      data Map1 k v = [(k,v)] -- less simple, O(log n) data Map2 k v =
+      Node k v (Map2 k v) (Map2 k v) | Empty
 
     </remark>
   </sect1>

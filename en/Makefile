@@ -9,23 +9,10 @@ src-files := $(src-master) \
 	$(wildcard app*.xml)
 
 src-examples := \
-	$(wildcard ../examples/ch01/*.hs) \
-	$(wildcard ../examples/ch02/*.ghci) \
-	$(wildcard ../examples/ch03/*.ghci) \
-	$(wildcard ../examples/ch05/*.hs) \
-	$(wildcard ../examples/ch05/*.ghci) \
-	$(wildcard ../examples/ch06/*.hs) \
-	$(wildcard ../examples/ch06/*.ghci) \
-	$(wildcard ../examples/appA/*.ghci) \
-	ch07/append.hs \
-	ch07/glob-to-regexp/GlobRegex.hs \
-	ch07/glob-to-regexp/GlobRegexEither.hs \
-	ch07/glob-to-regexp/Glob.hs \
-	ch07/glob-to-regexp/Useful.hs \
-	ch07/glob-regexp.ghci \
-	ch07/glob.ghci \
-	ch07/handle.ghci \
-	ch07/regexp.ghci
+	$(wildcard ../examples/app[A-Z]/*.ghci) \
+	$(wildcard ../examples/ch[0-9][0-9]/*.ghci) \
+	$(wildcard ../examples/ch[0-9][0-9]/*.hs) \
+	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs)
 
 src-figs := \
 	$(wildcard figs/*.png)

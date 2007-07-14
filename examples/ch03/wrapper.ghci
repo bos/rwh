@@ -1,0 +1,7 @@
+--# experiment
+
+:load Wrapper.hs
+
+:type wrappedString
+
+Wrapper [1,2,3]
