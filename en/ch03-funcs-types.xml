@@ -65,54 +65,82 @@
   </sect1>
 
   <sect1>
-    <title>Haskell's standard types</title>
+    <title>Some common basic types</title>
     
     <para>We've already encountered a few types in <xref
 	linkend="hs.starting.types"/>.  Haskell has a number of
-      built-in types that we'll use all the time.  We can categorise
-      these into <quote>basic</quote> types and
-      <quote>compound</quote> types that we build from basic
-      types.</para>
+      built-in types that we'll use over and over.  Here are some of
+      the language's basic types, types that aren't composed of other
+      types</para>
 
-    <sect2>
-      <title>Basic types</title>
+    <itemizedlist>
+      <listitem>
+	<para>The <type>Char</type> type represents a character. The
+	  values of <type>Char</type> are drawn from the Unicode
+	  character set.</para>
+      </listitem>
+      <listitem>
+	<para>The <type>Bool</type> type represents a value in Boolean
+	  logic.  The possible values of <type>Bool</type> are
+	  <code>True</code> and <code>False</code>.</para>
+      </listitem>
+      <listitem>
+	<para>The <type>Int</type> type represents a signed,
+	  fixed-width integer.  The exact range of values represented
+	  by <type>Int</type> depends on the system's longest
+	  <quote>native</quote> integer: on a 32-bit machine, an
+	  <type>Int</type> is usually 32 bits wide, while on a 64-bit
+	  machine, it is usually 64 bits wide.</para>
+      </listitem>
+      <listitem>
+	<para>The <type>Integer</type> type represents a signed
+	  integer of arbitrary width.  <type>Integer</type> values are
+	  not used as often as <type>Int</type>s, because they're a
+	  lot more expensive to work with.</para>
+      </listitem>
+      <listitem>
+	<para>The <type>Double</type> type is the type usually used to
+	  represent floating point numbers.  It is typically 64 bits
+	  wide, and uses the machine's native floating point
+	  representation.</para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
 
-      <para>A <quote>basic</quote> type is simply one that isn't
-	constructed from any simpler types.</para>
+  <sect1>
+    <title>Useful composite data types: lists and tuples</title>
 
-      <itemizedlist>
-	<listitem>
-	  <para>The <type>Char</type> type represents a character. The
-	    values of <type>Char</type> are drawn from the Unicode
-	    character set.</para>
-	</listitem>
-	<listitem>
-	  <para>The <type>Bool</type> type represents a value in
-	    Boolean logic.  The possible values of <type>Bool</type>
-	    are <code>True</code> and <code>False</code>.</para>
-	</listitem>
-	<listitem>
-	  <para>The <type>Int</type> type represents a signed,
-	    fixed-width integer.  The exact range of values
-	    represented by <type>Int</type> depends on the system's
-	    longest <quote>native</quote> integer: on a 32-bit
-	    machine, an <type>Int</type> is usually 32 bits wide,
-	    while on a 64-bit machine, it is usually 64 bits
-	    wide.</para>
-	</listitem>
-	<listitem>
-	  <para>The <type>Integer</type> type represents a signed
-	    integer of arbitrary width.  <type>Integer</type> values
-	    are not used as often as <type>Int</type>s, because
-	    they're a lot more expensive to work with.</para>
-	</listitem>
-	<listitem>
-	  <para>The <type>Double</type> type is the usual type used to
-	    represent floating point numbers.  It is typically 64 bits
-	    wide.</para>
-	</listitem>
-      </itemizedlist>
-    </sect2>
+    <para>The most common composite data types in Haskell are the list
+      and tuple.</para>
+
+    <para>We've already seen the list type mentioned in <xref
+	linkend="hs.starting.string"/>, where we found that Haskell
+      represents a text string as a list of <type>Char</type> values,
+      and that the type <quote>list of <type>Char</type></quote> is
+      written <type>[Char]</type>.</para>
+
+    <para>More generally, we can write the type <quote>list of
+	<varname role="type">a</varname></quote> for any type <varname
+	role="type">a</varname> by enclosing <varname
+	role="type">a</varname> in square brackets, <type>[a]</type>.
+      Lists are strongly typed: a list of one type has an identity of
+      its own, distinct from a list of another type. The type
+      <type>[Int]</type> is a list that can only contain values of
+      type <type>Int</type>, for example.</para>
+
+    <para>A tuple is a fixed-size collection of values, each of which
+      can be of any type.  Unlike a list, the elements of which must
+      all have the same type, there's no need for the elements of a
+      tuple to be related.</para>
+
+    &tuple.ghci:tuple;
+
+    <para>We can construct a tuple with any number of elements,
+      although in practice, they become unwieldy past a handful.  Each
+      tuple encodes the types of its elements in its own type.</para>
+
+    &tuple.ghci:type;
+    
   </sect1>
 
   <sect1>
@@ -156,8 +184,8 @@
 
     &mytype.ghci:load;
 
-    <para>Remember the <code>myValue</code> variable we
-      defined?  Here it is.</para>
+    <para>Remember the <code>myValue</code> variable we defined?  Here
+      it is.</para>
 
     &mytype.ghci:myValue;
 
@@ -182,39 +210,37 @@
     <para>From Haskell's perspective, then, a constructor is just
       another function, one that happens to return a value of the type
       we want to construct.</para>
+  </sect1>
+  <sect1>
+    <title>Algebraic data types</title>
 
-    <sect2>
-      <title>Algebraic data types</title>
+    <para>The <type>Bool</type> type that we introduced earlier is the
+      simplest example of a sort of type called an <emphasis>algebraic
+	data type</emphasis>. An algebraic data type has a fixed set
+      of possible values, each of which is identified by a distinct
+      constructor.</para>
 
-      <para>The <type>Bool</type> type that we introduced earlier is
-	the simplest example of a sort of type called an
-	<emphasis>algebraic data type</emphasis>. An algebraic data
-	type has a fixed set of possible values, each of which is
-	identified by a distinct constructor.</para>
-
-      <para>In the case of <type>Bool</type>, the type has two
-	constructors, <code>True</code> and <code>False</code>.  Each
-	constructor is separated by a <literal>|</literal> character,
-	which we can read as <quote>or</quote>.  These are usually
-	referred to as alternatives or cases.</para>
+    <para>In the case of <type>Bool</type>, the type has two
+      constructors, <code>True</code> and <code>False</code>.  Each
+      constructor is separated by a <literal>|</literal> character,
+      which we can read as <quote>or</quote>.  These are usually
+      referred to as alternatives or cases.</para>
 
       &Bool.hs:Bool;
 
-      <para>Each constructor can take zero or more arguments; the
-	numbers and types of the arguments accepted by each
-	constructor are independent.  For example, here's one way we
-	might represent versions of the Windows operating system,
-	where old releases were monolithic, and newer releases have
-	<quote>service pack levels</quote> denoting major updates
-	after their initial releases.</para>
+    <para>Each constructor can take zero or more arguments; the
+      numbers and types of the arguments accepted by each constructor
+      are independent.  For example, here's one way we might represent
+      versions of the Windows operating system, where old releases
+      were monolithic, and newer releases have <quote>service pack
+	levels</quote> denoting major updates after their initial
+      releases.</para>
 
       &OsVersion.hs:WindowsVersion;
 
-      <para>The alternatives that represent older releases don't need
-	arguments, but those for the newer releases need an
-	<type>Int</type> to represent the patch level.</para>
-
-    </sect2>
+    <para>The alternatives that represent older releases don't need
+      arguments, but those for the newer releases need an
+      <type>Int</type> to represent the patch level.</para>
 
     <sect2>
       <title>Alternatives to algebraic data types in other
@@ -260,13 +286,13 @@
 	that <emphasis>all</emphasis> of the data types that we define
 	with the <code>data</code> keyword are algebraic data types.
 	Some may have just one alternative; others have several; but
-	they're all using the same organising principle.</para>
+	they're all using the same organising machinery.</para>
 
       <para>Another useful thing to know is that it's perfectly okay
-	for the name of an algebraic type and the name of one of its
-	constructors to be the same.  It's always obvious from context
-	whether we're using a name as a type name or as a constructor,
-	so this doesn't introduce any ambiguity.</para>
+	for the name of an algebraic type to have the same name as one
+	of its constructors to be the same.  It's always obvious from
+	context whether we're using a name to refer to a type or a
+	constructor, so this doesn't introduce any ambiguity.</para>
 
       <para>Giving a type and its constructor the same name is in fact
 	something that we do frequently when the type has just one
@@ -274,9 +300,9 @@
 
       &TypeName.hs:PerfectlyNormal;
 
-      <para>While it's also legal to give a constructor the same name
-	as its type when the type has multiple alternatives, this is
-	less common.</para>
+      <para>When a type has multiple constructors, it's still legal to
+	give one of the constructors the  same name as the type, but
+	this is much less common.</para>
 
       &TypeName.hs:LegalButWeird;
 
@@ -284,74 +310,122 @@
   </sect1>
 
   <sect1>
-    <title>Lists, parameterised types, and recursive types</title>
+    <title>Parameterised types</title>
 
-    <para>We've already seen the list type mentioned in <xref
-	linkend="hs.starting.string"/>, where we found that Haskell
-      represents a text string as a list of <type>Char</type> values,
-      and that the type <quote>list of <type>Char</type></quote> is
-      written <type>[Char]</type>.</para>
+    <para>In our discussion of lists, we mentioned that we can create
+      a list of values of any type.  We can define our own types that
+      allow this, too.  To do this, we introduce variables into a type
+      declaration.</para>
 
-    <para>More generally, we can write the type <quote>list of
-	<varname role="type">a</varname></quote> for any type <varname
-	role="type">a</varname> by enclosing it in square brackets,
-      <type>[a]</type>.  Lists are strongly typed: a list of one type
-      has a distinct identity from a list of another type.  The type
-      <type>[Int]</type> is a list that can only contain values of
-      type <type>Int</type>, for example.</para>
+      &Wrapper.hs:Wrapper;
 
-    <para>A list is an algebraic data type, one that happens to be
-      built into the language.  There are only two ways to construct a
-      list.  One constructor is the empty list, written
-      <code>[]</code>.</para>
+    <para>Here, the variable <varname role="type">a</varname> is not a
+      regular variable; it's called a <emphasis>type
+	variable</emphasis>, because it indicates that our
+      <type>Wrapper</type> type takes another type as its parameter
+      (hence calling it a parameterised type). What this lets us do is
+      use <type>Wrapper</type> on values of any type.</para>
+
+      &Wrapper.hs:wrappedTypes;
+
+    <para>As usual, we can load our source file into &ghci; and
+      experiment with it.</para>
+
+      &wrapper.ghci:experiment;
+
+    <para><type>Wrapper</type> is a <quote>generic</quote> container
+      type (albeit a fairly useless one); we can construct a
+      <type>Wrapper</type> from a value of any type.  It is also
+      strongly typed; the type of whatever it contains is encoded in
+      its own type.</para>
+
+    <para>To once again extend an analogy to more familiar languages,
+      this gives us a facility that bears some resemblance to
+      templates in C++, and to generics in Java.  (In fact, Java's
+      generics facility was inspired by several aspects of Haskell's
+      type system.)</para>
+
+    <para>We can nest uses of parameterised types inside each other,
+      but when we do, we may need to use parentheses to tell the
+      Haskell compiler what we mean.</para>
+
+      &Wrapper.hs:parens;
+  </sect1>
+
+  <sect1>
+    <title>Recursive types</title>
+
+    <para>Here's a definition of a binary tree type.</para>
+
+      &Tree.hs:Tree;
+
+    <para>We call this a <emphasis>recursive</emphasis> type because
+      <type>Tree</type>, the type we're defining, appears both on the
+      left hand side and the right hand side of the definition: we
+      define the type in terms of itself.</para>
+  </sect1>
+
+  <sect1>
+    <title>A little more about lists</title>
+
+    <para>Now that we're getting familiar with some of the jargon
+      around types, we can revisit lists.  Haskell's list type is a
+      parameterised type, because we can make lists of any other type.
+      It is also an algebraic data type, with two constructors.  One
+      is the empty list, written <code>[]</code> (sometimes pronounced
+      <quote>nil</quote>, which is borrowed from Lisp).</para>
 
     &list.ghci:empty;
 
     <para>The other is the <function>(:)</function> operator, often
       pronounced <quote>cons</quote> (this is short for
-      <quote>construct</quote>, and borrowed from Lisp).  The
-      <code>:</code> operator takes an element and a list, and
-      constructs a new list.</para>
+      <quote>construct</quote>, and also borrowed from Lisp).  The
+      <function>(:)</function> operator takes an element and a list,
+      and constructs a new list.</para>
 
-      &list.ghci:cons;
+    &list.ghci:cons;
 
-    <sect2>
-      <title>Parameterised types</title>
+    <para>Because <function>(:)</function> constructs a list from
+      another list, the list type is recursive.  So here we have a
+      built-in type that's parameterised, recursive, and
+      algebraic.</para>
 
-      <para>In our discussion of lists, we mentioned that we can
-	create a list of any type.  We can define our own types that
-	have this property.  To do this, we introduce one or more
-	variables into a type declaration.</para>
+    <para>One consequence of lists being generic is that lists of
+      lists, for example, aren't special in any way.</para>
 
-      &Wrapper.hs:Wrapper;
+    &list.ghci:listlist;
 
-      <para>Here, the variable <varname role="type">a</varname> is not
-	a regular variable; it's called a <emphasis>type
-	  variable</emphasis>, because it indicates that our
-	<type>Wrapper</type> type takes another type as its parameter.
-	What this lets us do is use <type>Wrapper</type> on values of
-	any type.</para>
+    <para>This has type <type>[[String]]</type>, a list of lists of
+      strings.  But since <type>String</type> is just a synonym for
+      <type>[Char]</type>, it's <emphasis>really</emphasis> a list of
+      lists of lists of <type>Char</type>.  Whew!</para>
+  </sect1>
 
-      &Wrapper.hs:wrappedTypes;
+  <sect1>
+    <title>Unit, the zero-element tuple</title>
 
-      <para>As usual, we can load our source file into &ghci; and
-	experiment with it.</para>
+    <para>Haskell has a special tuple type with no elements, written
+      <type>()</type>, and pronounced <quote>unit</quote>.</para>
 
-      &wrapper.ghci:experiment;
+    &unit.ghci:unit;
 
-   </sect2>
+    <para>This type is only really used with parameterised data types,
+      to indicate that one of the type parameters isn't being used.
+      Since it doesn't encode any information, it's a rough equivalent
+      to <code>void</code> in C.</para>
 
-    <sect2>
-      <title>Recursive types</title>
+    <para>Here's an example of <type>()</type> in use.  We can
+      generalise our earlier <type>Tree</type> type a little, so that
+      internal nodes contain values of type <varname
+	role="type">a</varname>, while leaves contain values of type
+      <varname role="type">b</varname>.</para>
 
-      <para>Because the definition of the list type refers to itself
-	(for example, the <function>(:)</function> operator constructs
-	a new list from an existing list), we refer to it as a
-	<emphasis>recursive</emphasis> data type.</para>
+    &Tree.hs:ComplexTree;
 
-      <para>We can create recursive data types ourselves.</para>
-    </sect2>
-
+    <para>If we wanted to create a <type>ComplexTree</type> where we
+      wanted to store <type>Int</type>s on the leaves, but don't care
+      about the internal nodes.  We would write its type as
+      <type>ComplexTree () Int</type>.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.strong">

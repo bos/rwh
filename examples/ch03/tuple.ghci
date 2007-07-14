@@ -1,0 +1,6 @@
+--# tuple
+(True, "hello")
+(4, ['a', 'm'], (16, True))
+--# type
+:type (True, "hello")
+:type (4 :: Int, ['a', 'm'], (16 :: Integer, True))

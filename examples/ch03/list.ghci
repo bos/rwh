@@ -5,3 +5,7 @@
 --# cons
 
 1 : []
+
+--# listlist
+
+[["foo", "bar"], ["x", "y"]]
