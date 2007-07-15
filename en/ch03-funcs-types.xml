@@ -131,13 +131,17 @@
     <para>A tuple is a fixed-size collection of values, each of which
       can be of any type.  Unlike a list, the elements of which must
       all have the same type, there's no need for the elements of a
-      tuple to be related.</para>
+      tuple to be related.  We write a tuple by enclosing its elements
+      in parentheses and separating them with commas.  We use the same
+      notation for writing its type.</para>
 
     &tuple.ghci:tuple;
 
-    <para>We can construct a tuple with any number of elements,
-      although in practice, they become unwieldy past a handful.  Each
-      tuple encodes the types of its elements in its own type.</para>
+    <para>We can construct a tuple with any number of elements
+      (although in practice, a tuple with more than a handful becomes
+      unwieldy).  A tuple's type encodes the number and types of its
+      elements in its own type, so tuples containing different numbers
+      or types of elements have different types of their own.</para>
 
     &tuple.ghci:type;
     
@@ -243,7 +247,7 @@
       <type>Int</type> to represent the patch level.</para>
 
     <sect2>
-      <title>Alternatives to algebraic data types in other
+      <title>Analogues to algebraic data types in other
 	languages</title>
 
       <para>Algebraic data types provide a single structuring
