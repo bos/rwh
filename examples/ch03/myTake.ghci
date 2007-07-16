@@ -1,0 +1,21 @@
+--# take
+
+take 0 "foo"
+take 1 "foo"
+take 4 [1,2]
+take 7 []
+take (-2) "foo"
+
+--# myTake
+
+:load myTake.hs
+
+myTake 0 "foo"
+myTake 1 "foo"
+myTake 4 [1,2]
+myTake 7 []
+myTake (-2) "foo"
+
+--# null
+
+:type null

@@ -1,0 +1,37 @@
+--# head
+
+head [1,2,3]
+
+--# tail
+
+tail [True, False]
+
+--# takeDrop
+
+take 2 "abcdefg"
+drop 3 "abcdefg"
+
+--# snd
+
+snd (1,2)
+
+--# fst
+
+fst ("you", True)
+
+--# fst.type
+
+:type fst
+:type snd
+
+--# fst.bad
+
+fst (1,True,"foo")
+
+--# take.type
+
+:type take
+
+--# headDrop
+
+head (drop 4 "azerty")

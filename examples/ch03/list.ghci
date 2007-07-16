@@ -5,6 +5,16 @@
 --# cons
 
 1 : []
+1 : [2]
+
+--# cons2
+
+"alpha" : "beta" : ["gamma", "delta"]
+
+--# cons.bad
+
+True : False
+True : ["wrong"]
 
 --# listlist
 

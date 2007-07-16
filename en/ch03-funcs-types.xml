@@ -3,14 +3,18 @@
 <chapter id="hs.funcstypes">
   <title>Types and Functions</title>
 
+  <para>Topics: built-in types.  Writing functions.  Creating new
+    types.</para>
+
   <sect1>
     <title>Haskell's type system</title>
     
     <para><quote>Haskell has a strong, static type system with
-	inference.</quote> For a short sentence, this one has a lot
-      for us to pore over.  Because Haskell is quite different from
-      mainstream programming languages in how it treats types, let's
-      not assume anything as we talk about types.</para>
+	inference.</quote> For a short sentence, this one gives us a
+      lot for us to pore over.  Because Haskell is quite different
+      from mainstream programming languages in how it treats types,
+      let's not assume too much shared understanding as we talk about
+      types.</para>
 
     <para>Every value and expression in Haskell has a
       <emphasis>type</emphasis>.  The type of a value indicates that
@@ -77,7 +81,8 @@
       <listitem>
 	<para>The <type>Char</type> type represents a character. The
 	  values of <type>Char</type> are drawn from the Unicode
-	  character set.</para>
+	  character set, which covers most of the world's written
+	  languages.</para>
       </listitem>
       <listitem>
 	<para>The <type>Bool</type> type represents a value in Boolean
@@ -94,15 +99,18 @@
       </listitem>
       <listitem>
 	<para>The <type>Integer</type> type represents a signed
-	  integer of arbitrary width.  <type>Integer</type> values are
-	  not used as often as <type>Int</type>s, because they're a
-	  lot more expensive to work with.</para>
+	  integer of arbitrary size.  <type>Integer</type>s are not
+	  used as often as <type>Int</type>s, because they're a lot
+	  more expensive to work with.</para>
       </listitem>
       <listitem>
 	<para>The <type>Double</type> type is the type usually used to
 	  represent floating point numbers.  It is typically 64 bits
 	  wide, and uses the machine's native floating point
-	  representation.</para>
+	  representation.  (A narrower type, <type>Float</type>, also
+	  exists, but its use is discouraged; Haskell compiler writers
+	  concentrate more on making <type>Double</type>
+	  efficient.)</para>
       </listitem>
     </itemizedlist>
   </sect1>
@@ -128,30 +136,296 @@
       <type>[Int]</type> is a list that can only contain values of
       type <type>Int</type>, for example.</para>
 
+    <para>Lists are the <quote>bread and butter</quote> of Haskell
+      collections.  Whereas in an imperative language, we might repeat
+      a task over many items by iterating through a loop, this is
+      something that we tend to do in Haskell by recursing over a
+      list.</para>
+
     <para>A tuple is a fixed-size collection of values, each of which
-      can be of any type.  Unlike a list, the elements of which must
-      all have the same type, there's no need for the elements of a
-      tuple to be related.  We write a tuple by enclosing its elements
-      in parentheses and separating them with commas.  We use the same
-      notation for writing its type.</para>
+      can be of any type.  Unlike a list (the elements of which must
+      all have the same type), there's no need for the elements of a
+      tuple to have related types.  We write a tuple by enclosing its
+      elements in parentheses and separating them with commas.  We use
+      the same notation for writing its type.</para>
 
     &tuple.ghci:tuple;
 
     <para>We can construct a tuple with any number of elements
       (although in practice, a tuple with more than a handful becomes
       unwieldy).  A tuple's type encodes the number and types of its
-      elements in its own type, so tuples containing different numbers
-      or types of elements have different types of their own.</para>
+      elements in its own type.  This means that tuples containing
+      different numbers or types of elements have distinct types of
+      their own.</para>
 
     &tuple.ghci:type;
-    
+
+    <para>A two-tuple of an <type>Int</type> and a <type>String</type>
+      has a different type than a two-tuple of a <type>Bool</type> and
+      a <type>Bool</type>, for example, and a three-tuple has a
+      different type than a four-tuple.</para>
+
+    <para>Probably the most common use of tuples is to let us return
+      multiple values from a function.  We can also use them in other
+      places where we want a fixed-size collection of values, for
+      which the kind of container we're using isn't of much
+      importance.  An example of this might be to represent a row
+      in the result of a a database query.</para>
+  </sect1>
+
+  <sect1>
+    <title>Calling functions</title>
+
+    <para>Now that we've had our fill of data types for a while, let's
+      turn our attention to <emphasis>working</emphasis> with some of
+      the types we've seen.  We've already seen how to perform
+      arithmetic in <xref linkend="hs.starting.arithmetic"/>, and it
+      looks quite as it does in other languages.</para>
+
+    <para>However, our discussion of lists and tuples mentioned how we
+      can construct them, but not how we do anything with them
+      afterwards.  Haskell defines a large library of functions for
+      working with lists and (to a lesser extent) tuples, so let's
+      find out how to use a few of those functions.</para>
+
+    <para>To call a function in Haskell, we provide the name of the
+      function followed by its arguments, all separated by whitespace.
+      As an example, let's call the <function>head</function>
+      function, which returns the first element of a list.</para>
+
+    &func.ghci:head;
+
+    <para>Its counterpart, <function>tail</function>, returns all
+      <emphasis>but</emphasis> the head of a list.</para>
+
+    &func.ghci:tail;
+
+    <para>A related pair of functions, <function>take</function> and
+      <function>drop</function>, take two arguments: given a number
+      and a list, they return either the first, or all but the first,
+      number of elements of the list.  (Here, remember that a
+      <type>String</type> is a list of <type>Char</type>.)</para>
+
+    &func.ghci:takeDrop;
+
+    <para>If you're used to function call syntax in other languages,
+      this notation can take a little getting used to, but it's
+      undeniably simple and uniform.  Here's what we mean by
+      uniform.</para>
+
+    &func.ghci:snd;
+
+    <para>In some other languages, the call to
+      <function>snd</function> above might mean <quote>call
+	<function>snd</function> with two arguments,
+	<literal>1</literal> and <literal>2</literal></quote>, but in
+      Haskell, it's a single-argument call, passing the tuple
+      <literal>(1,2)</literal>.</para>
+
+    <para>By the way, <function>snd</function> has a companion
+      function, <function>fst</function>, which returns the first
+      element of a tuple.</para>
+
+    &func.ghci:fst;
+
+    <sect2>
+      <title>Passing an expression to a function</title>
+
+      <para>Haskell evaluates an expression from left to right.  If we
+	want to use the result of one expression as an argument to
+	another, we have to keep this in mind and use parentheses to
+	tell the parser what we really mean.  Here's an
+	example.</para>
+
+      &func.ghci:headDrop;
+
+      <para>We can read this as <quote>pass the result of the
+	  expression <code>drop 4 "azerty"</code> as the argument to
+	  <function>head</function></quote>.  If we were to leave out
+	the parentheses, Haskell would instead interpret the
+	expression as <quote>pass <function>drop</function> as the
+	  argument to <function>head</function></quote>.  Compilation
+	would fail with a type error, as <function>drop</function> is
+	a function, not a list.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Understanding a function's type signature</title>
+
+    <para>A consequence of Haskell's strong typing is that
+      <function>fst</function> and <function>snd</function> only
+      accept two-tuples as arguments.  Let's see what &ghci; tells us
+      about their types.</para>
+
+    &func.ghci:fst.type;
+
+    <para>We can read the <literal>-&gt;</literal> above as
+      <quote>returns</quote>.  The entire signature thus tells us that
+      <function>fst</function> takes any two-tuple whose elements are
+      of types <varname role="type">a</varname> and <varname
+	role="type">b</varname> (each of which can be of any type),
+      and returns a value with type <varname role="type">a</varname>.
+      Sure enough, if we try calling <function>fst</function> with a
+      three-tuple, things don't go so well.</para>
+
+    &func.ghci:fst.bad;
+
+    <para>Notice that the type signatures above give us a strong hint
+      as to what these functions might actually
+      <emphasis>do</emphasis>. This is an incredibly valuable property
+      of types in a functional language.  Since there aren't usually
+      any side effects for us to worry about, figuring what a function
+      does can often be a matter of reading its name and understanding
+      its type signature, with no <quote>regular documentation</quote>
+      required.</para>
+
+    <para>So far, we haven't seen a signature for a function that
+      takes <emphasis>more</emphasis> than one argument.  We've
+      already encountered a few such functions; let's look at
+      <function>take</function>.</para>
+
+    &func.ghci:take.type;
+
+    <para>It's pretty clear that there's something going on with an
+      <type>Int</type> and some lists, but why are there two
+      <literal>-&gt;</literal> symbols in the signature?  Haskell
+      parses these from right to left.  If we introduce parentheses,
+      it makes it clearer how Haskell is interpreting this type
+      signature.</para>
+
+    &Take.hs:type;
+
+    <para>From this, it looks like we ought to read the type signature
+      as a function that takes one argument, an <type>Int</type>, and
+      returns another function.  That other function also takes one
+      argument, a list, and returns a list of the same type as its
+      argument.</para>
+
+    <para>This is an intriguing idea, but it's not easy to see just
+      yet what its consequences might be.  We'll return to this topic
+      soon, once we've spent a bit of time writing functions.</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Haskell source files, and writing simple functions</title>
+
+    <para>Now that we know how to call functions, it's time we turned
+      our attention to writing them.  While we can write functions in
+      &ghci;, it's not a good environment for doing so, because it
+      limits any expression or definition to one line in length.  So
+      instead, we'll finally break down and create a source
+      file.</para>
+
+    <para>Haskell source files are usually identified with a suffix of
+      <filename>.hs</filename>.  Here's a simple function definition:
+      open up a file named <filename>add.hs</filename>, and add these
+      contents to it.</para>
+
+    &add.hs:add;
+
+    <para>On the left hand side of the <literal>=</literal> is the
+      name of the function, followed by the arguments to the function.
+      On the right hand side is the body of the function.  With our
+      source file saved, we can load it into &ghci;, and use our new
+      <function>add</function> function straight away.</para>
+
+    &add.ghci:add;
+
+    <para>When we call <function>add</function>, the variables
+      <varname>a</varname> and <varname>b</varname> on the left hand
+      side of our definition are given (or <quote>bound to</quote>)
+      the values <literal>1</literal> and <literal>2</literal>, then
+      the right hand side is evaluated, and the result
+      returned.</para>
+
+    <para>Haskell doesn't need a <command>return</command> statement;
+      the result of a function is the result of evaluating whatever
+      expression is in the function's body.</para>
+
+    <sect2>
+      <title>Conditional evaluation</title>
+
+      <para>Like other languages, Haskell has an <code>if</code>
+	expression.  Let's see it in action: we'll write our own
+	version of the standard <function>take</function> function.
+	Before we do so, let's probe a little bit of how
+	<function>take</function> behaves.</para>
+
+      &myTake.ghci:take;
+
+      <para>From the above, it seems that <function>take</function>
+	removes at most the given number of elements from the front of
+	a list (it returns the empty list if the number to remove is
+	greater than the number of elements), and that it treats
+	negative numbers as zero.</para>
+
+      <para>Here's a <function>myTake</function> function that has the
+	same behaviour as <function>take</function>, and uses
+	Haskell's <code>if</code> expression.</para>
+
+      &myTake.hs:myTake;
+
+      <para>Let's save it in a file named
+	<filename>myTake.hs</filename>, then load it into
+	&ghci;.</para>
+
+      &myTake.ghci:myTake;
+
+      <para>Now that we've seen <function>myTake</function> in action,
+	let's return to the source code and look at a few of the
+	novelties we've introduced.</para>
+
+      <para>First is the <code>if</code> keyword itself.  It takes an
+	expression of type <type>Bool</type>.  If that evaluates to
+	<function>True</function>, it evaluates the expression on the
+	<code>then</code> branch.  Otherwise, it evaluates the
+	expression on the <code>else</code> branch.</para>
+
+      <para>The combination of <code>if</code>, <code>then</code>,
+	<code>else</code> and the expression after each keyword
+	combine to make up a single expression, as far as Haskell is
+	concerned.  Whichever branch is evaluated is the result of the
+	<code>if</code>.  Because an expression can only have one
+	type, the expressions in the <code>then</code> and
+	<code>else</code> branches must have the same type.  If they
+	don't, an <code>if</code> expression won't typecheck.</para>
+
+      <para>Whereas it can make sense in an imperative language to
+	omit the <code>else</code> branch from an <code>if</code>,
+	this would be nonsensical in Haskell.  An <code>if</code>
+	expression that was missing an <code>else</code> couldn't
+	typecheck, since it would sometimes have a value and sometimes
+	not.</para>
+
+      <para>The second novelty is almost trivial: the
+	<function>null</function> function, which we use in the
+	Boolean portion of the <code>if</code>, indicates whether a
+	list is empty.</para>
+
+      &myTake.ghci:null;
+
+      <para>Finally, our <code>if</code> expression spans several
+	lines.  We line the <code>then</code> and <code>else</code>
+	branches up under the <code>if</code> for neatness, but this
+	is not mandatory.  We could put all of them on a single line,
+	for example, but this is harder to read.</para>
+
+      &myTake.hs:myTake2;
+
+      <remark>XXX Make a forward reference to discussion of the layout
+	rule.</remark>
+
+    </sect2>
   </sect1>
 
   <sect1>
     <title>Defining a new data type</title>
       
-    <para>We introduce a new data type using the <code>data</code>
-      keyword.</para>
+    <para>Although lists and tuples are useful, we'll still often want
+      to construct new data types of our own.  We define a new data
+      type using the <code>data</code> keyword.</para>
 
     &MyType.hs:MyType;
 
@@ -388,6 +662,17 @@
       and constructs a new list.</para>
 
     &list.ghci:cons;
+
+    <para>We can use <function>(:)</function> repeatedly to add new
+      elements to the front of a list.</para>
+
+    &list.ghci:cons2;
+
+    <para>The right hand side of <function>(:)</function> must be a
+      list, and of the correct type.  If it's not, we'll get an
+      error.</para>
+
+    &list.ghci:cons.bad;
 
     <para>Because <function>(:)</function> constructs a list from
       another list, the list type is recursive.  So here we have a

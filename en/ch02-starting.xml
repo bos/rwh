@@ -325,7 +325,7 @@ Loading package base ... linking ... done.
       way serves as a good way to become familiar with &ghci; itself,
       and with the basics of Haskell expressions.</para>
 
-    <sect2>
+    <sect2 id="hs.starting.arithmetic">
       <title>Simple arithmetic</title>
 
       <para>We can immediately start typing expressions, to see what
