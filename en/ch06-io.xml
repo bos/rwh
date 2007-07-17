@@ -65,6 +65,12 @@ Welcome to Haskell, John!
       properly.
     </para>
     <para>
+      You only need to use &do; if you have more than one action that you need
+      to perform.  The return value of a &do; block is the return value
+      of the last action executed.
+    </para>
+
+    <para>
       Let's take a look at the types of &putStrLn; and &getLine;.  You can
       find that information in the library reference, or just ask &ghci;:
     </para>
@@ -85,8 +91,10 @@ Welcome to Haskell, John!
       happens right then.  But if I later call <literal>writefoo</literal> in
       the middle of another I/O action, it will be executed.  The
       <literal>()</literal> is, essentially, an empty return value; there is
-      no return value to speak of from &putStrLn;.
+      no return value to speak of from &putStrLn;.  Let's look at that with
+      &ghci;:
     </para>
+    &basicio.ghci:putStrLn;
     <para>
       The type of &getLine; may look strange to you.  It looks like a value,
       rather than a function.  And in fact, that is one way to look at it:
@@ -378,7 +386,7 @@ I/O IS FUN
       <para>
         You can use &hTell; to find out your current position in the file.
         When the file is initially created, it is empty and your position
-        will be 0.  After you write out 5 characters, your position will be
+        will be 0.  After you write out 5 bytes, your position will be
         5, and so on.  &hTell; takes a &Handle; and returns an <literal>IO
           Integer</literal> with your position.
       </para>
@@ -694,6 +702,16 @@ Which could be expressed as this Haskell literal:
         on in the next examples:
       </para>
       &toupper-lazy2.hs:all;
+      <para>
+        You are not required to ever consume all the data from the input file
+        when using &hGetContents;.  Whenever the Haskell system determines
+        that the entire string &hGetContents; returned can be garbage collected
+        -- which means it will never again be used -- the file is closed
+        for you automatically.  The same principle applies to data read from
+        the file.  Whenever a given piece of data will never again be
+        needed, the Haskell environment releases the memory it was stored
+        within.
+      </para>
     </sect2>
     <sect2 id="hs.io.lazy.readFile">
       <title>readFile and writeFile</title>
@@ -916,6 +934,9 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         anything until it is invoked.  Let's look at an example of this:
       </para>
       &actions.hs:all;
+      <remark>
+        FIXME: make sure that partial application has been covered
+      </remark>
       <para>
         <literal>str2action</literal> is a function that takes one parameter
         and returns an <literal>IO ()</literal>.  As you can see at the end of
@@ -939,7 +960,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         yeild an I/O action which will be executed.
       </para>
       <para>
-        The call to <literal>printall</literal>; finally executes all those actions.  Actually,
+        The call to <literal>printitall</literal>; finally executes all those actions.  Actually,
         since Haskell is lazy, the actions aren't generated until here either.
       </para>
       <para>
