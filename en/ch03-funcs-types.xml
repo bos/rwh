@@ -169,8 +169,8 @@
       multiple values from a function.  We can also use them in other
       places where we want a fixed-size collection of values, for
       which the kind of container we're using isn't of much
-      importance.  An example of this might be to represent a row
-      in the result of a a database query.</para>
+      importance.  An example of this might be to represent a row in
+      the result of a a database query.</para>
   </sect1>
 
   <sect1>
@@ -189,7 +189,7 @@
       find out how to use a few of those functions.</para>
 
     <para>To call a function in Haskell, we provide the name of the
-      function followed by its arguments, all separated by whitespace.
+      function followed by its arguments, all separated by white space.
       As an example, let's call the <function>head</function>
       function, which returns the first element of a list.</para>
 
@@ -348,22 +348,20 @@
       <title>Conditional evaluation</title>
 
       <para>Like other languages, Haskell has an <code>if</code>
-	expression.  Let's see it in action: we'll write our own
-	version of the standard <function>take</function> function.
-	Before we do so, let's probe a little bit of how
-	<function>take</function> behaves.</para>
+	expression.  Let's see it in action, then we'll explain what's
+	going on.  As an example, we'll write our own version of the
+	standard <function>take</function> function. Before we begin,
+	let's probe a little bit of how <function>take</function>
+	behaves, so we can replicate its behaviour.</para>
 
       &myTake.ghci:take;
 
       <para>From the above, it seems that <function>take</function>
-	removes at most the given number of elements from the front of
-	a list (it returns the empty list if the number to remove is
-	greater than the number of elements), and that it treats
-	negative numbers as zero.</para>
-
-      <para>Here's a <function>myTake</function> function that has the
-	same behaviour as <function>take</function>, and uses
-	Haskell's <code>if</code> expression.</para>
+	returns an empty list if the number to remove is greater than
+	the number of elements, and that it treats negative numbers as
+	zero.  Here's a <function>myTake</function> function that has
+	the same behaviour, and uses Haskell's <code>if</code>
+	expression to decide what to do.</para>
 
       &myTake.hs:myTake;
 
@@ -406,11 +404,15 @@
 
       &myTake.ghci:null;
 
+      <para>Third is that our function calls itself recursively.  This
+	is an early example of how, in Haskell, we use recursion where
+	in an imperative language we'd probably use a loop.</para>
+
       <para>Finally, our <code>if</code> expression spans several
 	lines.  We line the <code>then</code> and <code>else</code>
 	branches up under the <code>if</code> for neatness, but this
 	is not mandatory.  We could put all of them on a single line,
-	for example, but this is harder to read.</para>
+	for example, but we'd end up with less readable code.</para>
 
       &myTake.hs:myTake2;
 
@@ -489,6 +491,7 @@
       another function, one that happens to return a value of the type
       we want to construct.</para>
   </sect1>
+
   <sect1>
     <title>Algebraic data types</title>
 
@@ -628,6 +631,70 @@
       Haskell compiler what we mean.</para>
 
       &Wrapper.hs:parens;
+  </sect1>
+
+  <sect1>
+    <title>Back to writing functions: local variables</title>
+
+    <para>Let's take a break from writing about types for a few
+      moments.  Within the body of a function, we can introduce new
+      local variables whenever we need them, using a <code>let</code>
+      expression.  As an example, let's write a function that
+      calculates the real-valued roots of the quadratic equation
+      <literal>a * (x ** 2) + b * x + c == 0</literal>.</para>
+
+    &Roots.hs:realRoots;
+
+    <para>The keywords to look out for here are <code>let</code>,
+      which starts a block of variable declarations, and
+      <code>in</code>, which ends it.  Each line introduces a new
+      variable.  The name is on the left of the <literal>=</literal>,
+      and its value on the right.  We can use these variables both
+      within our block of variable declarations and in the expression
+      that follows the <code>in</code> keyword.</para>
+
+    <para>There's no problem with a variable earlier in a
+      <code>let</code> block referring to a later one, or even with
+      them referring to each other.</para>
+
+    <para>We sneaked a previously unseen standard type,
+      <type>Maybe</type>, into our example.  We use <type>Maybe</type>
+      when it might not make sense to return a normal result, for
+      example because a function's result is undefined for some
+      inputs.  We use <function>Just</function> to say <quote>we have
+	a result</quote>, and the argument to
+      <function>Just</function> is that result.  When we can't give a
+      result, we use <function>Nothing</function>, which takes no
+      arguments.</para>
+
+    &realRoots.ghci:maybe;
+    
+    <para>Why do we need <type>Maybe</type> here?  The real-valued
+      roots of a quadratic equation are infinity when
+      <varname>a</varname>, the coefficient of <literal>x **
+	2</literal>, is zero.</para>
+
+    &realRoots.ghci:a0;
+
+    <para>They're also not defined when <literal>b ** 2 - 4 * a *
+	c</literal> is negative, because we would need to use complex
+      numbers to represent a negative square root.</para>
+
+    &realRoots.ghci:complex;
+
+    <para>Otherwise, we can return a normal result, wrapped in
+      <function>Just</function>.</para>
+
+    &realRoots.ghci:just;
+
+  </sect1>
+
+  <sect1>
+    <title>The offside rule, and white space in a function body</title>
+
+    <para>In our definition of <function>realRoots</function>, the
+      left margin of our text wandered around quite a bit.  This was
+      not an accident: in Haskell, white space has meaning.</para>
   </sect1>
 
   <sect1>

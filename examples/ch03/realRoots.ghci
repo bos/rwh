@@ -1,0 +1,16 @@
+--# maybe
+Just "answer"
+Nothing
+
+--# a0
+
+:load Roots.hs
+realRoots 0 1 2
+
+--# complex
+
+realRoots 1 3 4
+
+--# just
+
+realRoots 1 3 2
