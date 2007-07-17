@@ -22,8 +22,9 @@ printitall = runall actions
 -- Take a list of actions, and execute each of them in turn.
 runall :: [IO ()] -> IO ()
 runall [] = return ()
-runall (x:xs) = do x
-                   runall xs
+runall (firstelem:remainingelems) = 
+    do firstelem
+       runall remainingelems
 
 main = do str2action "Start of the program"
           printitall

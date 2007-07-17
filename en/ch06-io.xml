@@ -96,6 +96,11 @@ Welcome to Haskell, John!
     </para>
     &basicio.ghci:putStrLn;
     <para>
+      In this example, the output <literal>foo</literal> is not a return
+      value from &putStrLn;.  Rather, it's the result of &putStrLn; actually
+      writing <literal>foo</literal> to the terminal.
+    </para>
+    <para>
       The type of &getLine; may look strange to you.  It looks like a value,
       rather than a function.  And in fact, that is one way to look at it:
       &getLine; is storing an I/O action.  When that action is run, you get
@@ -919,7 +924,8 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         Haskell is called <emphasis>actions</emphasis>.  Actions resemble
         functions.  They do nothing when they are defined, but perform some
         task when they are invoked.  I/O actions are defined within the &IO;
-        monad.  Monads are actually a powerful way of chaining data together
+        monad.  Monads are actually a powerful way of chaining functions
+        together
         purely and are covered in <remark>FIXME: insert ref</remark>.  It's not
         necessary to understand monads in order to understand I/O.  Just
         understand that the return value of actions is "tagged" with 
@@ -1004,6 +1010,14 @@ Data: Done!
         function that returns a list.  It doesn't -- and can't -- actually
         execute anything directly.  &mapM; is a utility that lives in the
         &IO; monad and thus can actually execute the actions.
+      </para>
+      <para>
+        Going back to &main;, &mapM_; applies 
+        <literal>(straction . show)</literal> to every element in
+        <literal>numbers</literal>.  &show; converts each number to a &String;
+        and <literal>str2action</literal> converts each &String; to an action.
+        &mapM_; then takes care of executing each action, which results
+        in a line printed out.
       </para>
     </sect2>
     <sect2>
@@ -1163,7 +1177,8 @@ Data: Done!
         Haskell implementation.  The current mode can be set with
         &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  You can
         ask the system for the current buffering mode by calling
-        &hGetBuffering;.
+        &hGetBuffering;.  As an example, you can say 
+        <literal>hSetBuffering stdin (BlockBuffering Nothing)</literal>.
       </para>
     </sect2>
     <sect2>
