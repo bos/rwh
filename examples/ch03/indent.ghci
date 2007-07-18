@@ -1,0 +1,3 @@
+--# load
+:load GoodIntent.hs
+:load BadIndent.hs

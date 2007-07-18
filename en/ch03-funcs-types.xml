@@ -655,17 +655,68 @@
 
     <para>There's no problem with a variable earlier in a
       <code>let</code> block referring to a later one, or even with
-      them referring to each other.</para>
+      them referring to each other.  (In some functional languages,
+      this sort of flexible <code>let</code> is named
+      <code>letrec</code>.)</para>
 
-    <para>We sneaked a previously unseen standard type,
-      <type>Maybe</type>, into our example.  We use <type>Maybe</type>
-      when it might not make sense to return a normal result, for
-      example because a function's result is undefined for some
-      inputs.  We use <function>Just</function> to say <quote>we have
-	a result</quote>, and the argument to
-      <function>Just</function> is that result.  When we can't give a
-      result, we use <function>Nothing</function>, which takes no
-      arguments.</para>
+    <para>We can have multiple <code>let</code> blocks within an
+      expression.  There's also another mechanism we can use to
+      introduce local variables, called a <code>where</code> block.
+      The definitions in a <code>where</code> block apply to the code
+      that <emphasis>precedes</emphasis> it.  Let's illustrate what we
+      mean with another example.</para>
+
+    &Roots.hs:roots;
+
+    <para>Here, the <function>roots</function> function returns the
+      real roots when they're defined, and the complex roots
+      otherwise. (We left out the divide-by-zero case for simplicity.)
+      While a <quote>where</quote> clause initially looks very weird
+      to non-Haskell programmers, it's a great way to put the
+      <quote>important</quote> code early, followed by the auxiliary
+      definitions that support it.  After a while, you'll find
+      yourself missing <code>where</code> clauses in languages that
+      lack them!</para>
+
+    <para>The main difference between <code>let</code> and
+      <code>where</code> is one of scope.  The scope of a
+      <code>let</code> only extends to the expression after the
+      <code>in</code> keyword, while the variables introduced by a
+      <code>where</code> clause are visible upwards to the beginning
+      of the block that it <quote>belongs</quote> to. Also,
+      <code>let</code> is always paired with an expression, but
+      <code>where</code> is paired with a block of equations.</para>
+
+    <para>We'll be talking more about how to write <code>let</code>
+      expressions and <code>where</code> clauses in <xref
+	linkend="hs.funcstypes.offside"/>.</para>
+
+    <note>
+      <para>It's probably obvious from context above, but
+	<function>(:+)</function> is the constructor for a complex
+	number, taking the real part on the left and the imaginary
+	part on the right.</para>
+
+      <para>Also, <type>Complex</type> is parameterised over the type
+	of complex number it should represent.  In practice, it only
+	makes much sense to use <type>Complex Double</type>, since
+	&GHC; implements <type>Double</type> more efficiently than
+	<type>Float</type>.</para>
+    </note>
+  </sect1>
+
+  <sect1>
+    <title>How to represent a complicated result</title>
+
+    <para>We sneaked two previously unseen standard types,
+      <type>Maybe</type> and <type>Either</type>, into our
+      root-finding examples.  We use <type>Maybe</type> when it might
+      not make sense to return a normal result, for example because a
+      function's result is undefined for some inputs.  We use
+      <function>Just</function> to say <quote>we have a
+	result</quote>, and the argument to <function>Just</function>
+      is that result.  When we can't give a result, we use
+      <function>Nothing</function>, which takes no arguments.</para>
 
     &realRoots.ghci:maybe;
     
@@ -687,14 +738,128 @@
 
     &realRoots.ghci:just;
 
+    <para>The <type>Either a b</type> type gives us more flexibility,
+      as it's got two type parameters.  We can wrap a value of any
+      type <varname role="type">a</varname> with <type>Left</type>, or
+      a value of an unrelated type <varname role="type">b</varname>
+      with <type>Right</type>.  Our <function>roots</function>
+      function uses this to return a <type>Double</type> when the real
+      roots are defined, and a <type>Complex Double</type> when
+      they're not.</para>
   </sect1>
 
-  <sect1>
-    <title>The offside rule, and white space in a function body</title>
+  <sect1 id="hs.funcstypes.offside">
+    <title>The offside rule, and white space in a function
+      body</title>
 
     <para>In our definition of <function>realRoots</function>, the
       left margin of our text wandered around quite a bit.  This was
       not an accident: in Haskell, white space has meaning.</para>
+
+    <para>Haskell uses indentation as a cue to parse sections of code.
+      This use of layout to convey structure is sometimes called the
+      offside rule. At the top level, the first declaration or
+      definition can start in any column, and the Haskell compiler or
+      interpreter remembers that indentation level.  Every subsequent
+      top-level declaration must have the same indentation.</para>
+
+    <para>Here's an illustration of the top-level indentation rule.
+      Our first file, <filename>GoodIndent.hs</filename>, is well
+      behaved.</para>
+
+    &GoodIndent.hs:good;
+
+    <para>Our second, <filename>BadIndent.hs</filename>, doesn't play
+      by the rules.</para>
+
+    &BadIndent.hs:bad;
+
+    <para>Here's what happens when we try to load the two files into
+      &ghci;.</para>
+
+    &indent.ghci:load;
+
+    <para>An empty line is treated as a continuation of the current
+      item, as is a line indented to the right of the current current
+      item.</para>
+
+    <para>The rules for <code>let</code> expressions and
+      <code>where</code> clauses are similar.  After a
+      <code>let</code> or <code>where</code> keyword, the Haskell
+      compiler or interpreter remembers the indentation of the next
+      token it sees. If the next line is empty, or its indentation is
+      further to the right than the previous line, this counts as
+      continuing the previous line. On the other hand, if the
+      indentation is the same as the previous line, this is treated as
+      beginning a new item in the same block.</para>
+
+    <para>Here are nested uses of <code>let</code> and
+      <code>where</code>.</para>
+
+    &letwhere.hs:let;
+
+    <para>In the body of <varname>bar</varname>, the variable
+      <varname>a</varname> is only visible within the <code>let</code>
+      expression that defines it.  It's not visible to the
+      <code>let</code> expression that defines <varname>b</varname>;
+      only the <emphasis>result</emphasis> of the inner
+      <code>let</code> expression is visible.</para>
+
+    &letwhere.hs:where;
+
+    <para>Similarly, the scope of the first <code>where</code> clause
+      is the definition of <varname>foo</varname>, but the scope of
+      the second is just the first <code>where</code> clause.</para>
+
+    <para>The indentation we use for the <code>let</code> and
+      <code>where</code> clauses makes our intentions easy to figure
+      out.</para>
+
+    <sect2>
+      <title>A note about tabs versus spaces</title>
+
+      <para>If you are using a Haskell-aware text editor (e.g. Emacs),
+	it is probably already configured to use space characters for
+	all white space within a line.  If your editor is
+	<emphasis>not</emphasis> Haskell-aware, you should configure
+	it to only use space characters.</para>
+
+      <para>The reason for this is simple portability.  In an editor
+	that uses a fixed-width font, tab stops are by default placed
+	at different intervals on Unix-like systems (every eight
+	characters) than on Windows  (every four characters). This
+	means that no matter what your personal beliefs are about
+	where tabs belong, you can't rely on someone else's editor
+	honouring your preferences.  Any indentation that uses tabs is
+	going to look broken under <emphasis>someone's</emphasis>
+	configuration; this could lead to compilation problems, too.
+	Using space characters instead avoids this problem
+	entirely.</para>
+    </sect2>
+
+    <sect2>
+      <title>The offside rule is not mandatory</title>
+
+      <para>We can use explicit structuring instead of layout to
+	indicate what we mean.  To do so, we start a block of
+	equations with an opening curly brace; separate each item with
+	a semicolon; and finish the block with a closing curly brace.
+	The following two uses of <code>let</code> have the same
+	meanings.</para>
+
+      &Braces.hs:braces;
+
+      <para>When we use explicit structuring, the normal layout rules
+	don't apply, which is why we can get away with unusual
+	indentation in the second <code>let</code> expression.</para>
+
+      <para>We can use explicit structuring anywhere that we'd
+	normally use layout.  It's valid for <code>where</code>
+	clauses, and even top-level declarations.  Just remember that
+	although the facility exists, explicit structuring is hardly
+	ever actually <emphasis>used</emphasis> in Haskell
+	programs.</para>
+    </sect2>
   </sect1>
 
   <sect1>
