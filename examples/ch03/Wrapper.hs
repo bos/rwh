@@ -16,3 +16,7 @@ multiplyWrapped :: Wrapper (Wrapper Int)
 
 multiplyWrapped = Wrapper (Wrapper 7)
 {-- /snippet parens --}
+
+{-- snippet unwrap --}
+unwrap (Wrapper x) = x
+{-- /snippet unwrap --}

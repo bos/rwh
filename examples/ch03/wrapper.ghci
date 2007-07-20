@@ -7,3 +7,7 @@
 Wrapper [1,2,3]
 
 :type Wrapper
+
+--# unwrap
+unwrap (Wrapper "foo")
+:type unwrap

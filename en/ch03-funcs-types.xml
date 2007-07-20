@@ -344,7 +344,7 @@
       the result of a function is the result of evaluating whatever
       expression is in the function's body.</para>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.if">
       <title>Conditional evaluation</title>
 
       <para>Like other languages, Haskell has an <code>if</code>
@@ -949,44 +949,203 @@
       <type>ComplexTree () Int</type>.</para>
   </sect1>
 
-  <sect1 id="hs.funcstypes.strong">
-    <title>Strong and Static Typing With Inference</title>
-    <remark>FIXME</remark>
-    <para>See also <xref linkend="hs.funcstypes.inference"/>.</para>
+  <sect1>
+    <title>Pattern matching</title>
+
+    <para>Although we introduced a handful of functions earlier that
+      can operate on lists, we've yet to see how we might generally
+      get values out of a constructed algebraic data type.  Haskell
+      has a simple pattern matching facility that we can use to this
+      end.</para>
+
+    <para>A pattern lets us peer inside a compound value and bind
+      variables to the values it contains.  In fact, when we define a
+      function, the parameters to that function are really patterns
+      that bind our variables to an entire value.</para>
+
+    <para>Here's an example of pattern matching in action on a list;
+      we're going to add all elements of the list together.</para>
+
+    &add.hs:sumList;
+
+    <para>See that <code>(x:xs)</code> on the left of the first line?
+      The <code>:</code> means <quote>match the head of a
+	list</quote>; that's the familiar list constructor,
+      <function>(:)</function>, in action in a new way.  The variables
+      <varname>x</varname> and <varname>xs</varname> are given the
+      values of (<quote>bound to</quote>) the head and tail of the
+      list, respectively.  The whole pattern is wrapped in parentheses
+      so Haskell won't parse it as three separate arguments.</para>
+
+    <para>What effect does pattern matching have? Haskell will only
+      evaluate the right hand side of an equation if it can match all
+      of the patterns on the left hand side.  In the definition of
+      <function>sumList</function> above, the right hand side of the
+      first equation won't be evaluated if the input list is empty.
+      Instead, Haskell will <quote>fall through</quote> to the
+      equation on the following line, which <emphasis>does</emphasis>
+      have a pattern for the empty list, and it will evaluate
+      that.</para>
+
+    <para>It might initially look like we have two functions named
+      <function>sumList</function> here, but Haskell lets us define a
+      function as a series of equations, so in fact these two clauses
+      are defining the behaviour of one function, for different
+      inputs.  (By the way, there's a standard function,
+      <function>sum</function>, that does </para>
+
+    <para>The syntax for pattern matching on a tuple is similar to the
+      syntax for constructing a tuple.  Here's a function that returns
+      the third element from a three-tuple.</para>
+
+    &Tuple.hs:third;
+
+    <para>There's no limit on how <quote>deep</quote> within a value a
+      pattern can look.  Here's a definition that looks both inside a
+      tuple and inside a list within that tuple.</para>
+
+    &Tuple.hs:complicated;
+
+    <para>We can try this out interactively.</para>
+
+    &tuple.ghci:complicated;
+
+    <para>Wherever a literal value is present in a pattern, that value
+      must match exactly for the pattern match to succeed.  If every
+      pattern within a series of equations fails to match, we get a
+      runtime error.</para>
+
+    &tuple.ghci:nomatch;
+
+    <para>We can pattern match on algebraic data types using their
+      constructors.  Remember the <type>Wrapper</type> type we defined
+      earlier?  Here's how we can extract a wrapped value from a
+      <type>Wrapper</type>.</para>
+
+    &Wrapper.hs:unwrap;
+
+    <para>Let's see it in action.</para>
+
+    &wrapper.ghci:unwrap;
+
+    <para>Notice that Haskell infers the type of the
+      <function>unwrap</function> function based on the constructor
+      we're using in our pattern.  If we're trying to match a value
+      whose constructor is <function>Wrapper</function>, then the type
+      of that parameter must be <type>Wrapper a</type>.</para>
+    
+    <note>
+      <para>Haskell tests patterns for matches in the order in which
+	we list them in our code.  It goes from top to bottom and
+	stops at the first match; it <emphasis>does not</emphasis>
+	check every pattern and use the best match.</para>
+
+      <para>If you're familiar with pattern matching from a logic
+	programming language like Prolog, Haskell's facility is
+	simpler and less powerful.  It doesn't provide backtracking or
+	unification.</para>
+    </note>
+
+    <sect2>
+      <title>The don't-care, or wild card, pattern</title>
+
+      <para>When we're writing a pattern, we can specify that we don't
+	care what value a particular value within a structure has,
+	without actually binding that value to a name.  The notation
+	for this is <code>_</code> (called a wild card or <quote>don't
+	  care</quote>), and we use it as follows.  This function
+	tells us whether the result of the <function>roots</function>
+	function we defined earlier is real-valued or not.</para>
+
+      &Roots.hs:isRealValued;
+
+      <para>Here, we don't care about the value of the result, just
+	about which constructor was used to create it.  If it was
+	<function>Left</function>, the result must be a complex
+	number, otherwise it must be real.  We can use a wild card for
+	the entire second pattern; there's no need to see if the
+	constructor is <function>Right</function>, because it
+	<emphasis>must</emphasis> be; <type>Either</type> only has two
+	constructors.</para>
+    </sect2>
+
+    <sect2>
+      <title>The case expression</title>
+
+      <para>We're not limited to using patterns in function
+	definitions.  The <code>case</code> expression lets us match
+	patterns at any time.  Here's what it looks like.</para>
+
+      &Roots.hs:hasRealRoots;
+
+      <para>The <code>case</code> keyword is followed by an arbitrary
+	expression; the result of this expression is what we're
+	pattern matching on.  The <code>of</code> keyword signifies
+	the end of the expression and the beginning of the block of
+	patterns and expressions.</para>
+
+      <para>Each item in the block consists of a pattern, followed by
+	an arrow <code>-&gt;</code>, followed by an expression to
+	evaluate if that pattern matches.  The result of the
+	<code>case</code> expression is the result of the expression
+	associated with the first pattern to match, taken from top to
+	bottom.</para>
+
+      <para>To express <quote>here's the expression to evaluate if
+	  none of the other patterns match</quote>, we would just use
+	the wild card pattern <code>_</code> as the last in our list
+	of patterns.</para>
+    </sect2>
+
+    <sect2>
+      <title>A flying visit back to the where clause</title>
+
+      <para>Now that we've seen that we can define a function as a
+	series of equations, the usefulness of the <code>where</code>
+	clause should be a bit more clear.  Variables that we define
+	inside a <code>where</code> clause are visible across all of
+	the equations that precede it in a single block.</para>
+    </sect2>
+    
   </sect1>
 
-  <sect1 id="hs.funcstypes.patternmatching">
-    <title>Pattern Matching</title>
+  <sect1>
+    <title>Conditional evaluation with guards</title>
 
-    <remark>FIXME: Introduce pattern matching.  Show how to write a
-      function as a series of clauses, each predicated on its
-      patterns.
-    </remark>
-  </sect1>
+    <para>We can further extend our expressive arsenal using
+      <emphasis>guards</emphasis>.  A guard is an expression of type
+      <type>Bool</type>; if it evaluates to <function>True</function>,
+      the equation that follows it is evaluated.  Otherwise, the next
+      guard in the series is evaluated, and so on.  Here's an example
+      of guards in action.</para>
 
-  <sect1 id="hs.funcstypes.basictypes">
-    <title>Basic Types</title>
-    <remark>FIXME: Type basics: products (tuples), sums
-      (Maybe,Either), recursive types (lists). Give us enough glue to
-      pattern match on.
-    </remark>
-  </sect1>
+    &Roots.hs:guardedRoots;
 
-  <sect1 id="hs.funcstypes.guards">
-    <title>Guards</title>
-    <remark>FIXME:   Introduce guards.  Show that guards and patterns
-      can be used together or independently.
-    </remark>
-  </sect1>
+    <para>Each guard is introduced by a <code>|</code> symbol,
+      followed by the guard expression, then an <code>=</code> symbol
+      (or <code>-&gt;</code> if within a <code>case</code>
+      expression), then the expression to evaluate if the guard
+      succeeds.</para>
 
-  <sect1 id="hs.funcstypes.ifcase">
-    <title>Conditionals: if and case</title>
-    <remark>FIXME</remark>
-  </sect1>
+    <para>We can use guards anywhere that we can use patterns.  The
+      combination of writing a function as a series of equations,
+      pattern matching, and guards lets us write code that's
+      clear and easy to understand.</para>
 
-  <sect1 id="hs.funcstypes.local">
-    <title>Local definitions: let and where</title>
-    <remark>FIXME</remark>
+    <para>Remember the <function>myTake</function> function we defined
+      in <xref linkend="hs.funcstypes.if"/>?</para>
+
+    &myTake.hs:myTake.noid;
+
+    <para>Here's a reformulation of that function using patterns and
+      guards.  Instead of reasoning about what an <code>if</code>
+      expression is doing and which branch will be evaluated, the code
+      uses a series of equations with simple patterns and guards. This
+      makes it easy to understand its behaviour under different
+      circumstances.</para>
+
+    &myTake.hs:niceTake;
+
   </sect1>
 
   <sect1 id="hs.funcstypes.recursion">
