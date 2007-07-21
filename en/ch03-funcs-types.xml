@@ -1148,6 +1148,71 @@
 
   </sect1>
 
+  <sect1>
+    <title>Infix functions</title>
+
+    <para>Usually, when we define or call a function in Haskell, we
+      write the name of the function, followed by its arguments; this
+      is called prefix notation, because the name of the function
+      comes before its arguments.  For a function that takes two
+      arguments, we have the option of using it in
+      <emphasis>infix</emphasis> form, between its first and second
+      arguments.  This allows us to write expressions using functions
+      as if they were infix operators.</para>
+
+    <para>The syntax for defining or calling a function in infix form
+      is to enclose the name of the function in backtick characters
+      (sometimes known as backquotes).  Here's a simple infix
+      definition.</para>
+
+    &Plus.hs:plus;
+
+    <para>Defining a function in infix form doesn't change anything
+      about the behaviour of the function.  We can call the function
+      using infix or prefix notation, as we prefer.</para>
+
+    &infix.ghci:plus;
+
+    <para>Infix notation is useful for more than just our own
+      functions.  For example, Haskell's standard
+      <code>Data.List</code> module defines a function,
+      <function>isPrefixOf</function>, that indicates whether all
+      elements of its first argument are equal to the first elements
+      of its second argument.</para>
+
+    &infix.ghci:type;
+
+    <para>Let's define a few variables in &ghci;.</para>
+
+    &infix.ghci:vars;
+
+    <para>If we call <function>isPrefixOf</function> using prefix
+      notation, we can have a hard time remembering which argument
+      we're checking for as a prefix of the other.</para>
+
+    &infix.ghci:prefix;
+
+    <para>But if we use infix notation, the code <quote>reads</quote>
+      more naturally; it's now obvious that we're checking the
+      variable on the left to see if it's a prefix of the variable on
+      the right.</para>
+
+    &infix.ghci:infix;
+
+    <para>There's no hard-and-fast rule that dictates when you ought
+      to use infix versus prefix notation, although prefix notation is
+      far more common.  It's best to choose whichever makes your code
+      more readable in a specific situation.</para>
+
+    <note>
+      <para>The backtick notation is not a general mechanism: it's a
+	piece of special syntax that applies only to names.  For
+	example, we can't put backticks around an expression that
+	returns a function, and then treat that as an infix
+	function.</para>
+    </note>
+  </sect1>
+
   <sect1 id="hs.funcstypes.recursion">
     <title>Recursion</title>
     <remark>FIXME</remark>
