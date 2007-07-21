@@ -4,7 +4,7 @@ import Data.Complex
 roots :: Double -> Double -> Double
       -> Either (Complex Double, Complex Double) (Double, Double)
 
-roots a b c = if n > 0
+roots a b c = if n >= 0
               then Right ((-b + sqrt n) / a2, (-b - sqrt n) / a2)
               else Left ((-b' + sqrt n') / a2', (-b' - sqrt n') / a2')
     where n   = b**2 - 4 * a * c
@@ -28,7 +28,7 @@ realRoots a b c = let n  = b**2 - 4 * a * c
                       a2 = 2 * a
                       r1 = (-b + sqrt n) / a2
                       r2 = (-b - sqrt n) / a2
-                  in if n > 0 && a /= 0
+                  in if n >= 0 && a /= 0
                      then Just (r1, r2)
                      else Nothing
 {-- /snippet realRoots --}
@@ -41,10 +41,19 @@ hasRealRoots a b c = case realRoots a b c of
 
 {-- snippet guardedRoots --}
 guardedRoots a b c
-    | n > 0 && a /= 0 = Just (r1, r2)
-    | otherwise       = Nothing
+    | n >= 0 && a /= 0 = Just (r1, r2)
+    | otherwise        = Nothing
     where n  = b**2 - 4 * a * c
           a2 = 2 * a
           r1 = (-b + sqrt n) / a2
           r2 = (-b - sqrt n) / a2
 {-- /snippet guardedRoots --}
+
+{-- snippet finalRoots --}
+finalRoots _ 0 _             = Nothing
+finalRoots n a b | n >= 0    = Just (r1, r2)
+                 | otherwise = Nothing
+    where n  = b**2 - 4 * a * c
+          r1 = (-b + sqrt n) / (2 * a)
+          r2 = (-b - sqrt n) / (2 * a)
+{-- /snippet finalRoots --}

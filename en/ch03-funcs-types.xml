@@ -174,6 +174,30 @@
       which the kind of container we're using isn't of much
       importance.  An example of this might be to represent a row in
       the result of a a database query.</para>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>What are the types of the following
+	      expressions?</para>
+	    <itemizedlist>
+	      <listitem>
+		<para><code>False</code></para>
+	      </listitem>
+	      <listitem>
+		<para><code>(["foo", "bar"], 'a')</code></para>
+	      </listitem>
+	      <listitem>
+		<para><code>[(True, []), (False, [['a']])]</code></para>
+	      </listitem>
+	    </itemizedlist>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
   <sect1>
@@ -402,9 +426,9 @@
       <para>Whereas it can make sense in an imperative language to
 	omit the <code>else</code> branch from an <code>if</code>,
 	this would be nonsensical in Haskell.  An <code>if</code>
-	expression that was missing an <code>else</code> couldn't
-	typecheck, since it would sometimes have a value and sometimes
-	not.</para>
+	expression that was missing an <code>else</code> wouldn't have
+	a value if the condition after the <code>if</code> evaluated
+	to <function>False</function>, so it couldn't typecheck.</para>
 
       <para>The second novelty is almost trivial: the
 	<function>null</function> function, which we use in the
@@ -425,10 +449,72 @@
 
       &myTake.hs:myTake2;
 
-      <remark>XXX Make a forward reference to discussion of the layout
-	rule.</remark>
+    </sect2>
+
+    <sect2 id="hs.funcstypes.error">
+      <title>Reporting errors</title>
+
+      <para>Haskell provides a standard function, <function>error ::
+	  Char -&gt; a</function>, that we can call when something has
+	gone terribly wrong in our code.  We give it a string
+	parameter, which is the error message to display.  Its type
+	signature looks peculiar; how can it produce a value of any
+	type <varname role="type">a</varname> given just a string? The
+	answer is that it doesn't, because <function>error</function>
+	is special.</para>
+
+      <para>It has that type so that we can call it anywhere and it
+	will always have the right type.   However, instead of
+	returning a value like a normal function, it immediately
+	terminates evaluation, and prints the error message we give
+	it.  Here's an example.  The <function>mySecond</function>
+	function returns the second element of its input list, but
+	fails if its input list isn't long enough.</para>
+
+      &MySecond.hs:mySecond;
+
+      <para>As usual, we can see how this works in practice in
+	&ghci;.</para>
+
+      &error.ghci:mySecond;
+
+      <para>Notice that in the third case above, where we're trying to
+	use the result of the call to <function>mySecond</function> as
+	the argument to another function, evaluation still terminates
+	and drops us back to the &ghci; prompt.  This is both the
+	strength and weakness calling <function>error</function>: it
+	doesn't let us distinguish between recoverable errors and
+	problems so severe that they really should terminate a
+	program.  We'll see one way around this problem in
+	<xref linkend="hs.funcstypes.maybe"/>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Haskell provides a standard function, <code>last ::
+		[a] -&gt; a</code>, that returns the last element of a
+	      list.  Write a function <function>lastButOne</function>,
+	      that returns the element <emphasis>before</emphasis>
+	      the last.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Load your <function>lastButOne</function> function
+	      into &ghci;, and try it out on lists of different
+	      lengths.  What happens when you pass it a list that's
+	      too short?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
 
     </sect2>
+    
   </sect1>
 
   <sect1>
@@ -714,7 +800,7 @@
     </note>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.maybe">
     <title>How to represent a complicated result</title>
 
     <para>We sneaked two previously unseen standard types,
@@ -747,14 +833,23 @@
 
     &realRoots.ghci:just;
 
-    <para>The <type>Either a b</type> type gives us more flexibility,
-      as it's got two type parameters.  We can wrap a value of any
-      type <varname role="type">a</varname> with <type>Left</type>, or
-      a value of an unrelated type <varname role="type">b</varname>
-      with <type>Right</type>.  Our <function>roots</function>
-      function uses this to return a <type>Double</type> when the real
-      roots are defined, and a <type>Complex Double</type> when
-      they're not.</para>
+    <para>Compared to <function>error</function>, which we saw in
+      <xref linkend="hs.funcstypes.error"/>, <type>Maybe</type> has
+      the huge advantage that it's a normal value, which we return to
+      our caller to deal with.  Calling <function>error</function>, by
+      contrast, is more akin to pulling on the program's ejector seat
+      handle as it disintegrates around us; something terrible has
+      happened, and we need to give up right now.</para>
+
+    <para>The <type>Either a b</type> type gives us even more
+      flexibility than <type>Maybe</type>, as it's got two type
+      parameters. We can wrap a value of any type <varname
+	role="type">a</varname> with <type>Left</type>, or a value of
+      an unrelated type <varname role="type">b</varname> with
+      <type>Right</type>.  Our <function>roots</function> function
+      uses this to return a <type>Double</type> when the real roots
+      are defined, and a <type>Complex Double</type> when they're
+      not.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.offside">
@@ -929,6 +1024,19 @@
       strings.  But since <type>String</type> is just a synonym for
       <type>[Char]</type>, it's <emphasis>really</emphasis> a list of
       lists of lists of <type>Char</type>.  Whew!</para>
+
+    <para>We're not limited to building up lists one element at a
+      time.  Haskell defines an inline function,
+      <function>(++)</function>, that we can use to append one list
+      onto the end of another.</para>
+
+    &list.ghci:append;
+
+    <para>The <function>concat</function> function takes a list of
+      lists, and concatenates the whole lot into a single list.</para>
+
+    &list.ghci:concat;
+
   </sect1>
 
   <sect1>
@@ -1136,6 +1244,12 @@
       expression), then the expression to evaluate if the guard
       succeeds.</para>
 
+    <para>The <varname>otherwise</varname> used in the second guard
+      has an obvious meaning: it's the expression to evaluate if
+      previous gaurds all evaluate to <function>False</function>. It's
+      not a special piece of syntax, though; it's just a variable
+      whose value is <function>True</function>.</para>
+
     <para>We can use guards anywhere that we can use patterns.  The
       combination of writing a function as a series of equations,
       pattern matching, and guards lets us write code that's
@@ -1150,8 +1264,8 @@
       guards.  Instead of reasoning about what an <code>if</code>
       expression is doing and which branch will be evaluated, the code
       uses a series of equations with simple patterns and guards. This
-      makes it easy to understand its behaviour under different
-      circumstances.</para>
+      makes it easier to understand the behaviour of the function
+      under different circumstances.</para>
 
     &myTake.hs:niceTake;
 
@@ -1220,6 +1334,25 @@
 	returns a function, and then treat that as an infix
 	function.</para>
     </note>
+  </sect1>
+
+  <sect1>
+    <title>Conclusion</title>
+
+    <para>In this chapter, we've had a whirlwind overview of Haskell's
+      type system and much of its syntax.  We've read about basic
+      types, compound types, and how to write our own algebraic data
+      types.  We've seen how to write functions, and how to declare
+      local variables within them.  We've read about Haskell's offside
+      rule for laying out functions, and how we can avoid it if we
+      need to.  We've seen conditional evaluation, pattern matching
+      and guards.  We've discussed error handling.</para>
+
+    <para>This all amounts to a lot of information to absorb.  In
+      <xref linkend="hs.fp"/>, we'll build on this basic knowledge to
+      understand how we can write, and think about, code in
+      Haskell.</para>
+
   </sect1>
 
 </chapter>
