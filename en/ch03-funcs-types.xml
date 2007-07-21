@@ -134,13 +134,16 @@
       Lists are strongly typed: a list of one type has an identity of
       its own, distinct from a list of another type. The type
       <type>[Int]</type> is a list that can only contain values of
-      type <type>Int</type>, for example.</para>
+      type <type>Int</type>, for example.  We also call the list type
+      <emphasis>polymorphic</emphasis>, because it can contain any
+      type of value.</para>
 
     <para>Lists are the <quote>bread and butter</quote> of Haskell
       collections.  Whereas in an imperative language, we might repeat
       a task over many items by iterating through a loop, this is
       something that we tend to do in Haskell by recursing over a
-      list.</para>
+      list.  We'll be spending a lot more time discussing lists in
+      <xref linkend="hs.fp"/>.</para>
 
     <para>A tuple is a fixed-size collection of values, each of which
       can be of any type.  Unlike a list (the elements of which must
@@ -280,6 +283,11 @@
       its type signature, with no <quote>regular documentation</quote>
       required.</para>
 
+    <para>Just as we called the list type polymorphic because it can
+      contain values of any type, when a function has type variables
+      in its signature, indicating that some of its arguments can be
+      of any type, we call the function polymorphic, too.</para>
+
     <para>So far, we haven't seen a signature for a function that
       takes <emphasis>more</emphasis> than one argument.  We've
       already encountered a few such functions; let's look at
@@ -290,9 +298,9 @@
     <para>It's pretty clear that there's something going on with an
       <type>Int</type> and some lists, but why are there two
       <literal>-&gt;</literal> symbols in the signature?  Haskell
-      parses these from right to left.  If we introduce parentheses,
-      it makes it clearer how Haskell is interpreting this type
-      signature.</para>
+      parses this chain of arrows from right to left.  If we introduce
+      parentheses, it makes it clearer how Haskell is interpreting
+      this type signature.</para>
 
     &Take.hs:type;
 
@@ -304,7 +312,8 @@
 
     <para>This is an intriguing idea, but it's not easy to see just
       yet what its consequences might be.  We'll return to this topic
-      soon, once we've spent a bit of time writing functions.</para>
+      in <xref linkend="hs.fp.partialapp"/>, once we've spent a bit of
+      time writing functions.</para>
 
   </sect1>
 
