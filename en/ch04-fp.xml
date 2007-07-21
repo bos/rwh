@@ -1,0 +1,60 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.fp">
+  <title>Functional programming</title>
+
+  <remark>FIXME</remark>
+
+  <sect1 id="hs.funcstypes.rle">
+    <title>Example: Run-Length Encoding</title>
+    <remark>FIXME:   Example: run-length encoding.  Use to show how
+      looping can be done via tail recursion.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.inference">
+    <title>Type Inference</title>
+    <remark>FIXME: Discuss type inference: what it is and how it can
+      save a lot of work.
+    </remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.anonymous">
+    <title>Anonymous (Lambda) Functions</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.partialapp">
+    <title>Partial Application</title>
+    <remark>FIXME</remark>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.typeclasses">
+    <title>Typeclasses</title>
+    <remark>FIXME: Introduce type classes.  Show how ghci infers types
+      with constraints. Define some functions that use type class
+      constraints. Talk about when it's appropriate to write explicit
+      signatures. 
+    </remark>
+    <para>See also <xref linkend="hs.typeclasses"/>.</para>
+  </sect1>
+
+  <sect1 id="hs.funcstypes.mapapi">
+    <title>Example: Data.Map API</title>
+    <remark>FIXME: Small example would be a finite map data structure
+      API, with a list and tree implementation (different complexity,
+      same api). Ties together basic types, small functions, top level
+      functions. class Map m where new     :: m k v insert  :: k -> v
+      -> m k v -> m k v lookup  :: k -> m k v -> v -- simple, O(n)
+      data Map1 k v = [(k,v)] -- less simple, O(log n) data Map2 k v =
+      Node k v (Map2 k v) (Map2 k v) | Empty
+
+    </remark>
+  </sect1>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
