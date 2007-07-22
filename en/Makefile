@@ -21,7 +21,7 @@ xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
 src-ghci := $(filter %.ghci,$(src-examples))
 
-stamp-examples := $(addprefix .stamp-,$(notdir $(src-examples)))
+stamp-examples := $(addprefix x/.stamp-,$(notdir $(src-examples)))
 
 # Objects.
 
@@ -147,8 +147,8 @@ vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
-.stamp-%.hs: %.hs ../tools/bin/snippets
+x/.stamp-%.hs: %.hs ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
+x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
