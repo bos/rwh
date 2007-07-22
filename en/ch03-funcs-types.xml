@@ -1224,6 +1224,62 @@
 	the equations that precede it in a single block.</para>
     </sect2>
     
+    <sect2 id="hs.funcstypes.pattern.limits">
+      <title>Limits to pattern matching</title>
+
+      <para>Every variable that appears within a pattern is a new
+	local variable that will be given a value if the pattern
+	matches, not a reference to some variable on
+	<quote>outside</quote> the pattern.  Matching a pattern only
+	lets us do exact comparisons against constructors and simple
+	values.  We can't use a pattern to match something like a
+	function.  To see what we mean, take a look at the following
+	function.</para>
+
+      &BogusPattern.hs:isHead;
+
+      <para>A naive glance suggests that it's trying to check the
+	value of <function>f</function> to see if it's actually the
+	standard function <function>head</function>, but such an
+	interpretation would be quite wrong.  Here's what is
+	<emphasis>really</emphasis> doing.</para>
+
+      <para>Because the first pattern in the <code>case</code>
+	expression is just a variable, this pattern will
+	<emphasis>always</emphasis> match, no matter what the value of
+	<varname>f</varname> is, and the value of <varname>f</varname>
+	will be given to the local variable <varname>head</varname>
+	when the right hand side is evaluated.</para>
+
+      <note>
+	<para>A pattern that consists only of a variable will always
+	  match, because it's not being compared against anything that
+	  might cause the match to fail.  We refer to patterns that
+	  always match as <quote>irrefutable</quote>.</para>
+      </note>
+
+      <para>Finally, because the first pattern always matches, &GHC;
+	will always evaluate its right hand side and use that as the
+	result of the <code>case</code> expression.  The second
+	pattern (the one with the wild card) will never actually be
+	reached. Because the two patterns will match the same values,
+	they are said to <emphasis>overlap</emphasis>.  If &GHC; ever
+	complains to you about overlapping patterns, it's telling you
+	that one of your patterns is the same as another, and so will
+	never actually be matched.</para>
+
+      <para>Another limitation of patterns is that a variable can only
+	appear once in a pattern.  For example, you can't put a
+	variable in multiple places within a pattern to express the
+	notion <quote>this value and that should be
+	  identical</quote>.</para>
+
+      <para>The way around these restrictions of Haskell's patterns is
+	to use patterns in combination with a language facility called
+	<emphasis>guards</emphasis>, which we'll talk about
+	next.</para>
+
+    </sect2>
   </sect1>
 
   <sect1>
@@ -1252,8 +1308,8 @@
 
     <para>We can use guards anywhere that we can use patterns.  The
       combination of writing a function as a series of equations,
-      pattern matching, and guards lets us write code that's
-      clear and easy to understand.</para>
+      pattern matching, and guards lets us write code that's clear and
+      easy to understand.</para>
 
     <para>Remember the <function>myTake</function> function we defined
       in <xref linkend="hs.funcstypes.if"/>?</para>
@@ -1269,6 +1325,15 @@
 
     &myTake.hs:niceTake;
 
+    <para>Let's return to one of the limitations of patterns that we
+      mentioned in the previous section: the fact that we can't use a
+      pattern to check two variables within the pattern for equality.
+      We can express this quite easily using a guarded pattern.</para>
+
+    &Guard.hs:secondEqualsThird;
+
+    <para>Here, for good measure, we've illustrated guard syntax in a
+      <code>case</code> expression.</para>
   </sect1>
 
   <sect1>
