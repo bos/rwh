@@ -11,7 +11,7 @@ import Snippet (Snippet(..), parseSnippets)
 import System.Directory (createDirectoryIfMissing)
 import System.Environment (getArgs)
 import System.IO (putStrLn)
-import Util (baseName)
+import Util (baseName, suffix)
 -- Don't use lazy ByteStrings, due to the bug in "lines".
 import qualified Data.ByteString.Char8 as B
 
@@ -30,10 +30,22 @@ programListing modName snipName body =
   where tag = modName ++ ':' : B.unpack snipName
         rstrip = B.reverse . B.dropWhile isSpace . B.reverse
 
+markers :: FilePath -> (B.ByteString, B.ByteString)
+markers path =
+    case suffix path of
+      "hs" -> (startHs, endHs)
+      "c"  -> (startC, endC)
+      s    -> error ("unknown file suffix" ++ show s)
+  where startHs = B.pack "{-- snippet "
+        endHs = B.pack "{-- /snippet "
+        startC = B.pack "/** snippet "
+        endC = B.pack "/** /snippet "
+
 snipFile :: FilePath -> FilePath -> IO ()
 
 snipFile tgtDir fileName = do
-    snips <- parseSnippets `liftM` B.readFile fileName
+    let (start, end) = markers fileName
+    snips <- parseSnippets start end `liftM` B.readFile fileName
     let name = baseName fileName
     forM_ snips $ \(Snippet snip content) -> do
         forM_ (programListing name snip content) $ \(entity, listing) -> do

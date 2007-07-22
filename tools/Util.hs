@@ -7,6 +7,7 @@ module Util
     , dropSuffix
     , findInfix
     , strip
+    , suffix
     ) where
 
 import Control.Monad (liftM2)
@@ -36,5 +37,8 @@ dirName = reverse . either (const ".") (tidy . snd) . findInfix "/" . reverse
 dropSuffix :: String -> String
 dropSuffix = reverse . either id (tail . snd) . findInfix "." . reverse
               
+suffix :: FilePath -> String
+suffix = reverse . takeWhile (/='.') . reverse
+
 strip :: String -> String
 strip = reverse . dropWhile isSpace . reverse . dropWhile isSpace

@@ -6,7 +6,8 @@
 -- text to be included inside the snippet named "name_is_foo"
 -- {-- /snippet name_is_foo --}
 
-module Snippet (
+module Snippet
+    (
       Snippet(..)
     , parseSnippets
     ) where
@@ -29,12 +30,6 @@ maybeAny p (x:xs) | p x = Just x
 maybeInfixOf :: B.ByteString -> B.ByteString -> Maybe B.ByteString
 maybeInfixOf needle haystack =
     maybeAny (B.isPrefixOf needle) (B.tails haystack)
-
-startSnippet :: B.ByteString
-startSnippet = B.pack ('{' : "-- snippet ")
-
-endSnippet :: B.ByteString
-endSnippet = B.pack ('{' : "-- /snippet ")
 
 data CurState = Outside
               | Inside [B.ByteString] B.ByteString 
@@ -66,15 +61,15 @@ whenJust Nothing _ = return ()
 showB :: B.ByteString -> String
 showB = show . B.unpack
 
-ps :: [B.ByteString] -> State S [Snippet]
-ps [] = do
+ps :: B.ByteString -> B.ByteString -> [B.ByteString] -> State S [Snippet]
+ps _ _ [] = do
     s <- get
     case state s of
       Outside -> (return . reverse . snippets) s
       Inside _ name -> fail ("unterminated snippet " ++ showB name)
-ps (l:ls) = do
-    let mStart = maybeTag startSnippet l
-        mEnd = maybeTag endSnippet l
+ps start end (l:ls) = do
+    let mStart = maybeTag start l
+        mEnd = maybeTag end l
     s <- get
     case state s of
       Inside acc name -> do
@@ -96,7 +91,7 @@ ps (l:ls) = do
             fail ("end " ++ showB endName ++ " without start")
         whenJust mStart $ \startName ->
             put s{state = Inside [] startName}
-    ps ls
+    ps start end ls
 
-parseSnippets :: B.ByteString -> [Snippet]
-parseSnippets s = evalState (ps (B.lines s)) emptyS
+parseSnippets :: B.ByteString -> B.ByteString -> B.ByteString -> [Snippet]
+parseSnippets s e xs = evalState (ps s e (B.lines xs)) emptyS
