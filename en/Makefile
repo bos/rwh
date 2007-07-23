@@ -151,14 +151,17 @@ vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
-x/.stamp-%.c: %.c ../tools/bin/snippets
+x:
+	mkdir -p x
+
+x/.stamp-%.c: %.c ../tools/bin/snippets x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.cpp: %.cpp ../tools/bin/snippets
+x/.stamp-%.cpp: %.cpp ../tools/bin/snippets x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.hs: %.hs ../tools/bin/snippets
+x/.stamp-%.hs: %.hs ../tools/bin/snippets x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
+x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
