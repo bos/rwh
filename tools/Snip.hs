@@ -35,6 +35,7 @@ markers path =
     case suffix path of
       "hs" -> (startHs, endHs)
       "c"  -> (startC, endC)
+      "cpp"  -> (startC, endC)
       s    -> error ("unknown file suffix" ++ show s)
   where startHs = B.pack "{-- snippet "
         endHs = B.pack "{-- /snippet "

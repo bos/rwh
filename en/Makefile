@@ -144,11 +144,15 @@ clean:
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
 vpath %.c $(addprefix ../examples/,$(dir $(src-examples)))
+vpath %.cpp $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
 x/.stamp-%.c: %.c ../tools/bin/snippets
+	../tools/bin/snippets $(CURDIR)/x $< > $@
+
+x/.stamp-%.cpp: %.cpp ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.hs: %.hs ../tools/bin/snippets
