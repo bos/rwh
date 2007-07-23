@@ -12,7 +12,9 @@ src-examples := \
 	$(wildcard ../examples/app[A-Z]/*.ghci) \
 	$(wildcard ../examples/ch[0-9][0-9]/*.ghci) \
 	$(wildcard ../examples/ch[0-9][0-9]/*.hs) \
-	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs)
+	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs) \
+	$(wildcard ../examples/ch04/*.c) \
+	$(wildcard ../examples/ch04/*.cpp)
 
 src-figs := \
 	$(wildcard figs/*.png)

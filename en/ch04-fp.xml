@@ -3,7 +3,169 @@
 <chapter id="hs.fp">
   <title>Functional programming</title>
 
-  <remark>FIXME</remark>
+  <sect1>
+    <title>How to think about loops</title>
+
+    <para>Unlike traditional languages, Haskell has neither a
+      <code>for</code> loop nor a <code>while</code> loop.  If we've
+      got a lot of data to process, what do we use instead?  There are
+      several possible answers to this question, so let's build up a
+      toolbox of answers.</para>
+
+    <sect2>
+      <title>Transforming every piece of input</title>
+
+      <para>Consider the C function <function>square</function>, which
+	squares every element in an array.</para>
+
+      &map.c:square;
+
+      <para>This contains a straightforward and common kind of loop,
+	one that does exactly the same thing to every element of its
+	input array.  How might we write this loop in Haskell?</para>
+
+      &Map.hs:square;
+
+      <para>Our <function>square</function> function consists of two
+	pattern matching equations.  The first
+	<quote>deconstructs</quote> the beginning of a non-empty list,
+	to get its head and tail.  It squares the first element, then
+	puts that on the front of a new list, which is constructed by
+	calling <function>square</function> on the remainder of the
+	empty list.   The second equations ensures that
+	<function>square</function> halts when it reaches the end of
+	the input list.</para>
+
+      <para>The effect of <function>square</function> is to construct
+	a new list that's the same length as its input list, with
+	every element in the input list substituted with its square in
+	the output list.</para>
+
+      <para>Here's another such C loop, one that ensures that every
+	letter in a string is converted to uppercase.</para>
+
+      &map.c:uppercase;
+
+      <para>Let's look at a Haskell equivalent.</para>
+
+      &Map.hs:upperCase;
+
+      <para>Here, we're importing the <function>toUpper</function>
+	function from the standard <code>Data.Char</code> module,
+	which contains lots of useful functions for working with
+	<type>Char</type> data.</para>
+
+      <para>Our <function>upperCase</function> function follows a
+	similar pattern to our earlier <function>square</function>
+	function.  It terminates with an empty list when the input
+	list is empty; and when the input isn't empty, it calls
+	<function>toUpper</function> on the first element, then
+	constructs a new list cell from that and the result of calling
+	itself on the rest of the input list.</para>
+
+      <para>These examples follow a common pattern for writing
+	recursive functions over lists in Haskell.  The <emphasis>base
+	  case</emphasis> handles the situation where our input list
+	is empty.  The <emphasis>recursive case</emphasis> deals with
+	a non-empty list; it does something with the head of the list,
+	and calls itself recursively on the tail.</para>
+    </sect2>
+
+    <sect2>
+      <title>Mapping over a list</title>
+
+      <para>The <function>square</function> and
+	<function>upperCase</function> functions that we just defined
+	produce new lists that are the same lengths as their input
+	lists, and do only one piece of work per element.  This is
+	such a common pattern that Haskell's prelude defines a
+	function, <function>map</function>, to make it easier.
+	<function>map</function> takes a function, and applies it to
+	every element of a list, returning a new list constructed from
+	the results of these applications.</para>
+
+      <para>Here are our <function>square</function> and
+	<function>upperCase</function> functions rewritten to use
+	<function>map</function>.</para>
+
+      &Map.hs:map2;
+
+      <para>This is our first time seeing a function that takes
+	another function as its argument.  We can learn a lot about
+	what <function>map</function> does by simply inspecting its
+	type.</para>
+
+      &ch04.map.ghci:type;
+
+      <para>The signature tells us that <function>map</function> takes
+	two arguments.  The first is a function that takes a value of
+	one type, <varname role="type">a</varname>, and returns a
+	value of another type, <varname role="type">b</varname>.  This
+	is the only unfamiliar piece of notation in the type; notice
+	the parentheses that surround the signature of the function
+	argument so we (and Haskell) won't misread it.</para>
+
+      <para>Since <function>map</function> takes a function as
+	argument, we refer to it as a
+	<emphasis>higher-order</emphasis> function.  (In spite of the
+	name, there's nothing mysterious about higher-order
+	functions; it's just a term for functions that take other
+	functions as arguments, or return functions.)</para>
+
+      <para>Since <function>map</function> abstracts out the pattern
+	common to our <function>square</function> and
+	<function>upperCase</function> functions so that we can reuse
+	it with less boilerplate, we can look at what those functions
+	have in common and figure out how to implement it
+	ourselves.</para>
+
+      &Map.hs:myMap;
+
+      <para>We try out our <function>myMap</function> function to give
+      outselves some assurance that it behaves similarly to the
+	standard <function>map</function>.</para>
+
+      &ch04.map.ghci:inuse;
+
+      <para>This business of seeing that we're repeating an idiom,
+	then abstracting it so we can reuse (and write less!) code, is
+	a common aspect of Haskell programming.</para>
+    </sect2>
+
+    <sect2>
+      <title>Selecting pieces of input</title>
+
+      <para>Another common operation on a sequence of data is to comb
+	through it for elements that satisfy some criterion.  Here's
+	an example in C++ of a function that walks a linked list of
+	numbers and returns those that are odd.</para>
+
+      &filter.cpp:oddList;
+
+      <para>Our Haskell equivalent has a recursive case that's a bit
+	more complex than our earlier functions: it only puts a number
+	in the list it returns if the number is odd.  Using a guard
+	expresses this nicely.</para>
+
+      &Filter.hs:oddList;
+
+      <para>Let's see that in action.</para>
+
+      &ch04.filter.ghci:oddList;
+
+      <para>Once again, this idiom is so common that Haskell's prelude
+	defines a function, <function>filter</function>, which removes
+	the need for boilerplate code to recurse over the list.</para>
+
+      &ch04.filter.ghci:filter;
+
+      <para>The <function>filter</function> function takes a predicate
+	(a function that tests an argument and returns a
+	<type>Bool</type>) and applies it to every element in its
+	input list, returning a list of only those for which the
+	predicate evaluates to <code>True</code>.</para>
+    </sect2>
+  </sect1>
 
   <sect1 id="hs.fp.rle">
     <title>Example: Run-Length Encoding</title>
