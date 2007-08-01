@@ -16,6 +16,6 @@ toSilly2 5
 --# color
 :t Red
 :t Green
-Red == Green
-(read "Red")::Color
+describeColor Red
+
 
