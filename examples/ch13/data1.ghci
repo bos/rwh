@@ -1,0 +1,14 @@
+--# useless
+:l data1.hs
+:t Foo
+Foo
+Foo == Foo
+
+--# useless2
+:t Foo2
+Foo2
+Foo2 == Foo2
+Foo2 == Foo
+:t toSilly2
+:t toSilly2 5
+toSilly2 5

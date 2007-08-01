@@ -10,6 +10,59 @@
     Mutable storage with MVars
   </remark>
 
+  <para>
+    Back in <remark>FIXME: add ref to chapter 3ish</remark>, you saw how to
+    use &type; to create handy aliases for types.  That's a useful feature,
+    but in this chapter we'll take it a step further.  We'll show you how to
+    create entirely new types.  After doing that, we'll also show you some of
+    the built-in tools that Haskell provides for arranging large amounts of
+    data.
+  </para>
+
+  <sect1 id="hs.data.basic">
+    <title>Basic Type Creation</title>
+    <para>
+      To create a new type, we use the &data; keyword.  In its most simple,
+      though probably useless, form, you can create a type like this:
+    </para>
+    &data1.hs:useless;
+    <para>
+      This defines a new type called <literal>Silly</literal>.  There is one
+      <emphasis>type constructor</emphasis> for <literal>Silly</literal>:
+      <literal>Foo</literal>.  When you write <literal>Foo</literal> in your
+      program, this <literal>Foo</literal> is a value of type
+      <literal>Silly</literal>.  You can actually use the same word for both,
+      but it must start with an uppercase letter.
+    </para>
+    <para>
+      Looking at it with &ghci;, there's not much you can do with it yet:
+    </para>
+    &data1.ghci:useless;
+    <para>
+      Note that &ghci; doesn't know how to display <literal>Foo</literal> to
+      the screen, or how to compare it to itself.  That's because we haven't
+      made our new type a member of the &Show; and &Eq; typeclasses.  We'll
+      make a new example that is a member of these classes, and then we'll
+      get more information out of &ghci;.  For more on typeclasses, refer to
+      <xref linkend="hs.typeclasses"/>.
+    </para>
+    &data1.hs:silly2;
+    <para>
+      We've also defined a function that takes any parameter and returns
+      a value of type <literal>Silly2</literal>.  Let's play with this in
+      &ghci;.
+    </para>
+    &data1.ghci:useless2;
+    <para>
+      You can see here how the types interact.  Let's now expand on this
+      foundation with some more things that can be done with &data;.
+    </para>
+  </sect1>
+
+    
+
+
+
 
 
 
