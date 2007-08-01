@@ -16,6 +16,7 @@
 <!ENTITY ch06     SYSTEM "ch06-typeclasses.xml">
 <!ENTITY ch07     SYSTEM "ch07-io.xml">
 <!ENTITY ch08     SYSTEM "ch08-globs-and-regexps.xml">
+<!ENTITY ch13     SYSTEM "ch13-data.xml">
 
 <!-- Appendices. -->
 
@@ -96,6 +97,7 @@
   &ch06;
   &ch07;
   &ch08;
+  &ch13;
 
   &appA;
 

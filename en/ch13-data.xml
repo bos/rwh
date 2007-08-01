@@ -54,7 +54,12 @@
     </para>
     &data1.ghci:useless2;
     <para>
-      You can see here how the types interact.  Let's now expand on this
+      You can see here how the types interact.  Since <literal>Foo</literal>
+      is of type <literal>Silly</literal> and <literal>Foo2</literal> is of
+      type <literal>Silly2</literal>, you can't compare them directly.
+    </para>
+    <para>  
+      Let's now expand on this
       foundation with some more things that can be done with &data;.
     </para>
   </sect1>

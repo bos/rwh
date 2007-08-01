@@ -103,4 +103,6 @@
 <!ENTITY getEnv "<literal>getEnv</literal>">
 <!ENTITY lookup "<literal>lookup</literal>">
 <!ENTITY hGetLine "<literal>hGetLine</literal>">
+<!ENTITY type "<literal>type</literal>">
+<!ENTITY data "<literal>data</literal>">
 
