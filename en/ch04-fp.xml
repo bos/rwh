@@ -165,6 +165,148 @@
 	input list, returning a list of only those for which the
 	predicate evaluates to <code>True</code>.</para>
     </sect2>
+
+    <sect2>
+      <title>Computing one answer over a collection</title>
+
+      <para>Another common thing to do with a loop is to <quote>fold
+	  it up</quote>.  A simple example of this is summing the
+	values of a list.</para>
+
+      &Sum.hs:mySum;
+
+      <para>Our <function>helper</function> function is tail
+	recursive, and uses an <emphasis>accumulator</emphasis>
+	parameter, <varname>acc</varname>, to hold the current partial
+	sum of the list.  This is a <quote>natural</quote> way to
+	represent a loop in a pure functional language.</para>
+
+      <para>For something a little more complicated, let's take a look
+	at the Adler-32 checksum. Here's a Java implementation.</para>
+
+      &Adler32.java:Adler32;
+
+      <para>Although Adler-32 is a simple checksum, this code isn't
+	particularly easy to read on account of the bit-twiddling
+	involved.  Can we do any better with a Haskell
+	implementation?</para>
+
+      &Adler32.hs:adler32;
+
+      <para>This isn't exactly easier to follow than the Java code,
+	but let's look at what's going on.  Once again,
+	<function>helper</function> function is tail recursive.  We've
+	turned the two variables we updated on every loop iteration in
+	Java into accumulator parameters.  When our recursion
+	terminates on the end of the input list, we compute our
+	checksum and return it.</para>
+
+      <para>If we take a step back, we can restructure our Haskell
+	<function>adler32</function> to more closely resemble our
+	earlier <function>mySum</function> function.  Instead of two
+	accumulator parameters, we can use a single accumulator that's
+	a two-tuple.</para>
+
+      &Adler32.hs:adler32_try2;
+
+      <para>Why would we want to make this seemingly meaningless
+	structural change?  Because as we've already seen with
+	<function>map</function> and <function>filter</function>, we
+	can extract the common behaviour shared by
+	<function>mySum</function> and
+	<function>adler32_try2</function> into a higher-order
+	function.  We can describe this behaviour as <quote>do
+	  something to every element of a list, updating an
+	  accumulator as we go, and returning the accumulator when
+	  we're done</quote>.</para>
+
+      <para>This kind of function is called a
+	<emphasis>fold</emphasis>, because it <quote>folds up</quote>
+	a list, and it has two variants, <function>foldl</function>
+	and <function>foldr</function>.</para>
+    </sect2>
+
+    <sect2>
+      <title>The left fold</title>
+
+      &Fold.hs:foldl;
+
+      <para>The <function>foldl</function> function takes a
+	<quote>stepper</quote> function, an initial value for its
+	accumulator, and a list.  The <quote>stepper</quote> takes an
+	accumulator and an element from the list, and returns a new
+	accumulator value. All <function>foldl</function> does is call
+	the <quote>stepper</quote> on the current accumulator and an
+	element of the list, and passes the new accumulator value to
+	itself recursively to consume the rest of the list.</para>
+
+      <para>We refer to <function>foldl</function> as a <quote>left
+	  fold</quote> because it consumes the list from left (the
+	head) to right.</para>
+
+      <para>Here's a rewrite of <function>mySum</function> using
+	<function>foldl</function>.</para>
+
+      &Sum.hs:foldlSum;
+
+      <para>Notice how much simpler this code is?  We're no longer
+	using explicit recursion, because <function>foldl</function>
+	takes care of that for us.  We've simplified our problem down
+	to two things: what the initial value of the accumulator
+	should be (the second parameter to
+	<function>foldl</function>), and how to update the accumulator
+	(the <function>step</function> function).  As an added bonus,
+	our code is now shorter, too, which makes it easier to
+	understand.</para>
+
+      <para>We can rewrite <function>adler32_try2</function> in a
+	similar way, using <function>foldl</function> to let us focus
+	on the details that are important.</para>
+
+      &Adler32.hs:adler32_foldl;
+
+      <para>Here, our accumulator is a two-tuple, so the result of
+	<function>foldl</function> will be, too. We pull the final
+	accumulator apart when <function>foldl</function> returns, and
+	bit-twiddle it into a <quote>proper</quote> checksum.</para>
+    </sect2>
+
+    <sect2>
+      <title>Why use folds, maps, and filters?</title>
+
+      <para>A quick glance reveals that
+	<function>adler32_foldl</function> isn't really any shorter
+	than <function>adler32_try2</function>.  Why should we use a
+	fold in this case?  The advantage here lies in the fact that
+	folds are extremely common in Haskell, and they have regular,
+	predictable behaviour.</para>
+
+      <para>This means that a reader with a little experience will
+	have an easier time understanding a function that uses a fold
+	than one that uses explicit recursion.  Where a fold isn't
+	going to produce any surprises, the behaviour of a function
+	that recurses explicitly isn't immediately obvious.  Explicit
+	recursion requires us to read closely to understand exactly
+	what's going on.</para>
+
+      <para>This line of reasoning applies to other higher-order
+	library functions, including those we've already seen,
+	<function>map</function> and <function>filter</function>.
+	Because they're library functions with well-defined behaviour,
+	we only need to learn what they do once, and we'll have an
+	advantage when we need to understand any code that uses
+	them.</para>
+    </sect2>
+
+    <sect2>
+      <title>Folding from the right</title>
+
+      &Fold.hs:foldr;
+
+      <para>The counterpart to <function>foldl</function> is
+	<function>foldr</function>, which folds from the right of a
+	list.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.fp.rle">

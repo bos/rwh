@@ -36,6 +36,7 @@ markers path =
       "hs" -> (startHs, endHs)
       "c"  -> (startC, endC)
       "cpp"  -> (startC, endC)
+      "java"  -> (startC, endC)
       s    -> error ("unknown file suffix" ++ show s)
   where startHs = B.pack "{-- snippet "
         endHs = B.pack "{-- /snippet "
