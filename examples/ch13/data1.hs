@@ -10,8 +10,7 @@ toSilly2 :: a -> Silly2
 toSilly2 _ = Foo2
 {-- /snippet silly2 --}
 
-
-{-- snippet all --}
+{-- snippet color --}
 data Color = Red | Blue | Green
-{-- /snippet all --}
-
+    deriving (Eq, Read, Show)
+{-- /snippet color --}

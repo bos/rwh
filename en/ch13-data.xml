@@ -59,11 +59,12 @@
     </para>
   </sect1>
 
-    
-
-
-
-
+  <sect1 id="hs.data.multi">
+    <title>Multiple Type Constructors</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
 
 
 </chapter>
