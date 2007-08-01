@@ -67,8 +67,105 @@
   <sect1 id="hs.data.multi">
     <title>Multiple Type Constructors</title>
     <para>
-      FIXME
+      One way to make &data; more useful is to have multiple type
+      constructors.  Here's an example:
     </para>
+    &data1.hs:color;
+    <para>
+      This defined one new type named <literal>Color</literal>.  You can
+      create a value of type <literal>Color</literal> by using any of the
+      three literals <literal>Red</literal>, <literal>Green</literal>, or
+      <literal>Blue</literal>.  There are several reasons this might be
+      useful as opposed to using something like a &String; to store simple
+      color names:
+    </para>
+    <itemizedlist>
+      <listitem><para>You are guaranteed that a <literal>Color</literal>
+          always represents one of these three values</para></listitem>
+      <listitem><para>When you do pattern matching on a
+          <literal>Color</literal>, the compiler will warn you if you don't
+          consider all three possible values</para></listitem>
+      <listitem><para>It is possible to hide the implemention of
+          <literal>Color</literal> from users when exporting symbols from the
+          module; you can include <literal>Color</literal> in the list but
+          not the three constructors</para></listitem>
+    </itemizedlist>
+    <para>
+      Let's look at some example code that uses the Color:
+    </para>
+    &data1.hs:color2;
+    <para>
+      That's pretty simple: a function that takes a <literal>Color</literal> 
+      and converts it to
+      a &String;.  Note that we don't have to deal with the case where the
+      input to the function is something other than our three colors, because
+      that can't possibly happen.
+    </para>
+    <para>
+      You use a type defined in this way all the time.  Haskell 98 defines
+      this:
+    </para>
+    <programlisting>
+data Bool =  False | True deriving 
+                           (Read, Show, Eq, Ord, Enum, Bounded)
+    </programlisting>
+    <para>
+      As you'll see in the rest of this chapter, many of the core Haskell
+      features you rely upon are actually defined in the prelude using
+      &data;.  That is, they're not built into the compiler in any special
+      way.  The only thing special about them is that they are loaded for you
+      by default since they're in the prelude.
+    </para>
+    <remark>FIXME: have we discussed prelude?</remark>
+  </sect1>
+
+  <sect1 id="hs.data.records">
+    <title>Defining Records</title>
+    <para>
+      Custom types need not be defined solely in terms of static data.  They
+      can also take parameters.  Let's say that we wanted to take our
+      color example a new direction and let a user represent arbitrary colors
+      in the RGB (red, green, blue) colorspace.  We could use an 
+      <literal>(Int, Int, Int)</literal> tuple for this, but to illustrate
+      records, let's define a new type.
+    </para>
+    &color.hs:custom;
+    <para>
+      This defines a new type <literal>CustomColor</literal> and one type
+      constructor also named <literal>CustomColor</literal>.  This type
+      constructor, however, requires three parameters, all &Int;s.
+    </para>
+    <para>
+      The type constructor here is a unique beast in Haskell.  You can use it
+      as a function that takes three parameters, and it will return to you
+      one value ot type <literal>CustomColor</literal>.  You can also use it
+      to perform pattern matching in function or case definitions.
+    </para>
+    <para>
+      Let's use &ghci; to inspect this for a bit:
+    </para>
+    <para>
+      You can see that <literal>CustomColor 100 0 50</literal> returns a
+      single value of type <literal>CustomColor</literal>.  Now you're
+      probably wondering how to extract the data from that
+      <literal>CustomColor</literal>.  We use pattern matching to do that.
+      Here's how:
+    </para>
+    &color.hs:extract;
+    <para>
+      We used pattern matching to match the <literal>CustomColor</literal>.
+      The three &Int;s were assigned to <literal>red</literal>, 
+      <literal>green</literal>, and <literal>blue</literal>, and then printed
+      out.  You can see that this worked by using &ghci;:
+    </para>
+    &color.ghci:extract;
+    <para>
+      This is useful as it is, but when you have half a dozen or more
+      values to store in your record, it can get annoying to have to match
+      them all.  There's where named fields come in, which we'll discuss
+      next.
+    </para>
+
   </sect1>
 
 

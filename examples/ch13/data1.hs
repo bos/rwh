@@ -14,3 +14,11 @@ toSilly2 _ = Foo2
 data Color = Red | Blue | Green
     deriving (Eq, Read, Show)
 {-- /snippet color --}
+
+{-- snippet color2 --}
+describeColor :: Color -> String
+describeColor Red = "Rolled out on carpet"
+describeColor Blue = "Oceans"
+describeColor Green = "Grass"
+{-- /snippet color2 --}
+
