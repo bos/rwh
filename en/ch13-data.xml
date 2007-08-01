@@ -1,0 +1,23 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.data">
+  <title>Data Structures</title>
+  <remark>
+    FIXME:
+    records
+    association lists
+    Data.Map
+    Mutable storage with MVars
+  </remark>
+
+
+
+
+</chapter>
+ 
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
