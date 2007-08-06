@@ -469,7 +469,6 @@
 	  </question>
 	</qandaentry>
 
-      <qandaset>
 	<qandaentry>
 	  <question>
 	    <para>The Prelude function <function>takeWhile</function>
