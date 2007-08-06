@@ -132,8 +132,8 @@
 	a common aspect of Haskell programming.</para>
     </sect2>
 
-    <sect2>
-      <title id="hs.fp.filter">Selecting pieces of input</title>
+    <sect2 id="hs.fp.filter">
+      <title>Selecting pieces of input</title>
 
       <para>Another common operation on a sequence of data is to comb
 	through it for elements that satisfy some criterion.  Here's
