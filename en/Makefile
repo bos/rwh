@@ -5,6 +5,7 @@ src-files := $(src-master) \
 	book-index.xml \
 	book-shortcuts.xml \
 	auto-snippets.xml \
+	bibliography.xml \
 	$(wildcard ch*.xml) \
 	$(wildcard app*.xml)
 

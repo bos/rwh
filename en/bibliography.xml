@@ -1,0 +1,33 @@
+<bibliography>
+  <title>Bibliography</title>
+
+  <biblioentry id="bib.hutton99">
+    <abbrev>Hutton99</abbrev>
+    <biblioset relation="article">
+      <author><firstname>Graham</firstname><surname>Hutton</surname></author>
+      <title><ulink url="http://www.cs.nott.ac.uk/~gmh/fold.pdf">A
+	  tutorial on the universality and expressiveness of
+	  fold</ulink></title>
+    </biblioset>
+    <biblioset relation="journal">
+      <title><ulink
+	  url="http://journals.cambridge.org/jid_JFP">Journal of
+	  Functional Programming</ulink></title>
+      <volumenum>9</volumenum>
+      <issuenum>4</issuenum>
+      <pubdate>July 1999</pubdate>
+      <pagenums>355-372</pagenums>
+      <publisher>
+	<publishername><ulink
+	    url="http://www.cambridge.org/">Cambridge University
+	    Press</ulink></publishername>
+      </publisher>
+      <issn>0956-7968</issn>
+    </biblioset>
+  </biblioentry>
+</bibliography>
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "bibliography")
+end:
+-->

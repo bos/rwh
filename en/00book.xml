@@ -20,6 +20,7 @@
 
 <!-- Appendices. -->
 
+<!ENTITY bib      SYSTEM "bibliography.xml">
 <!ENTITY appA     SYSTEM "appA-escapes.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
@@ -98,6 +99,8 @@
   &ch07;
   &ch08;
   &ch13;
+
+  &bib;
 
   &appA;
 

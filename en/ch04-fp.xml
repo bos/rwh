@@ -133,7 +133,7 @@
     </sect2>
 
     <sect2>
-      <title>Selecting pieces of input</title>
+      <title id="hs.fp.filter">Selecting pieces of input</title>
 
       <para>Another common operation on a sequence of data is to comb
 	through it for elements that satisfy some criterion.  Here's
@@ -164,6 +164,9 @@
 	<type>Bool</type>) and applies it to every element in its
 	input list, returning a list of only those for which the
 	predicate evaluates to <code>True</code>.</para>
+
+      <para>We'll be discussing <function>filter</function> again
+	soon, in <xref linkend="hs.fp.foldr.filter"/>.</para>
     </sect2>
 
     <sect2>
@@ -299,13 +302,212 @@
     </sect2>
 
     <sect2>
-      <title>Folding from the right</title>
+      <title>Avoiding multiple traversals of a list</title>
 
-      &Fold.hs:foldr;
+      <para>From looking at <function>adler32_foldl</function>, we
+	know that we can accumulate more than one value at a time when
+	we fold over a list.  Here's another use for a fold:
+	optimising code by avoiding multiple traversals of a
+	list.</para>
+
+      <para>Let's consider the problem of finding the root mean square
+	of a list of numbers: compute the sum of the squares of every
+	element in the list, divide by its length, then coompute the
+	square root of that number.  In an imperative language like C,
+	we wouldn't even think twice about writing code like
+	this.</para>
+
+      &rms.c:rootMeanSquare;
+
+      <para>Clearly, we're looping over the list just once, updating
+	the accumulator values <varname>mean_square</varname> and
+	<varname>length</varname> as we go.</para>
+
+      <para>Meanwhile, over in functional programming land, the
+	temptation is strong to turn our verbal description of the
+	root mean square into code.</para>
+
+      &rms.hs:rootMeanSquare;
+
+      <para>This is a lovely, compact translation of the verbal
+	description.  It even uses our new friend, the
+	<function>map</function> function, to make the code clearer by
+	avoiding explicit recursion, but it's not necessarily good
+	code.  The calls to <function>map</function> and
+	<function>length</function> are each going to traverse the
+	input list once.</para>
+
+      <para>On a small list, the cost of traversing it twice obviously
+	won't matter, but on a big list, we're likely to notice. We
+	can use a fold to avoid this need to traverse the list
+	twice.</para>
+
+      &rms.hs:rootMeanSquare_foldl;
+
+      <para>Clearly, this code isn't as readable as the earlier
+	version that used <function>map</function> and
+	<function>length</function>.  Which version should we prefer?
+	It's often best to start out by writing the most readable
+	code, since we can make that correct most quickly, and put off
+	worrying about transforming it into something faster until
+	much later, when we have profiling data for our program.  Only
+	if those numbers indicate a performance problem should we
+	worry about stepping back in and transforming our code.  We'll
+	have much more to say about profiling, performance, and
+	optimisation later, in chapter XXX.</para>
+    </sect2>
+
+    <sect2 id="hs.fp.foldr.filter">
+      <title>Folding from the right and primitive recursion</title>
 
       <para>The counterpart to <function>foldl</function> is
 	<function>foldr</function>, which folds from the right of a
 	list.</para>
+
+      &Fold.hs:foldr;
+
+      <para>At first glance, <function>foldr</function> might seem
+	less useful than <function>foldl</function>: what use is a
+	function that folds from the right?  But consider the
+	Prelude's <function>filter</function> function, which we last
+	encountered in <xref linkend="hs.fp.filter"/>.  If we write
+	<function>filter</function> using explicit recursion, it will
+	look something like this.</para>
+
+      &Fold.hs:filter;
+
+      <para>Perhaps surpsisingly, though, we can write
+	<function>filter</function> as a fold, using
+	<function>foldr</function>.</para>
+
+      &Fold.hs:myFilter;
+
+      <para>This is the sort of definition that could cause us a
+	headache, so let's examine it a little depth.  Like
+	<function>foldl</function>, <function>foldr</function> takes a
+	function and a base case (what to do when the input list is
+	empty) as arguments.  From reading the type of
+	<function>filter</function>, we know that our
+	<function>myFilter</function> function must return a list of
+	the same type as it consumes, so the base case should be a
+	list of this type, and the <function>step</function> helper
+	function must return a list.</para>
+
+      <para>Since we know that <function>foldr </function> calls
+	<function>step</function> on one element of the input list at
+	a time, with the accumulator as its second argument, what
+	<function>step</function> does must be quite simple.  If the
+	predicate returns <function>True</function>, it pushes that
+	element onto the accumulated list; otherwise, it leaves the
+	list untouched.</para>
+
+      <para>The class of functions that we can express using
+	<function>foldr</function> is called <emphasis>primitive
+	  recursive</emphasis>.  A surprisingly large number of list
+	manipulation functions are primitive recursive.  For example,
+	here's <function>map</function> written in terms of
+	<function>foldr</function>.</para>
+
+      &Fold.hs:myMap;
+
+      <para>In fact, we can even write <function>foldl</function>
+	using <function>foldr</function>!</para>
+
+      &Fold.hs:myFoldl;
+
+      <note>
+	<para>If you want to understand the definition of
+	  <function>foldl</function> using <function>foldr</function>,
+	  it's best to have the following tools at hand: some headache
+	  pills, a glass of water, &ghci; (so you can find out what
+	  the <function>id</function> function does), and a pencil and
+	  paper.</para>
+      </note>
+
+      <para>While we can write <function>foldl</function> in terms of
+	<function>foldr</function>, we can't do the converse:
+	<function>foldr</function> is <quote>more basic than</quote>
+	<function>foldl</function>.  This should make it clearer why
+	we call functions written with <function>foldr</function>
+	primitive recursive.</para>
+
+      <para>(By the way, don't feel like you have to go to special
+	lengths to remember the term <quote>primitive
+	  recursive</quote>.  It's just useful to remember that you
+	read about it somewhere, and that it has something to do with
+	<function>foldr</function>.)</para>
+    </sect2>
+
+    <sect2>
+      <title>A final note about foldl</title>
+
+      <para>To keep our initial discussion simple, we've used
+	<function>foldl</function> throughout this section.  However,
+	any time you want to fold from the left in practice, use
+	<function>foldl'</function> from the <code>Data.List</code>
+	module instead, because it's more efficient.  You should take
+	this on faith for now; we'll explain why you should avoid
+	plain <function>foldl</function> in normal use in section
+	XXX.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>The Prelude function <function>concat</function>
+	      concatenates a list of lists into a single list, and has
+	      the following type.</para>
+
+	    &ch04.exercises.hs:concat;
+
+	    <para>Write your own definition of
+	      <function>concat</function> using
+	      <function>foldr</function>.</para>
+	  </question>
+	</qandaentry>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>The Prelude function <function>takeWhile</function>
+	      has the following type.</para>
+
+	    &ch04.exercises.hs:takeWhile;
+
+	    <para>Use &ghci; to figure out what
+	      <function>takeWhile</function> does.  Write your own
+	      definitions, first using explicit recursion, then
+	      <function>foldr</function>.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>The <code>Data.List</code> module defines a function,
+	      <function>groupBy</function>, which has the following
+	      type.</para>
+
+	    &ch04.exercises.hs:groupBy;
+
+	    <para>Use &ghci; to load the <code>Data.List</code> module
+	      and figure out what <function>groupBy</function> does,
+	      then write your own implementation using a fold.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+
+    <sect2>
+      <title>Further reading</title>
+
+      <para>The article <citation><biblioref
+	    linkend="bib.hutton99"/></citation> is an excellent and
+	deep tutorial covering folds. It includes many examples of how
+	to use simple, systematic calculation techniques to turn
+	functions that use explicit recursion into folds.</para>
     </sect2>
   </sect1>
 
