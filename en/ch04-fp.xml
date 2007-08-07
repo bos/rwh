@@ -101,6 +101,20 @@
 	<code>[]</code> pattern will match, and the recursive calls
 	will cease.</para>
 
+      <para>How well does this function work?  For positive integers,
+	it's perfectly cromulent.</para>
+
+      &intparse.ghci:example;
+
+      <para>But because we were focusing on how to traverse lists, not
+	error handling, our poor function misbehaves if we try to feed
+	it nonsense.</para>
+
+      &intparse.ghci:bad;
+
+      <para>We'll defer fixing our function's shortcomings to <xref
+	  linkend="hs.fp.asInt.fix"/>.</para>
+
       <para>Because the last thing that <function>loop</function> does
 	is simply call itself, it's an example of a tail recursive
 	function. There's another common idiom in this code, too.
@@ -562,7 +576,7 @@
     <sect2>
       <title>Exercises</title>
 
-      <qandaset>
+      <qandaset id="hs.fp.asInt.fix">
 	<qandaentry>
 	  <question>
 	    <para>Use a fold (choosing the appropriate fold will make
