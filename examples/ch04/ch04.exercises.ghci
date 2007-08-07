@@ -1,0 +1,16 @@
+:load ch04.exercises
+
+--# asInt_fold
+asInt_fold "101"
+asInt_fold "-31337"
+
+--# asInt_fold.errors
+asInt_fold ""
+asInt_fold "-"
+asInt_fold "-3"
+asInt_fold "2.7"
+asInt_fold "314159265358979323846"
+
+--# asInt_either
+asInt_either "33"
+asInt_either "foo"

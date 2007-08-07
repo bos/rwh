@@ -12,11 +12,118 @@
       several possible answers to this question, so let's build up a
       toolbox of answers.</para>
 
+    <sect2 id="hs.fp.tailrecursion">
+      <title>Explicit recursion</title>
+
+      <para>Here's a  C function that takes a string of decimal digits
+	and turns them into an integer.</para>
+
+      &intparse.c:as_int;
+
+      <para>Given that Haskell doesn't have any looping constructs,
+	how should we think about representing a fairly
+	straightforward piece of code like this?</para>
+
+      <para>We don't have to start off by writing a type signature,
+	but it helps to remind us of what we're working with.</para>
+
+      &IntParse.hs:type;
+
+      <para>The C code computes the result incrementally as it
+	traverses the string; the Haskell code can do the same.
+	However, in Haskell, we write the loop as a function, which
+	we'll call <function>loop</function> just to keep things nice
+	and explicit.</para>
+
+      &IntParse.hs:loop;
+
+      <para>That first parameter to <function>loop</function> is the
+	accumulator variable we'll be using.  Passing zero into it is
+	equivalent to initialising the <varname>acc</varname> variable
+	in C at the beginning of the loop.</para>
+
+      <para>Rather than leap into blazing code, let's think about the
+	data we have to work with.  Our familiar <type>String</type>
+	is just a synonym for <type>[Char]</type>, a list of
+	characters.  The easiest way for us to get the traversal right
+	is to think about the structure of a list: it's either empty,
+	or a single element followed by the rest of the list.</para>
+	
+      <para>We can express this structural thinking directly by
+	pattern matching on the list type's constructors.  It's often
+	handy to think about the easy cases first: here, that means we
+	will consider the empty-list case.</para>
+
+      &IntParse.hs:base;
+
+      <para>An empty list doesn't just mean <quote>the input string is
+	  empty</quote>; it's also the case we'll encounter when we
+	traverse all the way to the end of a non-empty list.  So we
+	don't want to <quote>error out</quote> if we see an empty
+	list.  Instead, we should do something sensible.  Here, the
+	sensible thing is to return our accumulated value.</para>
+
+      <para>The other case we have to consider arises when the input
+	list is not empty.  We need to do something with the current
+	element of the list, and something with the rest of the
+	list.</para>
+
+      &IntParse.hs:inductive;
+
+      <para>We compute a new value for the accumulator, and give it
+	the name <varname>acc'</varname>.  We then call the
+	<function>loop</function> function again, passing it the
+	updated value <varname>acc'</varname> and the rest of the
+	input list; this is equivalent to the loop starting another
+	round in C.</para>
+
+      <note>
+	<para>Remember, a single quote is a legal character to use in
+	  a Haskell variable name, and is pronounced
+	  <quote>prime</quote>.  There's a common idiom in Haskell
+	  programs involving a variable, say <varname>foo</varname>,
+	  and another variable, say <varname>foo'</varname>.  We can
+	  usually assume that <varname>foo'</varname> is somehow
+	  related to <varname>foo</varname>.  It's often a new value
+	  for <varname>foo</varname>, as in our case here.</para>
+
+	<para>Sometimes we'll see continuations of this idiom, such as
+	  <varname>foo''</varname>.  Since keeping track of the number
+	  of single quotes tacked onto the end of a name rapidly
+	  becomes tedious, use of more than two in a row is thankfully
+	  rare.</para>
+      </note>
+
+      <para>Each time the <function>loop</function> function calls
+	itself, it has a new value for the accumulator, and it
+	consumes one element of the input list.  Eventually, it's
+	going to hit the end of the list, at which time the
+	<code>[]</code> pattern will match, and the recursive calls
+	will cease.</para>
+
+      <para>Because the last thing that <function>loop</function> does
+	is simply call itself, it's an example of a tail recursive
+	function. There's another common idiom in this code, too.
+	Thinking about the structure of the list, and handling the
+	empty and non-empty cases separately, is a kind of approach
+	called structural recursion.</para>
+
+      <para>We call the non-recursive case (when the list is empty)
+	the base case.  We'll see people refer to the case where the
+	function calls itself as the recursive case (surprise!), or
+	they might give a nod to mathematical induction and call it
+	the inductive case.</para>
+
+      <para>Structural induction isn't confined to lists; we can use
+	it on other algebraic data types, too.  We'll have more to say
+	about it later.</para>
+    </sect2>
+
     <sect2>
       <title>Transforming every piece of input</title>
 
-      <para>Consider the C function <function>square</function>, which
-	squares every element in an array.</para>
+      <para>Consider another C function, <function>square</function>,
+	which squares every element in an array.</para>
 
       &map.c:square;
 
@@ -179,10 +286,11 @@
       &Sum.hs:mySum;
 
       <para>Our <function>helper</function> function is tail
-	recursive, and uses an <emphasis>accumulator</emphasis>
-	parameter, <varname>acc</varname>, to hold the current partial
-	sum of the list.  This is a <quote>natural</quote> way to
-	represent a loop in a pure functional language.</para>
+	recursive, and uses an accumulator parameter,
+	<varname>acc</varname>, to hold the current partial sum of the
+	list.  As we already saw with <function>asInt</function>, this
+	is a <quote>natural</quote> way to represent a loop in a pure
+	functional language.</para>
 
       <para>For something a little more complicated, let's take a look
 	at the Adler-32 checksum. Here's a Java implementation.</para>
@@ -457,6 +565,38 @@
       <qandaset>
 	<qandaentry>
 	  <question>
+	    <para>Use a fold (choosing the appropriate fold will make
+	      your code much simpler) to rewrite and improve upon the
+	      <function>asInt</function> function from <xref
+	      linkend="hs.fp.tailrecursion"/>.</para>
+
+	    &ch04.exercises.hs:asInt_fold;
+
+	    <para>Your function should behave as follows.</para>
+
+	    &ch04.exercises.ghci:asInt_fold;
+
+	    <para>Extend your function to handle the following kinds
+	      of exceptional conditions by calling
+	      <function>error</function>.</para>
+
+	    &ch04.exercises.ghci:asInt_fold.errors;
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>The <function>asInt_fold</function> function uses
+	      <function>error</function>, so its callers cannot handle
+	      errors.  Rewrite it to fix this problem.</para>
+
+	    &ch04.exercises.hs:asInt_either;
+	    &ch04.exercises.ghci:asInt_either;
+
+	  </question>
+	</qandaentry>
+	<qandaentry>
+	  <question>
 	    <para>The Prelude function <function>concat</function>
 	      concatenates a list of lists into a single list, and has
 	      the following type.</para>
@@ -485,9 +625,9 @@
 
 	<qandaentry>
 	  <question>
-	    <para>The <code>Data.List</code> module defines a function,
-	      <function>groupBy</function>, which has the following
-	      type.</para>
+	    <para>The <code>Data.List</code> module defines a
+	      function, <function>groupBy</function>, which has the
+	      following type.</para>
 
 	    &ch04.exercises.hs:groupBy;
 
