@@ -492,7 +492,7 @@
     <sect2>
       <title>Exercises</title>
 
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para>Haskell provides a standard function, <code>last ::

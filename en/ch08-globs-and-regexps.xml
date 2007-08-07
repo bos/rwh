@@ -881,7 +881,7 @@
 
     <sect2>
       <title>Exercises</title>
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para>Although we've gone to some lengths to write a
@@ -975,7 +975,7 @@
 
     <sect2>
       <title>Exercises</title>
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para>Write a version of <function>globToRegex</function>
@@ -1042,7 +1042,7 @@
 
   <sect1>
     <title>Exercises</title>
-    <qandaset>
+    <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
 	  <para>Glob patterns are simple enough to interpret that it's
