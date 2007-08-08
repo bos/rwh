@@ -1,0 +1,46 @@
+body
+{
+  background: white;
+  margin: 0.5in;
+  font-family: arial,helvetica,sans-serif;
+}
+
+.programlisting, .screen
+{
+  border-style: solid;
+  border-width: 1px;
+  font-size: medium;
+  margin: 1em 0pt;
+  overflow: hidden;
+  padding: 0.4em 0.5em;
+}
+
+.screen
+{
+  background: #E0FFB8 none repeat scroll 0% 50%;
+  border-color: #94DA3A;
+}
+
+.programlisting
+{
+  background: #F0F4FF none repeat scroll 0% 50%;
+  border-color: #B4BAEA;
+}
+
+.prompt
+{
+  color: #448844;
+}
+
+.note
+{
+  border-color: #B4BAEA;
+  border-style: solid;
+  border-width: 1px;
+  padding: 0.8em 1em;
+}
+
+.note .title
+{
+  font-size: 90%;
+}
