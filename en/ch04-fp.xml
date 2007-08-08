@@ -78,6 +78,8 @@
 	round in C.</para>
 
       <note>
+	<title>Single quotes in variable names</title>
+
 	<para>Remember, a single quote is a legal character to use in
 	  a Haskell variable name, and is pronounced
 	  <quote>prime</quote>.  There's a common idiom in Haskell
@@ -85,9 +87,9 @@
 	  and another variable, say <varname>foo'</varname>.  We can
 	  usually assume that <varname>foo'</varname> is somehow
 	  related to <varname>foo</varname>.  It's often a new value
-	  for <varname>foo</varname>, as in our case here.</para>
+	  for <varname>foo</varname>, as in our code above.</para>
 
-	<para>Sometimes we'll see continuations of this idiom, such as
+	<para>Sometimes we'll see this idiom extended, such as
 	  <varname>foo''</varname>.  Since keeping track of the number
 	  of single quotes tacked onto the end of a name rapidly
 	  becomes tedious, use of more than two in a row is thankfully
