@@ -571,7 +571,7 @@
 
     <para>To find out more about a type, we can use some of &ghci;'s
       browsing capabilities.  The <command>:info</command> command
-      gets &ghci; to tell us us everything it knows about a
+      gets &ghci; to tell us everything it knows about a
       type.</para>
     
     &mytype.ghci:info;
