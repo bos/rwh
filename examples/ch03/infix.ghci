@@ -13,7 +13,7 @@ let string = "foo"
 let other = "foobar"
 
 --# prefix
-isprefixOf string other
+isPrefixOf string other
 
 --# infix
 string `isPrefixOf` other
