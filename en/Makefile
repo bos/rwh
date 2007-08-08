@@ -42,10 +42,12 @@ xmllint := xmllint
 xmllint-opts := --noout --nonet --valid
 
 xmlto := xmlto
+xsltproc := xsltproc
 
 xml-path := $(CURDIR):$(CURDIR)/x
 
 xmlto-opts := --skip-validation --searchpath '$(xml-path)'
+xsltproc-opts := --nonet --xinclude --path '$(xml-path)'
 
 docbook2pdf := $(shell which docbook-2-pdf 2>/dev/null)
 
@@ -54,6 +56,17 @@ xml-to-pdf = $(xmlto) $(xmlto-opts) pdf $(1)
 else
 xml-to-pdf = SGML_SEARCH_PATH='$(xml-path)' $(docbook2pdf) -D openjade -q \
 		-O -V -O paper-size=Letter -s local=printlocal $(1) > /dev/null
+endif
+
+# Directories.
+
+system-xsl-dir := $(firstword $(wildcard \
+	/usr/share/sgml/docbook/xsl-stylesheets \
+	/usr/share/xml/docbook/stylesheet/nwalsh \
+	))
+
+ifeq ($(system-xsl-dir),)
+$(error add a suitable directory to system-xsl-dir)
 endif
 
 # Bletcherousness.
@@ -81,12 +94,19 @@ $(obj-pdf): .validated $(src-figs)
 	$(call xml-to-pdf,$(src-master))
 
 .PHONY: html
-html: html/index.html
+html: $(obj-html)/index.html $(obj-html)/styles.css
 
-$(obj-html)/index.html: .validated
+$(obj-html)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	mkdir -p $(obj-html)
-	$(xmlto) $(xmlto-opts) -o $(obj-html) html $(src-master)
+	$(xsltproc) $(xsltproc-opts) -o $(obj-html)/x ../xsl/chunk-stylesheet.xsl $(src-master)
 	cp -rf figs $(obj-html)
+	cp ../xsl/system-xsl/images/*.png html/figs
+
+$(obj-html)/styles.css: styles.css
+	cp $< $@
+
+../xsl/system-xsl: $(system-xsl-dir)
+	ln -s $< $@
 
 .PHONY: index
 index: xxx-book-index.xml
