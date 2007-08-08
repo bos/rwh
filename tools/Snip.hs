@@ -20,13 +20,13 @@ programListing :: String -> B.ByteString -> B.ByteString
 
 programListing modName snipName body =
     [(tag ++ ".code",
-      B.concat [B.pack "<![CDATA[\n", rstrip body, B.pack "\n]]>\n"]),
-     (tag ++ ".noid", B.pack ("<programlisting>\n" ++
-                              "&" ++ tag ++ ".code;\n" ++
-                              "</programlisting>\n")),
-     (tag, B.pack ("<programlisting id=" ++ show tag ++ ">\n" ++
-                   "&" ++ tag ++ ".code;\n" ++
-                   "</programlisting>\n"))]
+      B.concat [B.pack "<![CDATA[", rstrip body, B.pack "]]>"]),
+     (tag ++ ".noid", B.pack ("<programlisting>" ++
+                              "&" ++ tag ++ ".code;" ++
+                              "</programlisting>")),
+     (tag, B.pack ("<programlisting id=" ++ show tag ++ ">" ++
+                   "&" ++ tag ++ ".code;" ++
+                   "</programlisting>"))]
   where tag = modName ++ ':' : B.unpack snipName
         rstrip = B.reverse . B.dropWhile isSpace . B.reverse
 
