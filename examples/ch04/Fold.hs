@@ -44,3 +44,14 @@ myFilter p xs = foldr step [] xs
     where step x ys | p x       = x : ys
                     | otherwise = ys
 {-- /snippet myFilter --}
+
+{-- snippet identity --}
+identity :: [a] -> [a]
+identity xs = foldr (:) [] xs
+{-- /snippet identity --}
+
+{-- snippet append --}
+append :: [a] -> [a] -> [a]
+append xs ys = foldr (:) ys xs
+{-- /snippet append --}
+              

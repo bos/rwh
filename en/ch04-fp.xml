@@ -560,19 +560,72 @@
 	  recursive</quote>.  It's just useful to remember that you
 	read about it somewhere, and that it has something to do with
 	<function>foldr</function>.)</para>
+
+      <para>Another useful way to think about the way
+	<function>foldr</function> works is that it
+	<emphasis>transforms</emphasis> its input list.  Its first two
+	arguments are <quote>what to do with each head/tail element of
+	  the list</quote>, and <quote>what to substitute at the end
+	  of the list</quote>.</para>
+
+      <para>The <quote>identity</quote> transformation with
+	<function>foldr</function> thus replaces the empty list with
+	itself, and applies the list constructor to each head/tail
+	pair:</para>
+
+      &Fold.hs:identity;
+
+      <para>It transforms a list into a copy of itself.</para>
+
+      &fold.ghci:identity;
+
+      <para>If <function>foldr</function> replaces the end of a list
+	with some other value, we have an easy way to think about
+	Haskell's list append function,
+	<function>(++)</function>.</para>
+
+      &fold.ghci:append.builtin;
+
+      <para>All we have to do to append a list onto another is
+	substitute that second list for the end of our first
+	list.</para>
+
+      &Fold.hs:append;
+
+      <para>Let's try this out.</para>
+
+      &fold.ghci:append;
+
+      <para>Now that we can think in terms of transforming a list, it
+	becomes easier for us to reason about functions like summing a
+	list.  We replace the empty list with zero, which becomes our
+	first accumulator value.  We then apply the
+	<function>(+)</function> function to each element of the list
+	and an accumulator value, to give a new accumulator
+	value.</para>
+
+      &fold.ghci:sum;
+
+      <para>Knowing that <function>foldr</function> transforms a list
+	from right to left, we can <quote>unroll</quote> the
+	application of it by hand to see the intermediate accumulators
+	that it produces.</para>
+
+      &fold.ghci:sum.steps;
+
     </sect2>
 
     <sect2>
       <title>A final note about foldl</title>
 
-      <para>To keep our initial discussion simple, we've used
-	<function>foldl</function> throughout this section.  However,
-	any time you want to fold from the left in practice, use
-	<function>foldl'</function> from the <code>Data.List</code>
-	module instead, because it's more efficient.  You should take
-	this on faith for now; we'll explain why you should avoid
-	plain <function>foldl</function> in normal use in section
-	XXX.</para>
+      <para>To keep our initial discussion simple, we used
+	<function>foldl</function> throughout most of this section.
+	However, any time you want to fold from the left in practice,
+	use <function>foldl'</function> from the
+	<code>Data.List</code> module instead, because it's more
+	efficient.  You should take this on faith for now; we'll
+	explain why you should avoid plain <function>foldl</function>
+	in normal use in section XXX.</para>
     </sect2>
 
     <sect2>
