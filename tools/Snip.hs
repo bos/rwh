@@ -37,11 +37,14 @@ markers path =
       "c"  -> (startC, endC)
       "cpp"  -> (startC, endC)
       "java"  -> (startC, endC)
+      "py"  -> (startPy, endPy)
       s    -> error ("unknown file suffix" ++ show s)
   where startHs = B.pack "{-- snippet "
         endHs = B.pack "{-- /snippet "
         startC = B.pack "/** snippet "
         endC = B.pack "/** /snippet "
+        startPy = B.pack "## snippet "
+        endPy = B.pack "## /snippet "
 
 snipFile :: FilePath -> FilePath -> IO ()
 

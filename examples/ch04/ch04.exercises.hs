@@ -25,7 +25,7 @@ groupBy f = foldr step []
 {-- snippet asInt_fold --}
 asInt_fold :: String -> Int
 {-- /snippet asInt_fold --}
-asInt_fold ('-':xs) = negate (asInt' xs)
+asInt_fold ('-':xs) = negate (asInt_fold' xs)
 asInt_fold xs = asInt_fold' xs
 
 asInt_fold' [] = error "empty string"
@@ -57,3 +57,32 @@ asInt_either' xs = foldr step (Right 0) xs
               | otherwise = Left ("non-digit " ++ show c)
           step _ err = err
           zero = ord '0'
+
+breakList :: ([a] -> Maybe [a]) -> [a] -> ([a], [a], [a])
+breakList p = helper []
+    where helper acc xs@(x:xs') = case p xs of
+                           Just sep -> (reverse acc, sep,
+                                        foldr (const tail) xs sep)
+                           Nothing -> helper (x:acc) xs'
+          helper acc [] = (reverse acc, [], [])
+
+{-- snippet safe --}
+safeHead :: [a] -> Maybe a
+safeTail :: [a] -> Maybe [a]
+safeLast :: [a] -> Maybe a
+safeInit :: [a] -> Maybe [a]
+{-- /snippet safe --}
+
+safeHead (x:_) = Just x
+safeHead _     = Nothing
+
+safeTail (_:xs) = Just xs
+safeTail _      = Nothing
+
+safeLast [x]    = Just x
+safeLast (_:xs) = safeLast xs
+safeLast []     = Nothing
+
+safeInit []     = Nothing
+safeInit [x]    = Just []
+safeInit (x:xs) = maybe Nothing (Just . (x:)) (safeInit xs)

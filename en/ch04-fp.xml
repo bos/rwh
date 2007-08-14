@@ -4,6 +4,433 @@
   <title>Functional programming</title>
 
   <sect1>
+    <title>Thinking in Haskell</title>
+
+    <para>There are two aspects to the early stages of programming
+      effectively in Haskell.  The first is coming to terms with the
+      shift in mindset from imperative programming to functional: we
+      have to step away from an entire toolbox of programming habits
+      from other languages.  We do this not because these techniques
+      are bad, but because in a functional language they're either not
+      applicable or they turn out downright ungainly.  At the same
+      time, we have to come up to speed with a replacement vocabulary,
+      so that we can hack productively.</para>
+
+    <para>Our second challenge is learning our way around the standard
+      Haskell libraries.  As in any language, the libraries act as a
+      lever, enabling us to multiply our problem solving power.
+      However, Haskell libraries tend to be organised around a higher
+      level of abstraction than those in many other languages.  We'll
+      probably have to put more effort into learning them, but in
+      exchange they offer a tantalisingly greater magnification of our
+      efforts.</para>
+
+    <para>In this chapter, we'll introduce a number of common
+      functional programming techniques.  We'll draw upon examples
+      from imperative languages to highlight the shift in thinking
+      that we'll need to make.  As we do so, we'll walk through some
+      of the fundamentals of Haskell's standard libraries.</para>
+  </sect1>
+
+  <sect1 id="hs.fp.splitlines">
+    <title>Warming up: portably splitting lines of text</title>
+
+    <para>Haskell provides a built-in function,
+      <function>lines</function>, that lets us split a text string on
+      line boundaries.  It returns a list of strings with line
+      termination characters omitted.</para>
+
+    &splitlines.ghci:lines;
+
+    <para>While <function>lines</function> looks useful, it's not
+      portable: it doesn't deal well with Windows line ending
+      conventions.</para>
+
+    &splitlines.ghci:lines.cr;
+
+    <para>It only splits on newline characters, leaving carriage
+      returns dangling at the ends of lines.  Ugh.</para>
+
+    <para>Years of comfortable hacking with Python's <quote>universal
+	newline</quote> support, which transparently handles Unix and
+      Windows line ending conventions for us without us needing to
+      worry about them.  Although Python conveniently provides a
+      <function>splitlines</function> string method, let's reimplement
+      it as a Python function, just to see what the code might look
+      like.</para>
+
+    &splitlines.py:splitlines;
+
+    <para>The key to understanding this code lies with Python's
+      <function>partition</function> string method: it searches for a
+      substring.  If it finds it, it returns a triple of the substring
+      before the match, the match, and the substring after the match.
+      Otherwise, it returns a triple of the entire string and two
+      empty strings.</para>
+
+    <para>Because we're still early in our career of reading Haskell
+      code, we'll discuss our Haskell implementation in quite some
+      detail.  This is almost the last instance where we'll walk
+      through <quote>basic</quote> Haskell code at this level.</para>
+
+    <para>Haskell provides a similar function named
+      <function>break</function> that we can use to the same end.
+      Unlike Python's <function>partition</function>, it operates over
+      lists of any type, instead of strings.  It does this by taking a
+      function as its first parameter: this function takes an element
+      of the list, and returns a <type>Bool</type> to indicate whether
+      to break the list there or not.  What <function>break</function>
+      returns is a two-tuple, of the sublist before the predicate
+      returns <code>True</code> (the prefix), and the rest of the list
+      (the suffix).</para>
+
+    &splitlines.ghci:break;
+
+    <para>This makes <function>break</function> both more and less
+      powerful than <function>partition</function>: we can use it on
+      any type of list, not just a string; but it can only examine a
+      single item at a time, not a sublist.</para>
+
+    <para>For our purposes, examining one character at a time will work
+      perfectly well, since we only need to match a single carriage
+      return or newline.</para>
+
+    &SplitLines.hs:splitLines;
+
+    <para>Our function first calls <function>break</function> on its
+      input string, to break it into the substring before a line
+      terminator, and the rest of the string (which will include the
+      line terminator, if any).</para>
+
+    <para>It then uses the pattern matching capabilities of
+      <code>case</code> to inspect the return value of
+      <function>break</function>.  We know that
+      <function>break</function> always returns a two-tuple, so each
+      pattern on the left matches a two-tuple.  The first element of
+      the tuple pattern doesn't inspect its value; it just binds the
+      variable <varname>pre</varname> to whatever value is in that
+      element of the tuple.  The second element of the pattern
+      <emphasis>does</emphasis> inspect its value.  The first pattern
+      matches any string containing at least two characters that
+      begins with a carriage return, followed by a newline, then binds
+      <varname>suf</varname> to the remainder of the string.  The
+      other patterns should be self-explanatory.</para>
+
+    <para>The right-hand side of each of the first three branches of
+      the <code>case</code> expression constructs a new list, using
+      the prefix string <varname>pre</varname> as the head, and as the
+      remainder, the list of strings resulting from applying
+      <function>splitLines</function> to the suffix string
+      <varname>suf</varname> without the leading line separator
+      characters.</para>
+
+    <para>Following a prose description of the behaviour of a Haskell
+      function isn't easy.  We can get a better understanding by
+      stepping into &ghci;, and watching the function at work in
+      different circumstances.</para>
+
+    <para>We'll start by looking at a string that doesn't contain any
+      line separators.</para>
+
+    &splitlines.ghci:splitLines.foo;
+
+    <para>Here, our call to <function>break</function> never finds a
+      line separator, so we get an empty suffix.</para>
+
+    &splitlines.ghci:break.foo;
+
+    <para>The <code>case</code> expression thus hits a match on the
+      fourth branch, and we're done.  What about a slightly more
+      interesting case?</para>
+
+    &splitlines.ghci:splitLines.foobar;
+
+    <para>Our first call to <function>break</function> gives us a
+      non-empty suffix.</para>
+
+    &splitlines.ghci:break.foobar;
+
+    <para>Because the suffix begins with a carriage return, followed
+      by a newline, we match on the first branch of the
+      <code>case</code> expression.  This gives us
+      <varname>pre</varname> bound to <code>"foo"</code>, and
+      <varname>suf</varname> bound to <code>"bar"</code>.  We call
+      <function>splitLines</function> again, this time on
+      <code>"bar"</code> alone.</para>
+
+    &splitlines.ghci:splitLines.bar;
+
+    <para>The result is that we construct a list whose head is
+      <code>"foo"</code> and whose tail is
+      <code>["bar"]</code>.</para>
+
+    &splitlines.ghci:cons;
+  </sect1>
+
+  <sect1 id="hs.fp.lists">
+    <title>Working with lists</title>
+    
+    <para>As the bread and butter of functional programming, lists
+      deserve some serious attention.  The standard prelude defines
+      dozens of functions for dealing with lists.  Many of these will
+      be indispensable tools, so it's important that we learn them
+      early on.</para>
+
+    <para>The <code>Data.List</code> module is the <quote>real</quote>
+      logical home of all standard list functions. The prelude merely
+      re-exports a large subset of the functions exported by
+      <code>Data.List</code>. Several invaluable functions in
+      <code>Data.List</code> are <emphasis>not</emphasis> re-exported
+      by the standard prelude.  As we walk through list functions in
+      the sections that follow, we'll explicitly mention those that
+      are in <code>Data.List</code>.</para>
+      
+      &ch04.list.ghci:Data.List;
+
+    <sect2 id="hs.fp.lists.basic">
+      <title>Basic list manipulation</title>
+
+      <para>The simplest function on a list is
+	<function>null</function>, which merely tells us whether or
+	not the list is empty.</para>
+
+      &ch04.list.ghci:null;
+
+      <para>The <function>length</function> function tells us how many
+	elements are in a list.</para>
+
+      &ch04.list.ghci:length;
+
+      <para>To get the first element of a list, we use the
+	<function>head</function> function.</para>
+
+      &ch04.list.ghci:head;
+
+      <para>The converse, <function>tail</function>, returns all
+	<emphasis>but</emphasis> the head of a list.</para>
+
+      &ch04.list.ghci:tail;
+
+      <para>Another function, <function>last</function>, returns the
+	very last element of a list.</para>
+
+      &ch04.list.ghci:last;
+
+      <para>The converse of <function>last</function> is
+	<function>init</function>, which returns a list of all but the
+	last element of its input.</para>
+
+      &ch04.list.ghci:last;
+
+      <para>None of the above functions is well-behaved on empty
+	lists, so be careful if you don't know whether or not a list
+	is empty.  What form does their misbehaviour take?</para>
+      
+      &ch04.list.ghci:head.empty;
+    
+    </sect2>
+
+    <sect2 id="hs.fp.lists.safe">
+      <title>Safely and sanely working with unsafe functions</title>
+
+      <para>When we want to use a function like
+	<function>safe</function>, where we know that it might blow up
+	on us if we pass in an empty list, the temptation might
+	initially be strong to check the length of the list before we
+	call <function>safe</function>.  Let's construct a hideously
+	artificial example to illustrate our point.</para>
+
+      &EfficientList.hs:myDumbExample;
+
+      <para>If we're coming from a language like Perl or python, this
+	might seem like a perfectly natural way to write this test.
+	Behind the scenes, Python lists are arrays; and Perl arrays
+	are, well, arrays.  So they necessarily know how long they
+	are, and calling <code>len(foo)</code> or <code>$#foo+1</code>
+	is a perfectly natural thing to do.  But as with many other
+	things, it's not a good idea to blindly transplant such an
+	assumption into Haskell.</para>
+
+      <para>We've already seen the definition of the list algebraic
+	data type in <xref linkend="hs.funcstypes.listadt"/>, and know
+	that a list doesn't encode its own length.  Thus, the only way
+	that <function>length</function> can operate is to walk the
+	entire list.</para>
+
+      <para>Therefore,  when we only care whether or not a list is
+	empty, calling <function>length</function> isn't a good
+	strategy. It can potentially do a lot more work than we want,
+	if the list we're working is finite.  Worse, Haskell lets us
+	define infinitely long lists, on which an unsuspecting call to
+	<function>length</function> will never return!</para>
+
+      <para>A more appropriate function to call here instead is
+	<function>null</function>, which runs in constant time.  Better
+	yet, using <function>null</function> makes our code indicate
+	what property of the list we really care about.</para>
+    </sect2>
+
+    <sect2>
+      <title>Partial and total functions</title>
+
+      <para>Functions that only have return values defined for a
+	subset of valid inputs are called <emphasis>partial</emphasis>
+	functions (calling <function>error</function> doesn't qualify
+	as returning a value!). We call functions that return valid
+	results over their entire input domains
+	<emphasis>total</emphasis> functions.</para>
+
+      <para>It's always a good idea to know whether a function you're
+	using is partial or total.  Calling a partial function with an
+	input that it can't handle is probably the single biggest
+	source of straightforward, avoidable bugs in Haskell
+	programs.</para>
+
+      <para>Some Haskell programmers go so far as to give partial
+	functions names that begin with a prefix such as
+	<code>unsafe</code>, so that they can't shoot themselves in
+	the foot accidentally.</para>
+
+      <para>It's arguably a deficiciency of the standard prelude that
+	it defines quite a few <quote>unsafe</quote> partial
+	functions, like <function>head</function>, without also
+	providing <quote>safe</quote> total equivalents.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>More simple list manipulations</title>
+
+      <para>Haskell's name for the <quote>append</quote> function is
+	<function>(++)</function>.</para>
+
+      &ch04.list.ghci:append;
+
+      <para>The <function>concat</function> function takes a list of
+	lists, all of the same type, and <quote>flattens</quote> them
+	into a single list.</para>
+
+      &ch04.list.ghci:concat;
+
+      <para>It only flattens one level of nesting.</para>
+
+      &ch04.list.ghci:concat.multi;
+
+      <para>The <function>reverse</function> function returns the
+	elements of a list in reverse order.</para>
+
+      &ch04.list.ghci:reverse;
+
+      <para>For lists of <type>Bool</type>, the
+	<function>and</function> and <function>or</function> functions
+	generalise their two-argument
+	cousins,<function>(&amp;&amp;)</function> and
+	<function>(||)</function>.</para>
+
+      &ch04.list.ghci:and.or;
+
+      <para>They have more useful cousins, <function>all</function>
+	and <function>any</function>, which operate on lists of any
+	type.  Each one takes a predicate as its first argument;
+	<function>all</function> returns <code>True</code> if that
+	predicate succeeds on every element of the list, while
+	<function>any</function> returns <code>True</code> if the
+	predicate succeeds on any element of the list.</para>
+
+      &ch04.list.ghci:all.any;
+
+    </sect2>
+
+    <sect2>
+      <title>Working with sublists</title>
+
+      <para>The <function>take</function> function, which we already
+	met in <xref linkend="hs.funcstypes.calling"/>, returns a
+	sublist consisting of the first several  elements from a list.
+	Its converse, <function>drop</function>, drops several
+	elements from the head of the list.</para>
+
+      &ch04.list.ghci:take.drop;
+
+      <para>The <function>splitAt</function> function combines the
+	functions of <function>take</function> and
+	<function>drop</function>, returning a two-tuple of the input
+	list, split at the given index.</para>
+
+      &ch04.list.ghci:splitAt;
+
+      <para>The <function>takeWhile</function> and
+	<function>dropWhile</function> functions take predicates:
+	<function>takeWhile</function> constructs a list as long as
+	the predicate returns <code>True</code>, while
+	<function>dropWhile</function> drops elements from the list as
+	long as the predicate returns <code>True</code>.</para>
+      
+      &ch04.list.ghci:takeWhile.dropWhile;
+
+      <para>Just as <function>splitAt</function> <quote>tuples
+	  up</quote> the results of <function>take</function> and
+	<function>drop</function>, the functions
+	<function>break</function> (which we already saw in <xref
+	linkend="hs.fp.splitlines"/>) and <function>span</function>
+	tuple up the results of <function>takeWhile</function> and
+	<function>dropWhile</function>.</para>
+
+      <para>Each function takes a predicate;
+	<function>break</function> consumes its input while its
+	predicate fails, while <function>span</function> consumes
+	until its predicate succeeds.</para>
+
+      &ch04.list.ghci:break.span;
+
+    </sect2>
+
+    <sect2 id="hs.fp.list.search">
+      <title>Searching lists</title>
+
+      <para>In <code>Data.List</code>, three predicates,
+	<function>isPrefixOf</function>,
+	<function>isInfixOf</function>, and
+	<function>isSuffixOf</function>, let us test for the presence
+	of sublists within a bigger list.  The easiest way to use them
+	is as infix functions, where they read quite naturally.</para>
+
+      <para>The <function>isPrefixOf</function> function tells us
+	whether its left argument matches the beginning of its right
+	argument.</para>
+
+      &ch04.list.ghci:isPrefixOf;
+
+      <para>The <function>isInfixOf</function> function indicates
+	whether its left argument is a sublist of its right.</para>
+
+      &ch04.list.ghci:isInfixOf;
+
+      <para>The operation of <function>isSuffixOf</function> shouldn't
+	need any explanation.</para>
+
+      &ch04.list.ghci:isSuffixOf;
+      
+    </sect2>
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Write your own <quote>safe</quote> definitions of
+	      the standard partial list functions that never
+	      fail.</para>
+
+	    &ch04.exercises.hs:safe;
+
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
     <title>How to think about loops</title>
 
     <para>Unlike traditional languages, Haskell has neither a
@@ -15,8 +442,11 @@
     <sect2 id="hs.fp.tailrecursion">
       <title>Explicit recursion</title>
 
-      <para>Here's a  C function that takes a string of decimal digits
-	and turns them into an integer.</para>
+      <para>A straightforward way to make the jump from a language
+	that has loops to one that doesn't is to run through a few
+	examples, looking at the differences.  Here's a C function
+	that takes a string of decimal digits and turns them into an
+	integer.</para>
 
       &intparse.c:as_int;
 
@@ -231,9 +661,9 @@
       <para>Since <function>map</function> takes a function as
 	argument, we refer to it as a
 	<emphasis>higher-order</emphasis> function.  (In spite of the
-	name, there's nothing mysterious about higher-order
-	functions; it's just a term for functions that take other
-	functions as arguments, or return functions.)</para>
+	name, there's nothing mysterious about higher-order functions;
+	it's just a term for functions that take other functions as
+	arguments, or return functions.)</para>
 
       <para>Since <function>map</function> abstracts out the pattern
 	common to our <function>square</function> and
@@ -245,7 +675,7 @@
       &Map.hs:myMap;
 
       <para>We try out our <function>myMap</function> function to give
-      outselves some assurance that it behaves similarly to the
+	outselves some assurance that it behaves similarly to the
 	standard <function>map</function>.</para>
 
       &ch04.map.ghci:inuse;
@@ -580,8 +1010,8 @@
       &fold.ghci:identity;
 
       <para>If <function>foldr</function> replaces the end of a list
-	with some other value, we have an easy way to think about
-	Haskell's list append function,
+	with some other value, this gives us an easy way to think
+	about Haskell's list append function,
 	<function>(++)</function>.</para>
 
       &fold.ghci:append.builtin;
@@ -613,6 +1043,11 @@
 
       &fold.ghci:sum.steps;
 
+      <para>As our extended treatment of folds should indicate, the
+	<function>foldr</function> function is nearly as important a
+	member of our list-programming toolbox as the more basic list
+	functions we saw in <xref
+	  linkend="hs.fp.lists"/>.</para>
     </sect2>
 
     <sect2>
@@ -637,7 +1072,7 @@
 	    <para>Use a fold (choosing the appropriate fold will make
 	      your code much simpler) to rewrite and improve upon the
 	      <function>asInt</function> function from <xref
-	      linkend="hs.fp.tailrecursion"/>.</para>
+		linkend="hs.fp.tailrecursion"/>.</para>
 
 	    &ch04.exercises.hs:asInt_fold;
 
@@ -703,6 +1138,13 @@
 	    <para>Use &ghci; to load the <code>Data.List</code> module
 	      and figure out what <function>groupBy</function> does,
 	      then write your own implementation using a fold.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>How many of the following standard prelude functions
+	      can you rewrite using list folds?</para>
 	  </question>
 	</qandaentry>
       </qandaset>

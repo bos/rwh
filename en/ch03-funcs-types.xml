@@ -200,7 +200,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.calling">
     <title>Calling functions</title>
 
     <para>Now that we've had our fill of data types for a while, let's
@@ -979,7 +979,7 @@
       define the type in terms of itself.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.listadt">
     <title>A little more about lists</title>
 
     <para>Now that we're getting familiar with some of the jargon

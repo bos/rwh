@@ -16,7 +16,8 @@ src-examples := \
 	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs) \
 	$(wildcard ../examples/ch04/*.c) \
 	$(wildcard ../examples/ch04/*.cpp) \
-	$(wildcard ../examples/ch04/*.java)
+	$(wildcard ../examples/ch04/*.java) \
+	$(wildcard ../examples/ch04/*.py)
 
 src-figs := \
 	$(wildcard figs/*.png)
@@ -171,6 +172,7 @@ vpath %.c $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.cpp $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.java $(addprefix ../examples/,$(dir $(src-examples)))
+vpath %.py $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 
@@ -187,6 +189,9 @@ x/.stamp-%.hs: %.hs ../tools/bin/snippets x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.java: %.java ../tools/bin/snippets x
+	../tools/bin/snippets $(CURDIR)/x $< > $@
+
+x/.stamp-%.py: %.py ../tools/bin/snippets x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x

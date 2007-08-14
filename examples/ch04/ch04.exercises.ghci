@@ -14,3 +14,17 @@ asInt_fold "314159265358979323846"
 --# asInt_either
 asInt_either "33"
 asInt_either "foo"
+
+--# asFolds
+
+:module +Data.List
+:type reverse
+reverse "hcogogogoilisytnallllwbordnrywhcyregogllygnywgllwpriafnall"
+:type intersperse
+intersperse 3 [2,4,6]
+:type and
+and [True,False,False]
+:type maximum
+maximum [1,3,5,7,6,4]
+:type nub
+nub [1,1,2,2,2,2,2,3]
