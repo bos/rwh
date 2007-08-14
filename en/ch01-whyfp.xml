@@ -12,6 +12,19 @@
   audience is people who can already program.  There will be plenty of
   examples and exercises.
   </remark>
+
+    <para>As a new Haskell programmer, you'll inevitably end up
+      writing quite a bit of code by hand for which you could have
+      used a library function or programming technique, had you but
+      known of its existence. You'll also run into instances where a
+      cherished feature of another language isn't available; or a
+      library function you just know ought to be there isn't; or
+      occasionally something will be put together in such a way that
+      you know it could have been improved upon.  If you accept the
+      inevitability of the occasional surprise, difficulty, and
+      shortcoming, you'll have much more fun learning Haskell than if
+      you step in expecting perfection, only to trip up within a few
+      days or weeks of getting started.</para>
   </sect1>
 
   <sect1 id="hs.whyfp.fp">
