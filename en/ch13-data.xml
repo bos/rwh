@@ -4,7 +4,6 @@
   <title>Data Structures</title>
   <remark>
     FIXME:
-    records
     association lists
     Data.Map
     Mutable storage with MVars
@@ -228,7 +227,8 @@
       <para>
         First, we inspected the type of the <literal>CustomColor</literal>
         constructor.  Note that it's type is exactly the same as the
-        constructor that didn't use named fields.  Then, we created a object
+        constructor for the type 
+        that didn't use named fields.  Then, we created a object
         with identical data three different ways.  The first way didn't make
         use of the named fields.  The second and third ways did.  Notice that
         when you use named fields, you don't have to specify the values in
@@ -268,17 +268,17 @@
       </para>
       <programlisting>
 data CalendarTime = CalendarTime {
-  ctYear :: Int
-  ctMonth :: Month
-  ctDay :: Int
-  ctHour :: Int
-  ctMin :: Int
-  ctSec :: Int
-  ctPicosec :: Integer
-  ctWDay :: Day
-  ctYDay :: Int
-  ctTZName :: String
-  ctTZ :: Int
+  ctYear :: Int,
+  ctMonth :: Month,
+  ctDay :: Int,
+  ctHour :: Int,
+  ctMin :: Int,
+  ctSec :: Int,
+  ctPicosec :: Integer,
+  ctWDay :: Day,
+  ctYDay :: Int,
+  ctTZName :: String,
+  ctTZ :: Int,
   ctIsDST :: Bool
 }
       </programlisting>
@@ -292,11 +292,93 @@ data CalendarTime = CalendarTime {
     <sect2 id="hs.data.polymorphic">
       <title>Polymorphic Types</title>
       <para>
-        asdf
+        Sometimes you don't know in advance what the types of the data you
+        want to store will be.  For instance, our
+        <literal>CustomColor</literal> type used &Int;s.  But one could
+        certainly also represent color values as a &Float; or an &Integer;.
+        Haskell makes it possible to write generic code that
+        could work with any of those.  Why not make the type generic as well?
+      </para>
+      <para>
+        Haskell has a well-known type that is defined just this way: &Maybe;.
+        It's defined in the prelude like this:
+      </para>
+      <programlisting>
+data  Maybe a  =  Nothing | Just a
+  deriving (Eq, Ord)
+      </programlisting>
+      <para>
+        This type is often used when the result of a function could be an
+        error or some other invalid result (&Nothing;), or else a real value
+        (&Just;).  For instance, if you are searching in a list for the first
+        result that matches search criteria, you will either find something
+        or you won't.  If you do, you could get back the data wrapped in
+        &Just;, and if you don't, you could get back &Nothing;.
+      </para>
+      <para>
+        &Maybe; is a polymorphic type because its type depends on the type of
+        data that is encapsulated within it.  You can, in fact, encapsulate
+        <emphasis>any</emphasis> type of data within it.  Let's look at this
+        with &ghci;.
+      </para>
+      &maybe.ghci:maybe1;
+      <para>
+        Notice here that the type of &Nothing; is <literal>Maybe a</literal>,
+        but the type of <literal>Just "hi"</literal> is <literal>Maybe
+          [Char]</literal>.  The reason for this is Haskell's type inference.
+        &Nothing; doesn't actually encapsulate any data, so it -- by itself
+        -- is valid with any &Just;.  You can also give it an explicit type
+        to force it to behave a certain way.
+      </para>
+      <para>
+        Let's push the type system and see what it lets us do with &Maybe;.
+      </para>
+      &maybe.ghci:maybe2;
+      <para>
+        You can compare &Nothing; to a &Just; easily enough; that comparison
+        will of course always be false.  The comparison between two &String;s
+        wrapped in &Just; also works.  But the type checker wisely gives an
+        error on the last attempt, because you're trying to compare a
+        &String; to a number.
+      </para>
+      <para>
+        You'll see &Maybe; used quite a bit throughout this book, and in
+        Haskell code in general.
+      </para>
+    </sect2>
+    <sect2 id="hs.data.combining">
+      <title>A Final Word on Types</title>
+      <para>
+        We've shown you a lot of different ways to create your own types.
+        Note that, by using multiple constructors, you can effectively
+        combine various approaches in a single type.  For instance, you could
+        say <literal>data Foo a = Bar | Baz Int | Other a</literal> if you so
+        desire.  This may be useful in certain situations.
       </para>
     </sect2>
   </sect1>
 
+  <sect1 id="hs.data.assoc">
+    <title>Association Lists</title>
+    <para>
+      Often times, we have to deal with data that is unordered but is indexed
+      by a key.  For instance, a Unix administrator might have a list of
+      numeric UIDs and the textual usernames that they correspond to.  The
+      utility of this list is being able to look up a textual username for a
+      given UID, not the order of the data.  In otherwords, the UID is a key
+      into a database.
+    </para>
+    <para>
+      In Haskell, there are several ways to handle data that is structured in
+      this way.  The two most common are association lists and the
+      <literal>Data.Map</literal> module.  Association lists are handy
+      because they are simple.  They are standard Haskell lists, so all the
+      functions that work on those lists work on association lists.  However,
+      for large data sets, <literal>Data.Map</literal> will have a
+      considerable performance advantage over association lists.  We'll
+      consider both in this chapter.
+    </para>
+  </sect1>
 
 </chapter>
  
