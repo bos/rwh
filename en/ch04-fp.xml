@@ -220,7 +220,7 @@
 	<function>init</function>, which returns a list of all but the
 	last element of its input.</para>
 
-      &ch04.list.ghci:last;
+      &ch04.list.ghci:init;
 
       <para>None of the above functions is well-behaved on empty
 	lists, so be careful if you don't know whether or not a list
