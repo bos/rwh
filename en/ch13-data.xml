@@ -195,6 +195,106 @@
         next.
       </para>
     </sect2>
+
+    <sect2 id="hs.data.named">
+      <title>Records with Named Fields</title>
+      <para>
+        Our earlier example of a type that holds a color looked easy enough.
+        But you have to remember the ordering of the fields that are part of
+        the type.  Also, you always have to pattern match all fields, even if
+        you're interested in only one.  Of course, you could write a function
+        such as <literal>getRed</literal> to do that, but there's an easier
+        way.
+      </para>
+      <para>
+        In Haskell, records can have named fields.  When you name the fields
+        in a record, you can still access it just as you would without the
+        named fields.  But you gain two things: automatic functions for
+        picking out specific fields, plus an easier way to create and update
+        these objects.
+      </para>
+      <para>
+        Let's take a look at a re-designed <literal>CustomColor</literal>
+        type that uses named fields:
+      </para>
+      &colornamed.hs:custom;
+      <para>
+        This record stores exactly the same amount of information as our
+        ealier <literal>CustomColor</literal>.  But now we can take advantage
+        of named fields.  Let's see how that works with &ghci;:
+      </para>
+      &colornamed.ghci:custom;
+      &colornamed.ghci:create;
+      <para>
+        First, we inspected the type of the <literal>CustomColor</literal>
+        constructor.  Note that it's type is exactly the same as the
+        constructor that didn't use named fields.  Then, we created a object
+        with identical data three different ways.  The first way didn't make
+        use of the named fields.  The second and third ways did.  Notice that
+        when you use named fields, you don't have to specify the values in
+        order.
+      </para>
+      <para>
+        Haskell automatically creates accessor functions for each of the
+        named fields.  Let's look at how we extract the red component of our
+        color:
+      </para>
+      &colornamed.ghci:extract;
+      <para>
+        We can use that to write a modified <literal>color2string</literal>
+        function that accesses each named field without having to pattern
+        match each individual field.  For reference, the original
+        <literal>color2string</literal> is included here as
+        <literal>color2string2</literal>.
+      </para>
+      &colornamed.hs:extract;
+      &colornamed.hs:extract2;
+      <para>
+        In the first function, we took a <literal>CustomColor</literal> and
+        assigned the entire thing to <literal>cc</literal>.  In the second
+        function, we used pattern matching to pick it apart up front.
+      </para>
+      <para>
+        Named fields also make it easy to modify one or more components of a
+        type.  Here's an example:
+      </para>
+      &colornamed.ghci:update;
+      <para>
+        With just three fields, the burden of pattern matching isn't all that
+        great.  But what if you had a dozen or more?  Named fields really
+        help out in that case.  The standard Haskell library uses named
+        fields in <literal>System.Time.CalendarTime</literal>.  Here's a
+        excerpt from its definition:
+      </para>
+      <programlisting>
+data CalendarTime = CalendarTime {
+  ctYear :: Int
+  ctMonth :: Month
+  ctDay :: Int
+  ctHour :: Int
+  ctMin :: Int
+  ctSec :: Int
+  ctPicosec :: Integer
+  ctWDay :: Day
+  ctYDay :: Int
+  ctTZName :: String
+  ctTZ :: Int
+  ctIsDST :: Bool
+}
+      </programlisting>
+      <para>
+        Named fields are a tremendous time saver here.  If you have a
+        <literal>CalendarTime</literal> and want to extract just the year,
+        you can simply say <literal>ctYear ct</literal> rather than having to
+        match against 12 different fields in order.
+      </para>
+    </sect2>
+    <sect2 id="hs.data.polymorphic">
+      <title>Polymorphic Types</title>
+      <para>
+        asdf
+      </para>
+    </sect2>
   </sect1>
 
 
