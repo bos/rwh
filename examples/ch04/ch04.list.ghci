@@ -25,6 +25,11 @@ tail "foo"
 :type last
 last "bar"
 
+--# init
+
+:type init
+init "bar"
+
 --# head.empty
 
 head []
