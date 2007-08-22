@@ -378,6 +378,46 @@ data  Maybe a  =  Nothing | Just a
       considerable performance advantage over association lists.  We'll
       consider both in this chapter.
     </para>
+    <para>
+      An association list is just a normal list containing (key, value)
+      tuples.  The type of a list of mappings from UID to username might be
+      <literal>[(Integer, String)]</literal>.  You could use just about any
+      type for both the key and the value.
+    </para>
+    <para>
+      You can built association lists just like you would build any other
+      list.  Haskell comes with one built-in function called 
+      <literal>Data.List.lookup</literal> to look up data in an association
+      list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
+      Can you guess how it works from that type?  Let's take a look in
+      &ghci;.
+    </para>
+    &lookup.ghci:lookup1;
+    <para>
+      Let's take a look at a more complex example.  On Unix/Linux machines,
+      there is a file called <literal>/etc/passwd</literal> that stores
+      usernames, UIDs, home directories, and various other information.
+      Let's write a program that parses such a file, creates an association
+      list, and lets the user look up a username by giving a UID.
+    </para>
+    &passwd-al.hs:all;
+    <para>
+      As you might imagine, if you have a large amount of data, searching
+      through it can be slow.  Changing existing data can be slow, too.  The
+      <literal>Data.Map</literal> module addresses both of these concerns,
+      and we'll cover it in the next section.
+    </para>
+    <para>
+      Association lists have a couple of advantages, though.  One is that
+      they are simple to use, build, and understand.  Another is that they
+      are standard lists and can be manipulated by standard list functions
+      such as <literal>sort</literal>, <literal>reverse</literal>,
+      <literal>head</literal>, and <literal>tail</literal>.  Finally,
+      association lists preserve their original order, while maps may not.
+    </para>
+
+
+
   </sect1>
 
 </chapter>
