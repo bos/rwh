@@ -394,7 +394,19 @@ data  Maybe a  =  Nothing | Just a
     </para>
     &lookup.ghci:lookup1;
     <para>
-      Let's take a look at a more complex example.  On Unix/Linux machines,
+      The <literal>lookup</literal> function is really simple.  Here's
+      one way you could write it:
+    </para>
+    &lookup.hs:standalone;
+    <para>
+      This function returns &Nothing; if passed the empty list.  Otherwise,
+      it compares the key with the key we're looking for.  If a match is
+      found, the corresponding value is returned.  Otherwise, it searches
+      the rest of the list.
+    </para>
+    <para>
+      Let's take a look at a more complex example of association lists.
+      On Unix/Linux machines,
       there is a file called <literal>/etc/passwd</literal> that stores
       usernames, UIDs, home directories, and various other information.
       Let's write a program that parses such a file, creates an association

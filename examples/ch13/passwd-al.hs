@@ -4,7 +4,7 @@ import System.IO
 import Control.Monad(when)
 import System.Exit
 import System.Environment(getArgs)
-{-
+
 main = do
     -- Load the command-line arguments
     args <- getArgs
@@ -22,7 +22,7 @@ main = do
 
     -- Display the result
     case username of 
-         Just x -> putStrLn username
+         Just x -> putStrLn x
          Nothing -> putStrLn "Could not find that UID"
 
 findByUID :: String -> Integer -> Maybe String
@@ -30,17 +30,28 @@ findByUID content uid =
     let al = map parseline . lines $ content
         in lookup uid al
 
--- parseline :: String -> [(Integer, String)]
--- parseline input =
+-- Convert a colon-separated line into fields
+parseline :: String -> (Integer, String)
+parseline input =
+    let fields = split ':' input
+        in (read (fields !! 2), fields !! 0)
 
--}
+{- | Takes a delimiter and a list.  Break up the last based on the
+-  delimeter. -}
 split :: Eq a => a -> [a] -> [[a]]
+
+-- If the input is empty, the result is a list of empty lists.
 split _ [] = [[]]
 split delim str =
-    let (before, remainder) = span (/= delim) str
+    let -- Find the part of the list before delim and put it in "before".
+        -- The rest of the list, including the leading delim, goes
+        -- in "remainder".
+        (before, remainder) = span (/= delim) str
         in
         before : case remainder of
                       [] -> []
-                      x -> split delim (tail x)
+                      x -> -- If there is more data to process,
+                           -- call split recursively to process it
+                           split delim (tail x)
 
 {-- /snippet all --}
