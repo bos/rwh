@@ -25,6 +25,7 @@ main = do
          Just x -> putStrLn x
          Nothing -> putStrLn "Could not find that UID"
 
+-- Given the entire input and a UID, see if we can find a username.
 findByUID :: String -> Integer -> Maybe String
 findByUID content uid =
     let al = map parseline . lines $ content
@@ -53,5 +54,4 @@ split delim str =
                       x -> -- If there is more data to process,
                            -- call split recursively to process it
                            split delim (tail x)
-
 {-- /snippet all --}

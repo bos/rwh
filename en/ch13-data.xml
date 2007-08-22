@@ -414,8 +414,38 @@ data  Maybe a  =  Nothing | Just a
     </para>
     &passwd-al.hs:all;
     <para>
+      Let's look at this program.  The heart of it is
+      <literal>findByUID</literal>, which is a simple function that parses
+      the input one line at a time, then calls <literal>lookup</literal> over
+      the result.  The remaining program is concerned with parsing the input.
+      The input file looks like this:
+    </para>
+    <programlisting>
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
+    </programlisting>
+    <para>
+      This is an excerpt from <literal>/etc/passwd</literal> on a live
+      system.  The <literal>split</literal> function separates a line into
+      fields by looking for colons.  Note the type of the function, though:
+      it's so generic that it can be used on lists of things other than
+      strings even.
+    </para>
+    <para>
       As you might imagine, if you have a large amount of data, searching
-      through it can be slow.  Changing existing data can be slow, too.  The
+      through it can be slow.  <literal>lookup</literal> may have to search
+      through an entire list.  If you have hundreds of thousands of entries,
+      this could take a long time.  
+      Changing existing data can be slow, too.  The
       <literal>Data.Map</literal> module addresses both of these concerns,
       and we'll cover it in the next section.
     </para>
@@ -427,9 +457,6 @@ data  Maybe a  =  Nothing | Just a
       <literal>head</literal>, and <literal>tail</literal>.  Finally,
       association lists preserve their original order, while maps may not.
     </para>
-
-
-
   </sect1>
 
 </chapter>
