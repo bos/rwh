@@ -1,0 +1,29 @@
+--# tails
+:m +Data.List
+tail "foobar"
+tail (tail "foobar")
+tails "foobar"
+
+--# tails.empty
+
+tails []
+
+--# suffixes
+
+tails "foo"
+suffixes "foo"
+
+--# suffixes2
+
+suffixes2 "foo"
+
+--# types
+
+:type (.)
+:type suffixes
+:type suffixes5
+suffixes5 "foo"
+
+--# dotty
+
+(sum . map sum . filter (any odd)) [[1,4,9],[2,4,6]]
