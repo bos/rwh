@@ -104,21 +104,89 @@ break even [1,3,5,6,8]
 :type span
 span even [2,4,6,7,9]
 
---# Data.List
+--# elem
 
+:type elem
+2 `elem` [5,3,2,1,1]
+2 `notElem` [5,3,2,1,1]
+
+--# filter
+
+:type filter
+filter odd [2,4,1,3,6,8,5,7]
+
+--# Data.List
 :module +Data.List
 
 --# isPrefixOf
 
+:module +Data.List
 :type isPrefixOf
 "foo" `isPrefixOf` "foobar"
 [1,2] `isPrefixOf` []
 
 --# isInfixOf
 
+:module +Data.List
 [2,6] `isInfixOf` [3,1,4,1,5,9,2,6,5,3,5,8,9,7,9]
 "funk" `isInfixOf` "sonic youth"
 
 --# isSuffixOf
 
+:module +Data.List
 ".c" `isSuffixOf` "crashme.c"
+
+--# zip
+
+:type zip
+zip [12,72,93] "foo"
+
+--# zipWith
+
+:type zipWith
+zipWith (+) [1,2,3] [4,5,6]
+
+--# unlines
+
+lines "foo\nbar"
+unlines ["foo", "bar"]
+
+--# words.unwords
+
+words "the    quick   brown\n\n\nfox"
+unwords ["jumps", "over", "the", "lazy", "dog"]
+
+--# dropWhile
+
+:type dropWhile
+
+--# dropWhile.isSpace
+
+:module +Data.Char
+dropWhile isSpace
+
+--# dropWhile.isSpace.type
+
+:type dropWhile isSpace
+dropWhile isSpace "  \n\nfoo"
+
+--# zip3
+
+:type zip3
+zip3 "foo" "bar" "quux"
+
+--# zip3foo
+
+:type zip3 "foo"
+let zip3foo xs = zip3 "foo" xs
+:type zip3foo
+(zip3 "foo") "aaa" "bbb"
+zip3foo "aaa" "bbb"
+zip3foo [1,2,3] [True,False,True]
+
+--# zip3foobar
+
+let zip3foobar = zip3 "foo" "bar"
+:type zip3foobar
+zip3foobar "quux"
+zip3foobar [1,2]

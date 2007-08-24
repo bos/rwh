@@ -86,3 +86,11 @@ safeLast []     = Nothing
 safeInit []     = Nothing
 safeInit [x]    = Just []
 safeInit (x:xs) = maybe Nothing (Just . (x:)) (safeInit xs)
+
+{-- snippet splitWith --}
+splitWith :: (a -> Bool) -> [a] -> [[a]]
+{-- /snippet splitWith --}
+splitWith _ [] = []
+splitWith p xs = let (y, ys) = break p xs
+                 in y : splitWith p (dropWhile p ys)
+                   
