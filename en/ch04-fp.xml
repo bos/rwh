@@ -29,7 +29,9 @@
       functional programming techniques.  We'll draw upon examples
       from imperative languages to highlight the shift in thinking
       that we'll need to make.  As we do so, we'll walk through some
-      of the fundamentals of Haskell's standard libraries.</para>
+      of the fundamentals of Haskell's standard libraries.  We'll also
+      intermittently cover a few more language features along the
+      way.</para>
   </sect1>
 
   <sect1 id="hs.fp.splitlines">
@@ -42,22 +44,27 @@
 
     &splitlines.ghci:lines;
 
-    <para>While <function>lines</function> looks useful, it's not
-      portable: it doesn't deal well with Windows line ending
-      conventions.</para>
+    <para>While <function>lines</function> looks useful, it relies on
+      us reading a file in <quote>text mode</quote> in order to work
+      (yes, we'll be talking about opening files soon); it doesn't
+      deal well with Windows line ending conventions.</para>
 
     &splitlines.ghci:lines.cr;
 
-    <para>It only splits on newline characters, leaving carriage
-      returns dangling at the ends of lines.  Ugh.</para>
+    <para>The function only splits on newline characters, leaving
+      carriage returns dangling at the ends of lines.  Ugh.  We can't
+      rely on opening a file in text mode to do the right thing on our
+      behalf.  For example, if we're reading a Windows-generated text
+      file on a Linux or Unix box, we'll get trailing carriage returns
+      at the end of each line.</para>
 
     <para>Years of comfortable hacking with Python's <quote>universal
 	newline</quote> support, which transparently handles Unix and
-      Windows line ending conventions for us without us needing to
-      worry about them.  Although Python conveniently provides a
-      <function>splitlines</function> string method, let's reimplement
-      it as a Python function, just to see what the code might look
-      like.</para>
+      Windows line ending conventions for us, left us wanting
+      something similar in Haskell.  Although Python conveniently
+      provides a built-in <function>splitlines</function> string
+      method, we'll rewrite it as a Python function, just to see what
+      a reasonable Python implementation might look like.</para>
 
     &splitlines.py:splitlines;
 
@@ -185,7 +192,13 @@
       the sections that follow, we'll explicitly mention those that
       are in <code>Data.List</code>.</para>
       
-      &ch04.list.ghci:Data.List;
+    &ch04.list.ghci:Data.List;
+
+    <para>Because none of these functions is complex or takes more
+      than about three lines of Haskell to write, we'll be brief in
+      our descriptions of each.  In fact, a quick and useful learning
+      exercise is to write a definition of each function after you've
+      read about it.</para>
 
     <sect2 id="hs.fp.lists.basic">
       <title>Basic list manipulation</title>
@@ -388,6 +401,18 @@
     <sect2 id="hs.fp.list.search">
       <title>Searching lists</title>
 
+      <para>The <function>elem</function> function indicates whether a
+	value is present in a list.  It has a companion function,
+	<function>notElem</function>.</para>
+
+      &ch04.list.ghci:elem;
+      
+      <para>For a more general search, <function>filter</function>
+	takes a predicate, and returns every element of the list on
+	which the predicate succeeds.</para>
+
+      &ch04.list.ghci:filter;
+
       <para>In <code>Data.List</code>, three predicates,
 	<function>isPrefixOf</function>,
 	<function>isInfixOf</function>, and
@@ -412,17 +437,77 @@
       &ch04.list.ghci:isSuffixOf;
       
     </sect2>
+
+    <sect2>
+      <title>Working with several lists at once</title>
+
+      <para>The <function>zip</function> function takes two lists and
+	<quote>zips</quote> them into a single list of pairs.  The
+	resulting list is the same length as the shorter of the two
+	inputs.</para>
+
+      &ch04.list.ghci:zip;
+
+      <para>More useful is <function>zipWith</function>, which takes
+	two lists and applies a function to each pair of elements,
+	generating a list that is the same length as the shorter of
+	the two.</para>
+
+      &ch04.list.ghci:zipWith;
+
+      <para>Haskell's type system makes it an interesting challenge to
+	write functions that take variable numbers of arguments.  So
+	if we want to zip three lists together, we call
+	<function>zip3</function> or <function>zipWith3</function>,
+	and so on up to <function>zip7</function> and
+	<function>zipWith7</function>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Special string-handling functions</title>
+
+      <para>We've already encountered the standard
+	<function>lines</function> function in <xref
+	linkend="hs.fp.splitlines"/>.  It has a standard counterpart,
+	<function>unlines</function>, which joins a list of lines
+	together using newline characters, and adds another newline to
+	the end of the string.</para>
+
+      &ch04.list.ghci:unlines;
+
+      <para>The <function>words</function> function splits an input
+	string on any whitespace.  Its counterpart,
+	<function>unwords</function>, uses a single space to join a
+	list of words.</para>
+
+      &ch04.list.ghci:words.unwords;
+    </sect2>
+
     <sect2>
       <title>Exercises</title>
 
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para>Write your own <quote>safe</quote> definitions of
-	      the standard partial list functions that never
-	      fail.</para>
+	      the standard partial list functions, but make sure that
+	      yours never fail.  As a hint, you might want to consider
+	      using the following types.</para>
 
 	    &ch04.exercises.hs:safe;
+
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Write a function <function>splitWith</function> that
+	      acts similarly to <function>words</function>, but takes
+	      a predicate and a list of any type, and splits its input
+	      list on every element for which the predicate returns
+	      <function>False</function>.</para>
+
+	    &ch04.exercises.hs:splitWith;
 
 	  </question>
 	</qandaentry>
@@ -1176,13 +1261,341 @@
   </sect1>
 
   <sect1 id="hs.fp.anonymous">
-    <title>Anonymous (Lambda) Functions</title>
-    <remark>FIXME</remark>
+    <title>Anonymous (lambda) functions</title>
+
+    <para>In many of the function definitions we've seen so far, we've
+      written short helper functions.</para>
+
+    &Partial.hs:isInAny;
+
+    <para>Haskell lets us write completely anonymous functions, which
+      we can use to avoid the need to give names to our helper
+      functions.  Anonymous functions are often called
+      <quote>lambda</quote> functions, in a nod to their heritage in
+      the lambda calculus.  We introduce an anonymous function with a
+      backslash character, <code>\</code>.  This is followed by the
+      function's arguments (which can include patterns), then an arrow
+      <code>-&gt;</code> to introduce the function's body.</para>
+
+    <para>Lambdas are most easily illustrated by example.  Here's a
+      rewrite of <function>isInAny</function> using an anonymous
+      function.</para>
+
+    &Partial.hs:isInAny2;
+
+    <para>We've wrapped the lambda in parentheses here so that Haskell
+      can tell where the function body ends.</para>
+
+    <para>Anonymous functions behave in every respect identically to
+      functions that have names, but Haskell places a few important on
+      how we can define them.  Most importantly, whereas we can write
+      a normal function using multiple clauses containing different
+      patterns and guards, a lambda can only have a single clause in
+      its definition.</para>
+
+    <para>The limitation to a single clause restricts how we can use
+      patterns in the definition of a lambda.  We'll usually write a
+      normal function with several clauses to cover different pattern
+      matching possibilities.</para>
+
+    &Lambda.hs:safeHead;
+
+    <para>But as we can't write multiple clauses to define a lambda,
+      we have to be sure that any patterns we use will match.</para>
+
+    &Lambda.hs:unsafeHead;
+
+    <para>This definition of <function>unsafeHead</function> will
+      explode in our faces if we call it with a value on which pattern
+      matching fails.</para>
+
+    &lambda.ghci:unsafeHead;
+
+    <para>The definition typechecks, so it will compile, so the error
+      will occur at runtime.  The moral of this story is to be careful
+      in how you use patterns when defining an anonymous function:
+      make sure your patterns can't fail!</para>
+
+    <para>Another thing to notice about the
+      <function>isInAny</function> and <function>isInAny2</function>
+      functions we showed above is that the first version, using a
+      helper function that has a name, is a little easier to read than
+      the version that plops an anonymous function into the middle.
+      The named helper function doesn't disrupt the
+      <quote>flow</quote> of the function in which it's used, and the
+      judiciously chosen name gives us a little bit of information
+      about what the function is expected to do.</para>
+
+    <para>In contrast, when we run across a lambda in the middle of a
+      function body, we have to switch gears and read its definition
+      fairly carefully to understand what it does.  To help with
+      readability and maintainability, then, we tend to avoid lambdas
+      in many situations where we could use them to trim a few
+      characters from a function definition.  Very often, we'll use
+      a partially applied function instead, resulting in clearer and
+      more readable code than either a lambda or an explicit
+      function.  Don't know what a partially applied function is yet?
+      Read on!</para>
   </sect1>
 
   <sect1 id="hs.fp.partialapp">
-    <title>Curried functions and partial application</title>
-    <remark>FIXME</remark>
+    <title>Partial function application and currying</title>
+
+    <para>In Haskell, a single piece of syntax doesn't often get
+      pressed into use for multiple tasks.  So why does the
+      <code>-&gt;</code> arrow get used for what looks like two
+      purposes in the type signature of a function?</para>
+
+    &ch04.list.ghci:dropWhile;
+
+    <para>It looks like the <code>-&gt;</code> is separating the
+      arguments to <function>dropWhile</function> from each other, but
+      also that it separates the arguments from the return type.  But
+      in fact <function>-&gt;</function> has only one meaning: it
+      denotes a function that takes an argument of the type on the
+      left, and returns a value of the type on the right.</para>
+
+    <para>The implication here is that in Haskell, all functions take
+      only one argument.  While <function>dropWhile</function>
+      <emphasis>looks</emphasis> like a function that takes two
+      arguments, it only takes one.  Here's a perfectly valid Haskell
+      expression.</para>
+
+    &ch04.list.ghci:dropWhile.isSpace;
+
+    <para>What type does it have, and what does it do?</para>
+
+    &ch04.list.ghci:dropWhile.isSpace.type;
+    
+    <para>Well, <emphasis>that</emphasis> looks useful.  The value
+      <code>dropWhile isSpace</code> is a function that strips leading
+      white space from a string.</para>
+
+    <para>Every time we give an argument to a function, we can
+      <quote>chop</quote> an element off the front of its type
+      signature.  Let's take <function>zip3</function> as an example
+      to see what we mean; this is a function that zips three lists
+      into a list of three-tuples.</para>
+
+    &ch04.list.ghci:zip3;
+
+    <para>If we call <function>zip3</function> with just one argument,
+      we get a function that accepts two arguments, where the first
+      argument is now <emphasis>fixed</emphasis>.  No matter what
+      second or third arguments we pass, the first argument to this
+      new function will always be the fixed value we already
+      specified.</para>
+
+    &ch04.list.ghci:zip3foo;
+    
+    <para>When we pass fewer arguments to a function than the function
+      can accept, we call this <emphasis>partial
+	application</emphasis> of the function: we're applying the
+      function to only some of its arguments.</para>
+
+    <para>In the example above, we have a partially applied function,
+      <code>zip3 "foo"</code>, and a new function,
+      <function>zip3foo</function>.  We can see that the type
+      signatures of the two and their behaviour are identical.</para>
+
+    <para>This applies just as well if we fix two arguments, giving us
+      a function of just one argument.</para>
+
+    &ch04.list.ghci:zip3foobar;
+
+    <para>Partial function application lets us avoid writing tiresome
+      throwaway functions.  It's generally a lot better for this
+      purpose than the anonymous functions we introduced in <xref
+	linkend="hs.fp.anonymous"/>.  Looking back at the
+      <function>isInAny</function> function we defined there, here's
+      how we'd write it to use a partially applied function instead of
+      a named helper function or a lambda.</para>
+
+    &Partial.hs:isInAny3;
+
+    <para>Here, the expression <code>isInfixOf needle</code> is the
+      partially applied function.  We're taking the function
+      <function>isInfixOf</function>, and <quote>fixing</quote> its
+      first argument to be the <varname>needle</varname> variable from
+      our parameter list.  This gives us a partially applied function
+      that has exactly the same type and behaviour as the helper and
+      lambda in our earlier definitions.</para>
+
+    <sect2>
+      <title>Sections</title>
+
+      <para>Haskell provides a handy notational shortcut to let us
+	write partially applied functions using infix operators.  If
+	we enclose an operator in parentheses, we can supply its left
+	or right argument inside the parentheses to get a partially
+	applied function.  This kind of partial application is called
+	a <emphasis>section</emphasis>.</para>
+
+      &partial.ghci:section;
+
+      <para>If we provide the left argument inside the section, then
+	calling the resulting function with one argument supplies the
+	operator's right argument.  And vice versa.</para>
+
+      <para>Recall that we can wrap a function name in backquotes to
+	use it as an infix operator.  This lets us use sections with
+	functions.</para>
+
+      &partial.ghci:function;
+
+      <para>The above definition fixes <function>elem</function>'s
+	second argument, giving us a function that checks to see
+	whether its argument is a lowercase letter.</para>
+
+      &partial.ghci:lower.letter;
+
+      <para>Using this as an argument to <function>any</function>, we
+	get a function that checks an entire string to see if it's all
+	lowercase.</para>
+
+      &partial.ghci:lower.string;
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>As-patterns and function composition</title>
+
+    <para>Haskell's <function>tails</function> function, in the
+      <code>Data.List</code> module, generalises the
+      <function>tail</function> function we introduced earlier.  It
+      successively applies <function>tail</function> to its input,
+      then calls itself on the result, until there's nothing
+      left.</para>
+
+    &suffix.ghci:tails;
+
+    <para>Each of these strings is a <emphasis>suffix</emphasis> of
+      the initial string, so <function>tails</function> produces a
+      list of all suffixes, plus an extra empty list at the
+      end.  In fact, it always produces that extra empty list, even
+      when its input list is empty.</para>
+
+    &suffix.ghci:tails.empty;
+
+    <para>What if we want a function that behaves like
+      <function>tails</function>, but which <emphasis>only</emphasis>
+      returns suffixes?  One possibility would be for us to write our
+      own version by hand.</para>
+
+    &SuffixTree.hs:suffixes;
+
+    <para>Let's try out that definition.</para>
+
+    &suffix.ghci:suffixes;
+
+    <sect2>
+      <title>Where did that at-sign come from?</title>
+
+      <para>You may have noticed the funny-looking pattern
+	<code>xs@(_:xs')</code> in our definition of
+	<function>suffixes</function>.  This is called an
+	<emphasis>as-pattern</emphasis>, and it means <quote>bind the
+	  variable <varname>xs</varname> to the expression in the
+	  matched pattern <code>(_:xs')</code></quote>.</para>
+
+      <para>In this case, if the pattern after the <quote>@</quote>
+	matches, <varname>xs</varname> will be bound to the entire
+	list that matched, and <varname>xs'</varname> to the rest of
+	the list (we used the wildcard <code>_</code> pattern to
+	indicate that we're not interested in the value of the head of
+	the list).</para>
+
+      <para>Let's look at a second definition of the
+	<function>suffixes</function> function, only this time without
+	using an as-pattern.</para>
+
+      &SuffixTree.hs:noisier;
+
+      <para>Here, the list that we've deconstructed in the pattern
+	match just gets put right back together in the body of the
+	function.  The as-pattern makes the code more readable by
+	letting us avoid the need to repeat ourselves.</para>
+
+      <note>
+	<title>As-patterns are not just for readability</title>
+
+	<para>Not only can as-patterns reduce the clutter in our code;
+	  they can help it to execute more efficiently, too.  Since we
+	  don't have much of a mental model for thinking about
+	  evaluation and efficiency yet, we'll return to this topic
+	  later, in XXX.</para>
+      </note>
+    </sect2>
+
+    <sect2>
+      <title>Code reuse</title>
+
+      <para>It seems a shame to introduce a new function,
+	<function>suffixes</function>, that does almost the same thing
+	as the existing <function>tails</function> function.  Surely
+	we can do better?</para>
+
+      <para>Remember the <function>init</function> function we
+	introduced in <xref linkend="hs.fp.lists"/>?</para>
+
+      &SuffixTree.hs:suffixes2;
+
+      <para>The <function>suffixes2</function> function behaves
+	identically to <function>suffixes</function>, but it's a
+	single line of code.</para>
+
+      &suffix.ghci:suffixes2;
+
+      <para>If we take a step back, we see the glimmer of a pattern
+	here: we're calling a function, then applying another function
+	to its result.  Let's turn that pattern into a function
+	definition.</para>
+
+      &SuffixTree.hs:compose;
+
+      <para>We now have a function, <function>compose</function>, that
+	we can use to <quote>glue</quote> two other functions
+	together.</para>
+
+      &SuffixTree.hs:suffixes3;
+
+      <para>As Haskell's automatic currying lets us drop the
+	<varname>xs</varname> variable, we can make our definition
+	even shorter.</para>
+
+      &SuffixTree.hs:suffixes4;
+
+      <para>Fortunately, we don't need to write our own
+	<function>compose</function> function.  Plugging functions
+	into each other like this is so common that Haskell's prelude
+	uses the <function>(.)</function> operator to denote function
+	composition.</para>
+
+      &SuffixTree.hs:suffixes5;
+
+      <para>The <function>(.)</function> operator isn't a special
+	piece of language syntax; it's just a normal operator.</para>
+
+      &suffix.ghci:types;
+
+      <para>We can create new functions at any time by writing chains
+	of composed functions, stitched together with
+	<function>(.)</function>, so long (of course) as the result
+	type of the function on the right of each
+	<function>(.)</function> matches the type of parameter that
+	the function on the left can accept.</para>
+
+      &suffix.ghci:dotty;
+
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Working with data structures: the suffix tree</title>
+    
+    <para>A suffix tree is a useful and elegant data structure that
+      lets us deal efficiently with a fixed body of text or some other
+      kind of sequence.</para>
   </sect1>
 
   <sect1 id="hs.fp.typeclasses">

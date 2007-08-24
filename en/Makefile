@@ -136,7 +136,7 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config ../tools/*.hs
 
 auto-snippets.xml: $(stamp-examples)
 	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
-	cat $^ | sort >> $@
+	cat $(sort $^) | sort >> $@
 
 .validated: $(tools:%=../tools/bin/%) $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $(src-master)
