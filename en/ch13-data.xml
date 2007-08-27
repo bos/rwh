@@ -449,7 +449,9 @@ data  Maybe a  =  Nothing | Just a
       &insert.ghci:insert3;
       <para>
         Notice how the second definition for the key <literal>1</literal>
-        overwrote the first.
+        overwrote the first.  You could write a <literal>delete</literal>
+        function very similar to the <literal>insert</literal> function that
+        would delete all occurances of a given key from the association list.
       </para>
     </sect2>
     <sect2>
@@ -558,10 +560,25 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     <para>
       Notice that the output from <literal>mapManual</literal> doesn't occur
       in the order it was passed in.  Maps do not guarantee that they will
-      preserve the original ordering.  In fact, the present implementation
-      always stores mapped data sorted internally.
+      preserve the original ordering.
+    </para>
+    <para>
+      Maps operate similar in concept to association lists.  The
+      <literal>Data.Map</literal> module provides functions for adding and
+      removing data from maps.  It also provides functions for converting
+      maps back and forth to association lists, filtering them, modifying
+      them, and folding them.  The library documentation for this module is
+      good, so instead of going into detail on each function, we're going to
+      present an example that ties together much of the concepts we've
+      discussed in this chapter.
+  </sect1>
+  <sect1>
+    <title>Extended Example: /etc/passwd</title>
+    <para>
+      FIXME
     </para>
   </sect1>
+
 
 </chapter>
  
