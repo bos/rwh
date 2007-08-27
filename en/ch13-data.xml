@@ -384,43 +384,93 @@ data  Maybe a  =  Nothing | Just a
       <literal>[(Integer, String)]</literal>.  You could use just about any
       type for both the key and the value.
     </para>
-    <para>
-      You can built association lists just like you would build any other
-      list.  Haskell comes with one built-in function called 
-      <literal>Data.List.lookup</literal> to look up data in an association
-      list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
-      Can you guess how it works from that type?  Let's take a look in
-      &ghci;.
-    </para>
-    &lookup.ghci:lookup1;
-    <para>
-      The <literal>lookup</literal> function is really simple.  Here's
-      one way you could write it:
-    </para>
-    &lookup.hs:standalone;
-    <para>
-      This function returns &Nothing; if passed the empty list.  Otherwise,
-      it compares the key with the key we're looking for.  If a match is
-      found, the corresponding value is returned.  Otherwise, it searches
-      the rest of the list.
-    </para>
-    <para>
-      Let's take a look at a more complex example of association lists.
-      On Unix/Linux machines,
-      there is a file called <literal>/etc/passwd</literal> that stores
-      usernames, UIDs, home directories, and various other information.
-      Let's write a program that parses such a file, creates an association
-      list, and lets the user look up a username by giving a UID.
-    </para>
-    &passwd-al.hs:all;
-    <para>
-      Let's look at this program.  The heart of it is
-      <literal>findByUID</literal>, which is a simple function that parses
-      the input one line at a time, then calls <literal>lookup</literal> over
-      the result.  The remaining program is concerned with parsing the input.
-      The input file looks like this:
-    </para>
-    <programlisting>
+    <sect2>
+      <title>Building Association Lists</title>
+      <para>
+        You can built association lists just like you would build any other
+        list.  Haskell comes with one built-in function called 
+        <literal>Data.List.lookup</literal> to look up data in an association
+        list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
+        Can you guess how it works from that type?  Let's take a look in
+        &ghci;.
+      </para>
+      &lookup.ghci:lookup1;
+      <para>
+        The <literal>lookup</literal> function is really simple.  Here's
+        one way you could write it:
+      </para>
+      &lookup.hs:standalone;
+      <para>
+        This function returns &Nothing; if passed the empty list.  Otherwise,
+        it compares the key with the key we're looking for.  If a match is
+        found, the corresponding value is returned.  Otherwise, it searches
+        the rest of the list.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Inserting Into Association Lists</title>
+      <para>
+        It's easy enough to build an association list based on data that's
+        known up-front.  But a common use for these lists may involve
+        modifying existing data -- replacing the data a key points to.  In
+        Haskell, of course, we don't actually modify anything in-place; we
+        would return a new list instead.
+      </para>
+      <para>
+        Here's an insert function.  It will insert the given key/value pair
+        into the association list if the key isn't already in the list.  If
+        the key is already present, it will instead modify the associated
+        value.  Notice how easy it is to develop data structures like this in
+        Haskell.
+      </para>
+      &insert.hs:all;
+      <para>
+        The <literal>insert</literal> function takes a key, value, and an
+        association list.  It simply iterates over the list, looking for a
+        key that matches the given key.  If it never finds one, it adds
+        the key/value pair at the end of the list.  Let's see it in action
+      </para>
+      &insert.ghci:insert1;
+      <para>
+        You can see the effect of <literal>insert</literal> on existing
+        lists.  You can also build up lists from scratch using
+        <literal>insert</literal>.
+      </para>
+      &insert.ghci:insert2;
+      <para>
+        In fact, you can even use <literal>insert</literal> together with
+        <literal>foldl</literal> to build up lists from existing data.
+        Though slower, it may be better than simply using
+        <literal>map</literal> because it will prevent duplicate keys from
+        occuring in your list.
+      </para>
+      <remark>FIXME: have we described foldl already?  if so, insert
+      ref</remark>
+      &insert.ghci:insert3;
+      <para>
+        Notice how the second definition for the key <literal>1</literal>
+        overwrote the first.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Association List Example</title>
+      <para>
+        Let's take a look at a more complex example of association lists.
+        On Unix/Linux machines,
+        there is a file called <literal>/etc/passwd</literal> that stores
+        usernames, UIDs, home directories, and various other information.
+        Let's write a program that parses such a file, creates an association
+        list, and lets the user look up a username by giving a UID.
+      </para>
+      &passwd-al.hs:all;
+      <para>
+        Let's look at this program.  The heart of it is
+        <literal>findByUID</literal>, which is a simple function that parses
+        the input one line at a time, then calls <literal>lookup</literal> over
+        the result.  The remaining program is concerned with parsing the input.
+        The input file looks like this:
+      </para>
+      <programlisting>
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/bin/sh
 bin:x:2:2:bin:/bin:/bin/sh
@@ -433,29 +483,83 @@ mail:x:8:8:mail:/var/mail:/bin/sh
 news:x:9:9:news:/var/spool/news:/bin/sh
 jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </programlisting>
+      <para>
+        This is an excerpt from <literal>/etc/passwd</literal> on a live
+        system.  The <literal>split</literal> function separates a line into
+        fields by looking for colons.  Note the type of the function, though:
+        it's so generic that it can be used on lists of things other than
+        strings even.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Assocation List Performance</title>
+      <para>
+        As you might imagine, if you have a large amount of data, searching
+        through it can be slow.  <literal>lookup</literal> may have to search
+        through an entire list.  If you have hundreds of thousands of entries,
+        this could take a long time.  
+        Changing existing data can be slow, too.  The
+        <literal>Data.Map</literal> module addresses both of these concerns,
+        and we'll cover it in the next section.
+      </para>
+      <para>
+        Association lists have a couple of advantages, though.  One is that
+        they are simple to use, build, and understand.  Another is that they
+        are standard lists and can be manipulated by standard list functions
+        such as <literal>sort</literal>, <literal>reverse</literal>,
+        <literal>head</literal>, and <literal>tail</literal>.  Finally,
+        association lists preserve their original order, while maps may not.
+      </para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.data.maps">
+    <title>Maps</title>
     <para>
-      This is an excerpt from <literal>/etc/passwd</literal> on a live
-      system.  The <literal>split</literal> function separates a line into
-      fields by looking for colons.  Note the type of the function, though:
-      it's so generic that it can be used on lists of things other than
-      strings even.
+      Maps are similar to association lists in concept: they are a mapping
+      from a key to a value.  Maps have many advantages over association
+      lists.  For one, performance is far better for large maps than for
+      large lists.  Maps have an internal representation tailored for this
+      particular purpose, and lookups and inserts don't need to perform
+      exhaustive searches for maps like they do for association lists.  The
+      <literal>Data.Map</literal> module also has a richer set of functions
+      for working on maps than <literal>Data.List</literal> has for
+      association lists.
     </para>
     <para>
-      As you might imagine, if you have a large amount of data, searching
-      through it can be slow.  <literal>lookup</literal> may have to search
-      through an entire list.  If you have hundreds of thousands of entries,
-      this could take a long time.  
-      Changing existing data can be slow, too.  The
-      <literal>Data.Map</literal> module addresses both of these concerns,
-      and we'll cover it in the next section.
+      Like association lists, maps can have values of any type.  Keys in a
+      map must be a member of the &Eq; and &Ord; typeclasses.  In association
+      lists, they need only be a member of &Eq;.  This is not much of a
+      restriction in practice; almost every type that is in &Eq; is also in
+      &Ord;, and just about every common type is in both.
     </para>
     <para>
-      Association lists have a couple of advantages, though.  One is that
-      they are simple to use, build, and understand.  Another is that they
-      are standard lists and can be manipulated by standard list functions
-      such as <literal>sort</literal>, <literal>reverse</literal>,
-      <literal>head</literal>, and <literal>tail</literal>.  Finally,
-      association lists preserve their original order, while maps may not.
+      The <literal>Data.Map</literal> module has some functions with same
+      names as those in <literal>Prelude</literal> or other common modules.
+      Therefore, when using it, most people import it using
+      <literal>import qualified Data.Map as Map</literal> and use
+      <literal>Map.<replaceable>function</replaceable></literal> to refer to
+      functions in that module.  
+      Let's start our look at <literal>Data.Map</literal> by
+      taking a look at some ways to build a map.
+    </para>
+    &buildmap.hs:all;
+    <para>
+      Functions like <literal>Map.insert</literal> work in the usual Haskell
+      way: they return a copy of the input data, with the requested change
+      applied.  This is quite handy with maps.  It means that you can use
+      <literal>foldl</literal> to build up a map as in the
+      <literal>mapFold</literal> example.  Or, you can chain together
+      calls to <literal>Map.insert</literal> as in the
+      <literal>mapManual</literal> example.  Let's use &ghci; to verify
+      that all of these maps are as expected:
+    </para>
+    &buildmap.ghci:all;
+    <para>
+      Notice that the output from <literal>mapManual</literal> doesn't occur
+      in the order it was passed in.  Maps do not guarantee that they will
+      preserve the original ordering.  In fact, the present implementation
+      always stores mapped data sorted internally.
     </para>
   </sect1>
 
