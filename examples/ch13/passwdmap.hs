@@ -2,7 +2,10 @@
 import Data.List
 import qualified Data.Map as Map
 import System.IO
-import Text.Printf
+import Text.Printf(printf)
+import System.Environment(getArgs)
+import System.Exit
+import Control.Monad(when)
 
 {- | The primary piece of data this program will store.
    It represents the fields in a POSIX /etc/passwd file -}
@@ -67,4 +70,57 @@ inputToMaps inp =
     -- Convert the input String to [PasswdEntry]
     entries = map read (lines inp)
 
+main = do
+    -- Load the command-line arguments
+    args <- getArgs
+
+    -- If we don't have the right number of args,
+    -- give an error and abort
+
+    when (length args /= 1) $ do
+        putStrLn "Syntax: passwdmap filename"
+        exitFailure
+
+    -- Read the file lazily
+    content <- readFile (head args)
+    let maps = inputToMaps content
+    mainMenu maps
+
+mainMenu maps@(uidmap, usermap) = do
+    putStr optionText
+    sel <- getLine
+    -- See what they want to do.  For every option except 4,
+    -- return them to the main menu afterwards by calling
+    -- mainMenu recursively
+    case sel of
+         "1" -> lookupUserName >> mainMenu maps
+         "2" -> lookupUID >> mainMenu maps
+         "3" -> displayFile >> mainMenu maps
+         "4" -> return ()
+         _ -> putStrLn "Invalid selection" >> mainMenu maps
+
+    where 
+    lookupUserName = do
+        putStrLn "Username: "
+        username <- getLine
+        case Map.lookup username usermap of
+             Nothing -> putStrLn "Not found."
+             Just x -> print x
+    lookupUID = do
+        putStrLn "UID: "
+        uidstring <- getLine
+        case Map.lookup (read uidstring) uidmap of
+             Nothing -> putStrLn "Not found."
+             Just x -> print x
+    displayFile = 
+        putStr . unlines . map (show . snd) . Map.toList $ uidmap
+    optionText = 
+          "\npasswdmap options:\n\
+           \\n\
+           \1   Look up a user name\n\
+           \2   Look up a UID\n\
+           \3   Display entire file\n\
+           \4   Quit\n\n\
+           \Your selection: "
+    
 {-- /snippet all --}
