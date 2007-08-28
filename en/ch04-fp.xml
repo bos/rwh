@@ -1568,8 +1568,8 @@
       <para>Fortunately, we don't need to write our own
 	<function>compose</function> function.  Plugging functions
 	into each other like this is so common that Haskell's prelude
-	uses the <function>(.)</function> operator to denote function
-	composition.</para>
+	provides the <function>(.)</function> operator to denote
+	function composition.</para>
 
       &SuffixTree.hs:suffixes5;
 
@@ -1587,38 +1587,82 @@
 
       &suffix.ghci:dotty;
 
+      <para>Here's an example drawn from a piece of code I wrote the
+	day before I started on this section.  I wanted to get a list
+	of C preprocessor definitions from a header file shipped with
+	<code>libpcap</code>, a popular network packet filtering
+	library.</para>
+
+      &dlts.hs:dlts;
+
+      <para>We take an entire file, split it up with
+	<function>lines</function>, then call <code>foldr step
+	  []</code> on the result.  Since I know, based on the type of
+	<function>lines</function>, that I'm folding over a list of
+	strings, the <function>step</function> helper function must
+	thus operate on individual lines.</para>
+
+      &dlts.hs:step;
+
+      <para>If we match a macro definition, we cons the name of the
+	macro onto the head of the list we're returning; otherwise, we
+	do nothing with the list on this invocation.</para>
+
+      <para>We can see heavy use of function composition in the body
+	of <function>step</function>.  While all of these functions
+	are by now familiar to us, it can take a little practice to
+	glue together the sequence of types in a chain of compositions
+	like this.  Let's walk through the procedure by hand.</para>
+
+      <para>The first call is to <function>words</function>.</para>
+
+      &dlts.ghci:words;
+
+      <para>We then call the partially applied function <code>drop
+	  1</code> on the result of <function>words</function>.</para>
+
+      &dlts.ghci:drop1;
+
+      <para>See how naturally partial application fits in here?  It's
+	given us a function that turns a list into another list.
+	Composing these, we match up the result of
+	<function>words</function> with the parameter of <code>drop
+	  1</code>.</para>
+
+      &dlts.ghci:drop1.words;
+
+      <para>Finally, calling <function>head</function> on the result
+	of <code>drop 1 . words</code> will give us what we want: the
+	name of the macro we're defining.</para>
+
+      &dlts.ghci:head.drop1.words;
+
+      <note>
+	<title>Use your head wisely</title>
+
+	<para>After warning against unsafe list functions in <xref
+	    linkend="hs.fp.lists.safe"/>, here we are calling
+	  <function>head</function>, one of those unsafe list
+	  functions.  What gives?</para>
+
+	<para>In this case, we can reassure ourselves that we're safe
+	  from a runtime failure in the call to
+	  <function>head</function>.  The pattern guard in the
+	  definition of <function>step</function> ensures that after
+	  we call <function>words</function> on any string that makes
+	  it past the guard, we'll have a list of at least two
+	  elements, <code>"#define"</code> and some macro beginning
+	  with <code>"DLT_"</code>.  You can see this in some of the
+	  &ghci; code snippets above.</para>
+
+	<para>This is an example of the kind of reasoning we ought to
+	  do to convince ourselves that our code won't explode when we
+	  call partial functions.  Don't forget our earlier
+	  admonition: calling unsafe functions like this requires
+	  care, and can often make our code more fragile in subtle
+	  ways.</para>
+      </note>
     </sect2>
-  </sect1>
-
-  <sect1>
-    <title>Working with data structures: the suffix tree</title>
-    
-    <para>A suffix tree is a useful and elegant data structure that
-      lets us deal efficiently with a fixed body of text or some other
-      kind of sequence.</para>
-  </sect1>
-
-  <sect1 id="hs.fp.typeclasses">
-    <title>Typeclasses</title>
-    <remark>FIXME: Introduce type classes.  Show how ghci infers types
-      with constraints. Define some functions that use type class
-      constraints. Talk about when it's appropriate to write explicit
-      signatures. 
-    </remark>
-    <para>See also <xref linkend="hs.typeclasses"/>.</para>
-  </sect1>
-
-  <sect1 id="hs.fp.mapapi">
-    <title>Example: Data.Map API</title>
-    <remark>FIXME: Small example would be a finite map data structure
-      API, with a list and tree implementation (different complexity,
-      same api). Ties together basic types, small functions, top level
-      functions. class Map m where new     :: m k v insert  :: k -> v
-      -> m k v -> m k v lookup  :: k -> m k v -> v -- simple, O(n)
-      data Map1 k v = [(k,v)] -- less simple, O(log n) data Map2 k v =
-      Node k v (Map2 k v) (Map2 k v) | Empty
-
-    </remark>
   </sect1>
 </chapter>
 
