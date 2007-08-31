@@ -575,7 +575,26 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
   <sect1>
     <title>Extended Example: /etc/passwd</title>
     <para>
-      FIXME
+      In order to illustrate the usage of a number of different data
+      structures together, we've prepared an extended example.  This example
+      parses and stores entries from files in the format of
+      a typical <literal>/etc/passwd</literal> file.
+    </para>
+    &passwdmap.hs:all;
+    <para>
+      This example maintains two maps: one from username to
+      <literal>PasswdEntry</literal> and another one from UID to
+      <literal>PasswdEntry</literal>.  Database developers may find it
+      convenient to think of this has having two different indices into the
+      data to speed searching on different fields.
+    </para>
+    <para>
+      Take a look at the &Show; and &Read; instances for
+      <literal>PasswdEntry</literal>.  There is already a standard format for
+      rendering data of this type as a string: the colon-separated version
+      already used by the system.  So our &Show; function displays a
+      <literal>PasswdEntry</literal> in the format, and &Read; parses that
+      format.
     </para>
   </sect1>
 
