@@ -571,6 +571,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       good, so instead of going into detail on each function, we're going to
       present an example that ties together much of the concepts we've
       discussed in this chapter.
+    </para>
   </sect1>
   <sect1>
     <title>Extended Example: /etc/passwd</title>
