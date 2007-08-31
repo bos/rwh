@@ -4,9 +4,7 @@
   <title>Data Structures</title>
   <remark>
     FIXME:
-    association lists
-    Data.Map
-    Mutable storage with MVars
+    Mutable storage with MVars needs to go in threading area
   </remark>
 
   <para>
