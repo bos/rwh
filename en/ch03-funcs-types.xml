@@ -6,7 +6,7 @@
   <para>Topics: built-in types.  Writing functions.  Creating new
     types.</para>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.types">
     <title>Haskell's type system</title>
     
     <para><quote>Haskell has a strong, static type system with
@@ -68,7 +68,7 @@
       <code>expression</code> has the type <type>MyType</type>.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.basic">
     <title>Some common basic types</title>
     
     <para>We've already encountered a few types in <xref
@@ -115,7 +115,7 @@
     </itemizedlist>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.composite">
     <title>Useful composite data types: lists and tuples</title>
 
     <para>The most common composite data types in Haskell are the list
@@ -175,7 +175,7 @@
       importance.  An example of this might be to represent a row in
       the result of a a database query.</para>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.composite.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
@@ -206,7 +206,7 @@
     <para>Now that we've had our fill of data types for a while, let's
       turn our attention to <emphasis>working</emphasis> with some of
       the types we've seen.  We've already seen how to perform
-      arithmetic in <xref linkend="hs.starting.arithmetic"/>, and it
+      arithmetic in <xref linkend="hs.starting.calc.arithmetic"/>, and it
       looks quite as it does in other languages.</para>
 
     <para>However, our discussion of lists and tuples mentioned how we
@@ -255,7 +255,7 @@
 
     &func.ghci:fst;
 
-    <sect2>
+    <sect2 id="hs.funcstypes.calling.expr">
       <title>Passing an expression to a function</title>
 
       <para>Haskell evaluates an expression from left to right.  If we
@@ -277,7 +277,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.sigs">
     <title>Understanding a function's type signature</title>
 
     <para>A consequence of Haskell's strong typing is that
@@ -341,7 +341,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.srcfile">
     <title>Haskell source files, and writing simple functions</title>
 
     <para>Now that we know how to call functions, it's time we turned
@@ -489,7 +489,7 @@
 	<xref linkend="hs.funcstypes.maybe"/>.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.sigs.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
@@ -517,7 +517,7 @@
     
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.data">
     <title>Defining a new data type</title>
       
     <para>Although lists and tuples are useful, we'll still often want
@@ -587,7 +587,7 @@
       we want to construct.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.adt">
     <title>Algebraic data types</title>
 
     <para>The <type>Bool</type> type that we introduced earlier is the
@@ -618,7 +618,7 @@
       arguments, but those for the newer releases need an
       <type>Int</type> to represent the patch level.</para>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
 
@@ -655,7 +655,7 @@
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.adt.notes">
       <title>A few final notes</title>
 
       <para>From reading the preceding sections, it should be clear
@@ -685,7 +685,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.paramtypes">
     <title>Parameterised types</title>
 
     <para>In our discussion of lists, we mentioned that we can create
@@ -728,7 +728,7 @@
       &Wrapper.hs:parens;
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.locals">
     <title>Back to writing functions: local variables</title>
 
     <para>Let's take a break from writing about types for a few
@@ -919,7 +919,7 @@
       <code>where</code> clauses makes our intentions easy to figure
       out.</para>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.tabs">
       <title>A note about tabs versus spaces</title>
 
       <para>If you are using a Haskell-aware text editor (e.g. Emacs),
@@ -941,7 +941,7 @@
 	entirely.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.block">
       <title>The offside rule is not mandatory</title>
 
       <para>We can use explicit structuring instead of layout to
@@ -966,7 +966,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.recursive">
     <title>Recursive types</title>
 
     <para>Here's a definition of a binary tree type.</para>
@@ -1039,7 +1039,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.unit">
     <title>Unit, the zero-element tuple</title>
 
     <para>Haskell has a special tuple type with no elements, written
@@ -1066,7 +1066,7 @@
       <type>ComplexTree () Int</type>.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.pattern">
     <title>Pattern matching</title>
 
     <para>Although we introduced a handful of functions earlier that
@@ -1163,7 +1163,7 @@
 	unification.</para>
     </note>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.dontcare">
       <title>The don't-care, or wild card, pattern</title>
 
       <para>When we're writing a pattern, we can specify that we don't
@@ -1186,7 +1186,7 @@
 	constructors.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.case">
       <title>The case expression</title>
 
       <para>We're not limited to using patterns in function
@@ -1214,7 +1214,7 @@
 	of patterns.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.funcstypes.where">
       <title>A flying visit back to the where clause</title>
 
       <para>Now that we've seen that we can define a function as a
@@ -1282,7 +1282,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.guard">
     <title>Conditional evaluation with guards</title>
 
     <para>We can further extend our expressive arsenal using
@@ -1336,7 +1336,7 @@
       <code>case</code> expression.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.infix">
     <title>Infix functions</title>
 
     <para>Usually, when we define or call a function in Haskell, we
@@ -1401,7 +1401,7 @@
     </note>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.funcstypes.end">
     <title>Conclusion</title>
 
     <para>In this chapter, we've had a whirlwind overview of Haskell's

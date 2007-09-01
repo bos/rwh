@@ -758,6 +758,8 @@ Loading package base ... linking ... done.
       integer type.</para>
 
     <note>
+      <title>Type names start with an uppercase letter</title>
+
       <para>Both of the type names we've seen so far,
 	<type>Char</type> and <type>Integer</type>, have started with
 	capital letters.  This isn't an accident; Haskell requires
@@ -765,7 +767,8 @@ Loading package base ... linking ... done.
 	names with a lowercase letter.</para>
     </note>
 
-    <para>Rational numbers don't look quite the same.</para>
+    <para>Rational numbers don't look quite the same as
+      integers.</para>
 
     &types.ghci:ratio;
 

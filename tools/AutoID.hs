@@ -21,7 +21,7 @@ foo s = case s =~ "(<para)([^>]*)>" of
     _ -> fail "borked regex"
 
 toDocBookID :: Int -> String
-toDocBookID n = unfoldr digit (n, firstSyms)
+toDocBookID n = "x." ++ unfoldr digit (n, firstSyms)
     where digit (_, []) = Nothing
           digit (m, syms) = let (d, r) = m `divMod` length syms
                             in Just (syms !! r,
