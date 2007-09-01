@@ -7,7 +7,7 @@ import Text.Regex.Posix ((=~))
 
 foo :: String -> State Int [String]
 foo s = case s =~ "(<para)([^>]*)>" of
-    (_,"",_,_) -> return []
+    (_,"",_,_) -> return [s]
     (before,_,after,[tag,attrs])
         | " id=\"" `isInfixOf` attrs -> do
           after' <- foo after
@@ -43,4 +43,3 @@ main = do
   let idPath = ".biggest.id"
   n <- catch (read `fmap` readFile idPath) (const (return 0))
   getArgs >>= foldM processFile n >>= writeFile idPath . show
-  
