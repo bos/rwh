@@ -17,7 +17,7 @@
     composability help us to build maintainable code that we can adapt
     quickly to changes in circumstance.</para>
 
-  <sect1>
+  <sect1 id="hs.preface.audience">
     <title>Who is this book for?</title>
 
     <para>We're writing this book for you, the curious programmer.  We
@@ -52,7 +52,7 @@
       trouble with Haskell.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.preface.howtoread">
     <title>How to read this book</title>
 
     <para>We've put this book together so that each chapter builds on
