@@ -1,8 +1,10 @@
 import Control.Arrow (first)
+import Control.Exception (bracket)
 import Control.Monad (foldM)
 import Control.Monad.State (State(..), get, put)
 import Data.List (isInfixOf, unfoldr)
 import System.Environment (getArgs)
+import System.IO (Handle, IOMode(..), hClose, hGetLine, openFile)
 import Text.Regex.Posix ((=~))
 
 foo :: String -> State Int [String]
@@ -38,8 +40,11 @@ processFile num name = do
   writeFile (name ++ ".autoid") content
   return num'
 
+reading :: (Read a) => FilePath -> IO a
+reading path = bracket (openFile path ReadMode) hClose (fmap read . hGetLine)
+
 main :: IO ()
 main = do
   let idPath = ".biggest.id"
-  n <- catch (read `fmap` readFile idPath) (const (return 0))
+  n <- catch (reading idPath) (const (return 0))
   getArgs >>= foldM processFile n >>= writeFile idPath . show
