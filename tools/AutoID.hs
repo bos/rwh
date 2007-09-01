@@ -4,7 +4,7 @@ import Control.Monad (foldM)
 import Control.Monad.State (State(..), get, put)
 import Data.List (isInfixOf, unfoldr)
 import System.Environment (getArgs)
-import System.IO (Handle, IOMode(..), hClose, hGetLine, openFile)
+import System.IO (IOMode(..), hClose, hGetLine, openFile)
 import Text.Regex.Posix ((=~))
 
 foo :: String -> State Int [String]
