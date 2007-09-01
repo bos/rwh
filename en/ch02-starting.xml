@@ -39,7 +39,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.starting.install">
     <title>Installing GHC on your platform</title>
 
     <para>We are providing the instructions below based on our
@@ -50,7 +50,7 @@
     <para>Because &GHC; runs on a large number of platforms, we've
       focused on a handful of the most popular.</para>
 
-    <sect2>
+    <sect2 id="hs.starting.install.win">
       <title>Windows</title>
 
       <para>The prebuilt binary packages of &GHC; should work on
@@ -110,7 +110,7 @@
       </note>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.install.mac">
       <title>Mac OS X</title>
 
       <para>Installing &GHC; on Mac OS X takes several steps, as &GHC;
@@ -232,13 +232,13 @@
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.install.debian">
       <title>Ubuntu and Debian Linux</title>
       
       <remark>FIXME: actual content.</remark>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.install.fedora">
       <title>Fedora Linux</title>
       
       <para>&GHC; is packaged for Fedora.  From a shell, all you need
@@ -289,7 +289,7 @@ Loading package base ... linking ... done.
 	with the prompt string <prompt>ghci&gt;</prompt>.</para>
     </note>
 
-    <sect2>
+    <sect2 id="hs.starting.ghci.edit">
       <title>Command line editing</title>
 
       <para>On most systems, &ghci; has some amount of command line
@@ -317,7 +317,7 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.starting.calc">
     <title>Basic interaction: using ghci as a calculator</title>
 
     <para>Where some people might run a calculator program, I often
@@ -325,7 +325,7 @@ Loading package base ... linking ... done.
       way serves as a good way to become familiar with &ghci; itself,
       and with the basics of Haskell expressions.</para>
 
-    <sect2 id="hs.starting.arithmetic">
+    <sect2 id="hs.starting.calc.arithmetic">
       <title>Simple arithmetic</title>
 
       <para>We can immediately start typing expressions, to see what
@@ -365,7 +365,7 @@ Loading package base ... linking ... done.
       </note>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.calc.neg">
       <title>An arithmetic quirk: writing negative numbers</title>
 
       <para>Haskell presents us with one peculiarity in how we must
@@ -408,7 +408,7 @@ Loading package base ... linking ... done.
 	numbers in exchange for this expressive power.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.calc.undef">
       <title>Undefined values, and introducing variables</title>
 
       <para>&ghci; defines at least one well-known mathematical
@@ -443,7 +443,7 @@ Loading package base ... linking ... done.
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.calc.comparison">
       <title>Comparison and boolean operators</title>
 
       <para>Haskell gives us the usual operators for working with
@@ -469,7 +469,7 @@ Loading package base ... linking ... done.
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.calc.rational">
       <title>Rational numbers, the Haskell prelude, and modules</title>
 
       <para>In addition to integers and floating point numbers,
@@ -520,7 +520,7 @@ Loading package base ... linking ... done.
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.starting.calc.exp">
       <title>Aside: the faces of exponentiation</title>
 
       <remark>Is it too early to introduce this?  Does it disrupt the
@@ -574,7 +574,7 @@ Loading package base ... linking ... done.
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.starting.errmsg">
     <title>Don't sweat those error messages</title>
 
     <para>Remember the point we made earlier about explicit
@@ -724,7 +724,7 @@ Loading package base ... linking ... done.
       </listitem>
     </itemizedlist>
 
-    <note>
+    <note id="hs.starting.it">
       <title>The joy of <quote>it</quote></title>
 
       <para>That <varname>it</varname> variable is wonderfully handy
@@ -802,7 +802,7 @@ Loading package base ... linking ... done.
       evaluate the expression; it only checks its type and prints
       that.</para>
 
-    <sect2>
+    <sect2 id="hs.starting.types.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
@@ -815,7 +815,7 @@ Loading package base ... linking ... done.
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.starting.conclusion">
     <title>Conclusion</title>
 
     <para>In this chapter, we've seen how to install &GHC; for our
