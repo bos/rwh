@@ -3,13 +3,13 @@
 <chapter id="hs.io">
   <title>I/O</title>
 
-  <para>
+  <para id="x.xB">
     Just about any program of any consequence is going to have to deal with
     input and output at some point.  Many programs, in fact, are devoted to
     reading data, processing it, and writing it back out.
   </para>
 
-  <para>
+  <para id="x.yB">
     Haskell's I/O system is powerful and expressive.  It is easy to work
     with and important to understand.  I/O is the one area where the rest of
     Haskell's lack of side effects doesn't always apply.  Haskell provides
@@ -17,7 +17,7 @@
     that could introduce side effects.
   </para>
 
-  <para>
+  <para id="x.zB">
     We'll begin this chapter with simple, standard-looking I/O in Haskell.
     Then we'll discuss some of the more powerful options as well as provide
     more detail on how I/O fits into the pure, lazy, functional Haskell
@@ -28,14 +28,14 @@
     <title>Classic I/O in Haskell</title>
     <remark>FIXME: have we already explained main?</remark>
     <remark>FIXME: have we already explained $ ?</remark>
-    <para>
+    <para id="x.AC">
       Let's get started with I/O by looking at a program that looks
       surprisingly similar to I/O in other languages.
     </para>
     &basicio.hs:all;
     <remark>FIXME: have we explained how to compile to a standalone
     program?</remark>
-    <para>
+    <para id="x.BC">
       You can compile this program to a standalone executable, run it with
       &runghc;, run it with &hugs;, or invoke &main; from within &ghci;.
       Here's a sample session using &runghc;:
@@ -46,36 +46,36 @@ Greetings!  What is your name?
 <userinput>John</userinput>
 Welcome to Haskell, John!
 </screen>
-    <para>
+    <para id="x.CC">
       That's a fairly simple, obvious result.  You can see that &putStrLn;
       writes out a &String;, followed by an end-of-line character.  &getLine;
       reads a line from standard input.  The &larrow; operator may be new to
       you.  Put simply, that operator assigns the result from executing an
       I/O action to a name.
-      <footnote><para>You will later see that it has a more
+      <footnote><para id="x.DC">You will later see that it has a more
         broad application, but it is sufficient to think of it in these terms
         for now.</para></footnote>
       We use the simple list concatenation operator
       <literal>++</literal> to join the input string with our own text.
     </para>
-    <para>
+    <para id="x.EC">
       &do; is a convenient way to define a sequence of actions.  As you'll
       see later, there are other ways.  When you use &do; in this way,
       indentation is significant; make sure you line up your actions
       properly.
     </para>
-    <para>
+    <para id="x.FC">
       You only need to use &do; if you have more than one action that you need
       to perform.  The return value of a &do; block is the return value
       of the last action executed.
     </para>
 
-    <para>
+    <para id="x.GC">
       Let's take a look at the types of &putStrLn; and &getLine;.  You can
       find that information in the library reference, or just ask &ghci;:
     </para>
     &basicio.ghci:all;
-    <para>
+    <para id="x.HC">
       Notice that both of these types have &IO; in their return value.  That
       is your key to knowing that they may have side-effects or return
       different values at different times.  The type of &putStrLn; looks like
@@ -83,7 +83,7 @@ Welcome to Haskell, John!
       <literal>IO ()</literal>.  Just what is an <literal>IO ()</literal>
       though?
     </para>
-    <para>
+    <para id="x.IC">
       Anything that is type <literal>IO
         <replaceable>something</replaceable></literal> is an I/O
       <emphasis>action</emphasis>.  You can store it and nothing will happen.
@@ -95,19 +95,19 @@ Welcome to Haskell, John!
       &ghci;:
     </para>
     &basicio.ghci:putStrLn;
-    <para>
+    <para id="x.JC">
       In this example, the output <literal>foo</literal> is not a return
       value from &putStrLn;.  Rather, it's the result of &putStrLn; actually
       writing <literal>foo</literal> to the terminal.
     </para>
-    <para>
+    <para id="x.KC">
       The type of &getLine; may look strange to you.  It looks like a value,
       rather than a function.  And in fact, that is one way to look at it:
       &getLine; is storing an I/O action.  When that action is run, you get
       a &String;.  The &larrow; operator is used to "pull out" the result
       from an I/O action and store it in a variable.
     </para>
-    <para>
+    <para id="x.LC">
       Finally, &main; itself is an I/O action with type <literal>IO
         ()</literal>.  You can only execute I/O actions or use &larrow; from
       within other I/O actions.  So all I/O in Haskell programs is driven
@@ -118,14 +118,14 @@ Welcome to Haskell, John!
       from there.
     </para>
 
-    <para>
+    <para id="x.MC">
       Let's consider an example of calling pure code from within
       an I/O action:
     </para>
 
     &callingpure.hs:all;
 
-    <para>
+    <para id="x.NC">
       Notice the <literal>name2reply</literal> function in this example.  It
       is a regular Haskell function and obeys all the rules we've told you
       about: it always returns the same result when given the same input, it
@@ -134,13 +134,13 @@ Welcome to Haskell, John!
       <literal>length</literal>.   You can play with it in &ghci; just as you
       would any other function.
     </para>
-    <para>
+    <para id="x.OC">
       Down in <literal>main</literal>, we assign the result of
       <literal>name2reply inpStr</literal> to <literal>outStr</literal>.
       When you're working in a &do; block, remember: you use &larrow; to get
       results from &IO; actions and &let; to get results from pure code.
     </para>
-    <para>
+    <para id="x.PC">
       You can see here how we read from the keyboard the person's name.
       Then, that data got passed to a pure function, and its result was
       printed.  In fact, the last line of &main; could have been replaced
@@ -148,13 +148,13 @@ Welcome to Haskell, John!
       did have side-effects -- it caused things to appear on the terminal,
       for instance -- <literal>name2reply</literal> did not and could not.
     </para>
-    <para>
+    <para id="x.QC">
       Let's examine this with &ghci;:
     </para>
 
     &callingpure.ghci:all;
 
-    <para>
+    <para id="x.RC">
       The <literal>\n</literal> within the string is the end-of-line
       (newline) character, which causes the terminal to begin a new line in
       its output.  Just calling <literal>name2reply "John"</literal> in
@@ -163,12 +163,12 @@ Welcome to Haskell, John!
       it to the terminal, and the terminal interprets <literal>\n</literal>
       to start a new line.
     </para>
-    <para>
+    <para id="x.SC">
       What do you think will happen if you simply type
       <userinput>main</userinput> at the &ghci; prompt?  Give it a try.
     </para>
 
-    <para>
+    <para id="x.TC">
       After looking at these example programs, you may be wondering if Haskell
       is really imperative rather than lazy.  It sure looks like a sequence
       of actions to be followed in order.  There's more to it than that,
@@ -177,7 +177,7 @@ Welcome to Haskell, John!
           linkend="hs.io.imperative"/> and <xref linkend="hs.io.lazy"/>.
     </para>
 
-    <para>
+    <para id="x.UC">
       Haskell defines quite a few basic functions for I/O.  The library
       reference for <literal>System.IO</literal> provides a good summary of
       them all, should you need one that we haven't demonstrated here.
@@ -187,11 +187,11 @@ Welcome to Haskell, John!
   <sect1 id="hs.io.files">
     <title>Working With Files and Handles</title>
     <remark>FIXME: deleting files, renaming them, directory contents</remark>
-    <para>
+    <para id="x.VC">
       So far,  you've seen how to work with the terminal.  Of course, you'll
       often need to manipulate specific files.  That's easy to do, too.  
     </para>
-    <para>
+    <para id="x.WC">
       You will
       generally begin by using &openFile;, which will give you a file &Handle;.
       That &Handle; is then used to perform specific operations on the file.
@@ -205,7 +205,7 @@ Welcome to Haskell, John!
       for printing to the screen and &hPrint; for printing to a file.
     </para>
 
-    <para>
+    <para id="x.XC">
       Let's start with an imperative way to read and write files.  This will
       probably seem familiar to a <literal>while</literal> loop that you may
       find in other languages.  This isn't the best way to write it in
@@ -214,14 +214,14 @@ Welcome to Haskell, John!
 
     &toupper-imp.hs:all;
 
-    <para>
+    <para id="x.YC">
       Like every Haskell program, execution of this program begins as
       <literal>main</literal>.  Two files are opened:
       <literal>input.txt</literal> is opened for reading, and
       <literal>output.txt</literal> is opened for writing.  Then we call
       <literal>mainloop</literal>.
     </para>
-    <para>
+    <para id="x.ZC">
       <literal>mainloop</literal> begins by checking to see if we're at the
       end of file (EOF) for the input.  If we are, then we <literal>return
         ()</literal> -- this function doesn't return any other specific
@@ -230,7 +230,7 @@ Welcome to Haskell, John!
       we recursively call <literal>mainloop</literal> again to continue
       processing the file.
     </para>
-    <para>
+    <para id="x.aC">
       Notice that &return; call.  This is not really the same as &return; in
       C or Python.  In those languages, &return; is used to terminate
       execution of the current function immediately, and to return a value to
@@ -239,7 +239,7 @@ Welcome to Haskell, John!
       I/O action must return some &IO; type, if your result came from pure
       computation, you must use &return; to wrap it in &IO;.
     </para>
-    <para>
+    <para id="x.bC">
       Let's try running the program.  We've got a file named
       <literal>input.txt</literal> that looks like this:
     </para>
@@ -253,7 +253,7 @@ I/O is fun
 
 123456789
     </programlisting>
-    <para>
+    <para id="x.cC">
       Now, you can use <literal>runghc toupper-imp.hs</literal> and you'll
       find <literal>output.txt</literal> in your directory.  It should look
       like this:
@@ -270,16 +270,16 @@ I/O IS FUN
     </programlisting>
     <sect2 id="hs.io.files.openFile">
       <title>More on openFile</title>
-      <para>
+      <para id="x.dC">
         Let's use &ghci; to check on the type of &openFile;:
       </para>
       &openFile.ghci:all;
-      <para>
+      <para id="x.eC">
         &FilePath; is simply another name for &String;.  It is used in the
         types of I/O functions to help clarify that the parameter is being
         used as a filename, and not as regular data.
       </para>
-      <para>
+      <para id="x.fC">
         &IOMode; specifies how the file is to be managed.  The possible
         values for &IOMode; are listed in <xref
           linkend="hs.io.files.openFile.IOModes"/>.
@@ -338,7 +338,7 @@ I/O IS FUN
         </tgroup>
       </table>
 
-      <para>
+      <para id="x.gC">
         While we are mostly working with text examples in this chapter,
         binary files can also be used in Haskell.  If you are working with a
         binary file, you should use &openBinaryFile; instead of &openFile;.
@@ -353,27 +353,27 @@ I/O IS FUN
 
     <sect2 id="hs.io.files.closing">
       <title>Closing Handles</title>
-      <para>
+      <para id="x.hC">
         You've already seen that &hClose; is used to close file handles.
         Let's take a moment and think about why this is important.
       </para>
-      <para>
+      <para id="x.iC">
         As you'll see in <xref linkend="hs.io.buffering"/>, Haskell maintains
         internal buffers for files.  This provides an important performance
         boost.  However, it means that if you fail to &hClose; a file that is
         open for writing, your data may not all be flushed out to disk until
         you call &hClose;.
       </para>
-      <para>
+      <para id="x.jC">
         Another reason to make sure to &hClose; files is that open files take
         up memory on the system.  If your program runs for a long time, and
         opens many files but fails to close them, it is conceivable that your
         program could even crash due to resource exhaustion.
       </para>
-      <para>
+      <para id="x.kC">
         When a program exits, Haskell will normally take care of closing any
         files that remain open.  However, there are some circumstances in
-        which this may not happen<footnote><para>If there was a bug in the C
+        which this may not happen<footnote><para id="x.lC">If there was a bug in the C
             part of a hybrid program, for instance</para></footnote>, so once
         again, it is best to be responsible and call &hClose; all the time.
       </para>
@@ -381,26 +381,26 @@ I/O IS FUN
 
     <sect2 id="hs.io.files.seeking">
       <title>Seek and Tell</title>
-      <para>
+      <para id="x.mC">
         When reading and writing from a file, the operating system maintains
         an internal idea of the current position.  Each time you do another
         read, the operating system returns the next chunk of data that begins
         at the current position, and increments the position to reflect the
         data that you read.
       </para>
-      <para>
+      <para id="x.nC">
         You can use &hTell; to find out your current position in the file.
         When the file is initially created, it is empty and your position
         will be 0.  After you write out 5 bytes, your position will be
         5, and so on.  &hTell; takes a &Handle; and returns an <literal>IO
           Integer</literal> with your position.
       </para>
-      <para>
+      <para id="x.oC">
         The companion to &hTell; is &hSeek;.  &hSeek; lets you reposition the
         file position.  It takes three parameters: a &Handle;, a &SeekMode;,
         and a position.
       </para>
-      <para>
+      <para id="x.pC">
         &SeekMode; can be one of three different values, which specify how
         the given position is to be interpreted.  &AbsoluteSeek; means that
         the position is a precise location in the file.  This is the same
@@ -413,7 +413,7 @@ I/O IS FUN
           0</literal> will take you to the end of the file.
       </para>
       <remark>FIXME: do we need an example?</remark>
-      <para>
+      <para id="x.qC">
         Not all &Handle;s are seekable.  A &Handle; usually corresponds to a
         file, but it can also correspond to other things such as network
         connections, tape drives, or terminals.  You can use &hIsSeekable; to
@@ -423,23 +423,23 @@ I/O IS FUN
 
     <sect2 id="hs.io.files.stdin">
       <title>Standard Input, Output, and Error</title>
-      <para>
+      <para id="x.rC">
         Earlier, I pointed out that for each non-"h" function, there is
         usually also a corresponding "h" function that works on any &Handle;.
         The non-"h" functions nothing more than shortcuts, in fact.
       </para>
-      <para>
+      <para id="x.sC">
         There are three pre-defined &Handle;s in
         <literal>System.IO</literal>.  These &Handle;s are always available
         for your use.
       </para>
-      <para>
+      <para id="x.tC">
         They are &stdin;, which corresponds to standard input; &stdout; for
         standard output; and &stderr; for standard error.  Standard input
         normally refers to the keyboard, standard output to the monitor, and
         standard error also normally goes to the monitor.
       </para>
-      <para>
+      <para id="x.uC">
         Functions such as &getLine; can thus be trivially defined like this:
       </para>
 <programlisting>
@@ -447,7 +447,7 @@ getLine = hGetLine stdin
 putStrLn = hPutStrLn stdout
 print = hPrint stdout
 </programlisting>
-      <para>
+      <para id="x.vC">
         Earlier, I told you what the three standard file handles "normally"
         correspond to.  That's because some operating systems let you
         redirect the file handles to come from (or go to) different places --
@@ -456,14 +456,14 @@ print = hPrint stdout
         operating systems, but can
         also be used on Windows.
       </para>
-      <para>
+      <para id="x.wC">
         It often makes sense to use standard input and output instead of
         specific files.  This lets you interact with a human at the terminal.
         But it also lets you work with input and output files -- or even
         combine your code with other programs -- if that's
         what's requested.
       </para>
-      <para>
+      <para id="x.xC">
         As an example, we can provide input to
         <literal>callingpure.hs</literal> in advance like this:
       </para>
@@ -474,7 +474,7 @@ Pleased to meet you, John.
 Your name contains 4 characters.
       </screen>
       <remark>FIXME: does this work on windows?</remark>
-      <para>
+      <para id="x.yC">
         While <literal>callingpure.hs</literal> was running, it did not wait
         for input at the keyboard; instead it received
         <literal>John</literal> from the <literal>echo</literal> program.
@@ -488,14 +488,14 @@ Your name contains 4 characters.
 
     <sect2 id="hs.io.files.ops">
       <title>Deleting and Renaming Files</title>
-      <para>
+      <para id="x.zC">
         So far in this chapter, we've discussed the contents of the files.
         Let's now talk a bit about the files themselves.
       </para>
-      <para>
+      <para id="x.AD">
         &System.Directory; provides two functions you may find useful.
         &removeFile; takes a single argument, a filename, and deletes that
-        file.<footnote><para>POSIX programmers may be interested to know that
+        file.<footnote><para id="x.BD">POSIX programmers may be interested to know that
             this corresponds to <literal>unlink()</literal> in
             C.</para></footnote>  &renameFile; takes two filenames: the first
         is the old name and the second is the new name.  If the new filename
@@ -504,7 +504,7 @@ Your name contains 4 characters.
         the new file already exists, it is removed before the rename takes
         place.
       </para>
-      <para>
+      <para id="x.CD">
         There are many other functions in &System.Directory; for doing things
         such as creating and removing directories, finding lists of files in
         directories, and testing for file existance.  These are discussed in
@@ -514,19 +514,19 @@ Your name contains 4 characters.
 
     <sect2 id="hs.io.files.temp">
       <title>Temporary Files</title>
-      <para>
+      <para id="x.DD">
         Programmers frequently have a need for temporary files.  These files
         may be used to store large amounts of data needed for computations, data to be
         used by other programs, or any number of other uses.
       </para>
-      <para>
+      <para id="x.ED">
         While you could craft a way to manually open files with unique names,
         the details of doing this in a secure way differ from platform to
         platform.  Haskell provides a convenient function called
         &openTempFile; (and a corresponding &openBinaryTempFile;) to handle
         the difficult bits for you.
       </para>
-      <para>
+      <para id="x.FD">
         &openTempFile; takes two parameters: the directory in which to create
         the file, and a "template" for naming the file.  The directory could
         simply be <literal>"."</literal> for the current working directory.
@@ -536,7 +536,7 @@ Your name contains 4 characters.
         as the basis for the file name; it will have some random characters
         added to it to ensure that the result is truly unique.  
       </para>
-      <para>
+      <para id="x.GD">
         The result of this function is <literal>IO (FilePath,
           Handle)</literal>.  The first part of the tuple is the name of the
         file created, and the second is a &Handle; opened in &ReadWriteMode;
@@ -550,7 +550,7 @@ Your name contains 4 characters.
 
   <sect1 id="hs.io.example">
     <title>Extended Example: Functional I/O and Temporary Files</title>
-    <para>
+    <para id="x.HD">
       Here's a larger example that puts together some concepts from this
       chapter, from some earlier chapters, and a few you haven't seen yet.
       Take a look at the program and see if you can figure out what it does
@@ -559,7 +559,7 @@ Your name contains 4 characters.
 
     &tempfile.hs:all;
 
-    <para>
+    <para id="x.ID">
       Let's start looking at this program from the end.  The
       <literal>withTempFile</literal> function demonstrates that Haskell
       doesn't forget its functional nature when I/O is introduced.  This
@@ -567,29 +567,29 @@ Your name contains 4 characters.
       passed the name and &Handle; of a temporary file.  When that function
       exits, the temporary file is closed and deleted.
     </para>
-    <para>
+    <para id="x.JD">
       There is some exception handling going on to make the program more
       robust in the face of errors.  You normally want the temporary files to
       be deleted all the time, even if something went wrong.  So we make sure
       that happens.  For more on exception handling, and the use of &catch;
       and &finally; see <remark>FIXME: add ref (ch 18 or 24?)</remark>.
     </para>
-    <para>Let's return to the start of the program.  &main; is defined simply
+    <para id="x.KD">Let's return to the start of the program.  &main; is defined simply
       as <literal>withTempFile "mytemp.txt" myAction</literal>.
       <literal>myAction</literal>, then, will be invoked with the name and
       &Handle; of the temporary file.
     </para>
-    <para>
+    <para id="x.LD">
       <literal>myAction</literal> displays some information to the terminal,
       writes some data to the file, seeks to the beginning of the file, 
       and reads the data back with
-      &hGetContents;.<footnote><para>&hGetContents; will be discussed in
+      &hGetContents;.<footnote><para id="x.MD">&hGetContents; will be discussed in
           <xref linkend="hs.io.lazy"/></para></footnote>  It then displays
       the contents of the file byte-for-byte, and also as a Haskell literal
       via <literal>print c</literal>.  That's the same as <literal>putStrLn
         (show c)</literal>.
     </para>
-    <para>
+    <para id="x.ND">
       Let's look at the output:
     </para>
     <screen>
@@ -605,48 +605,48 @@ The file content is:
 Which could be expressed as this Haskell literal:
 "[1,2,3,4,5,6,7,8,9,10]\n"
     </screen>
-    <para>
+    <para id="x.OD">
       Every time you run this program, your temporary file name should be
       slightly different since it contains a randomly-generated component.
       Looking at this output, there are a few questions that might occur to
       you:
     </para>
     <orderedlist>
-      <listitem><para>Why is your position 23 after writing a line with 22
+      <listitem><para id="x.PD">Why is your position 23 after writing a line with 22
           bytes?</para></listitem>
-      <listitem><para>Why is there an empty line after the file content
+      <listitem><para id="x.QD">Why is there an empty line after the file content
           display?</para></listitem>
-      <listitem><para>Why is there a <literal>\n</literal> at the end of the
+      <listitem><para id="x.RD">Why is there a <literal>\n</literal> at the end of the
           Haskell literal display?</para></listitem>
     </orderedlist>
-    <para>
+    <para id="x.SD">
       You might be able to guess that the answers to all three questions are
       related.  See if you can work out the answers for a moment.  If you
       need some help, here are the explanations:
     </para>
     <orderedlist>
-      <listitem><para>That's because we used &hPutStrLn; instead of &hPutStr;
+      <listitem><para id="x.TD">That's because we used &hPutStrLn; instead of &hPutStr;
           to write the data.  &hPutStrLn; always terminates the line by
           writing a <literal>\n</literal> at the end, which didn't appear in
           <literal>tempdata</literal>.</para></listitem>
-      <listitem><para>We used <literal>putStrLn c</literal> to display the
+      <listitem><para id="x.UD">We used <literal>putStrLn c</literal> to display the
           file contents <literal>c</literal>.  Because the data was written
           originally with &hPutStrLn;, <literal>c</literal> ends with the
           newline character, and &putStrLn; adds a second newline character.
           The result is a blank line.</para></listitem>
-      <listitem><para>The <literal>\n</literal> is the newline character from
+      <listitem><para id="x.VD">The <literal>\n</literal> is the newline character from
           the original &hPutStrLn;.</para></listitem>
     </orderedlist>
   </sect1>
 
   <sect1 id="hs.io.lazy">
     <title>Lazy I/O</title>
-    <para>
+    <para id="x.WD">
       So far in this chapter, you've seen examples of fairly traditional I/O.
       Each line, or block of data, is requested individually and processed
       individually.
     </para>
-    <para>
+    <para id="x.XD">
       Haskell has another approach available to you as well.  Since Haskell
       is a lazy language, meaning that any given piece of data is only
       evaluated when its value must be known, there are some novel ways of
@@ -654,23 +654,23 @@ Which could be expressed as this Haskell literal:
     </para>
     <sect2 id="hs.io.lazy.hGetContents">
       <title>hGetContents</title>
-      <para>
-        One novel way to approach I/O is the &hGetContents; function.<footnote><para>There is
+      <para id="x.YD">
+        One novel way to approach I/O is the &hGetContents; function.<footnote><para id="x.ZD">There is
             also a shortcut function &getContents; that operates on standard
             input.</para></footnote>  &hGetContents; has the type
         <literal>Handle -> IO String</literal>.  The &String; it returns
         represents the entire data in the file given by the
-        &Handle;.<footnote><para>More precisely, it is the entire data from the
+        &Handle;.<footnote><para id="x.aD">More precisely, it is the entire data from the
             current position of the file pointer to the end of the
             file.</para></footnote>
       </para>
-      <para>
+      <para id="x.bD">
         In an imperative language, use of such a function is often a bad idea.
         It may be fine to read the entire contents of a 2KB file, but if you
         try to read the entire contents of a 500GB file, you are likely to
         crash due to lack of RAM to store all that data.
       </para>
-      <para>
+      <para id="x.cD">
         But &hGetContents; is different.  The &String; it returns is evaluated
         lazily.  At the moment you call &hGetContents;, nothing is actually
         read.  Data is only read from the &Handle; as the elements (characters)
@@ -680,7 +680,7 @@ Which could be expressed as this Haskell literal:
         and, really, is -- a pure &String;, you can pass it to pure (non-&IO;)
         code.
       </para>
-      <para>
+      <para id="x.dD">
         Let's take a quick look at an example.  Back in
         <xref linkend="hs.io.files"/>, you saw an imperative program
         that converted the entire content of a file to uppercase.  Its
@@ -688,7 +688,7 @@ Which could be expressed as this Haskell literal:
         languages.  Here now is the much simpler lazy algorithm:
       </para>
       &toupper-lazy1.hs:all;
-      <para>
+      <para id="x.eD">
         Notice that &hGetContents; handled <emphasis>all</emphasis> of the
         reading for us.  Also, take a look at <literal>processData</literal>.
         It's a pure function since it has no side-effects and always returns
@@ -697,17 +697,17 @@ Which could be expressed as this Haskell literal:
         in this case.  It can work perfectly well with a 20-character literal
         or a 500GB data dump on disk.
       </para>
-      <para>
+      <para id="x.fD">
         You can even verify that with &ghci;:
       </para>
       &toupper-lazy1.ghci:all;
-      <para>
+      <para id="x.gD">
         This program was a bit verbose to make it clear that there was pure
         code in use.  Here's a bit more concise version, which we will build
         on in the next examples:
       </para>
       &toupper-lazy2.hs:all;
-      <para>
+      <para id="x.hD">
         You are not required to ever consume all the data from the input file
         when using &hGetContents;.  Whenever the Haskell system determines
         that the entire string &hGetContents; returned can be garbage collected
@@ -720,7 +720,7 @@ Which could be expressed as this Haskell literal:
     </sect2>
     <sect2 id="hs.io.lazy.readFile">
       <title>readFile and writeFile</title>
-      <para>
+      <para id="x.iD">
         Haskell programmers use &hGetContents; as a filter quite often.  They
         read from one file, do something to the data, and write the result
         out elsewhere.  This is so common that there are some shortcuts for
@@ -729,12 +729,12 @@ Which could be expressed as this Haskell literal:
         closing files, reading data, and writing data.  &readFile; uses
         &hGetContents; internally.
       </para>
-      <para>
+      <para id="x.jD">
         Can you guess the Haskell types of these functions?  Let's check with
         &ghci;:
       </para>
       &toupper-lazy3.hs:all;
-      <para>
+      <para id="x.kD">
         Look at that -- the guts of the program takes up only two lines!
         &readFile; returned a lazy &String;, which we stored in
         <literal>inpStr</literal>.  We then took that, processed it, and
@@ -743,31 +743,31 @@ Which could be expressed as this Haskell literal:
     </sect2>
     <sect2 id="hs.io.lazy.output">
       <title>A Word On Lazy Output</title>
-      <para>
+      <para id="x.lD">
         By now, you should understand how lazy input works in Haskell.  But
         what about laziness during output?
       </para>
-      <para>
+      <para id="x.mD">
         As you know, nothing in Haskell is evaluated before its value is
         needed.  Since functions such as &putStr; write out the entire
         &String; passed to them, that entire &String; must be evaluated.  So
         you are guaranteed that the argument to &putStr; will be evaluated in
-        full.<footnote><para>Excepting I/O errors such as a full
+        full.<footnote><para id="x.nD">Excepting I/O errors such as a full
             disk, of course.</para></footnote> 
       </para>
-      <para>
+      <para id="x.oD">
         But what does that mean for laziness of the input?  In the examples
         above, will the call to &putStr; or &writeFile; force the entire
         input string to be loaded into memory at once, just to be written
         out?
       </para>
-      <para>
+      <para id="x.pD">
         The answer is no.  &putStr; (and all the similar output functions)
         write out data as it becomes available.  They also have no need for
         keeping around data already written, so as long as nothing else in
         the program needs it, the memory can be freed immediately.
       </para>
-      <para>
+      <para id="x.qD">
         You can verify this yourself by generating a large
         <literal>input.txt</literal> for <literal>toupper-lazy3.hs</literal>.
         It may take a bit to process, but you should see a constant -- and
@@ -777,7 +777,7 @@ Which could be expressed as this Haskell literal:
 
     <sect2 id="hs.io.lazy.interact">
       <title>interact</title>
-      <para>
+      <para id="x.rD">
         You learned that &readFile; and &writeFile; address the common situation of
         reading from one file, making a conversion, and writing to a
         different file.  There's a situation that's even more common than
@@ -789,13 +789,13 @@ Which could be expressed as this Haskell literal:
         standard input read lazily.  The result of that function is sent to
         stnadard output.
       </para>
-      <para>
+      <para id="x.sD">
         We can convert our example program to operate on standard input
         and standard input by using <literal>interact</literal>.  Here's one
         way to do that:
       </para>
       &toupper-lazy4.hs:all;
-      <para>
+      <para id="x.tD">
         Look at that -- <emphasis>one</emphasis> line of code to achieve our
         transformation!  To achieve the same effect as with the previous
         examples, you could run this one like this:
@@ -803,14 +803,14 @@ Which could be expressed as this Haskell literal:
       <screen>
 $ <userinput>runghc toupper-lazy4.hs &lt; input.txt &gt; output.txt</userinput>
       </screen>
-      <para>
+      <para id="x.uD">
         Or, if you'd like to see the output printed to the screen, you could
         type:
       </para>
       <screen>
 $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       </screen>
-      <para>
+      <para id="x.vD">
         If you want to see that Haskell output truly does write out chunks of
         data as soon as they are received, run <literal>runghc
           toupper-lazy4.hs</literal> without any other command-line
@@ -820,44 +820,44 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         on buffering.  If you see each line echoed as soon as you type it, or
         even nothing at all for awhile, buffering is causing this behavior.
       </para>
-      <para>
+      <para id="x.wD">
         You can also write simple interactive programs using &interact;.  Let's
         start with a simple example: adding a line of text before the
         uppercase output.
       </para>
       &toupper-lazy5.hs:all;
-      <para>
+      <para id="x.xD">
         Here we add a string at the beginning of the output.  Can you spot
         the problem, though?
       </para>
-      <para>
+      <para id="x.yD">
         Since we're calling &map; on the <emphasis>result</emphasis> of
         <literal>(++)</literal>, that header itself will appear in uppercase.
         We can fix that in this way:
       </para>
       &toupper-lazy6.hs:all;
-      <para>
+      <para id="x.zD">
         This moved the header outside of the &map;.
       </para>
       <sect3>
         <title>Filters with interact</title>
-        <para>
+        <para id="x.AE">
           Another common use of &interact; is filtering.  Let's say that you
           want to write a program that reads a file and prints out every line
           that contains the character "a".  Here's how you might do that with
           &interact;:
         </para>
         &filter.hs:all;
-        <para>
+        <para id="x.BE">
           This may have introduced three functions that you aren't familiar
           with yet.  Let's inspect their types with &ghci;:
         </para>
         &filter.ghci:all;
-        <para>
+        <para id="x.CE">
           Can you guess what these functions do just by looking at their types?
           With Haskell, in some cases, you can.
         </para>
-        <para>
+        <para id="x.DE">
           &lines; takes a &String; and returns a list of &String;s, each one
           representing one line in the input.  &unlines; does the opposite: it
           takes a list of &String;s, joins them together, and puts the end of
@@ -865,7 +865,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           &unlines; used with I/O.  Finally, &elem; takes a element and a list
           and returns &True; if that element occurs anywhere in the list.
         </para>
-        <para>
+        <para id="x.EE">
           Try running this over our standard example input:
         </para>
         <screen>
@@ -873,7 +873,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
   I like Haskell
   Haskell is great
         </screen>
-        <para>
+        <para id="x.FE">
           Sure enough, you got back the two lines that contain an "a".  
           Lazy filters are a powerful way to use Haskell.  When you think
           about it, a filter -- such as the standard Unix program
@@ -888,19 +888,19 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
 
   <sect1 id="hs.io.monad">
     <title>The IO Monad</title>
-    <para>
+    <para id="x.GE">
       You've seen a number of examples of I/O in Haskell by this point.
       Let's take a moment to step back and think about how I/O relates to the
       broader Haskell language.
     </para>
-    <para>
+    <para id="x.HE">
       You may recall from <remark>FIXME: add ref</remark> that Haskell is a
       pure language.  That is, if you give a certain function a specific
       argument, the function will return the same result every time you give
       it that argument.  Moreover, the function will not change anything
       about the program's overall state.
     </para>
-    <para>
+    <para id="x.IE">
       You may be wondering, then, how I/O fits into this picture.  Surely if
       you want to read a line of input from the keyboard, the function to
       read input can't possibly return the same result every time it is run,
@@ -912,14 +912,14 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
     </para>
     <sect2 id="hs.io.monad.actions">
       <title>Actions</title>
-      <para>
+      <para id="x.JE">
         Most languages do not make a distinction between a pure function and an
         impure one.  Haskell has functions in the mathematical sense: they are
         purely computations which cannot be impacted by anything external.
         Moreover, the computation can be performed at any time -- or even
         never, if its result is never needed.
       </para>
-      <para>
+      <para id="x.KE">
         Clearly, then, we need some other tool to work with I/O.  That tool in
         Haskell is called <emphasis>actions</emphasis>.  Actions resemble
         functions.  They do nothing when they are defined, but perform some
@@ -932,7 +932,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         &IO;.  Let's take a look at some types:
       </para>
       &basicio.ghci:all.noid;
-      <para>
+      <para id="x.LE">
         The type of &putStrLn; is just another function.  The function takes
         one parameter and returns an <literal>IO ()</literal>.  This
         <literal>IO ()</literal> is the action.  You can store and pass actions
@@ -943,7 +943,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       <remark>
         FIXME: make sure that partial application has been covered
       </remark>
-      <para>
+      <para id="x.ME">
         <literal>str2action</literal> is a function that takes one parameter
         and returns an <literal>IO ()</literal>.  As you can see at the end of
         &main;, you could use this directly in another action and it will print
@@ -954,22 +954,22 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         we would with other pure data.  You can see that everything up through
         <literal>printitall</literal> is built up with pure tools.
       </para>
-      <para>
+      <para id="x.NE">
         Although we define <literal>printitall</literal>, it doesn't get
         executed until its action is evaluated somewhere else.  Notice in
         <literal>main</literal> how we use <literal>str2action</literal> as
         an I/O action to be executed, but earlier we used it outside of the I/O
         monad and assembled results into a list.
       </para>
-      <para>
+      <para id="x.OE">
         You could think of it this way: every statement, except &let;, in a &do; block must
         yeild an I/O action which will be executed.
       </para>
-      <para>
+      <para id="x.PE">
         The call to <literal>printitall</literal>; finally executes all those actions.  Actually,
         since Haskell is lazy, the actions aren't generated until here either.
       </para>
-      <para>
+      <para id="x.QE">
         When you run the program, your output will look like this:
       </para>
       <screen>
@@ -986,12 +986,12 @@ Data: 9
 Data: 10
 Data: Done!
       </screen>
-      <para>
+      <para id="x.RE">
         We can actually write this in a much more compact way.  Consider this
         revision of the example:
       </para>
       &actions2.hs:all;
-      <para>
+      <para id="x.SE">
         Notice in <literal>str2action</literal> the use of the standard
         function composition operator.  In &main;, there's a call to &mapM_;.
         This function is similar to &map;.  It takes a function and a list.
@@ -1001,17 +1001,17 @@ Data: Done!
         them.  Take a look at their types:
       </para>
       &map.ghci:all;
-      <para>
+      <para id="x.TE">
         These functions actually work for more than just I/O; they work for any
         &Monad;.  For now, wherever you see "m", just think "IO".
       </para>
-      <para>
+      <para id="x.UE">
         Why a &mapM; when we already have &map;?  Because &map; is a pure
         function that returns a list.  It doesn't -- and can't -- actually
         execute anything directly.  &mapM; is a utility that lives in the
         &IO; monad and thus can actually execute the actions.
       </para>
-      <para>
+      <para id="x.VE">
         Going back to &main;, &mapM_; applies 
         <literal>(straction . show)</literal> to every element in
         <literal>numbers</literal>.  &show; converts each number to a &String;
@@ -1022,33 +1022,33 @@ Data: Done!
     </sect2>
     <sect2>
       <title>Sequencing</title>
-      <para>
+      <para id="x.WE">
         We mentioned earlier that &do; blocks are a shortcut notation.  This
         is true.  There are two operators that you can use instead of &do;
         blocks: &rr; and &rre;.  Let's look at their types in &ghci;:
       </para>
       &sequence.ghci:all;
-      <para>
+      <para id="x.XE">
         &rr; sequences two actions together: the first action is performed,
         then the second, and the result of the two will be the result of the
         second.  The result of the first is thrown away.  This is similar to
         simply having a new line in a &do; block.
       </para>
-      <para>
+      <para id="x.YE">
         &rre; runs an action, passes its result to a function that returns an
         action.  That action is run as well, and the result of the entire
         expression is the result of that second action.
       </para>
-      <para>
+      <para id="x.ZE">
         Let's re-write one of our examples to avoid &do; blocks.  Remember
         this example from the start of the chapter?
       </para>
       &basicio.hs:all.noid;
-      <para>
+      <para id="x.aE">
         Let's write that without a &do; block:
       </para>
       &basicio-nodo.hs:all;
-      <para>
+      <para id="x.bE">
         The Haskell compiler is internally performing a translation just like
         this when you define a &do; block.
       </para>
@@ -1058,11 +1058,11 @@ Data: Done!
   <sect1 id="hs.io.imperative">
     <title>Is Haskell Really Imperative?</title>
     <remark>FIXME: I don't really like this explanation</remark>
-    <para>
+    <para id="x.cE">
       These &do; blocks may look a lot like an imperative language.  After
       all, you're giving commands to run in sequence most of the time.
     </para>
-    <para>
+    <para id="x.dE">
       But Haskell remains a lazy language at its core.  While it is necessary
       to sequence actions for I/O at times, this is done using tools that are
       part of Haskell already.  Haskell achieves a nice separation of I/O
@@ -1072,27 +1072,27 @@ Data: Done!
 
   <sect1 id="hs.io.sideeffects">
     <title>Side-Effects with Lazy I/O</title>
-    <para>
+    <para id="x.eE">
       Earlier in this chapter, you read about &hGetContents;.
       We explained that the &String; it returns can be used in pure code.
     </para>
-    <para>
+    <para id="x.fE">
       We need to get a bit more specific about what side-effects are.  When
       we say Haskell has no side-effects, what exactly does that mean?
     </para>
-    <para>
+    <para id="x.gE">
       At a certain level, side-effects are always possible.  A poorly-written
       loop, even if written in pure code, could cause the system's RAM to be
       exhausted and the machine to crash.  Or it could cause data to be
       swapped to disk.
     </para>
-    <para>
+    <para id="x.hE">
       When we speak of no side-effects, we mean that pure code in Haskell
       can't run commands that trigger side-effects.  Pure functions 
       can't modify a global variable, request I/O, or run a command to take
       down a system.
     </para>
-    <para>
+    <para id="x.iE">
       When you have a &String; from &hGetContents; that is passed to a pure
       function, the function has no idea that this &String; is backed by a
       disk file.  It will behave just as it always would, but processing that
@@ -1101,7 +1101,7 @@ Data: Done!
       processing the pure function is doing, just as with the example of
       swapping RAM to disk.
     </para>
-    <para>
+    <para id="x.jE">
       In some cases, you may need more control over exactly when your I/O
       occurs.  Perhaps you are reading data interactively from the user, or
       via a pipe from another program, and need to communicate directly with
@@ -1113,7 +1113,7 @@ Data: Done!
 
   <sect1 id="hs.io.buffering">
     <title>Buffering</title>
-    <para>
+    <para id="x.kE">
       I/O is one of the slowest parts of a modern computer.  Completing a
       write to disk can take thousands of times as long as a write to memory.
       A write over the network can be hundreds or thousands of times slower
@@ -1121,20 +1121,20 @@ Data: Done!
       perhaps because the data is cached -- I/O still involves a system call,
       which slows things down by itself.
     </para>
-    <para>
+    <para id="x.lE">
       For this reason, modern operating systems and programming languages
       both provide various tools to help programs perform better where I/O is
       concerned.  The operating system typically performs caching -- storing
       frequently-used pieces of data in memory for faster access.
     </para>
-    <para>
+    <para id="x.mE">
       Programming languages typically perform buffering.  This means that
       they may request one large chunk of data from the operating system,
       even if the code underneath is processing data one character at a time.
       By doing this, they can achieve remarkable performance gains because
       each request for I/O to the operating system carries a processing cost.
     </para>
-    <para>
+    <para id="x.nE">
       Haskell, too, provides buffering.  In many cases, it is even on by
       default.  Up till now, we have pretended it isn't there.  Haskell
       usually is good about picking a good default buffering mode.  But this
@@ -1143,18 +1143,18 @@ Data: Done!
     </para>
     <sect2>
       <title>Buffering Modes</title>
-      <para>
+      <para id="x.oE">
         There are three different buffering modes in Haskell.  They are
         defined as the &BufferMode; type.
       </para>
-      <para>&NoBuffering;
+      <para id="x.pE">&NoBuffering;
         does just what it sounds like -- no buffering.  Data read via functions
         like &hGetLine; will be read from the OS one character at a time.  Data
         written will be written immediately, and also often will be written one
         character at a time.  For this reason, &NoBuffering; is usually a very
         poor performer and not suitable for general-purpose use.
       </para>
-      <para>
+      <para id="x.qE">
         &LineBuffering; causes the output buffer to be written whenever the
         newline character is output, or whenever it gets too large.  On
         input, it will usually attempt to read whatever data is available in
@@ -1162,7 +1162,7 @@ Data: Done!
         the terminal, it should return data immediately after each press of
         Enter.  It is often a reasonable default.
       </para>
-      <para>
+      <para id="x.rE">
         &BlockBuffering; causes Haskell to read or write data in fixed-size
         chunks when possible.  This is the best performer whe processing
         large amounts of data in batch, even if that data is line-oriented.
@@ -1172,7 +1172,7 @@ Data: Done!
         size.  Or, you can use a setting such as <literal>Just 4096</literal> to 
         set the buffer to 4096 bytes.
       </para>
-      <para>
+      <para id="x.sE">
         The default buffering mode is dependant upon the operating system and
         Haskell implementation.  The current mode can be set with
         &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  You can
@@ -1183,7 +1183,7 @@ Data: Done!
     </sect2>
     <sect2>
       <title>Flushing The Buffer</title>
-      <para>
+      <para id="x.tE">
         For any type of buffering, you may sometimes want to force Haskell to
         write out any data is has saved up in the buffer.  There are few
         times when this will happen automatically: a call to &hClose;, for
@@ -1195,18 +1195,18 @@ Data: Done!
 
   <sect1 id="hs.io.args">
     <title>Reading Command-Line Arguments</title>
-    <para>
+    <para id="x.uE">
       Many command-line programs are interested in the parameters passed on
       the command line.  <literal>System.Environment.getArgs</literal>
       returns a <literal>[String]</literal> listing each argument.  The
       program name is excluded from this list.  This is the same as
       <literal>argv[1]</literal> and on in C.
     </para>
-    <para>
+    <para id="x.vE">
       You can also call <literal>System.Environment.getProgName</literal> to
       find the name of the program as it was invoked.
     </para>
-    <para>
+    <para id="x.wE">
       The <literal>System.Console.GetOpt</literal> module provides some tools
       for parsing command-line options.  If you have a program with complex
       options, you may find it useful.
@@ -1215,7 +1215,7 @@ Data: Done!
 
   <sect1 id="hs.io.environ">
     <title>Environment Variables</title>
-    <para>
+    <para id="x.xE">
       If you need to read environment variables, you can use one of two
       functions in <literal>System.Environment</literal>: &getEnv; or
       &getEnvironment;.  &getEnv; looks for a specific variable and raises an
@@ -1224,7 +1224,7 @@ Data: Done!
       can use functions such as &lookup; to find the environment entry you
       want.
     </para>
-    <para>
+    <para id="x.yE">
       Setting environment variables is not defined in a cross-platform way in
       Haskell.  If you are on a POSIX platform such as Linux, you can use
       <literal>putEnv</literal> or <literal>setEnv</literal> from the

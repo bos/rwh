@@ -7,7 +7,7 @@
     Mutable storage with MVars needs to go in threading area
   </remark>
 
-  <para>
+  <para id="x.RH">
     Back in <remark>FIXME: add ref to chapter 3ish</remark>, you saw how to
     use &type; to create handy aliases for types.  That's a useful feature,
     but in this chapter we'll take it a step further.  We'll show you how to
@@ -18,7 +18,7 @@
 
   <sect1 id="hs.data.intro">
     <title>Creating New Types</title>
-    <para>
+    <para id="x.SH">
       To create a new type, we use the &data; keyword.  You can create an
       amazing variety of types using &data;.  We'll take a look at them,
       starting with the most simple, and moving on to more complex types.
@@ -26,15 +26,15 @@
 
     <sect2 id="hs.data.basic">
       <title>Basic Type Creation</title>
-      <para>
+      <para id="x.TH">
         To create a new type, we use the &data; keyword.  In its most simple,
-        though probably useless<footnote><para>The built-in type
+        though probably useless<footnote><para id="x.UH">The built-in type
             <literal>()</literal> carries no data, so there is little need to
             define your own unless you are writing FFI interfaces to C types.
         </para></footnote>, form, you can create a type like this:
       </para>
       &data1.hs:useless;
-      <para>
+      <para id="x.VH">
         This defines a new type called <literal>Silly</literal>.  There is one
         <emphasis>type constructor</emphasis> for <literal>Silly</literal>:
         <literal>Foo</literal>.  When you write <literal>Foo</literal> in your
@@ -42,11 +42,11 @@
         <literal>Silly</literal>.  You can actually use the same word for both,
         but it must start with an uppercase letter.
       </para>
-      <para>
+      <para id="x.WH">
         Looking at it with &ghci;, there's not much you can do with it yet:
       </para>
       &data1.ghci:useless;
-      <para>
+      <para id="x.XH">
         Note that &ghci; doesn't know how to display <literal>Foo</literal> to
         the screen, or how to compare it to itself.  That's because we haven't
         made our new type a member of the &Show; and &Eq; typeclasses.  We'll
@@ -55,18 +55,18 @@
         <xref linkend="hs.typeclasses"/>.
       </para>
       &data1.hs:silly2;
-      <para>
+      <para id="x.YH">
         We've also defined a function that takes any parameter and returns
         a value of type <literal>Silly2</literal>.  Let's play with this in
         &ghci;.
       </para>
       &data1.ghci:useless2;
-      <para>
+      <para id="x.ZH">
         You can see here how the types interact.  Since <literal>Foo</literal>
         is of type <literal>Silly</literal> and <literal>Foo2</literal> is of
         type <literal>Silly2</literal>, you can't compare them directly.
       </para>
-      <para>  
+      <para id="x.aH">  
         Let's now expand on this
         foundation with some more things that can be done with &data;.
       </para>
@@ -74,12 +74,12 @@
 
     <sect2 id="hs.data.multi">
       <title>Multiple Type Constructors</title>
-      <para>
+      <para id="x.bH">
         One way to make &data; more useful is to have multiple type
         constructors.  Here's an example:
       </para>
       &data1.hs:color;
-      <para>
+      <para id="x.cH">
         This defined one new type named <literal>Color</literal>.  You can
         create a value of type <literal>Color</literal> by using any of the
         three literals <literal>Red</literal>, <literal>Green</literal>, or
@@ -88,12 +88,12 @@
         color names:
       </para>
       <itemizedlist>
-        <listitem><para>You are guaranteed that a <literal>Color</literal>
+        <listitem><para id="x.dH">You are guaranteed that a <literal>Color</literal>
             always represents one of these three values</para></listitem>
-        <listitem><para>When you do pattern matching on a
+        <listitem><para id="x.eH">When you do pattern matching on a
             <literal>Color</literal>, the compiler will warn you if you don't
             consider all three possible values</para></listitem>
-        <listitem><para>It is possible to hide the implemention of
+        <listitem><para id="x.fH">It is possible to hide the implemention of
             <literal>Color</literal> from users when exporting symbols from the
             module; you can include <literal>Color</literal> in the list but
             not the three constructors
@@ -101,18 +101,18 @@
             somewhere and add a ref to it from here</remark>
             </para></listitem>
       </itemizedlist>
-      <para>
+      <para id="x.gH">
         Let's look at some example code that uses the Color:
       </para>
       &data1.hs:color2;
-      <para>
+      <para id="x.hH">
         That's pretty simple: a function that takes a <literal>Color</literal> 
         and converts it to
         a &String;.  Note that we don't have to deal with the case where the
         input to the function is something other than our three colors, because
         that can't possibly happen.
       </para>
-      <para>
+      <para id="x.iH">
         You use a type defined in this way all the time.  Haskell 98 defines
         this:
       </para>
@@ -120,7 +120,7 @@
   data Bool =  False | True deriving 
                              (Read, Show, Eq, Ord, Enum, Bounded)
       </programlisting>
-      <para>
+      <para id="x.jH">
         As you'll see in the rest of this chapter, many of the core Haskell
         features you rely upon are actually defined in the prelude using
         &data;.  That is, they're not built into the compiler in any special
@@ -132,7 +132,7 @@
 
     <sect2 id="hs.data.records">
       <title>Defining Records</title>
-      <para>
+      <para id="x.kH">
         Custom types need not be defined solely in terms of static data.  They
         can also take parameters.  Let's say that we wanted to take our
         color example a new direction and let a user represent arbitrary colors
@@ -141,21 +141,21 @@
         records, let's define a new type.
       </para>
       &color.hs:custom;
-      <para>
+      <para id="x.lH">
         This defines a new type <literal>CustomColor</literal> and one type
         constructor also named <literal>CustomColor</literal>.  This type
         constructor, however, requires three parameters, all &Int;s.
       </para>
-      <para>
+      <para id="x.mH">
         The type constructor here is a unique beast in Haskell.  You can use it
         as a function that takes three parameters, and it will return to you
         one value ot type <literal>CustomColor</literal>.  You can also use it
         to perform pattern matching in function or case definitions.
       </para>
-      <para>
+      <para id="x.nH">
         Let's use &ghci; to inspect this for a bit:
       </para>
-      <para>
+      <para id="x.oH">
         You can see that <literal>CustomColor 100 0 50</literal> returns a
         single value of type <literal>CustomColor</literal>.  Now you're
         probably wondering how to extract the data from that
@@ -163,14 +163,14 @@
         Here's how:
       </para>
       &color.hs:extract;
-      <para>
+      <para id="x.pH">
         We used pattern matching to match the <literal>CustomColor</literal>.
         The three &Int;s were assigned to <literal>red</literal>, 
         <literal>green</literal>, and <literal>blue</literal>, and then printed
         out.  You can see that this worked by using &ghci;:
       </para>
       &color.ghci:extract;
-      <para>
+      <para id="x.qH">
         This sort of record is used in the standard Haskell library in the
         <literal>System.Time.ClockTime</literal> type:
       </para>
@@ -178,14 +178,14 @@
   data ClockTime = TOD Integer Integer
        deriving (Eq, Ord)
       </programlisting>
-      <para>
+      <para id="x.rH">
         A <literal>ClockTime</literal> consists of two &Integer;s.  The first
         is the number of whole seconds since midnight UTC on January 1, 1970.
         The second is an additional number of picoseconds.  Since an &Integer;
         can be negative and is unbounded, a <literal>ClockTime</literal> can
         effectively represent any moment in history down to the picosecond.
       </para>
-      <para>
+      <para id="x.sH">
         This is useful as it is, but when you have half a dozen or more
         values to store in your record, it can get annoying to have to match
         them all.  There's where named fields come in, which we'll discuss
@@ -195,7 +195,7 @@
 
     <sect2 id="hs.data.named">
       <title>Records with Named Fields</title>
-      <para>
+      <para id="x.tH">
         Our earlier example of a type that holds a color looked easy enough.
         But you have to remember the ordering of the fields that are part of
         the type.  Also, you always have to pattern match all fields, even if
@@ -203,26 +203,26 @@
         such as <literal>getRed</literal> to do that, but there's an easier
         way.
       </para>
-      <para>
+      <para id="x.uH">
         In Haskell, records can have named fields.  When you name the fields
         in a record, you can still access it just as you would without the
         named fields.  But you gain two things: automatic functions for
         picking out specific fields, plus an easier way to create and update
         these objects.
       </para>
-      <para>
+      <para id="x.vH">
         Let's take a look at a re-designed <literal>CustomColor</literal>
         type that uses named fields:
       </para>
       &colornamed.hs:custom;
-      <para>
+      <para id="x.wH">
         This record stores exactly the same amount of information as our
         ealier <literal>CustomColor</literal>.  But now we can take advantage
         of named fields.  Let's see how that works with &ghci;:
       </para>
       &colornamed.ghci:custom;
       &colornamed.ghci:create;
-      <para>
+      <para id="x.xH">
         First, we inspected the type of the <literal>CustomColor</literal>
         constructor.  Note that it's type is exactly the same as the
         constructor for the type 
@@ -232,13 +232,13 @@
         when you use named fields, you don't have to specify the values in
         order.
       </para>
-      <para>
+      <para id="x.yH">
         Haskell automatically creates accessor functions for each of the
         named fields.  Let's look at how we extract the red component of our
         color:
       </para>
       &colornamed.ghci:extract;
-      <para>
+      <para id="x.zH">
         We can use that to write a modified <literal>color2string</literal>
         function that accesses each named field without having to pattern
         match each individual field.  For reference, the original
@@ -247,17 +247,17 @@
       </para>
       &colornamed.hs:extract;
       &colornamed.hs:extract2;
-      <para>
+      <para id="x.AI">
         In the first function, we took a <literal>CustomColor</literal> and
         assigned the entire thing to <literal>cc</literal>.  In the second
         function, we used pattern matching to pick it apart up front.
       </para>
-      <para>
+      <para id="x.BI">
         Named fields also make it easy to modify one or more components of a
         type.  Here's an example:
       </para>
       &colornamed.ghci:update;
-      <para>
+      <para id="x.CI">
         With just three fields, the burden of pattern matching isn't all that
         great.  But what if you had a dozen or more?  Named fields really
         help out in that case.  The standard Haskell library uses named
@@ -280,7 +280,7 @@ data CalendarTime = CalendarTime {
   ctIsDST :: Bool
 }
       </programlisting>
-      <para>
+      <para id="x.DI">
         Named fields are a tremendous time saver here.  If you have a
         <literal>CalendarTime</literal> and want to extract just the year,
         you can simply say <literal>ctYear ct</literal> rather than having to
@@ -289,7 +289,7 @@ data CalendarTime = CalendarTime {
     </sect2>
     <sect2 id="hs.data.polymorphic">
       <title>Polymorphic Types</title>
-      <para>
+      <para id="x.EI">
         Sometimes you don't know in advance what the types of the data you
         want to store will be.  For instance, our
         <literal>CustomColor</literal> type used &Int;s.  But one could
@@ -297,7 +297,7 @@ data CalendarTime = CalendarTime {
         Haskell makes it possible to write generic code that
         could work with any of those.  Why not make the type generic as well?
       </para>
-      <para>
+      <para id="x.FI">
         Haskell has a well-known type that is defined just this way: &Maybe;.
         It's defined in the prelude like this:
       </para>
@@ -305,7 +305,7 @@ data CalendarTime = CalendarTime {
 data  Maybe a  =  Nothing | Just a
   deriving (Eq, Ord)
       </programlisting>
-      <para>
+      <para id="x.GI">
         This type is often used when the result of a function could be an
         error or some other invalid result (&Nothing;), or else a real value
         (&Just;).  For instance, if you are searching in a list for the first
@@ -313,14 +313,14 @@ data  Maybe a  =  Nothing | Just a
         or you won't.  If you do, you could get back the data wrapped in
         &Just;, and if you don't, you could get back &Nothing;.
       </para>
-      <para>
+      <para id="x.HI">
         &Maybe; is a polymorphic type because its type depends on the type of
         data that is encapsulated within it.  You can, in fact, encapsulate
         <emphasis>any</emphasis> type of data within it.  Let's look at this
         with &ghci;.
       </para>
       &maybe.ghci:maybe1;
-      <para>
+      <para id="x.II">
         Notice here that the type of &Nothing; is <literal>Maybe a</literal>,
         but the type of <literal>Just "hi"</literal> is <literal>Maybe
           [Char]</literal>.  The reason for this is Haskell's type inference.
@@ -328,25 +328,25 @@ data  Maybe a  =  Nothing | Just a
         -- is valid with any &Just;.  You can also give it an explicit type
         to force it to behave a certain way.
       </para>
-      <para>
+      <para id="x.JI">
         Let's push the type system and see what it lets us do with &Maybe;.
       </para>
       &maybe.ghci:maybe2;
-      <para>
+      <para id="x.KI">
         You can compare &Nothing; to a &Just; easily enough; that comparison
         will of course always be false.  The comparison between two &String;s
         wrapped in &Just; also works.  But the type checker wisely gives an
         error on the last attempt, because you're trying to compare a
         &String; to a number.
       </para>
-      <para>
+      <para id="x.LI">
         You'll see &Maybe; used quite a bit throughout this book, and in
         Haskell code in general.
       </para>
     </sect2>
     <sect2 id="hs.data.combining">
       <title>A Final Word on Types</title>
-      <para>
+      <para id="x.MI">
         We've shown you a lot of different ways to create your own types.
         Note that, by using multiple constructors, you can effectively
         combine various approaches in a single type.  For instance, you could
@@ -358,7 +358,7 @@ data  Maybe a  =  Nothing | Just a
 
   <sect1 id="hs.data.assoc">
     <title>Association Lists</title>
-    <para>
+    <para id="x.NI">
       Often times, we have to deal with data that is unordered but is indexed
       by a key.  For instance, a Unix administrator might have a list of
       numeric UIDs and the textual usernames that they correspond to.  The
@@ -366,7 +366,7 @@ data  Maybe a  =  Nothing | Just a
       given UID, not the order of the data.  In otherwords, the UID is a key
       into a database.
     </para>
-    <para>
+    <para id="x.OI">
       In Haskell, there are several ways to handle data that is structured in
       this way.  The two most common are association lists and the
       <literal>Data.Map</literal> module.  Association lists are handy
@@ -376,101 +376,49 @@ data  Maybe a  =  Nothing | Just a
       considerable performance advantage over association lists.  We'll
       consider both in this chapter.
     </para>
-    <para>
+    <para id="x.PI">
       An association list is just a normal list containing (key, value)
       tuples.  The type of a list of mappings from UID to username might be
       <literal>[(Integer, String)]</literal>.  You could use just about any
       type for both the key and the value.
     </para>
-    <sect2>
-      <title>Building Association Lists</title>
-      <para>
-        You can built association lists just like you would build any other
-        list.  Haskell comes with one built-in function called 
-        <literal>Data.List.lookup</literal> to look up data in an association
-        list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
-        Can you guess how it works from that type?  Let's take a look in
-        &ghci;.
-      </para>
-      &lookup.ghci:lookup1;
-      <para>
-        The <literal>lookup</literal> function is really simple.  Here's
-        one way you could write it:
-      </para>
-      &lookup.hs:standalone;
-      <para>
-        This function returns &Nothing; if passed the empty list.  Otherwise,
-        it compares the key with the key we're looking for.  If a match is
-        found, the corresponding value is returned.  Otherwise, it searches
-        the rest of the list.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Inserting Into Association Lists</title>
-      <para>
-        It's easy enough to build an association list based on data that's
-        known up-front.  But a common use for these lists may involve
-        modifying existing data -- replacing the data a key points to.  In
-        Haskell, of course, we don't actually modify anything in-place; we
-        would return a new list instead.
-      </para>
-      <para>
-        Here's an insert function.  It will insert the given key/value pair
-        into the association list if the key isn't already in the list.  If
-        the key is already present, it will instead modify the associated
-        value.  Notice how easy it is to develop data structures like this in
-        Haskell.
-      </para>
-      &insert.hs:all;
-      <para>
-        The <literal>insert</literal> function takes a key, value, and an
-        association list.  It simply iterates over the list, looking for a
-        key that matches the given key.  If it never finds one, it adds
-        the key/value pair at the end of the list.  Let's see it in action
-      </para>
-      &insert.ghci:insert1;
-      <para>
-        You can see the effect of <literal>insert</literal> on existing
-        lists.  You can also build up lists from scratch using
-        <literal>insert</literal>.
-      </para>
-      &insert.ghci:insert2;
-      <para>
-        In fact, you can even use <literal>insert</literal> together with
-        <literal>foldl</literal> to build up lists from existing data.
-        Though slower, it may be better than simply using
-        <literal>map</literal> because it will prevent duplicate keys from
-        occuring in your list.
-      </para>
-      <remark>FIXME: have we described foldl already?  if so, insert
-      ref</remark>
-      &insert.ghci:insert3;
-      <para>
-        Notice how the second definition for the key <literal>1</literal>
-        overwrote the first.  You could write a <literal>delete</literal>
-        function very similar to the <literal>insert</literal> function that
-        would delete all occurances of a given key from the association list.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Association List Example</title>
-      <para>
-        Let's take a look at a more complex example of association lists.
-        On Unix/Linux machines,
-        there is a file called <literal>/etc/passwd</literal> that stores
-        usernames, UIDs, home directories, and various other information.
-        Let's write a program that parses such a file, creates an association
-        list, and lets the user look up a username by giving a UID.
-      </para>
-      &passwd-al.hs:all;
-      <para>
-        Let's look at this program.  The heart of it is
-        <literal>findByUID</literal>, which is a simple function that parses
-        the input one line at a time, then calls <literal>lookup</literal> over
-        the result.  The remaining program is concerned with parsing the input.
-        The input file looks like this:
-      </para>
-      <programlisting>
+    <para>
+      You can built association lists just like you would build any other
+      list.  Haskell comes with one built-in function called 
+      <literal>Data.List.lookup</literal> to look up data in an association
+      list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
+      Can you guess how it works from that type?  Let's take a look in
+      &ghci;.
+    </para>
+    &lookup.ghci:lookup1;
+    <para>
+      The <literal>lookup</literal> function is really simple.  Here's
+      one way you could write it:
+    </para>
+    &lookup.hs:standalone;
+    <para>
+      This function returns &Nothing; if passed the empty list.  Otherwise,
+      it compares the key with the key we're looking for.  If a match is
+      found, the corresponding value is returned.  Otherwise, it searches
+      the rest of the list.
+    </para>
+    <para>
+      Let's take a look at a more complex example of association lists.
+      On Unix/Linux machines,
+      there is a file called <literal>/etc/passwd</literal> that stores
+      usernames, UIDs, home directories, and various other information.
+      Let's write a program that parses such a file, creates an association
+      list, and lets the user look up a username by giving a UID.
+    </para>
+    &passwd-al.hs:all;
+    <para>
+      Let's look at this program.  The heart of it is
+      <literal>findByUID</literal>, which is a simple function that parses
+      the input one line at a time, then calls <literal>lookup</literal> over
+      the result.  The remaining program is concerned with parsing the input.
+      The input file looks like this:
+    </para>
+    <programlisting>
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/bin/sh
 bin:x:2:2:bin:/bin:/bin/sh
@@ -483,56 +431,6 @@ mail:x:8:8:mail:/var/mail:/bin/sh
 news:x:9:9:news:/var/spool/news:/bin/sh
 jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </programlisting>
-      <para>
-        This is an excerpt from <literal>/etc/passwd</literal> on a live
-        system.  The <literal>split</literal> function separates a line into
-        fields by looking for colons.  Note the type of the function, though:
-        it's so generic that it can be used on lists of things other than
-        strings even.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Assocation List Performance</title>
-      <para>
-        As you might imagine, if you have a large amount of data, searching
-        through it can be slow.  <literal>lookup</literal> may have to search
-        through an entire list.  If you have hundreds of thousands of entries,
-        this could take a long time.  
-        Changing existing data can be slow, too.  The
-        <literal>Data.Map</literal> module addresses both of these concerns,
-        and we'll cover it in the next section.
-      </para>
-      <para>
-        Association lists have a couple of advantages, though.  One is that
-        they are simple to use, build, and understand.  Another is that they
-        are standard lists and can be manipulated by standard list functions
-        such as <literal>sort</literal>, <literal>reverse</literal>,
-        <literal>head</literal>, and <literal>tail</literal>.  Finally,
-        association lists preserve their original order, while maps may not.
-      </para>
-    </sect2>
-  </sect1>
-
-  <sect1 id="hs.data.maps">
-    <title>Maps</title>
-    <para>
-      Maps are similar to association lists in concept: they are a mapping
-      from a key to a value.  Maps have many advantages over association
-      lists.  For one, performance is far better for large maps than for
-      large lists.  Maps have an internal representation tailored for this
-      particular purpose, and lookups and inserts don't need to perform
-      exhaustive searches for maps like they do for association lists.  The
-      <literal>Data.Map</literal> module also has a richer set of functions
-      for working on maps than <literal>Data.List</literal> has for
-      association lists.
-    </para>
-    <para>
-      Like association lists, maps can have values of any type.  Keys in a
-      map must be a member of the &Eq; and &Ord; typeclasses.  In association
-      lists, they need only be a member of &Eq;.  This is not much of a
-      restriction in practice; almost every type that is in &Eq; is also in
-      &Ord;, and just about every common type is in both.
-    </para>
     <para>
       The <literal>Data.Map</literal> module has some functions with same
       names as those in <literal>Prelude</literal> or other common modules.
@@ -543,7 +441,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       Let's start our look at <literal>Data.Map</literal> by
       taking a look at some ways to build a map.
     </para>
-    &buildmap.hs:all;
     <para>
       Functions like <literal>Map.insert</literal> work in the usual Haskell
       way: they return a copy of the input data, with the requested change
@@ -554,7 +451,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <literal>mapManual</literal> example.  Let's use &ghci; to verify
       that all of these maps are as expected:
     </para>
-    &buildmap.ghci:all;
     <para>
       Notice that the output from <literal>mapManual</literal> doesn't occur
       in the order it was passed in.  Maps do not guarantee that they will

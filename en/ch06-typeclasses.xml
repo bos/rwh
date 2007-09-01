@@ -3,7 +3,7 @@
 <chapter id="hs.typeclasses">
   <title>Using Typeclasses</title>
 
-  <para>
+  <para id="x.iA">
     Typeclasses are one of the most powerful features in Haskell.  They
     are also at the heart of some basic language features such as equality
     testing and numeric operators.  Before we talk about what exactly
@@ -12,7 +12,7 @@
 
   <sect1 id="hs.typeclasses.need">
     <title>The need for typeclasses</title>
-    <para>
+    <para id="x.jA">
       Let's imaging that for some unfathomable reason, the designers of the
       Haskell language neglected to implement the equality test
       <function>==</function>.  Once you got over your shock at hearing this, 
@@ -25,7 +25,7 @@
       <title>Naive Equality -- Colors (naiveeq.hs)</title>
       &naiveeq.hs:color;
     </example>
-    <para>
+    <para id="x.kA">
       You can test this with &ghci; or
       <application>hugs</application>:
     </para>
@@ -35,7 +35,7 @@ True
 *Main&gt; <userinput>colorEq Red Blue</userinput>
 False
 </screen>
-    <para>
+    <para id="x.lA">
       Now, let's say that you want to add an equality test for
       &String;s.
       Since a Haskell &String; is a list of characters, we can
@@ -45,7 +45,7 @@ False
       of times.
     </para>
     &naiveeq.hs:string;
-    <para>
+    <para id="x.mA">
       You should now be able to see a problem: we have to define a new
       function for every different type that we want to be able to compare.
       That's inefficient and annoying.  It's much more convenient to be able
@@ -55,7 +55,7 @@ False
   </sect1>
   <sect1 id="hs.typeclasses.whatarethey">
     <title>What are typeclasses?</title>
-    <para>
+    <para id="x.nA">
       Typeclasses define a set of functions that can operate on more than one
       type of data.  A typeclass defines an interface, and perhaps even
       default implementations of functions.  You then create an instance for
@@ -63,14 +63,14 @@ False
       function that's part of the typeclass definition can be called with any
       type that's an instance of the typeclass as a parameter.
     </para>
-    <para>
+    <para id="x.oA">
       Those familiar with object-oriented programming can think of
       typeclasses as objects in reverse.  In OOP, when you define an object,
       you define what its parent classes are at that time.  You must also
       define how it implements the methods in the parent class, if you need a
       custom implementation.
     </para>
-    <para>
+    <para id="x.pA">
       With typeclasses, you have greater freedom.  Let's say that you have a
       type from a third party.  Perhaps that third party didn't make it part
       of a typeclass that you'd like it to be part of.  No problem; you can
@@ -79,7 +79,7 @@ False
       make the child object behave as you like.  But you're still stuck if
       you have a parent object from somewhere.
     </para>
-    <para>
+    <para id="x.qA">
       In case that wasn't all clear, let's consider an example.  Imagine you have a
       basket of fruit.  There are things that you might want to do 
       with just about all
@@ -89,7 +89,7 @@ False
       <literal>peel</literal>, and <literal>removeSeeds</literal> in that
       typeclass.
     </para>
-    <para>
+    <para id="x.rA">
       Now, your <literal>Apple</literal> type could be an instance of
       <literal>Fruit</literal>, implementing the three functions.  It could
       describe removing the core of the apple to get rid of the seeds.  You
@@ -97,7 +97,7 @@ False
       removing the one big seed at the center.  Now, you can release Fruit
       v1.0.  Yum!
     </para>
-    <para>
+    <para id="x.sA">
       Now, some of your friends download your library.  They think that
       apples and peaches are fine, but maybe they'd also like to be able to
       eat oranges.  No problem; they define an <literal>Orange</literal> type
@@ -112,7 +112,7 @@ False
 
   <sect1 id="hs.typeclasses.defining">
     <title>Defining new typeclasses</title>
-    <para>
+    <para id="x.tA">
       Let's use typeclasses to solve our equality dilemma from earlier in the
       chapter.  The first thing that we need to do is define the typeclass
       itself.  What we want is a function that takes two parameters, both the
@@ -120,20 +120,20 @@ False
       they are equal.  Here's our first definition of a typeclass:
     </para>
     &eqclasses.hs:basiceq;
-    <para>
+    <para id="x.uA">
       This says that we are declaring a typeclass named
       <varname>BasicEq</varname>, and we'll refer to instance types with the
-      letter <parameter>a</parameter>.  This typeclass defines one function.
+      letter <parameter id="x.vA">a</parameter>.  This typeclass defines one function.
       That function takes two parameters -- both corresponding to instance
       types -- and returns a <type>Bool</type>.
     </para>
-    <para>
-      On the first line, the name of the parameter <parameter>a</parameter>
+    <para id="x.wA">
+      On the first line, the name of the parameter <parameter id="x.xA">a</parameter>
       was chosen arbitrarily.  We could have used any name.  The key is that,
       when you list the types of your functions, you must use that name to
       refer to instance types.
     </para>
-    <para>
+    <para id="x.yA">
       Let's look at this in &ghci;.  <remark>FIXME:
         insert reference to where this is defined</remark>
       Recall that you
@@ -145,24 +145,24 @@ False
 *Main&gt; <userinput>:t isEqual</userinput>
 isEqual :: (BasicEq a) => a -> a -> Bool
     </screen>
-    <para>
+    <para id="x.zA">
       You can read that this way: "For all types of <type>a</type>, so
       long as <type>a</type> is an instance of
       <varname>BasicEq</varname>, <function>isEqual</function> takes two
       parameters of type <type>a</type> and returns a <type>Bool</type>".
     </para>
-    <para>
+    <para id="x.AB">
       Now that we've seen a very simple typeclass, let's expand it a bit.  
       A not-equal-to function might be useful.
       Here's what we might say to define a typeclass with two functions:
     </para>
     &eqclasses.hs:basiceq2;
-    <para>
+    <para id="x.BB">
       Someone providing an instance of <varname>BasicEq2</varname> will
       be required to define two functions: <function>isEqual2</function> and
       <function>isNotEqual2</function>.
     </para>
-    <para>
+    <para id="x.CB">
       While our definition of <varname>BasicEq2</varname> is fine, it seems
       that we're making extra work for ourselves.  Logically speaking, if we
       know what <function>isEqual</function> or
@@ -172,7 +172,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       can provide default implementations for them.  Then, users will only
       have to implement one function.
       <footnote>
-        <para>
+        <para id="x.DB">
           We provided a default implementation of both functions, which gives
           implementators of instances choice: they can pick which one they
           implement.  We could have provided a default for only one function,
@@ -183,12 +183,12 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       this.
     </para>
     &eqclasses.hs:basiceq3;
-    <para>
+    <para id="x.EB">
       People implementing this class must provide an implementation of at
       least one function.  They can implement both if they wish, but they
       will not be required to.
     </para>
-    <para>
+    <para id="x.FB">
       With <varname>BasicEq3</varname>, we have provided a class that does
       very much the same thing as Haskell's built-in <function>==</function>
       and <function>/=</function> operators.  In fact, these operators are
@@ -217,13 +217,13 @@ class  Eq a  where
 
   <sect1 id="hs.typeclasses.instances">
     <title>Declaring typeclass instances</title>
-    <para>
+    <para id="x.GB">
       Now that you know how to define typeclasses, it's time to learn how to
       define instances of typeclasses.  An instance is just a type.  Making
       it an instance of a particular typeclass means implementing the
       functions necessary for that typeclass.
     </para>
-    <para>
+    <para id="x.HB">
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
       linkend="hs.typeclasses.ex.naiveeq"/>.
@@ -231,7 +231,7 @@ class  Eq a  where
       type a member of the <literal>BasicEq3</literal> class.
     </para>
     &eqclasses.hs:basiceq3inst;
-    <para>
+    <para id="x.IB">
       Notice that we provide essentially the same function as we used
       back in <xref linkend="hs.typeclasses.ex.naiveeq"/>.  In fact, the
       implementation is identical.  However, in this case, we can use
@@ -243,7 +243,7 @@ class  Eq a  where
       works the same as making Haskell's <literal>==</literal> operator
       work for your own custom types.
     </para>
-    <para>
+    <para id="x.JB">
       Note also that the <literal>BasicEq3</literal> class defined both
       <literal>isEqual3</literal> and <literal>isNotEqual3</literal>, but we
       defined only one of them.  That's because of the default implementation
@@ -258,7 +258,7 @@ class  Eq a  where
   <sect1 id="hs.typeclasses.wellknown">
     <title>Well-known typeclasses</title>
 
-    <para>
+    <para id="x.KB">
       Now that you're familiar with defining your own typeclasses and making
       your types instances of typeclasses, it's time to introduce you to
       typeclasses that are a standard part of Haskell.  As we mentioned at
@@ -269,14 +269,14 @@ class  Eq a  where
 
     <sect2 id="hs.typeclasses.wellknown.show">
       <title>Show</title>
-      <para>
+      <para id="x.LB">
         The <literal>Show</literal> typeclass is used to convert types to
         &String;s.  It is perhaps most commonly used to
         convert numbers to &String;s, but it is defined for
         so many types that it can be used to convert quite a bit more.  You
         can also, of course, define instances for your own types as well.
       </para>
-      <para>
+      <para id="x.MB">
         The most important function of <literal>Show</literal> is
         <literal>show</literal>.  It takes one argument: the type to convert.
         It returns a &String; representing that type.
@@ -285,11 +285,11 @@ class  Eq a  where
 
       &show.ghci:showtype;
 
-      <para>
+      <para id="x.NB">
         Let's look at some examples of converting numbers to strings:
       </para>
       &show.ghci:showex;
-      <para>
+      <para id="x.OB">
         Remember that &ghci; displays results as they would
         be entered into Haskell.  So the expression <literal>show 1</literal>
         returns a single-character string containing the digit
@@ -298,12 +298,12 @@ class  Eq a  where
         <literal>printStrLn</literal>:
       </para>
       &show.ghci:printshowex;
-      <para>
+      <para id="x.PB">
         You can also use <literal>show</literal> on
         &String;s:
       </para>
       &show.ghci:showstr;
-      <para>
+      <para id="x.QB">
         Running <literal>show</literal> on &String;s can be
         confusing.  Since <literal>show</literal> generates a result that
         is suitable for a Haskell literal, <literal>show</literal> adds
@@ -313,14 +313,14 @@ class  Eq a  where
         <literal>putStrLn</literal> can help make this difference clear.
       </para>
 
-      <para>
+      <para id="x.RB">
         You can define a <literal>Show</literal> instance for your own types
         easily.  Here's an example:
       </para>
 
       &eqclasses.hs:show;
 
-      <para>
+      <para id="x.SB">
         This example defines an instance of <literal>Show</literal> for our
         type 
         <literal>Color</literal> (see <xref
@@ -333,7 +333,7 @@ class  Eq a  where
 
     <sect2 id="hs.typeclasses.wellknown.read">
       <title>Read</title>
-      <para>
+      <para id="x.TB">
         The &Read; typeclass is essentially the opposite of &Show;: it will
         take a &String;, parse it, and return data in a native Haskell type.
         The most useful function in &Read; is &read;.
@@ -342,7 +342,7 @@ class  Eq a  where
 
       &read.ghci:readtype;
 
-      <para>
+      <para id="x.UB">
         Here's an example illustrating the use of &read; and &show;:
       </para>
 
@@ -350,7 +350,7 @@ class  Eq a  where
 
       <remark>FIXME: have we already explained main?</remark>
 
-      <para>
+      <para id="x.VB">
         This is a simple example of &read; and &show; together.  Notice that
         we gave an explicit typecast to &Integer; when processing the &read;.
         That's because &read; returns a value of type
@@ -361,7 +361,7 @@ class  Eq a  where
         needed -- at least not in this case.  Therefore, we give an explicit
         cast.
       </para>
-      <para>
+      <para id="x.WB">
         You can see the same effect at work if you try to use &read; on the
         &ghci; command line.  &ghci; internally uses &show; to display
         results, meaning that you can hit this ambiguous typing problem there
@@ -369,7 +369,7 @@ class  Eq a  where
         &ghci; as shown here:
       </para>
       &read.ghci:readerrors;
-      <para>
+      <para id="x.XB">
         Recall the type of &read;:
         <literal>(Read a) => String -&gt; a</literal>.  The
         <literal>a</literal> here is the type of each instance of &Read;.
@@ -378,12 +378,12 @@ class  Eq a  where
         works:
       </para>
       &read.ghci:readtypes;
-      <para>
+      <para id="x.YB">
         Notice the error when trying to parse <literal>5.0</literal> as an
         Integer.  The compiler selected a different parser there because the
         return value of &read; was expected to be of a different type.
       </para>
-      <para>
+      <para id="x.ZB">
         The &Read; class provides for some fairly complicated parsers.  Most
         people, however, choose to use Parsec for complicated parsers these
         days.  <remark>FIXME: insert xref to parsec</remark>  You can 
@@ -394,7 +394,7 @@ class  Eq a  where
         implementation:
       </para>
       &eqclasses.hs:read;
-      <para>
+      <para id="x.aB">
         This example handles the known cases for the three colors.  It
         returns an empty list (resulting in a "no parse" message) for others.
         The function is supposed to return the part of the input that was not
@@ -403,7 +403,7 @@ class  Eq a  where
         &Read;:
       </para>
       &read.ghci:readcolor;
-      <para>
+      <para id="x.bB">
         Notice the error on the final attempt.  That's because our parser is
         not smart enough to handle leading spaces yet.  If we modified it to
         accept leading spaces, that attempt would work.
@@ -412,33 +412,33 @@ class  Eq a  where
 
     <sect2 id="hs.typeclasses.wellknown.serialization">
       <title>Serialization with Read and Show</title>
-      <para>
+      <para id="x.cB">
         Often times, you may have a data structure in memory that you need to
         store on disk for later retrieval or send across the network.  The
         process of converting data in memory to a flat series of bits for
         storage is called <emphasis>serialization</emphasis>.
       </para>
-      <para>
+      <para id="x.dB">
         It turns out that &read; and &show; make excellent tools for
         serialization.  &show; produces output that is both human-readable and
         machine-readable.  It also mostly matches Haskell syntax.
       </para>
-      <para>
+      <para id="x.eB">
         Let's try it out in &ghci;:
       </para>
       &serialization.ghci:ex1;
-      <para>
+      <para id="x.fB">
         First, we assign <literal>d1</literal> to be a list.  Next, we print
         out the result of <literal>show d1</literal> so we can see what it
         generates.  Then, we write the result of <literal>show d1</literal>
         to a file named <literal>/tmp/test</literal>.
       </para>
-      <para>
+      <para id="x.gB">
         Let's try reading it back.
       </para>
       &serialization.ghci:ex2;
-      <para>
-        First, we ask Haskell to read the file back.<footnote><para>As you will see
+      <para id="x.hB">
+        First, we ask Haskell to read the file back.<footnote><para id="x.iB">As you will see
           in <remark>FIXME: insert ref</remark>, Haskell doesn't actually
           read the entire file at this point.  But for the purposes of this
           example, we can ignore that distinction.</para></footnote>  Then,
@@ -449,7 +449,7 @@ class  Eq a  where
         explicit cast, it works, and we can verify that the two sets of data
         are equal.
       </para>
-      <para>
+      <para id="x.jB">
         Since so many different types are instances of &Read; and &Show; by
         default (and others can be made instances easily; see <xref
           linkend="hs.typeclasses.auto.derivation"/>), you can use it for
@@ -464,7 +464,7 @@ class  Eq a  where
       <remark>FIXME: some of these tables don't render well under sgml2x.
       Will need to verify that they look good under the O'Reilly
       renderer.</remark>
-      <para>
+      <para id="x.kB">
         Haskell has a powerful set of numeric types.  You can using everyting
         from fast 32-bit or 64-bit integers to arbitrary-precision rational
         numbers.  Yet you probably know that operators such as
@@ -473,7 +473,7 @@ class  Eq a  where
         allows you to define your own numeric types and make them first-class
         citizens in Haskell.
       </para>
-      <para>
+      <para id="x.lB">
         Let's begin our discussion of the typeclasses surrounding nmeric
         types with an examination of the types themselves.  <xref
           linkend="hs.numerictypes.summary"/> describes the most
@@ -548,7 +548,7 @@ class  Eq a  where
         </tgroup>
       </table>
 
-      <para>
+      <para id="x.mB">
         These are quite a few different numeric types.  There are some
         operations, such as addition, that ought to work with all of them.
         There are others, such as <literal>asin</literal>, that only apply to
@@ -882,7 +882,7 @@ class  Eq a  where
           </tbody>
         </tgroup>
       </table>
-      <para>
+      <para id="x.nB">
         One other question regarding Haskell's numeric types is conversion
         between them.  <xref linkend="hs.numerictypes.funcs"/> listed many
         functions that can be used for conversion.  However, it is not always
@@ -951,7 +951,7 @@ class  Eq a  where
 
     <sect2 id="hs.typeclasses.wellknown.equality">
       <title>Equality, Ordering, and Comparisons</title>
-      <para>
+      <para id="x.oB">
         We've already talked about the arithmetic operators such as
         <literal>+</literal> that can be used for all sorts of different
         numbers.  But there are some even more widely-applied operators in
@@ -960,7 +960,7 @@ class  Eq a  where
         be evaluated for equality is a member of &Eq;, which defines those
         operators.
       </para>
-      <para>
+      <para id="x.pB">
         There are also comparison operators such as <literal>>=</literal> and
         <literal>&lt;=</literal>.  These are defined by the &Ord; typeclass.
         These are in a separate typeclass because there are some types, such
@@ -968,7 +968,7 @@ class  Eq a  where
         to express a particular ordering.  Anything that is an instance of
         &Ord; can be sorted by <literal>Data.List.sort</literal>.
       </para>
-      <para>
+      <para id="x.qB">
         Virtually all Haskell types are instances of &Eq;, and almost as many
         are instances of &Ord;.
       </para>
@@ -978,23 +978,23 @@ class  Eq a  where
 
   <sect1 id="hs.typeclasses.auto.derivation">
     <title>Automatic Derivation</title>
-    <para>
+    <para id="x.rB">
       For many simple data types, the Haskell compiler can automatically
       derive instances of &Read;, &Show;, &Bounded;, &Eq;, and &Ord; for you.
       This saves you the effort of having to manually write parsers and
       display code for each type.  Here's an example:
     </para>
     &colorderived.hs:all;
-    <para>
+    <para id="x.sB">
       Let's take a look at how these derived instances work for us:
     </para>
     &derived.ghci:all;
-    <para>
+    <para id="x.tB">
       Notice that the derived instance of &Read; actually works better than
       our hand-written version did: it successfully parsed a list with
       embedded whitespace.
     </para>
-    <para>
+    <para id="x.uB">
       Automatic derivation is not always possible.  For instance, if you
       defined a type <literal>Data MyType = MyType (Int -> Bool)</literal>,
       the compiler will not be able to derive an instance of &Show; because
@@ -1006,14 +1006,14 @@ class  Eq a  where
   <!-- FIXME: cover these? 
   <sect1 id="hs.typeclasses.overlapping">
     <title>Overlapping Instances</title>
-    <para>
+    <para id="x.vB">
       FIXME
     </para>
   </sect1>
 
   <sect1 id="hs.typeclasses.undecidable">
     <title>Undecidable Instances</title>
-    <para>
+    <para id="x.wB">
       FIXME
     </para>
   </sect1>
