@@ -35,7 +35,7 @@ addTags num s = first concat (runState (foo s) num)
 processFile :: Int -> FilePath -> IO Int
 processFile num name = do
   (content, num') <- addTags num `fmap` readFile name
-  writeFile (name ++ ".tmp") content
+  writeFile (name ++ ".autoid") content
   return num'
 
 main :: IO ()
@@ -43,3 +43,4 @@ main = do
   let idPath = ".biggest.id"
   n <- catch (read `fmap` readFile idPath) (const (return 0))
   getArgs >>= foldM processFile n >>= writeFile idPath . show
+  

@@ -35,7 +35,7 @@ obj-html := html
 
 # Tools.
 
-tools := ghcisession snippets
+tools := autoid ghcisession snippets
 
 runhaskell ?= runghc
 
@@ -141,6 +141,10 @@ auto-snippets.xml: $(stamp-examples)
 .validated: $(tools:%=../tools/bin/%) $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $(src-master)
 	touch .validated
+
+autoid: tools
+	../tools/bin/autoid ch*.xml app*.xml
+	rename .autoid '' *.autoid
 
 # Generate a zip file with the kind of contents required by nostromo's
 # AH server.
