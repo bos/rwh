@@ -31,4 +31,40 @@
     </xsl:call-template>
   </xsl:template>
 
+  <!-- Add id attributes to <p> tags. This is mostly a copy of the
+       base XSL. -->
+  <xsl:template name="paragraph">
+    <xsl:param name="class" select="''"/>
+    <xsl:param name="content"/>
+
+    <xsl:variable name="p">
+      <p>
+        <xsl:call-template name="dir"/>
+        <xsl:if test="$class != ''">
+          <xsl:apply-templates select="." mode="class.attribute">
+            <xsl:with-param name="class" select="$class"/>
+          </xsl:apply-templates>
+        </xsl:if>
+        <!-- Here we go. -->
+        <xsl:if test="$generate.id.attributes != 0">
+          <xsl:attribute name="id">
+            <xsl:call-template name="object.id"/>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:copy-of select="$content"/>
+      </p>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="$html.cleanup != 0">
+        <xsl:call-template name="unwrap.p">
+          <xsl:with-param name="p" select="$p"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="$p"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 </xsl:stylesheet>
