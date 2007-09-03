@@ -22,6 +22,11 @@ src-examples := \
 src-figs := \
 	$(wildcard figs/*.png)
 
+extras-html := \
+	hsbook.js \
+	jquery.js \
+	styles.css
+
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
 src-ghci := $(filter %.ghci,$(src-examples))
@@ -95,13 +100,14 @@ $(obj-pdf): .validated $(src-figs)
 	$(call xml-to-pdf,$(src-master))
 
 .PHONY: html
-html: $(obj-html)/index.html $(obj-html)/styles.css
+html: $(obj-html)/index.html $(extras-html:%=$(obj-html)/%)
 
 $(obj-html)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	mkdir -p $(obj-html)
-	$(xsltproc) $(xsltproc-opts) -o $(obj-html)/x ../xsl/chunk-stylesheet.xsl $(src-master)
+	$(xsltproc) $(xsltproc-opts) -o $(obj-html)/x \
+	  ../xsl/chunk-stylesheet.xsl $(src-master)
 	cp -rf figs $(obj-html)
-	cp ../xsl/system-xsl/images/*.png html/figs
+	cp ../xsl/system-xsl/images/*.png $(obj-html)/figs
 
 $(obj-html)/styles.css: styles.css
 	cp $< $@
@@ -172,6 +178,8 @@ clean:
 	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
+vpath %.js ../tools/javascript
+
 vpath %.c $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.cpp $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
@@ -200,3 +208,6 @@ x/.stamp-%.py: %.py ../tools/bin/snippets x
 
 x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
+
+$(obj-html)/%.js: %.js
+	cp $< $@

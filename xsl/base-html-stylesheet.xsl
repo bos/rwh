@@ -67,4 +67,8 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template name="user.head.content">
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="hsbook.js"></script>
+  </xsl:template>
 </xsl:stylesheet>
