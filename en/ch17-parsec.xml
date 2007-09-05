@@ -2,6 +2,45 @@
 
 <chapter id="hs.parsec">
   <title>Using Parsec</title>
+  <!--
+    FIXME:
+    combinators
+    expressing choices and errors
+    look-ahead techniques
+    writing new combinators
+    parsing non-character data
+    example for parsing a configuration file
+    -->
+  <para>
+    The task of parsing a file, or data of various types, is a common one for
+    programmers.  You already learned about Haskell's support for regular
+    expressions back in <xref linkend="hs.glob.regex"/>.  Regular expressions
+    are nice for many tasks.  But they can become quite complex and difficult
+    when dealing with a data format that is complex.  For instance, you
+    probably wouldn't want to use regular expressions to parse C source code.
+  </para>
+
+  <para>
+    Haskell has a very useful and unique library called Parsec.  Parsec
+    is a parser combinator library.  With Parsec, you will combine small
+    parsing functions together to build up more complex parsers.  Parsec
+    provides some simple parsing functions, as well as functions to tie them
+    all together.  It should come as no surprise that this parser library for
+    Haskell is built around the notion of functions.
+  </para>
+
+  <para>
+    In this chapter, we will use Parsec to build up a parser for CSV files.
+    We will also use Parsec to build a more complex parser for sectioned 
+    configuration files.
+  </para>
+  <!--
+  <sect1 id="hs.parsec.firststeps">
+    <title>First Steps with Parsec</title>
+    <para>
+      -->
+
+
 
 </chapter>
  
