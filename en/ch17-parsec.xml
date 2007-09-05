@@ -313,7 +313,11 @@
         consumed any input at all.  So, when you use &try; on the left side
         of &PChoice;, Parsec will try the option on the right even if the
         lift side failed after consuming some input.  &try; only has an
-        effect if it is on the left of a &PChoice;.  Here's a way to add
+        effect if it is on the left of a &PChoice;.  Keep in mind, though,
+        that many functions use
+        &PChoice; interally.  Sometimes you may want
+        to add it to your code just in case it will be used on the left of a
+        &PChoice;, and that works fine.  Here's a way to add
         expanded end-of-line support to our CSV parser using &try;:
       </para>
       &csv6.hs:all;
@@ -391,11 +395,58 @@
     <para>
       Here is a full CSV parser.  You can use this from &ghci;, or if you
       compile it to a standalone program, it will parse a CSV file on
-      standard input and convert it to a series of Haskell expressions on
-      standard output.
+      standard input and convert it a different format on output.
     </para>
-
-
+    &csv9.hs:all;
+    <para>
+      That's a full-featured CSV parser in just 21 lines of code, plus an
+      additional 10 lines for the <literal>parseCSV</literal> and
+      <literal>main</literal> utility functions.
+    </para>
+    <para>
+      Let's look at the changes in this program from the previous versions.
+      First, a cell may now be either a bare cell or a "quoted" cell.  We
+      give the <literal>quotedCell</literal> option first, because we want to
+      follow that path if the first character in a cell is the quote mark.
+    </para>
+    <para>
+      The <literal>quotedCell</literal> begins and ends with a quote mark,
+      and contains zero or more characters.  These characters can't be copied
+      directly, though, because they may contain embedded, doubled-up, quote
+      marks themselves.  So we define a custom <literal>quotedChar</literal>
+      to process them.
+    </para>
+    <para>
+      When we're processing characters inside a quoted cell, we first say
+      <literal>noneOf "\""</literal>.  This will match and return any single
+      character as long as it's not the quote mark.  Otherwise, if it is the
+      quote mark, we see if we have two of them in a row.  If so, we return a
+      single quote mark to go on our result string.
+    </para>
+    <para>
+      Notice that &try; in <literal>quotedChar</literal> on the
+      <emphasis>right</emphasis> side of &PChoice;.  Recall that I said that
+      &try; only has an effect if it is on the left side of &PChoice;.  This
+      &try; does occur on the left side of a &PChoice;, but on the left of
+      one that must be within the implementation of <literal>many</literal>.
+    </para>
+    <para>
+      This &try; is actually quite important.  Let's say you are parsing a
+      quoted cell and are getting towards the end of it.  There will be
+      another cell following.  So you will expect to see a quote to end the
+      current cell, followed by a comma.  When you hit
+      <literal>quotedChar</literal>, you will fail the
+      <literal>noneOf</literal> test and proceed to the test that looks for
+      two quotes in a row.  You'll also fail that one because you'll have a
+      quote, then a comma.  If you hadn't used &try;, you'd crash with an
+      error at this point, saying that it was expecting the second quote,
+      because the first quote was already consumed.  Since we use &try;, this
+      is properly recognized as not a character that's part of the cell, so
+      it terminates the <literal>many quotedChar</literal> expression as
+      expected.  Lookahead has once again proven very useful, and the fact
+      that it is so easy to add makes it a remarkable tool in Parsec.
+    </para>
+  </sect1>
 </chapter>
  
 
