@@ -10,6 +10,7 @@ eol =   try (string "\n\r")
     <|> try (string "\r\n")
     <|> string "\n"
     <|> string "\r"
+    <|> fail "Couldn't find EOL"
 {-- /snippet eol --}
 
 parseCSV :: String -> Either ParseError [[String]]

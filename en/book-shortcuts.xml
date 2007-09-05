@@ -111,4 +111,6 @@
 <!ENTITY PChoice "<literal>&lt;|&gt;</literal>">
 <!ENTITY Left "<literal>Left</literal>">
 <!ENTITY Right "<literal>Right</literal>">
-
+<!ENTITY PQ "<literal>&lt;?&gt;</literal>">
+<!ENTITY try "<literal>try</literal>">
+<!ENTITY fail "<literal>fail</literal>">
