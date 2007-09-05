@@ -34,13 +34,144 @@
     We will also use Parsec to build a more complex parser for sectioned 
     configuration files.
   </para>
-  <!--
   <sect1 id="hs.parsec.firststeps">
-    <title>First Steps with Parsec</title>
+    <title>First Steps with Parsec: Simple CSV Parsing</title>
     <para>
-      -->
-
-
+      Let's jump right in by writing some code for parsing a CSV file.
+      CSV files are often used as a plain text representation of spreadsheets
+      or databases.  Each line is a record, and each field in the record is
+      separated from the next by a comma.  There are ways of dealing with
+      fields that contain commas, but to start with, we won't worry about it.
+    </para>
+    <para>
+      This first example is much longer than it really needs to be.  We will
+      introduce more Parsec features in a little bit that will shrink the
+      parser down to only four lines!
+    </para>
+    &csv1.hs:all;
+    <para>
+      Before looking at all this code in detail, 
+      let's play with it a bit and see what
+      it does.
+    </para>
+    &csv1.ghci:s1;
+    <para>
+      That makes sense: parsing the empty string returns an empty list.
+      Let's try parsing a single cell.
+    </para>
+    &csv1.ghci:s2;
+    <para>
+      Look at that.  Recall how we defined that each line must end with the
+      end-of-line character, and we didn't give it.  Parsec's error message
+      helpfully indicated the line number and column number of the problem,
+      and even told us what it was expecting!  Let's give it an end-of-line
+      character and continue experimenting.
+    </para>
+    &csv1.ghci:s3;
+    <para>
+      You can see that <literal>parseCSV</literal> is doing exactly what we
+      wanted it to do.  It's even handling empty cells and empty lines
+      properly.
+    </para>
+    <para>
+      Let's take a look at the code for this example.  We didn't use many
+      shortcuts here, so remember that this will get shorter and simpler!
+    </para>
+    <para>
+      We've built it from the
+      top down,
+      so our first function is <literal>csvFile</literal>.  The type of this
+      function is <literal>GenParser Char st [[String]]</literal>.  This
+      means that the type of the input is a sequence of characters, which is
+      exactly what a Haskell string is, since <literal>String</literal> is
+      the same as <literal>[Char]</literal>.  It also means that we will
+      return a value of type <literal>[[String]]</literal>: a list of a list
+      of strings.  The <literal>st</literal> can be ignored for now.
+    </para>
+    <para>
+      Parsec programmers usually omit type declarations, since we write so
+      many small functions.  Haskell's type inference can figure it out.
+      We've listed the types for the first example here so you can get a
+      better idea of what's going on.  You can always use
+      <literal>:t</literal> in &ghci; to inspect types as well.
+    </para>
+    <para>
+      The <literal>csvFile</literal> uses a &do; block.  Parsec is a monadic
+      parser combinator, but we are not using the &IO; monad here.
+      As we discussed in <remark>fixme: insert ref</remark>, not all monads
+      are &IO; monads.
+    </para>
+    <para>
+      We start by running <literal>many line</literal>.
+      <literal>many</literal> is a function that takes a function as an
+      argument.  It tries to repeatedly
+      parse the input using the function passed to it.  It gathers up the
+      results from all that repeated parsing and returns a list of them.  So,
+      here, we are storing the results of parsing all lines in
+      <literal>result</literal>.  Then we look for the end-of-file indicator,
+      called <literal>eof</literal>.  Finally, we return the
+      <literal>result</literal>.  So, a CSV file is made of of many lines,
+      then the end of file.  You can often read out Parsec functions in plain
+      English just like that.
+    </para>
+    <para>
+      Now we must answer the question: what is a line?  We define the
+      <literal>line</literal> function to do just that.  Reading the
+      function, we can see that a line consists of cells followed by the end
+      of line character.
+    </para>
+    <para>
+      So what are cells?  We defined them in the <literal>cells</literal>
+      function.  The cells of a line start with the content of the first
+      cell, then continue with the content of the remaining cells, if any.
+      The result is simply the first cell and the remaining cells assembled
+      into a list.
+    </para>
+    <para>Let's skip over <literal>remainingCells</literal> for a minute and
+      look at <literal>cellContent</literal>.  A cell contains any number of
+      characters, but each character must not be a comma or end of line
+      character.  The <literal>noneOf</literal> function matches one item, so
+      long as it isn't in the list of items that we pass.  So, saying
+      <literal>many (noneOf ",\n")</literal> defines a cell the way we want
+      it.
+    </para>
+    <para>
+      Back in <literal>remainingCells</literal>, we have the first example of
+      a choice in Parsec.  The choice operator is &<|>;.  This operator
+      behaves like this: it will first try the parser on the left.  If it
+      consumed no input, it will try the parser on the right.
+    </para>
+    <para>
+      So, in <literal>remainingCells</literal>, our task is to come up with
+      all the cells after the first.  Recall that
+      <literal>cellContent</literal> uses <literal>noneOf ",\n"</literal>.
+      So it will not consume the comma or end-of-line character from the
+      input.  If we see a comma after parsing a cell, it means that at least
+      one more cell follows.  Otherwise, we're done.  So, our first choice in
+      <literal>remainingCells</literal> is <literal>char ','</literal>.  This
+      parser simply matches the passed character in the input.  If we found a
+      comma, we want this function to return the remaining cells on the line.
+      At this point, the "remaining cells" looks exactly like the start of
+      the line, so we call <literal>cells</literal> recursively to parse
+      them.  If we didn't find a comma, we return the empty list, signifying
+      no remaining cells on the line.
+    </para>
+    <para>
+      Finally, we must define what the end-of-line indicator is.  We set it
+      to <literal>char '\n'</literal>, which will suit our purposes fine for
+      now.
+    </para>
+    <para>
+      At the very end of the program, we define a function
+      <literal>parseCSV</literal> that takes a &String; and parses it as a
+      CSV file.  This function is just a shortcut that calls Parsec's
+      <literal>parse</literal> function, filling in a few parameters.
+      <literal>parse</literal> returns <literal>Either ParseError
+        [[String]]</literal> for the CSV file.  If there was an error, the
+      return vaule will be &Left; with the error; otherwise, it will be
+      &Right; with the result.
+    </para>
+  </sect1>
 
 </chapter>
  
