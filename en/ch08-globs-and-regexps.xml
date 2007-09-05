@@ -96,7 +96,7 @@
       Haskell.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.glob.regex">
     <title>Regular expressions in Haskell</title>
 
     <para>In this section, I'll be assuming that you are already
