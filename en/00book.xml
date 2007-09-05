@@ -17,6 +17,7 @@
 <!ENTITY ch07     SYSTEM "ch07-io.xml">
 <!ENTITY ch08     SYSTEM "ch08-globs-and-regexps.xml">
 <!ENTITY ch13     SYSTEM "ch13-data.xml">
+<!ENTITY ch17     SYSTEM "ch17-parsec.xml">
 
 <!-- Appendices. -->
 
@@ -99,6 +100,7 @@
   &ch07;
   &ch08;
   &ch13;
+  &ch17;
 
   &bib;
 
