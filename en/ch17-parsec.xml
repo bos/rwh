@@ -137,7 +137,7 @@
     </para>
     <para>
       Back in <literal>remainingCells</literal>, we have the first example of
-      a choice in Parsec.  The choice operator is &<|>;.  This operator
+      a choice in Parsec.  The choice operator is &PChoice;.  This operator
       behaves like this: it will first try the parser on the left.  If it
       consumed no input, it will try the parser on the right.
     </para>
