@@ -1,4 +1,3 @@
-{-- snippet all --}
 import Text.ParserCombinators.Parsec
 
 csvFile = endBy line eol
@@ -14,4 +13,3 @@ eol =   try (string "\n\r")
 
 parseCSV :: String -> Either ParseError [[String]]
 parseCSV input = parse csvFile "(unknown)" input
-{-- /snippet all --}
