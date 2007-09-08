@@ -7,7 +7,7 @@
     parsing non-character data
     example for parsing a configuration file
     -->
-  <para>
+  <para id="x.DJ">
     The task of parsing a file, or data of various types, is a common one for
     programmers.  You already learned about Haskell's support for regular
     expressions back in <xref linkend="hs.glob.regex"/>.  Regular expressions
@@ -16,7 +16,7 @@
     probably wouldn't want to use regular expressions to parse C source code.
   </para>
 
-  <para>
+  <para id="x.EJ">
     Haskell has a very useful and unique library called Parsec.  Parsec
     is a parser combinator library.  With Parsec, you will combine small
     parsing functions together to build up more complex parsers.  Parsec
@@ -25,45 +25,45 @@
     Haskell is built around the notion of functions.
   </para>
 
-  <para>
+  <para id="x.FJ">
     Those of you that are familiar with parser tools in other languages may
     be interested to know that Parsec can take the place of both parser tools
     such as Yacc and lexers such as flex.  Parsec can also be used to
     implement a single-stange parser.
   </para>
 
-  <para>
+  <para id="x.GJ">
     In this chapter, we will use Parsec to build up a parser for CSV files.
     We will also use Parsec to build a more complex parser for sectioned 
     configuration files.
   </para>
   <sect1 id="hs.parsec.firststeps">
     <title>First Steps with Parsec: Simple CSV Parsing</title>
-    <para>
+    <para id="x.HJ">
       Let's jump right in by writing some code for parsing a CSV file.
       CSV files are often used as a plain text representation of spreadsheets
       or databases.  Each line is a record, and each field in the record is
       separated from the next by a comma.  There are ways of dealing with
       fields that contain commas, but to start with, we won't worry about it.
     </para>
-    <para>
+    <para id="x.IJ">
       This first example is much longer than it really needs to be.  We will
       introduce more Parsec features in a little bit that will shrink the
       parser down to only four lines!
     </para>
     &csv1.hs:all;
-    <para>
+    <para id="x.JJ">
       Before looking at all this code in detail, 
       let's play with it a bit and see what
       it does.
     </para>
     &csv1.ghci:s1;
-    <para>
+    <para id="x.KJ">
       That makes sense: parsing the empty string returns an empty list.
       Let's try parsing a single cell.
     </para>
     &csv1.ghci:s2;
-    <para>
+    <para id="x.LJ">
       Look at that.  Recall how we defined that each line must end with the
       end-of-line character, and we didn't give it.  Parsec's error message
       helpfully indicated the line number and column number of the problem,
@@ -71,16 +71,16 @@
       character and continue experimenting.
     </para>
     &csv1.ghci:s3;
-    <para>
+    <para id="x.MJ">
       You can see that <literal>parseCSV</literal> is doing exactly what we
       wanted it to do.  It's even handling empty cells and empty lines
       properly.
     </para>
-    <para>
+    <para id="x.NJ">
       Let's take a look at the code for this example.  We didn't use many
       shortcuts here, so remember that this will get shorter and simpler!
     </para>
-    <para>
+    <para id="x.OJ">
       We've built it from the
       top down,
       so our first function is <literal>csvFile</literal>.  The type of this
@@ -91,20 +91,20 @@
       return a value of type <literal>[[String]]</literal>: a list of a list
       of strings.  The <literal>st</literal> can be ignored for now.
     </para>
-    <para>
+    <para id="x.PJ">
       Parsec programmers usually omit type declarations, since we write so
       many small functions.  Haskell's type inference can figure it out.
       We've listed the types for the first example here so you can get a
       better idea of what's going on.  You can always use
       <literal>:t</literal> in &ghci; to inspect types as well.
     </para>
-    <para>
+    <para id="x.QJ">
       The <literal>csvFile</literal> uses a &do; block.  Parsec is a monadic
       parser combinator, but we are not using the &IO; monad here.
       As we discussed in <remark>fixme: insert ref</remark>, not all monads
       are &IO; monads.
     </para>
-    <para>
+    <para id="x.RJ">
       We start by running <literal>many line</literal>.
       <literal>many</literal> is a function that takes a function as an
       argument.  It tries to repeatedly
@@ -117,20 +117,20 @@
       then the end of file.  You can often read out Parsec functions in plain
       English just like that.
     </para>
-    <para>
+    <para id="x.SJ">
       Now we must answer the question: what is a line?  We define the
       <literal>line</literal> function to do just that.  Reading the
       function, we can see that a line consists of cells followed by the end
       of line character.
     </para>
-    <para>
+    <para id="x.TJ">
       So what are cells?  We defined them in the <literal>cells</literal>
       function.  The cells of a line start with the content of the first
       cell, then continue with the content of the remaining cells, if any.
       The result is simply the first cell and the remaining cells assembled
       into a list.
     </para>
-    <para>Let's skip over <literal>remainingCells</literal> for a minute and
+    <para id="x.UJ">Let's skip over <literal>remainingCells</literal> for a minute and
       look at <literal>cellContent</literal>.  A cell contains any number of
       characters, but each character must not be a comma or end of line
       character.  The <literal>noneOf</literal> function matches one item, so
@@ -138,13 +138,13 @@
       <literal>many (noneOf ",\n")</literal> defines a cell the way we want
       it.
     </para>
-    <para>
+    <para id="x.VJ">
       Back in <literal>remainingCells</literal>, we have the first example of
       a choice in Parsec.  The choice operator is &PChoice;.  This operator
       behaves like this: it will first try the parser on the left.  If it
       consumed no input, it will try the parser on the right.
     </para>
-    <para>
+    <para id="x.WJ">
       So, in <literal>remainingCells</literal>, our task is to come up with
       all the cells after the first.  Recall that
       <literal>cellContent</literal> uses <literal>noneOf ",\n"</literal>.
@@ -159,12 +159,12 @@
       them.  If we didn't find a comma, we return the empty list, signifying
       no remaining cells on the line.
     </para>
-    <para>
+    <para id="x.XJ">
       Finally, we must define what the end-of-line indicator is.  We set it
       to <literal>char '\n'</literal>, which will suit our purposes fine for
       now.
     </para>
-    <para>
+    <para id="x.YJ">
       At the very end of the program, we define a function
       <literal>parseCSV</literal> that takes a &String; and parses it as a
       CSV file.  This function is just a shortcut that calls Parsec's
@@ -178,7 +178,7 @@
 
   <sect1 id="hs.parsec.sep">
     <title>The sepBy and endBy Combinators</title>
-    <para>
+    <para id="x.ZJ">
       We promised you earlier that we could simply our CSV parser
       significantly by using a few Parsec helper functions.  There are two
       that will dramatically simplify this code.  The first is
@@ -187,19 +187,19 @@
       this over and over, and return a list of the results from the first
       function.
     </para>
-    <para>
+    <para id="x.aJ">
       The second tool for us is <literal>sepBy</literal>.  It's like
       <literal>endBy</literal>, but expects the very last item to not end
       with the separator.
     </para>
-    <para>
+    <para id="x.bJ">
       So, we can use <literal>endBy</literal> to parse lines, since every
       line must end with the end-of-line character.  We can use
       <literal>sepBy</literal> to parse cells, since the last cell will not
       end with a comma.  Take a look at how much simpler our parser is now:
     </para>
     &csv2.hs:all;
-    <para>
+    <para id="x.cJ">
       This program behaves exactly the same as the first one.  You can verify
       that by using &ghci; to re-run our examples from the earlier example.
       You'll get the same result from every one.  Yet the program is much
@@ -208,17 +208,17 @@
       As you read over this code, you can see that:
     </para>
     <itemizedlist>
-      <listitem><para>A CSV file contains 0 or more lines, 
+      <listitem><para id="x.dJ">A CSV file contains 0 or more lines, 
           each of which is terminated
           by the end-of-line character.</para></listitem>
-      <listitem><para>A line contains 0 or more cells, separated by a comma.
+      <listitem><para id="x.eJ">A line contains 0 or more cells, separated by a comma.
         </para>
       </listitem>
-      <listitem><para>A cell contains 0 or more characters, which must be
+      <listitem><para id="x.fJ">A cell contains 0 or more characters, which must be
           neither the comma nor the end-of-line character.
         </para>
       </listitem>
-      <listitem><para>The end-of-line character is the newline,
+      <listitem><para id="x.gJ">The end-of-line character is the newline,
           <literal>\n</literal>.
         </para>
       </listitem>
@@ -227,7 +227,7 @@
 
   <sect1 id="hs.parsec.choices">
     <title>Choices and Errors</title>
-    <para>
+    <para id="x.hJ">
       Different operating systems use different characters to mark the
       end-of-line.  Unix/Linux systems, plus Windows in text mode, use
       simply <literal>"\n"</literal>.
@@ -236,25 +236,25 @@
       traditionally use <literal>"\r\n"</literal>.  We could also support
       a bare <literal>"\r"</literal> in case anybody uses that.
     </para>
-    <para>
+    <para id="x.iJ">
       We could easily adapt our example to be able to handle all these types
       of line endings in a single file.  We would need to make two
       modifications: adjust <literal>eol</literal> to recognize the different
       endings, and adjust the <literal>noneOf</literal> pattern in
       <literal>cell</literal> to ignore <literal>\r</literal>.
     </para>
-    <para>
+    <para id="x.jJ">
       This must be done carefully.  Recall that our earlier definition of
       <literal>eol</literal> was simply <literal>char '\n'</literal>.  There
       is a parser called <literal>string</literal> that we can use to match
       the multi-character patterns.  Let's start by thinking of how we would
       add support for <literal>\n\r</literal>.
     </para>
-    <para>
+    <para id="x.kJ">
       Our first attempt might look like this:
     </para>
     &csv3.hs:eol;
-    <para>
+    <para id="x.lJ">
       This isn't quite right.  Recall that the &PChoice; operator always
       tries the left alternative first.  Looking for the single character
       <literal>\n</literal> will match both types of line endings, so it will
@@ -262,20 +262,20 @@
       <literal>\r</literal>.  Not what we want.  Try it in &ghci;:
     </para>
     &csv3.ghci:s1;
-    <para>
+    <para id="x.mJ">
       It may look like it worked for both endings, but actually looking at it
       this way, we can't tell.  If it left something un-parsed, we don't
       know, because we're not looking for anything else.  So let's look for
       the end-of-file after our end of line:
     </para>
     &csv3.ghci:s2;
-    <para>
+    <para id="x.nJ">
       As expected, we got an error from the <literal>\n\r</literal> ending.
       So the next temptation may
       be to try it this way:
     </para>
     &csv4.hs:eol;
-    <para>
+    <para id="x.oJ">
       This also isn't right.  Recall that &PChoice; only attempts the option
       on the right of the option on the left consumed no input.  But by the
       time we are able to see if there is a <literal>\r</literal> after the
@@ -283,7 +283,7 @@
       <literal>\n</literal>.  This time, we fail on the other case in &ghci;:
     </para>
     &csv4.ghci:s1;
-    <para>
+    <para id="x.pJ">
       We've stumbled upon the lookahead problem.  It turns out that, when
       writing parsers, it's often very convenient to be able to "look ahead"
       at the data that's coming in.  Parsec supports this, but before showing
@@ -292,7 +292,7 @@
       the <literal>\n</literal> like this:
     </para>
     &csv5.hs:eol;
-    <para>
+    <para id="x.qJ">
       This function first looks for <literal>\n</literal>.  If it is found,
       then it will look for <literal>\r</literal>, consuming it if possible.
       Since the return type of <literal>char '\r'</literal> is a
@@ -303,13 +303,13 @@
       with &ghci;.
     </para>
     &csv5.ghci:s1;
-    <para>
+    <para id="x.rJ">
       This time, we got the right result!  But we could have done it easier
       with Parsec's lookahead support.
     </para>
     <sect2 id="hs.parsec.lookahead">
       <title>Lookahead</title>
-      <para>
+      <para id="x.sJ">
         Parsec has a function called &try; that is used to express
         lookaheads.  &try; takes one function, a parser.  It applies that
         parser.  If the parser doesn't succeed, &try; behaves as if it hadn't
@@ -324,7 +324,7 @@
         expanded end-of-line support to our CSV parser using &try;:
       </para>
       &csv6.hs:all;
-      <para>
+      <para id="x.tJ">
         Here we put both of the two-character endings first, and run both
         tests under &try;.  Both of them occur to the left of a &PChoice;, so
         they will do the right thing.  We could have put <literal>string
@@ -333,12 +333,12 @@
         this up and test the <literal>eol</literal> function in &ghci;.
       </para>
       &csv6.ghci:s1;
-      <para>
+      <para id="x.uJ">
         All four endings were handled properly.  You can also test the full
         CSV parser with some different endings like this:
       </para>
       &csv6.ghci:s2;
-      <para>
+      <para id="x.vJ">
         As you can see, this program even supports different line endings
         within a single file.
       </para>
@@ -346,27 +346,27 @@
 
     <sect2 id="hs.parsec.error">
       <title>Error Handling</title>
-      <para>
+      <para id="x.wJ">
         At the beginning of this chapter, you saw how Parsec could generate
         error messages that list the location where the error occured as well
         as what was expected.  As parsers get more complex, the list of what
         was expected can become cumbersome.  Parsec provides a way for you to
         specify custom error messages in the event of parse failures.
       </para>
-      <para>
+      <para id="x.xJ">
         Let's look at what happens on an error when our current CSV parser:
       </para>
       &csv6.ghci:error;
-      <para>
+      <para id="x.yJ">
         That's a pretty long, and technical, error message.  We could make an
         attempt to resolve this by using the monad &fail; function like so:
       </para>
       &csv7.hs:eol;
-      <para>
+      <para id="x.zJ">
         Under &ghci;, we can see the result:
       </para>
       &csv7.ghci:s1;
-      <para>
+      <para id="x.AK">
         We added to the error result, but didn't really help clean up the
         output.  Parsec has an &PQ; operator that is designed for just these
         situations.  It is similar to &PChoice; in that it first tries the
@@ -374,11 +374,11 @@
         a failure, it presents an error message.  Here's how we'd use it:
       </para>
       &csv8.hs:eol;
-      <para>
+      <para id="x.BK">
         Now, when you generate an error, you'll get more helpful output:
       </para>
       &csv8.ghci:s1;
-      <para>
+      <para id="x.CK">
         That's pretty helpful!  The general rule of thumb is that you put a
         human description of what you're looking for to the right of
         &PQ;.
@@ -388,52 +388,52 @@
 
   <sect1 id="hs.csv">
     <title>Extended Example: Full CSV Parser</title>
-    <para>
+    <para id="x.DK">
       Our earlier CSV examples have had an important flaw: they weren't able
       to handle cells that contain a comma.  CSV generating programs
       typically put quotation marks around such data.  But then you have
       another problem: what to do if a cell contains a quotation mark and a
       comma.  In these cases, the embedded quotation marks are doubled up.
     </para>
-    <para>
+    <para id="x.EK">
       Here is a full CSV parser.  You can use this from &ghci;, or if you
       compile it to a standalone program, it will parse a CSV file on
       standard input and convert it a different format on output.
     </para>
     &csv9.hs:all;
-    <para>
+    <para id="x.FK">
       That's a full-featured CSV parser in just 21 lines of code, plus an
       additional 10 lines for the <literal>parseCSV</literal> and
       <literal>main</literal> utility functions.
     </para>
-    <para>
+    <para id="x.GK">
       Let's look at the changes in this program from the previous versions.
       First, a cell may now be either a bare cell or a "quoted" cell.  We
       give the <literal>quotedCell</literal> option first, because we want to
       follow that path if the first character in a cell is the quote mark.
     </para>
-    <para>
+    <para id="x.HK">
       The <literal>quotedCell</literal> begins and ends with a quote mark,
       and contains zero or more characters.  These characters can't be copied
       directly, though, because they may contain embedded, doubled-up, quote
       marks themselves.  So we define a custom <literal>quotedChar</literal>
       to process them.
     </para>
-    <para>
+    <para id="x.IK">
       When we're processing characters inside a quoted cell, we first say
       <literal>noneOf "\""</literal>.  This will match and return any single
       character as long as it's not the quote mark.  Otherwise, if it is the
       quote mark, we see if we have two of them in a row.  If so, we return a
       single quote mark to go on our result string.
     </para>
-    <para>
+    <para id="x.JK">
       Notice that &try; in <literal>quotedChar</literal> on the
       <emphasis>right</emphasis> side of &PChoice;.  Recall that I said that
       &try; only has an effect if it is on the left side of &PChoice;.  This
       &try; does occur on the left side of a &PChoice;, but on the left of
       one that must be within the implementation of <literal>many</literal>.
     </para>
-    <para>
+    <para id="x.KK">
       This &try; is actually quite important.  Let's say you are parsing a
       quoted cell and are getting towards the end of it.  There will be
       another cell following.  So you will expect to see a quote to end the
@@ -449,11 +449,11 @@
       expected.  Lookahead has once again proven very useful, and the fact
       that it is so easy to add makes it a remarkable tool in Parsec.
     </para>
-    <para>
+    <para id="x.LK">
       You can test this program with &ghci; over some quoted cells:
     </para>
     &csv9.ghci:s1;
-    <para>
+    <para id="x.MK">
       Let's run it over a real CSV file.  Here's a CSV file generated by a
       spreadsheet program:
     </para>
@@ -464,7 +464,7 @@
 "Shirt, ""O'Reilly"" version",20
 "Haskell Caps",15
     </programlisting>
-    <para>
+    <para id="x.NK">
       Now, we can run this under our test program and watch:
     </para>
     <screen>
