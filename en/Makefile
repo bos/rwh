@@ -24,7 +24,10 @@ src-figs := \
 
 extras-html := \
 	hsbook.js \
+	form.js \
+	form-min.js \
 	jquery.js \
+	jquery-min.js \
 	styles.css
 
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
@@ -108,9 +111,6 @@ $(obj-html)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	  ../xsl/chunk-stylesheet.xsl $(src-master)
 	cp -rf figs $(obj-html)
 	cp ../xsl/system-xsl/images/*.png $(obj-html)/figs
-
-$(obj-html)/styles.css: styles.css
-	cp $< $@
 
 ../xsl/system-xsl: $(system-xsl-dir)
 	ln -s $< $@
@@ -208,6 +208,9 @@ x/.stamp-%.py: %.py ../tools/bin/snippets x
 
 x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
+
+$(obj-html)/%.css: %.css
+	cp $< $@
 
 $(obj-html)/%.js: %.js
 	cp $< $@

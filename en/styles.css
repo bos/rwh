@@ -44,3 +44,11 @@ body
 {
   font-size: 90%;
 }
+
+span.comment {
+  font-size: 80%;
+}
+
+span.commenttoggle {
+  opacity: 0.35;
+}
