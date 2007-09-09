@@ -72,4 +72,9 @@
     <script type="text/javascript" src="form.js"></script>
     <script type="text/javascript" src="hsbook.js"></script>
   </xsl:template>
+
+  <xsl:template name="user.footer.navigation">
+    <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+    <script type="text/javascript">_uacct = "UA-1805907-3"; urchinTracker();</script>
+  </xsl:template>
 </xsl:stylesheet>
