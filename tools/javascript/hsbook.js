@@ -14,20 +14,28 @@ function commentClose() {
   $(this).parent().children(".comment").hide("normal");
 }
 
-function validateForm(formData, jqForm, options) {
+function beforeComment(formData, jqForm, options) {
   var form = jqForm[0];
-  if (!form.name.value) {
-    alert("name!");
+  if (!form.comment.value) {
+    $("//span.comment_error", jqForm).empty().append(
+      "<span class=\"comment_error\">Your comment is empty</span>");
     return false;
   }
+  if (!form.name.value) {
+    $("//span.comment_error", jqForm).empty().append(
+      "<span class=\"comment_error\">Please provide a name</span>");
+    return false;
+  }
+  $("//span.comment_error", jqForm).empty().after("<img src=\"figs/throbber.gif\" style=\"vertical-align: middle\"/>");
+  $("//input[@name=submit]", jqForm).attr("disabled", true);
 }
 
 function updateComments(responseText, statusText) {
-  $(this).children("span.commenttoggle")
+  $(this).children("a.commenttoggle")
     .toggle(commentOpen, commentClose)
     .hover(paraHoverIn, paraHoverOut);
   $(this).children("form.comment").ajaxForm({
-    beforeSubmit: validateForm, success: updateComments, target: $(this)
+    beforeSubmit: beforeComment, success: updateComments, target: $(this)
   });
 }
 

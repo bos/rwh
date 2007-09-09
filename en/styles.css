@@ -45,10 +45,44 @@ body
   font-size: 90%;
 }
 
-span.comment {
+.comment {
   font-size: 80%;
 }
 
-span.commenttoggle {
+div.comment {
+  padding-top: 5px;
+  margin-left: 15px;
+}
+
+.commenttoggle {
   opacity: 0.35;
+}
+
+.comment_help {
+  font-size: 80%;
+}
+
+.comment_header {
+  opacity: 0.75;
+}
+
+.comment_name {
+  font-weight: bolder;
+}
+
+.comment_date {
+  opacity: 0.75;
+}
+
+.comment_new {
+  opacity: 1.1;
+  font-style: italic;
+  font-weight: bolder;
+}
+
+.comment_error {
+  padding-left: 5px;
+  font-weight: bolder;
+  font-size: 80%;
+  color: darkred;
 }
