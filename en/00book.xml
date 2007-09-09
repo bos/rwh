@@ -23,6 +23,7 @@
 
 <!ENTITY bib      SYSTEM "bibliography.xml">
 <!ENTITY appA     SYSTEM "appA-escapes.xml">
+<!ENTITY appX     SYSTEM "appX-web.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
 <!-- Include our standard shortcuts. -->
@@ -105,6 +106,8 @@
   &bib;
 
   &appA;
+
+  &appX;
 
   &index;
 

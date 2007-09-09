@@ -1,0 +1,341 @@
+<appendix id="hs.web">
+  <title>Web site and comment system usage and policies</title>
+
+  <para>Thank you for your interest in commenting on our book!  We are
+    excited to have made it possible for you, our readers, to submit
+    comments at the level of detail of every single paragraph and code
+    example.  Please feel welcome to make liberal use of the
+    commenting system; we want to produce the best book we can.  (Yes,
+    your use of the comment system is subject to our User Agreement;
+    see <xref linkend="hs.web.useragreement"/> for details.)</para>
+
+  <note>
+    <title>We require Javascript</title>
+
+    <para>Our comment system uses Javascript extensively.  If you
+      don't have Javascript enabled in your browser, you won't even
+      see a hint of the existence of the comment system.
+      Unfortunately, we don't have the time to spare to write a
+      Javascript-free alternative.  Patches welcome!</para>
+  </note>
+
+  <sect1 id="hs.web.comment">
+    <title>Using the comment system</title>
+
+    <para>Every paragraph ends with an unobtrusive anchor. When you
+      click on it, it reveals the comments submitted by other readers.
+      Click on the anchor again to hide the comments.</para>
+
+    <para>At the end of each list of comments sits a small form where
+      you can enter comments of your own.  We ask for just one piece
+      of information in addition to your comment, which is your name.
+      You're also welcome to provide a URL for your home page, blog,
+      or what have you.</para>
+    
+    <sect2 id="hs.web.comment.name">
+      <title>Why do we want your name?</title>
+
+      <para>We'd love to credit people who give particularly good
+	feedback, and to do that, we need to know who to thank. You
+	don't <emphasis>have</emphasis> to give us your real name, but
+	if you don't, we can't credit you, no matter how helpful you
+	may be.</para>
+
+      <note>
+	<title>We can't spam you, nor can anyone else</title>
+
+	<para>Notice that we don't ask for your email address?
+	  Nobody's going to spam you as a result of commenting on the
+	  book (unless for some reason you explicitly enter your email
+	  address somewhere).</para>
+      </note>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.web.feed">
+    <title>Subscribing to feeds</title>
+
+    <para>Our comment system isn't just a dead dump for snippets of
+      text; it's a <emphasis>conversation</emphasis> between us and
+      you.  You'll notice that you can subscribe to an Atom feed for
+      each web page, letting you see the latest comments, and there's
+      also a feed for the book as a whole.  Each comment published
+      through the feed comes with a link that lets you see that
+      comment in context, and respond to it.</para>
+  </sect1>
+
+  <sect1 id="hs.web.useragreement">
+    <title>User Agreement</title>
+
+    <para>The following User Agreement (<quote>Agreement</quote>)
+      governs the use of all <code>realworldhaskell.org</code> sites
+      (<quote>Site</quote>, <quote>Sites</quote>), including without
+      limitation participation in their comment systems, forums,
+      chats, and all other areas (except to the extent stated
+      otherwise on a specific page) as provided by the authors and
+      publishers of <quote>Real World Haskell</quote>
+      (<quote>us</quote> <quote>we</quote>, or
+      <quote>our</quote>).</para>
+
+    <para>Please read the rules contained in this agreement carefully.
+      Your use of and/or registration on any aspect of this Site will
+      constitute your agreement to comply with these rules. If you
+      cannot agree with these rules, please do not use the
+      Site.</para>
+
+    <sect2 id="hs.web.useragreement.use">
+      <title>Your use of our services</title>
+
+      <itemizedlist>
+	<listitem>
+	  <para>Unless otherwise specified, the Site is intended for
+	    your personal use only. You may not authorize others to
+	    use the Site, and you are responsible for all use of the
+	    Site by you and by those you allow to use, or provide
+	    access to, the Site.</para>
+	</listitem>
+
+	<listitem>
+	  <para>The Site contains material that is protected by
+	    state, national and international copyright, trademark and
+	    other intellectual property laws. You may not modify,
+	    copy, reproduce, republish, upload, post, transmit or
+	    distribute in any way any material, including code and
+	    software, from the Site. You may download material from
+	    the Site and may use the Site for your personal use
+	    only, provided you keep intact all copyright and other
+	    proprietary notices.</para>
+	</listitem>
+
+	<listitem>
+	  <para>The Site is not intended for users under the age of
+	    13, and We do not knowingly collect personally
+	    identifiable information from users under the age of 13.
+	    Such users are expressly prohibited from submitting their
+	    personally identifiable information to us, and from using
+	    our forums and comment systems; any information submitted
+	    by such users will not knowingly be used, posted, or
+	    retained by us.</para>
+	</listitem>
+
+	<listitem>
+	  <para>You agree not to place on the Site any material
+	    that is abusive, harassing, racist, or hateful. Further,
+	    you may not place on the Site any material that is
+	    encrypted, constitutes junk mail or unauthorized
+	    advertising, or commercial offers, invades anyone's
+	    privacy, or encourages conduct that would constitute a
+	    criminal offense, give rise to civil liability, or that
+	    otherwise violates any local, state, federal, national or
+	    international law or regulation. You agree to use the
+	    Site only for lawful purposes and you acknowledge that
+	    your failure to do so may subject you to civil and
+	    criminal liability.</para>
+	</listitem>
+
+	<listitem>
+	  <para>You are responsible for ensuring that any material you
+	    provide to the Site or post on a bulletin board or
+	    forum or elsewhere, including but not limited to text,
+	    photographs and sound, does not violate the copyright,
+	    trademark, trade secret or any other personal or
+	    proprietary rights of any third party or is posted with
+	    the permission of the owner(s) of such rights.</para>
+	</listitem>
+
+	<listitem>
+	  <para>The content, organization, graphics, text, images,
+	    video, design, compilation, advertising and all other
+	    material on the Site, including without limitation, the
+	    <quote>look and feel</quote> of this Site, are protected
+	    under applicable copyrights and other proprietary
+	    (including but not limited to intellectual property)
+	    rights and are the property of us or our licensors. The
+	    copying, rearrangement, redistribution, modification, use
+	    or publication by you, directly or indirectly, of any such
+	    matters or any part of the Site, including but not limited
+	    to the removal or alteration of advertising, except for
+	    the limited rights of use granted hereunder, is strictly
+	    prohibited.</para>
+	</listitem>
+  
+	<listitem>
+	  <para>You may not in any way make commercial or other
+	    unauthorized use, by publication, re-transmission,
+	    distribution, performance, caching, or otherwise, of
+	    material obtained through the Site, except as permitted by
+	    the Copyright Act or other law or as expressly permitted
+	    in writing by this Agreement, Us, or the Site.</para>
+	</listitem>
+
+	<listitem>
+	  <para>You agree not to disrupt, overwhelm, attack, modify or
+	    interfere with the Site or its associated software,
+	    hardware and/or servers in any way, and you agree not to
+	    impede or interfere with others' use of the Site. You
+	    further agree not to alter or tamper with any information
+	    or materials on or associated with the Site.</para>
+	</listitem>
+  
+	<listitem>
+	  <para>Other than connecting to Our servers using a Web
+	    browser, you may not attempt to gain access to Our servers
+	    by any means - including, without limitation, by using
+	    administrator passwords or by masquerading as an
+	    administrator while using the Site or otherwise.</para>
+	</listitem>
+      
+	<listitem>
+	  <para>You acknowledge that We have not reviewed and do not
+	    endorse the content of sites linked to from this Site and
+	    are not responsible for the content or actions of any
+	    other sites linked to from this Site. Your linking to any
+	    service or site is at your sole risk.</para>
+	</listitem>
+      </itemizedlist>
+
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.endorse">
+      <title>We do not endorse anyone's comments</title>
+
+      <para>We do not necessarily endorse, support, sanction,
+	encourage, verify, or agree with the comments, opinions, or
+	statements posted on forums, blogs or otherwise contained in
+	the Site. Any information or material placed online, including
+	advice and opinions, are the views and responsibility of those
+	who post the statements and do not necessarily represent our
+	views or those of our third party service providers.</para>
+
+      <para>You agree that we and our third party service providers
+	are not responsible, and shall have no liability to you, with
+	respect to any information or materials posted by others,
+	including defamatory, offensive or illicit material, even
+	material that violates this Agreement.</para>
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.ownership">
+      <title>Comment ownership and licensing</title>
+
+      <para>You retain ownership of, and copyright on, your own
+	comments.  You agree that by posting messages, uploading
+	files, inputting data, or engaging in any other form of
+	communication with or through the Site, you grant Us a
+	royalty-free, perpetual, non-exclusive, unrestricted,
+	worldwide license to use, reproduce, modify, adapt, translate,
+	enhance, transmit, distribute, publicly perform, display, or
+	sublicense any such communication in any medium (now in
+	existence or hereinafter developed) and for any purpose,
+	including commercial purposes, and to authorize others to do
+	so.</para>
+
+      <para>In addition, be aware that information you disclose in
+	publicly accessible portions of the Site will be available
+	to all users of the Site, so you should be mindful of
+	personal information and other content you may wish to
+	post.</para>
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.sales">
+      <title>Merchandise sold on or through the Site</title>
+
+      <para>Neither We nor our third party service providers make any
+	warranties with respect to any of the merchandise, products,
+	and/or services featured, mentioned, or sold by others on or
+	through the Site. Transactions for any such item shall be
+	between the user and the third party seller, without any
+	involvement of us or our third party service
+	providers. You agree that We and our third party service
+	providers are not responsible, and shall have no liability to
+	you, with respect to merchandise, products, and/or services
+	featured, mentioned, or sold by others on or through the Site,
+	including illegal, offensive or illicit items, even items that
+	violates this Agreement.</para>
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.indemnify">
+      <title>Indemnification</title>
+
+      <para>You agree to indemnify Us and our affiliates, employees,
+	agents, representatives and third party service providers, and
+	to defend and hold each of them harmless, from any and all
+	claims and liabilities (including attorneys fees) which may
+	arise from your submissions, from your unauthorized use of
+	material obtained through the Site, or from your breach of
+	this Agreement, or from any such acts through your use of the
+	Site.</para>
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.edit">
+      <title>Response, deletion, and editing</title>
+
+      <para>We reserve the right, but undertake no duty, to review,
+	respond to, edit, move or delete any material provided for
+	display or placed on the Site or its comment systems, in our
+	sole discretion, without notice.</para>
+    </sect2>
+
+    <sect2 id="hs.web.useragreement.disclaimer">
+      <title>Disclaimer of warranty and limitation of
+	liability</title>
+
+      <para><emphasis>You acknowledge that you are using the Site at
+	  your own risk. The Site is provided <quote>as is</quote>,
+	  and we, our affiliates and our third party service providers
+	  hereby expressly disclaim any and all warranties, express
+	  and implied, including but not limited to any warranties of
+	  accuracy, reliability, title, merchantability,
+	  non-infringement, fitness for a particular purpose or any
+	  other warranty, condition, guarantee or representation,
+	  whether oral, in writing or in electronic form, including
+	  but not limited to the accuracy or completeness of any
+	  information contained therein or provided by the Site. We,
+	  our affiliates, and our third party service providers do not
+	  represent or warrant that access to the Site will be
+	  uninterrupted or that there will be no failures, errors or
+	  omissions or loss of transmitted information, or that no
+	  viruses will be transmitted on the Site.</emphasis></para>
+
+      <para><emphasis>We, our affiliates and our third
+	  party service providers shall not be liable to you or any
+	  third parties for any direct, indirect, special,
+	  consequential or punitive damages allegedly sustained
+	  arising out of this Agreement, the providing of the Site
+	  hereunder, the sale or purchase of any goods or merchandise,
+	  your access to or inability to access the Site, including
+	  for viruses alleged to have been obtained from the Site,
+	  your use of or reliance on the Site or any of the
+	  merchandise, information or materials available on the
+	  Site, regardless of the type of claim or the nature of
+	  the cause of action, even if advised of the possibility of
+	  such damages. Some states do not allow the exclusion of
+	  implied warranties or the limitation or exclusion of
+	  liability for incidental or consequential damages, so the
+	  above exclusions or limitations may not apply to you. You
+	  may also have other rights that vary from state to
+	  state.</emphasis></para>
+
+      <para><emphasis>You hereby agree to release us, our affiliates
+	  and third-party service providers, and each of their
+	  respective directors, officers, employees, and agents from
+	  claims, demands and damages (actual and consequential) of
+	  every kind and nature, known and unknown, suspected and
+	  unsuspected, disclosed and undisclosed
+	  (<quote>claims</quote>), arising out of or in any way
+	  connected with your use of this site. If you are a
+	  California resident, you waive California Civil Code Section
+	  1542, which states, in part: <quote>A general release does
+	    not extend to claims which the creditor does not know or
+	    suspect to exist in his favor at the time of executing the
+	    release, which if known by him must have materially
+	    affected his settlement with the
+	    debtor</quote>.</emphasis></para>
+    </sect2>
+  </sect1>
+</appendix>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
