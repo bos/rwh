@@ -467,7 +467,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       discussed in this chapter.
     </para>
   </sect1>
-  <sect1>
+  <sect1 id="hs.data.passwd">
     <title>Extended Example: /etc/passwd</title>
     <para id="x.AJ">
       In order to illustrate the usage of a number of different data

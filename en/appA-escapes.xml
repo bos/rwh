@@ -6,7 +6,7 @@
     Haskell's escaping rules follow the pattern established by the C
     programming language, but expand considerably upon them.</para>
 
-  <sect1>
+  <sect1 id="hs.escapes.char">
     <title>Writing character and string literals</title>
     
     <para id="x.ZI">A single character is surrounded by ASCII single quotes,
@@ -27,7 +27,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.escapes.intl">
     <title>International language support</title>
 
     <para id="x.cI">Haskell uses Unicode internally for its <type>Char</type>
@@ -62,7 +62,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.escapes.escape">
     <title>Escaping text</title>
 
     <para id="x.hI">Some characters must be escaped to be represented inside a

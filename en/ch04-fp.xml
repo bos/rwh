@@ -3,7 +3,7 @@
 <chapter id="hs.fp">
   <title>Functional programming</title>
 
-  <sect1>
+  <sect1 id="hs.fp.thinking">
     <title>Thinking in Haskell</title>
 
     <para id="x.V6">There are two aspects to the early stages of programming
@@ -515,7 +515,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.fp.loop">
     <title>How to think about loops</title>
 
     <para id="x.i7">Unlike traditional languages, Haskell has neither a
@@ -1457,7 +1457,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.fp.aspattern">
     <title>As-patterns and function composition</title>
 
     <para id="x.FA">Haskell's <function>tails</function> function, in the
