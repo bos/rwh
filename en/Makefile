@@ -152,6 +152,11 @@ autoid: tools
 	../tools/bin/autoid ch*.xml app*.xml
 	rename .autoid '' *.autoid
 
+ids: all-ids.dat
+
+all-ids.dat: ../xsl/all-ids.xsl $(src-files)
+	$(xsltproc) $(xsltproc-opts) -o $@ ../xsl/all-ids.xsl $(src-master)
+
 # Generate a zip file with the kind of contents required by nostromo's
 # AH server.
 
