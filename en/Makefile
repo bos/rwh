@@ -183,7 +183,8 @@ clean:
 	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
-vpath %.js ../tools/javascript
+vpath %.css ../web
+vpath %.js ../web/javascript
 
 vpath %.c $(addprefix ../examples/,$(dir $(src-examples)))
 vpath %.cpp $(addprefix ../examples/,$(dir $(src-examples)))
