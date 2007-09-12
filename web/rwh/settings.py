@@ -1,5 +1,7 @@
 # Django settings for rwh project.
 
+import os, sys
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -9,12 +11,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+ROOT = os.path.dirname(sys.modules[__name__].__file__)
+
 if True:
     from secrets import DATABASE_ENGINE, DATABASE_NAME, DATABASE_USER, \
          DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT
 else:
     DATABASE_ENGINE = 'sqlite3'
-    DATABASE_NAME = '/home/bos/src/darcs/book/web/rwh/.database.sqlite3'
+    DATABASE_NAME = os.path.join(ROOT, '.database.sqlite3')
     DATABASE_USER = ''
     DATABASE_PASSWORD = ''
     DATABASE_HOST = ''
@@ -70,7 +74,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'rwh.urls'
 
 TEMPLATE_DIRS = (
-    '/home/bos/hg/rwh/templates'
+    os.path.join(ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
