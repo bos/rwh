@@ -25,8 +25,6 @@
         <xsl:copy-of select="$id"/>
         <xsl:text>|</xsl:text>
         <xsl:copy-of select="$sectitle"/>
-        <xsl:text>|</xsl:text>
-        <xsl:copy-of select="$chaptitle"/>
         <xsl:text>&#x0a;</xsl:text>
       </xsl:for-each>
     </xsl:for-each>
