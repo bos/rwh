@@ -13,18 +13,20 @@
 
   <xsl:template match="/">
     <xsl:for-each select="//chapter|//appendix|//sect1">
-      <xsl:variable name="page">
+      <xsl:variable name="id">
         <xsl:value-of select="@id"/>
       </xsl:variable>
-      <xsl:variable name="title">
+      <xsl:variable name="sectitle">
         <xsl:value-of select="normalize-space(./title)"/>
       </xsl:variable>
       <xsl:for-each select=".//para[@id]">
         <xsl:value-of select="@id"/>
         <xsl:text>|</xsl:text>
-        <xsl:copy-of select="$page"/>
+        <xsl:copy-of select="$id"/>
         <xsl:text>|</xsl:text>
-        <xsl:copy-of select="$title"/>
+        <xsl:copy-of select="$sectitle"/>
+        <xsl:text>|</xsl:text>
+        <xsl:copy-of select="$chaptitle"/>
         <xsl:text>&#x0a;</xsl:text>
       </xsl:for-each>
     </xsl:for-each>
