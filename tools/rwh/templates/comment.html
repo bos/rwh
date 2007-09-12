@@ -1,0 +1,51 @@
+{% ifequal length 1 %}
+  <a class="commenttoggle" href="comments: show / hide">1 comment</a>
+{% else %}
+  {% if length %}
+    <a class="commenttoggle" href="comments: show / hide">{{ length }} comments</a>
+  {% else %}
+    <a class="commenttoggle" href="comments: show / hide">No comments</a>
+    <div class="comment" style="display: none;">
+      <div class="comment_body">Be the first to comment on this paragraph!</div>
+    </div>
+  {% endif %}
+{% endifequal %}
+{% for c in query %}
+  <div class="comment" {% if not newid %} style="display: none;" {% endif %}
+    id="comment{{ c.id }}">
+    <a name="comment{{ c.id }}"/>
+    <div class="comment_header">
+      {% if c.submitter_url %}
+	<span class="comment_name"><a rel="nofollow"
+	  href="{{ c.submitter_url }}">{{ c.submitter_name|escape }}</a></span>
+      {% else %}
+	<span class="comment_name">{{ c.submitter_name|escape }}</span>
+      {% endif %}
+      <span class="comment_date">{{ c.date|date:"Y-m-d" }}</span>
+      {% ifequal c.id newid %}
+	<span class="comment_new">thank you for your comment!</span>
+      {% endifequal %}
+    </div>
+    <div class="comment_body">{{ c.comment|escape|linebreaks }}</div>
+  </div>
+{% endfor %}
+<form class="comment" id="{{ id }}" action="/comments/submit/{{ id }}"
+    method="post" {% if not newid %} style="display: none;" {% endif %}>
+  {{ form.id }}
+  <table>
+    <tbody>
+      <tr><td align="right" valign="top">Comment<br><a class="comment_help"
+		href="hs.web.comment.html">[ help ]</a></td>
+	  <td>{{ form.comment }}</td></tr>
+      <tr><td align="right">Your name</td><td>{{ form.name }}
+	    <span class="comment_help"><b>Required</b> so we can <a
+		href="hs.web.comment.html#hs.web.comment.name">give you credit</a></span></td></tr>
+      <tr><td align="right">Your URL</td><td>{{ form.url }}
+	    <span class="comment_help"><b>Optional</b> link to blog, home page,
+	      <i>etc</i>.</span></td></tr>
+      <tr><td align="right">Remember you?</td><td>{{ form.remember }}</td></tr>
+      <tr><td/><td><input name="submit" type="submit"
+	      value="Submit Comment"/><span class="comment_error">{{ error }}</span></td></tr>
+    </tbody>
+  </table>
+</form>
