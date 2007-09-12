@@ -88,6 +88,10 @@
     </pre>
   </xsl:template>
 
+  <!-- The default stylesheet generates a little TOC at the beginning
+       of each qandaset.  Uh, no thanks. -->
+  <xsl:template name="process.qanda.toc"/>
+
   <xsl:template name="user.head.content">
     <link rel="alternate" type="application/atom+xml" title="Comments"
       href="/feeds/comments/"/>
