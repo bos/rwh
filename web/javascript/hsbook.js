@@ -40,7 +40,7 @@ function updateComments(responseText, statusText) {
 }
 
 $(document).ready(function() {
-  $("p[@id]").append("<span class=\"comment\"><span class=\"commenttoggle\">Loading...</span></span>");
+  $("p[@id]").append(" <span class=\"comment\"><span class=\"commenttoggle\">Loading...</span></span>");
   $("span.comment").each(function() {
     $(this).load("http://localhost:8000/comments/single/" +
 		 $(this).parent().attr("id"), updateComments);
