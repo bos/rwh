@@ -9,12 +9,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = '/home/bos/hg/rwh/.database.sqlite3'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+if True:
+    from secrets import DATABASE_ENGINE, DATABASE_NAME, DATABASE_USER, \
+         DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT
+else:
+    DATABASE_ENGINE = 'sqlite3'
+    DATABASE_NAME = '/home/bos/src/darcs/book/web/rwh/.database.sqlite3'
+    DATABASE_USER = ''
+    DATABASE_PASSWORD = ''
+    DATABASE_HOST = ''
+    DATABASE_PORT = ''
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -47,8 +51,7 @@ MEDIA_URL = ''
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
 
-# Make this unique, and don't share it with anybody.
-#SECRET_KEY = ''
+from secrets import SECRET_KEY
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
