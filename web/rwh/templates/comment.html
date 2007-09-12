@@ -29,7 +29,7 @@
     <div class="comment_body">{{ c.comment|escape|linebreaks }}</div>
   </div>
 {% endfor %}
-<form class="comment" id="{{ id }}" action="/comments/submit/{{ id }}"
+<form class="comment" id="{{ id }}" action="/comments/submit/{{ id }}/"
     method="post" {% if not newid %} style="display: none;" {% endif %}>
   {{ form.id }}
   <table>

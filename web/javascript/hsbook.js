@@ -40,9 +40,18 @@ function updateComments(responseText, statusText) {
 }
 
 $(document).ready(function() {
-  $("p[@id]").append(" <span class=\"comment\"><span class=\"commenttoggle\">Loading...</span></span>");
+  function loading(id) {
+    return " <span class=\"comment\" pid=\"" + id +
+      "\"><span class=\"commenttoggle\">Loading...</span></span>";
+  }
+  $("p[@id]").each(function() {
+    $(this).append(loading($(this).attr("id")));
+  });
+  $("pre[@id]").each(function() {
+    $(this).after(loading($(this).attr("id")));
+  });
   $("span.comment").each(function() {
     $(this).load("http://localhost:8000/comments/single/" +
-		 $(this).parent().attr("id"), updateComments);
+		 $(this).attr("pid") + "/", updateComments);
   });
 });

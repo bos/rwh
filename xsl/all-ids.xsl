@@ -19,7 +19,7 @@
       <xsl:variable name="sectitle">
         <xsl:value-of select="normalize-space(./title)"/>
       </xsl:variable>
-      <xsl:for-each select=".//para[@id]">
+      <xsl:for-each select=".//para[@id]|.//programlisting[@id]|.//screen[@id]">
         <xsl:value-of select="@id"/>
         <xsl:text>|</xsl:text>
         <xsl:copy-of select="$id"/>
