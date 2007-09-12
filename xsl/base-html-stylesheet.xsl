@@ -67,6 +67,27 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- Add id attributes to <programlisting> and <screen> tags. Once
+       again, this is mostly a copy of the base XSL, although rather
+       trimmed down. -->
+  <xsl:template match="programlisting|screen">
+    <xsl:param name="suppress-numbers" select="'0'"/>
+
+    <xsl:call-template name="anchor"/>
+
+    <pre>
+      <!-- Here we go. -->
+      <xsl:if test="$generate.id.attributes != 0">
+        <xsl:attribute name="id">
+          <xsl:call-template name="object.id"/>
+        </xsl:attribute>
+      </xsl:if>
+
+      <xsl:apply-templates select="." mode="class.attribute"/>
+      <xsl:call-template name="apply-highlighting"/>
+    </pre>
+  </xsl:template>
+
   <xsl:template name="user.head.content">
     <link rel="alternate" type="application/atom+xml" title="Comments"
       href="/feeds/comments/"/>
