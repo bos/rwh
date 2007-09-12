@@ -1,0 +1,5 @@
+This directory contains web-related files.  Surprise!
+
+javascript - files used by the comment system, based on jQuery
+rwh        - Django app that acts as the comment back end
+styles.css - style file
