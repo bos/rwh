@@ -100,6 +100,13 @@
     <script type="text/javascript" src="hsbook.js"></script>
   </xsl:template>
 
+  <xsl:template name="user.footer.content">
+    <div class="license">Copyright 2007 Bryan O'Sullivan, Don Stewart, and John
+    Goerzen. This work is licensed under a <a rel="license"
+    href="http://creativecommons.org/licenses/by-nc/3.0/">Creative
+    Commons Attribution-Noncommercial 3.0 License</a>.</div>
+  </xsl:template>
+
   <xsl:template name="user.footer.navigation">
     <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
     <script type="text/javascript">_uacct = "UA-1805907-3"; urchinTracker();</script>
