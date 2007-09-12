@@ -1,0 +1,12 @@
+<p>On {{ obj.date|date:"Y-m-d" }},
+      {% if obj.submitter_url %}
+	<a rel="nofollow" href="{{ obj.submitter_url }}">{{ obj.submitter_name|escape }}</a>
+      {% else %}
+	{{ obj.submitter_name|escape }}
+      {% endif %}
+commented on &#8220;{{ obj.element.title|escape }}&#8221;:</p>
+<blockquote>
+{{ obj.comment|escape|linebreaks }}
+</blockquote>
+<p>To see this comment in context or to respond, visit <a
+	href="http://{{ site.domain }}{{ obj.get_absolute_url }}">{{ site.domain }}</a></p>
