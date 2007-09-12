@@ -75,7 +75,7 @@ div.comment {
 }
 
 .comment_new {
-  opacity: 1.1;
+  color: darkgreen;
   font-style: italic;
   font-weight: bolder;
 }
