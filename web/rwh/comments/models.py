@@ -35,7 +35,7 @@ class Comment(models.Model):
         help_text='IP address from which comment was submitted')
     date = models.DateTimeField('date submitted', auto_now=True,
                                 auto_now_add=True)
-    reviewed = models.BooleanField(
+    reviewed = models.BooleanField(default=False, db_index=True,
         help_text='Has this comment been reviewed by an author?')
     hidden = models.BooleanField(default=False, db_index=True,
         help_text='Has this comment been hidden from public display?')
