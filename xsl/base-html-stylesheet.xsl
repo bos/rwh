@@ -68,6 +68,8 @@
   </xsl:template>
 
   <xsl:template name="user.head.content">
+    <link rel="alternate" type="application/atom+xml" title="Comments"
+      href="/feeds/allcomments/"/>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="form.js"></script>
     <script type="text/javascript" src="hsbook.js"></script>
