@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 import rwh.comments.feeds as feeds
 
 feeds = {
-    'allcomments': feeds.AllComments,
+    'comments': feeds.Comments,
     }
 
 urlpatterns = patterns('',
