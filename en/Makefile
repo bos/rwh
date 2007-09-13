@@ -111,7 +111,7 @@ pdf: $(obj-pdf)
 xpdf: $(obj-pdf)
 	xpdf $(obj-pdf)
 
-$(obj-pdf): .validated $(src-figs)
+$(obj-pdf): .validated-00book.xml $(src-figs)
 	$(call xml-to-pdf,$(src-master))
 
 # Positional parameters:
@@ -127,30 +127,34 @@ endef
 
 # Positional parameters:
 # 1 -> name of output file
-# 2 -> release profiles to use (optional, uses $(1) if omitted)
-define release-profile
+# 2 -> revision profile to use
+define profile-revision
 $(xsltproc) $(xsltproc-opts) -o $(1).xml \
-  --stringparam profile.release "$(or $(2),$(1))" \
-  ../xsl/system-xsl/profiling/profile.xsl $(src-master)
+  --stringparam profile.revision "$(2)" ../xsl/dtd-profile.xsl $(src-master)
 endef
 
 .PHONY: alpha
 alpha: $(obj-alpha)/index.html $(extras-html:%=$(obj-alpha)/%)
 
-$(obj-alpha)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
-	$(call release-profile,alpha)
+$(obj-alpha)/index.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
+
+alpha.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
+	$(call profile-revision,alpha,alpha)
 
 .PHONY: beta
 beta: $(obj-beta)/index.html $(extras-html:%=$(obj-beta)/%)
 
-$(obj-beta)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
-	$(call make-html,$(obj-beta))
+$(obj-beta)/index.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
+	$(call make-html,$(obj-beta),beta.xml)
+
+beta.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
+	$(call profile-revision,beta,beta)
 
 .PHONY: html
 html: $(obj-html)/index.html $(extras-html:%=$(obj-html)/%)
 
-$(obj-html)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
+$(obj-html)/index.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-html))
 
 ../xsl/system-xsl: $(system-xsl-dir)
@@ -170,7 +174,7 @@ xxx-book-index.xml: $(src-master) $(chapter-files)
 	rm -r index
 
 .PHONY: valid
-valid: .validated
+valid: .validated-00book.xml
 
 .PHONY: tools
 tools: $(tools:%=../tools/bin/%)
@@ -185,9 +189,9 @@ auto-snippets.xml: $(stamp-examples)
 	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
 	cat $(sort $^) | sort >> $@
 
-.validated: $(tools:%=../tools/bin/%) $(src-files)
-	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $(src-master)
-	touch .validated
+.validated-%: % $(tools:%=../tools/bin/%) $(src-files)
+	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $<
+	touch $@
 
 autoid: tools
 	../tools/bin/autoid ch*.xml app*.xml
@@ -204,7 +208,7 @@ all-ids.dat: ../xsl/all-ids.xsl $(src-files)
 .PHONY: zip
 zip: book.zip
 
-book.zip: .validated $(src-figs)
+book.zip: .validated-00book.xml $(src-figs)
 	rm -rf $@ bookzip
 	mkdir -p bookzip/figs
 	cp $(src-files) $(xml-examples) bookzip
@@ -218,7 +222,7 @@ book.zip: .validated $(src-figs)
 	rm -r bookzip
 
 clean:
-	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
+	-rm -f .validated* .stamp-* *-entities.txt $(obj-pdf) 00book.zip
 	-rm -rf x $(obj-html) $(obj-alpha) $(obj-beta) index ../tools/dist \
 	  ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
