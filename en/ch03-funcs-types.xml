@@ -377,6 +377,28 @@
       the result of a function is the result of evaluating whatever
       expression is in the function's body.</para>
 
+    <sect2 id="hs.funcstypes.variable">
+      <title>Just what is a variable, anyway?</title>
+
+      <para>If you're used to imperative programming languages, you're
+	likely to think of a variable as a way of identifying a
+	<quote>box</quote>.  You can get the value that's currently in
+	a box, and you can change the value in the box using
+	assignment.</para>
+
+      <para>In Haskell, a variable is the name of a
+	<emphasis>value</emphasis>.  This is critically different from
+	the name of a box: we're used to being able to change what's
+	inside a box from our dealings with other languages, but we
+	can't change the <quote>twoness</quote> of the value
+	<literal>2</literal>.</para>
+
+      <para>Creating a variable in Haskell just gives a convenient
+	name to a value; we can't change the value associated with a
+	variable.  This bears a strong similarity to the way we think
+	about variables in mathematics.</para>
+    </sect2>
+
     <sect2 id="hs.funcstypes.if">
       <title>Conditional evaluation</title>
 
