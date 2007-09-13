@@ -1,3 +1,13 @@
+# Useful targets to know about:
+#
+# clean - delete all intermediate and end product files
+#
+# alpha - build profiled HTML for internal review
+# beta - build profiled HTML for public review
+# html - build unprofiled HTML, i.e. the whole lot
+#
+# pdf - try to build PDF; often pitifully broken
+
 # Sources.
 
 src-master := 00book.xml
@@ -39,7 +49,9 @@ stamp-examples := $(addprefix x/.stamp-,$(notdir $(src-examples)))
 # Objects.
 
 obj-pdf := $(src-master:%.xml=%.pdf)
-obj-html := html
+obj-html := html/html
+obj-alpha := alpha/html
+obj-beta := beta/html
 
 # Tools.
 
@@ -91,7 +103,7 @@ endif
 endif
 
 .PHONY: all
-all: pdf html
+all: alpha beta pdf html
 
 .PHONY: all
 pdf: $(obj-pdf)
@@ -102,15 +114,44 @@ xpdf: $(obj-pdf)
 $(obj-pdf): .validated $(src-figs)
 	$(call xml-to-pdf,$(src-master))
 
+# Positional parameters:
+# 1 -> directory to put output in
+# 2 -> name of docbook file to process (optional)
+define make-html
+mkdir -p $(1)
+$(xsltproc) $(xsltproc-opts) -o $(1)/x \
+  ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
+cp -rf figs $(1)
+cp ../xsl/system-xsl/images/*.png $(1)/figs
+endef
+
+# Positional parameters:
+# 1 -> name of output file
+# 2 -> release profiles to use (optional, uses $(1) if omitted)
+define release-profile
+$(xsltproc) $(xsltproc-opts) -o $(1).xml \
+  --stringparam profile.release "$(or $(2),$(1))" \
+  ../xsl/system-xsl/profiling/profile.xsl $(src-master)
+endef
+
+.PHONY: alpha
+alpha: $(obj-alpha)/index.html $(extras-html:%=$(obj-alpha)/%)
+
+$(obj-alpha)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
+	$(call release-profile,alpha)
+	$(call make-html,$(obj-alpha),alpha.xml)
+
+.PHONY: beta
+beta: $(obj-beta)/index.html $(extras-html:%=$(obj-beta)/%)
+
+$(obj-beta)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
+	$(call make-html,$(obj-beta))
+
 .PHONY: html
 html: $(obj-html)/index.html $(extras-html:%=$(obj-html)/%)
 
 $(obj-html)/index.html: .validated ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
-	mkdir -p $(obj-html)
-	$(xsltproc) $(xsltproc-opts) -o $(obj-html)/x \
-	  ../xsl/chunk-stylesheet.xsl $(src-master)
-	cp -rf figs $(obj-html)
-	cp ../xsl/system-xsl/images/*.png $(obj-html)/figs
+	$(call make-html,$(obj-html))
 
 ../xsl/system-xsl: $(system-xsl-dir)
 	ln -s $< $@
@@ -178,7 +219,8 @@ book.zip: .validated $(src-figs)
 
 clean:
 	-rm -f .validated .stamp-* *-entities.txt $(obj-pdf) 00book.zip
-	-rm -rf x $(obj-html) index ../tools/dist ../tools/bin
+	-rm -rf x $(obj-html) $(obj-alpha) $(obj-beta) index ../tools/dist \
+	  ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
@@ -214,6 +256,18 @@ x/.stamp-%.py: %.py ../tools/bin/snippets x
 
 x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
+
+$(obj-alpha)/%.css: %.css
+	cp $< $@
+
+$(obj-alpha)/%.js: %.js
+	cp $< $@
+
+$(obj-beta)/%.css: %.css
+	cp $< $@
+
+$(obj-beta)/%.js: %.js
+	cp $< $@
 
 $(obj-html)/%.css: %.css
 	cp $< $@
