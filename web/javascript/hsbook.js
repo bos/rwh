@@ -51,7 +51,8 @@ $(document).ready(function() {
     $(this).after(loading($(this).attr("id")));
   });
   $("span.comment").each(function() {
-    $(this).load("http://localhost:8000/comments/single/" +
-		 $(this).attr("pid") + "/", updateComments);
+    $(this).load(location.protocol + "//" + location.host +
+		 "/comments/single/" + $(this).attr("pid") + "/",
+		 updateComments);
   });
 });
