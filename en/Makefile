@@ -126,6 +126,7 @@ mkdir -p $(1)
 $(xsltproc) $(xsltproc-opts) -o $(1)/x \
   ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
 cp -rf figs $(1)
+cp -f ../web/icons/*.png $(1)/figs
 cp ../xsl/system-xsl/images/*.png $(1)/figs
 set -e; for i in $(1)/*.html; do \
   gzip -9 -c $$i > $$i.gz; \

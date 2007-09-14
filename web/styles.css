@@ -46,9 +46,28 @@ div.navheader th, div.navfooter td {
   font-family: georgia,serif;
 }
 
+pre.screen {
+  background-image: url(figs/shell.png);
+}
+
+pre.programlisting {
+  background-image: url(figs/source.png);
+}
+
+pre.screen, pre.programlisting {
+  background-repeat: no-repeat;
+  background-position: 10px 10px;
+  padding-left: 70px;
+}
+
 strong.command, code, pre {
   font-family: monospace;
   font-weight: normal;
+}
+
+strong.userinput > code {
+  font-weight: bolder;
+  color: #303030;
 }
 
 div.toc > p {
@@ -113,7 +132,7 @@ div.note {
 
 div.comment, div.new_comment {
   padding: 0.5em;
-  margin: 0.25em;
+  margin: 0.5em;
   margin-left: 2em;
   border-style: solid;
   border-width: 1px;
