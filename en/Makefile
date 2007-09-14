@@ -34,13 +34,15 @@ src-examples := \
 src-figs := \
 	$(wildcard figs/*.png)
 
-extras-html := \
+extras-html-base := \
 	hsbook.js \
 	form.js \
 	form-min.js \
 	jquery.js \
 	jquery-min.js \
 	styles.css
+
+extras-html := $(extras-html-base) $(extras-html-base:%=%.gz)
 
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
@@ -125,6 +127,9 @@ $(xsltproc) $(xsltproc-opts) -o $(1)/x \
   ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
 cp -rf figs $(1)
 cp ../xsl/system-xsl/images/*.png $(1)/figs
+set -e; for i in $(1)/*.html; do \
+  gzip -9 -c $$i > $$i.gz; \
+done
 endef
 
 # Positional parameters:
@@ -280,3 +285,6 @@ $(obj-html)/%.css: %.css
 
 $(obj-html)/%.js: %.js
 	cp $< $@
+
+%.gz: %
+	gzip -9 -c $< > $@
