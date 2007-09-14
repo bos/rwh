@@ -101,10 +101,13 @@
   </xsl:template>
 
   <xsl:template name="user.footer.content">
-    <div class="license">Copyright 2007 Bryan O'Sullivan, Don Stewart, and John
-    Goerzen. This work is licensed under a <a rel="license"
-    href="http://creativecommons.org/licenses/by-nc/3.0/">Creative
-    Commons Attribution-Noncommercial 3.0 License</a>.</div>
+    <div class="rwhfooter">
+      <p><img src="figs/rss.png"/> Want to stay up to date? Subscribe to the comment feed for <a id="chapterfeed" class="feed" href="/feeds/comments/">this chapter</a>, or the <a class="feed" href="/feeds/comments/">entire book</a>.</p>
+      <p>Copyright 2007 Bryan O'Sullivan, Don Stewart, and
+      John Goerzen. This work is licensed under a <a rel="license"
+      href="http://creativecommons.org/licenses/by-nc/3.0/">Creative
+      Commons Attribution-Noncommercial 3.0 License</a>.</p>
+    </div>
   </xsl:template>
 
   <xsl:template name="user.footer.navigation">
