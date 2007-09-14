@@ -49,8 +49,11 @@ $(document).ready(function() {
   $("pre[@id]").each(function() {
     $(this).after(loading($(this).attr("id")));
   });
+  var chapid = $("div.chapter").attr("id");
+  $("#chapterfeed").attr("href",
+			 $("#chapterfeed").attr("href") + chapid + "/");
   $.getJSON(location.protocol + "//" + location.host + "/comments/chapter/" +
-	    $("div.chapter").attr("id") + "/", function(data) {
+	    chapid + "/", function(data) {
     $.each(data, function(id, item) {
       $("p[id=\"" + id + "\"] span.commenttoggle").replaceWith(item);
       ajaxifyForm(id);
