@@ -3,7 +3,7 @@ body {
   font-family: verdana,helvetica,sans-serif;
 }
 
-.navheader, .book, .chapter, .appendix, .navfooter {
+.navheader, .book, .preface, .chapter, .appendix, .bibliography, .navfooter {
   width: 50em;
   margin-left: auto;
   margin-right: auto;
@@ -17,7 +17,7 @@ a:hover, a:active {
   border-bottom: 1px solid #aaaaaa;
 }
 
-.book, .chapter, .appendix {
+.book, .preface, .chapter, .appendix, .bibliography {
   background: white;
   padding: 2em;
 }
@@ -54,7 +54,11 @@ pre.programlisting {
   background-image: url(figs/source.png);
 }
 
-pre.screen, pre.programlisting {
+pre.programlisting, pre.screen, p.remark {
+  border-style: solid;
+  border-width: 1px;
+  font-size: medium;
+  padding: 1em;
   background-repeat: no-repeat;
   background-position: 10px 10px;
   padding-left: 70px;
@@ -73,35 +77,39 @@ strong.userinput > code {
 div.toc > p {
   opacity: 0.35;
   font-family: georgia,serif;
-  font-weight: normal;
   cursor: pointer;
 }
 
-div.toc > dl {
+div.toc b {
+  font-weight: normal;
+  font-size: large;
+}
+
+.book .titlepage {
   display: none;
 }
 
-.programlisting, .screen {
-  border-style: solid;
-  border-width: 1px;
-  font-size: medium;
+.chapter div.toc > dl {
+  display: none;
+}
+
+pre.programlisting, pre.screen, p.remark {
   overflow: hidden;
-  padding: 1em;
+}
+
+p.remark {
+  background-image: url(figs/remark.png);
+  background-color: #FFEFE8;
+  border-color: #e0a8a0;
 }
 
 span.remark {
-  border-style: solid;
-  border-width: 1px;
-  font-size: medium;
-  overflow: hidden;
-  margin: 1em;
-  background: #FFEFC0 none repeat scroll 0% 50%;
-  border-color: #DC9B40;
-  opacity: 0.4;
+  font-style: normal;
+  color: #707070;
 }
 
 .screen {
-  background: #E0FFB8 none repeat scroll 0% 50%;
+  background: #e7ffc7 none repeat scroll 0% 50%;
   border-color: #94DA3A;
 }
 
