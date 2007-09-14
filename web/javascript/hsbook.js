@@ -1,19 +1,3 @@
-function paraHoverIn() {
-  $(this).fadeTo("normal", 0.8);
-}
-
-function paraHoverOut() {
-  $(this).fadeTo("normal", 0.35);
-}
-
-function commentOpen() {
-  $(this).parent().children(".comment").show("normal");
-}
-
-function commentClose() {
-  $(this).parent().children(".comment").hide("normal");
-}
-
 function beforeComment(formData, jqForm, options) {
   var form = jqForm[0];
   if (!form.comment.value) {
@@ -32,8 +16,10 @@ function beforeComment(formData, jqForm, options) {
 
 function updateComments(responseText, statusText) {
   $(this).children("a.commenttoggle")
-    .toggle(commentOpen, commentClose)
-    .hover(paraHoverIn, paraHoverOut);
+    .toggle(function() { $(this).parent().children(".comment").show("normal"); },
+	    function() { $(this).parent().children(".comment").hide("normal"); })
+    .hover(function() { $(this).fadeTo("normal", 0.8); },
+	   function() { $(this).fadeTo("normal", 0.35); });
   $(this).children("form.comment").ajaxForm({
     beforeSubmit: beforeComment, success: updateComments, target: $(this)
   });
@@ -44,6 +30,10 @@ $(document).ready(function() {
     return " <span class=\"comment\" pid=\"" + id +
       "\"><span class=\"commenttoggle\">Loading...</span></span>";
   }
+  $("div.toc>p").toggle(function() { $(this).next().show("normal"); },
+			function() { $(this).next().hide("normal"); });
+  $("div.toc>p").hover(function() { $(this).fadeTo("normal", 0.8); },
+		       function() { $(this).fadeTo("normal", 0.35); });
   $("p[@id]").each(function() {
     $(this).append(loading($(this).attr("id")));
   });
