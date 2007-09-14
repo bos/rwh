@@ -51,7 +51,7 @@ def single(request, id, form=None, newid=None):
         'form': form,
         'length': len(queryset),
         'query': queryset,
-        'newid': newid,
+        'newid': newid or True,
         'error': error,
         })
 

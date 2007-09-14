@@ -4,7 +4,7 @@
   <title>Case study: regular expressions and file name
     matching</title>
 
-  <para id="x.zE">Working with text strings is a fundamental tool in the
+  <para id="x_zE">Working with text strings is a fundamental tool in the
     programmer's toolbox.  We've already been introduced to
     bytestrings and ropes as efficient ways to work with large text
     strings.  Throughout this book, we'll be returning to string
@@ -12,7 +12,7 @@
     techniques and libraries we can use to tackle a variety of
     problems that happen to involve working with strings.</para>
 
-  <para id="x.AF">In this chapter, we'll develop a library that can match file
+  <para id="x_AF">In this chapter, we'll develop a library that can match file
     names against <quote>glob-style</quote> file name patterns.  These
     patterns are a common feature of command shells.  To begin, we'll
     introduce the pattern language that we'll be working with.  Our
@@ -26,7 +26,7 @@
   <sect1 id="hs.glob.fnmatch">
     <title>File name matching</title>
 
-    <para id="x.BF">Many <quote>system-oriented</quote> programming languages
+    <para id="x_BF">Many <quote>system-oriented</quote> programming languages
       provide library routines that let us match a file name against a
       pattern, or that will give a list of files that match the
       pattern.  (In other languages, this function is often named
@@ -36,7 +36,7 @@
       functions.  We'll take this as an opportunity to develop our
       own.</para>
 
-    <para id="x.CF">The kinds of patterns we'll be dealing with are commonly
+    <para id="x_CF">The kinds of patterns we'll be dealing with are commonly
       referred to as <quote>glob patterns</quote> (the term we'll
       use), <quote>wildcard patterns</quote>, or <quote>shell-style
 	patterns</quote>.  These patterns have just a few simple
@@ -45,26 +45,26 @@
 
     <itemizedlist>
       <listitem>
-	<para id="x.DF">Matching a string against a pattern starts at the
+	<para id="x_DF">Matching a string against a pattern starts at the
 	  beginning of the string, and finishes at the end.</para>
       </listitem>
       <listitem>
-	<para id="x.EF">Most literal characters match themselves.  For example,
+	<para id="x_EF">Most literal characters match themselves.  For example,
 	  the text <literal>foo</literal> in a pattern will match
 	  <literal>foo</literal>, and only <literal>foo</literal>, in
 	  an input string.</para>
       </listitem>
       <listitem>
-	<para id="x.FF">The <literal>*</literal> (asterisk) character means
+	<para id="x_FF">The <literal>*</literal> (asterisk) character means
 	  <quote>match anything</quote>; it will match any text,
 	  including the empty string.</para>
       </listitem>
       <listitem>
-	<para id="x.GF">The <literal>?</literal> (question mark) character means
+	<para id="x_GF">The <literal>?</literal> (question mark) character means
 	  <quote>match any single character</quote>.</para>
       </listitem>
       <listitem>
-	<para id="x.HF">A <literal>[</literal> (open square bracket) character
+	<para id="x_HF">A <literal>[</literal> (open square bracket) character
 	  begins a <emphasis>character class</emphasis>, which is
 	  ended by a <literal>]</literal>.  Its meaning is
 	  <quote>match any character in this class</quote>.  A
@@ -73,11 +73,11 @@
 	  <literal>!</literal>, so that it means <quote>match any
 	    character <emphasis>not</emphasis> in this
 	    class</quote>.</para>
-	<para id="x.IF">As a shorthand, a character followed by a
+	<para id="x_IF">As a shorthand, a character followed by a
 	  <literal>-</literal> (dash), followed by another character,
 	  denotes a <emphasis>range</emphasis>: <quote>match any
 	    character within this set</quote>.</para>
-	<para id="x.JF">Character classes have an added subtlety; they can't be
+	<para id="x_JF">Character classes have an added subtlety; they can't be
 	  empty.  The first character after the opening
 	  <literal>[</literal> or <literal>[!</literal> is part of the
 	  class, so we can write a class containing the
@@ -86,7 +86,7 @@
       </listitem>
     </itemizedlist>
 
-    <para id="x.KF">While Haskell doesn't provide a way to match glob patterns
+    <para id="x_KF">While Haskell doesn't provide a way to match glob patterns
       among its standard libraries, it has excellent regular
       expression matching facilities.  Glob patterns are nothing more
       than cut-down regular expressions with slightly different
@@ -99,7 +99,7 @@
   <sect1 id="hs.glob.regex">
     <title>Regular expressions in Haskell</title>
 
-    <para id="x.LF">In this section, I'll be assuming that you are already
+    <para id="x_LF">In this section, I'll be assuming that you are already
       familiar with regular expressions (which I'll abbreviate as
       <emphasis>regexps</emphasis> from here on) by way of some other
       language, such as Python, Perl, or Java.  Rather than introduce
@@ -109,7 +109,7 @@
       expressive than those of other languages, so there's plenty to
       talk about.</para>
 
-    <para id="x.MF">To begin our exploration of the regexp libraries, the only
+    <para id="x_MF">To begin our exploration of the regexp libraries, the only
       module we'll need to work with is <classname
 	role="module">Text.Regex.Posix</classname>.  As usual, the
       most convenient way to explore this module is by interacting
@@ -117,7 +117,7 @@
 
     &regexp.ghci:load;
 
-    <para id="x.NF">The only function that we're likely to need for normal use
+    <para id="x_NF">The only function that we're likely to need for normal use
       is the regexp matching function, an infix operator named
       <function>=~</function> (borrowed from Perl.  The first hurdle
       to overcome is that Haskell's regexp libraries make heavy use of
@@ -128,7 +128,7 @@
 
     &regexp.ghci:typetwiddle;
 
-    <para id="x.OF">Ouch!  Rather than pick apart what this convoluted
+    <para id="x_OF">Ouch!  Rather than pick apart what this convoluted
       definition means, let's take a shortcut.  The
       <function>=~</function> operator uses typeclasses for both of
       its arguments, and also for its return type.  The first argument
@@ -140,7 +140,7 @@
     <sect2>
       <title>The many types of result</title>
 
-      <para id="x.PF">The <function>=~</function> operator is polymorphic in its
+      <para id="x_PF">The <function>=~</function> operator is polymorphic in its
 	return type, so the Haskell compiler needs some way to know
 	what type of result we would like.  In real code, it may be
 	able to infer the right type, due to the way we subsequently
@@ -152,7 +152,7 @@
 
       &regexp.ghci:noreturn;
 
-      <para id="x.QF">That's quite an impenetrable error message, but what it
+      <para id="x_QF">That's quite an impenetrable error message, but what it
 	means is that <command>ghci</command> can't infer what type of
 	result to give back to us.  (This is the same kind of error
 	that a compiler would print if it couldn't infer the correct
@@ -164,7 +164,7 @@
 
       &regexp.ghci:bool.passfail;
 
-      <para id="x.RF">In the bowels of the base regexp library, there's a
+      <para id="x_RF">In the bowels of the base regexp library, there's a
 	typeclass named <classname>RegexContext</classname> that
 	describes how a <varname condition="tyvar">target</varname>
 	type should behave; the base library defines many instances of
@@ -175,20 +175,20 @@
 
       &regexp.ghci:int.count;
 
-      <para id="x.SF">If we ask for a <type>String</type> result, we'll get the
+      <para id="x_SF">If we ask for a <type>String</type> result, we'll get the
 	first substring that matches, or an empty string if nothing
 	matches.</para>
 
       &regexp.ghci:string;
 
-      <para id="x.TF">Another valid type of result is <type>[String]</type>,
+      <para id="x_TF">Another valid type of result is <type>[String]</type>,
 	which returns a list of <emphasis>all</emphasis> matching
 	strings.</para>
 
       &regexp.ghci:list.string;
 
       <note>
-	<para id="x.UF">If you want a result that's a plain <type>String</type>,
+	<para id="x_UF">If you want a result that's a plain <type>String</type>,
 	  beware.  Since <function>(=~)</function> returns an empty
 	  string to signify <quote>no match</quote>, this poses an
 	  obvious difficulty if the empty string could also be a valid
@@ -199,7 +199,7 @@
 	  <function>=~~</function> operator.</remark>
       </note>
       
-      <para id="x.VF">That's about it for <quote>simple</quote> result types,
+      <para id="x_VF">That's about it for <quote>simple</quote> result types,
 	but we're not by any means finished.  Before we continue,
 	let's use a single pattern for our remaining examples.  We can
 	define this pattern as a variable in &ghci;, to save a little
@@ -207,7 +207,7 @@
       
       &regexp.ghci:let;
 
-      <para id="x.WF">We can obtain quite a lot of information about the context
+      <para id="x_WF">We can obtain quite a lot of information about the context
 	in which a match occurs.  If we ask for a three-element tuple,
 	we'll get back the text <emphasis>before</emphasis> the first
 	match, the text <emphasis>of</emphasis> that match, and the
@@ -215,33 +215,33 @@
 
       &regexp.ghci:3tuple.match;
 
-      <para id="x.XF">If the match fails, the entire text is returned as the
+      <para id="x_XF">If the match fails, the entire text is returned as the
 	<quote>before</quote> element of the tuple, with the other two
 	elements left empty.</para>
 
       &regexp.ghci:3tuple.nomatch;
 
-      <para id="x.YF">Asking for a four-element tuple gives us a fourth element
+      <para id="x_YF">Asking for a four-element tuple gives us a fourth element
 	that's a list of all groups in the pattern that
 	matched.</para>
 
       &regexp.ghci:4tuple;
 
-      <para id="x.ZF">We can get  numeric information about matches, too.  A
+      <para id="x_ZF">We can get  numeric information about matches, too.  A
 	pair of <type>Int</type>s gives us the starting offset of the
 	first match, and its length.  If we ask for a list of these
 	pairs, we'll get this information for all matches.</para>
 
       &regexp.ghci:2tuple.match;
 
-      <para id="x.aF">A failed match is represented by the value
+      <para id="x_aF">A failed match is represented by the value
 	<literal>-1</literal> as the first element of the tuple (the
 	match offset) if we've asked for a single tuple, or an empty
 	list if we've asked for a list of tuples.</para>
 
       &regexp.ghci:2tuple.nomatch;
 
-      <para id="x.bF">Believe it or not, this is <emphasis>not</emphasis> a
+      <para id="x_bF">Believe it or not, this is <emphasis>not</emphasis> a
 	comprehensive list of built-in instances of the
 	<classname>RegexContext</classname> typeclass.  For a complete
 	list, see the documentation for the <classname
@@ -253,7 +253,7 @@
     <sect2>
       <title>Mixing and matching string types</title>
 
-      <para id="x.cF">As we noted earlier, the <function>=~</function> operator
+      <para id="x_cF">As we noted earlier, the <function>=~</function> operator
 	uses typeclasses for its argument types and its return type.
 	Any combination of <type>String</type> and
 	<type>ByteString</type> will work for the types of both the
@@ -265,19 +265,19 @@
 
       &regexp.ghci:mix.pack;
       
-      <para id="x.dF">We can then try using different combinations of
+      <para id="x_dF">We can then try using different combinations of
 	<type>String</type> and <type>ByteString</type>.</para>
 
       &regexp.ghci:mix.simple;
 
-      <para id="x.eF">However, we need to be aware that if we want a string
+      <para id="x_eF">However, we need to be aware that if we want a string
 	value in the result of a match, the text we're matching
 	against must be the same type of string.  Let's see what this
 	means in practice.</para>
 
       &regexp.ghci:mix.match;
 
-      <para id="x.fF">In the above example, we've used the
+      <para id="x_fF">In the above example, we've used the
 	<function>pack</function> to turn a <type>String</type> into a
 	<type>ByteString</type>.  The typechecker accepts this because
 	<type>ByteString</type> appears in the result type.  But if we
@@ -286,14 +286,14 @@
 
       &regexp.ghci:mix.nomatch;
 
-      <para id="x.gF">And ouch!  That's quite an error message.  Don't let its
+      <para id="x_gF">And ouch!  That's quite an error message.  Don't let its
 	verbosity confound you; we can easily fix this problem by
 	making the string types of the left hand side and the result
 	match once again.</para>
 
       &regexp.ghci:mix.rematch;
 
-      <para id="x.hF">This restriction does <emphasis>not</emphasis> apply to
+      <para id="x_hF">This restriction does <emphasis>not</emphasis> apply to
 	the type of the regexp we're matching against.  It can be
 	either a <type>String</type> or <type>ByteString</type>,
 	unconstrained by the other types in use.</para>
@@ -302,7 +302,7 @@
     <sect2>
       <title>Other things you should know</title>
 
-      <para id="x.iF">When you look through Haskell library documentation,
+      <para id="x_iF">When you look through Haskell library documentation,
 	you'll see several regexp-related modules.  The modules under
 	<classname role="module">Text.Regex.Base</classname> define
 	the common API adhered to by all of the other regexp modules.
@@ -314,7 +314,7 @@
 	suggests, this package provides POSIX regexp semantics.</para>
 
       <note>
-	<para id="x.jF">If you're coming to Haskell from a language like Perl,
+	<para id="x_jF">If you're coming to Haskell from a language like Perl,
 	  Python, or Java, and you've used regular expressions in one
 	  of those languages, you should be aware that the POSIX
 	  regexps handled by the <classname
@@ -322,7 +322,7 @@
 	  different in some significant ways from Perl-style regexps.
 	  Here are a few of the more notable differences.</para>
 
-	<para id="x.kF">Perl regexp engines do left-biased matching when
+	<para id="x_kF">Perl regexp engines do left-biased matching when
 	  matching alternatives, whereas POSIX engines choose the
 	  greediest match.  What this means is that given a regexp of
 	  <literal>(foo|fo*)</literal> and a text string of
@@ -331,13 +331,13 @@
 	  a POSIX engine will match the entire string (the greediest
 	  match).</para>
 
-	<para id="x.lF">POSIX regexps have less uniform syntax than Perl-style
+	<para id="x_lF">POSIX regexps have less uniform syntax than Perl-style
 	  regexps.  They also lack a number of capabilities provided
 	  by Perl-style regexps, such as zero-width assertions and
 	  control over greedy matching.</para>
       </note>
 
-      <para id="x.mF">Other Haskell regexp packages are available for download
+      <para id="x_mF">Other Haskell regexp packages are available for download
 	on the Internet.  Some provide faster engines than the current
 	POSIX engine; others provide Perl-style matching capabilities.
 	All follow the standard API that we have covered in this
@@ -351,7 +351,7 @@
     <title>Translating a glob pattern into a regular
       expression</title>
 
-    <para id="x.nF">Now that we've seen the myriad of ways to match text against
+    <para id="x_nF">Now that we've seen the myriad of ways to match text against
       regular expressions, let's turn our attention back to glob
       patterns.  We want to write a function that will take a glob
       pattern and return its representation as a regular expression.
@@ -360,7 +360,7 @@
 
     &GlobRegex.hs:type;
 
-    <para id="x.oF">We start our definition of the
+    <para id="x_oF">We start our definition of the
       <function>globToRegex</function> function by recalling that a
       text string must match a glob pattern.  Before we attempt to
       convert any part of the glob pattern, we need to have a
@@ -368,14 +368,14 @@
     
     &GlobRegex.hs:rooted;
 
-    <para id="x.pF">Recall that the <type>String</type> is just a synonym for
+    <para id="x_pF">Recall that the <type>String</type> is just a synonym for
       <type>[Char]</type>, a list of <type>Char</type>s.  The
       <function>:</function> operator puts a value (the
       <literal>^</literal> character in this case) onto the front of a
       list, where the list is the value returned by the yet-to-be-seen
       <function>globToRegex'</function> function.</para>
 
-    <para id="x.qF">That single-quote character in the name
+    <para id="x_qF">That single-quote character in the name
       <function>globToRegex'</function>is not a typo, by the way;
       Haskell is unusual in allowing single quotes as parts of
       identifiers. A single quote is most likely to appear at the end
@@ -385,7 +385,7 @@
       unusual.)</para>
 
     <note>
-      <para id="x.rF">Haskell does not require that a value or function be
+      <para id="x_rF">Haskell does not require that a value or function be
 	declared or defined in a source file before it's used.  It's
 	perfectly normal for a definition to come
 	<emphasis>after</emphasis> the first place it's used.  The
@@ -394,7 +394,7 @@
 	manner that makes most logical sense to us, as opposed to a
 	way that makes the compiler writer's life easiest.</para>
 
-      <para id="x.sF">Haskell module writers often use this flexibility to put
+      <para id="x_sF">Haskell module writers often use this flexibility to put
 	<quote>more important</quote> code earlier in a source file,
 	relegating <quote>plumbing</quote> to later.  In fact, that's
 	exactly how we're presenting the
@@ -402,7 +402,7 @@
 	here.</para>
     </note>
 
-    <para id="x.tF">With the regular expression rooted, the
+    <para id="x_tF">With the regular expression rooted, the
       <function>globToRegex'</function> function will do the bulk of
       the translation work.  We'll use the convenience of Haskell's
       pattern matching to enumerate each of the cases we'll need to
@@ -410,7 +410,7 @@
 
     &GlobRegex.hs:asterisk;
 
-    <para id="x.uF">We now have a very minimal glob translator.  Our first
+    <para id="x_uF">We now have a very minimal glob translator.  Our first
       clause stipulates that if we hit the end of our glob pattern (by
       which time we'll be looking at the empty string), we return
       <literal>$</literal>, the regular expression symbol for
@@ -419,7 +419,7 @@
       <literal>*</literal> in our input list.  And the third passes
       every other character through, unaltered.</para>
 
-    <para id="x.vF">We can immediately save our new source file (let's call it
+    <para id="x_vF">We can immediately save our new source file (let's call it
       <filename>GlobRegexTiny.hs</filename> and start playing with it
       in <command>ghci</command>.  This is a great way to do
       exploratory programming: write a little code, load it into the
@@ -427,13 +427,13 @@
 
     &glob-regexp.ghci:tiny;
 
-    <para id="x.wF">These few lines of interaction might look trivial, but we
+    <para id="x_wF">These few lines of interaction might look trivial, but we
       have received immediate feedback on two fronts: our code passes
       the daunting scrutiny of Haskell's typechecker, and it produces
       sensible-looking results. Monkeying around with code in the
       interpreter early and often is consistently worthwhile.</para>
 
-    <para id="x.xF">The remaining cases for a complete definition of
+    <para id="x_xF">The remaining cases for a complete definition of
       <function>globToRegex'</function> are easy to enumerate.  First,
       we get <literal>?</literal> out of the way.</para>
 
@@ -443,11 +443,11 @@
       <function>(++)</function> and <function>(:)</function> operators
       here?  Newcomers often get confused over which to use.</remark>
 
-    <para id="x.yF">More interesting is how we handle character classes.</para>
+    <para id="x_yF">More interesting is how we handle character classes.</para>
 
     &GlobRegex.hs:class;
 
-    <para id="x.zF">We take advantage of two behaviours of Haskell's pattern
+    <para id="x_zF">We take advantage of two behaviours of Haskell's pattern
       matcher here.  The first is that it will match patterns in the
       order in which we declare them, so we place the most specific
       patterns first, and the least specific last.  Secondly, there's
@@ -456,25 +456,25 @@
       (This isn't limited to simple lists, either.  We can use the
       same capability to look inside nested structures.)</para>
 
-    <para id="x.AG">Here, the first pattern matches on three consecutive items
+    <para id="x_AG">Here, the first pattern matches on three consecutive items
       of its input to ensure that a <quote>negative</quote> character
       class cannot be empty.  The second pattern matches on only two
       items, so ensure that a <quote>positive</quote> character class
       cannot be empty.  The final clause can only match if it's given
       a syntactically invalid character class.</para>
 
-    <para id="x.BG">Finally, we may need to escape some characters before we
+    <para id="x_BG">Finally, we may need to escape some characters before we
       return them.</para>
 
     &GlobRegex.hs:last;
 
-    <para id="x.CG">The <function>escape</function> function ensures that the
+    <para id="x_CG">The <function>escape</function> function ensures that the
       regexp engine will not interpret certain characters as pieces of
       regular expression syntax.</para>
 
     &GlobRegex.hs:escape;
 
-    <para id="x.DG">The <function>charClass</function> helper function does
+    <para id="x_DG">The <function>charClass</function> helper function does
       nothing more than ensure that a character class is correctly
       terminated.  It passes its input through unmolested until it
       hits a <literal>]</literal>, when it hands control back to
@@ -482,18 +482,18 @@
 
     &GlobRegex.hs:charClass;
 
-    <para id="x.EG">Now that we've finished defining
+    <para id="x_EG">Now that we've finished defining
       <function>globToRegex</function> and its helpers, let's load it
       into &ghci; and try it out.</para>
 
     &glob-regexp.ghci:real;
 
-    <para id="x.FG">Sure enough, that looks like a reasonable regexp.  Can we
+    <para id="x_FG">Sure enough, that looks like a reasonable regexp.  Can we
       use it to match against a string?</para>
 
     &glob-regexp.ghci:matches;
 
-    <para id="x.GG">It works!  Now let's play around a little with &ghci;.  We
+    <para id="x_GG">It works!  Now let's play around a little with &ghci;.  We
       can create a temporary definition for
       <function>fnmatch</function> and try it out.  (This is another
       example of how &ghci; is great for exploratory programming.
@@ -502,7 +502,7 @@
 
     &glob-regexp.ghci:fnmatch;
 
-    <para id="x.HG">The name <quote><function>fnmatch</function></quote> doesn't
+    <para id="x_HG">The name <quote><function>fnmatch</function></quote> doesn't
       really have the <quote>Haskell nature</quote>, though.  The
       typical Haskell style is for functions to have descriptive,
       <quote>camel cased</quote> names.  Camel casing name smashes
@@ -514,7 +514,7 @@
     &GlobRegex.hs:matchesGlob;
 
     <note>
-      <para id="x.IG">The choice of naming conventions and coding styles is a
+      <para id="x_IG">The choice of naming conventions and coding styles is a
 	perennial source of heated discussion, perhaps because the
 	stakes are so low that everyone feels entitled to an opinion.
 	When we introduce style-related notions like camel cased
@@ -533,7 +533,7 @@
 
 	<qandaentry>
           <question id="ch07.q.error">
-	    <para id="x.JG">Use &ghci; to explore what happens if you pass a
+	    <para id="x_JG">Use &ghci; to explore what happens if you pass a
 	      malformed pattern, such as <literal>[</literal>, to
 	      <function>globToRegex</function>.  Write a small
 	      function that calls <function>globToRegex</function>,
@@ -543,7 +543,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x.KG">While filesystems on Unix are usually sensitive to
+	    <para id="x_KG">While filesystems on Unix are usually sensitive to
 	      case (e.g. <quote>G</quote> vs. <quote>g</quote>) in
 	      file names, Windows filesystems are not. Add a parameter
 	      to the <function>globToRegex</function> and
@@ -559,7 +559,7 @@
   <sect1 id="hs.glob.lazyfn">
     <title>An important aside: writing lazy functions</title>
 
-    <para id="x.LG">In an imperative language, the
+    <para id="x_LG">In an imperative language, the
       <function>globToRegex'</function> function is one that we'd
       usually express as a loop. For example, Python's standard
       <package>fnmatch</package> module includes a function named
@@ -567,7 +567,7 @@
       our <function>globToRegex</function> function.  It's written as
       a loop.</para>
 
-    <para id="x.MG">If you've been exposed to functional programming through a
+    <para id="x_MG">If you've been exposed to functional programming through a
       language such as Scheme or ML, you've probably had drilled into
       your head the notion that <quote>the way to emulate a loop is
 	via tail recursion</quote>.  A function
@@ -581,26 +581,26 @@
       tail calls can execute in constant space, just as we take for
       granted with a loop.</para>
 
-    <para id="x.NG">Looking at the <function>globToRegex'</function> function,
+    <para id="x_NG">Looking at the <function>globToRegex'</function> function,
       we can see that it is <emphasis>not</emphasis> tail recursive.
       To see why, let's examine its final clause again (several of its
       other clauses are structured similarly).</para>
 
       &GlobRegex.hs:last.noid;
 
-    <para id="x.OG">It calls itself recursively, but this
+    <para id="x_OG">It calls itself recursively, but this
       <emphasis>isn't</emphasis> the last thing the function does.
       The result of the recursive call is a parameter to the
       <function>(++)</function> function.</para>
 
-    <para id="x.PG">So what's going on here?  Why are we not writing a tail
+    <para id="x_PG">So what's going on here?  Why are we not writing a tail
       recursive definition for this function?  The answer lies with
       Haskell's non-strict evaluation strategy.  Before we start
       talking about that, let's quickly talk about why, in a
       traditional language, we'd be trying to avoid this kind of
       recursive definition.</para>
 
-    <para id="x.QG">Returning to the clause above,
+    <para id="x_QG">Returning to the clause above,
       <function>globToRegex'</function> computes a little bit of its
       result, then calls itself recursively, then returns the complete
       result.  In a traditional language, each recursive call is going
@@ -610,27 +610,27 @@
     <remark>Image: stack allocation for a recursive call to
       <function>globToRegex'</function>.</remark>
 
-    <para id="x.RG">Compound these scratch allocations over a large number of
+    <para id="x_RG">Compound these scratch allocations over a large number of
       recursive calls, and the amount of space we use while processing
       grows linearly with the size of the list we must process.</para>
 
     <remark>Image: stack allocation for a pile of recursive
       calls.</remark>
 
-    <para id="x.SG">For a problem like glob-to-regexp conversion, where we'll
+    <para id="x_SG">For a problem like glob-to-regexp conversion, where we'll
       always be dealing with very small amounts of data, this overhead
       is insignificant.  But if we had a hundred million elements to
       process, and used plain recursion rather than tail recursion or
       a loop to process them, we'd have a severe problem.</para>
 
-    <para id="x.TG">Haskell neatly defangs this problem by deferring the
+    <para id="x_TG">Haskell neatly defangs this problem by deferring the
       evaluation of an expression until its result is needed.  To
       understand how this deferred evaluation works, let's walk
       through what happens when the final clause of the
       <function>globToRegex'</function> is called.  (As you read, bear
       in mind that this is a simplified description.)</para>
 
-    <para id="x.UG">In order to determine that this clause must be called, the
+    <para id="x_UG">In order to determine that this clause must be called, the
       pattern matcher must inspect a little bit of the list it was
       passed.  The pattern requires it to do nothing more than
       determine whether it has been given an empty list (in which case
@@ -640,7 +640,7 @@
       inside <varname>c</varname>, the head of the list.  It doesn't
       follow <varname>cs</varname>, the tail.</para>
 
-    <para id="x.VG">We have now decided to evaluate the right hand side of
+    <para id="x_VG">We have now decided to evaluate the right hand side of
       the clause.  The first expression we must evaluate is the call
       to the list append function, <function>(++)</function>.
       (Because we don't need the results of <code>escape c</code> or
@@ -651,7 +651,7 @@
 
       &append.hs:append;
 
-    <para id="x.WG">As the argument to <function>(++)</function> is not an
+    <para id="x_WG">As the argument to <function>(++)</function> is not an
       empty list, the second clause matches, so we must evaluate
       <varname>x</varname>.  This requires that we evaluate
       <code>escape c</code>, which we had earlier deferred.  Let's
@@ -660,7 +660,7 @@
 
     &GlobRegex.hs:escape.noid;
 
-    <para id="x.XG">This will return a list whose first element is either the
+    <para id="x_XG">This will return a list whose first element is either the
       <literal>\</literal> character or the character it was passed.
       Once we've constructed the first element of this list, we'll
       defer constructing the rest of it until our caller needs it.  We
@@ -670,13 +670,13 @@
       enough information to resume the evaluation later; this saved
       package of information is called a <quote>thunk</quote>.</para>
 
-    <para id="x.YG">Not only is the evaluation of <function>escape</function>
+    <para id="x_YG">Not only is the evaluation of <function>escape</function>
       suspended; so too are the evaluation of its callers,
       <function>(++)</function> and <function>globToRegex'</function>,
       and so on up the call chain until some expression needs to
       inspect the value.</para>
 
-    <para id="x.ZG">What would happen if the caller of
+    <para id="x_ZG">What would happen if the caller of
       <function>globToRegex'</function> was for some reason the
       function <function>null</function>?  <function>null</function>
       only cares whether its argument is an empty list: once it finds
@@ -685,13 +685,13 @@
       we deferred in order to get a partial result back to
       <function>null</function> will ever actually occur.</para>
 
-    <para id="x.aG">Remarkably, given this kind of evaluation strategy, our
+    <para id="x_aG">Remarkably, given this kind of evaluation strategy, our
       recursive definition of <function>globToRegex'</function> will
       execute in constant space (more or less).  To see why, look at
       the definition of <function>(++)</function>; although it's
       simpler, it has a similar recursive structure.</para>
 
-    <para id="x.bG">If we put on our implementor's hats and think about how we
+    <para id="x_bG">If we put on our implementor's hats and think about how we
       might suspend the evaluation of <function>(++)</function> in a
       thunk, all we need to store are the current heads of the left
       and right lists; the result of the next evaluation step depends
@@ -704,7 +704,7 @@
   <sect1 id="hs.glob.use">
     <title>Making use of our pattern matcher</title>
 
-    <para id="x.cG">It's all very well to have a function that can match glob
+    <para id="x_cG">It's all very well to have a function that can match glob
       patterns, but we'd like to be able to put this to practical use.
       On Unix-like systems, the <function>glob</function> function
       returns the names of all files and directories that match a
@@ -714,17 +714,17 @@
 
     &Glob.hs:module;
 
-    <para id="x.dG">This function will obviously have to manipulate filesystem
+    <para id="x_dG">This function will obviously have to manipulate filesystem
       paths a lot, splicing and joining them as it goes.  We'll need
       to use a few previously unfamiliar modules along the way.</para>
 
-    <para id="x.eG">The <classname role="module">System.Directory</classname>
+    <para id="x_eG">The <classname role="module">System.Directory</classname>
       module provides standard functions for working with directories
       and their contents.</para>
 
     &Glob.hs:import.directory;
 
-    <para id="x.fG">The <classname role="module">System.FilePath</classname>
+    <para id="x_fG">The <classname role="module">System.FilePath</classname>
       module abstracts the details of an operating system's path name
       conventions.  Using this together with the <classname
 	role="module">System.Directory</classname> module, we can
@@ -733,21 +733,21 @@
 
     &Glob.hs:import.filepath;
 
-    <para id="x.gG">Finally, we'll be emulating a <quote>for</quote> loop;
+    <para id="x_gG">Finally, we'll be emulating a <quote>for</quote> loop;
       getting our first taste of exception handline in Haskell; and of
       course using the <function>matchesGlob</function> function we
       just wrote.</para>
 
     &Glob.hs:import.rest;
 
-    <para id="x.hG">Since directories and files live in the <quote>real
+    <para id="x_hG">Since directories and files live in the <quote>real
 	world</quote> of activities that have effects, our globbing
       function will have to have <classname>IO</classname> in its
       result type.</para>
 
     &Glob.hs:type;
 
-    <para id="x.iG">If the string we're passed doesn't contain any pattern
+    <para id="x_iG">If the string we're passed doesn't contain any pattern
       characters, all we need to do is check that the given name
       exists in the filesystem.  (Notice that we use Haskell's
       function guard syntax here to write a nice tidy definition.  An
@@ -756,18 +756,18 @@
 
     &Glob.hs:mundane;
 
-    <para id="x.jG">(You might have noticed that the function
+    <para id="x_jG">(You might have noticed that the function
       <function>doesNameExist</function> that we use here isn't in the
       list of functions we imported from <classname
 	role="module">System.Directory</classname>.  We'll define it
       shortly.)</para>
 
-    <para id="x.kG">What if the string <emphasis>is</emphasis> a glob
+    <para id="x_kG">What if the string <emphasis>is</emphasis> a glob
       pattern?</para>
 
     &Glob.hs:otherwise;
 
-    <para id="x.lG">We use <function>splitFileName</function> to split the
+    <para id="x_lG">We use <function>splitFileName</function> to split the
       string into a pair of <quote>everything but the final
 	name</quote> and <quote>the final name</quote>.  If the first
       element is empty, we're looking for a pattern in the current
@@ -775,7 +775,7 @@
 
     &Glob.hs:curdir;
 
-    <para id="x.mG">Otherwise, we must check the directory name and see if it
+    <para id="x_mG">Otherwise, we must check the directory name and see if it
       contains patterns.  If it does not, we create a singleton list
       of theb directory name.  If it contains a pattern, we list all
       of the matching directories.</para>
@@ -788,7 +788,7 @@
       earlier, we should repeat ourselves.</remark>
 
     <note>
-      <para id="x.nG">Using the <classname
+      <para id="x_nG">Using the <classname
 	  role="module">System.FilePath</classname> module can be a
 	litle tricky.  Above is a case in point; let's use &ghci; to
 	illustrate the problem.  The
@@ -797,7 +797,7 @@
 
       &glob.ghci:split;
 
-      <para id="x.oG">If we didn't remember (or know enough) to remove that
+      <para id="x_oG">If we didn't remember (or know enough) to remove that
 	slash, we'd recurse endlessly in that call to
 	<function>namesMatching</function> above, because of the
 	following behaviour of
@@ -805,21 +805,21 @@
 
       &glob.ghci:tricksy;
 
-      <para id="x.pG">You can guess why this note got to be written!</para>
+      <para id="x_pG">You can guess why this note got to be written!</para>
     </note>
 
-    <para id="x.qG">Finally, we collect all matches in every directory, giving
+    <para id="x_qG">Finally, we collect all matches in every directory, giving
       us a list of lists, and concatenate them into a single list of
       names.</para>
 
     &Glob.hs:glue;
 
-    <para id="x.rG">The unfamiliar <function>forM</function> function above acts
+    <para id="x_rG">The unfamiliar <function>forM</function> function above acts
       a little like a <quote>for</quote> loop: it maps its second
       argument (an action) over its first (a list), and returns the
       resulting list.</para>
 
-    <para id="x.sG">We have a few loose ends to clean up.  The first is the
+    <para id="x_sG">We have a few loose ends to clean up.  The first is the
       definition of the <function>doesNameExist</function> function,
       used above.  The <classname
 	role="module">System.Directory</classname> doesn't let us
@@ -834,7 +834,7 @@
 
     &Glob.hs:doesNameExist;
 
-    <para id="x.tG">We have two other functions to define, each of which returns
+    <para id="x_tG">We have two other functions to define, each of which returns
       a list of names in a directory.  The
       <function>listMatches</function> function returns a list of all
       files matching the given glob pattern in a directory, while the
@@ -844,7 +844,7 @@
 
     &Glob.hs:listfuncs;
 
-    <para id="x.uG">If we look closely at the definition of
+    <para id="x_uG">If we look closely at the definition of
       <function>listMatches</function> above, we'll see a call to a
       function named <function>handle</function>.  Earlier on, we
       imported this from the <classname
@@ -855,26 +855,26 @@
 
     &handle.ghci:type.handle;
 
-    <para id="x.vG">This is telling us that <function>handle</function> takes
+    <para id="x_vG">This is telling us that <function>handle</function> takes
       two arguments.  The first is a function that is passed an
       exception value, and can do I/O (we can see this because of the
       <type>IO</type> type in its return value); this is the handler
       to run if an exception is thrown.  The second argument is the
       code to run that might throw an exception.</para>
 
-    <para id="x.wG">As for the exception handler, the type of the
+    <para id="x_wG">As for the exception handler, the type of the
       <function>handle</function> constrains it to return the same
       type of value as the body of code that threw the exception.  So
       its choices are to either throw an exception or, as in our case,
       return a list of <type>String</type>s.</para>
 
-    <para id="x.xG">The <function>const</function> function takes two arguments;
+    <para id="x_xG">The <function>const</function> function takes two arguments;
       it always returns its first argument, no matter what its second
       argument is.</para>
 
     &handle.ghci:type.const;
 
-    <para id="x.yG">We won't have anything more to say about exception handling
+    <para id="x_yG">We won't have anything more to say about exception handling
       here.  There's plenty more to cover, though, so we'll be
       returning to the subject of exceptions in chapter
       <remark>FIXME</remark>.</para>
@@ -884,7 +884,7 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x.zG">Although we've gone to some lengths to write a
+	    <para id="x_zG">Although we've gone to some lengths to write a
 	      portable <function>namesMatching</function> function,
 	      the function uses our case sensitive
 	      <function>globToRegex</function> function.  Find a way
@@ -893,7 +893,7 @@
 	      without modifying its type signature.</para>
 	  </question>
 	  <answer>
-	    <para id="x.AH"><emphasis>Hint</emphasis>: consider reading the
+	    <para id="x_AH"><emphasis>Hint</emphasis>: consider reading the
 	      documentation for <classname
 		role="module">System.FilePath</classname> to look for
 	      a variable that tells us whether we're running on a
@@ -903,7 +903,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x.BH">If you're on a Unix-like system, look through the
+	    <para id="x_BH">If you're on a Unix-like system, look through the
 	      documentation for the <classname
 		role="module">System.Posix.Files</classname> module,
 	      and see if you can find a replacement for the
@@ -913,7 +913,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x.CH">The <literal>*</literal> wildcard only matches names
+	    <para id="x_CH">The <literal>*</literal> wildcard only matches names
 	      within a single directory.  Many shells have an extended
 	      wildcard syntax, <literal>**</literal>, that matches
 	      names recursively in all directories.  For example,
@@ -930,12 +930,12 @@
   <sect1 id="hs.glob.errapi">
     <title>Handling errors through API design</title>
 
-    <para id="x.DH">It's not necessarily a disaster if our
+    <para id="x_DH">It's not necessarily a disaster if our
       <function>globToRegex</function> is passed a malformed pattern.
       Perhaps a user mistyped a pattern, in which case we'd like to be
       able to report a meaningful error message.</para>
 
-    <para id="x.EH">Calling the <function>error</function> function when this
+    <para id="x_EH">Calling the <function>error</function> function when this
       kind of problem occurs can be a drastic response (exploring its
       consequences was the focus of exercise <xref
 	linkend="ch07.q.error"/>).  The <function>error</function>
@@ -947,26 +947,26 @@
       terminating our program (or print a nasty error message, in
       &ghci;).</para>
 
-    <para id="x.FH">So calling <function>error</function> is a little like
+    <para id="x_FH">So calling <function>error</function> is a little like
       pulling the handle of a fighter plane's ejection seat.  We're
       bailing out of a catastrophic situation that we can't deal with
       gracefully, and there's likely to be a lot of flaming wreckage
       strewn about by the time we hit the ground.</para>
 
-    <para id="x.GH">We've established that <function>error</function> is for
+    <para id="x_GH">We've established that <function>error</function> is for
       disasters, but we're still using it in
       <function>globToRegex</function>.  In that case, malformed input
       should be rejected, but not turned into a big deal.  What would
       be a better way to handle this?</para>
 
-    <para id="x.HH">Haskell's type system and libraries to the rescue!  We can
+    <para id="x_HH">Haskell's type system and libraries to the rescue!  We can
       encode the possibility of failure in the type signature of
       <function>globToRegex</function>, using the predefined
       <type>Either</type> type.</para>
 
     &GlobRegexEither.hs:type;
 
-    <para id="x.IH">A value returned by <function>globToRegex</function> will
+    <para id="x_IH">A value returned by <function>globToRegex</function> will
       now be either <literal>Left "an error message"</literal> or
       <literal>Right "a valid regexp"</literal>.  This return type
       forces our callers to deal with the possibility of error.
@@ -978,14 +978,14 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x.JH">Write a version of <function>globToRegex</function>
+	    <para id="x_JH">Write a version of <function>globToRegex</function>
 	      that uses the type signature above.</para>
 	  </question>
 	</qandaentry>
 
 	<qandaentry>
 	  <question>
-	    <para id="x.KH">Modify the type signature of
+	    <para id="x_KH">Modify the type signature of
 	      <function>namesMatching</function> so that it encodes
 	      the possibility of a bad pattern, and make it call your
 	      rewritten <function>globToRegex</function>
@@ -999,26 +999,26 @@
   <sect1 id="hs.glob.work">
     <title>Putting our code to work</title>
 
-    <para id="x.LH">The <function>namesMatching</function> function isn't very
+    <para id="x_LH">The <function>namesMatching</function> function isn't very
       exciting by itself, but it's a useful building block.  Combine
       it with a few more functions, and we can start to do interesting
       things.</para>
 
-    <para id="x.MH">Here's one such example.  Let's define a
+    <para id="x_MH">Here's one such example.  Let's define a
       <function>renameWith</function> function that, instead of simply
       renaming a file, applies a function to the file's name, and
       renames the file to whatever that function returns.</para>
 
     &Useful.hs:renameWith;
 
-    <para id="x.NH">Once again, we work around the ungainly file/directory split
+    <para id="x_NH">Once again, we work around the ungainly file/directory split
       that portability has forced upon <classname
 	role="module">System.Directory</classname> with a helper
       function:</para>
 
     &Useful.hs:rename;
 
-    <para id="x.OH">The <classname role="module">System.FilePath</classname>
+    <para id="x_OH">The <classname role="module">System.FilePath</classname>
       module provides many useful functions for manipulating file
       names.  These functions mesh nicely with our
       <function>renameWith</function> and
@@ -1029,7 +1029,7 @@
 
     &Useful.hs:cc2cpp;
 
-    <para id="x.PH">The <function>cc2cpp</function> function uses a few
+    <para id="x_PH">The <function>cc2cpp</function> function uses a few
       functions we'll be seeing over and over.  The
       <function>mapM</function> function maps a function that can do
       I/O over a list.  The <function>flip</function> function takes
@@ -1045,7 +1045,7 @@
     <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
-	  <para id="x.QH">Glob patterns are simple enough to interpret that it's
+	  <para id="x_QH">Glob patterns are simple enough to interpret that it's
 	    easy to write a matcher directly in Haskell, rather than
 	    going through the regexp machinery.  Give it a try.</para>
 	</question>

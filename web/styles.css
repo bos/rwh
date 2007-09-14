@@ -9,6 +9,14 @@ body {
   margin-right: auto;
 }
 
+a.commenttoggle:hover, a.commenttoggle:active {
+  opacity: 0.7;
+}
+
+a:hover, a:active {
+  border-bottom: 1px solid #aaaaaa;
+}
+
 .book, .chapter, .appendix {
   background: white;
   padding: 2em;
@@ -47,6 +55,7 @@ div.toc > p {
   opacity: 0.35;
   font-family: georgia,serif;
   font-weight: normal;
+  cursor: pointer;
 }
 
 div.toc > dl {
@@ -102,9 +111,21 @@ div.note {
   font-size: 80%;
 }
 
-div.comment {
-  margin-top: 0.5em;
+div.comment, div.new_comment {
+  padding: 0.5em;
+  margin: 0.25em;
   margin-left: 2em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #aaaaff;
+}
+
+div.comment {
+  background: #eeeeff;
+}
+
+div.new_comment {
+  background: #d0d0ff;
 }
 
 .commenttoggle {
@@ -127,8 +148,9 @@ div.comment {
   opacity: 0.75;
 }
 
-.comment_new {
-  color: darkgreen;
+.comment_thanks {
+  color: darkblue;
+  margin-left: 1em;
   font-style: italic;
   font-weight: bolder;
 }

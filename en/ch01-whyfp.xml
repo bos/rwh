@@ -13,7 +13,7 @@
   examples and exercises.
   </remark>
 
-    <para id="x.P">As a new Haskell programmer, you'll inevitably end up
+    <para id="x_P">As a new Haskell programmer, you'll inevitably end up
       writing quite a bit of code by hand for which you could have
       used a library function or programming technique, had you but
       known of its existence. You'll also run into instances where a
@@ -88,7 +88,7 @@
 
     <sect2 id="hs.whyfp.noths.vars">
       <title>Mutable Variables</title>
-      <para id="x.Q">
+      <para id="x_Q">
         In a language such as C, you might see a statement such as
         <literal>x = x * 5 + y</literal>.  This statement modifies the place
         in memory where <literal>x</literal> is stored and changes it to
@@ -97,30 +97,30 @@
         <literal>mylist[5] = 10</literal>, which will set the value of the
         fifth element in <literal>mylist</literal> to <literal>10</literal>.
       </para>
-      <para id="x.R">
+      <para id="x_R">
         In Haskell, all data is immutable -- it cannot be modified.  If you
         need to modify an element of a list, you'll get a copy of the
         original list returned -- except for the one changed element.  Then
         you will probably ignore the original list.
       </para>
-      <para id="x.S">
+      <para id="x_S">
         You might start to think that this could be slow to execute.
         That turns out not to be the case, as the Haskell compiler can
         optimize this sort of usage quite well.
       </para>
-      <para id="x.T">
+      <para id="x_T">
         It also turns out to be a powerful way to code: it makes it easy to
         "chain" functions together, the result of one being taken as input to
         another.  POSIX programmers can think of this as similar to pipes in
         the shell.  
       </para>
-      <para id="x.U">
+      <para id="x_U">
         There's another benefit of this: a lack of side-effects.  A common
         source of bugs in many languages is calling a function that does
         something unexpected: modifies a global or a class variable, for
         instance.  Later code then could behave in unexpected ways.
       </para>
-      <para id="x.V">
+      <para id="x_V">
         Some languages have partial immutability.  For instance, strings are
         immutable in Java; if you want to add something to a string in Java,
         you combine two strings and the result is a new string -- not a
@@ -132,19 +132,19 @@
 
     <sect2 id="hs.whyfp.noths.loops">
       <title>Looping with for or while</title>
-      <para id="x.W">
+      <para id="x_W">
         Chances are that most languages you've used before have the notion
         of <literal>for</literal> or <literal>while</literal>.  These
         tools are often used for performing actions a fixed number of times,
         for doing something over and over until some state changes, or for
         simply repeating infinitely until the program is killed.
       </para>
-      <para id="x.X">
+      <para id="x_X">
         Haskell has no <literal>for</literal> or <literal>while</literal>.
         That's not an oversight; Haskell doesn't have <literal>for</literal>
         or <literal>while</literal> because Haskell doesn't need them.
       </para>
-      <para id="x.Y">
+      <para id="x_Y">
         Let's consider a simple program to output the numbers from 1 to 10 on
         the screen.  A C programmer might work this way:
       </para>
@@ -159,38 +159,38 @@ void main(void) {
 }
 ]]>
       </programlisting>
-      <para id="x.Z">
+      <para id="x_Z">
         This assigns the value 1 to <literal>i</literal> on the first time,
         then modifies that place in memory each time through, incrementing
         <literal>i</literal> until it reaches 10.
       </para>
-      <para id="x.a">
+      <para id="x_a">
         A Haskell programmer could simply say:
       </para>
       &counter1.hs:all;
-      <para id="x.b">
+      <para id="x_b">
         The <literal>[1..10]</literal> generates an <emphasis>lazy</emphasis>
         list of numbers from 1 to 10.  Each element will be created only when
         demanded.  You could just as easily say
         <literal>[1..1000000]</literal> and you'll use no more memory.
       </para>
-      <para id="x.c">
+      <para id="x_c">
         The call to <literal>mapM_</literal> takes an I/O function and runs
         it once for each element passed in.  So we never need to directly
         modify memory, yet we can express the entire operation more compactly
         than in C.
       </para>
-      <para id="x.d">
+      <para id="x_d">
         A Haskell programmer could also express this without using
         <literal>mapM_</literal> like this:
       </para>
       &counter2.hs:all;
-      <para id="x.e">
+      <para id="x_e">
         This function uses recursion and pattern matching to achieve the
         result.  You'll learn more about these techniques in the next few
         chapters in the book.
       </para>
-      <para id="x.f">
+      <para id="x_f">
         While Haskell's approach may seem foreign at first, we think that
         you'll grow to appreciate its speed and robustness as you learn about
         it.  You'll see why Haskell doesn't have loops because loops would be

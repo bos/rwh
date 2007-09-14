@@ -3,20 +3,20 @@
 <chapter id="hs.funcstypes" revision="unpublished">
   <title>Types and Functions</title>
 
-  <para id="x.n2">Topics: built-in types.  Writing functions.  Creating new
+  <para id="x_n2">Topics: built-in types.  Writing functions.  Creating new
     types.</para>
 
   <sect1 id="hs.funcstypes.types">
     <title>Haskell's type system</title>
     
-    <para id="x.o2"><quote>Haskell has a strong, static type system with
+    <para id="x_o2"><quote>Haskell has a strong, static type system with
 	inference.</quote> For a short sentence, this one gives us a
       lot for us to pore over.  Because Haskell is quite different
       from mainstream programming languages in how it treats types,
       let's not assume too much shared understanding as we talk about
       types.</para>
 
-    <para id="x.p2">Every value and expression in Haskell has a
+    <para id="x_p2">Every value and expression in Haskell has a
       <emphasis>type</emphasis>.  The type of a value indicates that
       it shares certain properties with other values that have the
       same type.  (You'll see us refer to a value <quote>having the
@@ -26,27 +26,27 @@
       ability to be added to other values of type
       <type>Integer</type>, and so on.</para>
 
-    <para id="x.q2">Haskell has a <quote>strong</quote> type system, in which
+    <para id="x_q2">Haskell has a <quote>strong</quote> type system, in which
       every expression and value has exactly one type.  Another aspect
       of Haskell's view of strong typing is that it will not
       automatically convert values from one type to another, a feature
       present in some other languages.</para>
 
     <note>
-      <para id="x.r2">Conversations about type systems can lead to many a
+      <para id="x_r2">Conversations about type systems can lead to many a
 	misunderstanding among programmers.  Some people say that C
 	has a strong type system; others claim that Python does.
 	Haskell programmers think strong typing is still something
 	else.</para>
 
-      <para id="x.s2">Since there's no universally agreed upon meaning for the
+      <para id="x_s2">Since there's no universally agreed upon meaning for the
 	phrase <quote>strong type</quote>,  it's best not to assume
 	that someone else shares the same notion of it as you do.  (We
 	also suggest that putting forth one definition as better than
 	another doesn't often lead to enlightened discussion.)</para>
     </note>
 
-    <para id="x.t2">Having a <quote>static</quote> type system means that the
+    <para id="x_t2">Having a <quote>static</quote> type system means that the
       compiler knows the type of every value and expression at compile
       time, before any code is ever executed.  A Haskell compiler or
       interpreter will detect when we try to use types inconsistently
@@ -54,15 +54,15 @@
 
     &ch03.basics.ghci:error;
 
-    <para id="x.u2">Haskell's combination of strong and static typing also makes
+    <para id="x_u2">Haskell's combination of strong and static typing also makes
       it impossible for type errors to occur at runtime.</para>
 
-    <para id="x.v2">Finally, <quote>type inference</quote> means what it says:
+    <para id="x_v2">Finally, <quote>type inference</quote> means what it says:
       the compiler can automatically figure out the types of most
       values for us, so that we don't have to explicitly label
       them.</para>
 
-    <para id="x.w2">We've already briefly seen Haskell's notation for types in
+    <para id="x_w2">We've already briefly seen Haskell's notation for types in
       <xref linkend="hs.starting.types"/>.  We write <code>expression
 	:: <type>MyType</type></code> to say that
       <code>expression</code> has the type <type>MyType</type>.</para>
@@ -71,7 +71,7 @@
   <sect1 id="hs.funcstypes.basic">
     <title>Some common basic types</title>
     
-    <para id="x.x2">We've already encountered a few types in <xref
+    <para id="x_x2">We've already encountered a few types in <xref
 	linkend="hs.starting.types"/>.  Haskell has a number of
       built-in types that we'll use over and over.  Here are some of
       the language's basic types, types that aren't composed of other
@@ -79,18 +79,18 @@
 
     <itemizedlist>
       <listitem>
-	<para id="x.y2">The <type>Char</type> type represents a character. The
+	<para id="x_y2">The <type>Char</type> type represents a character. The
 	  values of <type>Char</type> are drawn from the Unicode
 	  character set, which covers most of the world's written
 	  languages.</para>
       </listitem>
       <listitem>
-	<para id="x.z2">The <type>Bool</type> type represents a value in Boolean
+	<para id="x_z2">The <type>Bool</type> type represents a value in Boolean
 	  logic.  The possible values of <type>Bool</type> are
 	  <code>True</code> and <code>False</code>.</para>
       </listitem>
       <listitem>
-	<para id="x.A3">The <type>Int</type> type represents a signed,
+	<para id="x_A3">The <type>Int</type> type represents a signed,
 	  fixed-width integer.  The exact range of values represented
 	  by <type>Int</type> depends on the system's longest
 	  <quote>native</quote> integer: on a 32-bit machine, an
@@ -98,13 +98,13 @@
 	  machine, it is usually 64 bits wide.</para>
       </listitem>
       <listitem>
-	<para id="x.B3">The <type>Integer</type> type represents a signed
+	<para id="x_B3">The <type>Integer</type> type represents a signed
 	  integer of arbitrary size.  <type>Integer</type>s are not
 	  used as often as <type>Int</type>s, because they're a lot
 	  more expensive to work with.</para>
       </listitem>
       <listitem>
-	<para id="x.C3">The <type>Double</type> type is the type usually used to
+	<para id="x_C3">The <type>Double</type> type is the type usually used to
 	  represent floating point numbers.  It is typically 64 bits
 	  wide, and uses the machine's native floating point
 	  representation.  (A narrower type, <type>Float</type>, also
@@ -118,16 +118,16 @@
   <sect1 id="hs.funcstypes.composite">
     <title>Useful composite data types: lists and tuples</title>
 
-    <para id="x.D3">The most common composite data types in Haskell are the list
+    <para id="x_D3">The most common composite data types in Haskell are the list
       and tuple.</para>
 
-    <para id="x.E3">We've already seen the list type mentioned in <xref
+    <para id="x_E3">We've already seen the list type mentioned in <xref
 	linkend="hs.starting.string"/>, where we found that Haskell
       represents a text string as a list of <type>Char</type> values,
       and that the type <quote>list of <type>Char</type></quote> is
       written <type>[Char]</type>.</para>
 
-    <para id="x.F3">More generally, we can write the type <quote>list of
+    <para id="x_F3">More generally, we can write the type <quote>list of
 	<varname role="type">a</varname></quote> for any type <varname
 	role="type">a</varname> by enclosing <varname
 	role="type">a</varname> in square brackets, <type>[a]</type>.
@@ -138,14 +138,14 @@
       <emphasis>polymorphic</emphasis>, because it can contain any
       type of value.</para>
 
-    <para id="x.G3">Lists are the <quote>bread and butter</quote> of Haskell
+    <para id="x_G3">Lists are the <quote>bread and butter</quote> of Haskell
       collections.  Whereas in an imperative language, we might repeat
       a task over many items by iterating through a loop, this is
       something that we tend to do in Haskell by recursing over a
       list.  We'll be spending a lot more time discussing lists in
       <xref linkend="hs.fp"/>.</para>
 
-    <para id="x.H3">A tuple is a fixed-size collection of values, each of which
+    <para id="x_H3">A tuple is a fixed-size collection of values, each of which
       can be of any type.  Unlike a list (the elements of which must
       all have the same type), there's no need for the elements of a
       tuple to have related types.  We write a tuple by enclosing its
@@ -154,7 +154,7 @@
 
     &tuple.ghci:tuple;
 
-    <para id="x.I3">We can construct a tuple with any number of elements
+    <para id="x_I3">We can construct a tuple with any number of elements
       (although in practice, a tuple with more than a handful becomes
       unwieldy).  A tuple's type encodes the number and types of its
       elements in its own type.  This means that tuples containing
@@ -163,12 +163,12 @@
 
     &tuple.ghci:type;
 
-    <para id="x.J3">A two-tuple of an <type>Int</type> and a <type>String</type>
+    <para id="x_J3">A two-tuple of an <type>Int</type> and a <type>String</type>
       has a different type than a two-tuple of a <type>Bool</type> and
       a <type>Bool</type>, for example, and a three-tuple has a
       different type than a four-tuple.</para>
 
-    <para id="x.K3">Probably the most common use of tuples is to let us return
+    <para id="x_K3">Probably the most common use of tuples is to let us return
       multiple values from a function.  We can also use them in other
       places where we want a fixed-size collection of values, for
       which the kind of container we're using isn't of much
@@ -181,17 +181,17 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x.L3">What are the types of the following
+	    <para id="x_L3">What are the types of the following
 	      expressions?</para>
 	    <itemizedlist>
 	      <listitem>
-		<para id="x.M3"><code>False</code></para>
+		<para id="x_M3"><code>False</code></para>
 	      </listitem>
 	      <listitem>
-		<para id="x.N3"><code>(["foo", "bar"], 'a')</code></para>
+		<para id="x_N3"><code>(["foo", "bar"], 'a')</code></para>
 	      </listitem>
 	      <listitem>
-		<para id="x.O3"><code>[(True, []), (False, [['a']])]</code></para>
+		<para id="x_O3"><code>[(True, []), (False, [['a']])]</code></para>
 	      </listitem>
 	    </itemizedlist>
 	  </question>
@@ -203,31 +203,31 @@
   <sect1 id="hs.funcstypes.calling">
     <title>Calling functions</title>
 
-    <para id="x.P3">Now that we've had our fill of data types for a while, let's
+    <para id="x_P3">Now that we've had our fill of data types for a while, let's
       turn our attention to <emphasis>working</emphasis> with some of
       the types we've seen.  We've already seen how to perform
       arithmetic in <xref linkend="hs.starting.calc.arithmetic"/>, and it
       looks quite as it does in other languages.</para>
 
-    <para id="x.Q3">However, our discussion of lists and tuples mentioned how we
+    <para id="x_Q3">However, our discussion of lists and tuples mentioned how we
       can construct them, but not how we do anything with them
       afterwards.  Haskell defines a large library of functions for
       working with lists and (to a lesser extent) tuples, so let's
       find out how to use a few of those functions.</para>
 
-    <para id="x.R3">To call a function in Haskell, we provide the name of the
+    <para id="x_R3">To call a function in Haskell, we provide the name of the
       function followed by its arguments, all separated by white space.
       As an example, let's call the <function>head</function>
       function, which returns the first element of a list.</para>
 
     &func.ghci:head;
 
-    <para id="x.S3">Its counterpart, <function>tail</function>, returns all
+    <para id="x_S3">Its counterpart, <function>tail</function>, returns all
       <emphasis>but</emphasis> the head of a list.</para>
 
     &func.ghci:tail;
 
-    <para id="x.T3">A related pair of functions, <function>take</function> and
+    <para id="x_T3">A related pair of functions, <function>take</function> and
       <function>drop</function>, take two arguments: given a number
       and a list, they return either the first, or all but the first,
       number of elements of the list.  (Here, remember that a
@@ -235,21 +235,21 @@
 
     &func.ghci:takeDrop;
 
-    <para id="x.U3">If you're used to function call syntax in other languages,
+    <para id="x_U3">If you're used to function call syntax in other languages,
       this notation can take a little getting used to, but it's
       undeniably simple and uniform.  Here's what we mean by
       uniform.</para>
 
     &func.ghci:snd;
 
-    <para id="x.V3">In some other languages, the call to
+    <para id="x_V3">In some other languages, the call to
       <function>snd</function> above might mean <quote>call
 	<function>snd</function> with two arguments,
 	<literal>1</literal> and <literal>2</literal></quote>, but in
       Haskell, it's a single-argument call, passing the tuple
       <literal>(1,2)</literal>.</para>
 
-    <para id="x.W3">By the way, <function>snd</function> has a companion
+    <para id="x_W3">By the way, <function>snd</function> has a companion
       function, <function>fst</function>, which returns the first
       element of a tuple.</para>
 
@@ -258,7 +258,7 @@
     <sect2 id="hs.funcstypes.calling.expr">
       <title>Passing an expression to a function</title>
 
-      <para id="x.X3">Haskell evaluates an expression from left to right.  If we
+      <para id="x_X3">Haskell evaluates an expression from left to right.  If we
 	want to use the result of one expression as an argument to
 	another, we have to keep this in mind and use parentheses to
 	tell the parser what we really mean.  Here's an
@@ -266,7 +266,7 @@
 
       &func.ghci:headDrop;
 
-      <para id="x.Y3">We can read this as <quote>pass the result of the
+      <para id="x_Y3">We can read this as <quote>pass the result of the
 	  expression <code>drop 4 "azerty"</code> as the argument to
 	  <function>head</function></quote>.  If we were to leave out
 	the parentheses, Haskell would instead interpret the
@@ -280,14 +280,14 @@
   <sect1 id="hs.funcstypes.sigs">
     <title>Understanding a function's type signature</title>
 
-    <para id="x.Z3">A consequence of Haskell's strong typing is that
+    <para id="x_Z3">A consequence of Haskell's strong typing is that
       <function>fst</function> and <function>snd</function> only
       accept two-tuples as arguments.  Let's see what &ghci; tells us
       about their types.</para>
 
     &func.ghci:fst.type;
 
-    <para id="x.a3">We can read the <literal>-&gt;</literal> above as
+    <para id="x_a3">We can read the <literal>-&gt;</literal> above as
       <quote>returns</quote>.  The entire signature thus tells us that
       <function>fst</function> takes any two-tuple whose elements are
       of types <varname role="type">a</varname> and <varname
@@ -298,7 +298,7 @@
 
     &func.ghci:fst.bad;
 
-    <para id="x.b3">Notice that the type signatures above give us a strong hint
+    <para id="x_b3">Notice that the type signatures above give us a strong hint
       as to what these functions might actually
       <emphasis>do</emphasis>. This is an incredibly valuable property
       of types in a functional language.  Since there aren't usually
@@ -307,19 +307,19 @@
       its type signature, with no <quote>regular documentation</quote>
       required.</para>
 
-    <para id="x.c3">Just as we called the list type polymorphic because it can
+    <para id="x_c3">Just as we called the list type polymorphic because it can
       contain values of any type, when a function has type variables
       in its signature, indicating that some of its arguments can be
       of any type, we call the function polymorphic, too.</para>
 
-    <para id="x.d3">So far, we haven't seen a signature for a function that
+    <para id="x_d3">So far, we haven't seen a signature for a function that
       takes <emphasis>more</emphasis> than one argument.  We've
       already encountered a few such functions; let's look at
       <function>take</function>.</para>
 
     &func.ghci:take.type;
 
-    <para id="x.e3">It's pretty clear that there's something going on with an
+    <para id="x_e3">It's pretty clear that there's something going on with an
       <type>Int</type> and some lists, but why are there two
       <literal>-&gt;</literal> symbols in the signature?  Haskell
       parses this chain of arrows from right to left.  If we introduce
@@ -328,13 +328,13 @@
 
     &Take.hs:type;
 
-    <para id="x.f3">From this, it looks like we ought to read the type signature
+    <para id="x_f3">From this, it looks like we ought to read the type signature
       as a function that takes one argument, an <type>Int</type>, and
       returns another function.  That other function also takes one
       argument, a list, and returns a list of the same type as its
       argument.</para>
 
-    <para id="x.g3">This is an intriguing idea, but it's not easy to see just
+    <para id="x_g3">This is an intriguing idea, but it's not easy to see just
       yet what its consequences might be.  We'll return to this topic
       in <xref linkend="hs.fp.partialapp"/>, once we've spent a bit of
       time writing functions.</para>
@@ -344,21 +344,21 @@
   <sect1 id="hs.funcstypes.srcfile">
     <title>Haskell source files, and writing simple functions</title>
 
-    <para id="x.h3">Now that we know how to call functions, it's time we turned
+    <para id="x_h3">Now that we know how to call functions, it's time we turned
       our attention to writing them.  While we can write functions in
       &ghci;, it's not a good environment for doing so, because it
       limits any expression or definition to one line in length.  So
       instead, we'll finally break down and create a source
       file.</para>
 
-    <para id="x.i3">Haskell source files are usually identified with a suffix of
+    <para id="x_i3">Haskell source files are usually identified with a suffix of
       <filename>.hs</filename>.  Here's a simple function definition:
       open up a file named <filename>add.hs</filename>, and add these
       contents to it.</para>
 
     &add.hs:add;
 
-    <para id="x.j3">On the left hand side of the <literal>=</literal> is the
+    <para id="x_j3">On the left hand side of the <literal>=</literal> is the
       name of the function, followed by the arguments to the function.
       On the right hand side is the body of the function.  With our
       source file saved, we can load it into &ghci;, and use our new
@@ -366,34 +366,34 @@
 
     &add.ghci:add;
 
-    <para id="x.k3">When we call <function>add</function>, the variables
+    <para id="x_k3">When we call <function>add</function>, the variables
       <varname>a</varname> and <varname>b</varname> on the left hand
       side of our definition are given (or <quote>bound to</quote>)
       the values <literal>1</literal> and <literal>2</literal>, then
       the right hand side is evaluated, and the result
       returned.</para>
 
-    <para id="x.l3">Haskell doesn't need a <command>return</command> statement;
+    <para id="x_l3">Haskell doesn't need a <command>return</command> statement;
       the result of a function is the result of evaluating whatever
       expression is in the function's body.</para>
 
     <sect2 id="hs.funcstypes.variable">
       <title>Just what is a variable, anyway?</title>
 
-      <para id="x.rK">If you're used to imperative programming languages, you're
+      <para id="x_rK">If you're used to imperative programming languages, you're
 	likely to think of a variable as a way of identifying a
 	<quote>box</quote>.  You can get the value that's currently in
 	a box, and you can change the value in the box using
 	assignment.</para>
 
-      <para id="x.sK">In Haskell, a variable is the name of a
+      <para id="x_sK">In Haskell, a variable is the name of a
 	<emphasis>value</emphasis>.  This is critically different from
 	the name of a box: we're used to being able to change what's
 	inside a box from our dealings with other languages, but we
 	can't change the <quote>twoness</quote> of the value
 	<literal>2</literal>.</para>
 
-      <para id="x.tK">Creating a variable in Haskell just gives a convenient
+      <para id="x_tK">Creating a variable in Haskell just gives a convenient
 	name to a value; we can't change the value associated with a
 	variable.  This bears a strong similarity to the way we think
 	about variables in mathematics.</para>
@@ -402,7 +402,7 @@
     <sect2 id="hs.funcstypes.if">
       <title>Conditional evaluation</title>
 
-      <para id="x.m3">Like other languages, Haskell has an <code>if</code>
+      <para id="x_m3">Like other languages, Haskell has an <code>if</code>
 	expression.  Let's see it in action, then we'll explain what's
 	going on.  As an example, we'll write our own version of the
 	standard <function>take</function> function. Before we begin,
@@ -411,7 +411,7 @@
 
       &myTake.ghci:take;
 
-      <para id="x.n3">From the above, it seems that <function>take</function>
+      <para id="x_n3">From the above, it seems that <function>take</function>
 	returns an empty list if the number to remove is greater than
 	the number of elements, and that it treats negative numbers as
 	zero.  Here's a <function>myTake</function> function that has
@@ -420,23 +420,23 @@
 
       &myTake.hs:myTake;
 
-      <para id="x.o3">Let's save it in a file named
+      <para id="x_o3">Let's save it in a file named
 	<filename>myTake.hs</filename>, then load it into
 	&ghci;.</para>
 
       &myTake.ghci:myTake;
 
-      <para id="x.p3">Now that we've seen <function>myTake</function> in action,
+      <para id="x_p3">Now that we've seen <function>myTake</function> in action,
 	let's return to the source code and look at a few of the
 	novelties we've introduced.</para>
 
-      <para id="x.q3">First is the <code>if</code> keyword itself.  It takes an
+      <para id="x_q3">First is the <code>if</code> keyword itself.  It takes an
 	expression of type <type>Bool</type>.  If that evaluates to
 	<function>True</function>, it evaluates the expression on the
 	<code>then</code> branch.  Otherwise, it evaluates the
 	expression on the <code>else</code> branch.</para>
 
-      <para id="x.r3">The combination of <code>if</code>, <code>then</code>,
+      <para id="x_r3">The combination of <code>if</code>, <code>then</code>,
 	<code>else</code> and the expression after each keyword
 	combine to make up a single expression, as far as Haskell is
 	concerned.  Whichever branch is evaluated is the result of the
@@ -445,25 +445,25 @@
 	<code>else</code> branches must have the same type.  If they
 	don't, an <code>if</code> expression won't typecheck.</para>
 
-      <para id="x.s3">Whereas it can make sense in an imperative language to
+      <para id="x_s3">Whereas it can make sense in an imperative language to
 	omit the <code>else</code> branch from an <code>if</code>,
 	this would be nonsensical in Haskell.  An <code>if</code>
 	expression that was missing an <code>else</code> wouldn't have
 	a value if the condition after the <code>if</code> evaluated
 	to <function>False</function>, so it couldn't typecheck.</para>
 
-      <para id="x.t3">The second novelty is almost trivial: the
+      <para id="x_t3">The second novelty is almost trivial: the
 	<function>null</function> function, which we use in the
 	Boolean portion of the <code>if</code>, indicates whether a
 	list is empty.</para>
 
       &myTake.ghci:null;
 
-      <para id="x.u3">Third is that our function calls itself recursively.  This
+      <para id="x_u3">Third is that our function calls itself recursively.  This
 	is an early example of how, in Haskell, we use recursion where
 	in an imperative language we'd probably use a loop.</para>
 
-      <para id="x.v3">Finally, our <code>if</code> expression spans several
+      <para id="x_v3">Finally, our <code>if</code> expression spans several
 	lines.  We line the <code>then</code> and <code>else</code>
 	branches up under the <code>if</code> for neatness, but this
 	is not mandatory.  We could put all of them on a single line,
@@ -476,7 +476,7 @@
     <sect2 id="hs.funcstypes.error">
       <title>Reporting errors</title>
 
-      <para id="x.w3">Haskell provides a standard function, <function>error ::
+      <para id="x_w3">Haskell provides a standard function, <function>error ::
 	  Char -&gt; a</function>, that we can call when something has
 	gone terribly wrong in our code.  We give it a string
 	parameter, which is the error message to display.  Its type
@@ -485,7 +485,7 @@
 	answer is that it doesn't, because <function>error</function>
 	is special.</para>
 
-      <para id="x.x3">It has that type so that we can call it anywhere and it
+      <para id="x_x3">It has that type so that we can call it anywhere and it
 	will always have the right type.   However, instead of
 	returning a value like a normal function, it immediately
 	terminates evaluation, and prints the error message we give
@@ -495,12 +495,12 @@
 
       &MySecond.hs:mySecond;
 
-      <para id="x.y3">As usual, we can see how this works in practice in
+      <para id="x_y3">As usual, we can see how this works in practice in
 	&ghci;.</para>
 
       &error.ghci:mySecond;
 
-      <para id="x.z3">Notice that in the third case above, where we're trying to
+      <para id="x_z3">Notice that in the third case above, where we're trying to
 	use the result of the call to <function>mySecond</function> as
 	the argument to another function, evaluation still terminates
 	and drops us back to the &ghci; prompt.  This is both the
@@ -517,7 +517,7 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x.A4">Haskell provides a standard function, <code>last ::
+	    <para id="x_A4">Haskell provides a standard function, <code>last ::
 		[a] -&gt; a</code>, that returns the last element of a
 	      list.  Write a function <function>lastButOne</function>,
 	      that returns the element <emphasis>before</emphasis>
@@ -527,7 +527,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x.B4">Load your <function>lastButOne</function> function
+	    <para id="x_B4">Load your <function>lastButOne</function> function
 	      into &ghci;, and try it out on lists of different
 	      lengths.  What happens when you pass it a list that's
 	      too short?</para>
@@ -542,13 +542,13 @@
   <sect1 id="hs.funcstypes.data">
     <title>Defining a new data type</title>
       
-    <para id="x.C4">Although lists and tuples are useful, we'll still often want
+    <para id="x_C4">Although lists and tuples are useful, we'll still often want
       to construct new data types of our own.  We define a new data
       type using the <code>data</code> keyword.</para>
 
     &MyType.hs:MyType;
 
-    <para id="x.D4">The <type>MyType</type> after the <code>data</code> keyword
+    <para id="x_D4">The <type>MyType</type> after the <code>data</code> keyword
       is the name of our new type.  (As we've already mentioned, a
       type name must start with a capital letter.)  The string
       <code>MyConstructor</code> is the name of the
@@ -560,7 +560,7 @@
       field in a structure or class would in another language.</para>
 
     <note>
-      <para id="x.E4">We'll explain the full meaning of <code>deriving
+      <para id="x_E4">We'll explain the full meaning of <code>deriving
 	  (Show)</code> later, in
 	<xref linkend="hs.typeclasses.wellknown.show"/>.  For now,
 	it's enough to know that we need to tack this onto a type
@@ -568,43 +568,43 @@
 	print a value of this type.</para>
     </note>
 
-    <para id="x.F4">We can create a new value of type <type>MyType</type> by
+    <para id="x_F4">We can create a new value of type <type>MyType</type> by
       treating <function>MyConstructor</function> as a function, and
       calling it with arguments of types <type>Int</type> and
       <type>String</type>.</para>
 
     &MyType.hs:myValue;
 
-    <para id="x.G4">Once we've defined a type, we can experiment with it in
+    <para id="x_G4">Once we've defined a type, we can experiment with it in
       &ghci;, starting by using the <command>:load</command> command
       to load our source file.</para>
 
     &mytype.ghci:load;
 
-    <para id="x.H4">Remember the <code>myValue</code> variable we defined?  Here
+    <para id="x_H4">Remember the <code>myValue</code> variable we defined?  Here
       it is.</para>
 
     &mytype.ghci:myValue;
 
-    <para id="x.I4">We can construct new values interactively in &ghci;,
+    <para id="x_I4">We can construct new values interactively in &ghci;,
       too.</para>
 
     &mytype.ghci:newValue;
 
-    <para id="x.J4">To find out more about a type, we can use some of &ghci;'s
+    <para id="x_J4">To find out more about a type, we can use some of &ghci;'s
       browsing capabilities.  The <command>:info</command> command
       gets &ghci; to tell us everything it knows about a
       type.</para>
     
     &mytype.ghci:info;
 
-    <para id="x.K4">We can also find out why we use
+    <para id="x_K4">We can also find out why we use
       <function>MyConstructor</function> to construct a new value of
       type <type>MyType</type>.</para>
 
     &mytype.ghci:type;
 
-    <para id="x.L4">From Haskell's perspective, then, a constructor is just
+    <para id="x_L4">From Haskell's perspective, then, a constructor is just
       another function, one that happens to return a value of the type
       we want to construct.</para>
   </sect1>
@@ -612,13 +612,13 @@
   <sect1 id="hs.funcstypes.adt">
     <title>Algebraic data types</title>
 
-    <para id="x.M4">The <type>Bool</type> type that we introduced earlier is the
+    <para id="x_M4">The <type>Bool</type> type that we introduced earlier is the
       simplest example of a sort of type called an <emphasis>algebraic
 	data type</emphasis>. An algebraic data type has a fixed set
       of possible values, each of which is identified by a distinct
       constructor.</para>
 
-    <para id="x.N4">In the case of <type>Bool</type>, the type has two
+    <para id="x_N4">In the case of <type>Bool</type>, the type has two
       constructors, <code>True</code> and <code>False</code>.  Each
       constructor is separated by a <literal>|</literal> character,
       which we can read as <quote>or</quote>.  These are usually
@@ -626,7 +626,7 @@
 
       &Bool.hs:Bool;
 
-    <para id="x.O4">Each constructor can take zero or more arguments; the
+    <para id="x_O4">Each constructor can take zero or more arguments; the
       numbers and types of the arguments accepted by each constructor
       are independent.  For example, here's one way we might represent
       versions of the Windows operating system, where old releases
@@ -636,7 +636,7 @@
 
       &OsVersion.hs:WindowsVersion;
 
-    <para id="x.P4">The alternatives that represent older releases don't need
+    <para id="x_P4">The alternatives that represent older releases don't need
       arguments, but those for the newer releases need an
       <type>Int</type> to represent the patch level.</para>
 
@@ -644,19 +644,19 @@
       <title>Analogues to algebraic data types in other
 	languages</title>
 
-      <para id="x.Q4">Algebraic data types provide a single structuring
+      <para id="x_Q4">Algebraic data types provide a single structuring
 	mechanism in instances where other languages have several
 	different building blocks.  Here are some analogues from C and
 	C++, which might make it clearer what we can do with algebraic
 	data types.</para>
 
-      <para id="x.R4">With just one constructor, an algebraic data type groups
+      <para id="x_R4">With just one constructor, an algebraic data type groups
 	related values into one, and gives that value an identity
 	distinct from other types.  It corresponds to a
 	<code>struct</code> in C or C++, and its components to the
 	fields of a struct.</para>
 
-      <para id="x.S4">If an algebraic data type has multiple alternatives, we
+      <para id="x_S4">If an algebraic data type has multiple alternatives, we
 	can think of it as similar to a <code>union</code> in C or
 	C++.  A big difference between the two is that a union doesn't
 	tell us which alternative is actually present; we have to
@@ -665,11 +665,11 @@
 	sometimes be sources of bugs, where our notion of which
 	alternative we should be using is incorrect.</para>
 
-      <para id="x.T4">With an algebraic data type, Haskell stores the
+      <para id="x_T4">With an algebraic data type, Haskell stores the
 	constructor that we use in the value that we create, so we
 	don't need to manually sock it away somewhere else.</para>
 
-      <para id="x.U4">Algebraic data types also serve where we'd use an
+      <para id="x_U4">Algebraic data types also serve where we'd use an
 	<code>enum</code> in C or C++, to represent a range of
 	discrete symbolic values.</para>
 
@@ -680,25 +680,25 @@
     <sect2 id="hs.funcstypes.adt.notes">
       <title>A few final notes</title>
 
-      <para id="x.V4">From reading the preceding sections, it should be clear
+      <para id="x_V4">From reading the preceding sections, it should be clear
 	that <emphasis>all</emphasis> of the data types that we define
 	with the <code>data</code> keyword are algebraic data types.
 	Some may have just one alternative; others have several; but
 	they're all using the same organising machinery.</para>
 
-      <para id="x.W4">Another useful thing to know is that it's perfectly okay
+      <para id="x_W4">Another useful thing to know is that it's perfectly okay
 	for the name of an algebraic type to have the same name as one
 	of its constructors to be the same.  It's always obvious from
 	context whether we're using a name to refer to a type or a
 	constructor, so this doesn't introduce any ambiguity.</para>
 
-      <para id="x.X4">Giving a type and its constructor the same name is in fact
+      <para id="x_X4">Giving a type and its constructor the same name is in fact
 	something that we do frequently when the type has just one
 	constructor.</para>
 
       &TypeName.hs:PerfectlyNormal;
 
-      <para id="x.Y4">When a type has multiple constructors, it's still legal to
+      <para id="x_Y4">When a type has multiple constructors, it's still legal to
 	give one of the constructors the  same name as the type, but
 	this is much less common.</para>
 
@@ -710,14 +710,14 @@
   <sect1 id="hs.funcstypes.paramtypes">
     <title>Parameterised types</title>
 
-    <para id="x.Z4">In our discussion of lists, we mentioned that we can create
+    <para id="x_Z4">In our discussion of lists, we mentioned that we can create
       a list of values of any type.  We can define our own types that
       allow this, too.  To do this, we introduce variables into a type
       declaration.</para>
 
       &Wrapper.hs:Wrapper;
 
-    <para id="x.a4">Here, the variable <varname role="type">a</varname> is not a
+    <para id="x_a4">Here, the variable <varname role="type">a</varname> is not a
       regular variable; it's called a <emphasis>type
 	variable</emphasis>, because it indicates that our
       <type>Wrapper</type> type takes another type as its parameter
@@ -726,24 +726,24 @@
 
       &Wrapper.hs:wrappedTypes;
 
-    <para id="x.b4">As usual, we can load our source file into &ghci; and
+    <para id="x_b4">As usual, we can load our source file into &ghci; and
       experiment with it.</para>
 
       &wrapper.ghci:experiment;
 
-    <para id="x.c4"><type>Wrapper</type> is a <quote>generic</quote> container
+    <para id="x_c4"><type>Wrapper</type> is a <quote>generic</quote> container
       type (albeit a fairly useless one); we can construct a
       <type>Wrapper</type> from a value of any type.  It is also
       strongly typed; the type of whatever it contains is encoded in
       its own type.</para>
 
-    <para id="x.d4">To once again extend an analogy to more familiar languages,
+    <para id="x_d4">To once again extend an analogy to more familiar languages,
       this gives us a facility that bears some resemblance to
       templates in C++, and to generics in Java.  (In fact, Java's
       generics facility was inspired by several aspects of Haskell's
       type system.)</para>
 
-    <para id="x.e4">We can nest uses of parameterised types inside each other,
+    <para id="x_e4">We can nest uses of parameterised types inside each other,
       but when we do, we may need to use parentheses to tell the
       Haskell compiler what we mean.</para>
 
@@ -753,7 +753,7 @@
   <sect1 id="hs.funcstypes.locals">
     <title>Back to writing functions: local variables</title>
 
-    <para id="x.f4">Let's take a break from writing about types for a few
+    <para id="x_f4">Let's take a break from writing about types for a few
       moments.  Within the body of a function, we can introduce new
       local variables whenever we need them, using a <code>let</code>
       expression.  As an example, let's write a function that
@@ -762,7 +762,7 @@
 
     &Roots.hs:realRoots;
 
-    <para id="x.g4">The keywords to look out for here are <code>let</code>,
+    <para id="x_g4">The keywords to look out for here are <code>let</code>,
       which starts a block of variable declarations, and
       <code>in</code>, which ends it.  Each line introduces a new
       variable.  The name is on the left of the <literal>=</literal>,
@@ -770,13 +770,13 @@
       within our block of variable declarations and in the expression
       that follows the <code>in</code> keyword.</para>
 
-    <para id="x.h4">There's no problem with a variable earlier in a
+    <para id="x_h4">There's no problem with a variable earlier in a
       <code>let</code> block referring to a later one, or even with
       them referring to each other.  (In some functional languages,
       this sort of flexible <code>let</code> is named
       <code>letrec</code>.)</para>
 
-    <para id="x.i4">We can have multiple <code>let</code> blocks within an
+    <para id="x_i4">We can have multiple <code>let</code> blocks within an
       expression.  There's also another mechanism we can use to
       introduce local variables, called a <code>where</code> block.
       The definitions in a <code>where</code> block apply to the code
@@ -785,7 +785,7 @@
 
     &Roots.hs:roots;
 
-    <para id="x.j4">Here, the <function>roots</function> function returns the
+    <para id="x_j4">Here, the <function>roots</function> function returns the
       real roots when they're defined, and the complex roots
       otherwise. (We left out the divide-by-zero case for simplicity.)
       While a <quote>where</quote> clause initially looks very weird
@@ -795,7 +795,7 @@
       yourself missing <code>where</code> clauses in languages that
       lack them!</para>
 
-    <para id="x.k4">The main difference between <code>let</code> and
+    <para id="x_k4">The main difference between <code>let</code> and
       <code>where</code> is one of scope.  The scope of a
       <code>let</code> only extends to the expression after the
       <code>in</code> keyword, while the variables introduced by a
@@ -804,17 +804,17 @@
       <code>let</code> is always paired with an expression, but
       <code>where</code> is paired with a block of equations.</para>
 
-    <para id="x.l4">We'll be talking more about how to write <code>let</code>
+    <para id="x_l4">We'll be talking more about how to write <code>let</code>
       expressions and <code>where</code> clauses in <xref
 	linkend="hs.funcstypes.offside"/>.</para>
 
     <note>
-      <para id="x.m4">It's probably obvious from context above, but
+      <para id="x_m4">It's probably obvious from context above, but
 	<function>(:+)</function> is the constructor for a complex
 	number, taking the real part on the left and the imaginary
 	part on the right.</para>
 
-      <para id="x.n4">Also, <type>Complex</type> is parameterised over the type
+      <para id="x_n4">Also, <type>Complex</type> is parameterised over the type
 	of complex number it should represent.  In practice, it only
 	makes much sense to use <type>Complex Double</type>, since
 	&GHC; implements <type>Double</type> more efficiently than
@@ -825,7 +825,7 @@
   <sect1 id="hs.funcstypes.maybe">
     <title>How to represent a complicated result</title>
 
-    <para id="x.o4">We sneaked two previously unseen standard types,
+    <para id="x_o4">We sneaked two previously unseen standard types,
       <type>Maybe</type> and <type>Either</type>, into our
       root-finding examples.  We use <type>Maybe</type> when it might
       not make sense to return a normal result, for example because a
@@ -837,25 +837,25 @@
 
     &realRoots.ghci:maybe;
     
-    <para id="x.p4">Why do we need <type>Maybe</type> here?  The real-valued
+    <para id="x_p4">Why do we need <type>Maybe</type> here?  The real-valued
       roots of a quadratic equation are infinity when
       <varname>a</varname>, the coefficient of <literal>x **
 	2</literal>, is zero.</para>
 
     &realRoots.ghci:a0;
 
-    <para id="x.q4">They're also not defined when <literal>b ** 2 - 4 * a *
+    <para id="x_q4">They're also not defined when <literal>b ** 2 - 4 * a *
 	c</literal> is negative, because we would need to use complex
       numbers to represent a negative square root.</para>
 
     &realRoots.ghci:complex;
 
-    <para id="x.r4">Otherwise, we can return a normal result, wrapped in
+    <para id="x_r4">Otherwise, we can return a normal result, wrapped in
       <function>Just</function>.</para>
 
     &realRoots.ghci:just;
 
-    <para id="x.s4">Compared to <function>error</function>, which we saw in
+    <para id="x_s4">Compared to <function>error</function>, which we saw in
       <xref linkend="hs.funcstypes.error"/>, <type>Maybe</type> has
       the huge advantage that it's a normal value, which we return to
       our caller to deal with.  Calling <function>error</function>, by
@@ -863,7 +863,7 @@
       handle as it disintegrates around us; something terrible has
       happened, and we need to give up right now.</para>
 
-    <para id="x.t4">The <type>Either a b</type> type gives us even more
+    <para id="x_t4">The <type>Either a b</type> type gives us even more
       flexibility than <type>Maybe</type>, as it's got two type
       parameters. We can wrap a value of any type <varname
 	role="type">a</varname> with <type>Left</type>, or a value of
@@ -878,38 +878,38 @@
     <title>The offside rule, and white space in a function
       body</title>
 
-    <para id="x.u4">In our definition of <function>realRoots</function>, the
+    <para id="x_u4">In our definition of <function>realRoots</function>, the
       left margin of our text wandered around quite a bit.  This was
       not an accident: in Haskell, white space has meaning.</para>
 
-    <para id="x.v4">Haskell uses indentation as a cue to parse sections of code.
+    <para id="x_v4">Haskell uses indentation as a cue to parse sections of code.
       This use of layout to convey structure is sometimes called the
       offside rule. At the top level, the first declaration or
       definition can start in any column, and the Haskell compiler or
       interpreter remembers that indentation level.  Every subsequent
       top-level declaration must have the same indentation.</para>
 
-    <para id="x.w4">Here's an illustration of the top-level indentation rule.
+    <para id="x_w4">Here's an illustration of the top-level indentation rule.
       Our first file, <filename>GoodIndent.hs</filename>, is well
       behaved.</para>
 
     &GoodIndent.hs:good;
 
-    <para id="x.x4">Our second, <filename>BadIndent.hs</filename>, doesn't play
+    <para id="x_x4">Our second, <filename>BadIndent.hs</filename>, doesn't play
       by the rules.</para>
 
     &BadIndent.hs:bad;
 
-    <para id="x.y4">Here's what happens when we try to load the two files into
+    <para id="x_y4">Here's what happens when we try to load the two files into
       &ghci;.</para>
 
     &indent.ghci:load;
 
-    <para id="x.z4">An empty line is treated as a continuation of the current
+    <para id="x_z4">An empty line is treated as a continuation of the current
       item, as is a line indented to the right of the current current
       item.</para>
 
-    <para id="x.A5">The rules for <code>let</code> expressions and
+    <para id="x_A5">The rules for <code>let</code> expressions and
       <code>where</code> clauses are similar.  After a
       <code>let</code> or <code>where</code> keyword, the Haskell
       compiler or interpreter remembers the indentation of the next
@@ -919,12 +919,12 @@
       indentation is the same as the previous line, this is treated as
       beginning a new item in the same block.</para>
 
-    <para id="x.B5">Here are nested uses of <code>let</code> and
+    <para id="x_B5">Here are nested uses of <code>let</code> and
       <code>where</code>.</para>
 
     &letwhere.hs:let;
 
-    <para id="x.C5">In the body of <varname>bar</varname>, the variable
+    <para id="x_C5">In the body of <varname>bar</varname>, the variable
       <varname>a</varname> is only visible within the <code>let</code>
       expression that defines it.  It's not visible to the
       <code>let</code> expression that defines <varname>b</varname>;
@@ -933,24 +933,24 @@
 
     &letwhere.hs:where;
 
-    <para id="x.D5">Similarly, the scope of the first <code>where</code> clause
+    <para id="x_D5">Similarly, the scope of the first <code>where</code> clause
       is the definition of <varname>foo</varname>, but the scope of
       the second is just the first <code>where</code> clause.</para>
 
-    <para id="x.E5">The indentation we use for the <code>let</code> and
+    <para id="x_E5">The indentation we use for the <code>let</code> and
       <code>where</code> clauses makes our intentions easy to figure
       out.</para>
 
     <sect2 id="hs.funcstypes.tabs">
       <title>A note about tabs versus spaces</title>
 
-      <para id="x.F5">If you are using a Haskell-aware text editor (e.g. Emacs),
+      <para id="x_F5">If you are using a Haskell-aware text editor (e.g. Emacs),
 	it is probably already configured to use space characters for
 	all white space within a line.  If your editor is
 	<emphasis>not</emphasis> Haskell-aware, you should configure
 	it to only use space characters.</para>
 
-      <para id="x.G5">The reason for this is simple portability.  In an editor
+      <para id="x_G5">The reason for this is simple portability.  In an editor
 	that uses a fixed-width font, tab stops are by default placed
 	at different intervals on Unix-like systems (every eight
 	characters) than on Windows  (every four characters). This
@@ -966,7 +966,7 @@
     <sect2 id="hs.funcstypes.block">
       <title>The offside rule is not mandatory</title>
 
-      <para id="x.H5">We can use explicit structuring instead of layout to
+      <para id="x_H5">We can use explicit structuring instead of layout to
 	indicate what we mean.  To do so, we start a block of
 	equations with an opening curly brace; separate each item with
 	a semicolon; and finish the block with a closing curly brace.
@@ -975,11 +975,11 @@
 
       &Braces.hs:braces;
 
-      <para id="x.I5">When we use explicit structuring, the normal layout rules
+      <para id="x_I5">When we use explicit structuring, the normal layout rules
 	don't apply, which is why we can get away with unusual
 	indentation in the second <code>let</code> expression.</para>
 
-      <para id="x.J5">We can use explicit structuring anywhere that we'd
+      <para id="x_J5">We can use explicit structuring anywhere that we'd
 	normally use layout.  It's valid for <code>where</code>
 	clauses, and even top-level declarations.  Just remember that
 	although the facility exists, explicit structuring is hardly
@@ -991,11 +991,11 @@
   <sect1 id="hs.funcstypes.recursive">
     <title>Recursive types</title>
 
-    <para id="x.K5">Here's a definition of a binary tree type.</para>
+    <para id="x_K5">Here's a definition of a binary tree type.</para>
 
       &Tree.hs:Tree;
 
-    <para id="x.L5">We call this a <emphasis>recursive</emphasis> type because
+    <para id="x_L5">We call this a <emphasis>recursive</emphasis> type because
       <type>Tree</type>, the type we're defining, appears both on the
       left hand side and the right hand side of the definition: we
       define the type in terms of itself.</para>
@@ -1004,7 +1004,7 @@
   <sect1 id="hs.funcstypes.listadt">
     <title>A little more about lists</title>
 
-    <para id="x.M5">Now that we're getting familiar with some of the jargon
+    <para id="x_M5">Now that we're getting familiar with some of the jargon
       around types, we can revisit lists.  Haskell's list type is a
       parameterised type, because we can make lists of any other type.
       It is also an algebraic data type, with two constructors.  One
@@ -1013,7 +1013,7 @@
 
     &list.ghci:empty;
 
-    <para id="x.N5">The other is the <function>(:)</function> operator, often
+    <para id="x_N5">The other is the <function>(:)</function> operator, often
       pronounced <quote>cons</quote> (this is short for
       <quote>construct</quote>, and also borrowed from Lisp).  The
       <function>(:)</function> operator takes an element and a list,
@@ -1021,40 +1021,40 @@
 
     &list.ghci:cons;
 
-    <para id="x.O5">We can use <function>(:)</function> repeatedly to add new
+    <para id="x_O5">We can use <function>(:)</function> repeatedly to add new
       elements to the front of a list.</para>
 
     &list.ghci:cons2;
 
-    <para id="x.P5">The right hand side of <function>(:)</function> must be a
+    <para id="x_P5">The right hand side of <function>(:)</function> must be a
       list, and of the correct type.  If it's not, we'll get an
       error.</para>
 
     &list.ghci:cons.bad;
 
-    <para id="x.Q5">Because <function>(:)</function> constructs a list from
+    <para id="x_Q5">Because <function>(:)</function> constructs a list from
       another list, the list type is recursive.  So here we have a
       built-in type that's parameterised, recursive, and
       algebraic.</para>
 
-    <para id="x.R5">One consequence of lists being generic is that lists of
+    <para id="x_R5">One consequence of lists being generic is that lists of
       lists, for example, aren't special in any way.</para>
 
     &list.ghci:listlist;
 
-    <para id="x.S5">This has type <type>[[String]]</type>, a list of lists of
+    <para id="x_S5">This has type <type>[[String]]</type>, a list of lists of
       strings.  But since <type>String</type> is just a synonym for
       <type>[Char]</type>, it's <emphasis>really</emphasis> a list of
       lists of lists of <type>Char</type>.  Whew!</para>
 
-    <para id="x.T5">We're not limited to building up lists one element at a
+    <para id="x_T5">We're not limited to building up lists one element at a
       time.  Haskell defines an inline function,
       <function>(++)</function>, that we can use to append one list
       onto the end of another.</para>
 
     &list.ghci:append;
 
-    <para id="x.U5">The <function>concat</function> function takes a list of
+    <para id="x_U5">The <function>concat</function> function takes a list of
       lists, and concatenates the whole lot into a single list.</para>
 
     &list.ghci:concat;
@@ -1064,17 +1064,17 @@
   <sect1 id="hs.funcstypes.unit">
     <title>Unit, the zero-element tuple</title>
 
-    <para id="x.V5">Haskell has a special tuple type with no elements, written
+    <para id="x_V5">Haskell has a special tuple type with no elements, written
       <type>()</type>, and pronounced <quote>unit</quote>.</para>
 
     &unit.ghci:unit;
 
-    <para id="x.W5">This type is only really used with parameterised data types,
+    <para id="x_W5">This type is only really used with parameterised data types,
       to indicate that one of the type parameters isn't being used.
       Since it doesn't encode any information, it's a rough equivalent
       to <code>void</code> in C.</para>
 
-    <para id="x.X5">Here's an example of <type>()</type> in use.  We can
+    <para id="x_X5">Here's an example of <type>()</type> in use.  We can
       generalise our earlier <type>Tree</type> type a little, so that
       internal nodes contain values of type <varname
 	role="type">a</varname>, while leaves contain values of type
@@ -1082,7 +1082,7 @@
 
     &Tree.hs:ComplexTree;
 
-    <para id="x.Y5">If we wanted to create a <type>ComplexTree</type> where we
+    <para id="x_Y5">If we wanted to create a <type>ComplexTree</type> where we
       wanted to store <type>Int</type>s on the leaves, but don't care
       about the internal nodes.  We would write its type as
       <type>ComplexTree () Int</type>.</para>
@@ -1091,23 +1091,23 @@
   <sect1 id="hs.funcstypes.pattern">
     <title>Pattern matching</title>
 
-    <para id="x.Z5">Although we introduced a handful of functions earlier that
+    <para id="x_Z5">Although we introduced a handful of functions earlier that
       can operate on lists, we've yet to see how we might generally
       get values out of a constructed algebraic data type.  Haskell
       has a simple pattern matching facility that we can use to this
       end.</para>
 
-    <para id="x.a5">A pattern lets us peer inside a compound value and bind
+    <para id="x_a5">A pattern lets us peer inside a compound value and bind
       variables to the values it contains.  In fact, when we define a
       function, the parameters to that function are really patterns
       that bind our variables to an entire value.</para>
 
-    <para id="x.b5">Here's an example of pattern matching in action on a list;
+    <para id="x_b5">Here's an example of pattern matching in action on a list;
       we're going to add all elements of the list together.</para>
 
     &add.hs:sumList;
 
-    <para id="x.c5">See that <code>(x:xs)</code> on the left of the first line?
+    <para id="x_c5">See that <code>(x:xs)</code> on the left of the first line?
       The <code>:</code> means <quote>match the head of a
 	list</quote>; that's the familiar list constructor,
       <function>(:)</function>, in action in a new way.  The variables
@@ -1116,7 +1116,7 @@
       list, respectively.  The whole pattern is wrapped in parentheses
       so Haskell won't parse it as three separate arguments.</para>
 
-    <para id="x.d5">What effect does pattern matching have? Haskell will only
+    <para id="x_d5">What effect does pattern matching have? Haskell will only
       evaluate the right hand side of an equation if it can match all
       of the patterns on the left hand side.  In the definition of
       <function>sumList</function> above, the right hand side of the
@@ -1126,60 +1126,60 @@
       have a pattern for the empty list, and it will evaluate
       that.</para>
 
-    <para id="x.e5">It might initially look like we have two functions named
+    <para id="x_e5">It might initially look like we have two functions named
       <function>sumList</function> here, but Haskell lets us define a
       function as a series of equations; so in fact these two clauses
       are defining the behaviour of one function, for different
       inputs.  (By the way, there's a standard function,
       <function>sum</function>, that does this for us.)</para>
 
-    <para id="x.f5">The syntax for pattern matching on a tuple is similar to the
+    <para id="x_f5">The syntax for pattern matching on a tuple is similar to the
       syntax for constructing a tuple.  Here's a function that returns
       the third element from a three-tuple.</para>
 
     &Tuple.hs:third;
 
-    <para id="x.g5">There's no limit on how <quote>deep</quote> within a value a
+    <para id="x_g5">There's no limit on how <quote>deep</quote> within a value a
       pattern can look.  Here's a definition that looks both inside a
       tuple and inside a list within that tuple.</para>
 
     &Tuple.hs:complicated;
 
-    <para id="x.h5">We can try this out interactively.</para>
+    <para id="x_h5">We can try this out interactively.</para>
 
     &tuple.ghci:complicated;
 
-    <para id="x.i5">Wherever a literal value is present in a pattern, that value
+    <para id="x_i5">Wherever a literal value is present in a pattern, that value
       must match exactly for the pattern match to succeed.  If every
       pattern within a series of equations fails to match, we get a
       runtime error.</para>
 
     &tuple.ghci:nomatch;
 
-    <para id="x.j5">We can pattern match on algebraic data types using their
+    <para id="x_j5">We can pattern match on algebraic data types using their
       constructors.  Remember the <type>Wrapper</type> type we defined
       earlier?  Here's how we can extract a wrapped value from a
       <type>Wrapper</type>.</para>
 
     &Wrapper.hs:unwrap;
 
-    <para id="x.k5">Let's see it in action.</para>
+    <para id="x_k5">Let's see it in action.</para>
 
     &wrapper.ghci:unwrap;
 
-    <para id="x.l5">Notice that Haskell infers the type of the
+    <para id="x_l5">Notice that Haskell infers the type of the
       <function>unwrap</function> function based on the constructor
       we're using in our pattern.  If we're trying to match a value
       whose constructor is <function>Wrapper</function>, then the type
       of that parameter must be <type>Wrapper a</type>.</para>
     
     <note>
-      <para id="x.m5">Haskell tests patterns for matches in the order in which
+      <para id="x_m5">Haskell tests patterns for matches in the order in which
 	we list them in our code.  It goes from top to bottom and
 	stops at the first match; it <emphasis>does not</emphasis>
 	check every pattern and use the best match.</para>
 
-      <para id="x.n5">If you're familiar with pattern matching from a logic
+      <para id="x_n5">If you're familiar with pattern matching from a logic
 	programming language like Prolog, Haskell's facility is
 	simpler and less powerful.  It doesn't provide backtracking or
 	unification.</para>
@@ -1188,7 +1188,7 @@
     <sect2 id="hs.funcstypes.dontcare">
       <title>The don't-care, or wild card, pattern</title>
 
-      <para id="x.o5">When we're writing a pattern, we can specify that we don't
+      <para id="x_o5">When we're writing a pattern, we can specify that we don't
 	care what value a particular value within a structure has,
 	without actually binding that value to a name.  The notation
 	for this is <code>_</code> (called a wild card or <quote>don't
@@ -1198,7 +1198,7 @@
 
       &Roots.hs:isRealValued;
 
-      <para id="x.p5">Here, we don't care about the value of the result, just
+      <para id="x_p5">Here, we don't care about the value of the result, just
 	about which constructor was used to create it.  If it was
 	<function>Left</function>, the result must be a complex
 	number, otherwise it must be real.  We can use a wild card for
@@ -1211,26 +1211,26 @@
     <sect2 id="hs.funcstypes.case">
       <title>The case expression</title>
 
-      <para id="x.q5">We're not limited to using patterns in function
+      <para id="x_q5">We're not limited to using patterns in function
 	definitions.  The <code>case</code> expression lets us match
 	patterns at any time.  Here's what it looks like.</para>
 
       &Roots.hs:hasRealRoots;
 
-      <para id="x.r5">The <code>case</code> keyword is followed by an arbitrary
+      <para id="x_r5">The <code>case</code> keyword is followed by an arbitrary
 	expression; the result of this expression is what we're
 	pattern matching on.  The <code>of</code> keyword signifies
 	the end of the expression and the beginning of the block of
 	patterns and expressions.</para>
 
-      <para id="x.s5">Each item in the block consists of a pattern, followed by
+      <para id="x_s5">Each item in the block consists of a pattern, followed by
 	an arrow <code>-&gt;</code>, followed by an expression to
 	evaluate if that pattern matches.  The result of the
 	<code>case</code> expression is the result of the expression
 	associated with the first pattern to match, taken from top to
 	bottom.</para>
 
-      <para id="x.t5">To express <quote>here's the expression to evaluate if
+      <para id="x_t5">To express <quote>here's the expression to evaluate if
 	  none of the other patterns match</quote>, we would just use
 	the wild card pattern <code>_</code> as the last in our list
 	of patterns.</para>
@@ -1239,7 +1239,7 @@
     <sect2 id="hs.funcstypes.where">
       <title>A flying visit back to the where clause</title>
 
-      <para id="x.u5">Now that we've seen that we can define a function as a
+      <para id="x_u5">Now that we've seen that we can define a function as a
 	series of equations, the usefulness of the <code>where</code>
 	clause should be a bit more clear.  Variables that we define
 	inside a <code>where</code> clause are visible across all of
@@ -1249,7 +1249,7 @@
     <sect2 id="hs.funcstypes.pattern.limits">
       <title>Limits to pattern matching</title>
 
-      <para id="x.v5">Every variable that appears within a pattern is a new
+      <para id="x_v5">Every variable that appears within a pattern is a new
 	local variable that will be given a value if the pattern
 	matches, not a reference to some variable on
 	<quote>outside</quote> the pattern.  Matching a pattern only
@@ -1260,13 +1260,13 @@
 
       &BogusPattern.hs:isHead;
 
-      <para id="x.w5">A naive glance suggests that it's trying to check the
+      <para id="x_w5">A naive glance suggests that it's trying to check the
 	value of <function>f</function> to see if it's actually the
 	standard function <function>head</function>, but such an
 	interpretation would be quite wrong.  Here's what is
 	<emphasis>really</emphasis> doing.</para>
 
-      <para id="x.x5">Because the first pattern in the <code>case</code>
+      <para id="x_x5">Because the first pattern in the <code>case</code>
 	expression is just a variable, this pattern will
 	<emphasis>always</emphasis> match, no matter what the value of
 	<varname>f</varname> is, and the value of <varname>f</varname>
@@ -1274,13 +1274,13 @@
 	when the right hand side is evaluated.</para>
 
       <note>
-	<para id="x.y5">A pattern that consists only of a variable will always
+	<para id="x_y5">A pattern that consists only of a variable will always
 	  match, because it's not being compared against anything that
 	  might cause the match to fail.  We refer to patterns that
 	  always match as <quote>irrefutable</quote>.</para>
       </note>
 
-      <para id="x.z5">Finally, because the first pattern always matches, &GHC;
+      <para id="x_z5">Finally, because the first pattern always matches, &GHC;
 	will always evaluate its right hand side and use that as the
 	result of the <code>case</code> expression.  The second
 	pattern (the one with the wild card) will never actually be
@@ -1290,13 +1290,13 @@
 	that one of your patterns is the same as another, and so will
 	never actually be matched.</para>
 
-      <para id="x.A6">Another limitation of patterns is that a variable can only
+      <para id="x_A6">Another limitation of patterns is that a variable can only
 	appear once in a pattern.  For example, you can't put a
 	variable in multiple places within a pattern to express the
 	notion <quote>this value and that should be
 	  identical</quote>.</para>
 
-      <para id="x.B6">The way around these restrictions of Haskell's patterns is
+      <para id="x_B6">The way around these restrictions of Haskell's patterns is
 	to use patterns in combination with a language facility called
 	<emphasis>guards</emphasis>, which we'll talk about
 	next.</para>
@@ -1307,7 +1307,7 @@
   <sect1 id="hs.funcstypes.guard">
     <title>Conditional evaluation with guards</title>
 
-    <para id="x.C6">We can further extend our expressive arsenal using
+    <para id="x_C6">We can further extend our expressive arsenal using
       <emphasis>guards</emphasis>.  A guard is an expression of type
       <type>Bool</type>; if it evaluates to <function>True</function>,
       the equation that follows it is evaluated.  Otherwise, the next
@@ -1316,29 +1316,29 @@
 
     &Roots.hs:guardedRoots;
 
-    <para id="x.D6">Each guard is introduced by a <code>|</code> symbol,
+    <para id="x_D6">Each guard is introduced by a <code>|</code> symbol,
       followed by the guard expression, then an <code>=</code> symbol
       (or <code>-&gt;</code> if within a <code>case</code>
       expression), then the expression to evaluate if the guard
       succeeds.</para>
 
-    <para id="x.E6">The <varname>otherwise</varname> used in the second guard
+    <para id="x_E6">The <varname>otherwise</varname> used in the second guard
       has an obvious meaning: it's the expression to evaluate if
       previous gaurds all evaluate to <function>False</function>. It's
       not a special piece of syntax, though; it's just a variable
       whose value is <function>True</function>.</para>
 
-    <para id="x.F6">We can use guards anywhere that we can use patterns.  The
+    <para id="x_F6">We can use guards anywhere that we can use patterns.  The
       combination of writing a function as a series of equations,
       pattern matching, and guards lets us write code that's clear and
       easy to understand.</para>
 
-    <para id="x.G6">Remember the <function>myTake</function> function we defined
+    <para id="x_G6">Remember the <function>myTake</function> function we defined
       in <xref linkend="hs.funcstypes.if"/>?</para>
 
     &myTake.hs:myTake.noid;
 
-    <para id="x.H6">Here's a reformulation of that function using patterns and
+    <para id="x_H6">Here's a reformulation of that function using patterns and
       guards.  Instead of reasoning about what an <code>if</code>
       expression is doing and which branch will be evaluated, the code
       uses a series of equations with simple patterns and guards. This
@@ -1347,21 +1347,21 @@
 
     &myTake.hs:niceTake;
 
-    <para id="x.I6">Let's return to one of the limitations of patterns that we
+    <para id="x_I6">Let's return to one of the limitations of patterns that we
       mentioned in the previous section: the fact that we can't use a
       pattern to check two variables within the pattern for equality.
       We can express this quite easily using a guarded pattern.</para>
 
     &Guard.hs:secondEqualsThird;
 
-    <para id="x.J6">Here, for good measure, we've illustrated guard syntax in a
+    <para id="x_J6">Here, for good measure, we've illustrated guard syntax in a
       <code>case</code> expression.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.infix">
     <title>Infix functions</title>
 
-    <para id="x.K6">Usually, when we define or call a function in Haskell, we
+    <para id="x_K6">Usually, when we define or call a function in Haskell, we
       write the name of the function, followed by its arguments; this
       is called prefix notation, because the name of the function
       comes before its arguments.  For a function that takes two
@@ -1370,20 +1370,20 @@
       arguments.  This allows us to write expressions using functions
       as if they were infix operators.</para>
 
-    <para id="x.L6">The syntax for defining or calling a function in infix form
+    <para id="x_L6">The syntax for defining or calling a function in infix form
       is to enclose the name of the function in backtick characters
       (sometimes known as backquotes).  Here's a simple infix
       definition.</para>
 
     &Plus.hs:plus;
 
-    <para id="x.M6">Defining a function in infix form doesn't change anything
+    <para id="x_M6">Defining a function in infix form doesn't change anything
       about the behaviour of the function.  We can call the function
       using infix or prefix notation, as we prefer.</para>
 
     &infix.ghci:plus;
 
-    <para id="x.N6">Infix notation is useful for more than just our own
+    <para id="x_N6">Infix notation is useful for more than just our own
       functions.  For example, Haskell's standard
       <code>Data.List</code> module defines a function,
       <function>isPrefixOf</function>, that indicates whether all
@@ -1392,30 +1392,30 @@
 
     &infix.ghci:type;
 
-    <para id="x.O6">Let's define a few variables in &ghci;.</para>
+    <para id="x_O6">Let's define a few variables in &ghci;.</para>
 
     &infix.ghci:vars;
 
-    <para id="x.P6">If we call <function>isPrefixOf</function> using prefix
+    <para id="x_P6">If we call <function>isPrefixOf</function> using prefix
       notation, we can have a hard time remembering which argument
       we're checking for as a prefix of the other.</para>
 
     &infix.ghci:prefix;
 
-    <para id="x.Q6">But if we use infix notation, the code <quote>reads</quote>
+    <para id="x_Q6">But if we use infix notation, the code <quote>reads</quote>
       more naturally; it's now obvious that we're checking the
       variable on the left to see if it's a prefix of the variable on
       the right.</para>
 
     &infix.ghci:infix;
 
-    <para id="x.R6">There's no hard-and-fast rule that dictates when you ought
+    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
       to use infix versus prefix notation, although prefix notation is
       far more common.  It's best to choose whichever makes your code
       more readable in a specific situation.</para>
 
     <note>
-      <para id="x.S6">The backtick notation is not a general mechanism: it's a
+      <para id="x_S6">The backtick notation is not a general mechanism: it's a
 	piece of special syntax that applies only to names.  For
 	example, we can't put backticks around an expression that
 	returns a function, and then treat that as an infix
@@ -1426,7 +1426,7 @@
   <sect1 id="hs.funcstypes.end">
     <title>Conclusion</title>
 
-    <para id="x.T6">In this chapter, we've had a whirlwind overview of Haskell's
+    <para id="x_T6">In this chapter, we've had a whirlwind overview of Haskell's
       type system and much of its syntax.  We've read about basic
       types, compound types, and how to write our own algebraic data
       types.  We've seen how to write functions, and how to declare
@@ -1435,7 +1435,7 @@
       need to.  We've seen conditional evaluation, pattern matching
       and guards.  We've discussed error handling.</para>
 
-    <para id="x.U6">This all amounts to a lot of information to absorb.  In
+    <para id="x_U6">This all amounts to a lot of information to absorb.  In
       <xref linkend="hs.fp"/>, we'll build on this basic knowledge to
       understand how we can write, and think about, code in
       Haskell.</para>

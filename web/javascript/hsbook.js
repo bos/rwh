@@ -14,21 +14,30 @@ function beforeComment(formData, jqForm, options) {
   $("//input[@name=submit]", jqForm).attr("disabled", true);
 }
 
-function updateComments(responseText, statusText) {
-  $(this).children("a.commenttoggle")
-    .toggle(function() { $(this).parent().children(".comment").show("normal"); },
-	    function() { $(this).parent().children(".comment").hide("normal"); })
-    .hover(function() { $(this).fadeTo("normal", 0.8); },
-	   function() { $(this).fadeTo("normal", 0.35); });
-  $(this).children("form.comment").ajaxForm({
-    beforeSubmit: beforeComment, success: updateComments, target: $(this)
+function ajaxifyForm(id) {
+  $("#form_" + id).ajaxForm({ beforeSubmit: beforeComment,
+			      success: function() { ajaxifyForm(id); },
+			      target: $("#comments_" + id) });
+}
+
+function toggleComment(id) {
+  $(id).nextAll().toggle();
+  return false;
+}
+
+function noComment(id) {
+  $("#comments_" + id).load(location.protocol + "//" + location.host +
+			    "/comments/single/" + id + "/", function() {
+    ajaxifyForm(id);
   });
+  return false;
 }
 
 $(document).ready(function() {
   function loading(id) {
-    return " <span class=\"comment\" pid=\"" + id +
-      "\"><span class=\"commenttoggle\">Loading...</span></span>";
+    return " <span id=\"comments_" + id + "\" class=\"comment\">" +
+      "<span pid=\"" + id + "\" class=\"commenttoggle\">Loading..." +
+      "</span></span>";
   }
   $("div.toc>p").toggle(function() { $(this).next().show("normal"); },
 			function() { $(this).next().hide("normal"); });
@@ -40,9 +49,17 @@ $(document).ready(function() {
   $("pre[@id]").each(function() {
     $(this).after(loading($(this).attr("id")));
   });
-  $("span.comment").each(function() {
-    $(this).load(location.protocol + "//" + location.host +
-		 "/comments/single/" + $(this).attr("pid") + "/",
-		 updateComments);
+  $.getJSON(location.protocol + "//" + location.host + "/comments/chapter/" +
+	    $("div.chapter").attr("id") + "/", function(data) {
+    $.each(data, function(id, item) {
+      $("p[id=\"" + id + "\"] span.commenttoggle").replaceWith(item);
+      ajaxifyForm(id);
+    });
+    $("span.commenttoggle").each(function() {
+      var id = $(this).attr("pid");
+      $(this).replaceWith("<a class='commenttoggle' id='toggle_" + id + "' " +
+			  "onclick='return noComment(\"" + id + "\")' " +
+			  "href='comment: add'>No comments</a>");
+    });
   });
 });

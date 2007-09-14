@@ -1,7 +1,7 @@
 <appendix id="hs.escapes" revision="alpha">
   <title>Characters, strings, and escaping rules</title>
 
-  <para id="x.YI">This appendix covers the escaping rules used to represent
+  <para id="x_YI">This appendix covers the escaping rules used to represent
     non-ASCII characters in Haskell character and string literals.
     Haskell's escaping rules follow the pattern established by the C
     programming language, but expand considerably upon them.</para>
@@ -9,18 +9,18 @@
   <sect1 id="hs.escapes.char">
     <title>Writing character and string literals</title>
     
-    <para id="x.ZI">A single character is surrounded by ASCII single quotes,
+    <para id="x_ZI">A single character is surrounded by ASCII single quotes,
       <literal>'</literal>, and has type <type>Char</type>.</para>
 
     &text.ghci:char;
 
-    <para id="x.aI">A string literal is surrounded by double quotes,
+    <para id="x_aI">A string literal is surrounded by double quotes,
       <literal>"</literal>, and has type <type>[Char]</type> (more
       often written as <type>String</type>).</para>
 
     &text.ghci:string;
 
-    <para id="x.bI">The double-quoted form of a string literal is just syntactic
+    <para id="x_bI">The double-quoted form of a string literal is just syntactic
       sugar for list notation.</para>
 
     &text.ghci:stringlist;
@@ -30,12 +30,12 @@
   <sect1 id="hs.escapes.intl">
     <title>International language support</title>
 
-    <para id="x.cI">Haskell uses Unicode internally for its <type>Char</type>
+    <para id="x_cI">Haskell uses Unicode internally for its <type>Char</type>
       data type.  Since <type>String</type> is just an alias for
       <type>[Char]</type>, a list of <type>Char</type>s, Unicode is
       also used to represent strings.</para>
 
-    <para id="x.dI">Different Haskell implementations place limitations on the
+    <para id="x_dI">Different Haskell implementations place limitations on the
       character sets they can accept in source files.  &GHC; allows
       source files to be written in the UTF-8 encoding of Unicode, so
       in a source file, you can use UTF-8 literals inside a character
@@ -43,19 +43,19 @@
       Haskell implementations may not be able to parse your source
       files.</para>
 
-    <para id="x.eI">When you run the &ghci; interpreter interactively, it may
+    <para id="x_eI">When you run the &ghci; interpreter interactively, it may
       not be able to deal with international characters in character
       or string literals that you enter at the keyboard.</para>
 
     <note>
-      <para id="x.fI">Although Haskell represents characters and strings
+      <para id="x_fI">Although Haskell represents characters and strings
 	internally using Unicode, there is no standardised way to do
 	I/O on files that contain Unicode data.  Haskell's standard
 	text I/O functions treat text as a sequence of 8-bit
 	characters, and do not perform any character set
 	conversion.</para>
 
-      <para id="x.gI">There exist third-party libraries that will convert
+      <para id="x_gI">There exist third-party libraries that will convert
 	between the many different encodings used in files and
 	Haskell's internal Unicode representation.</para>
     </note>
@@ -65,7 +65,7 @@
   <sect1 id="hs.escapes.escape">
     <title>Escaping text</title>
 
-    <para id="x.hI">Some characters must be escaped to be represented inside a
+    <para id="x_hI">Some characters must be escaped to be represented inside a
       character or string literal.  For example, a double quote
       character inside a string literal must be escaped, or else it
       will be treated as the end of the string.</para>
@@ -73,7 +73,7 @@
     <sect2>
       <title>Single-character escape codes</title>
 
-      <para id="x.iI">Haskell uses essentially the same single-character escapes
+      <para id="x_iI">Haskell uses essentially the same single-character escapes
 	as the C language and many other popular languages.</para>
 
       <table>
@@ -158,7 +158,7 @@
     <sect2>
       <title>Multiline string literals</title>
 
-      <para id="x.jI">To write a string literal that spans multiple lines,
+      <para id="x_jI">To write a string literal that spans multiple lines,
 	terminate one line with a backslash, and resume the string
 	with another backslash.  An arbitrary amount of whitespace (of
 	any kind) can fill the gap between the two backslashes.</para>
@@ -173,7 +173,7 @@
     <sect2>
       <title>ASCII control codes</title>
 
-      <para id="x.kI">Haskell recognises the escaped use of the standard two-
+      <para id="x_kI">Haskell recognises the escaped use of the standard two-
 	and three-letter abbreviations of ASCII control codes.</para>
 
       <table>
@@ -365,7 +365,7 @@
     <sect2>
       <title>Control-with-character escapes</title>
 
-      <para id="x.lI">Haskell recognises an alternate notation for control
+      <para id="x_lI">Haskell recognises an alternate notation for control
 	characters, which represents the archaic effect of pressing
 	the <keycap function="control">control</keycap> key on a
 	keyboard and chording it with another key.  These sequences
@@ -426,14 +426,14 @@
     <sect2>
       <title>Numeric escapes</title>
 
-      <para id="x.mI">Haskell allows Unicode characters to be written using
+      <para id="x_mI">Haskell allows Unicode characters to be written using
 	numeric escapes.  A decimal character begins with a digit,
 	e.g. <literal>\1234</literal>.  A hexadecimal character begins
 	with an <literal>x</literal>, e.g. <literal>\xbeef</literal>.
 	An octal character begins with an <literal>o</literal>,
 	e.g. <literal>\o1234</literal>.</para>
 
-      <para id="x.nI">The maximum value of a numeric literal is
+      <para id="x_nI">The maximum value of a numeric literal is
 	<literal>\1114111</literal>, which may also be written
 	<literal>\x10ffff</literal> or
 	<literal>\o4177777</literal>.</para>
@@ -442,19 +442,19 @@
     <sect2>
       <title>The zero-width escape sequence</title>
 
-      <para id="x.oI">String literals can contain a zero-width escape sequence,
+      <para id="x_oI">String literals can contain a zero-width escape sequence,
 	written <literal>\&amp;</literal>.  This is not a real
 	character, as it represents the empty string.</para>
 
       &text.ghci:empty;
 
-      <para id="x.pI">The purpose of this escape sequence is to make it possible
+      <para id="x_pI">The purpose of this escape sequence is to make it possible
 	to write a numeric escape followed immediately by a regular
 	ASCII digit.</para>
 
       &text.ghci:empty.example;
 
-      <para id="x.qI">Because the empty escape sequence represents an empty
+      <para id="x_qI">Because the empty escape sequence represents an empty
 	string, it is not legal in a character literal.</para>
     </sect2>
   </sect1>

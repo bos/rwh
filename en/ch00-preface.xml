@@ -3,11 +3,11 @@
 <preface id="hs.preface">
   <title>Preface</title>
 
-  <para id="x.A">We use Haskell every day to solve problems that require
+  <para id="x_A">We use Haskell every day to solve problems that require
     programming.  You can, too, and we're writing this book to show
     you how.</para>
 
-  <para id="x.B">Why do we like Haskell?  It provides a combination of
+  <para id="x_B">Why do we like Haskell?  It provides a combination of
     abstraction and concreteness that let us address a wide range of
     problem sizes.  When we have small problems to solve, we write
     short programs that would normally be considered the domain of
@@ -20,33 +20,33 @@
   <sect1 id="hs.preface.audience">
     <title>Who is this book for?</title>
 
-    <para id="x.C">We're writing this book for you, the curious programmer.  We
+    <para id="x_C">We're writing this book for you, the curious programmer.  We
       assume that you can already program in a language like Python,
       C, or Java, but that's as far as our assumptions about you
       go.</para>
 
-    <para id="x.D">Actually, that's not quite complete.  We have made a
+    <para id="x_D">Actually, that's not quite complete.  We have made a
       <emphasis>few</emphasis> more assumptions about you.</para>
 
-    <para id="x.E">We assume that you're reading this book because you want to
+    <para id="x_E">We assume that you're reading this book because you want to
       learn lots of interesting stuff, and to have fun, and
       occasionally to pump your fist and shout <quote>Wow! I
 	<emphasis>get</emphasis> it!</quote></para>
 
-    <para id="x.F">We assume that you are willing to put in some practice, to
+    <para id="x_F">We assume that you are willing to put in some practice, to
       help a new idea or technique to <quote>stick</quote> in your
       mind.</para>
 
-    <para id="x.G">But really, that's it for our assumptions about you.  For
+    <para id="x_G">But really, that's it for our assumptions about you.  For
       example, your educational background isn't important.  What
       <emphasis>is</emphasis> important is a willingness to explore
       new territory.</para>
 
-    <para id="x.H">Maybe you've never used a functional language.  No problem.
+    <para id="x_H">Maybe you've never used a functional language.  No problem.
       We'll take you through the basics at a brisk pace, and we won't
       talk down to you.</para>
 
-    <para id="x.I">If you <emphasis>have</emphasis> used some other functional
+    <para id="x_I">If you <emphasis>have</emphasis> used some other functional
       language, we'll point out areas where an appropriate way of
       tackling a problem in  a different language might lead you into
       trouble with Haskell.</para>
@@ -55,22 +55,22 @@
   <sect1 id="hs.preface.howtoread">
     <title>How to read this book</title>
 
-    <para id="x.J">We've put this book together so that each chapter builds on
+    <para id="x_J">We've put this book together so that each chapter builds on
       material we've covered in prior chapters.  If you're unfamiliar
       with functional programming or Haskell, you should start at the
       beginning.</para>
 
-    <para id="x.K">In every chapter, we've interlaced the material with
+    <para id="x_K">In every chapter, we've interlaced the material with
       exercises.  We think that taking the time to solve them is a
       great idea, one that will pay you back hugely.  Don't just think
       about how you <emphasis>would</emphasis> solve an exercise; sit
       in front of a computer and write working code!</para>
 
-    <para id="x.L">We've written our examples as real Haskell programs that you
+    <para id="x_L">We've written our examples as real Haskell programs that you
       can modify, compile and run.  Some exercises will refer you to
       particular example programs that we'll ask you to change.</para>
 
-    <para id="x.M">With exploration comes the risk of occasionally getting
+    <para id="x_M">With exploration comes the risk of occasionally getting
       lost.  We'll be trying to anticipate your questions as we go,
       but maybe once in a while we'll take a step a little too
       quickly.  Any time you feel like you're not quite getting it
@@ -80,13 +80,13 @@
       help you learn better than practice and a willingness to try a
       few different ways around an obstacle.</para>
 
-    <para id="x.N">We have a few important <emphasis>non</emphasis>-goals in
+    <para id="x_N">We have a few important <emphasis>non</emphasis>-goals in
       writing this book.  The first is that we're not triumphalists;
       when we say nice things about functional programming, we're not
       implicitly saying bad things about someone else's cherished way
       of getting things done.</para>
 
-    <para id="x.O">We will not sugar-coat problem topics.  No language is
+    <para id="x_O">We will not sugar-coat problem topics.  No language is
       perfect; neither is any language's standard library. When we
       cover aspects of the language or libraries that are less than
       perfect, we'll be clear about what the limitations are.</para>

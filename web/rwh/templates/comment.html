@@ -1,17 +1,24 @@
 {% ifequal length 1 %}
-  <a class="commenttoggle" href="comments: show / hide">1 comment</a>
+  <a class="commenttoggle" id="toggle_{{ id }}"
+      onclick="return toggleComment('#toggle_{{ id }}')"
+      href="comments: show / hide">1 comment</a>
 {% else %}
   {% if length %}
-    <a class="commenttoggle" href="comments: show / hide">{{ length }} comments</a>
+    <a class="commenttoggle" id="toggle_{{ id }}"
+      onclick="return toggleComment('#toggle_{{ id }}')"
+      href="comments: show / hide">{{ length }} comments</a>
   {% else %}
-    <a class="commenttoggle" href="comments: show / hide">No comments</a>
-    <div class="comment" style="display: none;">
+    <a class="commenttoggle" id="toggle_{{ id }}"
+      onclick="return toggleComment('#toggle_{{ id }}')"
+      href="comments: show / hide">No comments</a>
+    <div class="comment" {% if not newid %} style="display: none;" {% endif %}>
       <div class="comment_body">Be the first to comment on this paragraph!</div>
     </div>
   {% endif %}
 {% endifequal %}
 {% for c in query %}
-  <div class="comment" {% if not newid %} style="display: none;" {% endif %}
+  <div class="{% ifequal c.id newid %}new_{% endifequal %}comment"
+      {% if not newid %} style="display: none;" {% endif %}
     id="comment{{ c.id }}">
     <a name="comment{{ c.id }}"/>
     <div class="comment_header">
@@ -23,13 +30,13 @@
       {% endif %}
       <span class="comment_date">{{ c.date|date:"Y-m-d" }}</span>
       {% ifequal c.id newid %}
-	<span class="comment_new">thank you for your comment!</span>
+	<span class="comment_thanks">thank you for your comment!</span>
       {% endifequal %}
     </div>
     <div class="comment_body">{{ c.comment|escape|linebreaks }}</div>
   </div>
 {% endfor %}
-<form class="comment" id="{{ id }}" action="/comments/submit/{{ id }}/"
+<form class="comment" id="form_{{ id }}" action="/comments/submit/{{ id }}/"
     method="post" {% if not newid %} style="display: none;" {% endif %}>
   {{ form.id }}
   <table>

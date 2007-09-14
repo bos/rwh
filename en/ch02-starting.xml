@@ -6,30 +6,30 @@
   <sect1 id="hs.starting.ghc">
     <title>Your Haskell environment</title>
 
-    <para id="x.g">There's a number of Haskell implementations available, of
+    <para id="x_g">There's a number of Haskell implementations available, of
       which two are in wide use.  Hugs 98 is an interpreter that is
       primarily used for teaching.  For real applications, the Glasgow
       Haskell Compiler, or &GHC; as it's usually known, is much more
       popular.</para>
 
-    <para id="x.h">&GHC; has two complementary components: &ghc;, a compiler
+    <para id="x_h">&GHC; has two complementary components: &ghc;, a compiler
       that generates native code, and &ghci;, an interpreter that can
       run either interactively or in <quote>batch</quote> mode.</para>
 
     <note>
-      <para id="x.i">When we discuss the package as a whole, we'll refer to it
+      <para id="x_i">When we discuss the package as a whole, we'll refer to it
 	as &GHC;.  If we're talking about one or another command,
 	we'll mention either &ghc; or &ghci;.</para>
     </note>
 
-    <para id="x.j">In this book, we assume that you're using at least version
+    <para id="x_j">In this book, we assume that you're using at least version
       6.6.1 of &GHC;.  To obtain a copy of &GHC; for your platform,
       visit <ulink url="http://www.haskell.org/ghc/download.html">the
 	&GHC; download page</ulink>, and look for the list of binary
       packages.  If you're using Windows or Mac OS X, these binary
       packages are the best ones to use.</para>
 
-    <para id="x.k">Many Linux distributions, and BSD and other Unix variants,
+    <para id="x_k">Many Linux distributions, and BSD and other Unix variants,
       make pre-packaged versions of &GHC; available.  Because they are
       built specifically for each environment, these packages are less
       hassle to use than the generic binary packages. You can find a
@@ -42,29 +42,29 @@
   <sect1 id="hs.starting.install">
     <title>Installing GHC on your platform</title>
 
-    <para id="x.l">We are providing the instructions below based on our
+    <para id="x_l">We are providing the instructions below based on our
       experience installing &GHC; in mid-2007.  Installation
       instructions inevitably become dated quickly; please bear this
       in mind as you read.</para>
 
-    <para id="x.m">Because &GHC; runs on a large number of platforms, we've
+    <para id="x_m">Because &GHC; runs on a large number of platforms, we've
       focused on a handful of the most popular.</para>
 
     <sect2 id="hs.starting.install.win">
       <title>Windows</title>
 
-      <para id="x.n">The prebuilt binary packages of &GHC; should work on
+      <para id="x_n">The prebuilt binary packages of &GHC; should work on
 	versions of Windows as old as ME, and on all newer versions
 	(NT, 2000, XP, and Vista).  We have installed &GHC; 6.6.1
 	under Windows XP Service Pack 2; here are the steps we
 	followed.</para>
 
       <note>
-	<para id="x.o">On Windows, &GHC; requires almost 340MB of disk
+	<para id="x_o">On Windows, &GHC; requires almost 340MB of disk
 	  space.</para>
       </note>
   
-      <para id="x.p">Our first step is to visit the &GHC; <ulink
+      <para id="x_p">Our first step is to visit the &GHC; <ulink
 	  url="http://www.haskell.org/ghc/download.html">download
 	  page</ulink>, and follow the link to the current stable
 	release.  Scroll down to the section entitled <quote>Binary
@@ -76,7 +76,7 @@
 	<graphic fileref="figs/win32-download.png"/>
       </informalfigure>
 
-      <para id="x.q">After the installer has downloaded, double-clicking on it
+      <para id="x_q">After the installer has downloaded, double-clicking on it
 	starts the installation process.  This simply involves
 	stepping through a normal Windows installer wizard.</para>
 
@@ -84,7 +84,7 @@
 	<graphic fileref="figs/win32-wizard1.png"/>
       </informalfigure>
 
-      <para id="x.r">Once the installer has finished, the Start Menu's
+      <para id="x_r">Once the installer has finished, the Start Menu's
 	<quote>All Programs</quote> submenu should have a &GHC;
 	folder, inside of which you'll find an icon that you can
 	double-click on to run &ghci;.</para>
@@ -93,7 +93,7 @@
 	<graphic fileref="figs/win32-start-menu.png"/>
       </informalfigure>
 
-      <para id="x.s">Clicking on the &ghci; icon brings up a normal Windows
+      <para id="x_s">Clicking on the &ghci; icon brings up a normal Windows
 	console window, running &ghci;.</para>
 
       <informalfigure>
@@ -101,7 +101,7 @@
       </informalfigure>
 
       <note>
-	<para id="x.t">The &GHC; installer automatically modifies your user
+	<para id="x_t">The &GHC; installer automatically modifies your user
 	  account's <envar>PATH</envar> environment variable so that
 	  commands like &ghc; will be present in the command shell's
 	  search path (i.e. you can type a &GHC; command name without
@@ -113,7 +113,7 @@
     <sect2 id="hs.starting.install.mac">
       <title>Mac OS X</title>
 
-      <para id="x.u">Installing &GHC; on Mac OS X takes several steps, as &GHC;
+      <para id="x_u">Installing &GHC; on Mac OS X takes several steps, as &GHC;
 	does not yet have a standard OS X installer.  We have
 	installed &GHC; 6.6.1 under Mac OS X 10.4, on an Intel-based
 	MacBook.  We're not regular Mac users, and had never tried
@@ -122,7 +122,7 @@
 	daunting.  The process is neither difficult nor especially
 	time-consuming.</para>
 
-      <para id="x.v">Our first step is to visit the &GHC; <ulink
+      <para id="x_v">Our first step is to visit the &GHC; <ulink
 	  url="http://www.haskell.org/ghc/download.html">download
 	  page</ulink>, and follow the link to the current stable
 	release.  Scroll down to the section entitled <quote>Binary
@@ -132,44 +132,44 @@
 
       <itemizedlist>
 	<listitem>
-	  <para id="x.w">Apple's Xcode development software.  This provides
+	  <para id="x_w">Apple's Xcode development software.  This provides
 	    compiler toolchain support that &GHC; needs.</para>
 	</listitem>
 	<listitem>
-	  <para id="x.x">The <filename>GNUreadline</filename> framework
+	  <para id="x_x">The <filename>GNUreadline</filename> framework
 	    provides flexible command line editing.</para>
 	</listitem>
 	<listitem>
-	  <para id="x.y">The <filename>GMP</filename> framework is required for
+	  <para id="x_y">The <filename>GMP</filename> framework is required for
 	    arbitrary-precision integer support.</para>
 	</listitem>
 	<listitem>
-	  <para id="x.z">The &GHC; package itself.  This will not work unless
+	  <para id="x_z">The &GHC; package itself.  This will not work unless
 	    both of the preceding frameworks are installed.</para>
 	</listitem>
       </itemizedlist>
 
-      <para id="x.A1">The Xcode software installer may have come bundled on a
+      <para id="x_A1">The Xcode software installer may have come bundled on a
 	DVD with your Mac.  If not (or you can't find it), you can
 	download it from Apple and install it.  Once you've finished
 	installing Xcode, continue on to download the remaining three
 	packages.</para>
 
-      <para id="x.B1">After these downloads complete, you'll have three archive
+      <para id="x_B1">After these downloads complete, you'll have three archive
 	icons on your desktop.</para>
 
       <informalfigure>
 	<graphic fileref="figs/osx-archives.png"/>
       </informalfigure>
 
-      <para id="x.C1">Double click on each one to unpack it, giving you three
+      <para id="x_C1">Double click on each one to unpack it, giving you three
 	folders.</para>
 
       <informalfigure>
 	<graphic fileref="figs/osx-folders.png"/>
       </informalfigure>
 
-      <para id="x.D1">Open a <application>Finder</application> window with
+      <para id="x_D1">Open a <application>Finder</application> window with
 	<keycombo>
 	  <keycap function="command">command</keycap>
 	  <keycap>n</keycap>
@@ -193,13 +193,13 @@
 	<graphic fileref="figs/osx-folders.png"/>
       </informalfigure>
 
-      <para id="x.E1">With the prerequisites in place, you can turn to
+      <para id="x_E1">With the prerequisites in place, you can turn to
 	installing &GHC;. You'll need to open a &Terminal; window (you
 	can find it in
 	<filename>/Applications/Utilities</filename>).</para>
 
       <note>
-	<para id="x.F1">Since most of your interactions with &GHC; will be
+	<para id="x_F1">Since most of your interactions with &GHC; will be
 	  through a &Terminal; window, this might be a good time to
 	  add the &Terminal; application to your dock, if you haven't
 	  already done so.</para>
@@ -209,7 +209,7 @@
 	<graphic fileref="figs/osx-ghc-install.png"/>
       </informalfigure>
 
-      <para id="x.G1">Inside the &Terminal; window, change directory to
+      <para id="x_G1">Inside the &Terminal; window, change directory to
 	<filename>Desktop/ghc-6.6.1</filename>, and run
 	<userinput>./configure</userinput> to set up the command line
 	installer.  This configures &GHC; to install to
@@ -218,12 +218,12 @@
 	<userinput>sudo make install</userinput>, and type your
 	password when you are prompted for it.</para>
 
-      <para id="x.H1">The installation process should take a minute or
+      <para id="x_H1">The installation process should take a minute or
 	two.  If you don't already have
 	<filename>/usr/local/bin</filename> in your shell's search
 	path, add it.</para>
 
-      <para id="x.I1">Finally, you should be able to successfully run the &ghci;
+      <para id="x_I1">Finally, you should be able to successfully run the &ghci;
 	command from your shell prompt.</para>
 
       <informalfigure>
@@ -241,7 +241,7 @@
     <sect2 id="hs.starting.install.fedora">
       <title>Fedora Linux</title>
       
-      <para id="x.J1">&GHC; is packaged for Fedora.  From a shell, all you need
+      <para id="x_J1">&GHC; is packaged for Fedora.  From a shell, all you need
 	to do is run <userinput>sudo yum -y install ghc ghc-doc
 	  ghc661-prof</userinput>.  The base package, containing the
 	&ghc; and &ghci; commands and libraries, is
@@ -252,7 +252,7 @@
 	(note: its version number may have changed by the time you
 	read this).</para>
 
-      <para id="x.K1">Once installation has finished, you should be able to run
+      <para id="x_K1">Once installation has finished, you should be able to run
 	&ghci; from the shell immediately.  You won't need to change
 	your shell's search path, or set any environment
 	variables.</para>
@@ -262,11 +262,11 @@
   <sect1 id="hs.starting.ghci">
     <title>Getting started with ghci, the interpreter</title>
 
-    <para id="x.L1">The interactive interpreter for &GHC; is a program named
+    <para id="x_L1">The interactive interpreter for &GHC; is a program named
       &ghci;.  It lets you enter and evaluate Haskell expressions, and
       explore modules and type information.</para>
 
-    <para id="x.M1">When we run &ghci;, it displays a startup banner, followed
+    <para id="x_M1">When we run &ghci;, it displays a startup banner, followed
       by a <prompt>Prelude&gt;</prompt> prompt.</para>
 
     <screen>
@@ -282,7 +282,7 @@ Loading package base ... linking ... done.
 </screen>
 
     <note>
-      <para id="x.N1">The prompt displayed by &ghci; changes depending on what
+      <para id="x_N1">The prompt displayed by &ghci; changes depending on what
 	we're doing, and can often grow long enough to leave little
 	visual room on a single line for our input.  For brevity, we
 	have replaced &ghci;'s default prompts throughout this book
@@ -292,13 +292,13 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.ghci.edit">
       <title>Command line editing</title>
 
-      <para id="x.O1">On most systems, &ghci; has some amount of command line
+      <para id="x_O1">On most systems, &ghci; has some amount of command line
 	editing ability.  On Unix-like systems, it uses the GNU
 	readline library, which is powerful and customisable.  On
 	Windows, &ghci;'s command line editing capabilities are
 	provided by the <command>doskey</command> command.</para>
 
-      <para id="x.P1">If you haven't used command line editing before, it's a
+      <para id="x_P1">If you haven't used command line editing before, it's a
 	huge time saver.  The basics are common to both Unix-like and
 	Windows systems.  Pressing the <keycap
 	  function="up">up</keycap> arrow key on your keyboard recalls
@@ -309,7 +309,7 @@ Loading package base ... linking ... done.
 	  function="right">right</keycap> arrow keys to move around
 	inside a line of input.</para>
 
-      <para id="x.Q1">Just knowing this much will save you a lot of repeated
+      <para id="x_Q1">Just knowing this much will save you a lot of repeated
 	typing.  If you want to learn more about command line editing
 	on your system, consult the readline or
 	<command>doskey</command> documentation.</para>
@@ -320,7 +320,7 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.calc">
     <title>Basic interaction: using ghci as a calculator</title>
 
-    <para id="x.R1">Where some people might run a calculator program, I often
+    <para id="x_R1">Where some people might run a calculator program, I often
       drop into &ghci; to perform simple calculations.  Using it this
       way serves as a good way to become familiar with &ghci; itself,
       and with the basics of Haskell expressions.</para>
@@ -328,13 +328,13 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.calc.arithmetic">
       <title>Simple arithmetic</title>
 
-      <para id="x.S1">We can immediately start typing expressions, to see what
+      <para id="x_S1">We can immediately start typing expressions, to see what
 	&ghci; will do with them.  Basic arithmetic works as we'd
 	expect.</para>
     
       &basics.ghci:arithmetic;
 
-      <para id="x.T1">As the expressions above imply, Haskell has a notion of
+      <para id="x_T1">As the expressions above imply, Haskell has a notion of
 	integers and floating point numbers.  In fact, it allows us to
 	use arbitrarily large integers.  Here, the
 	<function>(^)</function> is the exponentiation
@@ -342,7 +342,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:bignum;
 
-      <para id="x.U1">Like other languages that use infix notation to write
+      <para id="x_U1">Like other languages that use infix notation to write
 	mathematical expressions, Haskell has a notion of operator
 	precedence.  This allows us to get rid of a few parentheses.
 	For example, the multiplication operator has a higher
@@ -352,12 +352,12 @@ Loading package base ... linking ... done.
       &basics.ghci:parens;
 
       <note>
-	<para id="x.V1">As in other languages, it's often better to leave at
+	<para id="x_V1">As in other languages, it's often better to leave at
 	  least some parentheses in place, even when Haskell allows us
 	  to omit them.  Their presence can help future readers
 	  (including ourselves) to understand what we intended.</para>
 
-	<para id="x.W1">Even more importantly, complex expressions that rely on
+	<para id="x_W1">Even more importantly, complex expressions that rely on
 	  operator precedence are notorious sources of bugs.  A
 	  compiler and a human can easily end up with different
 	  notions of what a long, parenthesis-free expression is
@@ -368,38 +368,38 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.calc.neg">
       <title>An arithmetic quirk: writing negative numbers</title>
 
-      <para id="x.X1">Haskell presents us with one peculiarity in how we must
+      <para id="x_X1">Haskell presents us with one peculiarity in how we must
 	write numbers: it's often necessary to enclose a negative
 	number in parentheses.  This affects us as soon as we move
 	past writing the simplest of expressions.</para>
 
       &basics.ghci:neg;
 
-      <para id="x.Y1">Later on, we'll be seeing how Haskell lets us devise
+      <para id="x_Y1">Later on, we'll be seeing how Haskell lets us devise
 	entirely new infix operators.  Now that we've been forewarned,
 	the following may not prove too surprising.</para>
 
-      <para id="x.Z1"><emphasis>Most</emphasis> of the time, we can omit
+      <para id="x_Z1"><emphasis>Most</emphasis> of the time, we can omit
 	whitespace from expressions, and Haskell will parse them as we
 	intended.  But not always.  Here's an expression that
 	works:</para>
 
       &basics.ghci:whitespace.ok;
 
-      <para id="x.a1">And here's one that similar to the problematic negative
+      <para id="x_a1">And here's one that similar to the problematic negative
 	number example above, but results in a different error
 	message.</para>
 
       &basics.ghci:whitespace.eek;
 
-      <para id="x.b1">What's happening here is that the Haskell parser is
+      <para id="x_b1">What's happening here is that the Haskell parser is
 	reading <literal>+-</literal> as a single token, and trying to
 	use it as an operator.  Once again, a few parentheses get us
 	and &ghci; looking at the expression in the same way.</para>
 
       &basics.ghci:whitespace.whew;
 
-      <para id="x.c1">Compared to other languages, this unusual treatment of
+      <para id="x_c1">Compared to other languages, this unusual treatment of
 	negative numbers is an annoyance, for sure, but it at least
 	represents a reasoned tradeoff.  As we mentioned, Haskell lets
 	us define new operators at any time, and choose the precedence
@@ -411,32 +411,32 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.calc.undef">
       <title>Undefined values, and introducing variables</title>
 
-      <para id="x.d1">&ghci; defines at least one well-known mathematical
+      <para id="x_d1">&ghci; defines at least one well-known mathematical
 	constant for us.</para>
 
       &basics.ghci:pi;
 
-      <para id="x.e1">But its coverage of mathematical constants is not great,
+      <para id="x_e1">But its coverage of mathematical constants is not great,
 	as we can quickly see.  Let's see if Euler's number,
 	<varname>e</varname>, is available.</para>
 
       &basics.ghci:e;
 
-      <para id="x.f1">Oh well.</para>
+      <para id="x_f1">Oh well.</para>
 
       <note>
-	<para id="x.g1">If the above <quote>not in scope</quote> error message
+	<para id="x_g1">If the above <quote>not in scope</quote> error message
 	  seems a little daunting, don't worry.  All it means is that
 	  there is no variable defined with the name
 	  <varname>e</varname>.</para>
       </note>
 
-      <para id="x.h1">We can define <varname>e</varname> ourselves; the &let;
+      <para id="x_h1">We can define <varname>e</varname> ourselves; the &let;
 	construct allows us to introduce a new variable.</para>
 
       &basics.ghci:let;
 
-      <para id="x.i1">We can then use our definition of <varname>e</varname> in
+      <para id="x_i1">We can then use our definition of <varname>e</varname> in
 	arithmetic expressions.</para>
 
       &basics.ghci:epipi;
@@ -446,23 +446,23 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.calc.comparison">
       <title>Comparison and boolean operators</title>
 
-      <para id="x.j1">Haskell gives us the usual operators for working with
+      <para id="x_j1">Haskell gives us the usual operators for working with
 	boolean values.</para>
 
       &basics.ghci:boolean;
 
-      <para id="x.k1">Unlike some other languages, Haskell does not treat the
+      <para id="x_k1">Unlike some other languages, Haskell does not treat the
 	number zero as synonymous with <literal>False</literal>, nor
 	does it accept non-zero as <literal>True</literal>.</para>
 
       &basics.ghci:boolean.bad;
 
-      <para id="x.l1">Comparison operators are mostly familiar from other
+      <para id="x_l1">Comparison operators are mostly familiar from other
 	languages.</para>
 
       &basics.ghci:comparison;
 
-      <para id="x.m1">There's one exception: the <quote>is not equal</quote>
+      <para id="x_m1">There's one exception: the <quote>is not equal</quote>
 	operator is <function>(/=)</function>.</para>
 
       &basics.ghci:neq;
@@ -472,7 +472,7 @@ Loading package base ... linking ... done.
     <sect2 id="hs.starting.calc.rational">
       <title>Rational numbers, the Haskell prelude, and modules</title>
 
-      <para id="x.n1">In addition to integers and floating point numbers,
+      <para id="x_n1">In addition to integers and floating point numbers,
 	Haskell supports rational numbers.  Haskell coders collect
 	self-contained hunks of code into
 	<emphasis>modules</emphasis>.  The integer and floating point
@@ -480,13 +480,13 @@ Loading package base ... linking ... done.
 	a module named <classname
 	  role="module">Prelude</classname>.</para>
 
-      <para id="x.o1">(The <classname role="module">Prelude</classname> module
+      <para id="x_o1">(The <classname role="module">Prelude</classname> module
 	is often referred to as <quote>the standard prelude</quote>,
 	because its contents are defined by the Haskell 98 standard.
 	Sometimes, it's simply shortened to <quote>the
 	  prelude</quote>.)</para>
 
-      <para id="x.p1">The prelude is always implicitly available; we don't need
+      <para id="x_p1">The prelude is always implicitly available; we don't need
 	to take any actions to use the types, values, or functions it
 	defines.  But to use definitions from other modules, we must
 	<emphasis>import</emphasis> them.  To use rational numbers,
@@ -497,21 +497,21 @@ Loading package base ... linking ... done.
 
       &basics.ghci:module;
 
-      <para id="x.q1">The notation for writing a rational number is as
+      <para id="x_q1">The notation for writing a rational number is as
 	follows.</para>
 
       &basics.ghci:ratio;
 
-      <para id="x.r1">The <function>(%)</function> operator above takes two
+      <para id="x_r1">The <function>(%)</function> operator above takes two
 	integers and constructs a rational number from them.</para>
 
-      <para id="x.s1">Arithmetic on rational numbers works in the same way as on
+      <para id="x_s1">Arithmetic on rational numbers works in the same way as on
 	other types of number, even allowing the same
 	operators.</para>
       
       &basics.ghci:ratarith;
       
-      <para id="x.t1">Haskell represents a rational number with the lowest
+      <para id="x_t1">Haskell represents a rational number with the lowest
 	denominator it can.  For example, the result of the following
 	expression is simplified from <literal>254%7</literal> to
 	something easier to read.</para>
@@ -526,7 +526,7 @@ Loading package base ... linking ... done.
       <remark>Is it too early to introduce this?  Does it disrupt the
 	flow?</remark>
 
-      <para id="x.u1">We've already seen an exponentiation operator in Haskell:
+      <para id="x_u1">We've already seen an exponentiation operator in Haskell:
 	<function>(^)</function> raises a number to an integer power.
 	The word <emphasis>integer</emphasis> is significant here: if
 	we try to raise a number to the power of a floating point
@@ -535,29 +535,29 @@ Loading package base ... linking ... done.
 
       &basics.ghci:intpower;
 
-      <para id="x.v1">Notice from the second example that it doesn't matter
+      <para id="x_v1">Notice from the second example that it doesn't matter
 	whether or not the base is an integer, only that the exponent
 	must be.</para>
 
-      <para id="x.w1">There's a further constraint on the exponent that is not
+      <para id="x_w1">There's a further constraint on the exponent that is not
 	immediately obvious: it must be not just an integer, but a
 	<emphasis>non-negative</emphasis> integer.</para>
 
       &basics.ghci:exponent.bad;
 
-      <para id="x.x1">If you think about the simplest definition of
+      <para id="x_x1">If you think about the simplest definition of
 	exponentiation, which is a number repeatedly multiplied by
 	itself a given number of times, this restriction makes
 	sense.</para>
 
-      <para id="x.y1">Haskell's exponentiation operator follows the convention
+      <para id="x_y1">Haskell's exponentiation operator follows the convention
 	that a number raised to the zeroth power is one.  This is why
 	the restriction on the exponent is that it must be
 	non-negative, and not that it must be positive.</para>
 
       &basics.ghci:exponent.zero;
 
-      <para id="x.z1">Haskell also provides a generalised integer exponentiation
+      <para id="x_z1">Haskell also provides a generalised integer exponentiation
 	operator, <function>(^^)</function>.  This accepts both
 	positive and negative exponents, following the rule that a
 	number raised to a negative exponent is the reciprocal of the
@@ -566,7 +566,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:exponent.neg;
       
-      <para id="x.A2">Finally, Haskell also gives us a floating point
+      <para id="x_A2">Finally, Haskell also gives us a floating point
 	exponentiation operator, <function>(**)</function>.</para>
 
       &basics.ghci:exponent.float;
@@ -577,26 +577,26 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.errmsg">
     <title>Don't sweat those error messages</title>
 
-    <para id="x.B2">Remember the point we made earlier about explicit
+    <para id="x_B2">Remember the point we made earlier about explicit
       parentheses often being good?  Here's an example of that idea in
       action, except here the parentheses are
       <emphasis>necessary</emphasis>, not merely a good idea.</para>
 
     &basics.ghci:denom.bad;
 
-    <para id="x.C2">Look at that error message; it's detailed, and mentions a
+    <para id="x_C2">Look at that error message; it's detailed, and mentions a
       lot of concepts we haven't covered yet.  We're new to Haskell!
       How are we supposed to interpret all of that?  The first thing
       we must do is take a deep breath and not worry about the
       details.</para>
 
-    <para id="x.D2">If we step back and gloss over the error message, we can see
+    <para id="x_D2">If we step back and gloss over the error message, we can see
       that &ghci; is displaying for us the expression that it had
       trouble with.  And it has helpfully added parentheses back into
       the expression, only look!  <emphasis>They're in the wrong
 	places</emphasis></para>
 
-    <para id="x.E2">This isn't the fault of &ghci;.  It just happens that the
+    <para id="x_E2">This isn't the fault of &ghci;.  It just happens that the
       <function>(%)</function> and <function>(*)</function> operators
       have the same precedences, so &ghci; parses the expession from
       left to right.  As a result, it tries to construct a rational
@@ -605,13 +605,13 @@ Loading package base ... linking ... done.
       than <function>(*)</function>, the expression would be parsed
       the way we might have hoped.)</para>
 
-    <para id="x.F2">All we have to do to correct this problem is add some
+    <para id="x_F2">All we have to do to correct this problem is add some
       explicit parentheses to say what we really mean.</para>
 
     &basics.ghci:denom.good;
 
     <note>
-      <para id="x.G2">The important lesson here is one that we'll be repeating
+      <para id="x_G2">The important lesson here is one that we'll be repeating
 	over and over throughout the early sections of this book. If
 	you run into problems, <emphasis>don't panic</emphasis>. You
 	do not need to understand every little detail of what's going
@@ -626,15 +626,15 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.string">
     <title>Text, strings and lists</title>
 
-    <para id="x.H2">If you are familiar with a language like Python, you'll find
+    <para id="x_H2">If you are familiar with a language like Python, you'll find
       Haskell's notations for strings, lists and tuples
       familiar.</para>
 
-    <para id="x.I2">A text string is surrounded by double quotes.</para>
+    <para id="x_I2">A text string is surrounded by double quotes.</para>
 
     &basics.ghci:string;
 
-    <para id="x.J2">As in many languages, we can represent hard-to-print
+    <para id="x_J2">As in many languages, we can represent hard-to-print
       characters by <quote>escaping</quote> them.  Haskell's escape
       characters and escaping rules expand on the conventions
       established by the C language (for details, see
@@ -642,42 +642,42 @@ Loading package base ... linking ... done.
 
     &basics.ghci:newline;
     
-    <para id="x.K2">A list is surrounded by square brackets, with elements
+    <para id="x_K2">A list is surrounded by square brackets, with elements
       separated by commas.</para>
 
     &basics.ghci:list;
 
-    <para id="x.L2">A list can be any length.</para>
+    <para id="x_L2">A list can be any length.</para>
 
     &basics.ghci:list.shortlong;
 
-    <para id="x.M2">All elements of a list must have the same type.</para>
+    <para id="x_M2">All elements of a list must have the same type.</para>
 
     &basics.ghci:list.bad;
     
-    <para id="x.N2">Once again, &ghci;'s error message is verbose, but it's
+    <para id="x_N2">Once again, &ghci;'s error message is verbose, but it's
       simply telling us that it can't figure out how to turn the
       string into a number, so the list isn't properly typed.</para>
     
-    <para id="x.O2">When it makes sense to do so, we can write a range of
+    <para id="x_O2">When it makes sense to do so, we can write a range of
       elements, and Haskell will fill in the contents of the list for
       us.</para>
     
     &basics.ghci:range;
 
-    <para id="x.P2">We can specify the size of the step to use by giving the
+    <para id="x_P2">We can specify the size of the step to use by giving the
       first two elements, followed by the value at which to stop
       generating the range.</para>
 
     &basics.ghci:range.step;
 
-    <para id="x.Q2">Haskell makes a distinction between single characters and
+    <para id="x_Q2">Haskell makes a distinction between single characters and
       text strings.  A single character is enclosed in single
       quotes.</para>
 
     &basics.ghci:char;
 
-    <para id="x.R2">In fact, a text string is simply a list of individual
+    <para id="x_R2">In fact, a text string is simply a list of individual
       characters.  Here's a painful way to write a short string, which
       &ghci; gives back to us in a more familiar form.</para>
 
@@ -688,12 +688,12 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.types">
     <title>First steps with types</title>
 
-    <para id="x.S2">Despite all our talk of types, our interactions with &ghci;
+    <para id="x_S2">Despite all our talk of types, our interactions with &ghci;
       have so far been free of much type-related thinking.  We haven't
       told &ghci; what types we've been using, and it's mostly been
       willing to accept our input.</para>
 
-    <para id="x.T2">The first thing we can do to start explicitly exploring the
+    <para id="x_T2">The first thing we can do to start explicitly exploring the
       world of types is to get &ghci; to tell us more about what it's
       doing.  &ghci; has a command, <command>:set</command>, that lets
       us change a few of its default behaviours.  We can tell it to
@@ -701,7 +701,7 @@ Loading package base ... linking ... done.
 
     &types.ghci:set_t_on;
 
-    <para id="x.U2">What the <code>+t</code> does is tell &ghci; to print the
+    <para id="x_U2">What the <code>+t</code> does is tell &ghci; to print the
       type of an expression after  the expression.  That cryptic
       <varname>it</varname> in the output can be very useful: it's
       actually the name of a special variable, in which &ghci; stores
@@ -710,16 +710,16 @@ Loading package base ... linking ... done.
       
     <itemizedlist>
       <listitem>
-	<para id="x.V2">It's telling us about the variable
+	<para id="x_V2">It's telling us about the variable
 	  <varname>it</varname>.</para>
       </listitem>
       <listitem>
-	<para id="x.W2">We can read the text <code>::</code> as meaning
+	<para id="x_W2">We can read the text <code>::</code> as meaning
 	  <quote>the value on the left has the type on the
 	    right</quote>.</para>
       </listitem>
       <listitem>
-	<para id="x.X2">And the value on the right is the type in question,
+	<para id="x_X2">And the value on the right is the type in question,
 	  namely <type>[Char]</type>.</para>
       </listitem>
     </itemizedlist>
@@ -727,13 +727,13 @@ Loading package base ... linking ... done.
     <note id="hs.starting.it">
       <title>The joy of <quote>it</quote></title>
 
-      <para id="x.Y2">That <varname>it</varname> variable is wonderfully handy
+      <para id="x_Y2">That <varname>it</varname> variable is wonderfully handy
 	when we want to use the result of a prior expression in a new
 	expression.</para>
 
       &types.ghci:it;
 
-      <para id="x.Z2">When evaluating an expression, &ghci; won't change the
+      <para id="x_Z2">When evaluating an expression, &ghci; won't change the
 	value of <varname>it</varname> until after it's finished.  An
 	error in the evaluation will leave <varname>it</varname>
 	untouched, so we can type possibly bogus expressions with a
@@ -741,7 +741,7 @@ Loading package base ... linking ... done.
 
       &types.ghci:it.bad;
 
-      <para id="x.a2">Coupling <varname>it</varname> with liberal use of the
+      <para id="x_a2">Coupling <varname>it</varname> with liberal use of the
 	arrow keys to recall and edit the last expression we typed,
 	and we have a fairly decent environment for interactive
 	experiments, where the cost of mistakes is very low.  Take
@@ -749,30 +749,30 @@ Loading package base ... linking ... done.
 	when you're exploring the language!</para>
     </note>
 
-    <para id="x.b2">Here are a few more of Haskell's names for types, from
+    <para id="x_b2">Here are a few more of Haskell's names for types, from
       expressions of the sort we've already seen.</para>
 
       &types.ghci:integer;
 
-    <para id="x.c2"><type>Integer</type> is Haskell's arbitrary-precision
+    <para id="x_c2"><type>Integer</type> is Haskell's arbitrary-precision
       integer type.</para>
 
     <note>
       <title>Type names start with an uppercase letter</title>
 
-      <para id="x.d2">Both of the type names we've seen so far,
+      <para id="x_d2">Both of the type names we've seen so far,
 	<type>Char</type> and <type>Integer</type>, have started with
 	capital letters.  This isn't an accident; Haskell requires
 	type names to start with an uppercase letter, and variable
 	names with a lowercase letter.</para>
     </note>
 
-    <para id="x.e2">Rational numbers don't look quite the same as
+    <para id="x_e2">Rational numbers don't look quite the same as
       integers.</para>
 
     &types.ghci:ratio;
 
-    <para id="x.f2">Notice <emphasis>two</emphasis> words on the right hand side
+    <para id="x_f2">Notice <emphasis>two</emphasis> words on the right hand side
       of the <code>::</code> above.  We can read this as a
       <type>Ratio</type> of <type>Integer</type>, and infer that a
       <type>Ratio</type> will probably need to have values of type
@@ -783,7 +783,7 @@ Loading package base ... linking ... done.
 
     &types.ghci:ratio.bad;
 
-    <para id="x.g2">Although it's initially useful to have <userinput>:set
+    <para id="x_g2">Although it's initially useful to have <userinput>:set
 	+t</userinput> giving us type information for every expression
       we enter, this is a facility we'll quickly outgrow, simply
       because it will become redundant: after a while, we'll often
@@ -793,13 +793,13 @@ Loading package base ... linking ... done.
 
     &types.ghci:set_t_off;
     
-    <para id="x.h2">Even with this facility turned off,  we can still get that
+    <para id="x_h2">Even with this facility turned off,  we can still get that
       type information easily when we need it, using another &ghci;
       command.</para>
 
     &types.ghci:type;
 
-    <para id="x.i2">The <command>:type</command> command will print type
+    <para id="x_i2">The <command>:type</command> command will print type
       information for any expression we give it (including
       <varname>it</varname>, as we see above).  It won't actually
       evaluate the expression; it only checks its type and prints
@@ -811,7 +811,7 @@ Loading package base ... linking ... done.
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x.j2">Foo?</para>
+	    <para id="x_j2">Foo?</para>
 	  </question>
 	</qandaentry>
       </qandaset>
@@ -821,13 +821,13 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.conclusion">
     <title>Conclusion</title>
 
-    <para id="x.k2">In this chapter, we've seen how to install &GHC; for our
+    <para id="x_k2">In this chapter, we've seen how to install &GHC; for our
       environment.  We then went on to interactively explore some
       basic Haskell concepts using &ghci; the interpreter bundled with
       &GHC;.  We saw how to evaluate simple expressions.</para>
 
-    <para id="x.l2">We dipped a toe into the water of typing.</para>
-    <para id="x.m2">We also had drilled into us the notion that we don't need to
+    <para id="x_l2">We dipped a toe into the water of typing.</para>
+    <para id="x_m2">We also had drilled into us the notion that we don't need to
       understand, or be intimidated by, every single gripe that &ghci;
       throws our way.  We'll do just fine with a shallow understanding
       initially, and rely on practice and more reading to round out

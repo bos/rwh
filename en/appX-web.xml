@@ -1,7 +1,7 @@
 <appendix id="hs.web" revision="unpublished">
   <title>Web site and comment system usage and policies</title>
 
-  <para id="x.OK">Thank you for your interest in commenting on our book!  We are
+  <para id="x_OK">Thank you for your interest in commenting on our book!  We are
     excited to have made it possible for you, our readers, to submit
     comments at the level of detail of every single paragraph and code
     example.  Please feel welcome to make liberal use of the
@@ -12,7 +12,7 @@
   <note>
     <title>We require Javascript</title>
 
-    <para id="x.PK">Our comment system uses Javascript extensively.  If you
+    <para id="x_PK">Our comment system uses Javascript extensively.  If you
       don't have Javascript enabled in your browser, you won't even
       see a hint of the existence of the comment system.
       Unfortunately, we don't have the time to spare to write a
@@ -22,11 +22,11 @@
   <sect1 id="hs.web.comment">
     <title>Using the comment system</title>
 
-    <para id="x.QK">Every paragraph ends with an unobtrusive anchor. When you
+    <para id="x_QK">Every paragraph ends with an unobtrusive anchor. When you
       click on it, it reveals the comments submitted by other readers.
       Click on the anchor again to hide the comments.</para>
 
-    <para id="x.RK">At the end of each list of comments sits a small form where
+    <para id="x_RK">At the end of each list of comments sits a small form where
       you can enter comments of your own.  We ask for just one piece
       of information in addition to your comment, which is your name.
       You're also welcome to provide a URL for your home page, blog,
@@ -35,7 +35,7 @@
     <sect2 id="hs.web.comment.name">
       <title>Why do we want your name?</title>
 
-      <para id="x.SK">We'd love to credit people who give particularly good
+      <para id="x_SK">We'd love to credit people who give particularly good
 	feedback, and to do that, we need to know who to thank. You
 	don't <emphasis>have</emphasis> to give us your real name, but
 	if you don't, we can't credit you, no matter how helpful you
@@ -44,7 +44,7 @@
       <note>
 	<title>We can't spam you, nor can anyone else</title>
 
-	<para id="x.TK">Notice that we don't ask for your email address?
+	<para id="x_TK">Notice that we don't ask for your email address?
 	  Nobody's going to spam you as a result of commenting on the
 	  book (unless for some reason you explicitly enter your email
 	  address somewhere).</para>
@@ -55,7 +55,7 @@
   <sect1 id="hs.web.feed">
     <title>Subscribing to feeds</title>
 
-    <para id="x.UK">Our comment system isn't just a dead dump for snippets of
+    <para id="x_UK">Our comment system isn't just a dead dump for snippets of
       text; it's a <emphasis>conversation</emphasis> between us and
       you.  You'll notice that you can subscribe to an Atom feed for
       each web page, letting you see the latest comments, and there's
@@ -67,7 +67,7 @@
   <sect1 id="hs.web.useragreement">
     <title>User Agreement</title>
 
-    <para id="x.VK">The following User Agreement (<quote>Agreement</quote>)
+    <para id="x_VK">The following User Agreement (<quote>Agreement</quote>)
       governs the use of all <code>realworldhaskell.org</code> sites
       (<quote>Site</quote>, <quote>Sites</quote>), including without
       limitation participation in their comment systems, forums,
@@ -77,7 +77,7 @@
       (<quote>us</quote> <quote>we</quote>, or
       <quote>our</quote>).</para>
 
-    <para id="x.WK">Please read the rules contained in this agreement carefully.
+    <para id="x_WK">Please read the rules contained in this agreement carefully.
       Your use of and/or registration on any aspect of this Site will
       constitute your agreement to comply with these rules. If you
       cannot agree with these rules, please do not use the
@@ -88,7 +88,7 @@
 
       <itemizedlist>
 	<listitem>
-	  <para id="x.XK">Unless otherwise specified, the Site is intended for
+	  <para id="x_XK">Unless otherwise specified, the Site is intended for
 	    your personal use only. You may not authorize others to
 	    use the Site, and you are responsible for all use of the
 	    Site by you and by those you allow to use, or provide
@@ -96,7 +96,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.YK">The Site contains material that is protected by
+	  <para id="x_YK">The Site contains material that is protected by
 	    state, national and international copyright, trademark and
 	    other intellectual property laws. You may not modify,
 	    copy, reproduce, republish, upload, post, transmit or
@@ -108,7 +108,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.ZK">The Site is not intended for users under the age of
+	  <para id="x_ZK">The Site is not intended for users under the age of
 	    13, and We do not knowingly collect personally
 	    identifiable information from users under the age of 13.
 	    Such users are expressly prohibited from submitting their
@@ -119,7 +119,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.aK">You agree not to place on the Site any material
+	  <para id="x_aK">You agree not to place on the Site any material
 	    that is abusive, harassing, racist, or hateful. Further,
 	    you may not place on the Site any material that is
 	    encrypted, constitutes junk mail or unauthorized
@@ -134,7 +134,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.bK">You are responsible for ensuring that any material you
+	  <para id="x_bK">You are responsible for ensuring that any material you
 	    provide to the Site or post on a bulletin board or
 	    forum or elsewhere, including but not limited to text,
 	    photographs and sound, does not violate the copyright,
@@ -144,7 +144,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.cK">The content, organization, graphics, text, images,
+	  <para id="x_cK">The content, organization, graphics, text, images,
 	    video, design, compilation, advertising and all other
 	    material on the Site, including without limitation, the
 	    <quote>look and feel</quote> of this Site, are protected
@@ -160,7 +160,7 @@
 	</listitem>
   
 	<listitem>
-	  <para id="x.dK">You may not in any way make commercial or other
+	  <para id="x_dK">You may not in any way make commercial or other
 	    unauthorized use, by publication, re-transmission,
 	    distribution, performance, caching, or otherwise, of
 	    material obtained through the Site, except as permitted by
@@ -169,7 +169,7 @@
 	</listitem>
 
 	<listitem>
-	  <para id="x.eK">You agree not to disrupt, overwhelm, attack, modify or
+	  <para id="x_eK">You agree not to disrupt, overwhelm, attack, modify or
 	    interfere with the Site or its associated software,
 	    hardware and/or servers in any way, and you agree not to
 	    impede or interfere with others' use of the Site. You
@@ -178,7 +178,7 @@
 	</listitem>
   
 	<listitem>
-	  <para id="x.fK">Other than connecting to Our servers using a Web
+	  <para id="x_fK">Other than connecting to Our servers using a Web
 	    browser, you may not attempt to gain access to Our servers
 	    by any means - including, without limitation, by using
 	    administrator passwords or by masquerading as an
@@ -186,7 +186,7 @@
 	</listitem>
       
 	<listitem>
-	  <para id="x.gK">You acknowledge that We have not reviewed and do not
+	  <para id="x_gK">You acknowledge that We have not reviewed and do not
 	    endorse the content of sites linked to from this Site and
 	    are not responsible for the content or actions of any
 	    other sites linked to from this Site. Your linking to any
@@ -199,7 +199,7 @@
     <sect2 id="hs.web.useragreement.endorse">
       <title>We do not endorse anyone's comments</title>
 
-      <para id="x.hK">We do not necessarily endorse, support, sanction,
+      <para id="x_hK">We do not necessarily endorse, support, sanction,
 	encourage, verify, or agree with the comments, opinions, or
 	statements posted on forums, blogs or otherwise contained in
 	the Site. Any information or material placed online, including
@@ -207,7 +207,7 @@
 	who post the statements and do not necessarily represent our
 	views or those of our third party service providers.</para>
 
-      <para id="x.iK">You agree that we and our third party service providers
+      <para id="x_iK">You agree that we and our third party service providers
 	are not responsible, and shall have no liability to you, with
 	respect to any information or materials posted by others,
 	including defamatory, offensive or illicit material, even
@@ -217,7 +217,7 @@
     <sect2 id="hs.web.useragreement.ownership">
       <title>Comment ownership and licensing</title>
 
-      <para id="x.jK">You retain ownership of, and copyright on, your own
+      <para id="x_jK">You retain ownership of, and copyright on, your own
 	comments.  You agree that by posting messages, uploading
 	files, inputting data, or engaging in any other form of
 	communication with or through the Site, you grant Us a
@@ -229,7 +229,7 @@
 	including commercial purposes, and to authorize others to do
 	so.</para>
 
-      <para id="x.kK">In addition, be aware that information you disclose in
+      <para id="x_kK">In addition, be aware that information you disclose in
 	publicly accessible portions of the Site will be available
 	to all users of the Site, so you should be mindful of
 	personal information and other content you may wish to
@@ -239,7 +239,7 @@
     <sect2 id="hs.web.useragreement.sales">
       <title>Merchandise sold on or through the Site</title>
 
-      <para id="x.lK">Neither We nor our third party service providers make any
+      <para id="x_lK">Neither We nor our third party service providers make any
 	warranties with respect to any of the merchandise, products,
 	and/or services featured, mentioned, or sold by others on or
 	through the Site. Transactions for any such item shall be
@@ -256,7 +256,7 @@
     <sect2 id="hs.web.useragreement.indemnify">
       <title>Indemnification</title>
 
-      <para id="x.mK">You agree to indemnify Us and our affiliates, employees,
+      <para id="x_mK">You agree to indemnify Us and our affiliates, employees,
 	agents, representatives and third party service providers, and
 	to defend and hold each of them harmless, from any and all
 	claims and liabilities (including attorneys fees) which may
@@ -269,7 +269,7 @@
     <sect2 id="hs.web.useragreement.edit">
       <title>Response, deletion, and editing</title>
 
-      <para id="x.nK">We reserve the right, but undertake no duty, to review,
+      <para id="x_nK">We reserve the right, but undertake no duty, to review,
 	respond to, edit, move or delete any material provided for
 	display or placed on the Site or its comment systems, in our
 	sole discretion, without notice.</para>
@@ -279,7 +279,7 @@
       <title>Disclaimer of warranty and limitation of
 	liability</title>
 
-      <para id="x.oK"><emphasis>You acknowledge that you are using the Site at
+      <para id="x_oK"><emphasis>You acknowledge that you are using the Site at
 	  your own risk. The Site is provided <quote>as is</quote>,
 	  and we, our affiliates and our third party service providers
 	  hereby expressly disclaim any and all warranties, express
@@ -296,7 +296,7 @@
 	  omissions or loss of transmitted information, or that no
 	  viruses will be transmitted on the Site.</emphasis></para>
 
-      <para id="x.pK"><emphasis>We, our affiliates and our third
+      <para id="x_pK"><emphasis>We, our affiliates and our third
 	  party service providers shall not be liable to you or any
 	  third parties for any direct, indirect, special,
 	  consequential or punitive damages allegedly sustained
@@ -315,7 +315,7 @@
 	  may also have other rights that vary from state to
 	  state.</emphasis></para>
 
-      <para id="x.qK"><emphasis>You hereby agree to release us, our affiliates
+      <para id="x_qK"><emphasis>You hereby agree to release us, our affiliates
 	  and third-party service providers, and each of their
 	  respective directors, officers, employees, and agents from
 	  claims, demands and damages (actual and consequential) of
