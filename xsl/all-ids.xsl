@@ -12,7 +12,7 @@
   <xsl:strip-space elements="title"/>
 
   <xsl:template match="/">
-    <xsl:for-each select="//chapter|//appendix|//sect1">
+    <xsl:for-each select="//preface|//chapter|//appendix|//bibliography|//sect1">
       <xsl:variable name="id">
         <xsl:choose>
           <xsl:when test="local-name(.)='sect1'">
