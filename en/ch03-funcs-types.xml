@@ -1128,10 +1128,10 @@
 
     <para id="x.e5">It might initially look like we have two functions named
       <function>sumList</function> here, but Haskell lets us define a
-      function as a series of equations, so in fact these two clauses
+      function as a series of equations; so in fact these two clauses
       are defining the behaviour of one function, for different
       inputs.  (By the way, there's a standard function,
-      <function>sum</function>, that does </para>
+      <function>sum</function>, that does this for us.)</para>
 
     <para id="x.f5">The syntax for pattern matching on a tuple is similar to the
       syntax for constructing a tuple.  Here's a function that returns
