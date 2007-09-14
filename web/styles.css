@@ -1,47 +1,100 @@
-body
-{
-  background: white;
-  margin: 1in;
-  font-family: arial,helvetica,sans-serif;
+body {
+  background: #f2f1f0;
+  font-family: verdana,helvetica,sans-serif;
 }
 
-.programlisting, .screen
-{
+.navheader, .book, .chapter, .appendix, .navfooter {
+  width: 50em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.book, .chapter, .appendix {
+  background: white;
+  padding: 2em;
+}
+
+h2 {
+  font-family: georgia,serif;
+  font-weight: normal;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+h3 {
+  font-family: georgia,serif;
+  font-weight: normal;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+div.note th {
+  font-family: georgia,serif;
+  font-weight: normal;
+  font-size: 110%;
+}
+
+div.navheader th, div.navfooter td {
+  font-family: georgia,serif;
+}
+
+strong.command, code, pre {
+  font-family: monospace;
+  font-weight: normal;
+}
+
+div.toc > p {
+  opacity: 0.35;
+  font-family: georgia,serif;
+  font-weight: normal;
+}
+
+div.toc > dl {
+  display: none;
+}
+
+.programlisting, .screen {
   border-style: solid;
   border-width: 1px;
   font-size: medium;
-  margin: 1em 0pt;
   overflow: hidden;
-  padding: 0.4em 0.5em;
+  padding: 1em;
 }
 
-.screen
-{
+span.remark {
+  border-style: solid;
+  border-width: 1px;
+  font-size: medium;
+  overflow: hidden;
+  margin: 1em;
+  background: #FFEFC0 none repeat scroll 0% 50%;
+  border-color: #DC9B40;
+  opacity: 0.4;
+}
+
+.screen {
   background: #E0FFB8 none repeat scroll 0% 50%;
   border-color: #94DA3A;
 }
 
-.programlisting
-{
+.programlisting {
   background: #F0F4FF none repeat scroll 0% 50%;
   border-color: #B4BAEA;
 }
 
-.prompt
-{
+.prompt {
   color: #448844;
 }
 
-.note
-{
+div.note {
+  background: #ffffc9;
   border-color: #B4BAEA;
   border-style: solid;
   border-width: 1px;
-  padding: 0.8em 1em;
+  padding: 1em;
 }
 
-.note .title
-{
+.note .title {
   font-size: 90%;
 }
 
@@ -50,8 +103,8 @@ body
 }
 
 div.comment {
-  padding-top: 5px;
-  margin-left: 15px;
+  margin-top: 0.5em;
+  margin-left: 2em;
 }
 
 .commenttoggle {
@@ -81,8 +134,18 @@ div.comment {
 }
 
 .comment_error {
-  padding-left: 5px;
+  padding-left: 1em;
   font-weight: bolder;
   font-size: 80%;
   color: darkred;
+}
+
+.license {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  width: 60em;
+  font-size: 80%;
+  opacity: 0.6;
 }
