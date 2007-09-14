@@ -29,6 +29,7 @@ def chapter(request, id):
             })
         resp[elt] = template.render(Context({
             'id': elt,
+            'form': form,
             'length': len(comments),
             'query': comments,
             }))
