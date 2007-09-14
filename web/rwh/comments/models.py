@@ -4,14 +4,14 @@ mutable = True
 
 class Element(models.Model):
     class Admin:
-        search_fields = ['id', 'section']
-        list_filter = ['section', 'title']
+        search_fields = ['id', 'chapter']
+        list_filter = ['chapter', 'title']
 
     id = models.CharField('ID attribute', max_length=64, editable=False,
                           primary_key=True)
-    section = models.CharField('Section ID', max_length=64, editable=False,
+    chapter = models.CharField('Chapter ID', max_length=64, editable=False,
                                db_index=True)
-    title = models.CharField('Section title', max_length=256, editable=False)
+    title = models.CharField('Chapter title', max_length=256, editable=False)
 
     def __unicode__(self):
         return self.id
@@ -43,4 +43,4 @@ class Comment(models.Model):
         return self.comment[:32]
 
     def get_absolute_url(self):
-        return '/html/%s.html#%s' % (self.element.section, self.element.id)
+        return '/html/%s.html#%s' % (self.element.chapter, self.element.id)

@@ -31,4 +31,4 @@ class Comments(Feed):
             return self.items()
         elif len(bits) > 1:
             raise ObjectDoesNotExist
-        return self.feedfilter(Comment.objects.filter(element__section=bits[0]))
+        return self.feedfilter(Comment.objects.filter(element__chapter=bits[0]))

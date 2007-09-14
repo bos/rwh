@@ -2,6 +2,9 @@ import django.newforms as forms
 from django.http import HttpResponse
 from rwh.comments.models import Comment, Element
 from django.shortcuts import get_object_or_404, render_to_response
+from django.template import Context
+from django.template.loader import get_template
+from django.utils.simplejson import dumps 
 
 class CommentForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput)
@@ -11,6 +14,25 @@ class CommentForm(forms.Form):
         'rows': 8, 'cols': 60
         }))
     remember = forms.BooleanField(initial=True, required=False)
+
+def chapter(request, id):
+    template = get_template('comment.html')
+    objs = {}
+    for c in Comment.objects.filter(element__chapter=id).order_by('date'):
+        objs.setdefault(c.element.id, [])
+        objs[c.element.id].append(c)
+    resp = {}
+    for elt, comments in objs.iteritems():
+        form = CommentForm(initial={
+            'id': elt,
+            'name': request.session.get('name', ''),
+            })
+        resp[elt] = template.render(Context({
+            'id': elt,
+            'length': len(comments),
+            'query': comments,
+            }))
+    return HttpResponse(dumps(resp), mimetype='application/json')
 
 def single(request, id, form=None, newid=None):
     queryset = Comment.objects.filter(element=id).order_by('date')
