@@ -14,7 +14,14 @@
   <xsl:template match="/">
     <xsl:for-each select="//chapter|//appendix|//sect1">
       <xsl:variable name="id">
-        <xsl:value-of select="@id"/>
+        <xsl:choose>
+          <xsl:when test="local-name(.)='sect1'">
+            <xsl:value-of select="../@id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="@id"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:variable>
       <xsl:variable name="sectitle">
         <xsl:value-of select="normalize-space(./title)"/>
