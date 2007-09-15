@@ -1,9 +1,9 @@
 body {
   background: #f2f1f0;
-  font-family: verdana,helvetica,sans-serif;
+  font-family: verdana,sans-serif;
 }
 
-.navheader, .book, .preface, .chapter, .appendix, .bibliography, .navfooter {
+.navheader, .book, .preface, .chapter, .appendix, .bibliography, .navfooter, .basetemplate {
   width: 50em;
   margin-left: auto;
   margin-right: auto;
@@ -17,7 +17,7 @@ a:hover, a:active {
   border-bottom: 1px solid #aaaaaa;
 }
 
-.book, .preface, .chapter, .appendix, .bibliography {
+.book, .preface, .chapter, .appendix, .bibliography, .basetemplate {
   background: white;
   padding: 2em;
 }

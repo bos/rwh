@@ -130,7 +130,6 @@ define make-html
 mkdir -p $(1)
 $(xsltproc) $(xsltproc-opts) -o $(1)/x \
   ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
-ln -sf ../support/figs $(1)/figs
 set -e; for i in $(1)/*.html; do \
   gzip -9 -c $$i > $$i.gz; \
 done
