@@ -1,0 +1,6 @@
+AuthUserFile /home/bos/src/darcs/book/web/alpha.htdigest
+AuthGroupFile /dev/null
+AuthName "Book Review"
+AuthType Digest
+
+require user lambda
