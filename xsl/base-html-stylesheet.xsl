@@ -1,6 +1,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-  <xsl:param name="html.stylesheet">styles.css</xsl:param>
+  <xsl:param name="html.stylesheet">/support/styles.css</xsl:param>
   <xsl:param name="toc.section.depth">3</xsl:param>
   <xsl:param name="annotate.toc">0</xsl:param>
 
@@ -95,9 +95,9 @@
   <xsl:template name="user.head.content">
     <link rel="alternate" type="application/atom+xml" title="Comments"
       href="/feeds/comments/"/>
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="form.js"></script>
-    <script type="text/javascript" src="hsbook.js"></script>
+    <script type="text/javascript" src="/support/jquery.js"></script>
+    <script type="text/javascript" src="/support/form.js"></script>
+    <script type="text/javascript" src="/support/hsbook.js"></script>
   </xsl:template>
 
   <xsl:template name="user.footer.content">
