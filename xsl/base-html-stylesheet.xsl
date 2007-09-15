@@ -106,7 +106,7 @@
       <p>Copyright 2007 Bryan O'Sullivan, Don Stewart, and
       John Goerzen. This work is licensed under a <a rel="license"
       href="http://creativecommons.org/licenses/by-nc/3.0/">Creative
-      Commons Attribution-Noncommercial 3.0 License</a>.</p>
+      Commons Attribution-Noncommercial 3.0 License</a>. Icons by <a href="mailto:mattahan@gmail.com">Paul Davey</a> aka <a href="http://mattahan.deviantart.com/">Mattahan</a>.</p>
     </div>
   </xsl:template>
 
