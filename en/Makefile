@@ -34,15 +34,20 @@ src-examples := \
 src-figs := \
 	$(wildcard figs/*.png)
 
-extras-html-base := \
-	hsbook.js \
-	form.js \
-	form-min.js \
-	jquery.js \
-	jquery-min.js \
-	styles.css
+obj-web := html
+obj-websup := html/support
 
-extras-html := $(extras-html-base) $(extras-html-base:%=%.gz)
+extras-web-base := \
+	$(obj-web)/index.html \
+	$(obj-web)/robots.txt \
+	$(obj-websup)/form-min.js \
+	$(obj-websup)/form.js \
+	$(obj-websup)/hsbook.js \
+	$(obj-websup)/jquery-min.js \
+	$(obj-websup)/jquery.js \
+	$(obj-websup)/styles.css
+
+extras-web := $(extras-web-base) $(extras-web-base:%=%.gz)
 
 xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
 
@@ -53,9 +58,9 @@ stamp-examples := $(addprefix x/.stamp-,$(notdir $(src-examples)))
 # Objects.
 
 obj-pdf := $(src-master:%.xml=%.pdf)
-obj-html := html/html
-obj-alpha := alpha/html
-obj-beta := beta/html
+obj-complete := $(obj-web)/complete
+obj-alpha := $(obj-web)/alpha
+obj-beta := $(obj-web)/beta
 
 # Tools.
 
@@ -125,9 +130,7 @@ define make-html
 mkdir -p $(1)
 $(xsltproc) $(xsltproc-opts) -o $(1)/x \
   ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
-cp -rf figs $(1)
-cp ../xsl/system-xsl/images/*.png $(1)/figs
-cp -f ../web/icons/*.png $(1)/figs
+ln -sf ../support/figs $(1)/figs
 set -e; for i in $(1)/*.html; do \
   gzip -9 -c $$i > $$i.gz; \
 done
@@ -141,29 +144,59 @@ $(xsltproc) $(xsltproc-opts) -o $(1).xml \
   --stringparam profile.revision "$(2)" ../xsl/dtd-profile.xsl $(src-master)
 endef
 
-.PHONY: alpha
-alpha: $(obj-alpha)/index.html $(extras-html:%=$(obj-alpha)/%)
+websup: $(extras-web)
 
-$(obj-alpha)/index.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
+web: websup webfigs alpha beta html
+
+webfigs:
+	cp -rf figs $(obj-websup)
+	cp ../xsl/system-xsl/images/*.png $(obj-websup)/figs
+	cp -f ../web/icons/*.png $(obj-websup)/figs
+	for i in $(obj-websup)/figs/*-800.png; do \
+	  mv $$i $$(echo $$i | sed 's/-800.png/.png/'); \
+	done
+
+.PHONY: alpha
+alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
+
+$(obj-alpha)/hs.preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
+
+$(obj-alpha)/index.html: ../web/index.complete.html $(obj-alpha)/hs.preface.html
+	cp $< $@
+	gzip -c < $@ > $@.gz
 
 alpha.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
 	$(call profile-revision,alpha,alpha)
 
-.PHONY: beta
-beta: $(obj-beta)/index.html $(extras-html:%=$(obj-beta)/%)
+$(obj-alpha)/.htaccess: ../web/alpha.htaccess
+	cp $< $@
 
-$(obj-beta)/index.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
+.PHONY: beta
+beta: $(obj-beta)/index.html
+
+$(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
+
+$(obj-beta)/index.html: ../web/index.complete.html $(obj-beta)/hs.preface.html
+	cp $< $@
+	gzip -c < $@ > $@.gz
 
 beta.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
 	$(call profile-revision,beta,beta)
 
-.PHONY: html
-html: $(obj-html)/index.html $(extras-html:%=$(obj-html)/%)
+.PHONY: complete
+html: $(obj-complete)/index.html $(obj-complete)/.htaccess
 
-$(obj-html)/index.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
-	$(call make-html,$(obj-html))
+$(obj-complete)/hs.preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
+	$(call make-html,$(obj-complete))
+
+$(obj-complete)/index.html: ../web/index.complete.html $(obj-complete)/hs.preface.html
+	cp $< $@
+	gzip -c < $@ > $@.gz
+
+$(obj-complete)/.htaccess: ../web/complete.htaccess
+	cp $< $@
 
 ../xsl/system-xsl: $(system-xsl-dir)
 	ln -s $< $@
@@ -231,8 +264,7 @@ book.zip: .validated-00book.xml $(src-figs)
 
 clean:
 	-rm -f .validated* .stamp-* *-entities.txt $(obj-pdf) 00book.zip
-	-rm -rf x $(obj-html) $(obj-alpha) $(obj-beta) index ../tools/dist \
-	  ../tools/bin
+	-rm -rf x html index ../tools/dist ../tools/bin
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
@@ -269,22 +301,16 @@ x/.stamp-%.py: %.py ../tools/bin/snippets x
 x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
-$(obj-alpha)/%.css: %.css
+$(obj-websup)/%.css: %.css
+	@mkdir -p $(dir $(@))
 	cp $< $@
 
-$(obj-alpha)/%.js: %.js
+$(obj-websup)/%.js: %.js
+	@mkdir -p $(dir $(@))
 	cp $< $@
 
-$(obj-beta)/%.css: %.css
-	cp $< $@
-
-$(obj-beta)/%.js: %.js
-	cp $< $@
-
-$(obj-html)/%.css: %.css
-	cp $< $@
-
-$(obj-html)/%.js: %.js
+$(obj-web)/%: ../web/%
+	@mkdir -p $(dir $(@))
 	cp $< $@
 
 %.gz: %
