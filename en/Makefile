@@ -303,15 +303,15 @@ x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
 $(obj-websup)/%.css: %.css
-	@mkdir -p $(dir $(@))
+	@mkdir -p $(dir $@)
 	cp $< $@
 
 $(obj-websup)/%.js: %.js
-	@mkdir -p $(dir $(@))
+	@mkdir -p $(dir $@)
 	cp $< $@
 
 $(obj-web)/%: ../web/%
-	@mkdir -p $(dir $(@))
+	@mkdir -p $(dir $@)
 	cp $< $@
 
 $(obj-web)/%.html: %.html.in
