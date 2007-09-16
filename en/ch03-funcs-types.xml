@@ -1126,12 +1126,14 @@
       have a pattern for the empty list, and it will evaluate
       that.</para>
 
-    <para id="x_e5">It might initially look like we have two functions named
-      <function>sumList</function> here, but Haskell lets us define a
-      function as a series of equations; so in fact these two clauses
-      are defining the behaviour of one function, for different
-      inputs.  (By the way, there's a standard function,
-      <function>sum</function>, that does this for us.)</para>
+    <para id="x_e5">It might initially look like we have two functions
+      named <function>sumList</function> here, but Haskell lets us
+      define a function as a series of equations; so in fact these two
+      clauses are defining the behaviour of one function, over
+      different inputs.  (By the way, there's already a standard
+      function, <function>sum</function>, that does this
+      adding-of-a-list for us.  This <function>sumList</function> is
+      purely for illustration.)</para>
 
     <para id="x_f5">The syntax for pattern matching on a tuple is similar to the
       syntax for constructing a tuple.  Here's a function that returns
@@ -1149,10 +1151,11 @@
 
     &tuple.ghci:complicated;
 
-    <para id="x_i5">Wherever a literal value is present in a pattern, that value
-      must match exactly for the pattern match to succeed.  If every
-      pattern within a series of equations fails to match, we get a
-      runtime error.</para>
+    <para id="x_i5">Wherever a literal value is present in a pattern
+      (<literal>True</literal> and <literal>5</literal> in the tuple
+      pattern above), that value must match exactly for the pattern
+      match to succeed.  If every pattern within a series of equations
+      fails to match, we get a runtime error.</para>
 
     &tuple.ghci:nomatch;
 
@@ -1174,6 +1177,8 @@
       of that parameter must be <type>Wrapper a</type>.</para>
     
     <note>
+      <title>The ordering of patterns is important</title>
+
       <para id="x_m5">Haskell tests patterns for matches in the order in which
 	we list them in our code.  It goes from top to bottom and
 	stops at the first match; it <emphasis>does not</emphasis>
@@ -1184,6 +1189,21 @@
 	simpler and less powerful.  It doesn't provide backtracking or
 	unification.</para>
     </note>
+
+    <para>Here are some rules of thumb to help with remembering how
+      pattern matching works.  A constructor in a pattern
+      checks that the matched value has the right <quote>shape</quote>.  A
+      literal value ensures that that portion of the value has exactly
+      the matching contents.  And a variable makes no assertions about
+      either the shape or contents of the matched value; it matches anything,
+      and gives the variable that value.</para>
+
+    <para>So the pattern <code>(3:xs)</code> first of all is an
+      assertion that a matching value is a non-empty list, by matching
+      against the <function>(:)</function> constructor.  It also
+      ensures that the head of the list is the literal value
+      <literal>3</literal>.  And whatever the tail of the list is, it
+      will be bound to the variable <varname>xs</varname>.</para>
 
     <sect2 id="hs.funcstypes.dontcare">
       <title>The don't-care, or wild card, pattern</title>
