@@ -1144,7 +1144,7 @@
       &fold.ghci:append;
 
       <para id="x_N9">Now that we can think in terms of transforming a list, it
-	becomes easier for us to reason about functions like summing a
+	becomes easier for us to reason about operations like summing a
 	list.  We replace the empty list with zero, which becomes our
 	first accumulator value.  We then apply the
 	<function>(+)</function> function to each element of the list
