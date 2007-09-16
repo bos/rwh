@@ -244,6 +244,14 @@ div.new_comment {
   color: #727272;
 }
 
+.rwhfooter a {
+  color: #5555ff;
+}
+
+.rwhfooter a:visited {
+  opacity: 0.7;
+}
+
 .rwhfooter img {
   vertical-align: -45%;
 }
