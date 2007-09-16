@@ -163,7 +163,7 @@ $(obj-alpha)/hs.preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
 
 $(obj-alpha)/index.html: ../web/index.complete.html $(obj-alpha)/hs.preface.html
-	cp $< $@
+	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
 alpha.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
@@ -179,7 +179,7 @@ $(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
 
 $(obj-beta)/index.html: ../web/index.complete.html $(obj-beta)/hs.preface.html
-	cp $< $@
+	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
 beta.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
@@ -192,7 +192,7 @@ $(obj-complete)/hs.preface.html: .validated-00book.xml ../xsl/system-xsl $(wildc
 	$(call make-html,$(obj-complete))
 
 $(obj-complete)/index.html: ../web/index.complete.html $(obj-complete)/hs.preface.html
-	cp $< $@
+	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
 $(obj-complete)/.htaccess: ../web/complete.htaccess
@@ -269,6 +269,7 @@ clean:
 	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
+vpath %.html.in ../web
 vpath %.css ../web
 vpath %.js ../web/javascript
 
