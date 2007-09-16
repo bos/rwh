@@ -1696,6 +1696,55 @@
       </note>
     </sect2>
   </sect1>
+
+  <sect1 id="hs.fp.readability">
+    <title>Tips for writing readable code</title>
+
+    <para>So far in this chapter, we've come across two tempting
+      looking features of Haskell: tail recursion and anonymous
+      functions.  As nice as these are, we don't often want to use
+      them.</para>
+
+    <para>Many tail recursive functions are better expressed using
+      list manipulation functions like <function>map</function>,
+      <function>take</function>, and <function>filter</function>.
+      Without a doubt, it takes some practice to get used to using
+      these.  What we get in return for our initial investment in
+      learning to use these functions is the ability to skim more
+      easily over code that uses them.</para>
+
+    <para>The reason for this is simple.  A tail recursive function
+      definition has the same problem as a loop in an imperative
+      language: it's completely general, so we have to look at the
+      exact details of every loop, and every tail recursive function,
+      to see what it's really doing.  In contrast,
+      <function>map</function> and most other list manipulation
+      functions do only <emphasis>one</emphasis> thing; we can take
+      for granted what these simple building blocks do, and focus on
+      the idea the code is trying to express, not the minute details
+      of how it's manipulating its inputs.</para>
+
+    <para>In the middle ground between tail recursive functions (with
+      complete generality) and our toolbox of list manipulation
+      functions (each of which does one thing) lie the folds.  A fold
+      takes more effort to understand than, say, a composition of
+      <function>map</function> and <function>filter</function> that
+      does the same thing, but at the same time it behaves more
+      regularly and predictably than a tail recursive function.  As a
+      general rule, don't use a fold if you don't need one, but think
+      about using one instead of a tail recursive loop if you
+      can.</para>
+
+    <para>As for anonymous functions, they tend to interrupt the
+      <quote>flow</quote> of reading a piece of code.  It is very
+      often as easy to write a local function definition in a
+      <code>let</code> or <code>where</code> clause, and use that, as
+      it is to put an anonymous function into place.  The relative
+      advantages of a named function are twofold: we're not confronted
+      with the need to understand the function's definition when we're
+      reading the code that uses it; and a well chosen function name
+      acts as a tiny piece of local documentation.</para>
+  </sect1>
 </chapter>
 
 <!--
