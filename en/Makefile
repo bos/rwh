@@ -162,7 +162,7 @@ alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
 $(obj-alpha)/hs.preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
 
-$(obj-alpha)/index.html: ../web/index.complete.html $(obj-alpha)/hs.preface.html
+$(obj-alpha)/index.html: ../web/index.complete.html.in $(obj-alpha)/hs.preface.html
 	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
@@ -178,7 +178,7 @@ beta: $(obj-beta)/index.html
 $(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
 
-$(obj-beta)/index.html: ../web/index.complete.html $(obj-beta)/hs.preface.html
+$(obj-beta)/index.html: ../web/index.complete.html.in $(obj-beta)/hs.preface.html
 	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
@@ -191,7 +191,7 @@ html: $(obj-complete)/index.html $(obj-complete)/.htaccess
 $(obj-complete)/hs.preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-complete))
 
-$(obj-complete)/index.html: ../web/index.complete.html $(obj-complete)/hs.preface.html
+$(obj-complete)/index.html: ../web/index.complete.html.in $(obj-complete)/hs.preface.html
 	../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
