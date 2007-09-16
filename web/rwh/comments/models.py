@@ -57,6 +57,6 @@ class Comment(models.Model):
         s.update(str(self.comment))
         s.update(str(self.submitter_name))
         s.update(str(self.date))
-        return '/html/%s.html#%s?comment=%s&uuid=%s' % (
+        return '/complete/%s.html#%s?comment=%s&uuid=%s' % (
             self.element.chapter, self.element.id, self.id, s.hexdigest()[:20]
             )
