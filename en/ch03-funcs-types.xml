@@ -1226,6 +1226,20 @@
 	constructor is <function>Right</function>, because it
 	<emphasis>must</emphasis> be; <type>Either</type> only has two
 	constructors.</para>
+
+      <para>In a pattern, a wild card acts similarly
+	to a variable, only it doesn't bind the value to a name.
+	While we can't put the same variable name multiple times in a
+	single pattern, we can use a wild card as many times as we
+	need to.</para>
+
+      <para>Another advantage of wild cards is that a Haskell compiler
+	can warn us if we introduce a variable name in a pattern, but
+	don't use it in a function's body; defining something but
+	forgetting to use it can often indicate a bug.  Using a wild
+	card instead of an unused variable makes it explicit that we
+	really don't care what value is present, and will prevent such
+	a warning.</para>
     </sect2>
 
     <sect2 id="hs.funcstypes.case">
