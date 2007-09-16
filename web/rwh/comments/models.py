@@ -1,4 +1,5 @@
 from django.db import models
+import sha
 
 mutable = True
 
@@ -52,6 +53,10 @@ class Comment(models.Model):
         return self.comment[:32]
 
     def get_absolute_url(self):
-        return '/html/%s.html#%s?comment=%s' % (
-            self.element.chapter, self.element.id, self.id
+        s = sha.new()
+        s.update(str(self.comment))
+        s.update(str(self.submitter_name))
+        s.update(str(self.date))
+        return '/html/%s.html#%s?comment=%s&uuid=%s' % (
+            self.element.chapter, self.element.id, self.id, s.hexdigest()[:20]
             )
