@@ -129,6 +129,7 @@ $(obj-pdf): .validated-00book.xml $(src-figs)
 # 2 -> name of docbook file to process (optional)
 define make-html
 mkdir -p $(1)
+ln -sf ../support/figs $(1)
 $(xsltproc) $(xsltproc-opts) -o $(1)/x \
   ../xsl/chunk-stylesheet.xsl $(or $(2),$(src-master))
 set -e; for i in $(1)/*.html; do \
