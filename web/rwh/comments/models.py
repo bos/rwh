@@ -52,4 +52,6 @@ class Comment(models.Model):
         return self.comment[:32]
 
     def get_absolute_url(self):
-        return '/html/%s.html#%s' % (self.element.chapter, self.element.id)
+        return '/html/%s.html#%s?comment=%s' % (
+            self.element.chapter, self.element.id, self.id
+            )
