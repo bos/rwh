@@ -186,10 +186,11 @@
     <para>For better or worse, this section is going to read a bit
       like a <quote>laundry list</quote> of functions.  Why present so
       many functions at once?  These functions are both easy to learn
-      and absolutely ubiquitous.  If we don't have this toolbox at
-      our fingertips, we'll end up wasting time by reinventing simple
-      functions that are already present in the standard
-      libraries.</para>
+      and absolutely ubiquitous.  If we don't have this toolbox at our
+      fingertips, we'll end up wasting time by reinventing simple
+      functions that are already present in the standard libraries.
+      So bear with us as we go through the list; the effort you'll
+      save will be huge.</para>
 
     <para id="x_s6">The <code>Data.List</code> module is the <quote>real</quote>
       logical home of all standard list functions. The prelude merely
@@ -400,7 +401,7 @@
       <para id="x_U7">Each function takes a predicate;
 	<function>break</function> consumes its input while its
 	predicate fails, while <function>span</function> consumes
-	until its predicate succeeds.</para>
+	while its predicate succeeds.</para>
 
       &ch04.list.ghci:break.span;
 
@@ -645,7 +646,7 @@
 	function. There's another common idiom in this code, too.
 	Thinking about the structure of the list, and handling the
 	empty and non-empty cases separately, is a kind of approach
-	called structural recursion.</para>
+	called <emphasis>structural recursion</emphasis>.</para>
 
       <para id="x_A8">We call the non-recursive case (when the list is empty)
 	the base case.  We'll see people refer to the case where the
