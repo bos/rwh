@@ -314,5 +314,9 @@ $(obj-web)/%: ../web/%
 	@mkdir -p $(dir $(@))
 	cp $< $@
 
+$(obj-web)/%.html: %.html.in
+	@mkdir -p $(dir $@)
+	python ../web/texpand.py $< $@
+
 %.gz: %
 	gzip -9 -c $< > $@
