@@ -648,6 +648,30 @@
       <para id="x_B8">Structural induction isn't confined to lists; we can use
 	it on other algebraic data types, too.  We'll have more to say
 	about it later.</para>
+
+      <note>
+	<title>What's the big deal about tail recursion?</title>
+
+	<para>In an imperative language, a loop executes in constant
+	  space.  Lacking loops, we use tail recursive functions in
+	  Haskell instead.  Normally, a recursive function allocates
+	  some space each time it calls itself, so it knows where to
+	  return to.</para>
+
+	<para>Clearly, a tail recursive function would be at a huge
+	  disadvantage relative to a loop if it allocated memory for
+	  every recursive call: this would require linear space
+	  instead of constant space.  However, functional language
+	  implementations usually detect uses of tail recursion, and
+	  transform tail recursive calls to run in constant space;
+	  this is called <emphasis>tail call
+	    optimisation</emphasis>.</para>
+
+	<para>Few imperative language implementations perform tail
+	  call optimisation; this is why writing imperative code in
+	  any kind of ambitiously functional style often leads to
+	  space leaks and poor performance.</para>
+      </note>
     </sect2>
 
     <sect2>
