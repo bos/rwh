@@ -1,0 +1,6 @@
+Fix links from feed items back to the book.  This means each stage
+(alpha, beta, complete) needs its own feed slug.  Feh.
+
+Indicate which comments have been reviewed.
+
+Don't display hidden comments.
