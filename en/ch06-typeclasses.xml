@@ -380,7 +380,7 @@ class  Eq a  where
       &read.ghci:readtypes;
       <para id="x_YB">
         Notice the error when trying to parse <literal>5.0</literal> as an
-        Integer.  The compiler selected a different parser there because the
+        Integer.  The interpreter selected a different parser there because the
         return value of &read; was expected to be of a different type.
       </para>
       <para id="x_ZB">
@@ -446,7 +446,7 @@ class  Eq a  where
         <literal>d2</literal>.  That generates an error.  The reason is that
         the interpreter doesn't know what type <literal>d2</literal> is meant
         to be, so it doesn't know how to parse the input.  If we give it an
-        explicit cast, it works, and we can verify that the two sets of data
+        explicit type, it works, and we can verify that the two sets of data
         are equal.
       </para>
       <para id="x_jB">
