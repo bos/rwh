@@ -1350,52 +1350,61 @@
     </sect2>
     
     <sect2 id="hs.funcstypes.pattern.limits">
-      <title>Limits to pattern matching</title>
+      <title>Early pattern matching pitfalls</title>
 
-      <para id="x_v5">Every variable that appears within a pattern is a new
-	local variable that will be given a value if the pattern
-	matches, not a reference to some variable on
-	<quote>outside</quote> the pattern.  Matching a pattern only
-	lets us do exact comparisons against constructors and simple
-	values.  We can't use a pattern to match something like a
-	function.  To see what we mean, take a look at the following
-	function.</para>
+      <para>There are a few ways in which new Haskell programmers can
+	misunderstand or misuse patterns.  Here are a few potential
+	missteps that you can easily avoid.</para>
+
+      <para id="x_v5">There's no way to write a pattern that compares
+	a value with a variable.  Matching a pattern only lets us
+	perform exact comparisons against combinations of constructors
+	and simple values.</para>
+
+      <para>Here's a well-intentioned example of pattern matching gone
+	awry.  This code compiles cleanly, but depending on what you
+	expect it to do, it might surprise you.</para>
 
       &BogusPattern.hs:isHead;
 
-      <para id="x_w5">A naive glance suggests that it's trying to check the
-	value of <function>f</function> to see if it's actually the
-	standard function <function>head</function>, but such an
-	interpretation would be quite wrong.  Here's what is
-	<emphasis>really</emphasis> doing.</para>
+      <para id="x_w5">A naive glance suggests that this code is trying
+	to check the value of <function>f</function> to see if it's
+	actually the standard function <function>head</function>, but
+	here's what it is <emphasis>really</emphasis> doing.</para>
 
-      <para id="x_x5">Because the first pattern in the <code>case</code>
-	expression is just a variable, this pattern will
-	<emphasis>always</emphasis> match, no matter what the value of
-	<varname>f</varname> is, and the value of <varname>f</varname>
-	will be given to the local variable <varname>head</varname>
-	when the right hand side is evaluated.</para>
+      <para id="x_x5">Because the first pattern in the
+	<code>case</code> expression is a variable, this branch of the
+	<code>case</code> will <emphasis>always</emphasis> match, no
+	matter what the value of <varname>f</varname> is.  The name
+	<varname>head</varname> thus acts as a local variable whose
+	value is the value of <varname>f</varname>, which hides the
+	global definition of the well-known <function>head</function>
+	function.  </para>
 
       <note>
+	<title>Irrefutable patterns</title>
+
 	<para id="x_y5">A pattern that consists only of a variable will always
-	  match, because it's not being compared against anything that
-	  might cause the match to fail.  We refer to patterns that
+	  match, because it's not being compared against any value that
+	  could cause the match to fail.  We refer to patterns that
 	  always match as <quote>irrefutable</quote>.</para>
       </note>
 
-      <para id="x_z5">Finally, because the first pattern always matches, &GHC;
-	will always evaluate its right hand side and use that as the
-	result of the <code>case</code> expression.  The second
-	pattern (the one with the wild card) will never actually be
-	reached. Because the two patterns will match the same values,
-	they are said to <emphasis>overlap</emphasis>.  If &GHC; ever
-	complains to you about overlapping patterns, it's telling you
-	that one of your patterns is the same as another, and so will
-	never actually be matched.</para>
+      <para id="x_z5">The first pattern always matches, because it's
+	irrefutable.  But the second pattern <emphasis>also</emphasis>
+	always matches, because it uses a wild card.  However, because
+	Haskell attempts to match patterns in the order in which we
+	write them, the first pattern will always succeed, and the
+	second pattern will never actually be reached. Because the two
+	patterns will match the same values, they are said to
+	<emphasis>overlap</emphasis>.  If &GHC; ever complains to you
+	about overlapping patterns, it's telling you that one of your
+	patterns is the same as another, and so it will never actually
+	be matched.</para>
 
-      <para id="x_A6">Another limitation of patterns is that a variable can only
-	appear once in a pattern.  For example, you can't put a
-	variable in multiple places within a pattern to express the
+      <para id="x_A6">Another thing to be aware of is that a variable
+	can only appear once in a pattern.  For example, we can't put
+	a variable in multiple places within a pattern to express the
 	notion <quote>this value and that should be
 	  identical</quote>.</para>
 
