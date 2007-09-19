@@ -1433,7 +1433,8 @@
       followed by the guard expression, then an <code>=</code> symbol
       (or <code>-&gt;</code> if within a <code>case</code>
       expression), then the expression to evaluate if the guard
-      succeeds.</para>
+      succeeds.  A guard expression can use any variables matched in
+      the pattern that precedes it.</para>
 
     <para id="x_E6">The <varname>otherwise</varname> used in the second guard
       has an obvious meaning: it's the expression to evaluate if
@@ -1441,22 +1442,24 @@
       not a special piece of syntax, though; it's just a predefined variable
       whose value is <function>True</function>.</para>
 
-    <para id="x_F6">We can use guards anywhere that we can use patterns.  The
-      combination of writing a function as a series of equations,
-      pattern matching, and guards lets us write code that's clear and
-      easy to understand.</para>
-
-    <para id="x_G6">Remember the <function>myTake</function> function we defined
-      in <xref linkend="hs.funcstypes.if"/>?</para>
+    <para id="x_F6">We can use guards anywhere that we can use
+      patterns.  The advantage of writing a function as a series of
+      equations using pattern matching and guards is that it often
+      makes code much clearer.  Remember the
+      <function>myTake</function> function we defined in <xref
+	linkend="hs.funcstypes.if"/>?</para>
 
     &myTake.hs:myTake.noid;
 
-    <para id="x_H6">Here's a reformulation of that function using patterns and
-      guards.  Instead of reasoning about what an <code>if</code>
-      expression is doing and which branch will be evaluated, the code
-      uses a series of equations with simple patterns and guards. This
-      makes it easier to understand the behaviour of the function
-      under different circumstances.</para>
+    <para id="x_H6">Here's a reformulation of that function using
+      patterns and guards.  Instead of reasoning about what an
+      <code>if</code> expression is doing and which branch will be
+      evaluated, the code uses a series of equations with simple
+      patterns and guards. Hoisting the control decisions to the
+      <quote>outside</quote> of the code, instead of burying it inside
+      with <code>if</code> expressions, lets us enumerate up front
+      the cases in which we expect the behaviour of the function to
+      differ.</para>
 
     &myTake.hs:niceTake;
 
@@ -1469,11 +1472,8 @@
     &Guard.hs:secondEqualsThird;
 
     <para id="x_J6">Here, for good measure, we've illustrated guard
-      syntax in a <code>case</code> expression.  It's worth pointing
-      out that a guard expression can use the variables matched in a
-      pattern.  A pattern acts as a <quote>first level</quote> filter
-      on a value, with a guard able to perform a more complicated test
-      if the pattern succeeds.</para>
+      syntax in a <code>case</code> expression.  This guard expression
+      compares the variables matched in the pattern for equality.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.infix">
