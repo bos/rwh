@@ -1,3 +1,5 @@
+:load SuffixTree
+
 --# tails
 :m +Data.List
 tail "foobar"

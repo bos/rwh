@@ -1,3 +1,4 @@
+:load insert
 --# insert1
 let al = [(1, "one"), (2, "two"), (3, "three"), (4, "four")]
 insert 5 "five" al
