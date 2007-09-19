@@ -866,6 +866,8 @@
 	linkend="hs.funcstypes.offside"/>.</para>
 
     <note>
+      <title>A few observations about complex numbers</title>
+
       <para id="x_m4">It's probably obvious from context above, but
 	<function>(:+)</function> is the constructor for a complex
 	number, taking the real part on the left and the imaginary
@@ -877,6 +879,32 @@
 	&GHC; implements <type>Double</type> more efficiently than
 	<type>Float</type>.</para>
     </note>
+
+    <sect2 id="hs.funcstypes.locals.functions">
+      <title>Local functions</title>
+
+      <para>You'll have noticed that Haskell's syntax for defining a
+	variable looks very similar to its syntax for defining a
+	function.  This symmetry is preserved in <code>let</code> and
+	<code>where</code> blocks; we can define local
+	<emphasis>functions</emphasis> just as easily as local
+	<emphasis>variables</emphasis>.  All of the same syntax
+	applies as at the top level: we can use multiple equations,
+	patterns, and guards.</para>
+
+      &LocalFunction.hs:pluralise;
+
+      <para>In this example, we define and use a local function
+	<function>plural</function> using several equations.  Local
+	functions can freely use variables from the scopes that
+	enclose them; here, we use <varname>word</varname> from the
+	definition of the outer function
+	<function>pluralise</function>.  In the definition of
+	<function>pluralise</function>, the <function>map</function>
+	function (which we'll be revisiting in the next chapter)
+	applies the local function <function>plural</function> to
+	every element of the <varname>counts</varname> list.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.funcstypes.maybe">
