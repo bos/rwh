@@ -55,3 +55,21 @@ append :: [a] -> [a] -> [a]
 append xs ys = foldr (:) ys xs
 {-- /snippet append --}
               
+{-- snippet foldl.expand --}
+-- step 0                   (1:2:3:[]) == step (0 + 1)             (2:3:[])
+-- step (0 + 1)             (2:3:[])   == step ((0 + 1) + 2)       (3:[])
+-- step ((0 + 1) + 2)       [3]        == step (((0 + 1) + 2) + 3) []
+-- step (((0 + 1) + 2) + 3) []         ==      (((0 + 1) + 2) + 3)
+{-- /snippet foldl.expand --}
+
+{-- snippet foldr.expand --}
+--               step (1:2:3:[])         == 1 +           step (2:3:[])
+-- 1 +           step (2:3:[])            == 1 + (2 +     step (3:[])
+-- 1 + (2 +      step [3])               == 1 + (2 + (3 + step []))
+-- 1 + (2 + (3 + step []))               == 1 + (2 + (3 + 0))
+{-- /snippet foldr.expand --}
+
+{-- snippet foldr.sub --}
+-- 1 : 2 : 3 : []
+-- 1 + 2 + 3 + 0
+{-- /snippet foldr.sub --}

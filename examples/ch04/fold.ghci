@@ -1,4 +1,4 @@
-:m +Fold.hs
+:load Fold.hs
 
 --# identity
 identity [1,2,3]
@@ -8,14 +8,3 @@ identity [1,2,3]
 
 --# append
 append [1,2,3] [4,5,6]
-
---# sum
-
-foldr (+) 0 [1,2,3]
-
---# sum.steps
-
-foldr (+) 0 []
-foldr (+) 0 [3]
-foldr (+) 0 [2,3]
-foldr (+) 0 [1,2,3]

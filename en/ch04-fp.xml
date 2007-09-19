@@ -973,22 +973,10 @@
 
       <para>Let's take a deeper look at what
 	<function>foldl</function> is doing here, by manually writing
-	out each step in the evaluation of <code>niceSum
-	  [1,2,3]</code>.</para>
-      <orderedlist>
-	<listitem>
-<literallayout>step 0                   (1:[2,3]) == step (0 + 1)             [2,3]</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>step (0 + 1)             (2:[3])   == step ((0 + 1) + 2)       [3]</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>step ((0 + 1) + 2)       [3]       == step (((0 + 1) + 2) + 3) []</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>step (((0 + 1) + 2) + 3) []        == (((0 + 1) + 2) + 3)</literallayout>
-	</listitem>
-      </orderedlist>
+	out each step in the evaluation of <code>step</code> function
+	when we call <code>niceSum [1,2,3]</code>.</para>
+
+      &Fold.hs:foldl.expand;
 
       <para id="x_l8">We can rewrite <function>adler32_try2</function> in a
 	similar way, using <function>foldl</function> to let us focus
@@ -1094,25 +1082,12 @@
 
       &Fold.hs:foldr;
 
-      <para>Let's follow the same manual expansion steps with
+      <para>Let's follow the same manual evaluation process with
 	<function>foldr (+) 0 [1,2,3]</function> as we did with
 	<function>niceSum</function> in <xref
 	  linkend="hs.fp.foldl"/>.</para>
 
-      <orderedlist>
-	<listitem>
-<literallayout>              step (1:[2,3])          == 1 +           step [2,3]</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>1 +           step (2:[3])            == 1 + (2 +      step [3])</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>1 + (2 +      step [3])               == 1 + (2 + (3 + step []))</literallayout>
-	</listitem>
-	<listitem>
-<literallayout>1 + (2 + (3 + step []))               == 1 + (2 + (3 + 0))</literallayout>
-	</listitem>
-      </orderedlist>
+      &Fold.hs:foldr.expand;
 
       <para>The difference between <function>foldl</function> and
 	<function>foldr</function> should be clear from looking at
@@ -1128,9 +1103,7 @@
 	with the empty list element, and every constructor in the list
 	with an application of the step function.</para>
 
-      <literallayout>1 : 2 : 3 : []
-1 + 2 + 3 + 0
-</literallayout>
+      &Fold.hs:foldr.sub;
 
       <para id="x_y8">At first glance, <function>foldr</function> might seem
 	less useful than <function>foldl</function>: what use is a
@@ -1181,18 +1154,25 @@
 
       &Fold.hs:myFoldl;
 
-      <note>
+      <tip>
+	<title>Understanding foldl in terms of foldr</title>
+
 	<para id="x_E9">If you want to understand the definition of
 	  <function>foldl</function> using <function>foldr</function>,
 	  it's best to have the following tools at hand: some headache
 	  pills, a glass of water, &ghci; (so you can find out what
 	  the <function>id</function> function does), and a pencil and
 	  paper.</para>
-      </note>
+
+	<para>All you'll need to do is follow the same manual
+	  evaluation steps as we did to see what
+	  <function>foldl</function> and <function>foldr</function>
+	  were really doing.</para>
+      </tip>
 
       <para id="x_F9">While we can write <function>foldl</function> in terms of
 	<function>foldr</function>, we can't do the converse:
-	<function>foldr</function> is <quote>more basic than</quote>
+	<function>foldr</function> is <quote>more basic</quote> than
 	<function>foldl</function>.  This should make it clearer why
 	we call functions written with <function>foldr</function>
 	primitive recursive.</para>
@@ -1203,12 +1183,13 @@
 	read about it somewhere, and that it has something to do with
 	<function>foldr</function>.)</para>
 
-      <para id="x_H9">Another useful way to think about the way
-	<function>foldr</function> works is that it
-	<emphasis>transforms</emphasis> its input list.  Its first two
-	arguments are <quote>what to do with each head/tail element of
-	  the list</quote>, and <quote>what to substitute at the end
-	  of the list</quote>.</para>
+      <para id="x_H9">Returning to our earlier intuitive explanation
+	of what <function>foldr</function> does, another useful way to
+	think about it is that it <emphasis>transforms</emphasis> its
+	input list.  Its first two arguments are <quote>what to do
+	  with each head/tail element of the list</quote>, and
+	<quote>what to substitute for the end of the
+	  list</quote>.</para>
 
       <para id="x_I9">The <quote>identity</quote> transformation with
 	<function>foldr</function> thus replaces the empty list with
@@ -1238,22 +1219,9 @@
 
       &fold.ghci:append;
 
-      <para id="x_N9">Now that we can think in terms of transforming a list, it
-	becomes easier for us to reason about operations like summing a
-	list.  We replace the empty list with zero, which becomes our
-	first accumulator value.  We then apply the
-	<function>(+)</function> function to each element of the list
-	and an accumulator value, to give a new accumulator
-	value.</para>
-
-      &fold.ghci:sum;
-
-      <para id="x_O9">Knowing that <function>foldr</function> transforms a list
-	from right to left, we can <quote>unroll</quote> the
-	application of it by hand to see the intermediate accumulators
-	that it produces.</para>
-
-      &fold.ghci:sum.steps;
+      <para>Here, we're replacing each list constructor with another
+	list constructor, but we're replacing the empty list with the
+	list we want to append onto the end of our first list.</para>
 
       <para id="x_P9">As our extended treatment of folds should indicate, the
 	<function>foldr</function> function is nearly as important a
