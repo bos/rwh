@@ -1397,6 +1397,20 @@
       more readable code than either a lambda or an explicit
       function.  Don't know what a partially applied function is yet?
       Read on!</para>
+
+    <para>A lambda has two other disadvantages: it is both less
+      expressive and more brittle than a top-level or local function.
+      We can use patterns in the parameters of a lambda, but we can't
+      use guards, and we can't define a lambda using a series of
+      equations.  If any pattern on the left hand side of a lambda
+      fails to match, we'll get a runtime pattern matching
+      error.</para>
+
+    <para>We don't intend these caveats to suggest that lambdas are
+      useless, merely that we ought to be mindful of the potential
+      pitfalls when we're thinking of using them.  In later chapters,
+      we will see that they are often invaluable as
+      <quote>glue</quote>.</para>
   </sect1>
 
   <sect1 id="hs.fp.partialapp">
