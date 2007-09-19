@@ -113,7 +113,7 @@ endif
 endif
 
 .PHONY: all
-all: web pdf
+all: valid
 
 .PHONY: all
 pdf: $(obj-pdf)
