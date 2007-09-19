@@ -11,9 +11,9 @@ foldl f z xs = step z xs
 {-- snippet foldr --}
 foldr :: (a -> b -> b) -> b -> [a] -> b
 
-foldr f z xs = helper xs
-     where helper []     = z
-           helper (y:ys) = f y (helper ys)
+foldr f z xs = step xs
+     where step []     = z
+           step (y:ys) = f y (step ys)
 {-- /snippet foldr --}
 
 {-- snippet myMap --}

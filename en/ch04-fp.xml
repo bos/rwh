@@ -971,6 +971,25 @@
 	function).  As an added bonus, our code is now shorter, too,
 	which makes it easier to understand.</para>
 
+      <para>Let's take a deeper look at what
+	<function>foldl</function> is doing here, by manually writing
+	out each step in the evaluation of <code>niceSum
+	  [1,2,3]</code>.</para>
+      <orderedlist>
+	<listitem>
+<literallayout>step 0                   (1:[2,3]) == step (0 + 1)             [2,3]</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>step (0 + 1)             (2:[3])   == step ((0 + 1) + 2)       [3]</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>step ((0 + 1) + 2)       [3]       == step (((0 + 1) + 2) + 3) []</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>step (((0 + 1) + 2) + 3) []        == (((0 + 1) + 2) + 3)</literallayout>
+	</listitem>
+      </orderedlist>
+
       <para id="x_l8">We can rewrite <function>adler32_try2</function> in a
 	similar way, using <function>foldl</function> to let us focus
 	on the details that are important.</para>
@@ -1074,6 +1093,44 @@
 	list.</para>
 
       &Fold.hs:foldr;
+
+      <para>Let's follow the same manual expansion steps with
+	<function>foldr (+) 0 [1,2,3]</function> as we did with
+	<function>niceSum</function> in <xref
+	  linkend="hs.fp.foldl"/>.</para>
+
+      <orderedlist>
+	<listitem>
+<literallayout>              step (1:[2,3])          == 1 +           step [2,3]</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>1 +           step (2:[3])            == 1 + (2 +      step [3])</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>1 + (2 +      step [3])               == 1 + (2 + (3 + step []))</literallayout>
+	</listitem>
+	<listitem>
+<literallayout>1 + (2 + (3 + step []))               == 1 + (2 + (3 + 0))</literallayout>
+	</listitem>
+      </orderedlist>
+
+      <para>The difference between <function>foldl</function> and
+	<function>foldr</function> should be clear from looking at
+	where the parentheses and the <quote>empty list</quote>
+	elements show up.  With <function>foldl</function>, the empty
+	list element is on the left, and all the parentheses group to
+	the left.  With <function>foldr</function>, the empty list
+	element is on the right, and the parentheses group to the
+	right.</para>
+
+      <para>In fact, there's a lovely intuitive explanation of how
+	<function>foldr</function> works: it replaces the empty list
+	with the empty list element, and every constructor in the list
+	with an application of the step function.</para>
+
+      <literallayout>1 : 2 : 3 : []
+1 + 2 + 3 + 0
+</literallayout>
 
       <para id="x_y8">At first glance, <function>foldr</function> might seem
 	less useful than <function>foldl</function>: what use is a
