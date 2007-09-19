@@ -94,23 +94,25 @@
 	  fixed-width integer.  The exact range of values represented
 	  by <type>Int</type> depends on the system's longest
 	  <quote>native</quote> integer: on a 32-bit machine, an
-	  <type>Int</type> is usually 32 bits wide, while on a 64-bit
-	  machine, it is usually 64 bits wide.</para>
+	  <type>Int</type> is usually 31 bits wide, while on a 64-bit
+	  machine, it is usually 63 bits wide.  (There are also
+	  numeric types that are exactly 8, 16, and so on bits wide;
+	  we'll get to those later.)</para>
       </listitem>
       <listitem>
 	<para id="x_B3">The <type>Integer</type> type represents a signed
 	  integer of arbitrary size.  <type>Integer</type>s are not
-	  used as often as <type>Int</type>s, because they're a lot
+	  used as often as <type>Int</type>s, because they're
 	  more expensive to work with.</para>
       </listitem>
       <listitem>
 	<para id="x_C3">The <type>Double</type> type is the type usually used to
 	  represent floating point numbers.  It is typically 64 bits
-	  wide, and uses the machine's native floating point
+	  wide, and uses the system's native floating point
 	  representation.  (A narrower type, <type>Float</type>, also
 	  exists, but its use is discouraged; Haskell compiler writers
 	  concentrate more on making <type>Double</type>
-	  efficient.)</para>
+	  efficient, so <type>Float</type> is much slower.)</para>
       </listitem>
     </itemizedlist>
   </sect1>
@@ -125,7 +127,9 @@
 	linkend="hs.starting.string"/>, where we found that Haskell
       represents a text string as a list of <type>Char</type> values,
       and that the type <quote>list of <type>Char</type></quote> is
-      written <type>[Char]</type>.</para>
+      written <type>[Char]</type>.  (The type <type>String</type> is
+      simply an alias for <type>[Char]</type>.  You can use the two
+      interchangeably.)</para>
 
     <para id="x_F3">More generally, we can write the type <quote>list of
 	<varname role="type">a</varname></quote> for any type <varname
@@ -174,6 +178,10 @@
       which the kind of container we're using isn't of much
       importance.  An example of this might be to represent a row in
       the result of a a database query.</para>
+
+    <para>A handy rule of thumb for remembering which is which is that
+      a list has variable size and elements of uniform type, while a
+      tuple has a uniform size and elements of variable type.</para>
 
     <sect2 id="hs.funcstypes.composite.exercises">
       <title>Exercises</title>
@@ -412,13 +420,23 @@
       &myTake.ghci:take;
 
       <para id="x_n3">From the above, it seems that <function>take</function>
-	returns an empty list if the number to remove is greater than
+	returns the original list if the number to remove is greater than
 	the number of elements, and that it treats negative numbers as
 	zero.  Here's a <function>myTake</function> function that has
 	the same behaviour, and uses Haskell's <code>if</code>
 	expression to decide what to do.</para>
 
       &myTake.hs:myTake;
+
+      <para>The <code>then</code> arm of the <code>if</code>
+	expression returns the input list once either the number of
+	elements to remove reaches zero or the current list is empty.
+	The <code>else</code> arm calls <function>myTake</function>
+	recursively, decrementing the counter and stripping one
+	element from the front of the list.  The conditional clause
+	inside the <code>if</code> causes the <code>else</code> branch
+	to be called repeatedly until either the remaining list is
+	empty or there are no elements left to return.</para>
 
       <para id="x_o3">Let's save it in a file named
 	<filename>myTake.hs</filename>, then load it into
@@ -560,6 +578,8 @@
       field in a structure or class would in another language.</para>
 
     <note>
+      <title>Deriving what?</title>
+
       <para id="x_E4">We'll explain the full meaning of <code>deriving
 	  (Show)</code> later, in
 	<xref linkend="hs.typeclasses.wellknown.show"/>.  For now,
@@ -581,15 +601,31 @@
 
     &mytype.ghci:load;
 
+
     <para id="x_H4">Remember the <code>myValue</code> variable we defined?  Here
       it is.</para>
 
     &mytype.ghci:myValue;
 
+    <para>A constructor serves as both a function for creating a value
+      and a <quote>tag</quote> identifying what type of value we have.
+      The value that &ghci; prints is telling us that we have created
+      a value with the tag <code>MyConstructor</code>, with the given
+      values in each <quote>slot</quote>.  (By the way, this is why we
+      had to add <code>deriving (Show)</code> to the definition of our
+      type; without that, &ghci; would print an error message, telling
+      us that it doesn't know how to print a value of this
+      type.)</para>
+
     <para id="x_I4">We can construct new values interactively in &ghci;,
       too.</para>
 
     &mytype.ghci:newValue;
+
+    <para>The &ghci; command <command>:type</command> lets us see what
+      the type of that expression is.</para>
+
+    &mytype.ghci:valueType;
 
     <para id="x_J4">To find out more about a type, we can use some of &ghci;'s
       browsing capabilities.  The <command>:info</command> command
@@ -618,6 +654,10 @@
       of possible values, each of which is identified by a distinct
       constructor.</para>
 
+    <para>The use of the word <quote>algebraic</quote> simply
+      indicates that the components of an algebraic data type are used
+      together.</para>
+
     <para id="x_N4">In the case of <type>Bool</type>, the type has two
       constructors, <code>True</code> and <code>False</code>.  Each
       constructor is separated by a <literal>|</literal> character,
@@ -626,13 +666,13 @@
 
       &Bool.hs:Bool;
 
-    <para id="x_O4">Each constructor can take zero or more arguments; the
-      numbers and types of the arguments accepted by each constructor
-      are independent.  For example, here's one way we might represent
-      versions of the Windows operating system, where old releases
-      were monolithic, and newer releases have <quote>service pack
-	levels</quote> denoting major updates after their initial
-      releases.</para>
+    <para id="x_O4">Each constructor of an algebraic type can take
+      zero or more arguments; the numbers and types of the arguments
+      accepted by each constructor are independent.  For example,
+      here's one way we might represent versions of the Windows
+      operating system, where old releases were monolithic, and newer
+      releases have <quote>service pack levels</quote> denoting major
+      updates after their initial releases.</para>
 
       &OsVersion.hs:WindowsVersion;
 
@@ -653,8 +693,19 @@
       <para id="x_R4">With just one constructor, an algebraic data type groups
 	related values into one, and gives that value an identity
 	distinct from other types.  It corresponds to a
-	<code>struct</code> in C or C++, and its components to the
-	fields of a struct.</para>
+	<code>struct</code> in C or C++, and its components correspond to the
+	fields of a struct.  Here's such a <code>struct</code>.</para>
+
+      &types.c:coord;
+
+      <para>And here's an equivalent type in Haskell.</para>
+
+      &SimpleTypes.hs:Coord;
+
+      <para>The only significant difference is that the fields in the
+	Haskell type are anonymous and positional.  In <xref
+	linkend="hs.funcstypes.pattern"/>, we'll see how to use names
+	to access the fields of the <type>Coord</type> type.</para>
 
       <para id="x_S4">If an algebraic data type has multiple alternatives, we
 	can think of it as similar to a <code>union</code> in C or
@@ -669,11 +720,17 @@
 	constructor that we use in the value that we create, so we
 	don't need to manually sock it away somewhere else.</para>
 
-      <para id="x_U4">Algebraic data types also serve where we'd use an
-	<code>enum</code> in C or C++, to represent a range of
-	discrete symbolic values.</para>
+      <para id="x_U4">Algebraic data types also serve where we'd use
+	an <code>enum</code> in C or C++, to represent a range of
+	discrete symbolic values. Such algebraic data types are
+	sometimes referred to as enumeration types.  Here's an example
+	from C.</para>
 
-      &Enum.hs:Roygbiv;
+      &types.c:roygbiv;
+
+      <para>And here's a Haskell equivalent.</para>
+
+      &SimpleTypes.hs:Roygbiv;
 
     </sect2>
 
@@ -1176,6 +1233,12 @@
       whose constructor is <function>Wrapper</function>, then the type
       of that parameter must be <type>Wrapper a</type>.</para>
     
+    <para>And for good measure, here's how we can define functions to
+      access the fields of the <type>Coord</type> type we defined in
+      <xref linkend="hs.funcstypes.adt.comp"/>.</para>
+
+    &SimpleTypes.hs:accessors;
+
     <note>
       <title>The ordering of patterns is important</title>
 
@@ -1240,6 +1303,12 @@
 	card instead of an unused variable makes it explicit that we
 	really don't care what value is present, and will prevent such
 	a warning.</para>
+
+      <para>Wild cards also help readability, as they make it easier
+	to tell which values we're really using.</para>
+
+      &SimpleTypes.hs:niceAccessors;
+
     </sect2>
 
     <sect2 id="hs.funcstypes.case">

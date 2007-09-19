@@ -9,6 +9,10 @@ myValue
 
 MyConstructor 1 "foo"
 
+--# valueType
+
+:type MyConstructor 1 "foo"
+
 --# info
 
 :info MyType
