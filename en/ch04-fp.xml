@@ -929,7 +929,7 @@
 	and <function>foldr</function>.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.fp.foldl">
       <title>The left fold</title>
 
       &Fold.hs:foldl;
@@ -1495,6 +1495,26 @@
       our parameter list.  This gives us a partially applied function
       that has exactly the same type and behaviour as the helper and
       lambda in our earlier definitions.</para>
+
+    <para>As another example, let's return to the list-summing function
+      we wrote in <xref linkend="hs.fp.foldl"/>.</para>
+
+      &Sum.hs:foldlSum.noid;
+
+    <para>Our first observation is that the local function
+      <function>step</function> just adds two numbers, so let's simply
+      use the addition operator instead, and eliminate the unnecessary
+      <code>where</code> clause.</para>
+
+    &Sum.hs:niceSum;
+
+    <para>It also turns out that we don't need to fully apply
+      <function>foldl</function>; we can omit the list
+      <varname>xs</varname> from both the parameter list and from the
+      parameters to <function>foldl</function>, and we'll end up with
+      a more compact function that has the same type.</para>
+
+    &Sum.hs:nicerSum;
 
     <sect2>
       <title>Sections</title>

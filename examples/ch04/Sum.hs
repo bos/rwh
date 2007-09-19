@@ -8,3 +8,11 @@ mySum xs = helper 0 xs
 foldlSum xs = foldl step 0 xs
     where step acc x = acc + x
 {-- /snippet foldlSum --}
+
+{-- snippet niceSum --}
+niceSum xs = foldl (+) 0 xs
+{-- /snippet niceSum --}
+
+{-- snippet nicerSum --}
+nicerSum = foldl (+) 0
+{-- /snippet nicerSum --}
