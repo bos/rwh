@@ -792,6 +792,28 @@
 
       &Map.hs:myMap;
 
+      <note>
+	<title>What are those wild cards doing there?</title>
+
+	<para>If you're new to functional programming, the reasons for
+	  matching patterns in certain ways won't always be obvious.
+	  For example, in the definition of <function>myMap</function>
+	  above, the first equation binds the function we're mapping
+	  to the variable <varname>f</varname>, but the second uses
+	  wild cards for both parameters.  What's going on?</para>
+
+	<para>We use a wild card in place of <varname>f</varname> to
+	  indicate that we aren't calling the function
+	  <varname>f</varname> on the right hand side of the equation.
+	  What about the list parameter?  The list type has two
+	  constructors.  We've already matched on the non-empty
+	  constructor in the first equation that defines
+	  <function>myMap</function>.  By elimination, the constructor
+	  in the second equation is thus necessarily the empty list
+	  constructor, so there's no point in doing a pattern match to
+	  see what its value really is.</para>
+      </note>
+
       <para id="x_R8">We try out our <function>myMap</function> function to give
 	outselves some assurance that it behaves similarly to the
 	standard <function>map</function>.</para>
