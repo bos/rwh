@@ -281,12 +281,21 @@ Loading package base ... linking ... done.
 <prompt>Prelude&gt;</prompt>
 </screen>
 
+    <para>The word <code>Prelude</code> in the prompt indicates that
+      the <quote>standard prelude</quote>, a fairly large standard
+      library of useful functions, is loaded and ready for us to use.
+      When we load other modules or source files, they'll show up in
+      the prompt, too.</para>
+
     <note>
-      <para id="x_N1">The prompt displayed by &ghci; changes depending on what
-	we're doing, and can often grow long enough to leave little
-	visual room on a single line for our input.  For brevity, we
-	have replaced &ghci;'s default prompts throughout this book
-	with the prompt string <prompt>ghci&gt;</prompt>.</para>
+      <title>The ephemeral ghci prompt</title>
+
+      <para id="x_N1">The prompt displayed by &ghci; changes
+	frequently depending on what modules we have loaded.  It can
+	often grow long enough to leave little visual room on a single
+	line for our input.  For brevity, we have replaced &ghci;'s
+	default prompts throughout this book with the prompt string
+	<prompt>ghci&gt;</prompt>.</para>
     </note>
 
     <sect2 id="hs.starting.ghci.edit">
