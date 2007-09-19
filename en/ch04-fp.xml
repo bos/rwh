@@ -878,8 +878,14 @@
 	is a <quote>natural</quote> way to represent a loop in a pure
 	functional language.</para>
 
-      <para id="x_b8">For something a little more complicated, let's take a look
-	at the Adler-32 checksum. Here's a Java implementation.</para>
+      <para id="x_b8">For something a little more complicated, let's
+	take a look at the Adler-32 checksum.  This is a popular
+	checksum algorithm; it concatenates two 16-bit checksums into
+	a single 32-bit checksum.  The first checksum is the sum of
+	all input bytes, plus one.  The second is the sum of all
+	intermediate values of the first checksum.  In each case, the
+	sums are computed modulo 65521.  Here's a straightforward,
+	unoptimised Java implementation.</para>
 
       &Adler32.java:Adler32;
 
@@ -890,7 +896,7 @@
 
       &Adler32.hs:adler32;
 
-      <para id="x_d8">This isn't exactly easier to follow than the Java code,
+      <para id="x_d8">This code isn't exactly easier to follow than the Java code,
 	but let's look at what's going on.  Once again,
 	<function>helper</function> function is tail recursive.  We've
 	turned the two variables we updated on every loop iteration in
