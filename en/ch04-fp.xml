@@ -954,15 +954,22 @@
 
       &Sum.hs:foldlSum;
 
-      <para id="x_k8">Notice how much simpler this code is?  We're no longer
-	using explicit recursion, because <function>foldl</function>
-	takes care of that for us.  We've simplified our problem down
-	to two things: what the initial value of the accumulator
-	should be (the second parameter to
-	<function>foldl</function>), and how to update the accumulator
-	(the <function>step</function> function).  As an added bonus,
-	our code is now shorter, too, which makes it easier to
-	understand.</para>
+    <para>That local function <function>step</function> just adds two
+	numbers, so let's simply use the addition operator instead,
+	and eliminate the unnecessary <code>where</code>
+	clause.</para>
+
+      &Sum.hs:niceSum;
+
+      <para id="x_k8">Notice how much simpler this code is than our `
+	original <function>mySum</function>?  We're no longer using
+	explicit recursion, because <function>foldl</function> takes
+	care of that for us.  We've simplified our problem down to two
+	things: what the initial value of the accumulator should be
+	(the second parameter to <function>foldl</function>), and how
+	to update the accumulator (the <function>(+)</function>
+	function).  As an added bonus, our code is now shorter, too,
+	which makes it easier to understand.</para>
 
       <para id="x_l8">We can rewrite <function>adler32_try2</function> in a
 	similar way, using <function>foldl</function> to let us focus
@@ -1498,23 +1505,17 @@
       that has exactly the same type and behaviour as the helper and
       lambda in our earlier definitions.</para>
 
-    <para>As another example, let's return to the list-summing function
-      we wrote in <xref linkend="hs.fp.foldl"/>.</para>
+    <para>As another example of currying in use, let's return to the
+      list-summing function we wrote in <xref
+	linkend="hs.fp.foldl"/>.</para>
 
-      &Sum.hs:foldlSum.noid;
+      &Sum.hs:niceSum.noid;
 
-    <para>Our first observation is that the local function
-      <function>step</function> just adds two numbers, so let's simply
-      use the addition operator instead, and eliminate the unnecessary
-      <code>where</code> clause.</para>
-
-    &Sum.hs:niceSum;
-
-    <para>It also turns out that we don't need to fully apply
-      <function>foldl</function>; we can omit the list
-      <varname>xs</varname> from both the parameter list and from the
-      parameters to <function>foldl</function>, and we'll end up with
-      a more compact function that has the same type.</para>
+    <para>We don't need to fully apply <function>foldl</function>; we
+      can omit the list <varname>xs</varname> from both the parameter
+      list and the parameters to <function>foldl</function>, and we'll
+      end up with a more compact function that has the same
+      type.</para>
 
     &Sum.hs:nicerSum;
 
