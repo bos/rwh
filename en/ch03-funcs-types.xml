@@ -1423,8 +1423,9 @@
       <emphasis>guards</emphasis>.  A guard is an expression of type
       <type>Bool</type>; if it evaluates to <function>True</function>,
       the equation that follows it is evaluated.  Otherwise, the next
-      guard in the series is evaluated, and so on.  Here's an example
-      of guards in action.</para>
+      guard in the series is evaluated, and so on.  A series of guards
+      is only checked if the patterns that they're associated with
+      match.  Here's an example of guards in action.</para>
 
     &Roots.hs:guardedRoots;
 
@@ -1437,7 +1438,7 @@
     <para id="x_E6">The <varname>otherwise</varname> used in the second guard
       has an obvious meaning: it's the expression to evaluate if
       previous gaurds all evaluate to <function>False</function>. It's
-      not a special piece of syntax, though; it's just a variable
+      not a special piece of syntax, though; it's just a predefined variable
       whose value is <function>True</function>.</para>
 
     <para id="x_F6">We can use guards anywhere that we can use patterns.  The
@@ -1460,14 +1461,19 @@
     &myTake.hs:niceTake;
 
     <para id="x_I6">Let's return to one of the limitations of patterns that we
-      mentioned in the previous section: the fact that we can't use a
-      pattern to check two variables within the pattern for equality.
-      We can express this quite easily using a guarded pattern.</para>
+      mentioned in the previous section: the fact that we can't 
+      check two variables within a pattern for equality.
+      We can express this quite easily by following the pattern with a
+      guard.</para>
 
     &Guard.hs:secondEqualsThird;
 
-    <para id="x_J6">Here, for good measure, we've illustrated guard syntax in a
-      <code>case</code> expression.</para>
+    <para id="x_J6">Here, for good measure, we've illustrated guard
+      syntax in a <code>case</code> expression.  It's worth pointing
+      out that a guard expression can use the variables matched in a
+      pattern.  A pattern acts as a <quote>first level</quote> filter
+      on a value, with a guard able to perform a more complicated test
+      if the pattern succeeds.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.infix">
