@@ -3,9 +3,9 @@ import Prelude hiding (filter, foldl, foldr)
 {-- snippet foldl --}
 foldl :: (a -> b -> a) -> a -> [b] -> a
 
-foldl f z xs = helper z xs
-    where helper z []     = z
-          helper z (x:xs) = helper (f z x) xs
+foldl f z xs = step z xs
+    where step z []     = z
+          step z (x:xs) = step (f z x) xs
 {-- /snippet foldl --}
 
 {-- snippet foldr --}
