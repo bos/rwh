@@ -761,10 +761,10 @@
 
       &Map.hs:map2;
 
-      <para id="x_N8">This is our first time seeing a function that takes
-	another function as its argument.  We can learn a lot about
-	what <function>map</function> does by simply inspecting its
-	type.</para>
+      <para id="x_N8">This is our first  close look at a function that
+	takes another function as its argument.  We can learn a lot
+	about what <function>map</function> does by simply inspecting
+	its type.</para>
 
       &ch04.map.ghci:type;
 
@@ -925,8 +925,10 @@
 
       <para id="x_g8">This kind of function is called a
 	<emphasis>fold</emphasis>, because it <quote>folds up</quote>
-	a list, and it has two variants, <function>foldl</function>
-	and <function>foldr</function>.</para>
+	a list.  There are two kinds of fold over lists,
+	<function>foldl</function> for folding from the left (the
+	start) and <function>foldr</function> for folding from the
+	right (the end).</para>
     </sect2>
 
     <sect2 id="hs.fp.foldl">
