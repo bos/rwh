@@ -50,8 +50,8 @@ guardedRoots a b c
 {-- /snippet guardedRoots --}
 
 {-- snippet finalRoots --}
-finalRoots _ 0 _             = Nothing
-finalRoots n a b | n >= 0    = Just (r1, r2)
+finalRoots 0 _ _             = Nothing
+finalRoots a b c | n >= 0    = Just (r1, r2)
                  | otherwise = Nothing
     where n  = b**2 - 4 * a * c
           r1 = (-b + sqrt n) / (2 * a)
