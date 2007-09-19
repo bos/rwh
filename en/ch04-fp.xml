@@ -1341,20 +1341,6 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.fp.rle">
-    <title>Example: Run-Length Encoding</title>
-    <remark>FIXME:   Example: run-length encoding.  Use to show how
-      looping can be done via tail recursion.
-    </remark>
-  </sect1>
-
-  <sect1 id="hs.fp.inference">
-    <title>Type Inference</title>
-    <remark>FIXME: Discuss type inference: what it is and how it can
-      save a lot of work.
-    </remark>
-  </sect1>
-
   <sect1 id="hs.fp.anonymous">
     <title>Anonymous (lambda) functions</title>
 
