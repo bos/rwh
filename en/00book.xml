@@ -16,7 +16,14 @@
 <!ENTITY ch06     SYSTEM "ch06-typeclasses.xml">
 <!ENTITY ch07     SYSTEM "ch07-io.xml">
 <!ENTITY ch08     SYSTEM "ch08-globs-and-regexps.xml">
+<!ENTITY ch09     SYSTEM "ch09-find-dsl.xml">
+<!ENTITY ch10     SYSTEM "ch10-barcode.xml">
+<!ENTITY ch11     SYSTEM "ch11-testing.xml">
+<!ENTITY ch12     SYSTEM "ch12-binary.xml">
 <!ENTITY ch13     SYSTEM "ch13-data.xml">
+<!ENTITY ch14     SYSTEM "ch14-monads.xml">
+<!ENTITY ch15     SYSTEM "ch15-monad-case.xml">
+<!ENTITY ch16     SYSTEM "ch16-monad-trans.xml">
 <!ENTITY ch17     SYSTEM "ch17-parsec.xml">
 
 <!-- Appendices. -->
@@ -100,7 +107,14 @@
   &ch06;
   &ch07;
   &ch08;
+  &ch09;
+  &ch10;
+  &ch11;
+  &ch12;
   &ch13;
+  &ch14;
+  &ch15;
+  &ch16;
   &ch17;
 
   &appA;
