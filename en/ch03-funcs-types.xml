@@ -1466,7 +1466,7 @@
 
     <para id="x_E6">The <varname>otherwise</varname> used in the second guard
       has an obvious meaning: it's the expression to evaluate if
-      previous gaurds all evaluate to <function>False</function>. It's
+      previous guards all evaluate to <function>False</function>. It's
       not a special piece of syntax, though; it's just a predefined variable
       whose value is <function>True</function>.</para>
 

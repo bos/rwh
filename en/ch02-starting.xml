@@ -389,7 +389,7 @@ Loading package base ... linking ... done.
 	the following may not prove too surprising.</para>
 
       <para id="x_Z1"><emphasis>Most</emphasis> of the time, we can omit
-	whitespace from expressions, and Haskell will parse them as we
+	white space from expressions, and Haskell will parse them as we
 	intended.  But not always.  Here's an expression that
 	works:</para>
 
@@ -410,7 +410,7 @@ Loading package base ... linking ... done.
 
       <para id="x_c1">Compared to other languages, this unusual treatment of
 	negative numbers is an annoyance, for sure, but it at least
-	represents a reasoned tradeoff.  As we mentioned, Haskell lets
+	represents a reasoned trade-off.  As we mentioned, Haskell lets
 	us define new operators at any time, and choose the precedence
 	and associativity of those operators.  The language designers
 	chose to accept a slightly cumbersome syntax for negative
@@ -453,10 +453,10 @@ Loading package base ... linking ... done.
     </sect2>
 
     <sect2 id="hs.starting.calc.comparison">
-      <title>Comparison and boolean operators</title>
+      <title>Comparison and Boolean operators</title>
 
       <para id="x_j1">Haskell gives us the usual operators for working with
-	boolean values.</para>
+	Boolean values.</para>
 
       &basics.ghci:boolean;
 
@@ -607,7 +607,7 @@ Loading package base ... linking ... done.
 
     <para id="x_E2">This isn't the fault of &ghci;.  It just happens that the
       <function>(%)</function> and <function>(*)</function> operators
-      have the same precedences, so &ghci; parses the expession from
+      have the same precedences, so &ghci; parses the expression from
       left to right.  As a result, it tries to construct a rational
       from another rational and an integer, instead of from a pair of
       integers.  (If <function>(%)</function> had a higher precedence

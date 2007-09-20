@@ -38,7 +38,7 @@
 
     <para id="x_CF">The kinds of patterns we'll be dealing with are commonly
       referred to as <quote>glob patterns</quote> (the term we'll
-      use), <quote>wildcard patterns</quote>, or <quote>shell-style
+      use), <quote>wild card patterns</quote>, or <quote>shell-style
 	patterns</quote>.  These patterns have just a few simple
       rules.  You probably already know them, but we'll quickly recap
       here.</para>
@@ -279,7 +279,7 @@
 
       <para id="x_fF">In the above example, we've used the
 	<function>pack</function> to turn a <type>String</type> into a
-	<type>ByteString</type>.  The typechecker accepts this because
+	<type>ByteString</type>.  The type checker accepts this because
 	<type>ByteString</type> appears in the result type.  But if we
 	try getting a <type>String</type> out, that
 	<emphasis>won't</emphasis> work.</para>
@@ -429,7 +429,7 @@
 
     <para id="x_wF">These few lines of interaction might look trivial, but we
       have received immediate feedback on two fronts: our code passes
-      the daunting scrutiny of Haskell's typechecker, and it produces
+      the daunting scrutiny of Haskell's type checker, and it produces
       sensible-looking results. Monkeying around with code in the
       interpreter early and often is consistently worthwhile.</para>
 
@@ -691,7 +691,7 @@
       the definition of <function>(++)</function>; although it's
       simpler, it has a similar recursive structure.</para>
 
-    <para id="x_bG">If we put on our implementor's hats and think about how we
+    <para id="x_bG">If we put on our implementer's hats and think about how we
       might suspend the evaluation of <function>(++)</function> in a
       thunk, all we need to store are the current heads of the left
       and right lists; the result of the next evaluation step depends
@@ -734,7 +734,7 @@
     &Glob.hs:import.filepath;
 
     <para id="x_gG">Finally, we'll be emulating a <quote>for</quote> loop;
-      getting our first taste of exception handline in Haskell; and of
+      getting our first taste of exception handling in Haskell; and of
       course using the <function>matchesGlob</function> function we
       just wrote.</para>
 
@@ -751,7 +751,7 @@
       characters, all we need to do is check that the given name
       exists in the filesystem.  (Notice that we use Haskell's
       function guard syntax here to write a nice tidy definition.  An
-      <quote>if</quote> would do, but isn't as aestheticall
+      <quote>if</quote> would do, but isn't as aesthetically
       pleasing.)</para>
 
     &Glob.hs:mundane;
@@ -790,7 +790,7 @@
     <note>
       <para id="x_nG">Using the <classname
 	  role="module">System.FilePath</classname> module can be a
-	litle tricky.  Above is a case in point; let's use &ghci; to
+	little tricky.  Above is a case in point; let's use &ghci; to
 	illustrate the problem.  The
 	<function>splitFileName</function> function leaves a trailing
 	slash on the end of the directory name that it returns.</para>
@@ -913,9 +913,9 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x_CH">The <literal>*</literal> wildcard only matches names
+	    <para id="x_CH">The <literal>*</literal> wild card only matches names
 	      within a single directory.  Many shells have an extended
-	      wildcard syntax, <literal>**</literal>, that matches
+	      wild card syntax, <literal>**</literal>, that matches
 	      names recursively in all directories.  For example,
 	      <literal>**.c</literal> would mean <quote>match a name
 		ending in <literal>.c</literal> in this directory or
