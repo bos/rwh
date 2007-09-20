@@ -26,11 +26,13 @@
       ability to be added to other values of type
       <type>Integer</type>, and so on.</para>
 
-    <para id="x_q2">Haskell has a <quote>strong</quote> type system, in which
-      every expression and value has exactly one type.  Another aspect
-      of Haskell's view of strong typing is that it will not
-      automatically convert values from one type to another, a feature
-      present in some other languages.</para>
+    <para id="x_q2">Haskell has a <quote>strong</quote> type system,
+      in which every expression and value has exactly one type;
+      any attempt to apply a function to a value of incompatible type
+      causes an error.  Another aspect of Haskell's view of strong
+      typing is that it will not automatically convert values from one
+      type to another, a feature present in some other
+      languages.</para>
 
     <note>
       <title>So what's a strong type?</title>
@@ -58,7 +60,8 @@
       compiler knows the type of every value and expression at compile
       time, before any code is ever executed.  A Haskell compiler or
       interpreter will detect when we try to use types inconsistently
-      in our code, and reject the code with an error message.</para>
+      in our code, and reject our code with an error message before we
+      ever get to run it.</para>
 
     &ch03.basics.ghci:error;
 
@@ -81,7 +84,7 @@
     
     <para id="x_x2">We've already encountered a few types in <xref
 	linkend="hs.starting.types"/>.  Haskell has a number of
-      built-in types that we'll use over and over.  Here are some of
+      built-in types that we'll be using over and over.  Here are some of
       the language's basic types, types that aren't composed of other
       types</para>
 
