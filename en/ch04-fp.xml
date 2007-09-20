@@ -1588,8 +1588,8 @@
 
     <para id="x_HA">What if we want a function that behaves like
       <function>tails</function>, but which <emphasis>only</emphasis>
-      returns suffixes?  One possibility would be for us to write our
-      own version by hand.</para>
+      returns the non-empty suffixes?  One possibility would be for us
+      to write our own version by hand.</para>
 
     &SuffixTree.hs:suffixes;
 
