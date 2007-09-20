@@ -11,7 +11,7 @@
     
     <para id="x_o2"><quote>Haskell has a strong, static type system with
 	inference.</quote> For a short sentence, this one gives us a
-      lot for us to pore over.  Because Haskell is quite different
+      lot to pore over.  Because Haskell is quite different
       from mainstream programming languages in how it treats types,
       let's not assume too much shared understanding as we talk about
       types.</para>
@@ -33,17 +33,25 @@
       present in some other languages.</para>
 
     <note>
-      <para id="x_r2">Conversations about type systems can lead to many a
-	misunderstanding among programmers.  Some people say that C
-	has a strong type system; others claim that Python does.
-	Haskell programmers think strong typing is still something
-	else.</para>
+      <title>So what's a strong type?</title>
 
-      <para id="x_s2">Since there's no universally agreed upon meaning for the
-	phrase <quote>strong type</quote>,  it's best not to assume
-	that someone else shares the same notion of it as you do.  (We
-	also suggest that putting forth one definition as better than
-	another doesn't often lead to enlightened discussion.)</para>
+      <para id="x_r2">Conversations about type systems can lead to
+	many a heated misunderstanding among programmers.  Some people
+	say that C has a strong type system; others claim that Python
+	does. Haskell programmers tend to think strong typing is still
+	something else.  The term <quote>strong type</quote> has many
+	definitions, quite a number of which are mutually
+	contradictory.  As a consequence, we're not going to bother
+	putting forward a definition of our own here, beyond the
+	minimal one above.</para>
+
+      <para id="x_s2">Since there's nothing even remotely like an
+	agreed upon meaning for the phrase <quote>strong type</quote>,
+	and there's more than enough misunderstanding in circulation,
+	it's best not to assume that someone else shares the same
+	notion of it as you do.  (We also suggest that putting forth
+	one definition as better than another doesn't often lead to
+	enlightened discussion.)</para>
     </note>
 
     <para id="x_t2">Having a <quote>static</quote> type system means that the
