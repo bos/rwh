@@ -100,6 +100,10 @@
       data Map2 k v = Node k v (Map2 k v) (Map2 k v)
 		    | Empty
 
+** Functional programming
+
+Added after this outline was originally written.
+
 ** Writing a (real) library: the rope
 
   Many Haskell string operations are expensive, especially
