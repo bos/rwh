@@ -174,7 +174,7 @@ $(obj-alpha)/.htaccess: ../web/alpha.htaccess
 	cp $< $@
 
 .PHONY: beta
-beta: $(obj-beta)/index.html
+beta: $(obj-beta)/index.html $(obj-beta)/.htaccess
 
 $(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
@@ -185,6 +185,9 @@ $(obj-beta)/index.html: ../web/index.complete.html.in $(obj-beta)/hs.preface.htm
 
 beta.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
 	$(call profile-revision,beta,beta)
+
+$(obj-beta)/.htaccess: ../web/beta.htaccess
+	cp $< $@
 
 .PHONY: complete
 html: $(obj-complete)/index.html $(obj-complete)/.htaccess
