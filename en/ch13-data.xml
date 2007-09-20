@@ -517,12 +517,14 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       out:
     </para>
     &funcrecs2.ghci:all;
-    Notice the creation of <literal>plus5a</literal>.  We changed the
-    <literal>name</literal> field, but not the <literal>namedCalc</literal>
-    field.  That's why <literal>name</literal> has the new name, but
-    <literal>namedCalc</literal> still returns the name that was passed to
-    <literal>mkFuncRec</literal>; it doesn't change unless we explicitly
-    change it.
+    <para>
+      Notice the creation of <literal>plus5a</literal>.  We changed the
+      <literal>name</literal> field, but not the <literal>namedCalc</literal>
+      field.  That's why <literal>name</literal> has the new name, but
+      <literal>namedCalc</literal> still returns the name that was passed to
+      <literal>mkFuncRec</literal>; it doesn't change unless we explicitly
+      change it.
+    </para>
   </sect1>
 
   <sect1 id="hs.data.passwd">
