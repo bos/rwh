@@ -15,6 +15,14 @@
     the built-in tools that Haskell provides for arranging large amounts of
     data.
   </para>
+  <para>
+    Before going on, there's a word that you might expect to see frequently
+    in a chapter such as this: <emphasis>object</emphasis>.  You're not going
+    to see it at all in this chapter because Haskell isn't an object-oriented
+    language.  Concepts in this chapter may have similar-sounding names, but
+    are likely quite different than the object-oriented ideas you may be
+    familiar with already.
+  </para>
 
   <sect1 id="hs.data.intro">
     <title>Creating New Types</title>
@@ -167,7 +175,10 @@
         We used pattern matching to match the <literal>CustomColor</literal>.
         The three &Int;s were assigned to <literal>red</literal>, 
         <literal>green</literal>, and <literal>blue</literal>, and then printed
-        out.  You can see that this worked by using &ghci;:
+        out.  The matching is positional; you could just as easily have used
+        <literal>(CustomColor x y z)</literal>, and <literal>x</literal>
+        would have held the first &Int;.  
+        You can see that this worked by using &ghci;:
       </para>
       &color.ghci:extract;
       <para id="x_qH">
@@ -208,7 +219,7 @@
         in a record, you can still access it just as you would without the
         named fields.  But you gain two things: automatic functions for
         picking out specific fields, plus an easier way to create and update
-        these objects.
+        these records.
       </para>
       <para id="x_vH">
         Let's take a look at a re-designed <literal>CustomColor</literal>
@@ -226,7 +237,7 @@
         First, we inspected the type of the <literal>CustomColor</literal>
         constructor.  Note that it's type is exactly the same as the
         constructor for the type 
-        that didn't use named fields.  Then, we created a object
+        that didn't use named fields.  Then, we created a record
         with identical data three different ways.  The first way didn't make
         use of the named fields.  The second and third ways did.  Notice that
         when you use named fields, you don't have to specify the values in
@@ -326,7 +337,8 @@ data  Maybe a  =  Nothing | Just a
           [Char]</literal>.  The reason for this is Haskell's type inference.
         &Nothing; doesn't actually encapsulate any data, so it -- by itself
         -- is valid with any &Just;.  You can also give it an explicit type
-        to force it to behave a certain way.
+        to force it to behave a certain way, as we did with 
+        <literal>Nothing :: Maybe [Char]</literal>.
       </para>
       <para id="x_JI">
         Let's push the type system and see what it lets us do with &Maybe;.

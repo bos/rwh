@@ -64,6 +64,7 @@ inputToMaps :: String -> (UIDMap, UserMap)
 inputToMaps inp =
     (uidmap, usermap)
     where
+    -- fromList converts a [(key, value)] list into a Map
     uidmap = Map.fromList . map (\pe -> (uid pe, pe)) $ entries
     usermap = Map.fromList . 
               map (\pe -> (userName pe, pe)) $ entries
