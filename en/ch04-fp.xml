@@ -313,7 +313,7 @@
 	<code>unsafe</code>, so that they can't shoot themselves in
 	the foot accidentally.</para>
 
-      <para id="x_J7">It's arguably a deficiciency of the standard prelude that
+      <para id="x_J7">It's arguably a deficiency of the standard prelude that
 	it defines quite a few <quote>unsafe</quote> partial
 	functions, like <function>head</function>, without also
 	providing <quote>safe</quote> total equivalents.</para>
@@ -485,7 +485,7 @@
       &ch04.list.ghci:unlines;
 
       <para id="x_f7">The <function>words</function> function splits an input
-	string on any whitespace.  Its counterpart,
+	string on any white space.  Its counterpart,
 	<function>unwords</function>, uses a single space to join a
 	list of words.</para>
 
@@ -815,7 +815,7 @@
       </note>
 
       <para id="x_R8">We try out our <function>myMap</function> function to give
-	outselves some assurance that it behaves similarly to the
+	ourselves some assurance that it behaves similarly to the
 	standard <function>map</function>.</para>
 
       &ch04.map.ghci:inuse;
@@ -1028,7 +1028,7 @@
 
       <para id="x_r8">Let's consider the problem of finding the root mean square
 	of a list of numbers: compute the sum of the squares of every
-	element in the list, divide by its length, then coompute the
+	element in the list, divide by its length, then compute the
 	square root of that number.  In an imperative language like C,
 	we wouldn't even think twice about writing code like
 	this.</para>
@@ -1115,7 +1115,7 @@
 
       &Fold.hs:filter;
 
-      <para id="x_z8">Perhaps surpsisingly, though, we can write
+      <para id="x_z8">Perhaps surprisingly, though, we can write
 	<function>filter</function> as a fold, using
 	<function>foldr</function>.</para>
 
@@ -1610,7 +1610,7 @@
       <para id="x_KA">In this case, if the pattern after the <quote>@</quote>
 	matches, <varname>xs</varname> will be bound to the entire
 	list that matched, and <varname>xs'</varname> to the rest of
-	the list (we used the wildcard <code>_</code> pattern to
+	the list (we used the wild card <code>_</code> pattern to
 	indicate that we're not interested in the value of the head of
 	the list).</para>
 
