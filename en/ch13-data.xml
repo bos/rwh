@@ -245,7 +245,8 @@
       </para>
       <para id="x_yH">
         Haskell automatically creates accessor functions for each of the
-        named fields.  Let's look at how we extract the red component of our
+        named fields.  For this reason, your field names must be unique in
+        your entire module.  Let's look at how we extract the red component of our
         color:
       </para>
       &colornamed.ghci:extract;
