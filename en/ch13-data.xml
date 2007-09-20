@@ -369,7 +369,7 @@ data  Maybe a  =  Nothing | Just a
   </sect1>
 
   <sect1 id="hs.data.assoc">
-    <title>Association Lists</title>
+    <title>Association Lists and Maps</title>
     <para id="x_NI">
       Often times, we have to deal with data that is unordered but is indexed
       by a key.  For instance, a Unix administrator might have a list of
@@ -479,6 +479,51 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       discussed in this chapter.
     </para>
   </sect1>
+
+  <sect1 id="hs.data.funcs">
+    <title>Functions Are Data, Too</title>
+    <para>
+      Back in the beginning of the chapter, we reminded you that Haskell isn't
+      object-oriented.  Part of Haskell's power is the ease with which you
+      can create and manipulate functions with it.  Let's take a look at a
+      record that stores a function as one of its fields:
+    </para>
+    &funcrecs.hs:all;
+    <para>
+      Notice the type of the <literal>colorCalc</literal> field: it's a
+      function.  It takes an <literal>Int</literal> and returns a tuple of
+      <literal>(CuscomColor, Int)</literal>.  We create two
+      <literal>FuncRec</literal> records: <literal>plus5</literal> and
+      <literal>always0</literal>.  Notice that the
+      <literal>colorCalc</literal> for both of them will always return the
+      color purple.  <literal>FuncRec</literal> itself has no field to store
+      the color in, yet that value somehow becomes part of the function
+      itself.  This is called a <emphasis>closure</emphasis>.  Let's play
+      with this a bit:
+    </para>
+    &funcrecs.ghci:all;
+    <para>
+      That worked well enough, but you might be wondering how to do something
+      more advanced such as making a piece of data available multiple places.
+      A type construction function can be helpful.  Here's an example:
+    </para>
+    &funcrecs2.hs:all;
+    <para>
+      Here we have a function called <literal>mkFuncRec</literal> that
+      takes a &String; and another function as parameters, and returns
+      a new <literal>FuncRec</literal> record.  Notice how both parameters to
+      <literal>mkFuncRec</literal> are used multiple places.  Let's try it
+      out:
+    </para>
+    &funcrecs2.ghci:all;
+    Notice the creation of <literal>plus5a</literal>.  We changed the
+    <literal>name</literal> field, but not the <literal>namedCalc</literal>
+    field.  That's why <literal>name</literal> has the new name, but
+    <literal>namedCalc</literal> still returns the name that was passed to
+    <literal>mkFuncRec</literal>; it doesn't change unless we explicitly
+    change it.
+  </sect1>
+
   <sect1 id="hs.data.passwd">
     <title>Extended Example: /etc/passwd</title>
     <para id="x_AJ">
