@@ -31,7 +31,7 @@ it ++ "baz"
 
 --# set_t_off
 
-:set -t
+:unset +t
 2
 
 --# type

@@ -31,8 +31,8 @@
 <!ENTITY read "<literal>read</literal>">
 <!ENTITY show "<literal>show</literal>">
 <!ENTITY where "<literal>where</literal>">
-<!ENTITY hugs "<literal>hugs</literal>">
-<!ENTITY runghc "<literal>runghc</literal>">
+<!ENTITY hugs "<command>hugs</command>">
+<!ENTITY runghc "<command>runghc</command>">
 <!ENTITY main "<literal>main</literal>"> 
 <!ENTITY IO "<literal>IO</literal>">
 <!ENTITY larrow "<literal>&lt;-</literal>">

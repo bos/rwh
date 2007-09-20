@@ -123,6 +123,7 @@ True && 1
 --# newline
 
 "Here's a newline -->\n<-- See?"
+print "Here's a newline -->\n<-- See?"
 
 --# list
 
