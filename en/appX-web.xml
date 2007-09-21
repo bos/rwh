@@ -10,9 +10,10 @@
     see <xref linkend="hs.web.useragreement"/> for details.)</para>
 
   <warning>
-    <title>We require Javascript</title>
+    <title>We require Javascript and cookies</title>
 
-    <para id="x_PK">Our comment system uses Javascript extensively.  If you
+    <para id="x_PK">Our comment system makes extensive use of
+      Javascript, and it helps to have cookies enabled.  If you
       don't have Javascript enabled in your browser, you won't even
       see a hint of the existence of the comment system.
       Unfortunately, we don't have the time to spare to write a
