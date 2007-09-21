@@ -60,6 +60,7 @@
 <!ENTITY elem "<literal>elem</literal>">
 <!ENTITY emdash "&#8212;">
 <!ENTITY fail "<literal>fail</literal>">
+<!ENTITY fail "<literal>fail</literal>">
 <!ENTITY finally "<literal>finally</literal>">
 <!ENTITY getContents "<literal>getContents</literal>">
 <!ENTITY getEnv "<literal>getEnv</literal>">
@@ -112,4 +113,3 @@
 <!ENTITY stdin "<literal>stdin</literal>">
 <!ENTITY stdout "<literal>stdout</literal>">
 <!ENTITY try "<literal>try</literal>">
-<!ENTITY fail "<literal>fail</literal>">
