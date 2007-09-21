@@ -95,6 +95,8 @@ simpleParen x@(UnaryArith _ _) = prettyShow x
 instance (Show a, Num a) => Show (SymbolicManip a) where
     show a = prettyShow a
     
+{- Show a SymbolicManip using RPN.  HP calculator users may
+find this familiar. -}
 rpnShow :: (Show a, Num a) => SymbolicManip a -> String
 rpnShow i =
     let toList (Number x) = [show x]
@@ -106,6 +108,7 @@ rpnShow i =
         join delim l = concat (intersperse delim l)
     in join " " (toList i)
 
+{- Perform some basic algebraic simplifications on a SymbolicManip. -}
 simplify :: (Num a) => SymbolicManip a -> SymbolicManip a
 simplify (BinaryArith op ia ib) = 
     let sa = simplify ia
@@ -133,7 +136,10 @@ A simple label would be something like (Symbol "m") -}
 data Num a => Units a = Units a (SymbolicManip a)
            deriving (Eq)
 
-{- Every Num can be an instance of Units -}
+{- Implement Units for Num.  We don't know how to convert between
+arbitrary units, so we generate an error if we try to add numbers with
+different units.  For multiplication, generate the appropriate
+new units. -}
 instance (Num a) => Num (Units a) where
     (Units xa ua) + (Units xb ub) 
         | ua == ub = Units (xa + xb) ua
@@ -145,13 +151,16 @@ instance (Num a) => Num (Units a) where
     signum (Units xa _) = Units (signum xa) (Number 1)
     fromInteger i = Units (fromInteger i) (Number 1)
 
-{- Fractional implementation for Units -}
+{- Make Units an instance of Fractional -}
 instance (Fractional a) => Fractional (Units a) where
     (Units xa ua) / (Units xb ub) = Units (xa / xb) (ua / ub)
     recip a = 1 / a
     fromRational r = Units (fromRational r) (Number 1)
 
-{- Floating implementation for Units -}
+{- Floating implementation for Units.
+
+Use some intelligence for angle calculations: support deg and rad
+-}
 instance (Floating a) => Floating (Units a) where
     pi = (Units pi (Number 1))
     exp _ = error "exp not yet implemented in Units"
@@ -197,12 +206,18 @@ units a b = Units a (Symbol b)
 dropUnits :: (Num z) => Units z -> z
 dropUnits (Units x _) = x
                                                     
+{- Showing units: we show the numeric component, an underscore,
+then the prettyShow version of the simplified units -}
 instance (Show a, Num a) => Show (Units a) where
     show (Units xa ua) = show xa ++ "_" ++ prettyShow (simplify ua)
 
+{- Utilities for the Unit implementation -}
 deg2rad x = 2 * pi * x / 360
 rad2deg x = 360 * x / (2 * pi)
 
+--------------------------------------------------
+-- Things to play with
+--------------------------------------------------
 
 test :: (Num a) => a
 test = 2 * 5 + 3
