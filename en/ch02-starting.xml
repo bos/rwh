@@ -296,7 +296,7 @@ Loading package base ... linking ... done.
 <prompt>Prelude&gt;</prompt>
 </screen>
 
-    <para>The word <code>Prelude</code> in the prompt indicates that
+    <para id="x_uK">The word <code>Prelude</code> in the prompt indicates that
       the <quote>standard prelude</quote>, a fairly large standard
       library of useful functions, is loaded and ready for us to use.
       When we load other modules or source files, they'll show up in
@@ -703,7 +703,7 @@ Loading package base ... linking ... done.
     
     &basics.ghci:range;
 
-    <para>Notice that range notation gives us a <emphasis>closed
+    <para id="x_vK">Notice that range notation gives us a <emphasis>closed
 	interval</emphasis>; the list contains both endpoints.</para>
 
     <para id="x_P2">When we write a range, we can optionally specify
@@ -713,7 +713,7 @@ Loading package base ... linking ... done.
 
     &basics.ghci:range.step;
 
-    <para>In the latter case above, the list is quite sensibly missing
+    <para id="x_wK">In the latter case above, the list is quite sensibly missing
       the end point of the range, because it isn't an element of the
       series we defined.</para>
 

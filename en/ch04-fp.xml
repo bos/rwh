@@ -183,7 +183,7 @@
       be indispensable tools, so it's important that we learn them
       early on.</para>
 
-    <para>For better or worse, this section is going to read a bit
+    <para id="x_PL">For better or worse, this section is going to read a bit
       like a <quote>laundry list</quote> of functions.  Why present so
       many functions at once?  These functions are both easy to learn
       and absolutely ubiquitous.  If we don't have this toolbox at our
@@ -661,13 +661,13 @@
       <note>
 	<title>What's the big deal about tail recursion?</title>
 
-	<para>In an imperative language, a loop executes in constant
+	<para id="x_QL">In an imperative language, a loop executes in constant
 	  space.  Lacking loops, we use tail recursive functions in
 	  Haskell instead.  Normally, a recursive function allocates
 	  some space each time it calls itself, so it knows where to
 	  return to.</para>
 
-	<para>Clearly, a tail recursive function would be at a huge
+	<para id="x_RL">Clearly, a tail recursive function would be at a huge
 	  disadvantage relative to a loop if it allocated memory for
 	  every recursive call: this would require linear space
 	  instead of constant space.  However, functional language
@@ -676,7 +676,7 @@
 	  this is called <emphasis>tail call
 	    optimisation</emphasis>.</para>
 
-	<para>Few imperative language implementations perform tail
+	<para id="x_SL">Few imperative language implementations perform tail
 	  call optimisation; this is why writing imperative code in
 	  any kind of ambitiously functional style often leads to
 	  space leaks and poor performance.</para>
@@ -795,14 +795,14 @@
       <note>
 	<title>What are those wild cards doing there?</title>
 
-	<para>If you're new to functional programming, the reasons for
+	<para id="x_TL">If you're new to functional programming, the reasons for
 	  matching patterns in certain ways won't always be obvious.
 	  For example, in the definition of <function>myMap</function>
 	  above, the first equation binds the function we're mapping
 	  to the variable <varname>f</varname>, but the second uses
 	  wild cards for both parameters.  What's going on?</para>
 
-	<para>We use a wild card in place of <varname>f</varname> to
+	<para id="x_UL">We use a wild card in place of <varname>f</varname> to
 	  indicate that we aren't calling the function
 	  <varname>f</varname> on the right hand side of the equation.
 	  What about the list parameter?  The list type has two
@@ -954,7 +954,7 @@
 
       &Sum.hs:foldlSum;
 
-    <para>That local function <function>step</function> just adds two
+    <para id="x_VL">That local function <function>step</function> just adds two
 	numbers, so let's simply use the addition operator instead,
 	and eliminate the unnecessary <code>where</code>
 	clause.</para>
@@ -971,7 +971,7 @@
 	function).  As an added bonus, our code is now shorter, too,
 	which makes it easier to understand.</para>
 
-      <para>Let's take a deeper look at what
+      <para id="x_WL">Let's take a deeper look at what
 	<function>foldl</function> is doing here, by manually writing
 	out each step in the evaluation of <code>step</code> function
 	when we call <code>niceSum [1,2,3]</code>.</para>
@@ -1082,14 +1082,14 @@
 
       &Fold.hs:foldr;
 
-      <para>Let's follow the same manual evaluation process with
+      <para id="x_XL">Let's follow the same manual evaluation process with
 	<function>foldr (+) 0 [1,2,3]</function> as we did with
 	<function>niceSum</function> in <xref
 	  linkend="hs.fp.foldl"/>.</para>
 
       &Fold.hs:foldr.expand;
 
-      <para>The difference between <function>foldl</function> and
+      <para id="x_YL">The difference between <function>foldl</function> and
 	<function>foldr</function> should be clear from looking at
 	where the parentheses and the <quote>empty list</quote>
 	elements show up.  With <function>foldl</function>, the empty
@@ -1098,7 +1098,7 @@
 	element is on the right, and the parentheses group to the
 	right.</para>
 
-      <para>In fact, there's a lovely intuitive explanation of how
+      <para id="x_ZL">In fact, there's a lovely intuitive explanation of how
 	<function>foldr</function> works: it replaces the empty list
 	with the empty list element, and every constructor in the list
 	with an application of the step function.</para>
@@ -1164,7 +1164,7 @@
 	  the <function>id</function> function does), and a pencil and
 	  paper.</para>
 
-	<para>All you'll need to do is follow the same manual
+	<para id="x_aL">All you'll need to do is follow the same manual
 	  evaluation steps as we did to see what
 	  <function>foldl</function> and <function>foldr</function>
 	  were really doing.</para>
@@ -1219,7 +1219,7 @@
 
       &fold.ghci:append;
 
-      <para>Here, we're replacing each list constructor with another
+      <para id="x_bL">Here, we're replacing each list constructor with another
 	list constructor, but we're replacing the empty list with the
 	list we want to append onto the end of our first list.</para>
 
@@ -1418,7 +1418,7 @@
       function.  Don't know what a partially applied function is yet?
       Read on!</para>
 
-    <para>A lambda has two other disadvantages: it is both less
+    <para id="x_cL">A lambda has two other disadvantages: it is both less
       expressive and more brittle than a top-level or local function.
       We can use patterns in the parameters of a lambda, but we can't
       use guards, and we can't define a lambda using a series of
@@ -1426,7 +1426,7 @@
       fails to match, we'll get a runtime pattern matching
       error.</para>
 
-    <para>We don't intend these caveats to suggest that lambdas are
+    <para id="x_dL">We don't intend these caveats to suggest that lambdas are
       useless, merely that we ought to be mindful of the potential
       pitfalls when we're thinking of using them.  In later chapters,
       we will see that they are often invaluable as
@@ -1516,13 +1516,13 @@
       that has exactly the same type and behaviour as the helper and
       lambda in our earlier definitions.</para>
 
-    <para>As another example of currying in use, let's return to the
+    <para id="x_eL">As another example of currying in use, let's return to the
       list-summing function we wrote in <xref
 	linkend="hs.fp.foldl"/>.</para>
 
       &Sum.hs:niceSum.noid;
 
-    <para>We don't need to fully apply <function>foldl</function>; we
+    <para id="x_fL">We don't need to fully apply <function>foldl</function>; we
       can omit the list <varname>xs</varname> from both the parameter
       list and the parameters to <function>foldl</function>, and we'll
       end up with a more compact function that has the same
@@ -1777,12 +1777,12 @@
   <sect1 id="hs.fp.readability">
     <title>Tips for writing readable code</title>
 
-    <para>So far in this chapter, we've come across two tempting
+    <para id="x_gL">So far in this chapter, we've come across two tempting
       looking features of Haskell: tail recursion and anonymous
       functions.  As nice as these are, we don't often want to use
       them.</para>
 
-    <para>Many tail recursive functions are better expressed using
+    <para id="x_hL">Many tail recursive functions are better expressed using
       list manipulation functions like <function>map</function>,
       <function>take</function>, and <function>filter</function>.
       Without a doubt, it takes some practice to get used to using
@@ -1790,7 +1790,7 @@
       learning to use these functions is the ability to skim more
       easily over code that uses them.</para>
 
-    <para>The reason for this is simple.  A tail recursive function
+    <para id="x_iL">The reason for this is simple.  A tail recursive function
       definition has the same problem as a loop in an imperative
       language: it's completely general, so we have to look at the
       exact details of every loop, and every tail recursive function,
@@ -1801,7 +1801,7 @@
       the idea the code is trying to express, not the minute details
       of how it's manipulating its inputs.</para>
 
-    <para>In the middle ground between tail recursive functions (with
+    <para id="x_jL">In the middle ground between tail recursive functions (with
       complete generality) and our toolbox of list manipulation
       functions (each of which does one thing) lie the folds.  A fold
       takes more effort to understand than, say, a composition of
@@ -1812,7 +1812,7 @@
       about using one instead of a tail recursive loop if you
       can.</para>
 
-    <para>As for anonymous functions, they tend to interrupt the
+    <para id="x_kL">As for anonymous functions, they tend to interrupt the
       <quote>flow</quote> of reading a piece of code.  It is very
       often as easy to write a local function definition in a
       <code>let</code> or <code>where</code> clause, and use that, as

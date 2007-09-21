@@ -190,7 +190,7 @@
       importance.  An example of this might be to represent a row in
       the result of a a database query.</para>
 
-    <para>A handy rule of thumb for remembering which is which is that
+    <para id="x_xK">A handy rule of thumb for remembering which is which is that
       a list has variable size and elements of uniform type, while a
       tuple has a uniform size and elements of variable type.</para>
 
@@ -439,7 +439,7 @@
 
       &myTake.hs:myTake;
 
-      <para>The <code>then</code> arm of the <code>if</code>
+      <para id="x_yK">The <code>then</code> arm of the <code>if</code>
 	expression returns the input list once either the number of
 	elements to remove reaches zero or the current list is empty.
 	The <code>else</code> arm calls <function>myTake</function>
@@ -618,7 +618,7 @@
 
     &mytype.ghci:myValue;
 
-    <para>A constructor serves as both a function for creating a value
+    <para id="x_zK">A constructor serves as both a function for creating a value
       and a <quote>tag</quote> identifying what type of value we have.
       The value that &ghci; prints is telling us that we have created
       a value with the tag <code>MyConstructor</code>, with the given
@@ -633,7 +633,7 @@
 
     &mytype.ghci:newValue;
 
-    <para>The &ghci; command <command>:type</command> lets us see what
+    <para id="x_AL">The &ghci; command <command>:type</command> lets us see what
       the type of that expression is.</para>
 
     &mytype.ghci:valueType;
@@ -665,7 +665,7 @@
       of possible values, each of which is identified by a distinct
       constructor.</para>
 
-    <para>The use of the word <quote>algebraic</quote> simply
+    <para id="x_BL">The use of the word <quote>algebraic</quote> simply
       indicates that the components of an algebraic data type are used
       together.</para>
 
@@ -709,11 +709,11 @@
 
       &types.c:coord;
 
-      <para>And here's an equivalent type in Haskell.</para>
+      <para id="x_CL">And here's an equivalent type in Haskell.</para>
 
       &SimpleTypes.hs:Coord;
 
-      <para>The only significant difference is that the fields in the
+      <para id="x_DL">The only significant difference is that the fields in the
 	Haskell type are anonymous and positional.  In <xref
 	linkend="hs.funcstypes.pattern"/>, we'll see how to use names
 	to access the fields of the <type>Coord</type> type.</para>
@@ -739,7 +739,7 @@
 
       &types.c:roygbiv;
 
-      <para>And here's a Haskell equivalent.</para>
+      <para id="x_EL">And here's a Haskell equivalent.</para>
 
       &SimpleTypes.hs:Roygbiv;
 
@@ -894,7 +894,7 @@
     <sect2 id="hs.funcstypes.locals.functions">
       <title>Local functions</title>
 
-      <para>You'll have noticed that Haskell's syntax for defining a
+      <para id="x_FL">You'll have noticed that Haskell's syntax for defining a
 	variable looks very similar to its syntax for defining a
 	function.  This symmetry is preserved in <code>let</code> and
 	<code>where</code> blocks; we can define local
@@ -905,7 +905,7 @@
 
       &LocalFunction.hs:pluralise;
 
-      <para>In this example, we define and use a local function
+      <para id="x_GL">In this example, we define and use a local function
 	<function>plural</function> using several equations.  Local
 	functions can freely use variables from the scopes that
 	enclose them; here, we use <varname>word</varname> from the
@@ -1272,7 +1272,7 @@
       whose constructor is <function>Wrapper</function>, then the type
       of that parameter must be <type>Wrapper a</type>.</para>
     
-    <para>And for good measure, here's how we can define functions to
+    <para id="x_HL">And for good measure, here's how we can define functions to
       access the fields of the <type>Coord</type> type we defined in
       <xref linkend="hs.funcstypes.adt.comp"/>.</para>
 
@@ -1292,7 +1292,7 @@
 	unification.</para>
     </note>
 
-    <para>Here are some rules of thumb to help with remembering how
+    <para id="x_IL">Here are some rules of thumb to help with remembering how
       pattern matching works.  A constructor in a pattern
       checks that the matched value has the right <quote>shape</quote>.  A
       literal value ensures that that portion of the value has exactly
@@ -1300,7 +1300,7 @@
       either the shape or contents of the matched value; it matches anything,
       and gives the variable that value.</para>
 
-    <para>So the pattern <code>(3:xs)</code> first of all is an
+    <para id="x_JL">So the pattern <code>(3:xs)</code> first of all is an
       assertion that a matching value is a non-empty list, by matching
       against the <function>(:)</function> constructor.  It also
       ensures that the head of the list is the literal value
@@ -1329,13 +1329,13 @@
 	<emphasis>must</emphasis> be; <type>Either</type> only has two
 	constructors.</para>
 
-      <para>In a pattern, a wild card acts similarly
+      <para id="x_KL">In a pattern, a wild card acts similarly
 	to a variable, only it doesn't bind the value to a name.
 	While we can't put the same variable name multiple times in a
 	single pattern, we can use a wild card as many times as we
 	need to.</para>
 
-      <para>Another advantage of wild cards is that a Haskell compiler
+      <para id="x_LL">Another advantage of wild cards is that a Haskell compiler
 	can warn us if we introduce a variable name in a pattern, but
 	don't use it in a function's body; defining something but
 	forgetting to use it can often indicate a bug.  Using a wild
@@ -1343,7 +1343,7 @@
 	really don't care what value is present, and will prevent such
 	a warning.</para>
 
-      <para>Wild cards also help readability, as they make it easier
+      <para id="x_ML">Wild cards also help readability, as they make it easier
 	to tell which values we're really using.</para>
 
       &SimpleTypes.hs:niceAccessors;
@@ -1391,7 +1391,7 @@
     <sect2 id="hs.funcstypes.pattern.limits">
       <title>Early pattern matching pitfalls</title>
 
-      <para>There are a few ways in which new Haskell programmers can
+      <para id="x_NL">There are a few ways in which new Haskell programmers can
 	misunderstand or misuse patterns.  Here are a few potential
 	missteps that you can easily avoid.</para>
 
@@ -1400,7 +1400,7 @@
 	perform exact comparisons against combinations of constructors
 	and simple values.</para>
 
-      <para>Here's a well-intentioned example of pattern matching gone
+      <para id="x_OL">Here's a well-intentioned example of pattern matching gone
 	awry.  This code compiles cleanly, but depending on what you
 	expect it to do, it might surprise you.</para>
 

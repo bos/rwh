@@ -161,7 +161,7 @@
 
 	  <itemizedlist>
 	    <listitem>
-	      <para>The text of this book and its accompanying
+	      <para id="x_lL">The text of this book and its accompanying
 		graphics (except those outlined below) are licensed
 		under a <ulink
 		  url="http://creativecommons.org/licenses/by-nc/3.0/">Creative 
@@ -169,7 +169,7 @@
 		  License</ulink>.</para>
 	    </listitem>
 	    <listitem>
-	      <para>The 48x48 callout icons, and the RSS icon, used on
+	      <para id="x_mL">The 48x48 callout icons, and the RSS icon, used on
 		this web site were designed by <ulink
 		  url="http://mattahan.googlepages.com/">Paul
 		  Davey</ulink>, and are licensed under a <ulink
