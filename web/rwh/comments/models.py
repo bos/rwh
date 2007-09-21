@@ -20,7 +20,7 @@ class Element(models.Model):
 class Comment(models.Model):
     class Admin:
         list_display = ['element', 'submitter_name', 'comment', 'reviewed',
-                        'hidden', 'date', 'get_absolute_url']
+                        'hidden', 'date']
         search_fields = ['comment']
         date_hierarchy = 'date'
         list_filter = ['date', 'submitter_name']
