@@ -23,6 +23,12 @@
     are likely quite different than the object-oriented ideas you may be
     familiar with already.
   </para>
+  <para>
+    In this chapter, you'll learn how to create and use your own types.
+    We'll start with very basic types, and progress all the way to defining
+    your own numeric types.  We think you'll find Haskell's typing system
+    powerful and -- surprise -- even exciting.
+  </para>
 
   <sect1 id="hs.data.intro">
     <title>Creating New Types</title>
