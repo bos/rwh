@@ -52,10 +52,20 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 	Structures</a></li>
     <li class="zebra_b">17. <a href="hs.parsec.html">Using
 	Parsec</a></li>
-    <li class="zebra_a">A. <a href="hs.escapes.html">Characters, Strings,
+    <li class="zebra_a"><span class="chapinfo">2007-07-21 <a
+	      href="/feeds/comments/hs.escapes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	A. <a href="hs.escapes.html">Characters, Strings,
 	and Escaping Rules</a></li>
-    <li class="zebra_b">X. <a href="hs.web.html">Web Site and
+    <li class="zebra_b"><span class="chapinfo">2007-07-21 <a
+	      href="/feeds/comments/hs.web/"><img
+		src="/support/figs/rss.png"/></a></span>
+	X. <a href="hs.web.html">Web Site and
 	Comment System Usage and Policies</a></li>
+    <li class="zebra_a"><span class="chapinfo">2007-07-21 <a
+	      href="/feeds/comments/hs.bib/"><img
+		src="/support/figs/rss.png"/></a></span>
+	<a href="hs.bib.html">Bibliography</a></li>
   </ul>
 </div>
 {% endblock %}
