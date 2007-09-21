@@ -58,7 +58,7 @@
 <!ENTITY data "<literal>data</literal>">
 <!ENTITY do "<literal>do</literal>">
 <!ENTITY elem "<literal>elem</literal>">
-<!ENTITY emdash "&#2014;">
+<!ENTITY emdash "&#8212;">
 <!ENTITY fail "<literal>fail</literal>">
 <!ENTITY finally "<literal>finally</literal>">
 <!ENTITY getContents "<literal>getContents</literal>">
