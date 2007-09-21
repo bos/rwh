@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.funcstypes" revision="unpublished">
+<chapter id="hs.funcstypes" revision="alpha">
   <title>Types and Functions</title>
 
   <para id="x_n2">Topics: built-in types.  Writing functions.  Creating new
