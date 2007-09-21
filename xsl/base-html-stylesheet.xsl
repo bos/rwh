@@ -95,7 +95,7 @@
   <xsl:template name="user.head.content">
     <link rel="alternate" type="application/atom+xml" title="Comments"
       href="/feeds/comments/"/>
-    <script type="text/javascript" src="/support/jquery.js"></script>
+    <script type="text/javascript" src="/support/jquery-min.js"></script>
     <script type="text/javascript" src="/support/form.js"></script>
     <script type="text/javascript" src="/support/hsbook.js"></script>
   </xsl:template>
