@@ -26,7 +26,9 @@
   <para>
     In this chapter, you'll learn how to create and use your own types.
     We'll start with very basic types, and progress all the way to defining
-    your own numeric types.  We think you'll find Haskell's typing system
+    your own numeric types.  We'll have an example showing you how you can
+    extend Haskell's numeric type system to support units of measure and
+    symbolic manipulations.  We think you'll find Haskell's typing system
     powerful and -- surprise -- even exciting.
   </para>
 
