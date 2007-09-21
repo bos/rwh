@@ -24,13 +24,14 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 	Typeclasses</span></li>
     <li class="zebra_b">7. <span class="unpublished">Input and
 	Output</span></li>
-    <li class="zebra_a">A. <span class="unpublished">Characters, Strings,
+    <li class="zebra_a">A. <span class="unpublished">Installing GHC</span></li>
+    <li class="zebra_b">B. <span class="unpublished">Characters, Strings,
 	and Escaping Rules</span></li>
-    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.web/"><img
 		src="/support/figs/rss.png"/></a></span>X. <a href="hs.web.html">Web Site and
 	Comment System Usage and Policies</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.bib/"><img
 		src="/support/figs/rss.png"/></a></span>
 	<a href="hs.bib.html">Bibliography</a></li>

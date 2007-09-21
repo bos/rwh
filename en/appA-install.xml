@@ -1,0 +1,233 @@
+<appendix id="hs.install" revision="alpha">
+  <title>Installing GHC</title>
+
+  <para id="x_l">We are providing the instructions below based on our
+    experience installing &GHC; in mid-2007.  Installation
+    instructions inevitably become dated quickly; please bear this in
+    mind as you read.</para>
+
+  <para id="x_m">Because &GHC; runs on a large number of platforms,
+    we've focused on a handful of the most popular.</para>
+
+  <sect1 id="hs.install.win">
+    <title>Windows</title>
+
+    <para id="x_n">The prebuilt binary packages of &GHC; should work
+      on versions of Windows as old as ME, and on all newer versions
+      (NT, 2000, XP, and Vista).  We have installed &GHC; 6.6.1 under
+      Windows XP Service Pack 2; here are the steps we
+      followed.</para>
+
+    <note>
+      <title>How much room does GHC need?</title>
+
+      <para id="x_o">On Windows, &GHC; requires almost 340MB of disk
+	space.</para>
+    </note>
+  
+    <para id="x_p">Our first step is to visit the &GHC; <ulink
+	url="http://www.haskell.org/ghc/download.html">download
+	page</ulink>, and follow the link to the current stable
+      release.  Scroll down to the section entitled <quote>Binary
+	packages</quote>, and then again to the subsection for
+      Windows.  Download the installer; in our case, it's named
+      <filename>ghc-6.6.1-i386-windows.exe</filename>.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/win32-download.png"/>
+    </informalfigure>
+
+    <para id="x_q">After the installer has downloaded, double-clicking
+      on it starts the installation process.  This involves stepping
+      through a normal Windows installer wizard.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/win32-wizard1.png"/>
+    </informalfigure>
+
+    <para id="x_r">Once the installer has finished, the Start Menu's
+      <quote>All Programs</quote> submenu should have a &GHC; folder,
+      inside of which you'll find an icon that you can use to run
+      &ghci;.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/win32-start-menu.png"/>
+    </informalfigure>
+
+    <para id="x_s">Clicking on the &ghci; icon brings up a normal
+      Windows console window, running &ghci;.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/win32-ghci.png"/>
+    </informalfigure>
+
+    <note>
+      <title>Updating your search path</title>
+
+      <para id="x_t">The &GHC; installer automatically modifies your
+	user account's <envar>PATH</envar> environment variable so
+	that commands like &ghc; will be present in the command
+	shell's search path (i.e. you can type a &GHC; command name
+	without typing its complete path).  This change will not take
+	effect until you log out and back in again.</para>
+    </note>
+  </sect1>
+
+  <sect1 id="hs.install.mac">
+    <title>Mac OS X</title>
+
+    <para id="x_u">Installing &GHC; on Mac OS X takes several steps,
+      as &GHC; does not yet have a standard OS X installer.  We have
+      installed &GHC; 6.6.1 under Mac OS X 10.4, on an Intel-based
+      MacBook.  We're not regular Mac users, and had never tried
+      installing &GHC; on OS X before, and everything worked for us on
+      the first try, so take heart if these instructions seem
+      daunting.  The process is neither difficult nor especially
+      time-consuming.</para>
+
+    <para id="x_v">Our first step is to visit the &GHC; <ulink
+	url="http://www.haskell.org/ghc/download.html">download
+	page</ulink>, and follow the link to the current stable
+      release.  Scroll down to the section entitled <quote>Binary
+	packages</quote>, and then again to the subsection for Mac OS
+      X.  There are four components to download, all of which are
+      necessary.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para id="x_w">Apple's Xcode development software.  This
+	  provides compiler toolchain support that &GHC; needs.</para>
+      </listitem>
+      <listitem>
+	<para id="x_x">The <filename>GNUreadline</filename> framework
+	  provides flexible command line editing.</para>
+      </listitem>
+      <listitem>
+	<para id="x_y">The <filename>GMP</filename> framework is
+	  required for arbitrary-precision integer support.</para>
+      </listitem>
+      <listitem>
+	<para id="x_z">The &GHC; package itself.  This will not work
+	  unless both of the preceding frameworks are
+	  installed.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para id="x_A1">The Xcode software installer may have come bundled
+      on a DVD with your Mac.  If not (or you can't find it), you can
+      download it from Apple and install it.  Once you've finished
+      installing Xcode, continue on to download the remaining three
+      packages.</para>
+
+    <para id="x_B1">After these downloads complete, you'll have three
+      archive icons on your desktop.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/osx-archives.png"/>
+    </informalfigure>
+
+    <para id="x_C1">Double click on each one to unpack it, giving you
+      three folders.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/osx-folders.png"/>
+    </informalfigure>
+
+    <para id="x_D1">Open a <application>Finder</application> window
+      with
+	<keycombo>
+	<keycap function="command">command</keycap>
+	<keycap>n</keycap>
+	</keycombo>.  In the left sidebar, click on your system's main
+      hard disk icon (often named <quote>Macintosh HD</quote>).  In
+      the main portion of the window, double click on
+      <filename>System</filename> to open that folder, then on
+      <filename>Library</filename>.  Select the
+      <filename>GMP.framework</filename> and
+      <filename>GNUreadline.framework</filename> folders on your
+      desktop, and drag them onto the <filename>Frameworks</filename>
+      folder in the Finder window that is visiting
+      <filename>/System/Library</filename>.  If the Finder refuses to
+      install them because you don't have permission, it will probably
+      display an <quote>Authenticate</quote> button in the alert it
+      displays. Click it, enter your password, and installation can
+      proceed.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/osx-folders.png"/>
+    </informalfigure>
+
+    <para id="x_E1">With the prerequisites in place, you can turn to
+      installing &GHC;. You'll need to open a &Terminal; window (you
+      can find it in
+      <filename>/Applications/Utilities</filename>).</para>
+
+    <tip>
+      <title>Terminal at your fingertips yet?</title>
+
+      <para id="x_F1">Since most of your interactions with &GHC; will
+	be through a &Terminal; window, this might be a good time to
+	add the &Terminal; application to your dock, if you haven't
+	already done so.</para>
+    </tip>
+
+    <informalfigure>
+      <graphic fileref="figs/osx-ghc-install.png"/>
+    </informalfigure>
+
+    <para id="x_G1">Inside the &Terminal; window, change directory to
+      <filename>Desktop/ghc-6.6.1</filename>, and run
+      <userinput>./configure</userinput> to set up the command line
+      installer.  This configures &GHC; to install to
+      <filename>/usr/local</filename>.  When the
+      <command>configure</command> script finishes, run
+      <userinput>sudo make install</userinput>, and type your password
+      when you are prompted for it.</para>
+
+    <para id="x_H1">The installation process should take a minute or
+      two.  If you don't already have
+      <filename>/usr/local/bin</filename> in your shell's search path,
+      add it.</para>
+
+    <para id="x_I1">Finally, you should be able to successfully run
+      the &ghci; command from your shell prompt.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/osx-ghci.png"/>
+    </informalfigure>
+
+  </sect1>
+
+  <sect1 id="hs.install.debian">
+    <title>Ubuntu and Debian Linux</title>
+      
+    <remark>FIXME: actual content.</remark>
+  </sect1>
+
+  <sect1 id="hs.install.fedora">
+    <title>Fedora Linux</title>
+      
+    <para id="x_J1">&GHC; is available as a standard Fedora binary
+      package.  From a shell, all you need to do is run
+      <userinput>sudo yum -y install ghc ghc-doc
+	ghc661-prof</userinput>.  The base package, containing the
+      &ghc; and &ghci; commands and libraries, is
+      <filename>ghc</filename>.  The <filename>ghc-doc</filename>
+      package contains the &GHC; user guide, and command and library
+      documentation.  The <filename>ghc661-prof</filename> package
+      contains profiling-capable versions of the standard libraries
+      (note: its version number may have changed by the time you read
+      this).</para>
+
+    <para id="x_K1">Once installation has finished, you should be able
+      to run &ghci; from the shell immediately.  You won't need to
+      change your shell's search path, or set any environment
+      variables.</para>
+  </sect1>
+</appendix>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->

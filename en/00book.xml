@@ -29,7 +29,8 @@
 <!-- Appendices. -->
 
 <!ENTITY bib      SYSTEM "bibliography.xml">
-<!ENTITY appA     SYSTEM "appA-escapes.xml">
+<!ENTITY appA     SYSTEM "appA-install.xml">
+<!ENTITY appB     SYSTEM "appB-escapes.xml">
 <!ENTITY appX     SYSTEM "appX-web.xml">
 <!ENTITY index    SYSTEM "book-index.xml">
 
@@ -118,6 +119,7 @@
   &ch17;
 
   &appA;
+  &appB;
 
   &appX;
 

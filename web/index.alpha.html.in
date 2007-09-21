@@ -37,14 +37,19 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 	  7. <a href="hs.io.html">Input and
 	Output</a></li>
     <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
-	      href="/feeds/comments/hs.escapes/"><img
-		src="/support/figs/rss.png"/></a></span>A. <a href="hs.escapes.html">Characters, Strings,
-	and Escaping Rules</a></li>
+	      href="/feeds/comments/hs.install/"><img
+		src="/support/figs/rss.png"/></a></span>
+	A. <a href="hs.install.html">Installing GHC</a></li>
     <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+	      href="/feeds/comments/hs.escapes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	B. <a href="hs.escapes.html">Characters, Strings,
+	and Escaping Rules</a></li>
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.web/"><img
 		src="/support/figs/rss.png"/></a></span>X. <a href="hs.web.html">Web Site and
 	Comment System Usage and Policies</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.bib/"><img
 		src="/support/figs/rss.png"/></a></span>
 	<a href="hs.bib.html">Bibliography</a></li>

@@ -29,7 +29,7 @@
 <!ENTITY Monad "<literal>Monad</literal>">
 <!ENTITY NoBuffering "<literal>NoBuffering</literal>">
 <!ENTITY Nothing "<literal>Nothing</literal>">
-<!ENTITY Nothing "<literal>Nothing</literal>">
+<!ENTITY Num "<literal>Num</literal>">
 <!ENTITY Ord "<literal>Ord</literal>">
 <!ENTITY PChoice "<literal>&lt;|&gt;</literal>">
 <!ENTITY PQ "<literal>&lt;?&gt;</literal>">
@@ -113,3 +113,6 @@
 <!ENTITY stdin "<literal>stdin</literal>">
 <!ENTITY stdout "<literal>stdout</literal>">
 <!ENTITY try "<literal>try</literal>">
+<!ENTITY type "<literal>type</literal>">
+<!ENTITY unlines "<literal>unlines</literal>">
+<!ENTITY writeFile "<literal>writeFile</literal>">
