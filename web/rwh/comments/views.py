@@ -18,7 +18,7 @@ class CommentForm(forms.Form):
 def chapter(request, id):
     template = get_template('comment.html')
     objs = {}
-    for c in Comment.objects.filter(element__chapter=id).order_by('date'):
+    for c in Comment.objects.filter(element__chapter=id, hidden=False).order_by('date'):
         objs.setdefault(c.element.id, [])
         objs[c.element.id].append(c)
     resp = {}
@@ -36,7 +36,7 @@ def chapter(request, id):
     return HttpResponse(dumps(resp), mimetype='application/json')
 
 def single(request, id, form=None, newid=None):
-    queryset = Comment.objects.filter(element=id).order_by('date')
+    queryset = Comment.objects.filter(element=id, hidden=False).order_by('date')
     if form is None:
         form = CommentForm(initial={
             'id': id,
