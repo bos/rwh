@@ -91,6 +91,7 @@
 <!ENTITY map "<literal>map</literal>">
 <!ENTITY mapM "<literal>mapM</literal>">
 <!ENTITY mapM_ "<literal>mapM_</literal>">
+<!ENTITY notEqual "&#8800;">
 <!ENTITY openBinaryFile "<literal>openBinaryFile</literal>">
 <!ENTITY openBinaryTempFile "<literal>openBinaryTempFile</literal>">
 <!ENTITY openFile "<literal>openFile</literal>">

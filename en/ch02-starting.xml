@@ -494,7 +494,7 @@ Loading package base ... linking ... done.
 
       <para id="x_m1">There's one exception: the <quote>is not
 	  equal</quote> operator is <function>(/=)</function>
-	(somewhat visually similar to the mathematical &#2260;
+	(somewhat visually similar to the mathematical &notEqual;
 	operator), not the <function>(!=)</function> you might
 	expect.</para>
 
