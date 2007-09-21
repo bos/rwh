@@ -8,7 +8,7 @@
 
   <!-- Uncomment this to enable auto-numbering of sections -->
   <!-- xsl:param name="section.autolabel" select="1" / -->
-  <xsl:param name="chunker.output.encoding" select="'UTF-8'"/>
+  <xsl:param name="chunker.output.encoding">ASCII</xsl:param>
   <xsl:param name="use.id.as.filename" select="1"/>
   <xsl:param name="chunk.first.sections" select="0"/>
   <xsl:param name="chunk.section.depth" select="0"/>
