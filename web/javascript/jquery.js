@@ -1,25 +1,24 @@
 (function(){
 /*
- * jQuery 1.2 - New Wave Javascript
+ * jQuery 1.2.1 - New Wave Javascript
  *
  * Copyright (c) 2007 John Resig (jquery.com)
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
  *
- * $Date: 2007-09-10 15:45:49 -0400 (Mon, 10 Sep 2007) $
- * $Rev: 3219 $
+ * $Date: 2007-09-16 23:42:06 -0400 (Sun, 16 Sep 2007) $
+ * $Rev: 3353 $
  */
 
 // Map over jQuery in case of overwrite
 if ( typeof jQuery != "undefined" )
 	var _jQuery = jQuery;
 
-var jQuery = window.jQuery = function(a,c) {
-	// If the context is global, return a new object
-	if ( window == this || !this.init )
-		return new jQuery(a,c);
-	
-	return this.init(a,c);
+var jQuery = window.jQuery = function(selector, context) {
+	// If the context is a namespace object, return a new object
+	return this instanceof jQuery ?
+		this.init(selector, context) :
+		new jQuery(selector, context);
 };
 
 // Map over the $ in case of overwrite
@@ -32,17 +31,17 @@ window.$ = jQuery;
 var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/;
 
 jQuery.fn = jQuery.prototype = {
-	init: function(a,c) {
+	init: function(selector, context) {
 		// Make sure that a selection was provided
-		a = a || document;
+		selector = selector || document;
 
 		// Handle HTML strings
-		if ( typeof a  == "string" ) {
-			var m = quickExpr.exec(a);
-			if ( m && (m[1] || !c) ) {
+		if ( typeof selector  == "string" ) {
+			var m = quickExpr.exec(selector);
+			if ( m && (m[1] || !context) ) {
 				// HANDLE: $(html) -> $(array)
 				if ( m[1] )
-					a = jQuery.clean( [ m[1] ], c );
+					selector = jQuery.clean( [ m[1] ], context );
 
 				// HANDLE: $("#id")
 				else {
@@ -51,38 +50,38 @@ jQuery.fn = jQuery.prototype = {
 						// Handle the case where IE and Opera return items
 						// by name instead of ID
 						if ( tmp.id != m[3] )
-							return jQuery().find( a );
+							return jQuery().find( selector );
 						else {
 							this[0] = tmp;
 							this.length = 1;
 							return this;
 						}
 					else
-						a = [];
+						selector = [];
 				}
 
 			// HANDLE: $(expr)
 			} else
-				return new jQuery( c ).find( a );
+				return new jQuery( context ).find( selector );
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction(a) )
-			return new jQuery(document)[ jQuery.fn.ready ? "ready" : "load" ]( a );
+		} else if ( jQuery.isFunction(selector) )
+			return new jQuery(document)[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
 		return this.setArray(
 			// HANDLE: $(array)
-			a.constructor == Array && a ||
+			selector.constructor == Array && selector ||
 
 			// HANDLE: $(arraylike)
 			// Watch for when an array-like object is passed as the selector
-			(a.jquery || a.length && a != window && !a.nodeType && a[0] != undefined && a[0].nodeType) && jQuery.makeArray( a ) ||
+			(selector.jquery || selector.length && selector != window && !selector.nodeType && selector[0] != undefined && selector[0].nodeType) && jQuery.makeArray( selector ) ||
 
 			// HANDLE: $(*)
-			[ a ] );
+			[ selector ] );
 	},
 	
-	jquery: "1.2",
+	jquery: "1.2.1",
 
 	size: function() {
 		return this.length;
@@ -234,17 +233,23 @@ jQuery.fn = jQuery.prototype = {
 		var ret = this.map(function(){
 			return this.outerHTML ? jQuery(this.outerHTML)[0] : this.cloneNode(true);
 		});
-		
-		if (events === true) {
-			var clone = ret.find("*").andSelf();
 
+		// Need to set the expando to null on the cloned set if it exists
+		// removeData doesn't work here, IE removes it from the original as well
+		// this is primarily for IE but the data expando shouldn't be copied over in any browser
+		var clone = ret.find("*").andSelf().each(function(){
+			if ( this[ expando ] != undefined )
+				this[ expando ] = null;
+		});
+		
+		// Copy the events from the original to the clone
+		if (events === true)
 			this.find("*").andSelf().each(function(i) {
 				var events = jQuery.data(this, "events");
 				for ( var type in events )
 					for ( var handler in events[type] )
 						jQuery.event.add(clone[i], type, events[type][handler], events[type][handler].data);
 			});
-		}
 
 		// Return the cloned set
 		return ret;
@@ -278,7 +283,7 @@ jQuery.fn = jQuery.prototype = {
 			this.get(),
 			t.constructor == String ?
 				jQuery(t).get() :
-				t.length != undefined && (!t.nodeName || t.nodeName == "FORM") ?
+				t.length != undefined && (!t.nodeName || jQuery.nodeName(t, "form")) ?
 					t : [t] )
 		);
 	},
@@ -359,6 +364,10 @@ jQuery.fn = jQuery.prototype = {
 		return this.after( val ).remove();
 	},
 
+	eq: function(i){
+		return this.slice(i, i+1);
+	},
+
 	slice: function() {
 		return this.pushStack( Array.prototype.slice.apply( this, arguments ) );
 	},
@@ -389,17 +398,31 @@ jQuery.fn = jQuery.prototype = {
 				obj = this.getElementsByTagName("tbody")[0] || this.appendChild(document.createElement("tbody"));
 
 			jQuery.each( a, function(){
-				if ( jQuery.nodeName(this, "script") ) {
-					if ( this.src )
-						jQuery.ajax({ url: this.src, async: false, dataType: "script" });
-					else
-						jQuery.globalEval( this.text || this.textContent || this.innerHTML || "" );
-				} else
-					fn.apply( obj, [ clone ? this.cloneNode(true) : this ] );
+				var elem = clone ? this.cloneNode(true) : this;
+				if ( !evalScript(0, elem) )
+					fn.call( obj, elem );
 			});
 		});
 	}
 };
+
+function evalScript(i, elem){
+	var script = jQuery.nodeName(elem, "script");
+
+	if ( script ) {
+		if ( elem.src )
+			jQuery.ajax({ url: elem.src, async: false, dataType: "script" });
+		else
+			jQuery.globalEval( elem.text || elem.textContent || elem.innerHTML || "" );
+	
+		if ( elem.parentNode )
+			elem.parentNode.removeChild(elem);
+
+	} else if ( elem.nodeType == 1 )
+    jQuery("script", elem).each(evalScript);
+
+	return script;
+}
 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
@@ -1138,7 +1161,7 @@ jQuery.extend({
 			empty: "!a.firstChild",
 
 			// Text Check
-			contains: "(a.textContent||a.innerText||'').indexOf(m[3])>=0",
+			contains: "(a.textContent||a.innerText||jQuery(a).text()||'').indexOf(m[3])>=0",
 
 			// Visibility
 			visible: '"hidden"!=a.type&&jQuery.css(a,"display")!="none"&&jQuery.css(a,"visibility")!="hidden"',
@@ -1697,6 +1720,9 @@ jQuery.event = {
 			if ( evt )
 				data.unshift( this.fix({ type: type, target: element }) );
 
+			// Enforce the right trigger type
+			data[0].type = type;
+
 			// Trigger the event
 			if ( jQuery.isFunction( jQuery.data(element, "handle") ) )
 				val = jQuery.data(element, "handle").apply( element, data );
@@ -2091,7 +2117,7 @@ jQuery.fn.extend({
 			var val = jQuery(this).val();
 			return val == null ? null :
 				val.constructor == Array ?
-					jQuery.map( val, function(i, val){
+					jQuery.map( val, function(val, i){
 						return {name: elem.name, value: val};
 					}) :
 					{name: elem.name, value: val};
@@ -2176,24 +2202,24 @@ jQuery.extend({
 		if ( s.data && s.processData && typeof s.data != "string" )
 			s.data = jQuery.param(s.data);
 
-		// Break the data into one single string
-		var q = s.url.indexOf("?");
-		if ( q > -1 ) {
-			s.data = (s.data ? s.data + "&" : "") + s.url.slice(q + 1);
-			s.url = s.url.slice(0, q);
-		}
-
 		// Handle JSONP Parameter Callbacks
 		if ( s.dataType == "jsonp" ) {
-			if ( !s.data || !s.data.match(jsre) )
+			if ( s.type.toLowerCase() == "get" ) {
+				if ( !s.url.match(jsre) )
+					s.url += (s.url.match(/\?/) ? "&" : "?") + (s.jsonp || "callback") + "=?";
+			} else if ( !s.data || !s.data.match(jsre) )
 				s.data = (s.data ? s.data + "&" : "") + (s.jsonp || "callback") + "=?";
 			s.dataType = "json";
 		}
 
 		// Build temporary JSONP function
-		if ( s.dataType == "json" && s.data && s.data.match(jsre) ) {
+		if ( s.dataType == "json" && (s.data && s.data.match(jsre) || s.url.match(jsre)) ) {
 			jsonp = "jsonp" + jsc++;
-			s.data = s.data.replace(jsre, "=" + jsonp);
+
+			// Replace the =? sequence both in the query string and the data
+			if ( s.data )
+				s.data = s.data.replace(jsre, "=" + jsonp);
+			s.url = s.url.replace(jsre, "=" + jsonp);
 
 			// We need to make sure
 			// that a JSONP style response is executed properly
@@ -2203,6 +2229,7 @@ jQuery.extend({
 			window[ jsonp ] = function(tmp){
 				data = tmp;
 				success();
+				complete();
 				// Garbage collect
 				window[ jsonp ] = undefined;
 				try{ delete window[ jsonp ]; } catch(e){}
@@ -2213,11 +2240,11 @@ jQuery.extend({
 			s.cache = false;
 
 		if ( s.cache === false && s.type.toLowerCase() == "get" )
-			s.data = (s.data ? s.data + "&" : "") + "_=" + (new Date()).getTime();
+			s.url += (s.url.match(/\?/) ? "&" : "?") + "_=" + (new Date()).getTime();
 
 		// If data is available, append data to url for get requests
 		if ( s.data && s.type.toLowerCase() == "get" ) {
-			s.url += "?" + s.data;
+			s.url += (s.url.match(/\?/) ? "&" : "?") + s.data;
 
 			// IE likes to send both get and post data, prevent this
 			s.data = null;
@@ -2575,23 +2602,23 @@ jQuery.fn.extend({
 				if ( /toggle|show|hide/.test(val) )
 					e[ val == "toggle" ? hidden ? "show" : "hide" : val ]( prop );
 				else {
-					var parts = val.toString().match(/^([+-]?)([\d.]+)(.*)$/),
+					var parts = val.toString().match(/^([+-]=)?([\d+-.]+)(.*)$/),
 						start = e.cur(true) || 0;
 
 					if ( parts ) {
-						end = parseFloat(parts[2]),
-						unit = parts[3] || "px";
+						var end = parseFloat(parts[2]),
+							unit = parts[3] || "px";
 
 						// We need to compute starting value
 						if ( unit != "px" ) {
-							self.style[ name ] = end + unit;
-							start = (end / e.cur(true)) * start;
+							self.style[ name ] = (end || 1) + unit;
+							start = ((end || 1) / e.cur(true)) * start;
 							self.style[ name ] = start + unit;
 						}
 
-						// If a +/- token was provided, we're doing a relative animation
+						// If a +=/-= token was provided, we're doing a relative animation
 						if ( parts[1] )
-							end = ((parts[1] == "-" ? -1 : 1) * end) + start;
+							end = ((parts[1] == "-=" ? -1 : 1) * end) + start;
 
 						e.custom( start, end, unit );
 					} else
@@ -2605,12 +2632,12 @@ jQuery.fn.extend({
 	},
 	
 	queue: function(type, fn){
-		if ( !fn ) {
+		if ( jQuery.isFunction(type) ) {
 			fn = type;
 			type = "fx";
 		}
 
-		if ( !arguments.length )
+		if ( !type || (typeof type == "string" && !fn) )
 			return queue( this[0], type );
 
 		return this.each(function(){
@@ -2878,11 +2905,11 @@ jQuery.fn.offset = function() {
 	var left = 0, top = 0, elem = this[0], results;
 	
 	if ( elem ) with ( jQuery.browser ) {
-		var	absolute	= jQuery.css(elem, "position") == "absolute", 
-		    	parent		= elem.parentNode, 
-		    	offsetParent	= elem.offsetParent, 
-		    	doc		= elem.ownerDocument,
-			safari2		= safari && !absolute && parseInt(version) < 522;
+		var	absolute     = jQuery.css(elem, "position") == "absolute", 
+		    parent       = elem.parentNode, 
+		    offsetParent = elem.offsetParent, 
+		    doc          = elem.ownerDocument,
+		    safari2      = safari && parseInt(version) < 522;
 	
 		// Use getBoundingClientRect if available
 		if ( elem.getBoundingClientRect ) {
@@ -2928,9 +2955,9 @@ jQuery.fn.offset = function() {
 			}
 		
 			// Get parent scroll offsets
-			while ( parent.tagName && /^body|html$/i.test(parent.tagName) ) {
+			while ( parent.tagName && !/^body|html$/i.test(parent.tagName) ) {
 				// Work around opera inline/table scrollLeft/Top bug
-				if ( /^inline|table-row.*$/i.test(jQuery.css(parent, "display")) )
+				if ( !/^inline|table-row.*$/i.test(jQuery.css(parent, "display")) )
 					// Subtract parent scroll offsets
 					add( -parent.scrollLeft, -parent.scrollTop );
 			
@@ -2943,7 +2970,7 @@ jQuery.fn.offset = function() {
 			}
 		
 			// Safari doubles body offsets with an absolutely positioned element or parent
-			if ( safari && absolute )
+			if ( safari2 && absolute )
 				add( -doc.body.offsetLeft, -doc.body.offsetTop );
 		}
 
