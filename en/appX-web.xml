@@ -51,6 +51,22 @@
 	  address somewhere).</para>
       </note>
     </sect2>
+
+    <sect2 id="hs.web.review">
+      <title>How we review comments</title>
+
+      <para>After we've read a comment, we may mark it as
+	<quote>reviewed</quote>; when we do this, you'll see a note
+	next to a comment's title.  Due to the huge volume of
+	comments, we may not have time to mark all of them as
+	reviewed.</para>
+
+      <para>When we <emphasis>do</emphasis> mark a comment as
+	reviewed, it indicates that we've read and acted upon the
+	comment, but that we haven't published an update yet.  When a
+	comment no longer applies to a particular paragraph, we'll
+	hide it from view.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.web.feed">
