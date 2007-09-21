@@ -9,15 +9,9 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 <div class="book">
   <h2>Table of Contents</h2>
   <ul class="booktoc">
-    <li class="zebra_a"><span class="chapinfo">2007-99-99 <a
-	      href="/feeds/comments/hs.preface/"><img
-		src="/support/figs/rss.png"/></a></span>
-	<a href="hs.preface.html">Preface</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-99-99 <a
-	      href="/feeds/comments/hs.preface/"><img
-		src="/support/figs/rss.png"/></a></span>
-	  1. <a href="hs.whyfp.html">Why Functional
-	    Programming? Why Haskell?</a></li>
+    <li class="zebra_a"><span class="unpublished">Preface</span></li>
+    <li class="zebra_b"><span class="unpublished">Why Functional
+	    Programming? Why Haskell?</span></li>
     <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.starting/"><img
 		src="/support/figs/rss.png"/></a></span>
@@ -27,17 +21,11 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 	      href="/feeds/comments/hs.funcstypes/"><img
 		src="/support/figs/rss.png"/></a></span>
 	  3. <a href="hs.funcstypes.html">Types and
-	Functions</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-99-99 <a
-	      href="/feeds/comments/hs.fp/"><img
-		src="/support/figs/rss.png"/></a></span>
-	  4. <a href="hs.fp.html">Functional
-	Programming</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-99-99 <a
-	      href="/feeds/comments/hs.library/"><img
-		src="/support/figs/rss.png"/></a></span>
-	  5. <a href="hs.library.html">Writing a
-	Library</a></li>
+	    Functions</a></li>
+    <li class="zebra_a">4. <span class="unpublished">Functional
+	    Programming</span></li>
+    <li class="zebra_a">5. <span class="unpublished">Writing a
+	    Library</span></li>
     <li class="zebra_b"><span class="chapinfo">2007-07-21 <a
 	      href="/feeds/comments/hs.typeclasses/"><img
 		src="/support/figs/rss.png"/></a></span>
@@ -48,10 +36,6 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 		src="/support/figs/rss.png"/></a></span>
 	  7. <a href="hs.io.html">Input and
 	Output</a></li>
-    <li class="zebra_a">13. <a href="hs.data.html">Data
-	Structures</a></li>
-    <li class="zebra_b">17. <a href="hs.parsec.html">Using
-	Parsec</a></li>
     <li class="zebra_a">A. <a href="hs.escapes.html">Characters, Strings,
 	and Escaping Rules</a></li>
     <li class="zebra_b">X. <a href="hs.web.html">Web Site and

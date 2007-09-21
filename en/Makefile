@@ -163,7 +163,7 @@ alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
 $(obj-alpha)/hs.preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
 
-$(obj-alpha)/index.html: ../web/index.complete.html.in $(obj-alpha)/hs.preface.html
+$(obj-alpha)/index.html: ../web/index.alpha.html.in $(obj-alpha)/hs.preface.html
 	python ../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
