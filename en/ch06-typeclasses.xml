@@ -21,7 +21,10 @@
       equality test is for this type.  Your first attempt might look like
       this:
     </para>
-    &naiveeq.hs:color;
+    <example id="hs.typeclasses.ex.naiveeq">
+      <title>Naive Equality -- Colors (naiveeq.hs)</title>
+      &naiveeq.hs:color;
+    </example>
     <para id="x_kA">
       You can test this with &ghci; or
       <application>hugs</application>:
@@ -121,8 +124,8 @@ False
       This says that we are declaring a typeclass named
       <varname>BasicEq</varname>, and we'll refer to instance types with the
       letter <parameter id="x_vA">a</parameter>.  This typeclass defines one function.
-      That function takes two parameters -- both corresponding to instance
-      types -- and returns a <type>Bool</type>.
+      That function takes two parameters&emdash;both corresponding to instance
+      types&emdash;and returns a <type>Bool</type>.
     </para>
     <para id="x_wA">
       On the first line, the name of the parameter <parameter id="x_xA">a</parameter>
@@ -196,12 +199,15 @@ isEqual :: (BasicEq a) => a -> a -> Bool
         <varname>Eq</varname> typeclass, and note how similar it is to our
         <varname>BasicEq3</varname> typeclass.
     </para>
-    <programlisting>
+    <remark>FIXME: How to cite sources on this? -- jg</remark>
+    <example id="hs.typeclasses.ex.eq">
+      <title>Haskell Standard Eq Typeclass</title>
+      <programlisting>
 class  Eq a  where
     (==), (/=) :: a -> a -> Bool
 
-        -- Minimal complete definition:
-        --      (==) or (/=)
+       &emdash;Minimal complete definition:
+       &emdash;     (==) or (/=)
     x /= y     =  not (x == y)
     x == y     =  not (x /= y)
      </programlisting>
@@ -351,7 +357,7 @@ class  Eq a  where
         <literal>Show a => a</literal>.  There are many, many types that are
         defined for both &Read; and &Show;.  Without knowing a specific type,
         the compiler can't possibly guess from these many types which one is
-        needed -- at least not in this case.  Therefore, we give an explicit
+        needed&emdash;at least not in this case.  Therefore, we give an explicit
         cast.
       </para>
       <para id="x_WB">

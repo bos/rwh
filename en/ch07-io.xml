@@ -79,7 +79,7 @@ Welcome to Haskell, John!
       Notice that both of these types have &IO; in their return value.  That
       is your key to knowing that they may have side-effects or return
       different values at different times.  The type of &putStrLn; looks like
-      a function.  It takes a parameter -- a &String; -- and returns an
+      a function.  It takes a parameter&emdash;a &String;&emdash;and returns an
       <literal>IO ()</literal>.  Just what is an <literal>IO ()</literal>
       though?
     </para>
@@ -145,8 +145,8 @@ Welcome to Haskell, John!
       Then, that data got passed to a pure function, and its result was
       printed.  In fact, the last line of &main; could have been replaced
       with <literal>putStrLn (name2reply inpStr)</literal>.  So, while &main;
-      did have side-effects -- it caused things to appear on the terminal,
-      for instance -- <literal>name2reply</literal> did not and could not.
+      did have side-effects&emdash;it caused things to appear on the terminal,
+      for instance&emdash;<literal>name2reply</literal> did not and could not.
     </para>
     <para id="x_QC">
       Let's examine this with &ghci;:
@@ -196,7 +196,7 @@ Welcome to Haskell, John!
       generally begin by using &openFile;, which will give you a file &Handle;.
       That &Handle; is then used to perform specific operations on the file.
       Haskell provides functions such as &hPutStrLn; that work just like
-      &putStrLn; but take an additional argument -- a &Handle; -- that
+      &putStrLn; but take an additional argument&emdash;a &Handle;&emdash;that
       specifies which file to operate upon.  When you're done, you'll use
       &hClose; to close the &Handle; again.  These functions are all defined
       in <literal>System.IO</literal>, so you'll need to import that module
@@ -224,7 +224,7 @@ Welcome to Haskell, John!
     <para id="x_ZC">
       <literal>mainloop</literal> begins by checking to see if we're at the
       end of file (EOF) for the input.  If we are, then we <literal>return
-        ()</literal> -- this function doesn't return any other specific
+        ()</literal>&emdash;this function doesn't return any other specific
       value.  Otherwise, we read a line from the input.  We write out the
       same line to the output, after first converting it to uppercase.  Then
       we recursively call <literal>mainloop</literal> again to continue
@@ -450,8 +450,7 @@ print = hPrint stdout
       <para id="x_vC">
         Earlier, I told you what the three standard file handles "normally"
         correspond to.  That's because some operating systems let you
-        redirect the file handles to come from (or go to) different places --
-        files, devices, or even other programs.  This feature is used
+        redirect the file handles to come from (or go to) different places&emdash;files, devices, or even other programs.  This feature is used
         extensively in shell scripting on POSIX (Linux, BSD, Mac)
         operating systems, but can
         also be used on Windows.
@@ -459,8 +458,8 @@ print = hPrint stdout
       <para id="x_wC">
         It often makes sense to use standard input and output instead of
         specific files.  This lets you interact with a human at the terminal.
-        But it also lets you work with input and output files -- or even
-        combine your code with other programs -- if that's
+        But it also lets you work with input and output files&emdash;or even
+        combine your code with other programs&emdash;if that's
         what's requested.
       </para>
       <para id="x_xC">
@@ -676,8 +675,7 @@ Which could be expressed as this Haskell literal:
         read.  Data is only read from the &Handle; as the elements (characters)
         of the list are processed.  As elements of the &String; are no longer
         used, Haskell automatically frees that memory.  All of this happens
-        completely transparently to you.  And since you have what looks like --
-        and, really, is -- a pure &String;, you can pass it to pure (non-&IO;)
+        completely transparently to you.  And since you have what looks like&emdash;and, really, is&emdash;a pure &String;, you can pass it to pure (non-&IO;)
         code.
       </para>
       <para id="x_dD">
@@ -692,8 +690,7 @@ Which could be expressed as this Haskell literal:
         Notice that &hGetContents; handled <emphasis>all</emphasis> of the
         reading for us.  Also, take a look at <literal>processData</literal>.
         It's a pure function since it has no side-effects and always returns
-        the same result each time it is called.  It has no need to know --
-        and no way to tell -- that its input is being read lazily from a file
+        the same result each time it is called.  It has no need to know&emdash;and no way to tell&emdash;that its input is being read lazily from a file
         in this case.  It can work perfectly well with a 20-character literal
         or a 500GB data dump on disk.
       </para>
@@ -711,7 +708,7 @@ Which could be expressed as this Haskell literal:
         You are not required to ever consume all the data from the input file
         when using &hGetContents;.  Whenever the Haskell system determines
         that the entire string &hGetContents; returned can be garbage collected
-        -- which means it will never again be used -- the file is closed
+       &emdash;which means it will never again be used&emdash;the file is closed
         for you automatically.  The same principle applies to data read from
         the file.  Whenever a given piece of data will never again be
         needed, the Haskell environment releases the memory it was stored
@@ -735,7 +732,7 @@ Which could be expressed as this Haskell literal:
       </para>
       &toupper-lazy3.hs:all;
       <para id="x_kD">
-        Look at that -- the guts of the program takes up only two lines!
+        Look at that&emdash;the guts of the program takes up only two lines!
         &readFile; returned a lazy &String;, which we stored in
         <literal>inpStr</literal>.  We then took that, processed it, and
         passed it to &writeFile; for writing.
@@ -770,8 +767,8 @@ Which could be expressed as this Haskell literal:
       <para id="x_qD">
         You can verify this yourself by generating a large
         <literal>input.txt</literal> for <literal>toupper-lazy3.hs</literal>.
-        It may take a bit to process, but you should see a constant -- and
-        low -- memory usage while it is being processed.
+        It may take a bit to process, but you should see a constant&emdash;and
+        low&emdash;memory usage while it is being processed.
       </para>
     </sect2>
 
@@ -785,7 +782,7 @@ Which could be expressed as this Haskell literal:
         the result to standard output.  For that situation, there is a
         function called &interact;.  &interact; takes one argument: a
         function of type <literal>String -> String</literal>.  That function
-        is passed the result of <literal>getContents</literal> -- that is,
+        is passed the result of <literal>getContents</literal>&emdash;that is,
         standard input read lazily.  The result of that function is sent to
         standard output.
       </para>
@@ -796,7 +793,7 @@ Which could be expressed as this Haskell literal:
       </para>
       &toupper-lazy4.hs:all;
       <para id="x_tD">
-        Look at that -- <emphasis>one</emphasis> line of code to achieve our
+        Look at that&emdash;<emphasis>one</emphasis> line of code to achieve our
         transformation!  To achieve the same effect as with the previous
         examples, you could run this one like this:
       </para>
@@ -876,8 +873,8 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         <para id="x_FE">
           Sure enough, you got back the two lines that contain an "a".  
           Lazy filters are a powerful way to use Haskell.  When you think
-          about it, a filter -- such as the standard Unix program
-          <command>grep</command> -- sounds a lot like a function.  It takes
+          about it, a filter&emdash;such as the standard Unix program
+          <command>grep</command>&emdash;sounds a lot like a function.  It takes
           some input, applies some computation, and generates a predictable
           output.  This is a great match for Haskell.
         </para>
@@ -916,7 +913,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         Most languages do not make a distinction between a pure function and an
         impure one.  Haskell has functions in the mathematical sense: they are
         purely computations which cannot be impacted by anything external.
-        Moreover, the computation can be performed at any time -- or even
+        Moreover, the computation can be performed at any time&emdash;or even
         never, if its result is never needed.
       </para>
       <para id="x_KE">
@@ -947,9 +944,9 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         <literal>str2action</literal> is a function that takes one parameter
         and returns an <literal>IO ()</literal>.  As you can see at the end of
         &main;, you could use this directly in another action and it will print
-        out a line right away.  But you can store -- but not execute -- the
+        out a line right away.  But you can store&emdash;but not execute&emdash;the
         action from pure code.  You can see an example of that in
-        <literal>list2actions</literal> -- we use &map; over
+        <literal>list2actions</literal>&emdash;we use &map; over
         <literal>str2action</literal> and return a list of actions, just like
         we would with other pure data.  You can see that everything up through
         <literal>printitall</literal> is built up with pure tools.
@@ -1007,7 +1004,7 @@ Data: Done!
       </para>
       <para id="x_UE">
         Why a &mapM; when we already have &map;?  Because &map; is a pure
-        function that returns a list.  It doesn't -- and can't -- actually
+        function that returns a list.  It doesn't&emdash;and can't&emdash;actually
         execute anything directly.  &mapM; is a utility that lives in the
         &IO; monad and thus can actually execute the actions.
       </para>
@@ -1117,14 +1114,13 @@ Data: Done!
       I/O is one of the slowest parts of a modern computer.  Completing a
       write to disk can take thousands of times as long as a write to memory.
       A write over the network can be hundreds or thousands of times slower
-      yet.  Even if your operation doesn't directly impact the disk --
-      perhaps because the data is cached -- I/O still involves a system call,
+      yet.  Even if your operation doesn't directly impact the disk&emdash;perhaps because the data is cached&emdash;I/O still involves a system call,
       which slows things down by itself.
     </para>
     <para id="x_lE">
       For this reason, modern operating systems and programming languages
       both provide various tools to help programs perform better where I/O is
-      concerned.  The operating system typically performs caching -- storing
+      concerned.  The operating system typically performs caching&emdash;storing
       frequently-used pieces of data in memory for faster access.
     </para>
     <para id="x_mE">
@@ -1148,7 +1144,7 @@ Data: Done!
         defined as the &BufferMode; type.
       </para>
       <para id="x_pE">&NoBuffering;
-        does just what it sounds like -- no buffering.  Data read via functions
+        does just what it sounds like&emdash;no buffering.  Data read via functions
         like &hGetLine; will be read from the OS one character at a time.  Data
         written will be written immediately, and also often will be written one
         character at a time.  For this reason, &NoBuffering; is usually a very

@@ -98,9 +98,9 @@
         fifth element in <literal>mylist</literal> to <literal>10</literal>.
       </para>
       <para id="x_R">
-        In Haskell, all data is immutable -- it cannot be modified.  If you
+        In Haskell, all data is immutable&emdash;it cannot be modified.  If you
         need to modify an element of a list, you'll get a copy of the
-        original list returned -- except for the one changed element.  Then
+        original list returned&emdash;except for the one changed element.  Then
         you will probably ignore the original list.
       </para>
       <para id="x_S">
@@ -123,7 +123,7 @@
       <para id="x_V">
         Some languages have partial immutability.  For instance, strings are
         immutable in Java; if you want to add something to a string in Java,
-        you combine two strings and the result is a new string -- not a
+        you combine two strings and the result is a new string&emdash;not a
         modification of an existing string.  Haskell takes immutability much
         farther.  The only exception in Haskell deals with I/O, which is
         encapsulated in a special way; this will be discussed later.

@@ -344,8 +344,8 @@ data  Maybe a  =  Nothing | Just a
         Notice here that the type of &Nothing; is <literal>Maybe a</literal>,
         but the type of <literal>Just "hi"</literal> is <literal>Maybe
           [Char]</literal>.  The reason for this is Haskell's type inference.
-        &Nothing; doesn't actually encapsulate any data, so it -- by itself
-        -- is valid with any &Just;.  You can also give it an explicit type
+        &Nothing; doesn't actually encapsulate any data, so it&emdash;by itself
+       &emdash;is valid with any &Just;.  You can also give it an explicit type
         to force it to behave a certain way, as we did with 
         <literal>Nothing :: Maybe [Char]</literal>.
       </para>
