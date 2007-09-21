@@ -30,6 +30,9 @@
 	<span class="comment_name">{{ c.submitter_name|escape }}</span>
       {% endif %}
       <span class="comment_date">{{ c.date|date:"Y-m-d" }}</span>
+      {% if c.reviewed %}
+	<span class="comment_reviewed">(reviewed)</span>
+      {% endif %}
       {% ifequal c.id newid %}
 	<span class="comment_thanks">thank you for your comment!</span>
       {% endifequal %}
