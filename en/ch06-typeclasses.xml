@@ -21,10 +21,7 @@
       equality test is for this type.  Your first attempt might look like
       this:
     </para>
-    <example id="hs.typeclasses.ex.naiveeq">
-      <title>Naive Equality -- Colors (naiveeq.hs)</title>
-      &naiveeq.hs:color;
-    </example>
+    &naiveeq.hs:color;
     <para id="x_kA">
       You can test this with &ghci; or
       <application>hugs</application>:
@@ -199,10 +196,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
         <varname>Eq</varname> typeclass, and note how similar it is to our
         <varname>BasicEq3</varname> typeclass.
     </para>
-    <remark>FIXME: How to cite sources on this? -- jg</remark>
-    <example id="hs.typeclasses.ex.eq">
-      <title>Haskell Standard Eq Typeclass</title>
-      <programlisting>
+    <programlisting>
 class  Eq a  where
     (==), (/=) :: a -> a -> Bool
 
@@ -210,7 +204,7 @@ class  Eq a  where
        --     (==) or (/=)
     x /= y     =  not (x == y)
     x == y     =  not (x /= y)
-     </programlisting>
+   </programlisting>
 
   </sect1>
 
