@@ -171,7 +171,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       <footnote>
         <para id="x_DB">
           We provided a default implementation of both functions, which gives
-          implementators of instances choice: they can pick which one they
+          implementers of instances choice: they can pick which one they
           implement.  We could have provided a default for only one function,
           which would have forced users to implement the other every time.
         </para>
@@ -256,7 +256,7 @@ class  Eq a  where
       your types instances of typeclasses, it's time to introduce you to
       typeclasses that are a standard part of Haskell.  As we mentioned at
       the beginning of this chapter, typeclasses are at the core of some
-      imporant aspects of the language.  We'll cover the most common ones
+      important aspects of the language.  We'll cover the most common ones
       here.
     </para>
 
@@ -458,7 +458,7 @@ class  Eq a  where
       Will need to verify that they look good under the O'Reilly
       renderer.</remark>
       <para id="x_kB">
-        Haskell has a powerful set of numeric types.  You can using everyting
+        Haskell has a powerful set of numeric types.  You can using everything
         from fast 32-bit or 64-bit integers to arbitrary-precision rational
         numbers.  Yet you probably know that operators such as
         <literal>+</literal> can work with just about all of these.  This
@@ -467,7 +467,7 @@ class  Eq a  where
         citizens in Haskell.
       </para>
       <para id="x_lB">
-        Let's begin our discussion of the typeclasses surrounding nmeric
+        Let's begin our discussion of the typeclasses surrounding numeric
         types with an examination of the types themselves.  <xref
           linkend="hs.numerictypes.summary"/> describes the most
         commonly-used numeric types in Haskell.  Note that there are also
@@ -647,7 +647,7 @@ class  Eq a  where
             <row>
               <entry><literal>fromRational</literal></entry>
               <entry><literal>Fractional a => Rational -> a</literal></entry>
-              <entry>Conversional from a &Rational;.  May be lossy.</entry>
+              <entry>Conversion from a &Rational;.  May be lossy.</entry>
             </row>
             <row>
               <entry><literal>log</literal></entry>
@@ -990,7 +990,7 @@ class  Eq a  where
     <para id="x_tB">
       Notice that the derived instance of &Read; actually works better than
       our hand-written version did: it successfully parsed a list with
-      embedded whitespace.
+      embedded white space.
     </para>
     <para id="x_uB">
       Automatic derivation is not always possible.  For instance, if you

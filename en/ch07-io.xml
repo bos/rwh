@@ -507,7 +507,7 @@ Your name contains 4 characters.
       <para id="x_CD">
         There are many other functions in &System.Directory; for doing things
         such as creating and removing directories, finding lists of files in
-        directories, and testing for file existance.  These are discussed in
+        directories, and testing for file existence.  These are discussed in
         <remark>FIXME: add ref to appropriate section of chapter 19</remark>.
       </para>
     </sect2>
@@ -787,7 +787,7 @@ Which could be expressed as this Haskell literal:
         function of type <literal>String -> String</literal>.  That function
         is passed the result of <literal>getContents</literal> -- that is,
         standard input read lazily.  The result of that function is sent to
-        stnadard output.
+        standard output.
       </para>
       <para id="x_sD">
         We can convert our example program to operate on standard input
@@ -963,7 +963,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       </para>
       <para id="x_OE">
         You could think of it this way: every statement, except &let;, in a &do; block must
-        yeild an I/O action which will be executed.
+        yield an I/O action which will be executed.
       </para>
       <para id="x_PE">
         The call to <literal>printitall</literal>; finally executes all those actions.  Actually,
@@ -1173,7 +1173,7 @@ Data: Done!
         set the buffer to 4096 bytes.
       </para>
       <para id="x_sE">
-        The default buffering mode is dependant upon the operating system and
+        The default buffering mode is dependent upon the operating system and
         Haskell implementation.  The current mode can be set with
         &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  You can
         ask the system for the current buffering mode by calling
