@@ -226,6 +226,12 @@ div.new_comment {
   font-weight: bolder;
 }
 
+.comment_reviewed {
+  color: darkgreen;
+  margin-left: 1em;
+  font-style: italic;
+}
+
 .comment_date {
   opacity: 0.75;
 }
