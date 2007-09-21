@@ -84,7 +84,10 @@ op2str Div = "/"
 op2str Pow = "**"
 
 {- Add parenthesis where needed.  This function is fairly conservative
-and will add parenthesis when not needed in some cases. -}
+and will add parenthesis when not needed in some cases.
+    
+Haskell will have already figured out precedence for us while building
+up the SymbolicManip. -}
 simpleParen :: (Show a, Num a) => SymbolicManip a -> String
 simpleParen (Number x) = prettyShow (Number x)
 simpleParen (Symbol x) = prettyShow (Symbol x)

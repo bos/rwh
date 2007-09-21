@@ -946,6 +946,11 @@ class  Eq a  where
         </tgroup>
       </table>
 
+      <para>
+        For an extended example demonstrating the use of these numeric
+        typeclasses, see <xref linkend="hs.data.num"/>.
+      </para>
+
 
     </sect2>
 

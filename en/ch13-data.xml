@@ -561,6 +561,171 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
   </sect1>
 
+  <sect1 id="hs.data.num">
+    <title>Extended example: Numeric Types</title>
+    <para>
+      We've told you how powerful and expressive Haskell's type system is.
+      We've shown you a lot of ways to use that power.  Here's a chance to
+      really see that in action.
+    </para>
+    <para>
+      Back in <xref linkend="hs.typeclasses.wellknown.numeric"/>, we showed
+      the numeric typeclasses that come with Haskell.  Let's see what we can
+      do by defining new types and utilizing the numeric typeclasses to
+      integrate them with basic mathematics in Haskell.
+    </para>
+    <para>
+      Let's start by thinking through what we'd like to see out of &ghci;
+      when we interact with our new types.  To start with, it might be nice
+      to render numeric expressions as strings, making sure to indicate
+      proper precedence.  Perhaps we could create a function called
+      <literal>prettyShow</literal> to do that.
+    </para>
+    &num.ghci:prettyshow;
+    <para>
+      That looks nice, but it wasn't all that smart.  We could easily
+      simplify out the <literal>1 *</literal> part of the expression.  How
+      about a function to do some very basic simplification?
+    </para>
+    &num.ghci:simplify;
+    <para>
+      How about converting a numeric expression to Reverse Polish Notation
+      (RPN)?  RPN is a postfix notation that never requires parentheses, and
+      is commonly found on HP calculators.  RPN is a stack-based notation.
+      You enter numbers onto the stack, and when you enter operations, they
+      pop the most recent numbers off the stack and place the result on the
+      stack.
+    </para>
+    &num.ghci:rpnshow;
+    <para>
+      Maybe it would be nice to be able to represent simple expressions with
+      symbols for the unknowns.
+    </para>
+    &num.ghci:symbols;
+    <para>
+      It's often important to track units of measure when working with
+      numbers.  For instance, when you see the number 5, does it mean 5
+      meters, 5 feet, or 5 bytes?  Of course, if you divide 5 meters by 2
+      seconds, the system ought to be able to figure out the appropriate
+      units.  Moreover, it should stop you from adding 2 seconds to 5 meters.
+    </para>
+    &num.ghci:units;
+    <para>
+      If we define an expression or a function that is valid for all numbers,
+      we should be able to calculate the result, or render the expression.
+      For instance, if we define <literal>test</literal> to have type
+      <literal>Num a => a</literal>, and say <literal>test = 2 * 5 +
+        3</literal>, then we ought to be able to do this:
+    </para>
+    &num.ghci:func;
+    <para>
+      Since we have units, we should be able to handle some basic
+      trigonometry as well.  Many of these operations operate on angles.
+      Let's make sure that we can handle both degrees and radians.
+    </para>
+    &num.ghci:trig;
+    <para>
+      Finally, we ought to be able to put all this together and combine
+      different kinds of expressions together.
+    </para>
+    &num.ghci:final;
+    <para>
+      Perhaps a future excercise could enhance <literal>prettyShow</literal>
+      to remove unnecessary parentheses as well.
+    </para>
+    <para>
+      Everything you've just seen is possible with Haskell types and classes.
+      In fact, you've been reading a real &ghci; session demonstrating
+      <literal>num.hs</literal>, which you'll see shortly.
+    </para>
+    <sect2>
+      <title>First Steps</title>
+      <para>
+        Let's think about how we would accomplish everything shown above.  To
+        start with, we might use &ghci; to check the type of
+        <literal>(+)</literal>, which is <literal>Num a => a -> a ->
+          a</literal>.  If we want to make possible some custom behavior for
+        the plus operator, then we will have to define a new type and make it
+        an instance of &Num;.  This type will need to store an expression
+        symbolically.  We can start by thinking of operations such as addition.
+        To store that, we will need to store the operation itself, its left
+        side, and its right side.  The left and right sides could themselves be
+        expressions.
+      </para>
+      <para>
+        We can therefore think of an expression as a sort of tree.  Let's start
+        with some simple types.
+      </para>
+      &numsimple.hs:all;
+      <para>
+        First, we define a type called <literal>Op</literal>.  This type
+        simply represents some of the operations we will intend to support.
+        Next, there is a definition for <literal>SymbolicManip a</literal>.
+        Because of the <literal>Num a</literal> constraint, any
+        <literal>Num</literal> can be used for the <literal>a</literal>.  So
+        a full type may be something like <literal>SymbolicManip
+          Int</literal>.
+      </para>
+      <para>
+        A <literal>SymbolicManip</literal> type can be a plain number, or it
+        can be some arithmetic operation.  The type for the
+        <literal>Arith</literal> constructor is recursive, which is perfectly
+        legal in Haskell.  <literal>Arith</literal> creates a
+        <literal>SymbolicManip</literal> out of an <literal>Op</literal> and
+        two other <literal>SymbolicManip</literal> items.  Let's look at an
+        example:
+      </para>
+      &numsimple.ghci:all;
+      <para>
+        You can see that we already have a very basic representation of
+        expressions working.  Notice how Haskell "converted" <literal>5 * 10
+          + 2</literal> into a <literal>SymbolicManip</literal>, and even
+        handled order of evaluation properly.  This wasn't really a true
+        conversion; <literal>SymbolicManip</literal> is a first-class number
+        now.  Integer numeric literals are internally treated as being wrapped 
+        in &fromInteger; anyway, so <literal>5</literal> is just as valid as
+        a <literal>SymbolicManip Int</literal> as it as an
+        <literal>Int</literal>.
+      </para>
+      <para>
+        From here, then, our task is simple: extend the
+        <literal>SymbolicManip</literal> type to be able to represent all the
+        operations we will want to perform, implement instances of it for the
+        other numeric typeclasses, and implement our own instance of &Show;
+        for <literal>SymbolicManip</literal> that renders this tree in a more
+        accessible fashion.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Completed Code</title>
+      <para>
+        Here is the completed <literal>num.hs</literal>, which was used with
+        the &ghci; examples at the beginning of this chapter.
+      </para>
+      &num.hs:all;
+      <para>
+        Here we have done what we set out to accomplish: implemented more
+        instances for <literal>SymbolicManip</literal>.  We have also
+        introduced another type called <literal>Units</literal> which stores
+        a number and a unit of measure.  We implement several show-like
+        functions which render the <literal>SymbolicManip</literal> or
+        <literal>Units</literal> in different ways.  
+      </para>
+      <para>
+        There is one other point that this example drives home.  In many
+        languages, even those with objects and overloading, there are still
+        some parts of the language that are special in some way.  In Haskell,
+        the "special" bits are extremely small.  We have just developed a new
+        representation for something as fundamental as a number, and it has
+        been really quite easy.  Haskell takes code reuse and
+        interchangability to the extreme.  It is easy to make code generic
+        and work on things of many different types.  It's also easy to make
+        up new types and make them automatically be 
+        first-class features of the system.
+      </para>
+    </sect2>
+
+  </sect1>
 
 </chapter>
  
