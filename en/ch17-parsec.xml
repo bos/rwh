@@ -2,11 +2,8 @@
 
 <chapter id="hs.parsec" revision="unpublished">
   <title>Using Parsec</title>
-  <!--
-    FIXME:
-    parsing non-character data
-    example for parsing a configuration file
-    -->
+  <remark>FIXME: do we still want to discuss parsing non-character data and
+  a configuration file?</remark>
   <para id="x_DJ">
     The task of parsing a file, or data of various types, is a common one for
     programmers.  You already learned about Haskell's support for regular
