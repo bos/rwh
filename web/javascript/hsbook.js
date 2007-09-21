@@ -55,7 +55,7 @@ $(document).ready(function() {
   $("pre[@id]").each(function() {
     $(this).after(loading($(this).attr("id")));
   });
-  var chapid = $("div.chapter").attr("id");
+  var chapid = $("div.preface, div.chapter, div.appendix, div.bibliography").attr("id");
   $("#chapterfeed").attr("href",
 			 $("#chapterfeed").attr("href") + chapid + "/");
   $.getJSON(location.protocol + "//" + location.host + "/comments/chapter/" +
