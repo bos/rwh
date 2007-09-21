@@ -22,6 +22,7 @@
     id="comment{{ c.id }}">
     <a name="comment{{ c.id }}"/>
     <div class="comment_header">
+	<span class="comment_id">{{ c.id }}</span>
       {% if c.submitter_url %}
 	<span class="comment_name"><a rel="nofollow"
 	  href="{{ c.submitter_url }}">{{ c.submitter_name|escape }}</a></span>

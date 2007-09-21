@@ -216,6 +216,12 @@ div.new_comment {
   opacity: 0.75;
 }
 
+.comment_id {
+  float: right;
+  opacity: 0.3;
+  font-size: 60%;
+}
+
 .comment_name {
   font-weight: bolder;
 }
