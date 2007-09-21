@@ -1,4 +1,6 @@
 {- snippet all -}
+import Data.List
+
 data Op = Plus | Minus | Mul | Div | Pow
         deriving (Eq, Show)
 
@@ -137,6 +139,8 @@ rpnShow i =
         toList (BinaryArith op a b) = toList a ++ toList b ++
            [op2str op]
         toList (UnaryArith op a) = toList a ++ [op]
+        join :: [a] -> [[a]] -> [a]
+        join delim l = concat (intersperse delim l)
     in join " " (toList i)
 
 simpleParen :: (Show a, Num a) => SymbolicManip a -> String
@@ -163,7 +167,7 @@ simplify (BinaryArith op ia ib) =
 simplify (UnaryArith op a) = UnaryArith op (simplify a)
 simplify x = x
 
-test :: forall a. (Num a) => a
+test :: (Num a) => a
 test = 2 * 5 + 3
 {- /snippet all -}
 
