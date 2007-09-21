@@ -179,7 +179,7 @@ beta: $(obj-beta)/index.html $(obj-beta)/.htaccess
 $(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
 
-$(obj-beta)/index.html: ../web/index.complete.html.in $(obj-beta)/hs.preface.html
+$(obj-beta)/index.html: ../web/index.beta.html.in $(obj-beta)/hs.preface.html
 	python ../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
