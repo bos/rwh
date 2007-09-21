@@ -115,6 +115,10 @@ ul.booktoc {
   color: #a0a0a0;
 }
 
+.unpublished {
+  color: #a0a0a0;
+}
+
 .chapinfo img {
   vertical-align: -35%;
   border: 0px;
