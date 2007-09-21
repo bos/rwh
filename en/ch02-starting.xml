@@ -495,8 +495,9 @@ Loading package base ... linking ... done.
       <para id="x_m1">There's one exception: the <quote>is not
 	  equal</quote> operator is <function>(/=)</function>
 	(somewhat visually similar to the mathematical &notEqual;
-	operator), not the <function>(!=)</function> you might
-	expect.</para>
+	operator), not the <function>(!=)</function> you might expect
+	from a language that borrows many other operators from
+	C.</para>
 
       &basics.ghci:neq;
 
