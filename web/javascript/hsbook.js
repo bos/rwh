@@ -1,3 +1,7 @@
+function qid(id) {
+  return id.replace(/([.:])/g, "\\$1");
+}
+
 function beforeComment(formData, jqForm, options) {
   var form = jqForm[0];
   if (!form.comment.value) {
@@ -15,19 +19,21 @@ function beforeComment(formData, jqForm, options) {
 }
 
 function ajaxifyForm(id) {
-  $("#form_" + id).ajaxForm({ beforeSubmit: beforeComment,
-			      success: function() { ajaxifyForm(id); },
-			      target: $("#comments_" + id) });
+  var q = qid(id);
+  
+  $("#form_" + q).ajaxForm({ beforeSubmit: beforeComment,
+			     success: function() { ajaxifyForm(id); },
+			     target: $("#comments_" + q) });
 }
 
 function toggleComment(id) {
-  $(id).nextAll().toggle();
+  $("#toggle_" + qid(id)).nextAll().toggle();
   return false;
 }
 
 function noComment(id) {
-  $("#comments_" + id).load(location.protocol + "//" + location.host +
-			    "/comments/single/" + id + "/", function() {
+  $("#comments_" + qid(id)).load(location.protocol + "//" + location.host +
+				 "/comments/single/" + id + "/", function() {
     ajaxifyForm(id);
   });
   return false;
@@ -55,7 +61,7 @@ $(document).ready(function() {
   $.getJSON(location.protocol + "//" + location.host + "/comments/chapter/" +
 	    chapid + "/", function(data) {
     $.each(data, function(id, item) {
-      $("p[id=\"" + id + "\"] span.commenttoggle").replaceWith(item);
+      $("#comments_" + qid(id) + " span.commenttoggle").replaceWith(item);
       ajaxifyForm(id);
     });
     $("span.commenttoggle").each(function() {

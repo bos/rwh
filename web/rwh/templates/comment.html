@@ -1,15 +1,15 @@
 {% ifequal length 1 %}
   <a class="commenttoggle" id="toggle_{{ id }}"
-      onclick="return toggleComment('#toggle_{{ id }}')"
+      onclick="return toggleComment('{{ id }}')"
       href="comments: show / hide">One comment</a>
 {% else %}
   {% if length %}
     <a class="commenttoggle" id="toggle_{{ id }}"
-      onclick="return toggleComment('#toggle_{{ id }}')"
+      onclick="return toggleComment('{{ id }}')"
       href="comments: show / hide">{{ length }} comments</a>
   {% else %}
     <a class="commenttoggle" id="toggle_{{ id }}"
-      onclick="return toggleComment('#toggle_{{ id }}')"
+      onclick="return toggleComment('{{ id }}')"
       href="comments: show / hide">No comments</a>
     <div class="comment" {% if not newid %} style="display: none;" {% endif %}>
       <div class="comment_body">Be the first to comment on this paragraph!</div>
