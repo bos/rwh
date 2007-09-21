@@ -19,10 +19,10 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 	Functions</a></li>
     <li class="zebra_a">4. <a href="hs.fp.html">Functional
 	Programming</a></li>
-    <li class="zebra_b">6. <a href="hs.typeclasses.html">Using
-	Typeclasses</a></li>
     <li class="zebra_a">5. <a href="hs.library.html">Writing a
 	Library</a></li>
+    <li class="zebra_b">6. <a href="hs.typeclasses.html">Using
+	Typeclasses</a></li>
     <li class="zebra_b">7. <a href="hs.io.html">Input and
 	Output</a></li>
     <li class="zebra_a">13. <a href="hs.data.html">Data
