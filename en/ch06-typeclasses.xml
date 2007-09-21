@@ -206,8 +206,8 @@ isEqual :: (BasicEq a) => a -> a -> Bool
 class  Eq a  where
     (==), (/=) :: a -> a -> Bool
 
-       &emdash;Minimal complete definition:
-       &emdash;     (==) or (/=)
+       -- Minimal complete definition:
+       --     (==) or (/=)
     x /= y     =  not (x == y)
     x == y     =  not (x /= y)
      </programlisting>
