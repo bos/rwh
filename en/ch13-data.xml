@@ -15,7 +15,7 @@
     the built-in tools that Haskell provides for arranging large amounts of
     data.
   </para>
-  <para>
+  <para id="x_pL">
     Before going on, there's a word that you might expect to see frequently
     in a chapter such as this: <emphasis>object</emphasis>.  You're not going
     to see it at all in this chapter because Haskell isn't an object-oriented
@@ -23,7 +23,7 @@
     are likely quite different than the object-oriented ideas you may be
     familiar with already.
   </para>
-  <para>
+  <para id="x_qL">
     In this chapter, you'll learn how to create and use your own types.
     We'll start with very basic types, and progress all the way to defining
     your own numeric types.  We'll have an example showing you how you can
@@ -491,14 +491,14 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
   <sect1 id="hs.data.funcs">
     <title>Functions Are Data, Too</title>
-    <para>
+    <para id="x_rL">
       Back in the beginning of the chapter, we reminded you that Haskell isn't
       object-oriented.  Part of Haskell's power is the ease with which you
       can create and manipulate functions with it.  Let's take a look at a
       record that stores a function as one of its fields:
     </para>
     &funcrecs.hs:all;
-    <para>
+    <para id="x_sL">
       Notice the type of the <literal>colorCalc</literal> field: it's a
       function.  It takes an <literal>Int</literal> and returns a tuple of
       <literal>(CuscomColor, Int)</literal>.  We create two
@@ -511,13 +511,13 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       with this a bit:
     </para>
     &funcrecs.ghci:all;
-    <para>
+    <para id="x_tL">
       That worked well enough, but you might be wondering how to do something
       more advanced such as making a piece of data available multiple places.
       A type construction function can be helpful.  Here's an example:
     </para>
     &funcrecs2.hs:all;
-    <para>
+    <para id="x_uL">
       Here we have a function called <literal>mkFuncRec</literal> that
       takes a &String; and another function as parameters, and returns
       a new <literal>FuncRec</literal> record.  Notice how both parameters to
@@ -525,7 +525,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       out:
     </para>
     &funcrecs2.ghci:all;
-    <para>
+    <para id="x_vL">
       Notice the creation of <literal>plus5a</literal>.  We changed the
       <literal>name</literal> field, but not the <literal>namedCalc</literal>
       field.  That's why <literal>name</literal> has the new name, but
@@ -563,18 +563,18 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
   <sect1 id="hs.data.num">
     <title>Extended example: Numeric Types</title>
-    <para>
+    <para id="x_wL">
       We've told you how powerful and expressive Haskell's type system is.
       We've shown you a lot of ways to use that power.  Here's a chance to
       really see that in action.
     </para>
-    <para>
+    <para id="x_xL">
       Back in <xref linkend="hs.typeclasses.wellknown.numeric"/>, we showed
       the numeric typeclasses that come with Haskell.  Let's see what we can
       do by defining new types and utilizing the numeric typeclasses to
       integrate them with basic mathematics in Haskell.
     </para>
-    <para>
+    <para id="x_yL">
       Let's start by thinking through what we'd like to see out of &ghci;
       when we interact with our new types.  To start with, it might be nice
       to render numeric expressions as strings, making sure to indicate
@@ -582,13 +582,13 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <literal>prettyShow</literal> to do that.
     </para>
     &num.ghci:prettyshow;
-    <para>
+    <para id="x_zL">
       That looks nice, but it wasn't all that smart.  We could easily
       simplify out the <literal>1 *</literal> part of the expression.  How
       about a function to do some very basic simplification?
     </para>
     &num.ghci:simplify;
-    <para>
+    <para id="x_AM">
       How about converting a numeric expression to Reverse Polish Notation
       (RPN)?  RPN is a postfix notation that never requires parentheses, and
       is commonly found on HP calculators.  RPN is a stack-based notation.
@@ -597,12 +597,12 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       stack.
     </para>
     &num.ghci:rpnshow;
-    <para>
+    <para id="x_BM">
       Maybe it would be nice to be able to represent simple expressions with
       symbols for the unknowns.
     </para>
     &num.ghci:symbols;
-    <para>
+    <para id="x_CM">
       It's often important to track units of measure when working with
       numbers.  For instance, when you see the number 5, does it mean 5
       meters, 5 feet, or 5 bytes?  Of course, if you divide 5 meters by 2
@@ -610,7 +610,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       units.  Moreover, it should stop you from adding 2 seconds to 5 meters.
     </para>
     &num.ghci:units;
-    <para>
+    <para id="x_DM">
       If we define an expression or a function that is valid for all numbers,
       we should be able to calculate the result, or render the expression.
       For instance, if we define <literal>test</literal> to have type
@@ -618,29 +618,29 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         3</literal>, then we ought to be able to do this:
     </para>
     &num.ghci:func;
-    <para>
+    <para id="x_EM">
       Since we have units, we should be able to handle some basic
       trigonometry as well.  Many of these operations operate on angles.
       Let's make sure that we can handle both degrees and radians.
     </para>
     &num.ghci:trig;
-    <para>
+    <para id="x_FM">
       Finally, we ought to be able to put all this together and combine
       different kinds of expressions together.
     </para>
     &num.ghci:final;
-    <para>
+    <para id="x_GM">
       Perhaps a future excercise could enhance <literal>prettyShow</literal>
       to remove unnecessary parentheses as well.
     </para>
-    <para>
+    <para id="x_HM">
       Everything you've just seen is possible with Haskell types and classes.
       In fact, you've been reading a real &ghci; session demonstrating
       <literal>num.hs</literal>, which you'll see shortly.
     </para>
     <sect2>
       <title>First Steps</title>
-      <para>
+      <para id="x_IM">
         Let's think about how we would accomplish everything shown above.  To
         start with, we might use &ghci; to check the type of
         <literal>(+)</literal>, which is <literal>Num a => a -> a ->
@@ -652,12 +652,12 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         side, and its right side.  The left and right sides could themselves be
         expressions.
       </para>
-      <para>
+      <para id="x_JM">
         We can therefore think of an expression as a sort of tree.  Let's start
         with some simple types.
       </para>
       &numsimple.hs:all;
-      <para>
+      <para id="x_KM">
         First, we define a type called <literal>Op</literal>.  This type
         simply represents some of the operations we will intend to support.
         Next, there is a definition for <literal>SymbolicManip a</literal>.
@@ -666,7 +666,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         a full type may be something like <literal>SymbolicManip
           Int</literal>.
       </para>
-      <para>
+      <para id="x_LM">
         A <literal>SymbolicManip</literal> type can be a plain number, or it
         can be some arithmetic operation.  The type for the
         <literal>Arith</literal> constructor is recursive, which is perfectly
@@ -676,7 +676,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         example:
       </para>
       &numsimple.ghci:all;
-      <para>
+      <para id="x_MM">
         You can see that we already have a very basic representation of
         expressions working.  Notice how Haskell "converted" <literal>5 * 10
           + 2</literal> into a <literal>SymbolicManip</literal>, and even
@@ -687,7 +687,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         a <literal>SymbolicManip Int</literal> as it as an
         <literal>Int</literal>.
       </para>
-      <para>
+      <para id="x_NM">
         From here, then, our task is simple: extend the
         <literal>SymbolicManip</literal> type to be able to represent all the
         operations we will want to perform, implement instances of it for the
@@ -698,12 +698,12 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </sect2>
     <sect2>
       <title>Completed Code</title>
-      <para>
+      <para id="x_OM">
         Here is the completed <literal>num.hs</literal>, which was used with
         the &ghci; examples at the beginning of this chapter.
       </para>
       &num.hs:all;
-      <para>
+      <para id="x_PM">
         Here we have done what we set out to accomplish: implemented more
         instances for <literal>SymbolicManip</literal>.  We have also
         introduced another type called <literal>Units</literal> which stores
@@ -711,7 +711,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         functions which render the <literal>SymbolicManip</literal> or
         <literal>Units</literal> in different ways.  
       </para>
-      <para>
+      <para id="x_QM">
         There is one other point that this example drives home.  In many
         languages, even those with objects and overloading, there are still
         some parts of the language that are special in some way.  In Haskell,

@@ -45,7 +45,7 @@
 	url="http://www.haskell.org/ghc/distribution_packages.html">distribution 
 	packages</ulink> page.</para>
 
-    <para>For more detailed information about how to install &GHC; on
+    <para id="x_nL">For more detailed information about how to install &GHC; on
       a variety of popular platforms, see <xref
 	linkend="hs.install"/>.</para>
   </sect1>
