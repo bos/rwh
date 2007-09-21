@@ -78,11 +78,11 @@
 
       <table>
 	<title>Single-character escape codes</title>
-	<tgroup cols="4">
+	<tgroup cols="3">
 	  <thead>
 	    <row>
 	      <entry>Escape</entry>
-	      <entry>Value</entry>
+	      <entry>Unicode</entry>
 	      <entry>Character</entry>
 	    </row>
 	  </thead>
@@ -99,8 +99,6 @@
 	    </row>
 	    <row>
 	      <entry><literal>\b</literal></entry>
-	    </row>
-	    <row>
 	      <entry>U+0008</entry>
 	      <entry>backspace</entry>
 	    </row>
