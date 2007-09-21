@@ -54,9 +54,9 @@ class Comment(models.Model):
 
     def get_absolute_url(self):
         s = sha.new()
-        s.update(repr(self.comment.to_python(self.comment)))
-        s.update(repr(self.submitter_name.to_python(self.submitter_name)))
-        s.update(str(self.date.to_python(date)))
+        s.update(repr(self.comment))
+        s.update(repr(self.submitter_name))
+        s.update(str(self.date))
         return '/complete/%s.html#%s?comment=%s&uuid=%s' % (
             self.element.chapter, self.element.id, self.id, s.hexdigest()[:20]
             )
