@@ -1,17 +1,27 @@
 {- snippet all -}
 import Data.List
 
+--------------------------------------------------
+-- Symbolic/units manipulation
+--------------------------------------------------
+
+-- The "operators" that we're going to support
 data Op = Plus | Minus | Mul | Div | Pow
         deriving (Eq, Show)
 
+{- The core symbolic manipulation type.  It can be a simple number,
+a symbol, a binary arithmetic operation (such as +), or a unary
+arithmetic operation (such as cos) -}
 data Num a => SymbolicManip a = 
           Number a
         | Symbol String
         | BinaryArith Op (SymbolicManip a) (SymbolicManip a)
         | UnaryArith String (SymbolicManip a)
           deriving(Eq)
-                     
 
+{- Every instance of Num is now going to be an instance of
+SymbolicManip.  Define the SymbolicManip versions of basic Num
+operations. -}
 instance Num a => Num (SymbolicManip a) where
     a + b = BinaryArith Plus a b
     a - b = BinaryArith Minus a b
@@ -21,11 +31,14 @@ instance Num a => Num (SymbolicManip a) where
     signum _ = error "signum is unimplemented"
     fromInteger i = Number (fromInteger i)
 
+{- Every Fractional is part of SymbolicManip, and we implement
+SymbolicManip operations for them. -}
 instance (Fractional a) => Fractional (SymbolicManip a) where
     a / b = BinaryArith Div a b
     recip a = BinaryArith Div (Number 1) a
     fromRational r = Number (fromRational r)
 
+{- Imlement Floating operations for SymbolicManip -}
 instance (Floating a) => Floating (SymbolicManip a) where
     pi = Symbol "pi"
     exp a = UnaryArith "exp" a
@@ -45,8 +58,66 @@ instance (Floating a) => Floating (SymbolicManip a) where
     acosh a = UnaryArith "acosh" a
     atanh a = UnaryArith "atanh" a
 
+prettyShow :: (Show a, Num a) => SymbolicManip a -> String
+prettyShow (Number x) = show x
+prettyShow (Symbol x) = x
+prettyShow (BinaryArith op a b) =
+    let pa = simpleParen a
+        pb = simpleParen b
+        pop = op2str op
+        in pa ++ pop ++ pb
+prettyShow (UnaryArith op a) = 
+    op ++ "(" ++ show a ++ ")"
+
+{- Showing a SymbolicManip calls the prettyShow function on it -}
+instance (Show a, Num a) => Show (SymbolicManip a) where
+    show a = prettyShow a
+    
+rpnShow :: (Show a, Num a) => SymbolicManip a -> String
+rpnShow i =
+    let toList (Number x) = [show x]
+        toList (Symbol x) = [x]
+        toList (BinaryArith op a b) = toList a ++ toList b ++
+           [op2str op]
+        toList (UnaryArith op a) = toList a ++ [op]
+        join :: [a] -> [[a]] -> [a]
+        join delim l = concat (intersperse delim l)
+    in join " " (toList i)
+
+simpleParen :: (Show a, Num a) => SymbolicManip a -> String
+simpleParen (Number x) = prettyShow (Number x)
+simpleParen (Symbol x) = prettyShow (Symbol x)
+simpleParen x@(BinaryArith _ _ _) = "(" ++ prettyShow x ++ ")"
+simpleParen x@(UnaryArith _ _) = prettyShow x
+
+simplify :: (Num a) => SymbolicManip a -> SymbolicManip a
+simplify (BinaryArith op ia ib) = 
+    let sa = simplify ia
+        sb = simplify ib
+        in
+        case (op, sa, sb) of 
+                (Mul, Number 1, b) -> b
+                (Mul, a, Number 1) -> a
+                (Mul, Number 0, b) -> Number 0
+                (Mul, a, Number 0) -> Number 0
+                (Div, a, Number 1) -> a
+                (Plus, a, Number 0) -> a
+                (Plus, Number 0, b) -> b
+                (Minus, a, Number 0) -> a
+                _ -> BinaryArith op sa sb
+simplify (UnaryArith op a) = UnaryArith op (simplify a)
+simplify x = x
+--------------------------------------------------
+-- Units of measure support
+--------------------------------------------------
+
+{- New data type: Units.  A Units type contains a number
+and a SymbolicManip, which represents the units of measure.
+A simple label would be something like (Symbol "m") -}
 data Num a => Units a = Units a (SymbolicManip a)
            deriving (Eq)
+
+{- Every Num can be an instance of Units -}
 instance (Num a) => Num (Units a) where
     (Units xa ua) + (Units xb ub) 
         | ua == ub = Units (xa + xb) ua
@@ -58,11 +129,13 @@ instance (Num a) => Num (Units a) where
     signum (Units xa _) = Units (signum xa) (Number 1)
     fromInteger i = Units (fromInteger i) (Number 1)
 
+{- Fractional implementation for Units -}
 instance (Fractional a) => Fractional (Units a) where
     (Units xa ua) / (Units xb ub) = Units (xa / xb) (ua / ub)
     recip a = 1 / a
     fromRational r = Units (fromRational r) (Number 1)
 
+{- Floating implementation for Units -}
 instance (Floating a) => Floating (Units a) where
     pi = (Units pi (Number 1))
     exp _ = error "exp not yet implemented in Units"
@@ -99,18 +172,18 @@ instance (Floating a) => Floating (Units a) where
     acosh = error "acosh not yet implemented in Units"
     atanh = error "atanh not yet implemented in Units"
 
+{- A simple function that takes a number and a String and returns an
+appropriate Units type to represent the number and its unit of measure -}
 units :: (Num z) => z -> String -> Units z
 units a b = Units a (Symbol b)
 
+{- Extract the number only out of a Units type -}
 dropUnits :: (Num z) => Units z -> z
 dropUnits (Units x _) = x
                                                     
 instance (Show a, Num a) => Show (Units a) where
     show (Units xa ua) = show xa ++ "_" ++ prettyShow (simplify ua)
 
-instance (Show a, Num a) => Show (SymbolicManip a) where
-    show a = prettyShow a
-    
 deg2rad x = 2 * pi * x / 360
 rad2deg x = 360 * x / (2 * pi)
 
@@ -121,51 +194,6 @@ op2str Mul = "*"
 op2str Div = "/"
 op2str Pow = "**"
 
-prettyShow :: (Show a, Num a) => SymbolicManip a -> String
-prettyShow (Number x) = show x
-prettyShow (Symbol x) = x
-prettyShow (BinaryArith op a b) =
-    let pa = simpleParen a
-        pb = simpleParen b
-        pop = op2str op
-        in pa ++ pop ++ pb
-prettyShow (UnaryArith op a) = 
-    op ++ "(" ++ show a ++ ")"
-
-rpnShow :: (Show a, Num a) => SymbolicManip a -> String
-rpnShow i =
-    let toList (Number x) = [show x]
-        toList (Symbol x) = [x]
-        toList (BinaryArith op a b) = toList a ++ toList b ++
-           [op2str op]
-        toList (UnaryArith op a) = toList a ++ [op]
-        join :: [a] -> [[a]] -> [a]
-        join delim l = concat (intersperse delim l)
-    in join " " (toList i)
-
-simpleParen :: (Show a, Num a) => SymbolicManip a -> String
-simpleParen (Number x) = prettyShow (Number x)
-simpleParen (Symbol x) = prettyShow (Symbol x)
-simpleParen x@(BinaryArith _ _ _) = "(" ++ prettyShow x ++ ")"
-simpleParen x@(UnaryArith _ _) = prettyShow x
-
-simplify :: (Num a) => SymbolicManip a -> SymbolicManip a
-simplify (BinaryArith op ia ib) = 
-    let sa = simplify ia
-        sb = simplify ib
-        in
-        case (op, sa, sb) of 
-                (Mul, Number 1, b) -> b
-                (Mul, a, Number 1) -> a
-                (Mul, Number 0, b) -> Number 0
-                (Mul, a, Number 0) -> Number 0
-                (Div, a, Number 1) -> a
-                (Plus, a, Number 0) -> a
-                (Plus, Number 0, b) -> b
-                (Minus, a, Number 0) -> a
-                _ -> BinaryArith op sa sb
-simplify (UnaryArith op a) = UnaryArith op (simplify a)
-simplify x = x
 
 test :: (Num a) => a
 test = 2 * 5 + 3
