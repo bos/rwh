@@ -11,17 +11,20 @@ data Op = Plus | Minus | Mul | Div | Pow
 
 {- The core symbolic manipulation type.  It can be a simple number,
 a symbol, a binary arithmetic operation (such as +), or a unary
-arithmetic operation (such as cos) -}
+arithmetic operation (such as cos)
+
+Notice the types of BinaryArith and UnaryArith: it's a recursive
+type.  So, we could represent a (+) over two SymbolicManips. -}
 data Num a => SymbolicManip a = 
-          Number a
-        | Symbol String
+          Number a           -- Simple number, such as 5
+        | Symbol String      -- A symbol, such as x
         | BinaryArith Op (SymbolicManip a) (SymbolicManip a)
         | UnaryArith String (SymbolicManip a)
-          deriving(Eq)
+          deriving (Eq)
 
-{- Every instance of Num is now going to be an instance of
-SymbolicManip.  Define the SymbolicManip versions of basic Num
-operations. -}
+{- SymbolicManip will be an instance of Num.  Define how the Num
+operations are handled over a SymbolicManip.  This will implement things
+like (+) for SymbolicManip. -}
 instance Num a => Num (SymbolicManip a) where
     a + b = BinaryArith Plus a b
     a - b = BinaryArith Minus a b
@@ -31,14 +34,13 @@ instance Num a => Num (SymbolicManip a) where
     signum _ = error "signum is unimplemented"
     fromInteger i = Number (fromInteger i)
 
-{- Every Fractional is part of SymbolicManip, and we implement
-SymbolicManip operations for them. -}
+{- Make SymbolicManip an instance of Fractional -}
 instance (Fractional a) => Fractional (SymbolicManip a) where
     a / b = BinaryArith Div a b
     recip a = BinaryArith Div (Number 1) a
     fromRational r = Number (fromRational r)
 
-{- Imlement Floating operations for SymbolicManip -}
+{- Make SymbolicManip an instance of Floating -}
 instance (Floating a) => Floating (SymbolicManip a) where
     pi = Symbol "pi"
     exp a = UnaryArith "exp" a
@@ -58,9 +60,14 @@ instance (Floating a) => Floating (SymbolicManip a) where
     acosh a = UnaryArith "acosh" a
     atanh a = UnaryArith "atanh" a
 
+{- Show a SymbolicManip as a String, using conventional
+algebriac notation -}
 prettyShow :: (Show a, Num a) => SymbolicManip a -> String
+
+-- Show a number or symbol as a bare number or serial
 prettyShow (Number x) = show x
 prettyShow (Symbol x) = x
+
 prettyShow (BinaryArith op a b) =
     let pa = simpleParen a
         pb = simpleParen b
@@ -68,6 +75,21 @@ prettyShow (BinaryArith op a b) =
         in pa ++ pop ++ pb
 prettyShow (UnaryArith op a) = 
     op ++ "(" ++ show a ++ ")"
+
+op2str :: Op -> String
+op2str Plus = "+"
+op2str Minus = "-"
+op2str Mul = "*"
+op2str Div = "/"
+op2str Pow = "**"
+
+{- Add parenthesis where needed.  This function is fairly conservative
+and will add parenthesis when not needed in some cases. -}
+simpleParen :: (Show a, Num a) => SymbolicManip a -> String
+simpleParen (Number x) = prettyShow (Number x)
+simpleParen (Symbol x) = prettyShow (Symbol x)
+simpleParen x@(BinaryArith _ _ _) = "(" ++ prettyShow x ++ ")"
+simpleParen x@(UnaryArith _ _) = prettyShow x
 
 {- Showing a SymbolicManip calls the prettyShow function on it -}
 instance (Show a, Num a) => Show (SymbolicManip a) where
@@ -83,12 +105,6 @@ rpnShow i =
         join :: [a] -> [[a]] -> [a]
         join delim l = concat (intersperse delim l)
     in join " " (toList i)
-
-simpleParen :: (Show a, Num a) => SymbolicManip a -> String
-simpleParen (Number x) = prettyShow (Number x)
-simpleParen (Symbol x) = prettyShow (Symbol x)
-simpleParen x@(BinaryArith _ _ _) = "(" ++ prettyShow x ++ ")"
-simpleParen x@(UnaryArith _ _) = prettyShow x
 
 simplify :: (Num a) => SymbolicManip a -> SymbolicManip a
 simplify (BinaryArith op ia ib) = 
@@ -186,13 +202,6 @@ instance (Show a, Num a) => Show (Units a) where
 
 deg2rad x = 2 * pi * x / 360
 rad2deg x = 360 * x / (2 * pi)
-
-op2str :: Op -> String
-op2str Plus = "+"
-op2str Minus = "-"
-op2str Mul = "*"
-op2str Div = "/"
-op2str Pow = "**"
 
 
 test :: (Num a) => a
