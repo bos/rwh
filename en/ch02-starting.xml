@@ -871,7 +871,7 @@ Loading package base ... linking ... done.
 
     <para id="x_k2">In this chapter, we've seen how to install &GHC; for our
       environment.  We then went on to interactively explore some
-      basic Haskell concepts using &ghci; the interpreter bundled with
+      basic Haskell concepts using &ghci;, the interpreter bundled with
       &GHC;.  We saw how to evaluate simple expressions.</para>
 
     <para id="x_l2">We dipped a toe into the water of typing.</para>
