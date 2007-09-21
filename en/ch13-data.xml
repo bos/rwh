@@ -683,7 +683,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         handled order of evaluation properly.  This wasn't really a true
         conversion; <literal>SymbolicManip</literal> is a first-class number
         now.  Integer numeric literals are internally treated as being wrapped 
-        in &fromInteger; anyway, so <literal>5</literal> is just as valid as
+        in <literal>fromInteger</literal> anyway, so <literal>5</literal> is just as valid as
         a <literal>SymbolicManip Int</literal> as it as an
         <literal>Int</literal>.
       </para>

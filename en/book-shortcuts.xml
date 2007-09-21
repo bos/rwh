@@ -114,3 +114,4 @@
 <!ENTITY PQ "<literal>&lt;?&gt;</literal>">
 <!ENTITY try "<literal>try</literal>">
 <!ENTITY fail "<literal>fail</literal>">
+<!ENTITY Num "<literal>Num</literal>">

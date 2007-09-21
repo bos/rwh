@@ -1,4 +1,4 @@
-{- snippet all -}
+{-- snippet all --}
 import Data.List
 
 --------------------------------------------------
@@ -224,5 +224,5 @@ rad2deg x = 360 * x / (2 * pi)
 
 test :: (Num a) => a
 test = 2 * 5 + 3
-{- /snippet all -}
+{-- /snippet all --}
 

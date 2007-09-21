@@ -1,4 +1,4 @@
-{- snippet all -}
+{-- snippet all --}
 -- The "operators" that we're going to support
 data Op = Plus | Minus | Mul | Div | Pow
         deriving (Eq, Show)
@@ -20,4 +20,4 @@ instance Num a => Num (SymbolicManip a) where
     abs a = error "abs is unimplemented"
     signum _ = error "signum is unimplemented"
     fromInteger i = Number (fromInteger i)
-{- /snippet all -}
+{-- /snippet all --}
