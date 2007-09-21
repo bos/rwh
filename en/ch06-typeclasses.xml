@@ -219,14 +219,14 @@ class  Eq a  where
     <para id="x_HB">
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
-      linkend="hs.typeclasses.ex.naiveeq"/>.
+      linkend="hs.typeclasses.need"/>.
       Now let's see how we could make that same <literal>Color</literal>
       type a member of the <literal>BasicEq3</literal> class.
     </para>
     &eqclasses.hs:basiceq3inst;
     <para id="x_IB">
       Notice that we provide essentially the same function as we used
-      back in <xref linkend="hs.typeclasses.ex.naiveeq"/>.  In fact, the
+      back in <xref linkend="hs.typeclasses.need"/>.  In fact, the
       implementation is identical.  However, in this case, we can use
       <literal>isEqual3</literal> on <emphasis>any</emphasis> type that
       we declare is an instance of <literal>BasicEq3</literal>, not just
@@ -317,7 +317,7 @@ class  Eq a  where
         This example defines an instance of <literal>Show</literal> for our
         type 
         <literal>Color</literal> (see <xref
-          linkend="hs.typeclasses.ex.naiveeq"/>).  The implementation is
+          linkend="hs.typeclasses.need"/>).  The implementation is
         simple: we define a function <literal>show</literal> and that's all
         that's needed.
       </para>
