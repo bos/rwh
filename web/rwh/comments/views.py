@@ -28,14 +28,16 @@ class CommentForm(forms.Form):
         }))
     remember = forms.BooleanField(initial=True, required=False)
 
-def chapter(request, id):
-    template = get_template('comment.html')
+def comments_by_chapter(id):
     objs = {}
     for c in Comment.objects.filter(element__chapter=id, hidden=False).order_by('date'):
-        objs.setdefault(c.element_id, [])
-        objs[c.element_id].append(c)
+        objs.setdefault(c.element_id, []).append(c)
+    return objs
+
+def chapter(request, id):
+    template = get_template('comment.html')
     resp = {}
-    for elt, comments in objs.iteritems():
+    for elt, comments in comments_by_chapter(id).iteritems():
         form = CommentForm(initial={
             'id': elt,
             'name': request.session.get('name', ''),
@@ -48,6 +50,12 @@ def chapter(request, id):
             }))
     return HttpResponse(dumps(resp), mimetype='application/json')
 
+def chapter_count(request, id):
+    resp = comments_by_chapter(id)
+    for elt, comments in resp.iteritems():
+        resp[elt] = len(comments)
+    return HttpResponse(dumps(resp), mimetype='application/json')
+    
 def single(request, id, form=None, newid=None):
     queryset = Comment.objects.filter(element=id, hidden=False).order_by('date')
     if form is None:
