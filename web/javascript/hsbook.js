@@ -31,7 +31,7 @@ function toggleComment(id) {
   return false;
 }
 
-function noComment(id) {
+function loadComments(id) {
   $("#comments_" + qid(id)).load(location.protocol + "//" + location.host +
 				 "/comments/single/" + id + "/", function() {
     ajaxifyForm(id);
@@ -59,15 +59,18 @@ $(document).ready(function() {
   $("#chapterfeed").attr("href",
 			 $("#chapterfeed").attr("href") + chapid + "/");
   $.getJSON(location.protocol + "//" + location.host + "/comments/chapter/" +
-	    chapid + "/", function(data) {
+	    chapid + "/count/", function(data) {
     $.each(data, function(id, item) {
-      $("#comments_" + qid(id) + " span.commenttoggle").replaceWith(item);
-      ajaxifyForm(id);
+      var s = item == 1 ? "" : "s";
+      $("#comments_" + qid(id) + " span.commenttoggle").replaceWith(
+        "<a class='commenttoggle' id='toggle_" + id + "' " +
+	"onclick='return loadComments(\"" + id + "\")' " +
+	"href='comment: add'>" + item + " comment" + s + "</a>");
     });
     $("span.commenttoggle").each(function() {
       var id = $(this).attr("pid");
       $(this).replaceWith("<a class='commenttoggle' id='toggle_" + id + "' " +
-			  "onclick='return noComment(\"" + id + "\")' " +
+			  "onclick='return loadComments(\"" + id + "\")' " +
 			  "href='comment: add'>No comments</a>");
     });
   });
