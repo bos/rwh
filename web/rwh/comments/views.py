@@ -1,10 +1,23 @@
 import django.newforms as forms
+from django.db import connection
 from django.http import HttpResponse
 from rwh.comments.models import Comment, Element
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context
 from django.template.loader import get_template
 from django.utils.simplejson import dumps 
+
+def dump_queries():
+    # requires settings.DEBUG to be set to True in order to work
+    if len(connection.queries) == 1:
+        print connection.queries
+    else:
+        qs = {}
+        for q in connection.queries:
+            qs[q['sql']] = qs.setdefault(q['sql'], 0) + 1
+        for q in sorted(qs.items(), key=lambda x: x[1], reverse=True):
+            print q
+        print len(connection.queries)
 
 class CommentForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput)
