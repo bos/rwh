@@ -65,7 +65,7 @@ $(document).ready(function() {
       $("#comments_" + qid(id) + " span.commenttoggle").replaceWith(
         "<a class='commenttoggle' id='toggle_" + id + "' " +
 	"onclick='return loadComments(\"" + id + "\")' " +
-	"href='comment: add'>" + item + " comment" + s + "</a>");
+	"href='comments: show / hide'>" + item + " comment" + s + "</a>");
     });
     $("span.commenttoggle").each(function() {
       var id = $(this).attr("pid");
