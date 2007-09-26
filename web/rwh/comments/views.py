@@ -19,8 +19,8 @@ def chapter(request, id):
     template = get_template('comment.html')
     objs = {}
     for c in Comment.objects.filter(element__chapter=id, hidden=False).order_by('date'):
-        objs.setdefault(c.element.id, [])
-        objs[c.element.id].append(c)
+        objs.setdefault(c.element_id, [])
+        objs[c.element_id].append(c)
     resp = {}
     for elt, comments in objs.iteritems():
         form = CommentForm(initial={
