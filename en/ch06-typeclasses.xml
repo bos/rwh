@@ -4,16 +4,18 @@
   <title>Using Typeclasses</title>
 
   <para id="x_iA">
-    Typeclasses are one of the most powerful features in Haskell.  They
-    are also at the heart of some basic language features such as equality
+    Typeclasses are one of the most powerful features in Haskell.
+    They allow you to define generic interfaces that provide a common
+    feature set over a wide variety of types.  Typeclasses 
+    are at the heart of some basic language features such as equality
     testing and numeric operators.  Before we talk about what exactly
-    typeclasses are, though, we'd like to first explain the need for them.
+    typeclasses are, though, we'd like to explain the need for them.
   </para>
 
   <sect1 id="hs.typeclasses.need">
     <title>The need for typeclasses</title>
     <para id="x_jA">
-      Let's imaging that for some unfathomable reason, the designers of the
+      Let's imagine that for some unfathomable reason, the designers of the
       Haskell language neglected to implement the equality test
       <function>==</function>.  Once you got over your shock at hearing this, 
       you resolved to implement your own equality tests.  Your application
@@ -26,12 +28,7 @@
       You can test this with &ghci; or
       <application>hugs</application>:
     </para>
-    <screen>
-*Main&gt; <userinput>colorEq Red Red</userinput>
-True
-*Main&gt; <userinput>colorEq Red Blue</userinput>
-False
-</screen>
+    &naiveeq.ghci:all;
     <para id="x_lA">
       Now, let's say that you want to add an equality test for
       &String;s.
@@ -43,41 +40,25 @@ False
     </para>
     &naiveeq.hs:string;
     <para id="x_mA">
-      You should now be able to see a problem: we have to define a new
-      function for every different type that we want to be able to compare.
+      You should now be able to see a problem: we have to use a function
+      with a different name for every different type that we want to be able to compare.
       That's inefficient and annoying.  It's much more convenient to be able
-      to just use <function>==</function> to compare anything.  As it turns
-      out, this is exactly what Haskell's typeclasses are for.  
+      to just use <function>==</function> to compare anything.  It may also
+      be useful to write generic functions such as </function>/=</function>
+      that could be implemented in terms of <function>==</function>, and
+      valid for almost anything.
+      This is exactly what Haskell's typeclasses are for.  
     </para>
   </sect1>
   <sect1 id="hs.typeclasses.whatarethey">
     <title>What are typeclasses?</title>
     <para id="x_nA">
-      Typeclasses define a set of functions that can operate on more than one
-      type of data.  A typeclass defines an interface, and perhaps even
-      default implementations of functions.  You then create an instance for
-      each type that should conform to the typeclass.  Once that is done, a
-      function that's part of the typeclass definition can be called with any
-      type that's an instance of the typeclass as a parameter.
-    </para>
-    <para id="x_oA">
-      Those familiar with object-oriented programming can think of
-      typeclasses as objects in reverse.  In OOP, when you define an object,
-      you define what its parent classes are at that time.  You must also
-      define how it implements the methods in the parent class, if you need a
-      custom implementation.
-    </para>
-    <para id="x_pA">
-      With typeclasses, you have greater freedom.  Let's say that you have a
-      type from a third party.  Perhaps that third party didn't make it part
-      of a typeclass that you'd like it to be part of.  No problem; you can
-      define an instance yourself.  With OOP, the best you can do is subclass
-      an object and use multiple inheritance (or, in Java, interfaces) to
-      make the child object behave as you like.  But you're still stuck if
-      you have a parent object from somewhere.
+      Typeclasses define a set of functions that can have different
+      implementations depending on the type of data they are given.
+      Typeclasses may look like objects, but they are truly quite different.  
     </para>
     <para id="x_qA">
-      In case that wasn't all clear, let's consider an example.  Imagine you have a
+      Let's consider an example.  Imagine you have a
       basket of fruit.  There are things that you might want to do 
       with just about all
       fruit: eat it, peel it, or maybe remove the seeds.  If you were to

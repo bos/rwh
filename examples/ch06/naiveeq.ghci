@@ -1,0 +1,5 @@
+--# all
+:l naiveeq.hs
+colorEq Red Red
+colorEq Red Green
+
