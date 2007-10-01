@@ -44,7 +44,7 @@
       with a different name for every different type that we want to be able to compare.
       That's inefficient and annoying.  It's much more convenient to be able
       to just use <function>==</function> to compare anything.  It may also
-      be useful to write generic functions such as </function>/=</function>
+      be useful to write generic functions such as <function>/=</function>
       that could be implemented in terms of <function>==</function>, and
       valid for almost anything.
       This is exactly what Haskell's typeclasses are for.  
