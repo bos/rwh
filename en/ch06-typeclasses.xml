@@ -92,6 +92,7 @@
   <sect1 id="hs.typeclasses.defining">
     <title>Defining new typeclasses</title>
     <para id="x_tA">
+      <remark>FIXME: use Eq instead?  (see comments)</remark>
       Let's use typeclasses to solve our equality dilemma from earlier in the
       chapter.  The first thing that we need to do is define the typeclass
       itself.  What want a function that takes two parameters, both the
@@ -102,7 +103,7 @@
     &eqclasses.hs:basiceq;
     <para id="x_uA">
       This says that we are declaring a typeclass named
-      <varname>BasicEq</varname>, and we'll refer to instance types with the
+      <literal>BasicEq</literal>, and we'll refer to instance types with the
       letter <literal>a</literal>.  This typeclass defines one function.
       That function takes two parameters&emdash;both corresponding to instance
       types&emdash;and returns a <literal>Bool</literal>.
@@ -127,12 +128,25 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     <para id="x_zA">
       You can read that this way: "For all types <literal>a</literal>, so
       long as <literal>a</literal> is an instance of
-      <varname>BasicEq</varname>, <literal>isEqual</literal> takes two
+      <literal>BasicEq</literal>, <literal>isEqual</literal> takes two
       parameters of type <literal>a</literal> and returns a
       <literal>Bool</literal>".  Let's take a quick look at defining
       <literal>isEqual</literal> for a particular type.
     </para>
     &eqclasses.hs:basicinstance;
+    <para>
+      You can also use &ghci; to verify that we can now use
+      <literal>isEqual</literal> on &Bool;s, but not on any other type:
+    </para>
+    &eqclasses.ghci:all;
+    <para>
+      Notice that when we tried to compare two strings, &ghci; noticed that
+      we hadn't provided an instance of <literal>BasicEq</literal> for
+      &String;.  It therefore didn't know how to compare a &String;, and
+      suggested that we could fix the problem by defining an instance of
+      <literal>BasicEq</literal> for <literal>[Char]</literal>, which is the
+      same as &String;.
+    </para>
     <para>
       We'll go into more detail on defining instances in <xref
         linkend="hs.typeclasses.instances"/>.  First, though, let's continue
@@ -142,13 +156,22 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     </para>
     &eqclasses.hs:basiceq2;
     <para id="x_BB">
-      Someone providing an instance of <varname>BasicEq2</varname> will
+      Someone providing an instance of <literal>BasicEq2</literal> will
       be required to define two functions: <literal>isEqual2</literal> and
       <literal>isNotEqual2</literal>.
     </para>
     <para id="x_CB">
-      While our definition of <varname>BasicEq2</varname> is fine, it seems
-      that we're making extra work for ourselves.  Logically speaking, if we
+      While our definition of <literal>BasicEq2</literal> is fine, it seems
+      that we're making extra work for ourselves.  
+      Logically speaking, for any type, if we know the return value of
+      <literal>isEqual</literal>, we also know the return value of
+      <literal>isNotEqual</literal>, and vice-versa.  The definition of
+      <literal>BasicEq2</literal> requires programmers to define both
+      functions for every instance of <literal>BasicEq2</literal>.  It would
+      be nice to only require programmers to write one function, and have the
+      system figure out the proper return value of the other automatically.
+
+      Logically speaking, if we
       know what <literal>isEqual</literal> or
       <literal>isNotEqual</literal> would return, we know how to figure out
       what the other function would return, for all types.  Rather than
@@ -173,15 +196,15 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       will not be required to.
     </para>
     <para id="x_FB">
-      With <varname>BasicEq3</varname>, we have provided a class that does
+      With <literal>BasicEq3</literal>, we have provided a class that does
       very much the same thing as Haskell's built-in <literal>==</literal>
       and <literal>/=</literal> operators.  In fact, these operators are
       defined by a typeclass that looks almost identical to
-      <varname>BasicEq3</varname>.  The Haskell 98 Report <remark>FIXME: add
+      <literal>BasicEq3</literal>.  The Haskell 98 Report <remark>FIXME: add
         reference? --jg</remark> defines a typeclass that implements equality
       comparison.  See the below example for the built-in
-        <varname>Eq</varname> typeclass, and note how similar it is to our
-        <varname>BasicEq3</varname> typeclass.
+        <literal>Eq</literal> typeclass, and note how similar it is to our
+        <literal>BasicEq3</literal> typeclass.
     </para>
     <programlisting>
 class  Eq a  where
