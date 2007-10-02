@@ -8,6 +8,7 @@
 
 --# it
 
+"foo"
 it ++ "bar"
 
 --# it.bad
@@ -28,6 +29,7 @@ it ++ "baz"
 --# ratio.bad
 
 3.14 % 8
+1.2 % 3.4
 
 --# set_t_off
 
@@ -36,6 +38,6 @@ it ++ "baz"
 
 --# type
 
-:type 22 % 7
+:type 'a'
 "foo"
 :type it

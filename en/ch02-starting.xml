@@ -189,26 +189,30 @@ Loading package base ... linking ... done.
 
       <para id="x_S1">We can immediately start entering expressions,
 	to see what &ghci; will do with them.  Basic arithmetic works
-	similarly to familiar languages like C and Python.</para>
+	similarly to familiar languages like C and Python: we write
+	expression in <emphasis>infix</emphasis> form, where an
+	operator appears between its operands.</para>
     
       &basics.ghci:arithmetic;
+
+      <para>Operators are normal Haskell functions; the infix style of
+	writing an expression is just a convenience.</para>
 
       <para id="x_T1">As the expressions above imply, Haskell has a notion of
 	integers and floating point numbers.  In fact, it allows us to
 	use arbitrarily large integers.  Here, the
-	<function>(^)</function> is the exponentiation
-	operator.  We'll be talking more about exponentiation
-	in <xref linkend="hs.starting.calc.exp"/>.</para>
+	<function>(^)</function> is the integer exponentiation
+	operator.</para>
 
       &basics.ghci:bignum;
 
       <note>
 	<title>Why are there parentheses around operators?</title>
 
-	<para>When we write operators by themselves, we'll usually
-	  write them surrounded by parentheses, for example
+	<para>When we write an operator by itself, we'll usually
+	  write it surrounded by parentheses, for example
 	  <function>(+)</function>.  This is a standard Haskell way of
-	  treating an operator as a function.</para>
+	  writing an operator as an ordinary function.</para>
       </note>
     </sect2>
 
@@ -437,54 +441,6 @@ Loading package base ... linking ... done.
 	are often safest.</para>
     </sect2>
 
-    <sect2 id="hs.starting.calc.exp">
-      <title>Aside: the many faces of exponentiation</title>
-
-      <remark>Is it too early to introduce this?  Does it disrupt the
-	flow?</remark>
-
-      <para id="x_u1">Mathematicians have three different ways of
-	looking at exponentiation, and Haskell has a specific operator
-	for each one.</para>
-
-      <para>The first way of looking at exponentiation is to multiply
-	a number <varname>a</varname> by itself a given number
-	<varname>n</varname> of times. Here, the base
-	<varname>a</varname> can be any number, but the exponent
-	<varname>n</varname> must be an integer, and it must be
-	non-negative.</para>
-
-      &basics.ghci:intpower;
-
-      <para id="x_y1">Haskell's exponentiation operators follow the convention
-	that a number raised to the zeroth power is one.  This is why
-	the restriction on the exponent is that it must be
-	non-negative, and not that it must be positive.</para>
-
-      &basics.ghci:exponent.zero;
-
-      <para>Haskell's type system enforces for us the requirement that
-      the exponent be an integer.  If we try using a fractional
-      exponent, &ghci; will report a type error, telling us that it
-      expects an integral value here.</para>
-
-      &basics.ghci:exponent.bad;
-
-      <para id="x_z1">The second mathematical definition of
-	exponentiation works for both positive and negative integer
-	exponents. Where a positive exponent multiplies the base by
-	itself repeatedly, a negative exponent divides the number one
-	by the base repeatedly.  If the base is zero, a negative
-	exponent thus leads to division by zero.</para>
-
-      &basics.ghci:exponent.neg;
-      
-      <para id="x_A2">Finally, we have an operator that is defined for
-	real numbers, <function>(**)</function>.</para>
-
-      &basics.ghci:exponent.float;
-
-    </sect2>
   </sect1>
 
   <sect1 id="hs.starting.errmsg">
@@ -497,13 +453,16 @@ Loading package base ... linking ... done.
 
     &basics.ghci:denom.bad;
 
-    <para id="x_C2">Look at that error message; it's detailed, and mentions a
-      lot of concepts we haven't covered yet.  We're new to Haskell!
-      How are we supposed to interpret all of that?  The first thing
-      we must do is take a deep breath and not worry about the
-      details.</para>
+    <para id="x_C2">Look at that error message; it's detailed, and
+      mentions a lot of concepts we haven't covered yet.  The best way
+      to start dealing with it is to not worry early on about the
+      details.  The error messages that &GHC; produces can be daunting
+      to newcomers, but take heart.  As you become more familiar with
+      Haskell, you'll acquire enough understanding to interpret error
+      messages more easily.</para>
 
-    <para id="x_D2">If we step back and gloss over the error message, we can see
+    <para id="x_D2">For now, however, we must make some kind of progress.
+      If we step back and gloss over the error message, we can see
       that &ghci; is displaying for us the expression that it had
       trouble with.  And it has helpfully added parentheses back into
       the expression, only look!  <emphasis>They're in the wrong
@@ -533,57 +492,62 @@ Loading package base ... linking ... done.
 	on.  Early on, all you have to do is figure out enough to make
 	progress through a problem.  You don't need instantaneous
 	complete understanding, so don't worry if you don't have
-	it.</para>
+	it.  It will come.</para>
+
+      <para>The numerous error messages have a purpose: they actually
+	help us to write correct code, by making us perform some
+	amount of debugging <quote>up front</quote>, before we ever
+	run a program.  If you are coming from a background of working
+	with more permissive languages, this way of working may come
+	as something of a shock.  Bear with us.</para>
     </note>
 
   </sect1>
 
-  <sect1 id="hs.starting.string">
-    <title>Text, strings and lists</title>
+  <sect1 id="hs.starting.list">
+    <title>Lists</title>
 
-    <para id="x_H2">If you are familiar with a language like Python, you'll find
-      Haskell's notations for strings and lists
-      familiar.</para>
-
-    <para id="x_I2">A text string is surrounded by double quotes.</para>
-
-    &basics.ghci:string;
-
-    <para id="x_J2">As in many languages, we can represent hard-to-print
-      characters by <quote>escaping</quote> them.  Haskell's escape
-      characters and escaping rules expand on the conventions
-      established by the C language (for details, see
-      <xref linkend="hs.escapes"/>).</para>
-
-    &basics.ghci:newline;
-    
-    <para id="x_K2">A list is surrounded by square brackets, with elements
-      separated by commas.</para>
+    <para id="x_K2">A list is surrounded by square brackets; the
+      elements are separated by commas.</para>
 
     &basics.ghci:list;
+    
+    <note>
+      <title>Commas are separators, not terminators</title>
 
-    <para id="x_L2">A list can be of any length.</para>
+      <para>Some languages permit the last element in a list to be
+	followed by an optional trailing comma before a closing
+	bracket, but Haskell doesn't allow this.  If you leave in a
+	trailing comma, you'll get a parse error.</para>
+    </note>
+
+    <para id="x_L2">A list can be of any length.  The empty list is
+      written <literal>[]</literal>.</para>
 
     &basics.ghci:list.shortlong;
 
-    <para id="x_M2">All elements of a list must have the same type.</para>
+    <para id="x_M2">All elements of a list must be of the same type.</para>
 
     &basics.ghci:list.bad;
     
-    <para id="x_N2">Once again, &ghci;'s error message is verbose, but it's
-      simply telling us that it can't figure out how to turn the
-      string into a number, so the list expression isn't properly
-      typed. (It chose to try to turn the string into a number because
-      the list starts with a number.)</para>
-    
+    <para id="x_N2">Once again, &ghci;'s error message is verbose, but
+      it's simply telling us that there is no way to turn the string
+      into a number, so the list expression isn't properly typed.</para>
+
     <para id="x_O2">We can write a series of elements using range
       notation, and Haskell will fill in the contents of the list for
       us.</para>
     
     &basics.ghci:range;
 
-    <para id="x_vK">Notice that range notation gives us a <emphasis>closed
-	interval</emphasis>; the list contains both endpoints.</para>
+    <para>Here, the <literal>..</literal> characters denote a
+      range.  We can only use range notation for types we can count.
+      Range notation makes no sense for rational numbers, for example,
+      because there is not a countable number of rationals.</para>
+
+    <para id="x_vK">By the way, notice that the above use of range
+      notation gives us a <emphasis>closed interval</emphasis>; the
+      list contains both endpoints.</para>
 
     <para id="x_P2">When we write a range, we can optionally specify
       the size of the step to use by giving the first two elements,
@@ -592,10 +556,78 @@ Loading package base ... linking ... done.
 
     &basics.ghci:range.step;
 
-    <para id="x_wK">In the latter case above, the list is quite sensibly missing
-      the end point of the range, because it isn't an element of the
-      series we defined.</para>
+    <para id="x_wK">In the latter case above, the list is quite
+      sensibly missing the end point of the range, because it isn't an
+      element of the series we defined.</para>
 
+    <para>We can omit the end point of a range.  If the type of the
+      range has an upper bound on its values (or a lower bound if the
+      step is negative), that bound will be the end point of the
+      range.  Otherwise, the range will continue indefinitely.</para>
+
+    <warning>
+      <title>Beware ranges of floating point numbers</title>
+
+      <para>Here's a non-intuitive bit of behaviour.</para>
+
+      &basics.ghci:range.double;
+
+      <para>Behind the scenes, the Haskell implementation is
+	converting the floating point numbers into integers,
+	enumerating the range as integers, then turning them back into
+	floating point numbers.</para>
+
+      <para>While this is peculiar, there's worse in store.  The range
+	<literal>[0,0.1..1]</literal> steps in increments of 0.1
+	between zero and one, but the number of elements in the list
+	depends on the amount of rounding error in the
+	implementation's representation of floating point numbers: you
+	will <emphasis>probably</emphasis> get a list of eleven
+	elements, but you <emphasis>might</emphasis> get ten.</para>
+
+      <para>Because of these limitations, range notation over floating
+	point numbers is not really safe to use.</para>
+    </warning>
+
+    <sect2 id="hs.starting.list.op">
+      <title>Operators on lists</title>
+
+      <para>There are two ubiquitous operators for working with
+	lists.  We concatenate two lists using the
+	<function>(++)</function> operator.</para>
+
+      &basics.ghci:concat;
+
+      <para>More basic is the <function>(:)</function> operator, which
+	adds an element to the front of a list.  This is pronounced
+	<quote>cons</quote> (short for
+	<quote>construct</quote>).</para>
+
+      &basics.ghci:concat;
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="hs.starting.string">
+    <title>Strings and characters</title>
+
+    <para id="x_H2">If you know a language like Perl or C, you'll find
+      Haskell's notations for strings familiar.</para>
+
+    <para id="x_I2">A text string is surrounded by double quotes.</para>
+
+    &basics.ghci:string;
+
+    <para id="x_J2">As in many languages, we can represent
+      hard-to-print characters by <quote>escaping</quote> them.
+      Haskell's escape characters and escaping rules follow the widely
+      used conventions established by the C language.  For example,
+      <literal>'\n'</literal> denotes a newline character, and
+      <literal>'\t'</literal> is a tab character.  For complete
+      details, see <xref linkend="hs.escapes"/>.</para>
+
+    &basics.ghci:newline;
+    
     <para id="x_Q2">Haskell makes a distinction between single characters and
       text strings.  A single character is enclosed in single
       quotes.</para>
@@ -613,12 +645,18 @@ Loading package base ... linking ... done.
   <sect1 id="hs.starting.types">
     <title>First steps with types</title>
 
-    <para id="x_S2">Despite all our talk of types, our interactions with &ghci;
-      have so far been free of much type-related thinking.  We haven't
-      told &ghci; what types we've been using, and it's mostly been
-      willing to accept our input.</para>
+    <para id="x_S2">While we've talked a little about types already,
+      our interactions with &ghci; have so far been free of much
+      type-related thinking.  We haven't told &ghci; what types we've
+      been using, and it's mostly been willing to accept our
+      input.</para>
 
-    <para id="x_T2">The first thing we can do to start explicitly exploring the
+    <para>Haskell requires type names to start with an uppercase
+      letter, and variable names must start with a lowercase letter.
+      Bear this in mind as you read on; it makes it much easier to
+      read everything.</para>
+
+    <para id="x_T2">The first thing we can do to start exploring the
       world of types is to get &ghci; to tell us more about what it's
       doing.  &ghci; has a command, <command>:set</command>, that lets
       us change a few of its default behaviours.  We can tell it to
@@ -631,7 +669,7 @@ Loading package base ... linking ... done.
       <varname>it</varname> in the output can be very useful: it's
       actually the name of a special variable, in which &ghci; stores
       the result of the last expression we evaluated.  Let's break
-      down the meaning of the last line of &ghci; output, then.</para>
+      down the meaning of the last line of &ghci; output.</para>
       
     <itemizedlist>
       <listitem>
@@ -639,17 +677,17 @@ Loading package base ... linking ... done.
 	  <varname>it</varname>.</para>
       </listitem>
       <listitem>
-	<para id="x_W2">We can read the text <code>::</code> as meaning
-	  <quote>the value on the left has the type on the
-	    right</quote>.</para>
+	<para id="x_W2">We can read text of the form <code>x ::
+	    y</code> as meaning <quote>the expression <code>x</code>
+	    has the type <code>y</code></quote>.</para>
       </listitem>
       <listitem>
-	<para id="x_X2">And the value on the right is the type in question,
-	  namely <type>[Char]</type>.</para>
+	<para id="x_X2">Here, the expression <quote>it</quote> has the
+	  type <type>[Char]</type>.</para>
       </listitem>
     </itemizedlist>
 
-    <note id="hs.starting.it">
+    <tip id="hs.starting.it">
       <title>The joy of <quote>it</quote></title>
 
       <para id="x_Y2">That <varname>it</varname> variable is wonderfully handy
@@ -658,41 +696,30 @@ Loading package base ... linking ... done.
 
       &types.ghci:it;
 
-      <para id="x_Z2">When evaluating an expression, &ghci; won't change the
-	value of <varname>it</varname> until after it's finished.  An
-	error in the evaluation will leave <varname>it</varname>
-	untouched, so we can type possibly bogus expressions with a
-	bit of a safety net.</para>
+      <para id="x_Z2">When evaluating an expression, &ghci; won't
+	change your environment if the evaluation fails.  A successful
+	evaluation will only change either the variable you specify,
+	or <varname>it</varname> if you didn't name a variable to
+	change.  This lets you write potentially bogus expressions
+	with something of a safety net.</para>
 
       &types.ghci:it.bad;
 
-      <para id="x_a2">Coupling <varname>it</varname> with liberal use of the
+      <para id="x_a2">Couple <varname>it</varname> with liberal use of the
 	arrow keys to recall and edit the last expression we typed,
 	and we have a fairly decent environment for interactive
 	experiments, where the cost of mistakes is very low.  Take
 	advantage of the opportunity to make cheap, plentiful mistakes
 	when you're exploring the language!</para>
-    </note>
+    </tip>
 
     <para id="x_b2">Here are a few more of Haskell's names for types, from
       expressions of the sort we've already seen.</para>
 
       &types.ghci:integer;
 
-    <para id="x_c2">Haskell's arbitrary-precision
-      integer type is named <type>Integer</type> .</para>
-
-    <note>
-      <title>Type names start with an uppercase letter</title>
-
-      <para id="x_d2">Both of the type names we've seen so far,
-	<type>Char</type> and <type>Integer</type>, have started with
-	capital letters.  This isn't an accident; Haskell requires
-	type names to start with an uppercase letter, and variable
-	names must start with a lowercase letter.  As far as Haskell
-	is concerned, a function is just another variable, so a
-	function name must start with a lowercase letter, too.</para>
-    </note>
+    <para id="x_c2">Haskell's unbounded integral type is named
+      <type>Integer</type> .</para>
 
     <para id="x_e2">Rational numbers don't look quite the same as
       integers.</para>
@@ -701,21 +728,20 @@ Loading package base ... linking ... done.
 
     <para id="x_f2">Notice <emphasis>two</emphasis> words on the right
       hand side of the <code>::</code> above.  We can read this as a
-      <quote><type>Ratio</type> of <type>Integer</type></quote>; we
+      <quote><type>Ratio</type> of <type>Integer</type></quote>.  We
       might infer that a <type>Ratio</type> must need to have values
       of type <type>Integer</type> as both numerator and denominator.
       Sure enough, if we try to construct a <type>Ratio</type> where
-      the numerator and denominator are of different types, &ghci;
-      complains.</para>
+      the numerator and denominator are of different types, or of the
+      same non-integral type, &ghci; complains.</para>
 
     &types.ghci:ratio.bad;
 
-    <para id="x_g2">Although it's initially useful to have <userinput>:set
-	+t</userinput> giving us type information for every expression
-      we enter, this is a facility we'll quickly outgrow, simply
-      because it will become redundant.  After a while, we'll often
-      know what type we expect an expression to have, so why get
-      &ghci; to remind us?  We can turn off the extra type information
+    <para id="x_g2">Although it's initially useful to have
+      <userinput>:set +t</userinput> giving us type information for
+      every expression we enter, this is a facility we'll quickly
+      outgrow: after a while, we'll often know what type we expect an
+      expression to have.  We can turn off the extra type information
       at any time, using the <command>:unset</command> command.</para>
 
     &types.ghci:set_t_off;

@@ -129,6 +129,16 @@ True && 1
 
 12.2 ** 2.1
 
+--# concat
+
+"foo" ++ "bar"
+[] ++ [1,2,3] ++ [4]
+
+--# cons
+
+1 : [2,3]
+1 : []
+
 --# string
 
 "This is a string."
@@ -136,7 +146,7 @@ True && 1
 --# newline
 
 "Here's a newline -->\n<-- See?"
-print "Here's a newline -->\n<-- See?"
+putStr "Here's a newline -->\n<-- See?"
 
 --# list
 
@@ -173,3 +183,7 @@ print "Here's a newline -->\n<-- See?"
 let a = ['l', 'o', 't', 's', ' ', 'o', 'f', ' ', 'w', 'o', 'r', 'k']
 a
 a == "lots of work"
+
+--# range.double
+
+[1.0..1.8]
