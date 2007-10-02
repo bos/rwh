@@ -231,6 +231,7 @@ class  Eq a  where
       functions necessary for that typeclass.
     </para>
     <para id="x_HB">
+      <remark>FIXME: rearrange? see comments</remark>
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
       linkend="hs.typeclasses.need"/>.
@@ -253,7 +254,8 @@ class  Eq a  where
     <para id="x_JB">
       Note also that the <literal>BasicEq3</literal> class defined both
       <literal>isEqual3</literal> and <literal>isNotEqual3</literal>, but we
-      defined only one of them.  That's because of the default implementation
+      implemented only one of them in the <literal>Color</literal> instance.  
+      That's because of the default implementation
       contained in <literal>BasicEq3</literal>.  Since we didn't explicitly
       define <literal>isNotEqual3</literal>, the compiler automatically uses
       the default implementation given in the <literal>BasicEq3</literal>
@@ -266,39 +268,44 @@ class  Eq a  where
     <title>Well-known typeclasses</title>
 
     <para id="x_KB">
-      Now that you're familiar with defining your own typeclasses and making
+      Now that we've discussed defining your own typeclasses and making
       your types instances of typeclasses, it's time to introduce you to
-      typeclasses that are a standard part of Haskell.  As we mentioned at
+      typeclasses that are a standard part of the Haskell Prelude.  As we mentioned at
       the beginning of this chapter, typeclasses are at the core of some
       important aspects of the language.  We'll cover the most common ones
-      here.
+      here.  For more details, the Haskell library reference is a good
+      resource.  It will give you a description of the typeclasses, and
+      usually also will tell you which functions you must implement to have a
+      complete definition.
     </para>
 
     <sect2 id="hs.typeclasses.wellknown.show">
       <title>Show</title>
       <para id="x_LB">
-        The <literal>Show</literal> typeclass is used to convert types to
+        The <literal>Show</literal> typeclass is used to convert values to
         &String;s.  It is perhaps most commonly used to
         convert numbers to &String;s, but it is defined for
-        so many types that it can be used to convert quite a bit more.  You
-        can also, of course, define instances for your own types as well.
+        so many types that it can be used to convert quite a bit more.  
+        If you have defined your own types, making them instances of
+        <literal>Show</literal> will make it easy to display them in &ghci;
+        or print them out in programs.
       </para>
       <para id="x_MB">
         The most important function of <literal>Show</literal> is
         <literal>show</literal>.  It takes one argument: the type to convert.
         It returns a &String; representing that type.
-        &ghci; reports that this way:
+        &ghci; reports the type of <literal>show</literal> like this:
       </para>
 
       &show.ghci:showtype;
 
       <para id="x_NB">
-        Let's look at some examples of converting numbers to strings:
+        Let's look at some examples of converting values to strings:
       </para>
       &show.ghci:showex;
       <para id="x_OB">
         Remember that &ghci; displays results as they would
-        be entered into Haskell.  So the expression <literal>show 1</literal>
+        be entered into a Haskell program.  So the expression <literal>show 1</literal>
         returns a single-character string containing the digit
         <literal>1</literal>.  That is, the quotes are not part of the string
         itself.  We can make that clear by using
@@ -341,7 +348,8 @@ class  Eq a  where
     <sect2 id="hs.typeclasses.wellknown.read">
       <title>Read</title>
       <para id="x_TB">
-        The &Read; typeclass is essentially the opposite of &Show;: it will
+        The &Read; typeclass is essentially the opposite of &Show;: it
+        defines functions that will
         take a &String;, parse it, and return data in a native Haskell type.
         The most useful function in &Read; is &read;.
         You can ask &ghci; for its type like this:
@@ -355,18 +363,21 @@ class  Eq a  where
 
       &read.hs:read;
 
-      <remark>FIXME: have we already explained main?</remark>
+      <remark>FIXME: have we already explained main, do, and
+        type annotations on expressions?</remark>
 
       <para id="x_VB">
         This is a simple example of &read; and &show; together.  Notice that
-        we gave an explicit typecast to &Integer; when processing the &read;.
+        we gave an explicit type of &Double; when processing the &read;.
         That's because &read; returns a value of type
         <literal>Read a => a</literal> and &show; expects a value of type
-        <literal>Show a => a</literal>.  There are many, many types that are
+        <literal>Show a => a</literal>.  There are many types that have
+        instances
         defined for both &Read; and &Show;.  Without knowing a specific type,
-        the compiler can't possibly guess from these many types which one is
-        needed&emdash;at least not in this case.  Therefore, we give an explicit
-        cast.
+        the compiler must guess from these many types which one is
+        needed.  In situations like this, it may often choose &Integer;.  If
+        we wanted to accept floating-point input, this wouldn't work, so we
+        provided an explicit type.
       </para>
       <para id="x_WB">
         You can see the same effect at work if you try to use &read; on the
@@ -387,8 +398,10 @@ class  Eq a  where
       &read.ghci:readtypes;
       <para id="x_YB">
         Notice the error when trying to parse <literal>5.0</literal> as an
-        Integer.  The interpreter selected a different parser there because the
-        return value of &read; was expected to be of a different type.
+        &Integer;.  The interpreter selected a different instance of &Read;
+        when the return value was expected to be &Integer; then it did when a
+        &Double; was expected.  The &Integer; parser doesn't accept decimal
+        points, and caused an exception to be raised.
       </para>
       <para id="x_ZB">
         The &Read; class provides for some fairly complicated parsers.  Most
@@ -420,7 +433,7 @@ class  Eq a  where
     <sect2 id="hs.typeclasses.wellknown.serialization">
       <title>Serialization with Read and Show</title>
       <para id="x_cB">
-        Often times, you may have a data structure in memory that you need to
+        You may often have a data structure in memory that you need to
         store on disk for later retrieval or send across the network.  The
         process of converting data in memory to a flat series of bits for
         storage is called <emphasis>serialization</emphasis>.
