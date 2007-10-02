@@ -6,6 +6,7 @@
 <!ENTITY Bounded "<literal>Bounded</literal>">
 <!ENTITY BufferMode "<literal>BufferMode</literal>">
 <!ENTITY BufferMode "<literal>BufferMode</literal>">
+<!ENTITY Bool "<literal>Bool</literal>">
 <!ENTITY Double "<literal>Double</literal>">
 <!ENTITY Eq "<literal>Eq</literal>">
 <!ENTITY False "<literal>False</literal>">

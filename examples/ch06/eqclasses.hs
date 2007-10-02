@@ -6,7 +6,7 @@ colorEq Red Red = True
 colorEq Green Green = True
 colorEq Blue Blue = True
 colorEq _ _ = False
-{-- /snippet --}
+{-- /snippet color --}
 
 stringEq :: [Char] -> [Char] -> Bool
 -- Match if both are empty
@@ -31,7 +31,7 @@ instance BasicEq Bool where
     isEqual True True = True
     isEqual False False = True
     isEqual _ _ = False
-{-- /snippet --}
+{-- /snippet basicinstance--}
 
 {-- snippet basiceq2 --}
 class BasicEq2 a where
