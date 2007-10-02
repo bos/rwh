@@ -16,6 +16,7 @@
 <!ENTITY IO "<literal>IO</literal>">
 <!ENTITY IOMode "<literal>IOMode</literal>">
 <!ENTITY Int "<literal>Int</literal>">
+<!ENTITY Int8 "<literal>Int8</literal>">
 <!ENTITY Int16 "<literal>Int16</literal>">
 <!ENTITY Int32 "<literal>Int32</literal>">
 <!ENTITY Int64 "<literal>Int64</literal>">
@@ -49,6 +50,7 @@
 <!ENTITY Terminal "<application>Terminal</application>">
 <!ENTITY True "<literal>True</literal>">
 <!ENTITY Word "<literal>Word</literal>">
+<!ENTITY Word8 "<literal>Word8</literal>">
 <!ENTITY Word16 "<literal>Word16</literal>">
 <!ENTITY Word32 "<literal>Word32</literal>">
 <!ENTITY Word64 "<literal>Word64</literal>">
