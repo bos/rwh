@@ -125,7 +125,7 @@
 isEqual :: (BasicEq a) => a -> a -> Bool
     </screen>
     <para id="x_zA">
-      You can read that this way: "For all types of <literal>a</literal>, so
+      You can read that this way: "For all types <literal>a</literal>, so
       long as <literal>a</literal> is an instance of
       <varname>BasicEq</varname>, <literal>isEqual</literal> takes two
       parameters of type <literal>a</literal> and returns a <literal>Bool</literal>".
