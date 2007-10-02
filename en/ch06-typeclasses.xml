@@ -102,12 +102,12 @@
     <para id="x_uA">
       This says that we are declaring a typeclass named
       <varname>BasicEq</varname>, and we'll refer to instance types with the
-      letter <parameter id="x_vA">a</parameter>.  This typeclass defines one function.
+      letter <literal>a</literal>.  This typeclass defines one function.
       That function takes two parameters&emdash;both corresponding to instance
       types&emdash;and returns a <literal>Bool</literal>.
     </para>
     <para id="x_wA">
-      On the first line, the name of the parameter <parameter id="x_xA">a</parameter>
+      On the first line, the name of the parameter <literal>a</literal>
       was chosen arbitrarily.  We could have used any name.  The key is that,
       when you list the types of your functions, you must use that name to
       refer to instance types.
