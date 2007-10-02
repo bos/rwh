@@ -8,11 +8,17 @@
 
 31337 ^ 15
 
---# neg
+--# neg.simple
 
 -3
+
+--# neg.error
 2 + -3
+
+--# neg.better
+
 2 + (-3)
+3 + (-(13 * 37))
 
 --# whitespace.ok
 
@@ -44,8 +50,6 @@ let e = 2.7182818284590451
 
 --# boolean
 
-True
-False
 True && False
 False || True
 
@@ -65,8 +69,18 @@ True && 1
 
 --# parens
 
-(4 * 4) + 1
-4 * 4 + 1
+1 + (4 * 4)
+1 + 4 * 4
+
+--# precedence
+
+:info (+)
+:info (*)
+
+--# grouping
+
+5 * 8 / 3
+5 * (8 / 3)
 
 --# module
 
@@ -96,21 +110,20 @@ True && 1
 
 12 ^ 2
 12.1 ^ 2
-12 ^ 2.1
 
 --# exponent.bad
 
-12 ^ 2
-12 ^ (-2)
+12 ^ 2.1
 
 --# exponent.zero
 
 12 ^ 0
+12 ^ (-1)
 
 --# exponent.neg
 
 12 ^^ (-2)
-(12%1) ^^ (-2)
+0 ^^ (-2)
 
 --# exponent.float
 

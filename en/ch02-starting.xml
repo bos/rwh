@@ -6,48 +6,57 @@
   <sect1 id="hs.starting.ghc">
     <title>Your Haskell environment</title>
 
-    <para id="x_g">There's a number of Haskell implementations available, of
-      which two are in wide use.  Hugs 98 is an interpreter that is
+    <para id="x_g">Haskell is a language with many implementations, of
+      which two are in wide use.  Hugs is an interpreter that is
       primarily used for teaching.  For real applications, the Glasgow
-      Haskell Compiler, or &GHC; as it's usually known, is much more
-      popular.  This is the Haskell implementation we'll be using
-      throughout this book.</para>
+      Haskell Compiler (&GHC;) is much more popular.  Compared to
+      Hugs, &GHC; is much more complete: it compiles to native code,
+      supports parallel execution, and provides useful performance
+      analysis and debugging tools.  For these reasons, &GHC; is the
+      Haskell implementation that we'll be using throughout this
+      book.</para>
 
     <para id="x_h">&GHC; has three complementary components: &ghc;, a
       compiler that generates native code; &ghci;, an interpreter that
-      we can run interactively; and &runghc;, an interpreter that we
-      can run in <quote>batch</quote> mode.</para>
+      we can run interactively; and &runghc;, an interpreter for
+      running Haskell programs as fast-turnaround scripts after the
+      manner of Perl or Ruby.</para>
 
     <note>
-      <title>Which part of GHC do we mean?</title>
+      <title>How we refer to the components of GHC</title>
 
-      <para id="x_i">When we discuss the package as a whole, we'll refer to it
-	as &GHC;.  If we're talking about one or another command,
-	we'll mention either &ghc; or &ghci;.  (We'll rarely make
-	reference to &runghc;.)</para>
+      <para id="x_i">When we discuss the &GHC; system as a whole,
+	we'll refer to it as &GHC;.  If we're talking about one or
+	another command, we'll mention &ghc;, &ghci;, or &runghc; by
+	name.</para>
     </note>
 
-    <para id="x_j">In this book, we assume that you're using at least version
-      6.6.1 of &GHC;.  To obtain a copy of &GHC; for your platform,
+    <para id="x_j">In this book, we assume that you're using at least
+      version 6.6.1 of &GHC;.  If you're using Windows or Mac OS X,
+      you can get started easily and quickly using a prebuilt
+      installer.  To obtain a copy of &GHC; for these platforms,
       visit <ulink url="http://www.haskell.org/ghc/download.html">the
 	&GHC; download page</ulink>, and look for the list of binary
-      packages.  If you're using Windows or Mac OS X, these binary
-      packages are the best ones to use.</para>
+      packages and installers.</para>
 
     <remark>With 6.8.1 due out long before the book, should we make
-      that the <quote>baseline</quote> version?</remark>
+      that the <quote>baseline</quote> version?  We're likely to hold
+      off on a decision until much closer to publication.  For now,
+      we'll stick with 6.6.1.</remark>
 
-    <para id="x_k">Many Linux distributions, and BSD and other Unix variants,
-      make pre-packaged versions of &GHC; available.  Because they are
-      built specifically for each environment, these packages are less
-      hassle to use than the generic binary packages. You can find a
-      list of such packages at the &GHC; <ulink
+    <para id="x_k">Many Linux distributors, and providers of BSD and
+      other Unix variants, make custom binary packages of &GHC;
+      available. Because these are built specifically for each
+      environment, they are much easier to install and use than the
+      generic binary packages that are available from the &GHC;
+      download page. You can find a list of distributions that
+      custom-build &GHC; at the &GHC; <ulink
 	url="http://www.haskell.org/ghc/distribution_packages.html">distribution 
 	packages</ulink> page.</para>
 
     <para id="x_nL">For more detailed information about how to install &GHC; on
-      a variety of popular platforms, see <xref
-	linkend="hs.install"/>.</para>
+      a variety of popular platforms, we've provided some instructions
+      in <xref linkend="hs.install"/>.</para>
   </sect1>
 
 
@@ -56,10 +65,31 @@
 
     <para id="x_L1">The interactive interpreter for &GHC; is a program named
       &ghci;.  It lets you enter and evaluate Haskell expressions, and
-      explore modules and type information.</para>
+      explore modules and type information.  If you're familiar with
+      Python, it's somewhat similar to the interactive Python
+      interpreter.</para>
+
+      <para>The &ghci; command is a tool for evaluating Haskell
+      expressions, using existing code from libraries or source files
+      that we've written.  It also provides commands that let us
+      inspect some details of modules and expressions.  It is not a
+      complete interpreter for all of Haskell.  We typically cannot
+      copy some code out of a Haskell source file and paste it into
+      &ghci;.  In this respect, it's more restrictive than, say, the
+      interactive Python interpreter, which can accept all Python
+      code.</para>
+
+    <para>On Unix-like systems, we run &ghci; as a command in a shell
+      window.  On Windows, it's available as a menu item accessible
+      off the Start Menu.  For example, if you installed using the
+      &GHC; installer on Windows XP, you should go to <quote>All
+	Programs</quote>, then <quote>GHC</quote>; you'll then see
+      &ghci; in the list.  (See <xref linkend="hs.install.win"/> for a
+      screenshot.)</para>
 
     <para id="x_M1">When we run &ghci;, it displays a startup banner, followed
-      by a <prompt>Prelude&gt;</prompt> prompt.</para>
+      by a <prompt>Prelude&gt;</prompt> prompt.  (Here, we're showing
+      it run on a Linux box.)</para>
 
     <screen>
 <prompt>$</prompt> <userinput>ghci</userinput>
@@ -73,65 +103,93 @@ Loading package base ... linking ... done.
 <prompt>Prelude&gt;</prompt>
 </screen>
 
-    <para id="x_uK">The word <code>Prelude</code> in the prompt indicates that
-      the <quote>standard prelude</quote>, a fairly large standard
-      library of useful functions, is loaded and ready for us to use.
-      When we load other modules or source files, they'll show up in
-      the prompt, too.</para>
+    <para id="x_uK">The word <code>Prelude</code> in the prompt
+      indicates that the <quote>standard prelude</quote>, a standard
+      library of useful functions, is loaded and ready to use. When we
+      load other modules or source files, they'll show up in the
+      prompt, too.</para>
+
+    <para id="x_o1">The <classname role="module">Prelude</classname>
+      module is sometimes referred to as <quote>the standard
+	prelude</quote>, because its contents are defined by the
+      Haskell 98 standard. Usually, it's simply shortened to
+      <quote>the prelude</quote>.</para>
 
     <note>
-      <title>The ephemeral ghci prompt</title>
+      <title>About the ghci prompt</title>
 
       <para id="x_N1">The prompt displayed by &ghci; changes
 	frequently depending on what modules we have loaded.  It can
 	often grow long enough to leave little visual room on a single
-	line for our input.  For brevity, we have replaced &ghci;'s
+	line for our input.</para>
+
+      <para>For brevity and consistency, we have replaced &ghci;'s
 	default prompts throughout this book with the prompt string
 	<prompt>ghci&gt;</prompt>.</para>
     </note>
 
+    <para id="x_p1">The prelude is always implicitly available; we
+      don't need to take any actions to use the types, values, or
+      functions it defines.  To use definitions from other modules, we
+      must load them into &ghci;, using the <command>:module</command>
+      command.</para>
+
+    &basics.ghci:module;
+
     <sect2 id="hs.starting.ghci.edit">
       <title>Command line editing</title>
 
-      <para id="x_O1">On most systems, &ghci; has some amount of command line
-	editing ability.  On Unix-like systems, it uses the GNU
-	readline library, which is powerful and customisable.  On
-	Windows, &ghci;'s command line editing capabilities are
-	provided by the <command>doskey</command> command.</para>
-
-      <para id="x_P1">If you haven't used command line editing before, it's a
-	huge time saver.  The basics are common to both Unix-like and
-	Windows systems.  Pressing the <keycap
-	  function="up">up</keycap> arrow key on your keyboard recalls
-	the last line of input you entered; pressing <keycap
+      <para id="x_O1">On most systems, &ghci; has some amount of
+	command line editing ability. If you're not familiar with
+	command line editing, it's a huge time saver.  The basics are
+	common to both Unix-like and Windows systems.  Pressing the
+	<keycap function="up">up</keycap> arrow key on your keyboard
+	recalls the last line of input you entered; pressing <keycap
 	  function="up">up</keycap> repeatedly cycles through earlier
 	lines of input. You can use the <keycap
 	  function="left">left</keycap> and <keycap
 	  function="right">right</keycap> arrow keys to move around
-	inside a line of input.</para>
+	inside a line of input.  On Unix (but not Windows,
+	unfortunately), the <keycap function="tab">tab</keycap> key
+	completes partially typed identifiers.</para>
 
-      <para id="x_Q1">Just knowing this much will save you a lot of repeated
-	typing.  If you want to learn more about command line editing
-	on your system, consult the readline or
-	<command>doskey</command> documentation.</para>
+      <tip>
+	<title>Where to look for more information</title>
+
+	<para>We've barely scratched the surface of command line
+	  editing here.  Since you can work more effectively if you're
+	  more familiar with the capabilities of your command line
+	  editing system, you might find it useful to do some further
+	  reading.</para>
+
+	<para>On Unix-like systems, &ghci; uses the <ulink
+	    url="http://tiswww.case.edu/php/chet/readline/rltop.html#Documentation">GNU 
+	    readline library</ulink>, which is powerful and
+	  customisable.  On Windows, &ghci;'s command line editing
+	  capabilities are provided by the <ulink
+	    url="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/doskey.mspx"><command>doskey</command> 
+	    command</ulink>.</para>
+      </tip>
     </sect2>
-
   </sect1>
 
   <sect1 id="hs.starting.calc">
     <title>Basic interaction: using ghci as a calculator</title>
 
-    <para id="x_R1">Where some people might run a calculator program, I often
-      drop into &ghci; to perform simple calculations.  Using it this
-      way serves as a good way to become familiar with &ghci; itself,
-      and with the basics of Haskell expressions.</para>
+    <para id="x_R1">In addition to providing a convenient interface
+      for testing code fragments, &ghci; can function as a readily
+      accessible desktop calculator. We can easily express any
+      calculator operation in &ghci; and, as an added bonus, we can
+      add more complex operations as we become more familiar with
+      Haskell. Even using the interpreter in this simple way can help
+      us to become more comfortable with how Haskell works.</para>
 
     <sect2 id="hs.starting.calc.arithmetic">
       <title>Simple arithmetic</title>
 
-      <para id="x_S1">We can immediately start typing expressions, to see what
-	&ghci; will do with them.  Basic arithmetic works as we might
-	expect.</para>
+      <para id="x_S1">We can immediately start entering expressions,
+	to see what &ghci; will do with them.  Basic arithmetic works
+	similarly to familiar languages like C and Python.</para>
     
       &basics.ghci:arithmetic;
 
@@ -139,33 +197,19 @@ Loading package base ... linking ... done.
 	integers and floating point numbers.  In fact, it allows us to
 	use arbitrarily large integers.  Here, the
 	<function>(^)</function> is the exponentiation
-	operator.</para>
+	operator.  We'll be talking more about exponentiation
+	in <xref linkend="hs.starting.calc.exp"/>.</para>
 
       &basics.ghci:bignum;
 
-      <para id="x_U1">Like other languages that use infix notation to write
-	mathematical expressions, Haskell has a notion of operator
-	precedence.  This allows us to get rid of a few parentheses.
-	For example, the multiplication operator has a higher
-	precedence than the addition operator, so Haskell treats the
-	two following expressions as equivalent.</para>
+      <note>
+	<title>Why are there parentheses around operators?</title>
 
-      &basics.ghci:parens;
-
-      <tip>
-	<title>Don't be too aggressive with parenthesis removal</title>
-
-	<para id="x_V1">As in other languages, it's often better to leave at
-	  least some parentheses in place, even when Haskell allows us
-	  to omit them.  Their presence can help future readers
-	  (including ourselves) to understand what we intended.</para>
-
-	<para id="x_W1">Even more importantly, complex expressions
-	  that rely completely on operator precedence are notorious
-	  sources of bugs.  A compiler and a human can easily end up
-	  with different notions of what a long, parenthesis-free
-	  expression is supposed to do.</para>
-      </tip>
+	<para>When we write operators by themselves, we'll usually
+	  write them surrounded by parentheses, for example
+	  <function>(+)</function>.  This is a standard Haskell way of
+	  treating an operator as a function.</para>
+      </note>
     </sect2>
 
     <sect2 id="hs.starting.calc.neg">
@@ -174,13 +218,26 @@ Loading package base ... linking ... done.
       <para id="x_X1">Haskell presents us with one peculiarity in how we must
 	write numbers: it's often necessary to enclose a negative
 	number in parentheses.  This affects us as soon as we move
-	past writing the simplest of expressions.</para>
+	beyond the simplest expressions.</para>
 
-      &basics.ghci:neg;
+      <para>We'll start by writing a negative number.</para>
 
-      <para id="x_Y1">Later on, we'll be seeing how Haskell lets us devise
-	entirely new infix operators.  Now that we've been forewarned,
-	the following may not prove too surprising.</para>
+      &basics.ghci:neg.simple;
+
+      <para>The <code>-</code> above is a unary operator.  In other
+	words, we didn't write the single number <quote>-3</quote>; we
+	wrote the number <quote>3</quote>, and applied the operator
+	<code>-</code> to it.  The <code>-</code> operator is
+	Haskell's only unary operator, and we can't mix it with infix
+	operators.</para>
+
+      &basics.ghci:neg.error;
+
+      <para>If we want to use the unary minus near an infix operator,
+	we must wrap the expression it applies to in
+	parentheses.</para>
+
+      &basics.ghci:neg.better;
 
       <para id="x_Z1"><emphasis>Most</emphasis> of the time, we can omit
 	white space from expressions, and Haskell will parse them as we
@@ -189,33 +246,124 @@ Loading package base ... linking ... done.
 
       &basics.ghci:whitespace.ok;
 
-      <para id="x_a1">And here's one that similar to the problematic negative
-	number example above, but results in a different error
-	message.</para>
+      <para id="x_a1">And here's one that seems similar to the
+	problematic negative number example above, but results in a
+	different error message.</para>
 
       &basics.ghci:whitespace.eek;
 
-      <para id="x_b1">What's happening here is that the Haskell parser is
-	reading <literal>+-</literal> as a single token, and trying to
-	use it as an operator.  Once again, a few parentheses get us
-	and &ghci; looking at the expression in the same way.</para>
+      <para id="x_b1">Here, the Haskell implementation is reading
+	<literal>+-</literal> as a single operator.  Haskell lets us
+	define new operators (a subject that we'll return to later),
+	but we haven't defined this one.  Once again, a few
+	parentheses get us and &ghci; looking at the expression in the
+	same way.</para>
 
       &basics.ghci:whitespace.whew;
 
-      <para id="x_c1">Compared to other languages, this unusual treatment of
-	negative numbers is an annoyance, for sure, but it at least
-	represents a reasoned trade-off.  As we mentioned, Haskell lets
-	us define new operators at any time, and choose the precedence
-	and associativity of those operators.  The language designers
-	chose to accept a slightly cumbersome syntax for negative
-	numbers in exchange for this expressive power.</para>
+      <para id="x_c1">Compared to other languages, this unusual
+	treatment of negative numbers might seem annoying, but it
+	represents a reasoned trade-off.  Haskell lets us define new
+	operators at any time.  This isn't some kind of esoteric
+	language feature; we'll see quite a few user-defined operators
+	in the chapters ahead. The language designers chose to accept
+	a slightly cumbersome syntax for negative numbers in exchange
+	for this expressive power.</para>
+    </sect2>
+
+    <sect2 id="hs.starting.calc.comparison">
+      <title>Boolean logic, operators, and value comparisons</title>
+
+      <para id="x_j1">The values of Boolean logic in Haskell are
+	&True; and &False;.  The language uses C-influenced operators
+	for working with Boolean values.</para>
+
+      &basics.ghci:boolean;
+
+      <para>Here, <function>(&amp;&amp;)</function> is logical
+	<quote>and</quote>, and <function>(||)</function> is logical
+	<quote>or</quote>.</para>
+
+      <para id="x_k1">Unlike some other languages, Haskell does
+	<emphasis>not</emphasis> treat the
+	number zero as synonymous with <literal>False</literal>, nor
+	does it consider any non-zero value to be <literal>True</literal>.</para>
+
+      &basics.ghci:boolean.bad;
+
+      <para>Once again, we're faced with a substantial-looking error
+	message. It tells us that the Boolean type, <type>Bool</type>,
+	is not a member of the family of numeric types,
+	<code>Num</code>.  The error message is rather long because
+	&ghci; is pointing out the location of the problem, and
+	hinting at a possible change we could make that might fix the
+	problem.</para>
+
+      <para id="x_l1">Most of Haskell's comparison operators are
+	similar to those used in C and languages influenced by
+	C.</para>
+
+      &basics.ghci:comparison;
+
+      <para id="x_m1">There's one exception: the <quote>is not
+	  equal to</quote> operator is <function>(/=)</function>
+	(somewhat visually similar to the mathematical &notEqual;
+	operator), not the <function>(!=)</function> you might expect
+	from a language that borrows many other operators from
+	C.</para>
+
+      &basics.ghci:neq;
+
+    </sect2>
+
+    <sect2 id="hs.starting.calc.precedence">
+      <title>Operator precedence and associativity</title>
+
+      <para id="x_U1">Like other languages that use infix notation to
+	write some expressions, Haskell has a notion of
+	operator precedence.  We can use parentheses to explicitly
+	group parts of an expression, and precedence allows us to
+	omit a few parentheses. For example, the multiplication
+	operator has a higher precedence than the addition operator,
+	so Haskell treats the following two expressions as
+	equivalent.</para>
+
+      &basics.ghci:parens;
+
+      <para>Haskell assigns numeric precedence values to operators,
+	with 1 being the lowest precedence and 9 the highest.  A
+	higher-precedence operator gets parsed before a
+	lower-precedence operator.  We can use &ghci; to inspect the
+	precedence levels of individual operators, using its
+	<command>:type</command> command.</para>
+
+      &basics.ghci:precedence;
+
+      <para>Since <function>(*)</function> has a higher precedence
+	than <function>(+)</function>, we can now see why <code>1 + 4
+	  * 4</code> is parsed as <code>1 + (4 * 4)</code>, and not
+	<code>(1 + 4) * 4</code>.</para>
+
+      <para>Haskell also defines <emphasis>associativity</emphasis> of
+	operators.  This determines whether an expression containing
+	multiple uses of an operator is parsed from left to right, or
+	right to left.  The <function>(+)</function> and
+	<function>(*)</function> operators are left associative, which
+	is represented as <code>infixl</code> in the &ghci; output
+	above.  A right associative operator would be displayed with
+	<code>infixr</code>.</para>
+
+      <para>The combination of precedence and associativity rules are
+	usually referred to as <emphasis>fixity</emphasis>
+	rules.</para>
     </sect2>
 
     <sect2 id="hs.starting.calc.undef">
       <title>Undefined values, and introducing variables</title>
 
-      <para id="x_d1">&ghci; defines at least one well-known mathematical
-	constant for us.</para>
+      <para id="x_d1">Haskell's prelude, the standard library we
+	mentioned earlier, defines at least one well-known
+	mathematical constant for us.</para>
 
       &basics.ghci:pi;
 
@@ -236,8 +384,8 @@ Loading package base ... linking ... done.
 	  <varname>e</varname>.</para>
       </note>
 
-      <para id="x_h1">We can define <varname>e</varname> ourselves; the &let;
-	construct allows us to introduce a new variable.</para>
+      <para id="x_h1">Using the &let; construct, we can define
+	<varname>e</varname> ourselves.</para>
 
       &basics.ghci:let;
 
@@ -245,141 +393,94 @@ Loading package base ... linking ... done.
 	arithmetic expressions.</para>
 
       &basics.ghci:epipi;
+      
+      <warning>
+	<title>This syntax is ghci-specific</title>
 
+	<para>The syntax for &let; that &ghci; accepts is not the same
+	  as we would use in a normal Haskell program.  We'll see the
+	  normal syntax in <xref linkend="hs.funcstypes.locals"/>.</para>
+      </warning>
     </sect2>
 
-    <sect2 id="hs.starting.calc.comparison">
-      <title>Comparison and Boolean operators</title>
+    <sect2>
+      <title>Navigating the thicket of fixity rules</title>
 
-      <para id="x_j1">Haskell gives us the usual operators for working with
-	Boolean values.</para>
+      <para id="x_V1">It's sometimes better to leave at least some
+	parentheses in place, even when Haskell allows us to omit
+	them.  Their presence can help future readers (including
+	ourselves) to understand what we intended.</para>
 
-      &basics.ghci:boolean;
+      <para id="x_W1">Even more importantly, complex expressions that
+	rely completely on operator precedence are notorious sources
+	of bugs.  A compiler and a human can easily end up with
+	different notions of what even a short, parenthesis-free
+	expression is supposed to do.</para>
 
-      <para id="x_k1">Unlike some other languages, Haskell does
-	<emphasis>not</emphasis> treat the
-	number zero as synonymous with <literal>False</literal>, nor
-	does it accept non-zero as <literal>True</literal>.</para>
+      <para>Here's a cautionary example of mixing different operators
+	of the same fixities: <function>(*)</function> and
+	<function>(/)</function>. The following two expressions give
+	subtly different results.</para>
 
-      &basics.ghci:boolean.bad;
+      &basics.ghci:grouping;
 
-      <para id="x_l1">Comparison operators are mostly going to be
-	familiar from other languages that have taken some syntactic
-	cues from C.</para>
-
-      &basics.ghci:comparison;
-
-      <para id="x_m1">There's one exception: the <quote>is not
-	  equal</quote> operator is <function>(/=)</function>
-	(somewhat visually similar to the mathematical &notEqual;
-	operator), not the <function>(!=)</function> you might expect
-	from a language that borrows many other operators from
-	C.</para>
-
-      &basics.ghci:neq;
-
-    </sect2>
-
-    <sect2 id="hs.starting.calc.rational">
-      <title>Rational numbers, the Haskell prelude, and modules</title>
-
-      <para id="x_n1">In addition to integers and floating point numbers,
-	Haskell supports rational numbers.  Haskell coders collect
-	self-contained hunks of code into
-	<emphasis>modules</emphasis>.  The integer and floating point
-	numbers, and the operators we've seen so far, are packaged in
-	a module named <classname
-	  role="module">Prelude</classname>, whose name we've already
-	seen in &ghci;'s prompt.</para>
-
-      <para id="x_o1">(The <classname role="module">Prelude</classname> module
-	is often referred to as <quote>the standard prelude</quote>,
-	because its contents are defined by the Haskell 98 standard.
-	Sometimes, it's simply shortened to <quote>the
-	  prelude</quote>.)</para>
-
-      <para id="x_p1">The prelude is always implicitly available; we don't need
-	to take any actions to use the types, values, or functions it
-	defines.  But to use definitions from other modules, we must
-	<emphasis>import</emphasis> them.  To use rational numbers,
-	the module we need to import is named <classname
-	  role="module">Data.Ratio</classname>.  We can use a &ghci;
-	command named <command>:module</command> to import
-	it.</para>
-
-      &basics.ghci:module;
-
-      <para id="x_q1">The notation for writing a rational number is as
-	follows.</para>
-
-      &basics.ghci:ratio;
-
-      <para id="x_r1">The <function>(%)</function> operator above takes two
-	integers and constructs a rational number from them.</para>
-
-      <para id="x_s1">Arithmetic on rational numbers works in the same way as on
-	other types of number, even allowing the same
-	operators.</para>
-      
-      &basics.ghci:ratarith;
-      
-      <para id="x_t1">Haskell represents a rational number with the lowest
-	denominator it can.  For example, the result of the following
-	expression is simplified from <literal>254%7</literal> to
-	something easier to read.</para>
-
-      &basics.ghci:denom;
-
+      <para>When deciding whether to use parentheses, you can probably
+	rely on yourself and your readers to remember the language's
+	precedence rules for the most common arithmetic and logical
+	operators: <function>(||)</function> is <code>2</code>;
+	<function>(&amp;&amp;)</function> is <code>3</code>;
+	<function>(+)</function> and <function>(-)</function> are
+	<code>6</code>; while <function>(*)</function> and
+	<function>(/)</function> are <code>7</code>.  For
+	associativities and for other operators, it's not often wise
+	to assume that readers will remember the rules, so parentheses
+	are often safest.</para>
     </sect2>
 
     <sect2 id="hs.starting.calc.exp">
-      <title>Aside: the faces of exponentiation</title>
+      <title>Aside: the many faces of exponentiation</title>
 
       <remark>Is it too early to introduce this?  Does it disrupt the
 	flow?</remark>
 
-      <para id="x_u1">We've already seen an exponentiation operator in Haskell:
-	<function>(^)</function> raises a number to an integer power.
-	The word <emphasis>integer</emphasis> is significant here: if
-	we try to raise a number to the power of a floating point
-	number using the <function>(^)</function> operator, exciting
-	things will happen.</para>
+      <para id="x_u1">Mathematicians have three different ways of
+	looking at exponentiation, and Haskell has a specific operator
+	for each one.</para>
+
+      <para>The first way of looking at exponentiation is to multiply
+	a number <varname>a</varname> by itself a given number
+	<varname>n</varname> of times. Here, the base
+	<varname>a</varname> can be any number, but the exponent
+	<varname>n</varname> must be an integer, and it must be
+	non-negative.</para>
 
       &basics.ghci:intpower;
 
-      <para id="x_v1">Notice from the second example that it doesn't matter
-	whether or not the base is an integer, only that the exponent
-	must be.</para>
-
-      <para id="x_w1">There's a further constraint on the exponent that is not
-	immediately obvious: it must be not just an integer, but a
-	<emphasis>non-negative</emphasis> integer.</para>
-
-      &basics.ghci:exponent.bad;
-
-      <para id="x_x1">If you think about the simplest definition of
-	exponentiation, which is a number repeatedly multiplied by
-	itself a given number of times, this restriction makes
-	sense.</para>
-
-      <para id="x_y1">Haskell's exponentiation operator follows the convention
+      <para id="x_y1">Haskell's exponentiation operators follow the convention
 	that a number raised to the zeroth power is one.  This is why
 	the restriction on the exponent is that it must be
 	non-negative, and not that it must be positive.</para>
 
       &basics.ghci:exponent.zero;
 
-      <para id="x_z1">Haskell also provides a generalised integer exponentiation
-	operator, <function>(^^)</function>.  This accepts both
-	positive and negative exponents, following the rule that a
-	number raised to a negative exponent is the reciprocal of the
-	number raised to the positive exponent.  Let's try this with
-	both integer and rational bases.</para>
+      <para>Haskell's type system enforces for us the requirement that
+      the exponent be an integer.  If we try using a fractional
+      exponent, &ghci; will report a type error, telling us that it
+      expects an integral value here.</para>
+
+      &basics.ghci:exponent.bad;
+
+      <para id="x_z1">The second mathematical definition of
+	exponentiation works for both positive and negative integer
+	exponents. Where a positive exponent multiplies the base by
+	itself repeatedly, a negative exponent divides the number one
+	by the base repeatedly.  If the base is zero, a negative
+	exponent thus leads to division by zero.</para>
 
       &basics.ghci:exponent.neg;
       
-      <para id="x_A2">Finally, Haskell also gives us a floating point
-	exponentiation operator, <function>(**)</function>.</para>
+      <para id="x_A2">Finally, we have an operator that is defined for
+	real numbers, <function>(**)</function>.</para>
 
       &basics.ghci:exponent.float;
 
