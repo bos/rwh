@@ -17,9 +17,9 @@
     <para id="x_jA">
       Let's imagine that for some unfathomable reason, the designers of the
       Haskell language neglected to implement the equality test
-      <function>==</function>.  Once you got over your shock at hearing this, 
+      <literal>==</literal>.  Once you got over your shock at hearing this, 
       you resolved to implement your own equality tests.  Your application
-      consisted of a simple <type>Color</type> type, and so your first
+      consisted of a simple <literal>Color</literal> type, and so your first
       equality test is for this type.  Your first attempt might look like
       this:
     </para>
@@ -35,7 +35,7 @@
       Since a Haskell &String; is a list of characters, we can
       write a simple function to perform that test.
         For simplicity, we
-      cheat a bit and use the <function>==</function> operator a couple
+      cheat a bit and use the <literal>==</literal> operator a couple
       of times.
     </para>
     &naiveeq.hs:string;
@@ -43,9 +43,9 @@
       You should now be able to see a problem: we have to use a function
       with a different name for every different type that we want to be able to compare.
       That's inefficient and annoying.  It's much more convenient to be able
-      to just use <function>==</function> to compare anything.  It may also
-      be useful to write generic functions such as <function>/=</function>
-      that could be implemented in terms of <function>==</function>, and
+      to just use <literal>==</literal> to compare anything.  It may also
+      be useful to write generic functions such as <literal>/=</literal>
+      that could be implemented in terms of <literal>==</literal>, and
       valid for almost anything.
       This is exactly what Haskell's typeclasses are for.  
     </para>
@@ -93,9 +93,10 @@
     <para id="x_tA">
       Let's use typeclasses to solve our equality dilemma from earlier in the
       chapter.  The first thing that we need to do is define the typeclass
-      itself.  What we want is a function that takes two parameters, both the
-      same type, and returns a <type>Bool</type> indicating whether or not
-      they are equal.  Here's our first definition of a typeclass:
+      itself.  What want a function that takes two parameters, both the
+      same type, and returns a <literal>Bool</literal> indicating whether or not
+      they are equal.  We don't care what that type is, but we just want two
+      items of that type.  Here's our first definition of a typeclass:
     </para>
     &eqclasses.hs:basiceq;
     <para id="x_uA">
@@ -103,7 +104,7 @@
       <varname>BasicEq</varname>, and we'll refer to instance types with the
       letter <parameter id="x_vA">a</parameter>.  This typeclass defines one function.
       That function takes two parameters&emdash;both corresponding to instance
-      types&emdash;and returns a <type>Bool</type>.
+      types&emdash;and returns a <literal>Bool</literal>.
     </para>
     <para id="x_wA">
       On the first line, the name of the parameter <parameter id="x_xA">a</parameter>
@@ -117,17 +118,17 @@
       Recall that you
       can type <command>:t</command> in &ghci; to 
       have it show you the type of something.  Let's see what it says about
-      <function>isEqual</function>:
+      <literal>isEqual</literal>:
     </para>
     <screen>
 *Main&gt; <userinput>:t isEqual</userinput>
 isEqual :: (BasicEq a) => a -> a -> Bool
     </screen>
     <para id="x_zA">
-      You can read that this way: "For all types of <type>a</type>, so
-      long as <type>a</type> is an instance of
-      <varname>BasicEq</varname>, <function>isEqual</function> takes two
-      parameters of type <type>a</type> and returns a <type>Bool</type>".
+      You can read that this way: "For all types of <literal>a</literal>, so
+      long as <literal>a</literal> is an instance of
+      <varname>BasicEq</varname>, <literal>isEqual</literal> takes two
+      parameters of type <literal>a</literal> and returns a <literal>Bool</literal>".
     </para>
     <para id="x_AB">
       Now that we've seen a very simple typeclass, let's expand it a bit.  
@@ -137,14 +138,14 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     &eqclasses.hs:basiceq2;
     <para id="x_BB">
       Someone providing an instance of <varname>BasicEq2</varname> will
-      be required to define two functions: <function>isEqual2</function> and
-      <function>isNotEqual2</function>.
+      be required to define two functions: <literal>isEqual2</literal> and
+      <literal>isNotEqual2</literal>.
     </para>
     <para id="x_CB">
       While our definition of <varname>BasicEq2</varname> is fine, it seems
       that we're making extra work for ourselves.  Logically speaking, if we
-      know what <function>isEqual</function> or
-      <function>isNotEqual</function> would return, we know how to figure out
+      know what <literal>isEqual</literal> or
+      <literal>isNotEqual</literal> would return, we know how to figure out
       what the other function would return, for all types.  Rather than
       making users of the typeclass define both functions for all types, we
       can provide default implementations for them.  Then, users will only
@@ -168,8 +169,8 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     </para>
     <para id="x_FB">
       With <varname>BasicEq3</varname>, we have provided a class that does
-      very much the same thing as Haskell's built-in <function>==</function>
-      and <function>/=</function> operators.  In fact, these operators are
+      very much the same thing as Haskell's built-in <literal>==</literal>
+      and <literal>/=</literal> operators.  In fact, these operators are
       defined by a typeclass that looks almost identical to
       <varname>BasicEq3</varname>.  The Haskell 98 Report <remark>FIXME: add
         reference? --jg</remark> defines a typeclass that implements equality
