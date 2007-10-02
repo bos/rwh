@@ -184,6 +184,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
           implementers of instances choice: they can pick which one they
           implement.  We could have provided a default for only one function,
           which would have forced users to implement the other every time.
+          As it is, users can implement one or both, as they see fit.
         </para>
       </footnote>
       Here's an example that shows how to do
@@ -193,7 +194,10 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     <para id="x_EB">
       People implementing this class must provide an implementation of at
       least one function.  They can implement both if they wish, but they
-      will not be required to.
+      will not be required to.  While we did provide defaults for both
+      functions, each function depends on the presence of the other to
+      calculate an answer.  Therefore, at least one function must always be
+      implemented.
     </para>
     <para id="x_FB">
       With <literal>BasicEq3</literal>, we have provided a class that does

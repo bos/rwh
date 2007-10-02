@@ -51,11 +51,9 @@ class BasicEq3 a where
 {-- snippet basiceq3inst --}
 instance BasicEq3 Color where
     isEqual3 Red Red = True
-    isEqual3 Red _ = False
     isEqual3 Green Green = True
-    isEqual3 Green _ = False
     isEqual3 Blue Blue = True
-    isEqual3 Blue _ = False
+    isEqual3 _ _ = False
 {-- /snippet basiceq3inst --}
 
 {-- snippet show --}
