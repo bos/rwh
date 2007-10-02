@@ -58,6 +58,7 @@
       Typeclasses may look like objects, but they are truly quite different.  
     </para>
     <para id="x_qA">
+      <remark>FIXME: remove or fix this? see comments</remark>
       Let's consider an example.  Imagine you have a
       basket of fruit.  There are things that you might want to do 
       with just about all
@@ -113,8 +114,7 @@
       refer to instance types.
     </para>
     <para id="x_yA">
-      Let's look at this in &ghci;.  <remark>FIXME:
-        insert reference to where this is defined</remark>
+      Let's look at this in &ghci;.
       Recall that you
       can type <command>:t</command> in &ghci; to 
       have it show you the type of something.  Let's see what it says about
@@ -128,11 +128,16 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       You can read that this way: "For all types <literal>a</literal>, so
       long as <literal>a</literal> is an instance of
       <varname>BasicEq</varname>, <literal>isEqual</literal> takes two
-      parameters of type <literal>a</literal> and returns a <literal>Bool</literal>".
+      parameters of type <literal>a</literal> and returns a
+      <literal>Bool</literal>".  Let's take a quick look at defining
+      <literal>isEqual</literal> for a particular type.
     </para>
-    <para id="x_AB">
-      Now that we've seen a very simple typeclass, let's expand it a bit.  
-      A not-equal-to function might be useful.
+    &eqclasses.hs:basicinstance;
+    <para>
+      We'll go into more detail on defining instances in <xref
+        linkend="hs.typeclasses.instances"/>.  First, though, let's continue
+      to look at ways to define typeclasses.  In this example, a
+      not-equal-to function might be useful.
       Here's what we might say to define a typeclass with two functions:
     </para>
     &eqclasses.hs:basiceq2;

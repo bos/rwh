@@ -1,12 +1,12 @@
+{-- snippet color --}
 data Color = Red | Green | Blue
 
 colorEq :: Color -> Color -> Bool
 colorEq Red Red = True
-colorEq Red _ = False
 colorEq Green Green = True
-colorEq Green _ = False
 colorEq Blue Blue = True
-colorEq Blue _ = False
+colorEq _ _ = False
+{-- /snippet --}
 
 stringEq :: [Char] -> [Char] -> Bool
 -- Match if both are empty
@@ -25,6 +25,13 @@ stringEq _ _ = False
 class BasicEq a where
     isEqual :: a -> a -> Bool
 {-- /snippet basiceq --}
+
+{-- snippet basicinstance --}
+instance BasicEq Bool where
+    isEqual True True = True
+    isEqual False False = True
+    isEqual _ _ = False
+{-- /snippet --}
 
 {-- snippet basiceq2 --}
 class BasicEq2 a where
