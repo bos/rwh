@@ -441,7 +441,9 @@ class  Eq a  where
       <para id="x_dB">
         It turns out that &read; and &show; make excellent tools for
         serialization.  &show; produces output that is both human-readable and
-        machine-readable.  It also mostly matches Haskell syntax.
+        machine-readable.  Most &show; output is also syntactically-valid
+        Haskell, though it is up to people that write &Show; instances to
+        make it so.
       </para>
       <para id="x_eB">
         Let's try it out in &ghci;:
@@ -455,6 +457,7 @@ class  Eq a  where
       </para>
       <para id="x_gB">
         Let's try reading it back.
+        <remark>FIXME: xref to explanation of variable binding in ghci</remark>
       </para>
       &serialization.ghci:ex2;
       <para id="x_hB">
@@ -475,6 +478,7 @@ class  Eq a  where
           linkend="hs.typeclasses.auto.derivation"/>), you can use it for
         some really complex data structures.  Here are a few examples of
         slightly more complex data structures:
+        <remark>FIXME: like to def of $, or explain it here</remark>
       </para>
       &serialization.ghci:ex3;
     </sect2>
@@ -485,7 +489,7 @@ class  Eq a  where
       Will need to verify that they look good under the O'Reilly
       renderer.</remark>
       <para id="x_kB">
-        Haskell has a powerful set of numeric types.  You can using everything
+        Haskell has a powerful set of numeric types.  You can use everything
         from fast 32-bit or 64-bit integers to arbitrary-precision rational
         numbers.  Yet you probably know that operators such as
         <literal>+</literal> can work with just about all of these.  This
@@ -519,11 +523,17 @@ class  Eq a  where
             </row>
             <row>
               <entry>&Float;</entry>
-              <entry>Single-precision floating point</entry>
+              <entry>Single-precision floating point.  Often used for
+                floating-point data.</entry>
             </row>
             <row>
               <entry>&Int;</entry>
-              <entry>Fixed-precision signed integer; minimum range [-2^29..2^29-1]</entry>
+              <entry>Fixed-precision signed integer; minimum range
+                [-2^29..2^29-1].  Commonly used.</entry>
+            </row>
+            <row>
+              <entry>&Int8;</entry>
+              <entry>8-bit signed integer</entry>
             </row>
             <row>
               <entry>&Int16;</entry>
@@ -540,7 +550,7 @@ class  Eq a  where
             <row>
               <entry>&Integer;</entry>
               <entry>Arbitrary-precision signed integer; range limited only by
-                machine resources</entry>
+                machine resources.  Commonly used.</entry>
             </row>
             <row>
               <entry>&Rational;</entry>
@@ -551,6 +561,10 @@ class  Eq a  where
               <entry>&Word;</entry>
               <entry>Fixed-precision unsigned integer; storage size same as
                 &Int;</entry>
+            </row>
+            <row>
+              <entry>&Word8;</entry>
+              <entry>8-bit unsigned integer</entry>
             </row>
             <row>
               <entry>&Word16;</entry>
@@ -584,6 +598,7 @@ class  Eq a  where
       </para>
 
       <remark>FIXME: how to sort the operators?</remark>
+      <remark>FIXME: start here with Calvin Smith's comment</remark>
 
       <table id="hs.numerictypes.funcs" tocentry="1">
         <title>Selected Numeric Functions and Constants</title>
