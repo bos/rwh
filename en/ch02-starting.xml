@@ -603,7 +603,7 @@ Loading package base ... linking ... done.
 	<quote>cons</quote> (short for
 	<quote>construct</quote>).</para>
 
-      &basics.ghci:concat;
+      &basics.ghci:cons;
     </sect2>
 
   </sect1>
