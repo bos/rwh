@@ -9,69 +9,96 @@
   <sect1 id="hs.funcstypes.types">
     <title>Haskell's type system</title>
     
-    <para id="x_o2"><quote>Haskell has a strong, static type system with
-	inference.</quote> For a short sentence, this one gives us a
-      lot to pore over.  Because Haskell is quite different
-      from mainstream programming languages in how it treats types,
-      let's not assume too much shared understanding as we talk about
-      types.</para>
+    <para id="x_o2">There are three interesting aspects to types in
+      Haskell: they are <emphasis>strong</emphasis>, they are
+      <emphasis>static</emphasis>, and they can usually be
+      automatically <emphasis>inferred</emphasis> by an
+      implementation.  Let's talk in more detail about each of these
+      ideas.  Because Haskell is quite different from mainstream
+      programming languages in how it treats types, let's not assume
+      too much shared understanding as we cover each one.</para>
 
     <para id="x_p2">Every value and expression in Haskell has a
-      <emphasis>type</emphasis>.  The type of a value indicates that
-      it shares certain properties with other values that have the
-      same type.  (You'll see us refer to a value <quote>having the
-	type <code>X</code></quote>, or <quote>being of type
-	<code>X</code></quote>.  The two phrases mean the same thing.)
-      All values that have the type <type>Integer</type> have the
-      ability to be added to other values of type
-      <type>Integer</type>, and so on.</para>
+      <emphasis>type</emphasis>, such as <type>Integer</type> or
+      <type>[Char]</type>.  The type of a value indicates that it
+      shares certain properties with other values of the same type.
+      For example, we can add numbers, and we can concatenate lists;
+      these are properties of those types. We say a value or
+      expression <quote>has type <code>X</code></quote>, or <quote>is
+	of type <code>X</code></quote>; the two phrases mean the same
+      thing.  Functions, being values, have types too.</para>
 
-    <para id="x_q2">Haskell has a <quote>strong</quote> type system,
-      in which every expression and value has exactly one type;
-      any attempt to apply a function to a value of incompatible type
-      causes an error.  Another aspect of Haskell's view of strong
-      typing is that it will not automatically convert values from one
-      type to another, a feature present in some other
-      languages.</para>
+    <para>Here are a few examples of values, expressions, and their
+      types: the value <literal>'a'</literal> has type
+      <type>Char</type>; the expression <literal>"a" ++ "b"</literal>
+      has type <type>String</type>.  We call an expression that obeys
+      the language's type rules <emphasis>well typed</emphasis>.  An
+      expression that disobeys the type rules, such as <code>10 +
+	"hello"</code>, is <emphasis>ill typed</emphasis>, and will be
+      rejected by a Haskell implementation.</para>
+
+    <para id="x_q2">When we say that Haskell has a
+      <quote>strong</quote> type system, we mean that every expression
+      and value has exactly one <emphasis>most general
+	type</emphasis>.  The notion of a most general type is best
+      explained by example: the expression <literal>x - 1</literal> by
+      itself doesn't result in a specific kind of number: it will work
+      equally well given a value of <varname>x</varname> that's an
+      <type>Integer</type> or a <type>Double</type> (a floating point
+      number). The most general interpretation of it is that it will
+      accept a value of any numeric type.</para>
+
+    <para>Strong typing means that any attempt to apply a function to
+      a value of a different type causes an error.  Another aspect of
+      Haskell's view of strong typing is that it will not
+      automatically coerce values from one type to another.  For
+      example, whereas a C compiler will automatically coerce a value
+      of type <type>int</type> into a <type>float</type> for us if a
+      function expects a parameter of type <type>float</type>, a
+      Haskell compiler will raise a compilation error in a similar
+      situation.  We must explicitly coerce types ourselves.</para>
 
     <note>
       <title>So what's a strong type?</title>
 
-      <para id="x_r2">Conversations about type systems can lead to
-	many a heated misunderstanding among programmers.  Some people
-	say that C has a strong type system; others claim that Python
-	does. Haskell programmers tend to think strong typing is still
-	something else.  The term <quote>strong type</quote> has many
-	definitions, quite a number of which are mutually
-	contradictory.  As a consequence, we're not going to bother
-	putting forward a definition of our own here, beyond the
-	minimal one above.</para>
-
-      <para id="x_s2">Since there's nothing even remotely like an
-	agreed upon meaning for the phrase <quote>strong type</quote>,
-	and there's more than enough misunderstanding in circulation,
-	it's best not to assume that someone else shares the same
-	notion of it as you do.  (We also suggest that putting forth
-	one definition as better than another doesn't often lead to
-	enlightened discussion.)</para>
+      <para id="x_r2">It's useful to be aware that many language
+	communities define a <quote>strong type</quote> differently.
+	Broadly speaking, an implementation of a weak type system will
+	not report an error when presented with an expression like
+	<code>10 + "foo"</code>.  A stronger type system is less
+	permissive in how it allows values of different types to be
+	mixed.  Haskell is less permissive than C, so it has a
+	stronger type system.</para>
     </note>
 
-    <para id="x_t2">Having a <quote>static</quote> type system means that the
-      compiler knows the type of every value and expression at compile
-      time, before any code is ever executed.  A Haskell compiler or
-      interpreter will detect when we try to use types inconsistently
-      in our code, and reject our code with an error message before we
-      ever get to run it.</para>
+    <para id="x_t2">Having a <quote>static</quote> type system means
+      that the compiler knows the type of every value and expression
+      at compile time, before any code is executed.  A Haskell
+      compiler or interpreter will detect when we try to use
+      expressions whose types don't match, and reject our code with an
+      error message.</para>
 
     &ch03.basics.ghci:error;
 
-    <para id="x_u2">Haskell's combination of strong and static typing also makes
-      it impossible for type errors to occur at runtime.</para>
+    <para>This error message is of a kind we've seen before.  It's
+      telling us that the value <literal>1</literal> cannot be treated
+      as a <type>Bool</type>.</para>
 
-    <para id="x_v2">Finally, <quote>type inference</quote> means what it says:
-      the compiler can automatically figure out the types of most
-      values for us, so that we don't have to explicitly label
-      them.</para>
+    <para id="x_u2">Haskell's combination of strong and static typing
+      makes it impossible for type errors to occur at runtime.  While
+      this forces us to do more thinking <quote>up front</quote>, it
+      also eliminates large numbers of simple errors that can
+      otherwise be devilishly hard to find.  It's a truism within the
+      Haskell community that once code compiles, it's more likely to
+      work correctly than in other languages.  (Perhaps a more
+      realistic way of putting this is that Haskell code often has
+      fewer trivial bugs.)</para>
+
+    <para id="x_v2">Finally, <quote>type inference</quote> means that
+      the compiler can automatically deduce the types of most values.
+      Haskell allows us to explicitly declare the type of any value,
+      but the presence of type inference means that only rarely
+      <emphasis>must</emphasis> we do so.</para>
 
     <para id="x_w2">We've already briefly seen Haskell's notation for types in
       <xref linkend="hs.starting.types"/>.  We write <code>expression
@@ -82,11 +109,10 @@
   <sect1 id="hs.funcstypes.basic">
     <title>Some common basic types</title>
     
-    <para id="x_x2">We've already encountered a few types in <xref
-	linkend="hs.starting.types"/>.  Haskell has a number of
-      built-in types that we'll be using over and over.  Here are some of
-      the language's basic types, types that aren't composed of other
-      types</para>
+    <para id="x_x2">In <xref
+	linkend="hs.starting.types"/>, we introduced a few types. Here
+      are more of the most ubiquitous base types, i.e. those that
+      aren't composed of other types.</para>
 
     <itemizedlist>
       <listitem>
@@ -97,7 +123,7 @@
       </listitem>
       <listitem>
 	<para id="x_z2">The <type>Bool</type> type represents a value in Boolean
-	  logic.  The possible values of <type>Bool</type> are
+	  logic.  The possible values of type <type>Bool</type> are
 	  <code>True</code> and <code>False</code>.</para>
       </listitem>
       <listitem>
@@ -105,16 +131,17 @@
 	  fixed-width integer.  The exact range of values represented
 	  by <type>Int</type> depends on the system's longest
 	  <quote>native</quote> integer: on a 32-bit machine, an
-	  <type>Int</type> is usually 31 bits wide, while on a 64-bit
-	  machine, it is usually 63 bits wide.  (There are also
+	  <type>Int</type> is usually 32 bits wide, while on a 64-bit
+	  machine, it is usually 64 bits wide.  (There are also
 	  numeric types that are exactly 8, 16, and so on bits wide;
 	  we'll get to those later.)</para>
       </listitem>
       <listitem>
-	<para id="x_B3">The <type>Integer</type> type represents a signed
-	  integer of arbitrary size.  <type>Integer</type>s are not
-	  used as often as <type>Int</type>s, because they're
-	  more expensive to work with.</para>
+	<para id="x_B3">The <type>Integer</type> type represents a
+	  signed integer of arbitrary size.  <type>Integer</type>s are
+	  not used as often as <type>Int</type>s, because they're more
+	  expensive in terms of both performance and space
+	  consumption.</para>
       </listitem>
       <listitem>
 	<para id="x_C3">The <type>Double</type> type is the type usually used to

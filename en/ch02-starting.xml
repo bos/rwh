@@ -664,16 +664,18 @@ Loading package base ... linking ... done.
 
     &types.ghci:set_t_on;
 
-    <para id="x_U2">What the <code>+t</code> does is tell &ghci; to print the
-      type of an expression after  the expression.  That cryptic
-      <varname>it</varname> in the output can be very useful: it's
-      actually the name of a special variable, in which &ghci; stores
-      the result of the last expression we evaluated.  Let's break
-      down the meaning of the last line of &ghci; output.</para>
+    <para id="x_U2">What the <code>+t</code> does is tell &ghci; to
+      print the type of an expression after  the expression.  That
+      cryptic <varname>it</varname> in the output can be very useful:
+      it's actually the name of a special variable, in which &ghci;
+      stores the result of the last expression we evaluated.  (This
+      isn't a Haskell language feature; it's specific to &ghci;
+      alone.)  Let's break down the meaning of the last line of &ghci;
+      output.</para>
       
     <itemizedlist>
       <listitem>
-	<para id="x_V2">It's telling us about the variable
+	<para id="x_V2">It's telling us about the special variable
 	  <varname>it</varname>.</para>
       </listitem>
       <listitem>
