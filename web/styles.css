@@ -80,7 +80,7 @@ pre.programlisting, pre.screen, p.remark {
   padding-left: 70px;
 }
 
-strong.command, code, pre {
+strong.command, code, pre, span.type {
   font-family: monospace;
   font-weight: normal;
 }
