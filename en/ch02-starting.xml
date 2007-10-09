@@ -296,7 +296,7 @@ Loading package base ... linking ... done.
       &basics.ghci:boolean.bad;
 
       <para>Once again, we're faced with a substantial-looking error
-	message. It tells us that the Boolean type, <type>Bool</type>,
+	message. In brief, it tells us that the Boolean type, <type>Bool</type>,
 	is not a member of the family of numeric types,
 	<code>Num</code>.  The error message is rather long because
 	&ghci; is pointing out the location of the problem, and
@@ -693,7 +693,7 @@ Loading package base ... linking ... done.
       <title>The joy of <quote>it</quote></title>
 
       <para id="x_Y2">That <varname>it</varname> variable is wonderfully handy
-	when we want to use the result of a prior expression in a new
+	when we want to use the result of the prior expression in a new
 	expression.</para>
 
       &types.ghci:it;

@@ -67,8 +67,9 @@
 	not report an error when presented with an expression like
 	<code>10 + "foo"</code>.  A stronger type system is less
 	permissive in how it allows values of different types to be
-	mixed.  Haskell is less permissive than C, so it has a
-	stronger type system.</para>
+	mixed, and will report some an error for such an expression.
+	Haskell is less permissive than C, so it has a stronger type
+	system.</para>
     </note>
 
     <para id="x_t2">Having a <quote>static</quote> type system means
@@ -81,7 +82,7 @@
     &ch03.basics.ghci:error;
 
     <para>This error message is of a kind we've seen before.  It's
-      telling us that the value <literal>1</literal> cannot be treated
+      telling us that the value <literal>"false"</literal> cannot be treated
       as a <type>Bool</type>.</para>
 
     <para id="x_u2">Haskell's combination of strong and static typing
@@ -95,10 +96,17 @@
       fewer trivial bugs.)</para>
 
     <para id="x_v2">Finally, <quote>type inference</quote> means that
-      the compiler can automatically deduce the types of most values.
-      Haskell allows us to explicitly declare the type of any value,
-      but the presence of type inference means that only rarely
+      the compiler can automatically figure out the types of most
+      values and expressions, based on the context in which they
+      appear. Haskell allows us to explicitly declare the type of any
+      value, but the presence of type inference means that only rarely
       <emphasis>must</emphasis> we do so.</para>
+
+    <para>While strong, static typing makes Haskell safe, type
+      inference makes it concise.  The result is potent: we end up
+      with a language that's both safer than popular statically typed
+      languages, and often more expressive than dynamic
+      languages.</para>
 
     <para id="x_w2">We've already briefly seen Haskell's notation for types in
       <xref linkend="hs.starting.types"/>.  We write <code>expression
