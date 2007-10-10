@@ -24,6 +24,32 @@
     the Cygwin environment for Windows.
   </para>
 
+  <sect1 id="hs.systems.running">
+    <title>Running External Programs</title>
+    <para>
+      It is possible to invoke external commands from Haskell.  To do that,
+      we suggest using <literal>rawSystem</literal> from the
+      <literal>System.Cmd</literal> module.  This will invoke a specified
+      program, with the specified arguments, and return the exit code from
+      that program.  You can play with it in &ghci;:
+    </para>
+    &rawSystem.ghci:s1;
+    <para>
+      Here, we run the equivolent of the shell command <literal>ls -l /usr</literal>.  
+      <literal>rawSystem</literal> does not parse arguments from a string or
+      expand wildcards.<footnote><para>There is also a function
+          <literal>system</literal> that takes only a single string and
+          passes it through the shell to parse.  We recommend using
+          <literal>rawSystem</literal> instead, because the shell attaches
+          special meaning to certain characters, which could lead to security
+          issues or unexpected behavior.</para></footnote>
+      Instead, it expects every argument to be contained
+      in a list.  If you don't want to pass any arguments, you can simply
+      pass an empty list like this:
+    </para>
+    &rawSystem.ghci:s2;
+  </sect1>
+
   <sect1 id="hs.systems.piping">
     <title>Piping</title>
     <para>
