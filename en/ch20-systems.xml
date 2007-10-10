@@ -90,7 +90,13 @@ TERMCAP
     <para>
       In this situation, the shell handles setting up all the pipelines
       between programs.  Let's take a look at how we might accomplish this
-      ourselves using Haskell.
+      ourselves using Haskell.  The <literal>System.Process</literal> module
+      defines two functions that will be useful:
+      <literal>runProcess</literal>, which takes &Handle;s to use for input
+      and output; and
+      <literal>runInteractiveCommand</literal>, which returns &Handles; for
+      input and output.  By combining these together,
+      we can send the output of one command to the input of another.
     </para>
   </sect1>
 
