@@ -32,7 +32,39 @@
       programs.  The output of the first program is sent to the input of the
       second.  Its output is sent to the third as input, and so on.  The last
       program's output normally goes to the terminal, or it could go to a
-      file.
+      file.  Here's an example session with the POSIX<footnote><para>POSIX is
+          a standard for Unix-like operating systems.  Linux, FreeBSD,
+          Solaris, and MacOS X are all examples of operating systems that
+          present a POSIX shell and many POSIX-like features.  Windows
+          doesn't, but the Cygwin package can provide many POSIX features for
+          Windows.</para></footnote>
+      shell to illustrate piping:
+    </para>
+    <screen>
+$ <userinput>ls /etc | grep 'm.*ap' | tr a-z A-Z</userinput>
+IDMAPD.CONF
+MAILCAP
+MAILCAP.ORDER
+MEDIAPRM
+TERMCAP
+    </screen>
+    <para>
+      This command runs three programs, piping data between them.  It starts
+      with <literal>ls /etc</literal>, which outputs a list of all files or
+      directories in <literal>/etc</literal>.  The output of
+      <literal>ls</literal> is sent as input to <literal>grep</literal>.  We
+      gave <literal>grep</literal> a regular expression that will cause it to
+      output only the lines that start with <literal>'m'</literal> and then
+      contain <literal>"ap"</literal> somewhere in the line.  Finally, the
+      result of that is sent to <literal>tr</literal>.  We gave
+      <literal>tr</literal> options to convert everything to uppercase.  The
+      output of <literal>tr</literal> isn't set anywhere in particular, so it
+      is displayed on the screen.
+    </para>
+    <para>
+      In this situation, the shell handles setting up all the pipelines
+      between programs.  Let's take a look at how we might accomplish this
+      ourselves using Haskell.
     </para>
   </sect1>
 
