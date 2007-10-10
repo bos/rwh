@@ -40,16 +40,28 @@ function loadComments(id) {
   return false;
 }
 
+function loadAllComments() {
+  $("a.commenttoggle").each(function() {
+    var id = $(this).attr("pid");
+    if (id) {
+      loadComments(id);
+    }
+  });
+}
+
 $(document).ready(function() {
   function loading(id) {
     return " <span id=\"comments_" + id + "\" class=\"comment\">" +
       "<span pid=\"" + id + "\" class=\"commenttoggle\">Loading..." +
       "</span></span>";
   }
-  $("div.toc>p").toggle(function() { $(this).next().show("normal"); },
-			function() { $(this).next().hide("normal"); });
-  $("div.toc>p").hover(function() { $(this).fadeTo("normal", 0.8); },
-		       function() { $(this).fadeTo("normal", 0.35); });
+  $("div.toc>p")
+    .after("<p style='display: none;'><a onclick='return loadAllComments()'>" +
+	   "Load all comments (<b>slow</b>)</a></p>")
+    .toggle(function() { $(this).nextAll().show("normal"); },
+	    function() { $(this).nextAll().hide("normal"); })
+    .hover(function() { $(this).fadeTo("normal", 0.8); },
+	   function() { $(this).fadeTo("normal", 0.35); });
   $("p[@id]").each(function() {
     $(this).append(loading($(this).attr("id")));
   });
@@ -65,6 +77,7 @@ $(document).ready(function() {
       var s = item == 1 ? "" : "s";
       $("#comments_" + qid(id) + " span.commenttoggle").replaceWith(
         "<a class='commenttoggle' id='toggle_" + id + "' " +
+	"pid='" + id + "' " +
 	"onclick='return loadComments(\"" + id + "\")' " +
 	"href='comments: show / hide'>" + item + " comment" + s + "</a>");
     });
