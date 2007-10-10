@@ -1,0 +1,46 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.systems" revision="unpublished">
+  <title>Systems Programming in Haskell</title>
+
+  <para>
+    So far, we've been talking mostly about high-level concepts.  Haskell can
+    also be used for lower-level systems programming.  It is quite possible
+    to write programs that interface with the operating system at a low level
+    using Haskell.
+  </para>
+  <para>
+    In this chapter, we are going to attempt something ambitious: a Perl-like
+    "language" that is valid Haskell, implemented in pure Haskell, that makes
+    shell scripting easy.  We are going to implement piping, easy command
+    invocation, and some simple tools to handle tasks that might otherwise be
+    performed with <literal>grep</literal> or <literal>sed</literal>.
+  </para>
+  <para>
+    Specialized modules exist for different operating systems.  In this
+    chapter, we will use generic OS-independent modules as much as possible.
+    We will alert you to OS-specific code where it occurs.  Most of the
+    example sessions with &ghci; in this chapter require Linux, MacOS X, or
+    the Cygwin environment for Windows.
+  </para>
+
+  <sect1 id="hs.systems.piping">
+    <title>Piping</title>
+    <para>
+      Let's start with a discussing of piping.  Piping is often used in shell
+      scripts.  When you set up a pipe in the shell, you run multiple
+      programs.  The output of the first program is sent to the input of the
+      second.  Its output is sent to the third as input, and so on.  The last
+      program's output normally goes to the terminal, or it could go to a
+      file.
+    </para>
+  </sect1>
+
+</chapter>
+ 
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
