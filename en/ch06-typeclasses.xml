@@ -597,19 +597,22 @@ class  Eq a  where
         it is written in parenthesis as seen in this table.
       </para>
 
+      <remark>FIXME: class hierarchy diagram?</remark>
       <remark>FIXME: how to sort the operators?</remark>
       <remark>FIXME: start here with Calvin Smith's comment</remark>
 
       <table id="hs.numerictypes.funcs" tocentry="1">
         <title>Selected Numeric Functions and Constants</title>
-        <tgroup cols='3' align='left'>
+        <tgroup cols='4' align='left'>
           <colspec colname='c1'/>
           <colspec colname='c2'/>
           <colspec colname='c3'/>
+          <colspec colname='c4'/>
           <thead>
             <row>
               <entry>Item</entry>
               <entry>Type</entry>
+              <entry>Module</entry>
               <entry>Description</entry>
             </row>
           </thead>
@@ -617,53 +620,63 @@ class  Eq a  where
             <row>
               <entry><literal>(+)</literal></entry>
               <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Addition</entry>
             </row>
             <row>
               <entry><literal>(-)</literal></entry>
               <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Subtraction</entry>
             </row>
             <row>
               <entry><literal>(*)</literal></entry>
               <entry><literal>Num a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Multiplication</entry>
             </row>
             <row>
               <entry><literal>(/)</literal></entry>
               <entry><literal>Fractional a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Fractional division</entry>
             </row>
             <row>
               <entry><literal>(**)</literal></entry>
               <entry><literal>Floating a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Raise to the power of</entry>
             </row>
             <row>
               <entry><literal>(%)</literal></entry>
               <entry><literal>Integral a => a -> a -> Ratio a</literal></entry>
+              <entry><literal>Data.Ratio</literal></entry>
               <entry>Ratio composition</entry>
             </row>
 
             <row>
               <entry><literal>(.&amp;.)</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
+              <entry><literal>Data.Bits</literal></entry>
               <entry>Bitwise and</entry>
             </row>
             <row>
               <entry><literal>(.|.)</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
+              <entry><literal>Data.Bits</literal></entry>
               <entry>Bitwise or</entry>
             </row>
             <row>
               <entry><literal>abs</literal></entry>
               <entry><literal>Num a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Absolute value</entry>
             </row>
             <row>
               <entry><literal>approxRational</literal></entry>
               <entry><literal>RealFrac a => a -> a ->
                   Rational</literal></entry>
+              <entry><literal>Data.Ratio</literal></entry>
               <entry>Approximate rational composition based on fractional numerators and
                 denominators</entry>
             </row>
@@ -671,6 +684,7 @@ class  Eq a  where
             <row>
               <entry><literal>cos</literal></entry>
               <entry><literal>Floating a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Cosine.  Also provided are <literal>acos</literal>,
                 <literal>cosh</literal>, and <literal>acosh</literal>, with
                 the same type.</entry>
@@ -678,81 +692,96 @@ class  Eq a  where
             <row>
               <entry><literal>div</literal></entry>
               <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Integer division always truncated down; see also
                 <literal>quot</literal></entry>
             </row>
             <row>
               <entry><literal>fromInteger</literal></entry>
               <entry><literal>Num a => Integer -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Conversion from an &Integer; to any numeric type</entry>
             </row>
             <row>
               <entry><literal>fromRational</literal></entry>
               <entry><literal>Fractional a => Rational -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Conversion from a &Rational;.  May be lossy.</entry>
             </row>
             <row>
               <entry><literal>log</literal></entry>
               <entry><literal>Floating a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Natural logarithm</entry>
             </row>
             <row>
               <entry><literal>logBase</literal></entry>
               <entry><literal>Floating a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Log with explicit base</entry>
             </row>
             <row>
               <entry><literal>maxBound</literal></entry>
               <entry><literal>Bounded a => a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>The maximum value of a bounded
                   type</entry>
             </row>
             <row>
               <entry><literal>minBound</literal></entry>
               <entry><literal>Bounded a => a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>The minimum value of a bounded
                   type</entry>
             </row>
             <row>
               <entry><literal>mod</literal></entry>
               <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Integer modulus</entry>
             </row>
             <row>
               <entry><literal>pi</literal></entry>
               <entry><literal>Floating a => a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Mathematical constant pi</entry>
             </row>
             <row>
               <entry><literal>quot</literal></entry>
               <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Integer division; fractional part of quotient
                   truncated towards zero</entry>
             </row>
             <row>
               <entry><literal>recip</literal></entry>
               <entry><literal>Fractional a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Reciprocal</entry>
             </row>
             <row>
               <entry><literal>rem</literal></entry>
               <entry><literal>Integral a => a -> a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Remainder of integer division</entry>
             </row>
             <row>
               <entry><literal>round</literal></entry>
               <entry><literal>(RealFrac a, Integral b) => a -> b</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Rounds to nearest integer</entry>
             </row>
             <row>
               <entry><literal>shift</literal></entry>
               <entry><literal>Bits a => a -> Int -> a</literal></entry>
+              <entry><literal>Bits</literal></entry>
               <entry>Shift left by the specified number of bits,
                   which may be negative for a right shift.</entry>
             </row>
             <row>
               <entry><literal>sin</literal></entry>
               <entry><literal>Floating a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Sine.  Also provided are <literal>asin</literal>,
                 <literal>sinh</literal>, and <literal>asinh</literal>, with
                 the same type.</entry>
@@ -760,12 +789,14 @@ class  Eq a  where
             <row>
               <entry><literal>sqrt</literal></entry>
               <entry><literal>Floating a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Square root</entry>
             </row>
 
             <row>
               <entry><literal>tan</literal></entry>
               <entry><literal>Floating a => a -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Tangent.  Also provided are <literal>atan</literal>,
                 <literal>tanh</literal>, and <literal>atanh</literal>, with
                 the same type.</entry>
@@ -773,21 +804,25 @@ class  Eq a  where
             <row>
               <entry><literal>toInteger</literal></entry>
               <entry><literal>Integral a => a -> Integer</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Convert any &Integral; to an &Integer;</entry>
             </row>
             <row>
               <entry><literal>toRational</literal></entry>
               <entry><literal>Real a => a -> Rational</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Convert losslessly to &Rational;</entry>
             </row>
             <row>
               <entry><literal>truncate</literal></entry>
               <entry><literal>(RealFrac a, Integral b) => a -> b</literal></entry>
+              <entry><literal>Prelude</literal></entry>
               <entry>Truncates number towards zero</entry>
             </row>
             <row>
               <entry><literal>xor</literal></entry>
               <entry><literal>Bits a => a -> a -> a</literal></entry>
+              <entry><literal>Data.Bits</literal></entry>
               <entry>Bitwise exclusive or</entry>
             </row>
           </tbody>
@@ -918,8 +953,8 @@ class  Eq a  where
         </tgroup>
       </table>
       <para id="x_nB">
-        One other question regarding Haskell's numeric types is conversion
-        between them.  <xref linkend="hs.numerictypes.funcs"/> listed many
+        Converting between numeric types is another common need.
+        <xref linkend="hs.numerictypes.funcs"/> listed many
         functions that can be used for conversion.  However, it is not always
         obvious how to apply them to convert between two arbitrary types.  To
         help you out, <xref linkend="hs.numerictypes.conversion"/> provides
@@ -996,20 +1031,19 @@ class  Eq a  where
         <literal>+</literal> that can be used for all sorts of different
         numbers.  But there are some even more widely-applied operators in
         Haskell.  The most obvious, of course, are the equality tests:
-        <literal>==</literal> and <literal>/=</literal>.  Any type that can
-        be evaluated for equality is a member of &Eq;, which defines those
-        operators.
+        <literal>==</literal> and <literal>/=</literal>.  These operators are
+        defined in the &Eq; class.
       </para>
       <para id="x_pB">
         There are also comparison operators such as <literal>>=</literal> and
-        <literal>&lt;=</literal>.  These are defined by the &Ord; typeclass.
+        <literal>&lt;=</literal>.  These are declared by the &Ord; typeclass.
         These are in a separate typeclass because there are some types, such
         as &Handle;, where an equality test makes sense, but there is no way
         to express a particular ordering.  Anything that is an instance of
         &Ord; can be sorted by <literal>Data.List.sort</literal>.
       </para>
       <para id="x_qB">
-        Virtually all Haskell types are instances of &Eq;, and almost as many
+        Almost all Haskell types are instances of &Eq;, and nearly as many
         are instances of &Ord;.
       </para>
 
@@ -1020,19 +1054,23 @@ class  Eq a  where
     <title>Automatic Derivation</title>
     <para id="x_rB">
       For many simple data types, the Haskell compiler can automatically
-      derive instances of &Read;, &Show;, &Bounded;, &Eq;, and &Ord; for you.
-      This saves you the effort of having to manually write parsers and
-      display code for each type.  Here's an example:
+      derive instances of &Read;, &Show;, &Bounded;, &Enum;, &Eq;, and &Ord;
+      for you.<footnote><para>While these are defined as regular Haskell
+          typeclasses without anything special magic, automatic derivation is a special
+          feature of the compiler only supported with these particular
+          typeclasses.</para></footnote>
+      This saves you the effort of having to manually write code to compare
+      or display your own types.
     </para>
     &colorderived.hs:all;
     <para id="x_sB">
       Let's take a look at how these derived instances work for us:
     </para>
     &derived.ghci:all;
-    <para id="x_tB">
-      Notice that the derived instance of &Read; actually works better than
-      our hand-written version did: it successfully parsed a list with
-      embedded white space.
+    <para>
+      Notice that the sort order for <literal>Color</literal>
+      was based on the order that
+      the constructors were defined, not on an alphabetical ordering.
     </para>
     <para id="x_uB">
       Automatic derivation is not always possible.  For instance, if you
@@ -1040,6 +1078,16 @@ class  Eq a  where
       the compiler will not be able to derive an instance of &Show; because
       it doesn't know how to render a function.  You will get a compilation
       error in such a situation.
+    </para>
+  </sect1>
+
+  <sect1 id="hs.typeclasses.conclusion">
+    <title>Conclusion</title>
+    <para>In this chapter, you learned about the need for typeclasses and how
+      to use them.  We talked about defining our own typeclasses and then
+      covered some of the important typeclasses that are defined in the
+      Haskell library.  Finally, we showed how to have the Haskell compiler
+      automatically derive instances of certain typeclasses for your types.
     </para>
   </sect1>
 
