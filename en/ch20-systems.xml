@@ -94,7 +94,7 @@ TERMCAP
       defines two functions that will be useful:
       <literal>runProcess</literal>, which takes &Handle;s to use for input
       and output; and
-      <literal>runInteractiveCommand</literal>, which returns &Handles; for
+      <literal>runInteractiveCommand</literal>, which returns &Handle;s for
       input and output.  By combining these together,
       we can send the output of one command to the input of another.
     </para>

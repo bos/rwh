@@ -119,3 +119,5 @@
 <!ENTITY type "<literal>type</literal>">
 <!ENTITY unlines "<literal>unlines</literal>">
 <!ENTITY writeFile "<literal>writeFile</literal>">
+<!ENTITY Enum "<literal>Enum</literal>">
+
