@@ -5,17 +5,18 @@ function qid(id) {
 function beforeComment(formData, jqForm, options) {
   var form = jqForm[0];
   if (!form.comment.value) {
-    $("//span.comment_error", jqForm).empty().append(
+    $(options.target + " span.comment_error").empty().append(
       "<span class=\"comment_error\">Your comment is empty</span>");
     return false;
   }
   if (!form.name.value) {
-    $("//span.comment_error", jqForm).empty().append(
+    $(options.target + " span.comment_error").empty().append(
       "<span class=\"comment_error\">Please provide a name</span>");
     return false;
   }
-  $("//span.comment_error", jqForm).empty().after("<img src=\"figs/throbber.gif\" style=\"vertical-align: middle\"/>");
-  $("//input[@name=submit]", jqForm).attr("disabled", true);
+  $(options.target + " span.comment_error").empty().after(
+    "<img src=\"figs/throbber.gif\" style=\"vertical-align: middle\"/>");
+  $(options.target + " input[@name=submit]").attr("disabled", true);
 }
 
 function ajaxifyForm(id) {
@@ -23,7 +24,7 @@ function ajaxifyForm(id) {
   
   $("#form_" + q).ajaxForm({ beforeSubmit: beforeComment,
 			     success: function() { ajaxifyForm(id); },
-			     target: $("#comments_" + q) });
+			     target: "#comments_" + q });
 }
 
 function toggleComment(id) {
