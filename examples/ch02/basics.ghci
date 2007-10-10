@@ -2,7 +2,7 @@
 
 2 + 2
 31337 * 101
-7/2
+7.0 / 2.0
 
 --# bignum
 
@@ -42,7 +42,7 @@ e
 
 --# let
 
-let e = 2.7182818284590451
+let e = exp 1
 
 --# epipi
 
@@ -67,6 +67,10 @@ True && 1
 
 2 /= 3
 
+--# not
+
+not True
+
 --# parens
 
 1 + (4 * 4)
@@ -85,18 +89,6 @@ True && 1
 --# module
 
 :module Data.Ratio
-
---# ratio
-
-7 % 2
-
---# ratarith
-
-7 % 2 + 2 % 3
-
---# denom
-
-(22 % 7) * 7
 
 --# denom.bad
 
@@ -159,7 +151,7 @@ putStr "Here's a newline -->\n<-- See?"
 
 --# list.bad
 
-[1, 2, "buckle my shoe"]
+[True, False, "testing"]
 
 --# range
 

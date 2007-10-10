@@ -3,6 +3,13 @@
 <chapter id="hs.starting" revision="alpha">
   <title>Getting Started</title>
 
+  <para>As you read this chapter and the few that follow, it's good to
+    keep in mind that early on, we will sometimes introduce ideas in
+    restricted, simplified form.  Haskell is a deep language, and
+    presenting every aspect of a given subject all at once is likely
+    to prove overwhelming.  As we build a solid foundation in Haskell,
+    we'll expand upon these initial explanations.</para>
+
   <sect1 id="hs.starting.ghc">
     <title>Your Haskell environment</title>
 
@@ -303,6 +310,27 @@ Loading package base ... linking ... done.
 	hinting at a possible change we could make that might fix the
 	problem.</para>
 
+      <tip>
+	<title>Remain dauntless in the face of error messages</title>
+
+	<para id="x_G2">An important guideline here is one that we'll
+	  be repeating over and over throughout the early sections of
+	  this book. If you run into problems or error messages that
+	  you do not yet understand, <emphasis>don't panic</emphasis>.
+	  Early on, all you have to do is figure out enough to make
+	  progress through a problem. As you acquire experience, parts
+	  of error messages that now seem obscure will become easier
+	  to follow.</para>
+
+	<para>The numerous error messages have a purpose: they
+	  actually help us in writing correct code, by making us
+	  perform some amount of debugging <quote>up front</quote>,
+	  before we ever run a program.  If you are coming from a
+	  background of working with more permissive languages, this
+	  way of working may come as something of a shock.  Bear with
+	  us.</para>
+    </tip>
+
       <para id="x_l1">Most of Haskell's comparison operators are
 	similar to those used in C and languages influenced by
 	C.</para>
@@ -318,6 +346,12 @@ Loading package base ... linking ... done.
 
       &basics.ghci:neq;
 
+      <para>Also, where C and Perl use <function>!</function> for
+	logical negation, Haskell uses the <function>not</function>
+	function.</para>
+
+      &basics.ghci:not;
+      
     </sect2>
 
     <sect2 id="hs.starting.calc.precedence">
@@ -388,13 +422,19 @@ Loading package base ... linking ... done.
 	  <varname>e</varname>.</para>
       </note>
 
-      <para id="x_h1">Using the &let; construct, we can define
-	<varname>e</varname> ourselves.</para>
+      <para id="x_h1">Using &ghci;'s &let; construct, we can make a
+	temporary definition of <varname>e</varname> ourselves.</para>
 
       &basics.ghci:let;
 
-      <para id="x_i1">We can then use our definition of <varname>e</varname> in
-	arithmetic expressions.</para>
+      <para>This is a call to the base-<varname>e</varname>
+	exponential function, <function>exp</function>, and our first
+	example of calling a function in Haskell.  While languages
+	like Python require parentheses around the arguments to a
+	function, Haskell does not.</para>
+
+      <para id="x_i1">With <varname>e</varname> defined, we can use it
+	in arithmetic expressions.</para>
 
       &basics.ghci:epipi;
       
@@ -443,67 +483,6 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1 id="hs.starting.errmsg">
-    <title>Don't sweat those error messages</title>
-
-    <para id="x_B2">Remember the point we made earlier about explicit
-      parentheses often being good?  Here's an example of that idea in
-      action, except here the parentheses are
-      <emphasis>necessary</emphasis>, not merely a good idea.</para>
-
-    &basics.ghci:denom.bad;
-
-    <para id="x_C2">Look at that error message; it's detailed, and
-      mentions a lot of concepts we haven't covered yet.  The best way
-      to start dealing with it is to not worry early on about the
-      details.  The error messages that &GHC; produces can be daunting
-      to newcomers, but take heart.  As you become more familiar with
-      Haskell, you'll acquire enough understanding to interpret error
-      messages more easily.</para>
-
-    <para id="x_D2">For now, however, we must make some kind of progress.
-      If we step back and gloss over the error message, we can see
-      that &ghci; is displaying for us the expression that it had
-      trouble with.  And it has helpfully added parentheses back into
-      the expression, only look!  <emphasis>They're in the wrong
-	places.</emphasis></para>
-
-    <para id="x_E2">This isn't the fault of &ghci;.  It just happens that the
-      <function>(%)</function> and <function>(*)</function> operators
-      have the same precedences, so &ghci; parses the expression from
-      left to right.  As a result, it tries to construct a rational
-      from another rational and an integer, instead of from a pair of
-      integers.  (If <function>(%)</function> had a higher precedence
-      than <function>(*)</function>, the expression would be parsed
-      the way we might have hoped.)</para>
-
-    <para id="x_F2">All we have to do to correct this problem is add some
-      explicit parentheses to say what we really mean.</para>
-
-    &basics.ghci:denom.good;
-
-    <note>
-      <title>Remain dauntless in the face of error messages</title>
-
-      <para id="x_G2">The important lesson here is one that we'll be repeating
-	over and over throughout the early sections of this book. If
-	you run into problems, <emphasis>don't panic</emphasis>. You
-	do not need to understand every little detail of what's going
-	on.  Early on, all you have to do is figure out enough to make
-	progress through a problem.  You don't need instantaneous
-	complete understanding, so don't worry if you don't have
-	it.  It will come.</para>
-
-      <para>The numerous error messages have a purpose: they actually
-	help us to write correct code, by making us perform some
-	amount of debugging <quote>up front</quote>, before we ever
-	run a program.  If you are coming from a background of working
-	with more permissive languages, this way of working may come
-	as something of a shock.  Bear with us.</para>
-    </note>
-
-  </sect1>
-
   <sect1 id="hs.starting.list">
     <title>Lists</title>
 
@@ -532,18 +511,20 @@ Loading package base ... linking ... done.
     
     <para id="x_N2">Once again, &ghci;'s error message is verbose, but
       it's simply telling us that there is no way to turn the string
-      into a number, so the list expression isn't properly typed.</para>
+      into a Boolean value, so the list expression isn't properly
+      typed.</para>
 
-    <para id="x_O2">We can write a series of elements using range
-      notation, and Haskell will fill in the contents of the list for
-      us.</para>
+    <para id="x_O2">If we write a series of elements using
+      <emphasis>range notation</emphasis>, Haskell will fill in the
+      contents of the list for us.</para>
     
     &basics.ghci:range;
 
-    <para>Here, the <literal>..</literal> characters denote a
-      range.  We can only use range notation for types we can count.
-      Range notation makes no sense for rational numbers, for example,
-      because there is not a countable number of rationals.</para>
+    <para>Here, the <literal>..</literal> characters denote a range.
+      We can only use range notation for types whose elements we can
+      enumerate. Range notation makes no sense for rational numbers,
+      for example, because there is not a countable number of
+      rationals.</para>
 
     <para id="x_vK">By the way, notice that the above use of range
       notation gives us a <emphasis>closed interval</emphasis>; the
@@ -560,10 +541,14 @@ Loading package base ... linking ... done.
       sensibly missing the end point of the range, because it isn't an
       element of the series we defined.</para>
 
-    <para>We can omit the end point of a range.  If the type of the
-      range has an upper bound on its values (or a lower bound if the
-      step is negative), that bound will be the end point of the
-      range.  Otherwise, the range will continue indefinitely.</para>
+    <para>We can omit the end point of a range.  If the type we're
+      enumerating has an upper bound on its values (or a lower bound
+      if the step is negative), that bound will be the end point of
+      the range.  Otherwise, the range will continue indefinitely.
+      For example, if you type <literal>[1..]</literal> at the &ghci;
+      prompt, you'll have to interrupt or kill &ghci; to get it to
+      stop printing an infinite succession of ever-larger
+      numbers.</para>
 
     <warning>
       <title>Beware ranges of floating point numbers</title>
@@ -654,7 +639,7 @@ Loading package base ... linking ... done.
     <para>Haskell requires type names to start with an uppercase
       letter, and variable names must start with a lowercase letter.
       Bear this in mind as you read on; it makes it much easier to
-      read everything.</para>
+      follow the names.</para>
 
     <para id="x_T2">The first thing we can do to start exploring the
       world of types is to get &ghci; to tell us more about what it's
@@ -707,12 +692,13 @@ Loading package base ... linking ... done.
 
       &types.ghci:it.bad;
 
-      <para id="x_a2">Couple <varname>it</varname> with liberal use of the
-	arrow keys to recall and edit the last expression we typed,
-	and we have a fairly decent environment for interactive
-	experiments, where the cost of mistakes is very low.  Take
-	advantage of the opportunity to make cheap, plentiful mistakes
-	when you're exploring the language!</para>
+      <para id="x_a2">When we couple <varname>it</varname> with
+	liberal use of the arrow keys to recall and edit the last
+	expression we typed, and this gives us a fairly decent
+	environment for interactive experiments, where the cost of
+	mistakes is very low.  Take advantage of the opportunity to
+	make cheap, plentiful mistakes when you're exploring the
+	language!</para>
     </tip>
 
     <para id="x_b2">Here are a few more of Haskell's names for types, from
@@ -720,8 +706,10 @@ Loading package base ... linking ... done.
 
       &types.ghci:integer;
 
-    <para id="x_c2">Haskell's unbounded integral type is named
-      <type>Integer</type> .</para>
+    <para id="x_c2">Haskell's integer type is named
+      <type>Integer</type>, and is unbounded; only your system's
+      memory capacity limits the size of the integers it can
+      represent.</para>
 
     <para id="x_e2">Rational numbers don't look quite the same as
       integers.</para>
@@ -782,6 +770,7 @@ Loading package base ... linking ... done.
       &GHC;.  We saw how to evaluate simple expressions.</para>
 
     <para id="x_l2">We dipped a toe into the water of typing.</para>
+
     <para id="x_m2">We also had drilled into us the notion that we don't need to
       understand, or be intimidated by, every single gripe that &ghci;
       throws our way.  We'll do just fine with a shallow understanding
