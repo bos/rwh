@@ -1,8 +1,120 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="hs.find" revision="unpublished">
-  <title>FIXME</title>
-  <remark>FIXME.</remark>
+  <title>I/O case study: a library for searching the
+    filesystem</title>
+
+  <para>The problem of <quote>I know I have this file, but I don't
+      know where it is</quote> has been around for as long as
+    computers have had hierarchical filesystems.  The fifth edition of
+    Unix introduced the <command>find</command> command in 1974; it
+    remains indispensable today.  The state of the art has come a long
+    way: modern operating systems ship with advanced document indexing
+    and search capabilities.</para>
+
+  <para>There's still a valuable place for
+    <command>find</command>-like capability in the programmer's
+    toolbox.  In this chapter, we'll develop a library that gives us
+    many of <command>find</command>'s capabilities, without leaving
+    Haskell.</para>
+
+  <sect1>
+    <title>The find command</title>
+
+    <para>If you don't use a Unix-like operating system, or you're not
+      a heavy shell user, it's quite possible you won't have heard of
+      <command>find</command>.  Given a list of directories, it
+      searches each one recursively and prints the name of every entry
+      that matches an expression.</para>
+
+    <para>Individual expressions can take such forms as <quote>name
+	matches this glob pattern</quote>, <quote>entry is a plain
+	file</quote>, <quote>last modified before this date</quote>,
+      and many more.  They can be stitched together into more complex
+      expressions using <quote>and</quote> and <quote>or</quote>
+      operators.</para>
+  </sect1>
+
+  <sect1>
+    <title>Starting simple: recursively listing a directory</title>
+
+    <para>Before we plunge into designing our library, let's solve a
+      few smaller problems.  Our first problem is to get a list of the
+      contents of a directory at all, and to do so recursively.</para>
+
+    &RecursiveContents.hs:RecursiveContents;
+
+    <para>The <function>filter</function> expression ensures that a
+      listing for a single directory won't contain the special
+      directory names <literal>.</literal> or <literal>..</literal>,
+      which refer to the current and parent directory, respectively.
+      If we were to forget to filter these out, we'd recurse
+      endlessly.</para>
+
+    <para>The <function>forM</function> function is a
+      <function>flip</function>ped version of
+      <function>mapM</function>, which we first saw in <xref
+	linkend="hs.io.monad"/>.</para>
+
+    &recursivecontents.ghci:forM;
+
+    <para>The body of the loop checks to see whether the current entry
+      is a directory.  If it is, it recursively lists that directory.
+      Otherwise, it returns a single-element list that is the name of
+      the current entry.  Note that in the body of the loop, the
+      <function>return</function> is returning a value
+      <emphasis>from</emphasis> the anonymous function that is the
+      loop body <emphasis>to</emphasis> its caller,
+      <function>forM</function>.  It is <emphasis>not</emphasis>
+      returning from <function>getRecursiveContents</function>.</para>
+
+    <para>Another thing worth pointing out is the use of the variable
+      <varname>isDirectory</varname>.  In an imperative language such
+      as Python, we'd normally write <code>if
+	os.path.isdir(path)</code>.  However, the
+      <function>doesDirectoryExist</function> function is an
+      <emphasis>action</emphasis>; its return type is <type>IO
+	Bool</type>, not <type>Bool</type>.  Since an &if; expression
+      requires an expression of type <type>Bool</type>, we have to use
+      <code>&lt;-</code> to get the <type>Bool</type> result of the
+      action, and use <emphasis>that</emphasis> in the &if;.</para>
+
+    <para>Finally, each call to the loop body yields a list of names,
+      so the result of <function>forM</function> is a list of lists.
+      We use <function>concat</function> to flatten it into a single
+      list.</para>
+
+    <sect2>
+      <title>Why have both mapM and forM?</title>
+
+      <para>It might seem a bit odd that there exist two functions
+	that are identical but for the order in which they accept
+	their arguments.  However, <function>mapM</function> and
+	<function>forM</function> are convenient in different
+	circumstances.</para>
+
+      <para>In the example above, we're using an anonymous function as
+	the body of our loop.  If we were to use
+	<function>mapM</function> instead of
+	<function>forM</function>, we'd have to place the variable
+	<varname>properNames</varname> after the body of the anonymous
+	function.  We'd have to wrap the entire anonymous function in
+	parentheses, or replace it with a local function in a &where;
+	clause, to make the code parse properly.</para>
+
+      <para>By contrast, if the body of the loop was already a named
+	function, and the list over which we were looping was computed
+	by a complicated expression, we'd have a good case for using
+	<function>mapM</function> instead.</para>
+
+      <para>The stylistic rule of thumb to follow here is to use
+	whichever of <function>mapM</function> or
+	<function>forM</function> lets you write the tidiest code; you
+	should decide this on a case by case basis.  With just a
+	little practice, it will be obvious which to use in every
+	instance.</para>
+    </sect2>
+  </sect1>
 </chapter>
 
 <!--

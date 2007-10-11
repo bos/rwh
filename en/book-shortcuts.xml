@@ -118,6 +118,7 @@
 <!ENTITY try "<literal>try</literal>">
 <!ENTITY type "<literal>type</literal>">
 <!ENTITY unlines "<literal>unlines</literal>">
+<!ENTITY where "<literal>where</literal>">
 <!ENTITY writeFile "<literal>writeFile</literal>">
 <!ENTITY Enum "<literal>Enum</literal>">
 
