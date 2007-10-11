@@ -1072,6 +1072,34 @@ Data: Done!
         return value of the the function.  Otherwise, a type error would
         occur.  Here's an example:
       </para>
+      &return1.hs:all;
+      <para>
+        We have a pure computation that yields a &Bool;.  That computation is
+        passed to &return;, which puts it into the &IO; monad.  Since it is
+        the last value in the &do; block, it becomes the return value of
+        <literal>isGreen</literal>, but this is not because we used the
+        &return; function.
+      </para>
+      <para>
+        Here's a version of the same program with the pure computation broken
+        out into a separate function.  This helps keep the pure code
+        separate, and can also make the intent more clear.
+      </para>
+      &return2.hs:all;
+      <para>
+        Finally, here's a contrived example to show that &return; truly does
+        not have to occur at the end of a &do; block.  In practice, it
+        usually is, but it need not be so.
+      </para>
+      &return3.hs:all;
+      <para>
+        Notice that we used &larrow; in combination with &return;, but &let;
+        in combination with the simple literal.  That's because we needed
+        both values to be pure in order to add them, and &larrow; pulls
+        things out of monads, effectively reversing the effect of &return;.
+        Run this in &ghci; and you'll see <literal>3</literal> displayed, as
+        expected.
+      </para>
     </sect2>
 
 
