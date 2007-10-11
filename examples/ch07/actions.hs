@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch06/actions.hs
+-- ch07/actions.hs
 
 str2action :: String -> IO ()
 str2action input = putStrLn ("Data: " ++ input)

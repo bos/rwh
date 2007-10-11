@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch06/basicio-nodo.hs
+-- ch07/basicio-nodo.hs
 
 main =
     putStrLn "Greetings!  What is your name?" >>

@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch06/toupper-imp.hs
+-- ch07/toupper-imp.hs
 
 import System.IO
 import Data.Char(toUpper)

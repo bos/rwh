@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch06/tempfile.hs
+-- ch07/tempfile.hs
 
 import System.IO
 import System.Directory(getTemporaryDirectory, removeFile)
