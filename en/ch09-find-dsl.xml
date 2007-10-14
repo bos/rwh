@@ -18,7 +18,7 @@
     many of <command>find</command>'s capabilities, without leaving
     Haskell.</para>
 
-  <sect1>
+  <sect1 id="hs.find.getRecursiveContents">
     <title>The find command</title>
 
     <para>If you don't use a Unix-like operating system, or you're not
@@ -59,7 +59,8 @@
     &recursivecontents.ghci:forM;
 
     <para>The body of the loop checks to see whether the current entry
-      is a directory.  If it is, it recursively lists that directory.
+      is a directory.  If it is, it recursively calls
+      <function>getRecursiveContents</function> to list that directory.
       Otherwise, it returns a single-element list that is the name of
       the current entry.  Note that in the body of the loop, the
       <function>return</function> is returning a value
@@ -67,6 +68,9 @@
       loop body <emphasis>to</emphasis> its caller,
       <function>forM</function>.  It is <emphasis>not</emphasis>
       returning from <function>getRecursiveContents</function>.</para>
+
+    <remark>Tie this into our earlier discussion of
+      <function>return</function>.</remark>
 
     <para>Another thing worth pointing out is the use of the variable
       <varname>isDirectory</varname>.  In an imperative language such
@@ -77,7 +81,8 @@
 	Bool</type>, not <type>Bool</type>.  Since an &if; expression
       requires an expression of type <type>Bool</type>, we have to use
       <code>&lt;-</code> to get the <type>Bool</type> result of the
-      action, and use <emphasis>that</emphasis> in the &if;.</para>
+      action out of its <type>IO</type> wrapper, so we can use the
+      plain, unwrapped <type>Bool</type> in the &if;.</para>
 
     <para>Finally, each call to the loop body yields a list of names,
       so the result of <function>forM</function> is a list of lists.
@@ -85,7 +90,28 @@
       list.</para>
 
     <sect2>
-      <title>Why have both mapM and forM?</title>
+      <title>Revisiting anonymous and named functions</title>
+
+      <para>In <xref linkend="hs.fp.anonymous"/>, we listed some
+	reasons not to use anonymous functions, and yet here we are,
+	using one as the body of a loop. This is one of the most
+	common uses of anonymous functions in Haskell.</para>
+
+      <para>We've already seen from their types that
+	<function>forM</function> and <function>mapM</function> take
+	functions as arguments. Most loop bodies are blocks of code
+	that only appear once in a program. Since we're most likely to
+	use a loop body in only one place, why give it a name?</para>
+
+      <para>Of course, it does happen that we need to deploy exactly
+	the same code in several different loops. Rather than cutting
+	and pasting the same anonymous function, it makes sense here
+	to take an existing anonymous function and give it a
+	name.</para>
+    </sect2>
+
+    <sect2>
+      <title>Why provide both mapM and forM?</title>
 
       <para>It might seem a bit odd that there exist two functions
 	that are identical but for the order in which they accept
@@ -93,14 +119,16 @@
 	<function>forM</function> are convenient in different
 	circumstances.</para>
 
-      <para>In the example above, we're using an anonymous function as
-	the body of our loop.  If we were to use
-	<function>mapM</function> instead of
-	<function>forM</function>, we'd have to place the variable
-	<varname>properNames</varname> after the body of the anonymous
-	function.  We'd have to wrap the entire anonymous function in
-	parentheses, or replace it with a local function in a &where;
-	clause, to make the code parse properly.</para>
+      <para>Consider our example above, using an anonymous function as
+	a loop body.  If we were to use <function>mapM</function>
+	instead of <function>forM</function>, we'd have to place the
+	variable <varname>properNames</varname> after the body of the
+	function.  In order to get the code to parse correctly, we'd
+	have to wrap the entire anonymous function in parentheses, or
+	replace it with a named function that would otherwise be
+	unnecessary.  Try it yourself: copy the code above, replacing
+	<function>forM</function> with <function>mapM</function>, and
+	see what this does to the readability of the code.</para>
 
       <para>By contrast, if the body of the loop was already a named
 	function, and the list over which we were looping was computed
@@ -109,11 +137,192 @@
 
       <para>The stylistic rule of thumb to follow here is to use
 	whichever of <function>mapM</function> or
-	<function>forM</function> lets you write the tidiest code; you
-	should decide this on a case by case basis.  With just a
-	little practice, it will be obvious which to use in every
-	instance.</para>
+	<function>forM</function> lets you write the tidiest code.  If
+	the loop body and the expression computing the data over which
+	you're looping are both short, it doesn't matter which you
+	use.  If the loop is short, but the data is long, use
+	<function>mapM</function>.  If the loop is long, but the data
+	short, use <function>forM</function>.  And if both are long,
+	use a &let; or &where; clause to make one of them short.  With
+	just a little practice, it will become obvious which of these
+	approaches is best in every instance.</para>
     </sect2>
+  </sect1>
+
+  <sect1 id="hs.find.simpleFind">
+    <title>A naive finding function</title>
+
+    <para>We can use our <function>getRecursiveContents</function>
+      function as the basis for a simple-minded file finder.</para>
+
+    &SimpleFinder.hs:simpleFind;
+
+    <para>This function takes a predicate that we use to filter the
+      names returned by <function>getRecursiveContents</function>.
+      Each name passed to the predicate is a complete path, so how can
+      we perform a common operation like <quote>find all files ending
+	in the extension <code>.c</code></quote>?</para>
+
+    <para>The <code>System.FilePath</code> module contains numerous
+      invaluable functions that help us to manipulate file names. In
+      this case, we want <function>takeExtension</function>.</para>
+
+    &simplefinder.ghci:takeExtension;
+
+    <para>This gives us a simple matter of writing a function that
+      takes a path, extracts its extension, and compares it with
+      <code>.c</code>.</para>
+    
+    &simplefinder.ghci:find.c;
+
+    <para>While <function>simpleFind</function> works, it has a few
+      glaring problems.  The first is that the predicate is not very
+      expressive.  It can only look at the name of a directory entry,
+      and not for example find out whether it's a file or a directory.
+      This means that our attempt to use
+      <function>simpleFind</function> will list directories ending in
+      <code>.c</code> as well as files with the same extension.</para>
+
+    <para>The second problem is that <function>simpleFind</function>
+      gives us no control over how it traverses the filesystem.  To
+      see why this is significant, consider the problem of searching
+      for a source file in a tree managed by the Subversion revision
+      control system.  Subversion maintains a private
+      <filename>.svn</filename> directory in every directory that it
+      manages; each one contains many subdirectories and files that
+      are of no interest to us.  While we can easily enough filter out
+      any path containing <filename>.svn</filename>, it's more
+      efficient to simply avoid traversing these directories in the
+      first place.  For example, one of us has a Subversion source
+      tree containing 45,000 files, 30,000 of which are stored in
+      1,200 different <filename>.svn</filename> directories.  It's
+      cheaper to avoid traversing those 1,200 directories than to
+      filter out the 30,000 files they contain.</para>
+
+    <para>Finally, <function>simpleFind</function> is strict.  If we
+      have a million files to traverse, we get one huge result
+      containing a million names, instead of a piecemeal lazy stream
+      of results.  This is bad for both resource usage and
+      responsiveness.</para>
+
+    <para>In the sections that follow, we'll overcome each one of
+      these problems.</para>
+  </sect1>
+
+  <sect1>
+    <title>Predicates: from poverty to riches, while remaining
+      pure</title>
+
+    <para>Our predicates can only look at file names.  This excludes a
+      wide variety of interesting behaviours: for instance, what if
+      we'd like to list files of greater than a given size?</para>
+
+    <para>An easy reaction to this is to reach for <type>IO</type>:
+      instead of our predicate being of type <type>FilePath ->
+	Bool</type>, why don't we change it to <type>FilePath -> IO
+	Bool</type>?  This would let us perform arbitrary I/O as part
+      of our predicate.  As appealing as this might seem, it's also
+      potentially a problem: such a predicate could have arbitrary
+      side effects, since a function with return type <type>IO
+	a</type> can have whatever side effects it pleases.</para>
+
+    <para>Let's enlist the type system in our quest to write more
+      predictable, less buggy code: we'll keep predicates pure by
+      avoiding the taint of <quote>IO</quote>.  This will ensure that
+      they can't have any nasty side effects.   We'll feed them more
+      information, too, so that they can gain the expressiveness we
+      want without also becoming potentially dangerous.</para>
+
+    <para>Haskell's portable <code>System.Directory</code> module
+      provides a useful, albeit limited, set of file metadata.</para>
+
+    &simplefinder.ghci:System.Directory;
+
+    <itemizedlist>
+      <listitem>
+	<para>We can use <function>doesFileExist</function> and
+	  <function>doesDirectoryExist</function> to determine whether
+	  a directory entry is a file or a directory.  There are not
+	  yet portable ways to query for other file types that have
+	  become widely available in recent years, such as named
+	  pipes, hard links and symbolic links.</para>
+
+	&simplefinder.ghci:doesExist;
+
+      </listitem>
+
+      <listitem>
+	<para>The <function>getPermissions</function> function lets us
+	  find out whether certain operations on a file or directory
+	  are allowed.</para>
+
+	&simplefinder.ghci:getPermissions;
+
+	<para>Directories are always <function>searchable</function>;
+	  files never are.</para>
+      </listitem>
+
+      <listitem>
+	<para>Finally, <function>getModificationTime</function> tells
+	  us when an entry was last modified.</para>
+
+	&simplefinder.ghci:getModificationTime;
+
+      </listitem>
+    </itemizedlist>
+
+    <para>If we stick with portable, standard Haskell code, these
+      functions are all we have at our disposal.  (We can also find a
+      file's size using a small hack; see below.)  They're also quite
+      enough to let us illustrate the principles we're interested in,
+      without letting us get carried away with an example that's too
+      expansive.  If you need to write more demanding code, the
+      <code>System.POSIX</code> and <code>System.Win32</code> module
+      families provide much more detailed file metadata for the two
+      major modern computing platforms.</para>
+
+    <para>How many pieces of data does our new, richer predicate need
+      to see?  Since we can find out whether an entry is a file or a
+      directory by looking at its <type>Permissions</type>, we don't
+      need to pass in the results of
+      <function>doesFileExist</function> or
+      <function>doesDirectoryExist</function>.  We thus have four
+      pieces of data that a richer predicate needs to look at.</para>
+
+    &BetterPredicate.hs:Predicate;
+
+    <para>Notice that the return value of this predicate is
+      <type>Bool</type>, not <type>IO Bool</type>: the predicate is
+      pure, and cannot perform I/O. With this type in hand, our more
+      expressive finder function is still quite trim.</para>
+
+    &BetterPredicate.hs:betterFind;
+
+    <para>Let's walk through the code.  We'll talk about
+      <function>getFileSize</function> in some detail soon, so let's
+      skip over it for now.</para>
+
+    <para>We can't use <function>filter</function> to call our
+      predicate <varname>p</varname>, as <varname>p</varname>'s
+      purity means it cannot do the I/O needed to gather the metadata
+      it requires.</para>
+
+    <para>This leads us to the unfamiliar function
+      <function>filterM</function>.  It behaves like the normal
+      <function>filter</function> function, but in this case it
+      evaluates its predicate in the <type>IO</type> monad, so that
+      predicate can perform I/O.</para>
+
+    &simplefinder.ghci:filterM;
+
+    <para>Our <function>check</function> predicate is an I/O-capable
+      wrapper for our pure predicate <varname>p</varname>. It does all
+      the dirty work of I/O on <varname>p</varname>'s behalf, so that
+      <varname>p</varname> can remain pure and incapable of causing
+      unwanted side effects.  After gathering the metadata,
+      <function>check</function> calls <varname>p</varname>, then uses
+      <function>return</function> to wrap <varname>p</varname>'s
+      result with <type>IO</type>.</para>
   </sect1>
 </chapter>
 
