@@ -41,24 +41,6 @@ instance (CommandLike a, CommandLike b) =>
 (-|-) :: (CommandLike a, CommandLike b) => a -> b -> PipeCommand a b
 (-|-) = PipeCommand
 
-{-
-instance (CommandLike a, CommandLike b) => 
-         Pipeable a b Handles where
-    (-|-) srcCmd destCmd =
-        do src <- invoke srcCmd
-           dest <- invoke destCmd
-           forkIO (copy (out src) (inp dest))
-           forkIO (copy (err src) stdout)
-           return $ Handles {inp = (inp src),
-                             out = (out dest),
-                             err = (err dest),
-                             getExitCode = getEC src dest}
-
-instance (CommandLike a) => HSCommand a Handles where
-    (-|-) hsfunc destCmd =
-        do dest <- invoke destCmd
-
--}
 copy :: Handle -> Handle -> IO ()
 copy src dest =
     do c <- hGetContents src
