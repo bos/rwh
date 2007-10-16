@@ -4,30 +4,31 @@ import Control.Concurrent
 import System.IO
 import System.Exit
 
-{- | Storage for the Handles that we will be passing about -}
-data Handles = Handles {
-    inp :: Handle,
-    out :: Handle,
-    err :: Handle,
+type SysCommand = (String, [String])
+type HsCommand = String -> IO String
+
+data CommandResult = CommandResult {
+    cmdOutput :: String,
     getExitCode :: IO ExitCode}
 
-type Command = (String, [String])
-
 class CommandLike a where
-    invoke :: a -> IO Handles
+    invoke :: a -> String -> IO CommandResult
 
-instance CommandLike Command where
-    invoke (cmd, args) =
+instance CommandLike SysCommand where
+    invoke (cmd, args) input =
         do (newinp, newout, newerr, ph) <-
                 runInteractiveProcess cmd args Nothing Nothing
-           return $ Handles newinp newout newerr (waitForProcess ph)
+           forkIO $ hPutStr newinp input
+           forkIO $ copy newerr stderr
+           c <- hGetContents newout
+           return $ CommandResult c (waitForProcess ph)
 
-instance CommandLike Handles where
-    invoke h = return h
+instance CommandLike HsCommand where
+    invoke func input =
+        do result <- func input 
+           return $ CommandResult result (return ExitSuccess)
 
-class Pipeable a b c where
-    (-|-) :: a -> b -> IO c
-
+{-
 instance (CommandLike a, CommandLike b) => 
          Pipeable a b Handles where
     (-|-) srcCmd destCmd =
@@ -40,6 +41,10 @@ instance (CommandLike a, CommandLike b) =>
                              err = (err dest),
                              getExitCode = getEC src dest}
 
+instance (CommandLike a) => HSCommand a Handles where
+    (-|-) hsfunc destCmd =
+        do dest <- invoke destCmd
+
 getEC :: Handles -> Handles -> IO ExitCode
 getEC src dest =
     do sec <- getExitCode src
@@ -47,7 +52,7 @@ getEC src dest =
        case sec of
             ExitSuccess -> return dec
             x -> return x
-
+-}
 copy :: Handle -> Handle -> IO ()
 copy src dest =
     do c <- hGetContents src
