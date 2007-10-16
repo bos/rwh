@@ -1,5 +1,8 @@
+{-# OPTIONS_GHC -fglasgow-exts #-}
 import System.Process
 import Control.Concurrent
+import System.IO
+import System.Exit
 
 {- | Storage for the Handles that we will be passing about -}
 data Handles = Handles {
@@ -7,18 +10,20 @@ data Handles = Handles {
     out :: Handle,
     err :: Handle,
     getExitCode :: IO ExitCode}
-    deriving (Eq, Show)
 
 type Command = (String, [String])
 
-(-|-) :: Handles -> Handles -> IO Handles
-(-|-) src dest =
-    do forkIO (copy (out src) (inp dest))
-       forkIO (copy (err src) stdout)
-       return $ Handles {inp = (inp src),
-                         out = (out dest),
-                         err = (err dest),
-                         getExitCode = getEC src dest}
+class Pipeable a b c where
+    (-|-) :: a -> b -> IO c
+
+instance Pipeable Handles Handles Handles where
+    (-|-) src dest =
+        do forkIO (copy (out src) (inp dest))
+           forkIO (copy (err src) stdout)
+           return $ Handles {inp = (inp src),
+                             out = (out dest),
+                             err = (err dest),
+                             getExitCode = getEC src dest}
  
 getEC :: Handles -> Handles -> IO ExitCode
 getEC src dest =
@@ -27,4 +32,9 @@ getEC src dest =
        case sec of
             ExitSuccess -> return dec
             x -> return x
+
+copy :: Handle -> Handle -> IO ()
+copy src dest =
+    do c <- hGetContents src
+       hPutStr dest c
 
