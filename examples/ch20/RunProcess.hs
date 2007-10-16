@@ -6,51 +6,73 @@ import System.Process
 import Control.Concurrent
 import System.IO
 import System.Exit
+import Text.Regex
 
+{- | The type for running external commands.  The first part
+of the tuple is the program name.  The list represents the
+command-line parameters to pass to the command. -}
 type SysCommand = (String, [String])
+
+{- | The type for running Haskell functions and IO actions. -}
 type HsCommand = String -> IO String
 
+{- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: String,
-    getExitCode :: IO ExitCode}
+    cmdOutput :: IO String,        -- ^ IO action that yields the output
+    getExitCode :: IO ExitCode     -- ^ IO action that gives exit code
+    }
 
+{- | Class representing anything that is a runnable command -}
 class CommandLike a where
+    {- | Given the command and a String representing input,
+         invokes the command.  Returns a 'CommandResult'
+         representing the result of the command. -}
     invoke :: a -> String -> IO CommandResult
 
+-- Support for running system commands
 instance CommandLike SysCommand where
     invoke (cmd, args) input =
         do (newinp, newout, newerr, ph) <-
                 runInteractiveProcess cmd args Nothing Nothing
-           hSetBuffering newinp LineBuffering
-           forkIO $ hPutStr newinp input
+           forkIO (do hPutStr newinp input
+                      hClose newinp)
            forkIO $ copy newerr stderr
-           hSetBuffering newout LineBuffering
-           c <- hGetContents newout
-           return $ CommandResult c (waitForProcess ph)
+           return $ CommandResult (hGetContents newout) (waitForProcess ph)
 
+-- Support for running Haskell commands
 instance CommandLike HsCommand where
     invoke func input =
-        do result <- func input 
-           return $ CommandResult result (return ExitSuccess)
+        return $ CommandResult (func input) (return ExitSuccess)
 
+{- | Type representing a pipe.  A 'PipeCommand' consists of a source
+and destination part, both of which must be instances of
+'CommandLine'. -}
 data (CommandLike src, CommandLike dest) => 
      PipeCommand src dest = PipeCommand src dest 
 
+{- | A convenient function for creating a 'PipeCommand'. -}
+(-|-) :: (CommandLike a, CommandLike b) => a -> b -> PipeCommand a b
+(-|-) = PipeCommand
+
+{- | Make 'PipeCommand' runnable as a command -}
 instance (CommandLike a, CommandLike b) =>
          CommandLike (PipeCommand a b) where
     invoke (PipeCommand src dest) input =
         do res1 <- invoke src input
-           res2 <- invoke dest (cmdOutput res1)
+           out1 <- (cmdOutput res1)
+           res2 <- invoke dest out1
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
-(-|-) :: (CommandLike a, CommandLike b) => a -> b -> PipeCommand a b
-(-|-) = PipeCommand
-
+{- | Utility function to copy data from one Handle to another. -}
 copy :: Handle -> Handle -> IO ()
 copy src dest =
     do c <- hGetContents src
        hPutStr dest c
 
+{- | Given two 'CommandResult' items, evaluate the exit codes for
+both and then return a "combined" exit code.  This will be ExitSuccess
+if both exited successfully.  Otherwise, it will reflect the first
+error encountered. -}
 getEC :: CommandResult -> CommandResult -> IO ExitCode
 getEC src dest =
     do sec <- getExitCode src
@@ -59,12 +81,26 @@ getEC src dest =
             ExitSuccess -> return dec
             x -> return x
 
+{- | Execute a 'CommandLike'. -}
 runIO :: CommandLike a => a -> IO ()
 runIO cmd =
     do res <- invoke cmd []
-       putStr (cmdOutput res)
+       output <- cmdOutput res
+       putStr output
        ec <- getExitCode res
        case ec of
             ExitSuccess -> return ()
             ExitFailure code -> fail $ "Exited with code " ++ show code
+
+-- | Count the lines in the input
+countLines :: String -> IO String
+countLines = return . (++) "\n" . show . length . lines
+
+grep :: String -> String -> IO String
+grep pattern = 
+    return . unlines . filter isMatch . lines
+    where regex = mkRegex pattern
+          isMatch line = case matchRegex regex line of
+                              Nothing -> False
+                              Just _ -> True
 
