@@ -16,9 +16,12 @@ type SysCommand = (String, [String])
 {- | The type for running Haskell functions and IO actions. -}
 type HsCommand = String -> IO String
 
+{- | The output from a command -}
+type CommandOutput = Either String Handle
+
 {- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: IO String,        -- ^ IO action that yields the output
+    cmdOutput :: CommandOutput,        -- ^ IO action that yields the output
     getExitCode :: IO ExitCode     -- ^ IO action that gives exit code
     }
 
@@ -32,7 +35,8 @@ class CommandLike a where
 -- Support for running system commands
 instance CommandLike SysCommand where
     invoke (cmd, args) input =
-        do (newinp, newout, newerr, ph) <-
+        do putStrLn $ "35: " ++ cmd ++ " " ++ show args
+           (newinp, newout, newerr, ph) <-
                 runInteractiveProcess cmd args Nothing Nothing
            forkIO (do hPutStr newinp input
                       hClose newinp)
@@ -59,8 +63,11 @@ instance (CommandLike a, CommandLike b) =>
          CommandLike (PipeCommand a b) where
     invoke (PipeCommand src dest) input =
         do res1 <- invoke src input
+           putStrLn "62"
            out1 <- (cmdOutput res1)
+           putStrLn "64"
            res2 <- invoke dest out1
+           putStrLn "66"
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
 {- | Utility function to copy data from one Handle to another. -}
@@ -85,9 +92,13 @@ getEC src dest =
 runIO :: CommandLike a => a -> IO ()
 runIO cmd =
     do res <- invoke cmd []
+       putStrLn "91"
        output <- cmdOutput res
+       putStrLn "93"
        putStr output
+       putStrLn "95"
        ec <- getExitCode res
+       putStrLn "97"
        case ec of
             ExitSuccess -> return ()
             ExitFailure code -> fail $ "Exited with code " ++ show code
