@@ -16,12 +16,12 @@ type SysCommand = (String, [String])
 {- | The type for running Haskell functions and IO actions. -}
 type HsCommand = String -> IO String
 
-{- | The output from a command -}
-type CommandOutput = Either String Handle
+{- | The output from a command, and the input to a command -}
+type CommandData = Either String Handle
 
 {- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: CommandOutput,        -- ^ IO action that yields the output
+    cmdOutput :: CommandData,      -- ^ IO action that yields the output
     getExitCode :: IO ExitCode     -- ^ IO action that gives exit code
     }
 
@@ -30,7 +30,7 @@ class CommandLike a where
     {- | Given the command and a String representing input,
          invokes the command.  Returns a 'CommandResult'
          representing the result of the command. -}
-    invoke :: a -> String -> IO CommandResult
+    invoke :: a -> CommandData -> IO CommandResult
 
 -- Support for running system commands
 instance CommandLike SysCommand where
@@ -38,15 +38,23 @@ instance CommandLike SysCommand where
         do putStrLn $ "35: " ++ cmd ++ " " ++ show args
            (newinp, newout, newerr, ph) <-
                 runInteractiveProcess cmd args Nothing Nothing
-           forkIO (do hPutStr newinp input
-                      hClose newinp)
+           case input of
+                Left str -> forkIO (do hPutStr newinp str
+                                       hClose newinp)
+                Right hdl -> forkIO (do copy hdl newinp
+                                        hClose hdl
+                                        hClose newinp)
+
            forkIO $ copy newerr stderr
-           return $ CommandResult (hGetContents newout) (waitForProcess ph)
+           return $ CommandResult (Right newout) (waitForProcess ph)
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
     invoke func input =
-        return $ CommandResult (func input) (return ExitSuccess)
+       do result <- case input of 
+              Left str -> func str
+              Right hdl -> hGetContents hdl >>= func
+          return $ CommandResult (Left result) (return ExitSuccess)
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
@@ -64,9 +72,8 @@ instance (CommandLike a, CommandLike b) =>
     invoke (PipeCommand src dest) input =
         do res1 <- invoke src input
            putStrLn "62"
-           out1 <- (cmdOutput res1)
            putStrLn "64"
-           res2 <- invoke dest out1
+           res2 <- invoke dest (cmdOutput res1)
            putStrLn "66"
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
@@ -91,11 +98,11 @@ getEC src dest =
 {- | Execute a 'CommandLike'. -}
 runIO :: CommandLike a => a -> IO ()
 runIO cmd =
-    do res <- invoke cmd []
+    do res <- invoke cmd (Left [])
        putStrLn "91"
-       output <- cmdOutput res
-       putStrLn "93"
-       putStr output
+       case (cmdOutput res) of
+            Left str -> putStr str
+            Right hdl -> copy hdl stdout
        putStrLn "95"
        ec <- getExitCode res
        putStrLn "97"
