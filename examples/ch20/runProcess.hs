@@ -13,18 +13,33 @@ data Handles = Handles {
 
 type Command = (String, [String])
 
+class CommandLike a where
+    invoke :: a -> IO Handles
+
+instance CommandLike Command where
+    invoke (cmd, args) =
+        do (newinp, newout, newerr, ph) <-
+                runInteractiveProcess cmd args Nothing Nothing
+           return $ Handles newinp newout newerr (waitForProcess ph)
+
+instance CommandLike Handles where
+    invoke h = return h
+
 class Pipeable a b c where
     (-|-) :: a -> b -> IO c
 
-instance Pipeable Handles Handles Handles where
-    (-|-) src dest =
-        do forkIO (copy (out src) (inp dest))
+instance (CommandLike a, CommandLike b) => 
+         Pipeable a b Handles where
+    (-|-) srcCmd destCmd =
+        do src <- invoke srcCmd
+           dest <- invoke destCmd
+           forkIO (copy (out src) (inp dest))
            forkIO (copy (err src) stdout)
            return $ Handles {inp = (inp src),
                              out = (out dest),
                              err = (err dest),
                              getExitCode = getEC src dest}
- 
+
 getEC :: Handles -> Handles -> IO ExitCode
 getEC src dest =
     do sec <- getExitCode src
