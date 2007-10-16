@@ -28,6 +28,19 @@ instance CommandLike HsCommand where
         do result <- func input 
            return $ CommandResult result (return ExitSuccess)
 
+data (CommandLike src, CommandLike dest) => 
+     PipeCommand src dest = PipeCommand src dest 
+
+instance (CommandLike a, CommandLike b) =>
+         CommandLike (PipeCommand a b) where
+    invoke (PipeCommand src dest) input =
+        do res1 <- invoke src input
+           res2 <- invoke dest (cmdOutput res1)
+           return $ CommandResult (cmdOutput res2) (getEC res1 res2)
+
+(-|-) :: (CommandLike a, CommandLike b) => a -> b -> PipeCommand a b
+(-|-) = PipeCommand
+
 {-
 instance (CommandLike a, CommandLike b) => 
          Pipeable a b Handles where
@@ -45,16 +58,17 @@ instance (CommandLike a) => HSCommand a Handles where
     (-|-) hsfunc destCmd =
         do dest <- invoke destCmd
 
-getEC :: Handles -> Handles -> IO ExitCode
+-}
+copy :: Handle -> Handle -> IO ()
+copy src dest =
+    do c <- hGetContents src
+       hPutStr dest c
+
+getEC :: CommandResult -> CommandResult -> IO ExitCode
 getEC src dest =
     do sec <- getExitCode src
        dec <- getExitCode dest
        case sec of
             ExitSuccess -> return dec
             x -> return x
--}
-copy :: Handle -> Handle -> IO ()
-copy src dest =
-    do c <- hGetContents src
-       hPutStr dest c
 
