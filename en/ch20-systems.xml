@@ -117,19 +117,26 @@
     </para>
   </sect1>
 
-  <sect1 id="hs.systems.datetime"> <title>Dates and Times</title> <para>
+  <sect1 id="hs.systems.datetime"> 
+    <title>Dates and Times</title>
+    <para>
       Everything from file timestamps to business transactions involve dates
       and times.  Haskell provides ways for manipulating dates and times, as
       well as features for obtaining date and time information from the
-      system.  </para> <sect2 id="hs.systems.datetime.types">
-      <title>ClockTime and CalendarTime</title> <para> In Haskell, the
+      system.
+    </para>
+    <sect2 id="hs.systems.datetime.types">
+      <title>ClockTime and CalendarTime</title>
+      <para> In Haskell, the
         <literal>System.Time</literal> module is primarily responsible for
         date and time handling.  It defines two types: &ClockTime; and
         &CalendarTime;.  </para> <para> &ClockTime; is the Haskell version of
         the traditional POSIX epoch.  A &ClockTime; represents the number of
         seconds since midnight the morning of January 1, 1970, UTC.  A
         negative &ClockTime; represents times prior to that date, while a
-        positive number represents times after it.  </para> <para>
+        positive number represents times after it.  
+      </para> 
+      <para>
         &ClockTime; is convenient for computations.  Since it tracks
         Coordinated Universal Time (UTC), it doesn't have to adjust for local
         timezones, daylight saving time, or other special cases in time
@@ -157,6 +164,7 @@
         <listitem><para>What will be the &ClockTime; 14 days ahead of this
             precise instant?</para></listitem>
         <listitem><para>When was the file last modified?</para></listitem>
+        <listitem><para>What is the precise time right now?</para></listitem>
       </itemizedlist>
       <para>
         These are good uses of &ClockTime; because they refer to precise,
@@ -169,10 +177,69 @@
             month?</para></listitem>
         <listitem><para>What day of the week will May 1 fall on next
             year?</para></listitem>
-        <listitem><para>What is the current time in the local timezone,
-            taking the potential presence of Daylight Saving Time into
+        <listitem><para>What is the current time in my local timezone,
+            taking the potential presence of Daylight Saving Time (DST) into
             account?</para></listitem>
       </itemizedlist>
+      <para>
+        &CalendarTime; stores a time the way humans do: with a year, month,
+        day, hour, minute, second, timezone, and DST information.  It's easy
+        to convert this into a conveniently-displayable string, or to answer
+        questions about the local time.
+      </para>
+      <para>
+        You can convert between &ClockTime; and &CalendarTime; at will.
+        Haskell includes functions to convert a &ClockTime; to a
+        &CalendarTime; in the local timezone, or to a &CalendarTime;
+        representing UTC.
+      </para>
+      <sect3 id="hs.systems.clocktime">
+        <title>Using ClockTime</title>
+        <para>
+          &ClockTime; is defined in <literal>System.Time</literal> like this:
+        </para>
+        <programlisting>
+data ClockTime = TOD Integer Integer
+        </programlisting>
+        <para>
+          The first &Integer; represents the number of seconds since the
+          epoch.  The second &Integer; represents an additional number of
+          picoseconds.  Because &ClockTime; in Haskell uses the unbounded
+          &Integer; type, it can effectively represent a date range limited only
+          by computational resources.
+        </para>
+        <para>
+          Let's look at some ways to use &ClockTime;.  First, there is the
+          <literal>getClockTime</literal> function that returns the current
+          time according to the system's clock.
+        </para>
+        &time.ghci:getClockTime;
+        <para>
+          If you wait a second and run <literal>getClockTime</literal> again,
+          you'll see it returning an updated time.  Notice that the output
+          from this command was a nice-looking string, complete with
+          day-of-week information.  That's due to the &Show; instance for
+          &ClockTime;.  Let's look at the &ClockTime; at a lower level:
+        </para>
+        &time.ghci:ClockTime2;
+        <para>
+          Here we first construct a &ClockTime; representing the point in
+          time 1500 seconds after midnight on January 1, 1970, UTC.
+          Depending on your timezone, this moment in time may correspond to
+          the evening of December 31, 1969, in your local timezone.
+        </para>
+        <para>
+          The second example shows us pulling the number of seconds out of
+          the value returned by <literal>getClockTime</literal>.  We can now
+          manipulate it, like so:
+        </para>
+        &time.ghci:ClockTime3;
+        <para>
+          This will display what the time will be exactly 24 hours from now
+          in your local timezone, since there are 86,400 seconds in 24 hours.
+        </para>
+      </sect3>
+
     </sect2>
 
   </sect1>
