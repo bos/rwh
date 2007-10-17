@@ -19,9 +19,11 @@
   <para>
     Specialized modules exist for different operating systems.  In this
     chapter, we will use generic OS-independent modules as much as possible.
-    We will alert you to OS-specific code where it occurs.  Most of the
-    example sessions with &ghci; in this chapter require Linux, MacOS X, or
-    the Cygwin environment for Windows.
+    However, we will be focusing on the POSIX environment for much of the
+    chapter.  POSIX is a standard for Unix-like operating systems such as
+    Linux, FreeBSD, MacOS X, or Solaris.  Windows does not support POSIX by
+    default, but the Cygwin environment provides a POSIX compatibility layer
+    for Windows.
   </para>
 
   <sect1 id="hs.systems.running">
@@ -50,6 +52,79 @@
     &rawSystem.ghci:s2;
   </sect1>
 
+  <sect1 id="hs.systems.directories">
+    <title>Directory and File Information</title>
+    <para>
+      The <literal>System.Directory</literal> module contains quite a few
+      functions that can be used to obtain information from the filesystem.
+      You can get a list of files in a directory, rename or delete files,
+      copy files, change the current working directory, or create new
+      directories.  <literal>System.Directory</literal> is portable and works
+      on any platform where GHC itself works.
+    </para>
+    <para>
+      The <ulink
+        url="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-Directory.html">library
+        reference for <literal>System.Directory</literal></ulink> provides a
+      comprehensive list of the functions available.  Let's use &ghci; to
+      demonstrate a few of them.  Most of these functions are straightforward
+      equivolents to C library calls or shell commands.
+    </para>
+    &dir.ghci:setdir;
+    <para>
+      Here we saw commands to change the current working directory and obtain
+      the current working directory from the system.  These are similar to
+      the <literal>cd</literal> and <literal>pwd</literal> commands in the
+      POSIX shell.
+    </para>
+    &dir.ghci:contents;
+    <para>
+      <literal>getDirectoryContents</literal> returns a list for every item
+      in a given directory.  Note that on POSIX systems, this list normally
+      includes the special values <literal>"."</literal> and
+      <literal>".."</literal>.  You will usually want to filter these out
+      when processing the content of the directory, perhaps like this:
+    </para>
+    &dir.ghci:contents2;
+    <para>
+      You can also query the system about the location of certain
+      directories.   This query will ask the underlying operating system for
+      the information.
+    </para>
+    &dir.ghci:query;
+  </sect1>
+
+  <sect1 id="hs.system.termination">
+    <title>Program Termination</title>
+    <para>
+      Developers often write individual programs to accomplish particular
+      tasks.  These individual parts may be combined to accomplish larger
+      tasks.  A shell script or another program may execute them.  The
+      calling script often needs a way to discover whether the program was
+      able to complete its task successfully.  Haskell automatically
+      indicates a non-successful exit whenever a program is aborted by an
+      exception.
+    </para>
+    <para>However, you may need more fine-grained control over the
+      exit code than that.   Perhaps you need to return different codes for
+      different types of errors.
+      The <literal>System.Exit</literal> module provides a way to exit the
+      program and return a specific exit status code to the caller.  You can
+      call <literal>exitWith ExitSuccess</literal> to return a code
+      indicating a successful termination (0 on POSIX systems).  Or, you can
+      call something like <literal>exitWith (ExitFailure 5)</literal>, which
+      will return code 5 to the calling program.
+    </para>
+  </sect1>
+
+  <sect1 id="hs.systems.datetime">
+    <title>Dates and Times</title>
+    <para>
+      asdf
+    </para>
+  </sect1>
+
+
   <sect1 id="hs.systems.piping">
     <title>Piping</title>
     <para>
@@ -58,12 +133,7 @@
       programs.  The output of the first program is sent to the input of the
       second.  Its output is sent to the third as input, and so on.  The last
       program's output normally goes to the terminal, or it could go to a
-      file.  Here's an example session with the POSIX<footnote><para>POSIX is
-          a standard for Unix-like operating systems.  Linux, FreeBSD,
-          Solaris, and MacOS X are all examples of operating systems that
-          present a POSIX shell and many POSIX-like features.  Windows
-          doesn't, but the Cygwin package can provide many POSIX features for
-          Windows.</para></footnote>
+      file.  Here's an example session with the POSIX
       shell to illustrate piping:
     </para>
     <screen>
