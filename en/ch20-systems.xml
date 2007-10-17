@@ -117,11 +117,64 @@
     </para>
   </sect1>
 
-  <sect1 id="hs.systems.datetime">
-    <title>Dates and Times</title>
-    <para>
-      asdf
-    </para>
+  <sect1 id="hs.systems.datetime"> <title>Dates and Times</title> <para>
+      Everything from file timestamps to business transactions involve dates
+      and times.  Haskell provides ways for manipulating dates and times, as
+      well as features for obtaining date and time information from the
+      system.  </para> <sect2 id="hs.systems.datetime.types">
+      <title>ClockTime and CalendarTime</title> <para> In Haskell, the
+        <literal>System.Time</literal> module is primarily responsible for
+        date and time handling.  It defines two types: &ClockTime; and
+        &CalendarTime;.  </para> <para> &ClockTime; is the Haskell version of
+        the traditional POSIX epoch.  A &ClockTime; represents the number of
+        seconds since midnight the morning of January 1, 1970, UTC.  A
+        negative &ClockTime; represents times prior to that date, while a
+        positive number represents times after it.  </para> <para>
+        &ClockTime; is convenient for computations.  Since it tracks
+        Coordinated Universal Time (UTC), it doesn't have to adjust for local
+        timezones, daylight saving time, or other special cases in time
+        handling.  Every day is exactly (60 * 60 * 24) or 86,400
+        seconds<footnote><para>Some will note that UTC defines leap seconds
+            at irregular intervals.  The POSIX standard, which Haskell
+            follows, states that every day is exactly 86,400 seconds in
+            length in its representation, so you need not be concerned about
+            leap seconds when performing routine calculations.  The exact
+            manner of handling leap seconds is system-dependant and complex,
+            though usually it can be explained as having a "long second".
+            This nuance is generally only of interest when performing precise
+            subsecond calculations.</para></footnote>, which makes time
+        interval calculations simple.  You can, for instance, check the
+        &ClockTime; at the start of a long task, again at the end, and simply
+        subtract the start time from the end time to determine how much time
+        elapsed.  You can then divide by 24 and display the elapsed time as a
+        count of hours if you wish.
+      </para>
+      <para>
+        &ClockTime; is ideal for answering questions such as these:
+      </para>
+      <itemizedlist>
+        <listitem><para>How much time has elapsed?</para></listitem>
+        <listitem><para>What will be the &ClockTime; 14 days ahead of this
+            precise instant?</para></listitem>
+        <listitem><para>When was the file last modified?</para></listitem>
+      </itemizedlist>
+      <para>
+        These are good uses of &ClockTime; because they refer to precise,
+        unambiguous moments in time.  However, &ClockTime; is not as easily
+        used for questions such as:
+      </para>
+      <itemizedlist>
+        <listitem><para>Is today Monday?</para></listitem>
+        <listitem><para>What will be the time on this date next
+            month?</para></listitem>
+        <listitem><para>What day of the week will May 1 fall on next
+            year?</para></listitem>
+        <listitem><para>What is the current time in the local timezone,
+            taking the potential presence of Daylight Saving Time into
+            account?</para></listitem>
+      </itemizedlist>
+    </sect2>
+
   </sect1>
 
 
