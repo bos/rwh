@@ -1,0 +1,15 @@
+--# setdir
+:m System.Directory
+setCurrentDirectory "/etc"
+getCurrentDirectory
+setCurrentDirectory ".."
+getCurrentDirectory
+--# contents
+getDirectoryContents "/"
+--# contents2
+getDirectoryContents "/" >>= return . filter (\c -> not $ elem c [".", ".."])
+--# query
+getHomeDirectory
+getAppUserDataDirectory "myApp"
+getUserDocumentsDirectory
+
