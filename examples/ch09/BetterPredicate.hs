@@ -4,15 +4,11 @@ import RecursiveContents (getRecursiveContents)
 import System.Directory (Permissions(..), getModificationTime, getPermissions)
 import System.Time (ClockTime(..))
 {-- /snippet imports --}
-{-- snippet getFileSize --}
+import System.FilePath (takeExtension)
+{-- snippet simpleFileSize --}
 import Control.Exception (bracket, handle)
 import System.IO (IOMode(..), hClose, hFileSize, openFile)
 
-getFileSize path = handle (const (return Nothing)) $
-  bracket (openFile path ReadMode) hClose ((Just `fmap`) . hFileSize)
-{-- /snippet getFileSize --}
-
-{-- snippet simpleFileSize --}
 simpleFileSize :: FilePath -> IO Integer
 
 simpleFileSize path = do
@@ -22,8 +18,19 @@ simpleFileSize path = do
   return size
 {-- /snippet simpleFileSize --}
 
+{-- snippet getFileSize --}
+getFileSize path = handle (const (return Nothing)) $
+  bracket (openFile path ReadMode) hClose $ \h -> do
+    size <- hFileSize h
+    return (Just size)
+{-- /snippet getFileSize --}
+
 {-- snippet saferFileSize --}
-saferFileSize path = bracket (openFile path ReadMode) hClose hFileSize
+saferFileSize path = handle (\_ -> return Nothing) $ do
+  h <- openFile path ReadMode
+  size <- hFileSize h
+  hClose h
+  return (Just size)
 {-- /snippet saferFileSize --}
 
 {-- snippet Predicate --}
@@ -46,3 +53,9 @@ betterFind p path = getRecursiveContents path >>= filterM check
             modified <- getModificationTime name
             return (p name perms size modified)
 {-- /snippet betterFind --}
+
+{-- snippet myTest --}
+myTest name _ (Just size) _ =
+    takeExtension name == ".c" && size > 1048576
+myTest _ _ _ _ = False
+{-- /snippet myTest --}

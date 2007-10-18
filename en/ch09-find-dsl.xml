@@ -310,19 +310,175 @@
     <para>This leads us to the unfamiliar function
       <function>filterM</function>.  It behaves like the normal
       <function>filter</function> function, but in this case it
-      evaluates its predicate in the <type>IO</type> monad, so that
-      predicate can perform I/O.</para>
+      evaluates its predicate in the <type>IO</type> monad, allowing
+      the predicate to perform I/O.</para>
 
     &simplefinder.ghci:filterM;
 
     <para>Our <function>check</function> predicate is an I/O-capable
       wrapper for our pure predicate <varname>p</varname>. It does all
-      the dirty work of I/O on <varname>p</varname>'s behalf, so that
-      <varname>p</varname> can remain pure and incapable of causing
+      the <quote>dirty</quote> work of I/O on <varname>p</varname>'s
+      behalf, so that we can keep <varname>p</varname> incapable of
       unwanted side effects.  After gathering the metadata,
       <function>check</function> calls <varname>p</varname>, then uses
       <function>return</function> to wrap <varname>p</varname>'s
       result with <type>IO</type>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Sizing a file safely</title>
+
+    <para>Although <code>System.Directory</code> doesn't let us find
+      out what size a file is, we can use the similarly portable
+      <code>System.IO</code> module to do this.  It contains a
+      function named <function>hFileSize</function>, which returns the
+      size in bytes of an open file.  Here's a simple function that
+      wraps it.</para>
+
+    &BetterPredicate.hs:simpleFileSize;
+
+    <para>While this function works, it's not yet suitable for us to
+      use.  We call <function>getFileSize</function> unconditionally
+      on all kinds of directory entry, and expect it to return
+      <code>Nothing</code> if an entry is not a plain file, or the
+      size wrapped by <code>Just</code> otherwise.  This function
+      instead throws an exception if an entry is not a plain file, and
+      returns the unwrapped size.</para>
+
+    <para>Here's a safer version of this function.</para>
+
+    &BetterPredicate.hs:saferFileSize;
+
+    <para>The body of the function is almost identical, save for the
+      <function>handle</function> clause.  This is our first use of an
+      exception handler.  Exception-related code lives in the
+      <code>Control.Exception</code> module.</para>
+
+    &simplefinder.ghci:handle;
+
+    <para>The <function>handle</function> function works by calling
+      its second argument.  If that action returns normally,
+      <function>handle</function> returns its result.  If the action
+      throws an exception, <function>handle</function> catches the
+      exception and passes it to the first action.  That action is
+      free to do whatever it wants.  It can rethrow the exception or
+      throws a new exception (topics we'll return to in chapter XXX),
+      or it can return some value, which will in turn be returned by
+      <function>handle</function>.</para>
+
+    <para>Our exception handler above ignores the exception it's
+      passed, and returns <code>Nothing</code>.  The only change to
+      the body that follows is that it wraps the file size with
+      <function>Just</function>.</para>
+
+    <para>The <function>saferFileSize</function> function now has the
+      correct type signature, and it won't throw any exceptions.  But
+      it's still not completely well behaved.  There are directory
+      entries on which <function>openFile</function> will succeed, but
+      <function>hFileSize</function> will throw an exception.  This
+      can happen with, for example, named pipes.  Such an exception
+      will be caught by <function>handle</function>, but our call to
+      <function>hClose</function> will never occur.</para>
+
+    <para>A Haskell implementation will automatically close the file
+      handle when it notices that the handle is no longer being used,
+      but that will not happen until the garbage collector runs, which
+      can take a while. Until then, the file handle remains
+      open.</para>
+
+    <para>File handles are scarce resources.  Their scarcity is
+      enforced by the underlying operating system.  On Linux, for
+      example, a process is by default only allowed to have 1024 files
+      open simultaneously.</para>
+
+    <para>It's not hard to imagine a scenario in which a program that
+      called a version of <function>betterFind</function> that used
+      <function>saferFileSize</function> could crash because
+      <function>betterFind</function> exhausted the supply of open
+      files before enough garbage file handles could be closed.</para>
+
+    <para>This is a particularly pernicious kind of bug, as it has
+      several aspects that combine make it incredibly difficult to
+      track down. It will only be triggered if
+      <function>betterFind</function> visits a sufficiently large
+      number of non-files to hit the process's open file limit, and
+      then returns to a caller that tries to open another file before
+      any of the accumulated garbage file handles is closed.  This is
+      an unlikely enough combination of circumstances.  Worse, any
+      subsequent error will be caused by data that is no longer
+      reachable from within the program, and has yet to be garbage
+      collected.  Such a bug is thus dependent on the structure of the
+      program, the contents of the filesystem, and how close the
+      current run of the program is to triggering the garbage
+      collector.</para>
+
+    <para>Fortunately, we can avoid this kind of error very easily, in
+      fact here we can do so by making our function
+      <emphasis>shorter</emphasis>.</para>
+
+    <sect2>
+      <title>The acquire-use-release cycle</title>
+
+      <para>We need <function>hClose</function> to always be called if
+	<function>openFile</function> succeeds.  The
+	<code>Control.Exception</code> module provides the
+	<function>bracket</function> function for exactly this
+	purpose.</para>
+
+      &simplefinder.ghci:bracket;
+
+      <para>The <function>bracket</function> function takes three
+	actions as arguments.  The first action acquires a resource.
+	The second releases the resource.  The third runs in between,
+	while the resource is acquired; let's call this the
+	<quote>use</quote> action.  If the <quote>acquire</quote>
+	action succeeds, the <quote>release</quote> action is
+	<emphasis>always</emphasis> called.  This guarantees that the
+	resource will always be released.  The <quote>use</quote> and
+	<quote>release</quote> actions are each passed the resource
+	acquired by the <quote>acquire</quote> action.</para>
+
+      <para>If an exception occurs while the <quote>use</quote> action
+	is executing, <function>bracket</function> calls the
+	<quote>release</quote> action and rethrows the exception.  If
+	the <quote>use</quote> action succeeds,
+	<function>bracket</function> calls the <quote>release</quote>
+	action, and returns the value returned by the
+	<quote>use</quote> action.</para>
+
+      <para>We can now write a function that is completely safe: it
+	will not throw exceptions; neither will it accumulate garbage
+	file handles that could cause spurious failures elsewhere in
+	our program.</para>
+    
+      &BetterPredicate.hs:getFileSize;
+
+      <para>Look closely at the arguments of
+	<function>bracket</function> above.  The first opens the file,
+	and returns the open file handle.  The second closes the
+	handle.  The third simply calls <function>hFileSize</function>
+	on the handle and wraps the result in
+	<function>Just</function>.</para>
+
+      <para>We need to use both <function>bracket</function> and
+	<function>handle</function> for this function to operate
+	correctly. The former ensures that we don't accumulate garbage
+	file handles, while the latter gets rid of exceptions.</para>
+
+      <sect3>
+	<title>Exercises</title>
+
+	<qandaset defaultlabel="number">
+	  <qandaentry>
+	    <question>
+	      <para>Is the order in which <function>bracket</function>
+		and <function>handle</function> are called important?
+		Why?</para>
+	    </question>
+	  </qandaentry>
+	</qandaset>
+      </sect3>
+    </sect2>
   </sect1>
 </chapter>
 

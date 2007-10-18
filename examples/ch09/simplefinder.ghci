@@ -39,3 +39,10 @@ getModificationTime "."
 --# filterM
 
 :type filterM
+
+--# handle
+:m +Control.Exception
+:type handle
+
+--# bracket
+:type bracket
