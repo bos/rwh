@@ -55,7 +55,49 @@ betterFind p path = getRecursiveContents path >>= filterM check
 {-- /snippet betterFind --}
 
 {-- snippet myTest --}
-myTest name _ (Just size) _ =
-    takeExtension name == ".c" && size > 1048576
+myTest path _ (Just size) _ =
+    takeExtension path == ".cpp" && size > 131072
 myTest _ _ _ _ = False
 {-- /snippet myTest --}
+
+{-- snippet InfoP --}
+type InfoP a = FilePath         -- path to directory entry
+             -> Permissions     -- permissions
+             -> Maybe Integer   -- file size (Nothing if not file)
+             -> ClockTime       -- last modified
+             -> a
+
+pathP :: InfoP FilePath
+{-- /snippet InfoP --}
+
+{-- snippet pathP --}
+pathP path _ _ _ = path
+{-- /snippet pathP --}
+
+{-- snippet sizeP --}
+sizeP :: InfoP Integer
+sizeP _ _ (Just size) _ = size
+sizeP _ _ Nothing _ = -1
+{-- /snippet sizeP --}
+
+{-- snippet equalP --}
+equalP :: (Eq a) => InfoP a -> a -> InfoP Bool
+equalP f k = \w x y z -> f w x y z == k
+{-- /snippet equalP --}
+
+{-- snippet equalP2 --}
+equalP' :: (Eq a) => InfoP a -> a -> InfoP Bool
+equalP' f k w x y z = f w x y z == k
+{-- /snippet equalP2 --}
+
+{-- snippet liftP2 --}
+liftP2 :: (a -> a -> b) -> InfoP a -> a -> InfoP b
+liftP2 f g k w x y z = g w x y z `f` k
+
+greaterP, lesserP :: (Ord a) => InfoP a -> a -> InfoP Bool
+greaterP = liftP2 (>)
+lesserP = liftP2 (<)
+{-- /snippet liftP2 --}
+
+andP :: InfoP Bool -> InfoP Bool -> InfoP Bool
+andP f g w x y z = f w x y z && g w x y z

@@ -1,0 +1,5 @@
+--# load
+:load BetterPredicate
+
+--# betterFind
+:type betterFind (sizeP `equalP` 1024)
