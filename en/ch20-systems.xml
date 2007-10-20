@@ -240,6 +240,11 @@ data ClockTime = TOD Integer Integer
         </para>
       </sect3>
 
+      <sect3 id="hs.system.calendartime">
+        <title>Using CalendarTime</title>
+        <para>
+
+
       <!-- Todo: file modification times -->
     </sect2>
 
