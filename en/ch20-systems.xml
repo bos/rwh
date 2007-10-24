@@ -405,9 +405,48 @@ data TimeDiff = TimeDiff
         </para>
       </sect3>
 
-      <!-- Todo: file modification times as sect2 -->
     </sect2>
-
+    <sect2 id="hs.systems.modtime">
+      <title>File Modification Times</title>
+      <para>
+        Many programs need to find out when particular files were last
+        modified.  Programs such as <literal>ls</literal> or graphical file
+        managers typically display the modification time of files.
+        The <literal>System.Directory</literal> module contains a
+        cross-platform <literal>getModificationTime</literal> function.  It
+        takes a filename and returns a &ClockTime; representing the time the
+        file was last modified.  For instance:
+      </para>
+      &modtime.ghci:all;
+      <para>
+        POSIX platforms maintain not just a modification time (known as
+        mtime), but also the time of last read or write access (atime) and
+        the time of last status change (ctime).  Since this information is
+        POSIX-specific, the cross-platform
+        <literal>System.Directory</literal> module does not provide access to
+        it.  Instead, you will need to use functions in
+        <literal>System.Posix.Files</literal>.  Here is an example function
+        to do that:
+      </para>
+      &posixtime.hs:all;
+      <para>
+        Notice that call to <literal>getFileStatus</literal>.  That call maps
+        directly to the C function <literal>stat()</literal>.  Its return
+        value stores a vast assortment of information, including file
+        type, permissions, owner, group, and the three time values we're
+        interested in.  <literal>System.Posix.Files</literal> provides
+        various functions, such as <literal>accessTime</literal>, that
+        extract the information we're interested out of the opaque
+        <literal>FileStatus</literal> type returned by
+        <literal>getFileStatus</literal>.
+      </para>
+      <para>
+        <literal>System.Posix.Files</literal> also provides a
+        <literal>setFileTimes</literal> function to set the atime and mtime
+        for a file.<footnote><para>It is not normally possible to set the
+            ctime on POSIX systems.</para></footnote>
+      </para>
+    </sect2>
   </sect1>
 
 
