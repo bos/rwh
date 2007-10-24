@@ -453,7 +453,10 @@ data TimeDiff = TimeDiff
   <sect1 id="hs.systems.piping">
     <title>Piping</title>
     <para>
-      Let's start with a discussing of piping.  Piping is often used in shell
+      Many programmers need to run programs, process their output, and then
+      feed that output into other programs.  One way to accomplish that is
+      with piping.
+      Piping is often used in shell
       scripts.  When you set up a pipe in the shell, you run multiple
       programs.  The output of the first program is sent to the input of the
       second.  Its output is sent to the third as input, and so on.  The last
