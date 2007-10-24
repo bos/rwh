@@ -449,13 +449,43 @@ data TimeDiff = TimeDiff
     </sect2>
   </sect1>
 
+  <sect1 id="hs.systems.cmd">
+    <title>Invoking External Commands</title>
+    <para>
+      The <literal>System.Cmd</literal> module provides a cross-platform way
+      to invoke external commands.  This could let you call system utilities
+      or
+      start up programs to gather data from the user.  The functions in
+      <literal>System.Cmd</literal> pause execution of your Haskell program
+      while the new program runs, then continue where it left off after the
+      called program terminates.
+    </para>
+    <para>
+      The most useful if the functions in <literal>System.Cmd</literal> is
+      <literal>rawSystem</literal>.  It takes an executble name and a list of
+      command-line arguments to pass to it, and returns an exit code.  You
+      can even test it from &ghci; like this:
+    </para>
+    &cmd.hs:all;
+    <para>
+      <literal>rawSystem</literal> does not pass the command or its arguments
+      through the shell.  This is an important safety and integrity feature.
+      The shell may perform wildcard expansion, argument parsing, and other
+      tasks on the input.  This can lead to problems or even security risks
+      when dealing with things as simple as filenames containing spaces or
+      strings containing punctuation.  For this reason, we recommend using
+      <literal>rawSystem</literal> instead of alternatives such as
+      <literal>system</literal> at all times.
+    </para>
+  </sect1>
 
   <sect1 id="hs.systems.piping">
     <title>Piping</title>
     <para>
-      Many programmers need to run programs, process their output, and then
-      feed that output into other programs.  One way to accomplish that is
-      with piping.
+      We've just seen how to invoke external programs.  Sometimes we need
+      more control that that.  Perhaps we need to obtain the output from
+      those programs, provide input, or even chain together multiple external
+      programs.  Piping can help with all of these needs.
       Piping is often used in shell
       scripts.  When you set up a pipe in the shell, you run multiple
       programs.  The output of the first program is sent to the input of the
