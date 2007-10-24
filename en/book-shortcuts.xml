@@ -123,4 +123,8 @@
 <!ENTITY Enum "<literal>Enum</literal>">
 <!ENTITY ClockTime "<literal>ClockTime</literal>">
 <!ENTITY CalendarTime "<literal>CalendarTime</literal>">
-
+<!ENTITY TimeDiff "<literal>TimeDiff</literal>">
+<!ENTITY Month "<literal>Month</literal>">
+<!ENTITY Day "<literal>Day</literal>">
+<!ENTITY ctWDay "<literal>ctWDay</literal>">
+<!ENTITY ctTZName "<literal>ctTZName</literal>">
