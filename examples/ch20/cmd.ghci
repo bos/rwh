@@ -1,0 +1,4 @@
+--# all
+:m System.Cmd
+rawSystem "ls" ["-l", "/usr"]
+
