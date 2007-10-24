@@ -243,7 +243,70 @@ data ClockTime = TOD Integer Integer
       <sect3 id="hs.system.calendartime">
         <title>Using CalendarTime</title>
         <para>
+          asdf
+        </para>
+      </sect3>
 
+
+      <sect3 id="hs.system.timediff">
+        <title>TimeDiff for ClockTime</title>
+        <para>
+          Because it can be difficult to manage differences between
+          &ClockTime; values in a human-friendly way, the
+          <literal>System.Time</literal> module includes a &TimeDiff; type.
+          &TimeDiff; can be used, where convenient, to handle these
+          differences.  It is defined like this:
+        </para>
+        <programlisting>
+data TimeDiff = TimeDiff
+   {tdYear :: Int,
+    tdMonth :: Int,
+    tdDay :: Int,
+    tdHour :: Int,
+    tdMin :: Int,
+    tdSec :: Int,
+    tdPicosec :: Integer}
+        </programlisting>
+        <para>
+          Functions such as <literal>diffClockTimes</literal> and
+          <literal>addToClockTime</literal> take a &ClockTime; and a
+          &TimeDiff; and handle the calculations internally by converting to
+          a &CalendarTime; in UTC, applying the differences, and converting
+          back to a &ClockTime;.
+        </para>
+        <para>
+          Let's see how it works:
+        </para>
+        &timediff.ghci:all;
+        <para>
+          We started by generating a &ClockTime; representing midnight
+          February 5, 2008 in UTC.  Note that, unless your timezone is the
+          same as UTC, when this time is printed out on the display, it may
+          show up as the evening of February 4 because it is formatted for
+          your local timezone.
+        </para>
+        <para>
+          Next, we add one month to to it by calling
+          <literal>addToClockTime</literal>.  2008 is a leap year, but the
+          system handled that properly and we get a result that has the same
+          date and time in March.  By using <literal>toUTCTime</literal>, we
+          can see the effect on this in the original UTC timezone.
+        </para>
+        <para>
+          For a second experiment, we set up a time representing midnight 
+          on January 30, 2009 in UTC.  2009 is not a leap year, so we might
+          wonder what will happen when trying to add one month to it.  We can
+          see that, since neither February 29 or 30 exist in 2009, we wind up
+          with March 2.
+        </para>
+        <para>
+          Finally, we can see how <literal>diffClockTimes</literal> turns two
+          &ClockTime; values into a &TimeDiff;, though only the seconds and
+          picoseconds are filled in.  The
+          <literal>normalizeTimeDiff</literal> function takes such a
+          &TimeDiff; and reformats it as a human might expect to see it.
+        </para>
+      </sect3>
 
       <!-- Todo: file modification times -->
     </sect2>
