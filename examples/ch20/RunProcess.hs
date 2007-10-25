@@ -40,12 +40,16 @@ class CommandLike a where
 -- Support for running system commands
 instance CommandLike SysCommand where
     invoke (cmd, args) closefds input =
-        do (stdinread, stdinwrite) <- createPipe
+        do -- Create two pipes: one to handle stdin and the other
+           -- to handle stdout.  We do not redirect stderr in this program.
+           (stdinread, stdinwrite) <- createPipe
            (stdoutread, stdoutwrite) <- createPipe
 
            -- We add the parent FDs to this list because we always need
            -- to close them in the clients.
            addCloseFDs closefds [stdinwrite, stdoutread]
+
+           -- Now, grab the closed FDs list and fork the child.
            childPID <- withMVar closefds (\fds ->
                           forkProcess (child fds stdinread stdoutwrite))
 
