@@ -77,10 +77,8 @@ instance CommandLike SysCommand where
         where child closefds stdinread stdoutwrite = 
                 do dupTo stdinread stdInput
                    dupTo stdoutwrite stdOutput
-                   hPutStrLn stderr $ "Closing stdinread, stdoutwrite: " ++ show [stdinread,stdoutwrite]
                    closeFd stdinread
                    closeFd stdoutwrite
-                   hPutStrLn stderr $ "Closing closefds: " ++ show closefds
                    mapM_ (\fd -> catch (closeFd fd) (\_ -> return ())) closefds
                    executeFile cmd True args Nothing
 
@@ -90,9 +88,17 @@ addCloseFDs closefds newfds =
 
 removeCloseFDs :: CloseFDs -> [Fd] -> IO ()
 removeCloseFDs closefds removethem =
-    modifyMVar_ closefds (\fdlist -> return $ 
-                             filter (\fd -> notElem fd removethem) fdlist)
+    modifyMVar_ closefds (\fdlist -> return $ procfdlist fdlist removethem)
 
+    where
+    procfdlist fdlist [] = fdlist
+    procfdlist fdlist (x:xs) = procfdlist (removefd fdlist x) xs
+
+    -- We want to remove only the first occurance ot any given fd
+    removefd [] _ = []
+    removefd (x:xs) fd 
+        | fd == x = xs
+        | otherwise = x : removefd xs fd
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
