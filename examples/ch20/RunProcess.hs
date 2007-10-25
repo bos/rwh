@@ -4,6 +4,7 @@ module RunProcess where
 
 import System.Process
 import Control.Concurrent
+import Control.Concurrent.MVar
 import System.IO
 import System.Exit
 import Text.Regex
@@ -16,37 +17,64 @@ type SysCommand = (String, [String])
 {- | The type for running Haskell functions and IO actions. -}
 type HsCommand = String -> IO String
 
-{- | The output from a command, and the input to a command -}
-type CommandData = Either String Handle
-
 {- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: CommandData,      -- ^ IO action that yields the output
-    getExitCode :: IO ExitCode     -- ^ IO action that gives exit code
+    cmdOutput :: IO String,              -- ^ IO action that yields the output
+    getExitStatus :: IO ProcessStatus    -- ^ IO action that yields exit result
     }
+
+{- | The type for handling global lists of FDs to always close in the clients
+-}
+type CloseFDs = MVar [Fd]
 
 {- | Class representing anything that is a runnable command -}
 class CommandLike a where
     {- | Given the command and a String representing input,
-         invokes the command.  Returns a 'CommandResult'
-         representing the result of the command. -}
-    invoke :: a -> CommandData -> IO CommandResult
+         invokes the command.  Returns a String
+         representing the output of the command. -}
+    invoke :: a -> ClientFDs -> String -> IO String
 
 -- Support for running system commands
 instance CommandLike SysCommand where
-    invoke (cmd, args) input =
+    invoke (cmd, args) closefds input =
         do putStrLn $ "35: " ++ cmd ++ " " ++ show args
-           (newinp, newout, newerr, ph) <-
-                runInteractiveProcess cmd args Nothing Nothing
-           case input of
-                Left str -> forkIO (do hPutStr newinp str
-                                       hClose newinp)
-                Right hdl -> forkIO (do copy hdl newinp
-                                        hClose hdl
-                                        hClose newinp)
+           (stdinread, stdinwrite) <- createPipe
+           (stdoutread, stdoutwrite) <- createPipe
 
-           forkIO $ copy newerr stderr
-           return $ CommandResult (Right newout) (waitForProcess ph)
+           -- We add the parent FDs to this list because we always need
+           -- to close them in the clients.
+           addCloseFDs closefds [stdinwrite, stdoutread]
+           childPID <- withMVar clientfds (\closefds ->
+                          forkProcess (child closefds stdinread stdoutwrite))
+
+           -- Now, on the parent, close the client-side FDs.
+           closeFd stdinread
+           closeFd stdoutwrite
+
+           -- Write the input to the command.
+           stdinhdl <- fdToHandle stdinwrite
+           forkIO $ do hPutStr stdinhdl input
+                       hClose stdinhdl
+
+           -- Prepare to receive output from the command
+           stdouthdl <- fdToHandle stdoutread
+           let readfunc = hGetContents stdouthdl
+           let waitfunc = 
+               do status <- getProcessStatus True False childPID
+                  case status of
+                       Nothing -> fail $ "Error: Nothing from getProcessStatus"
+                       Just ps -> do removeCloseFDs [stdinwrite, stdoutread]
+                                     return ps
+           return $ CommandResult {cmdOutput = readfunc,
+                                   getExitStatus = waitfunc}
+
+        where child closefds stdinread stdoutwrite = 
+                do dupTo stdinread stdInput
+                   dupTo stdoutwrite stdOutput
+                   closeFd stdinread
+                   closeFd stdoutwrite
+                   mapM_ closeFd closefds
+                   executeFile cmd True args Nothing
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
