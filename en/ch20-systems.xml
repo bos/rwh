@@ -517,15 +517,74 @@ TERMCAP
     </para>
     <para>
       In this situation, the shell handles setting up all the pipelines
-      between programs.  Let's take a look at how we might accomplish this
-      ourselves using Haskell.  The <literal>System.Process</literal> module
-      defines two functions that will be useful:
-      <literal>runProcess</literal>, which takes &Handle;s to use for input
-      and output; and
-      <literal>runInteractiveCommand</literal>, which returns &Handle;s for
-      input and output.  By combining these together,
-      we can send the output of one command to the input of another.
+      between programs.  By using some of the POSIX tools in Haskell, we can
+      accomplish the same thing.
     </para>
+    <para>
+      Before describing how to do this, we should first warn you that the
+      <literal>System.Posix</literal> modules expose a very low-level
+      interface to Unix systems.  The interfaces can be complex and their
+      interactions can be complex as well, regardless of the programming
+      language you use to access them.  The full nature of these low-level
+      interfaces has been the topic of entire books themselves, so in this
+      chapter we will just scratch the surface.  <remark>FIXME: suggest some
+      other ORA title?</remark>
+    </para>
+    <sect2 id="hs.systems.piping.theory">
+      <title>Using Pipes for Redirection</title>
+      <para>
+        POSIX defines a function that creates a pipe.  This function returns
+        two file descriptors (FDs), which are similar in concept to a Haskell
+        &Handle;.  One FD is the reading end of the pipe, and the other is the
+        writing end.  Anything that is written to the writing end can be read
+        by the reading end.  The data is "shoved through a pipe".
+        In Haskell, you call <literal>createPipe</literal> to access this
+        interface.
+      </para>
+      <para>
+        Having a pipe is the first step to being able to pipe data between
+        external programs.  We must also be able to redirect the output of a
+        program to a pipe, and the input of another program from a pipe.  The
+        Haskell function <literal>dupTo</literal> accomplishes this.  It takes
+        a FD and makes a copy of it at another FD number.  POSIX FDs for
+        standard input, standard output, and standard error have the predefined
+        FD numbers of 0, 1, and 2, respectively.  By renumbering an endpoint of
+        a pipe to one of those numbers, we effectively can cause programs to
+        have their input or output redirected.
+      </para>
+      <para>
+        There is another piece of the puzzle, however.  We can't just use
+        <literal>dupTo</literal> before a call such as
+        <literal>rawSystem</literal> because this would mess up the stdandard
+        input or output of our main Haskell process.  Moreover,
+        <literal>rawSystem</literal> blocks until the invoked program executes,
+        leaving us no way to start multiple processes running in parallel.  To
+        make this happen, we must use <literal>forkProcess</literal>.
+        This is a very special function.  It actually makes a copy of the
+        currently-running program and you wind up with two copies of the
+        program running at the same time.  Haskell's
+        <literal>forkProcess</literal> function takes a function to execute in
+        the new process (known as the child).  We have that function call
+        <literal>dupTo</literal>.  After it has done that, it calls
+        <literal>executeFile</literal> to actually invoke the command.  This is
+        also a special function: if all goes well, it <emphasis>never
+          returns</emphasis>.  That's because <literal>executeFile</literal>
+        replaces the running process with a different program.  Eventually, the
+        original Haskell process will call <literal>getProcessStatus</literal>
+        to wait for the child processes to terminate and learn of their exit
+        codes.
+      </para>
+      <para>
+        Whenever you run a command on POSIX systems, whether you've just typed
+        <literal>ls</literal> on the command line or used
+        <literal>rawSystem</literal> in Haskell, under the hood,
+        <literal>forkProcess</literal>, <literal>executeFile</literal>, and
+        <literal>getProcessStatus</literal> (or their C equivolents) are always
+        being used.  To set up pipes, we are duplicating the process that the
+        system uses to start up programs, and adding a few steps involving
+        piping and redirection along the way.
+      </para>
+      <para>
   </sect1>
 
 </chapter>
