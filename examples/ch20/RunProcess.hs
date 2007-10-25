@@ -22,7 +22,7 @@ type HsCommand = String -> IO String
 
 {- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: String,              -- ^ IO action that yields the output
+    cmdOutput :: IO String,              -- ^ IO action that yields the output
     getExitStatus :: IO ProcessStatus    -- ^ IO action that yields exit result
     }
 
@@ -61,7 +61,6 @@ instance CommandLike SysCommand where
 
            -- Prepare to receive output from the command
            stdouthdl <- fdToHandle stdoutread
-           output <- hGetContents stdouthdl
            let waitfunc = 
                 do status <- getProcessStatus True False childPID
                    case status of
@@ -69,7 +68,7 @@ instance CommandLike SysCommand where
                        Just ps -> do removeCloseFDs closefds 
                                           [stdinwrite, stdoutread]
                                      return ps
-           return $ CommandResult {cmdOutput = output,
+           return $ CommandResult {cmdOutput = hGetContents stdouthdl,
                                    getExitStatus = waitfunc}
 
         where child closefds stdinread stdoutwrite = 
@@ -95,8 +94,7 @@ removeCloseFDs closefds removethem =
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
     invoke func _ input =
-       do result <- func input
-          return $ CommandResult result (return (Exited ExitSuccess))
+       return $ CommandResult (func input) (return (Exited ExitSuccess))
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
@@ -115,7 +113,8 @@ instance (CommandLike a, CommandLike b) =>
         do res1 <- invoke src closefds input
            putStrLn "62"
            putStrLn "64"
-           res2 <- invoke dest closefds (cmdOutput res1)
+           output1 <- cmdOutput res1
+           res2 <- invoke dest closefds output1
            putStrLn "66"
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
@@ -143,7 +142,8 @@ runIO cmd =
     do closefds <- newMVar []
        res <- invoke cmd closefds []
        putStrLn "91"
-       putStr (cmdOutput res)
+       output <- cmdOutput res
+       putStr output
        putStrLn "95"
        ec <- getExitStatus res
        putStrLn "97"
