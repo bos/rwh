@@ -40,8 +40,7 @@ class CommandLike a where
 -- Support for running system commands
 instance CommandLike SysCommand where
     invoke (cmd, args) closefds input =
-        do putStrLn $ "35: " ++ cmd ++ " " ++ show args
-           (stdinread, stdinwrite) <- createPipe
+        do (stdinread, stdinwrite) <- createPipe
            (stdoutread, stdoutwrite) <- createPipe
 
            -- We add the parent FDs to this list because we always need
@@ -111,11 +110,8 @@ instance (CommandLike a, CommandLike b) =>
          CommandLike (PipeCommand a b) where
     invoke (PipeCommand src dest) closefds input =
         do res1 <- invoke src closefds input
-           putStrLn "62"
-           putStrLn "64"
            output1 <- cmdOutput res1
            res2 <- invoke dest closefds output1
-           putStrLn "66"
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
 {- | Utility function to copy data from one Handle to another. -}
@@ -141,12 +137,9 @@ runIO :: CommandLike a => a -> IO ()
 runIO cmd =
     do closefds <- newMVar []
        res <- invoke cmd closefds []
-       putStrLn "91"
        output <- cmdOutput res
        putStr output
-       putStrLn "95"
        ec <- getExitStatus res
-       putStrLn "97"
        case ec of
             Exited ExitSuccess -> return ()
             x -> fail $ "Exited: " ++ show x
