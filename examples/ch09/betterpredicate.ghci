@@ -3,3 +3,9 @@
 
 --# betterFind
 :type betterFind (sizeP `equalP` 1024)
+
+--# fixities
+
+:info ==
+:info &&
+:info >

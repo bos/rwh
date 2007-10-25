@@ -60,10 +60,10 @@
 
     <para>The body of the loop checks to see whether the current entry
       is a directory.  If it is, it recursively calls
-      <function>getRecursiveContents</function> to list that directory.
-      Otherwise, it returns a single-element list that is the name of
-      the current entry.  Note that in the body of the loop, the
-      <function>return</function> is returning a value
+      <function>getRecursiveContents</function> to list that
+      directory. Otherwise, it returns a single-element list that is
+      the name of the current entry.  Note that in the body of the
+      loop, the <function>return</function> is returning a value
       <emphasis>from</emphasis> the anonymous function that is the
       loop body <emphasis>to</emphasis> its caller,
       <function>forM</function>.  It is <emphasis>not</emphasis>
@@ -303,9 +303,9 @@
       skip over it for now.</para>
 
     <para>We can't use <function>filter</function> to call our
-      predicate <varname>p</varname>, as <varname>p</varname>'s
-      purity means it cannot do the I/O needed to gather the metadata
-      it requires.</para>
+      predicate <varname>p</varname>, as <varname>p</varname>'s purity
+      means it cannot do the I/O needed to gather the metadata it
+      requires.</para>
 
     <para>This leads us to the unfamiliar function
       <function>filterM</function>.  It behaves like the normal
@@ -483,7 +483,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.find.predicate">
     <title>Writing a predicate</title>
 
     <para>Let's take a stab at writing a predicate, recalling the type
@@ -575,7 +575,7 @@
       list all files that are exactly one kilobyte in size.  Our
       success gives us enough confidence to continue.</para>
 
-    <sect2>
+    <sect2 id="hs.find.predicate.lift">
       <title>Avoiding boilerplate with lifting</title>
 
       <para>Besides <function>equalP</function>, we'd like to be able
@@ -589,22 +589,25 @@
 	<function>(==)</function> directly, we'll pass in as another
 	argument the binary function that we want to call.</para>
 
-      &BetterPredicate.hs:liftP2;
+      &BetterPredicate.hs:liftPK;
 
       <para>This act of taking a function, such as
 	<function>(>)</function>, and transforming it into another
-	function that works in a different context, here
+	function that operates in a different context, here
 	<function>greaterP</function>, is referred to as
 	<emphasis>lifting</emphasis> it into that context.  This
-	explains the choice of <function>liftP2</function> as a
-	function name (the <code>2</code> indicates that it works with
-	functions of two arguments).  Lifting lets us reuse code and
-	reduce boilerplate.  We'll be using it a lot throughout the
+	explains the presence of <code>lift</code> in the function's
+	name.  Lifting lets us reuse code and reduce boilerplate.
+	We'll be using it a lot, in different guises, throughout the
 	rest of this book.</para>
+
+      <para>When we lift a function, we'll often refer to its original
+	and new versions as <emphasis>unlifted</emphasis> and
+	<emphasis>lifted</emphasis>, respectively.</para>
 
       <para>By the way, our placement of <varname>f</varname>, the
 	function to lift, as the first argument to
-	<function>liftP2</function>, was no accident.  This made it
+	<function>liftPK</function>, was no accident.  This made it
 	possible for us to write such concise definitions of
 	<function>greaterP</function> and
 	<function>lesserP</function>.  Partial application makes
@@ -615,6 +618,318 @@
 	in the wrong place in Haskell, however, and you lose the
 	concision that partial application gives.</para>
     </sect2>
+
+    <sect2 id="hs.find.predicate.combinator">
+      <title>Gluing predicates together</title>
+
+      <para>If we want to combine predicates, we can of course follow
+	the obvious path of doing so by hand.</para>
+
+      &BetterPredicate.hs:simpleAndP;
+
+      <para>Now that we know about lifting, however, it becomes
+	tempting to lift our existing Boolean operators.</para>
+
+      &BetterPredicate.hs:liftP2;
+
+      <para>Notice that <function>liftP2</function> is very similar to
+	our earlier <function>liftPK</function>.  In fact, it's more
+	general, because we can write <function>liftPK</function> in
+	terms of <function>liftP2</function>.</para>
+
+      &BetterPredicate.hs:constP;
+
+      <note>
+	<title>Combinators</title>
+
+	<para>In Haskell, we refer to functions that take other
+	  functions as arguments, returning new functions, as
+	  <emphasis>combinators</emphasis>.</para>
+      </note>
+
+      <para>Now that we have some helper functions in place, we can
+	return to the <function>myTest</function> function we defined
+	earlier.</para>
+
+      &BetterPredicate.hs:myTest.noid;
+
+      <para>How will this function look if we write it using our new
+	combinators?</para>
+
+      &BetterPredicate.hs:myTest2;
+
+      <para>We've added one final combinator,
+	<function>liftPath</function>, since manipulating file names
+	is such a common activity.</para>
+
+      <para>Our rewrite doesn't really look any shorter than the
+	original function, though it's perhaps a little easier to
+	read.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Defining and using new operators</title>
+
+      <para>We can address the length problem by defining new infix
+	operators, taking advantage of a Haskell feature that we first
+	mentioned briefly in <xref
+	  linkend="hs.starting.calc.neg"/>.</para>
+
+      &BetterPredicate.hs:myTest3;
+
+      <para>We chose names like <function>(==?)</function> for the
+	lifted functions specifically for their visual similarity to
+	their unlifted counterparts.</para>
+
+      <para>The parentheses in our definition above are necessary,
+	because we haven't told Haskell about the precedence or
+	associativity of our new operators.  The language specifies
+	that operators without fixity declarations should be treated
+	as <code>infixl 9</code>, i.e. they are parsed from left to
+	right at the lowest allowable precedence level.  If we were to
+	omit the parentheses, the expression would thus be parsed as
+	<code>(((liftPath takeExtension) ==? ".cpp") &amp;&amp;?
+	  sizeP) &gt;? 1024</code>, which is horribly wrong.</para>
+
+      <para>We can respond by writing fixity declarations for our new
+	operators.  Our first step is to find out what the fixities of
+	the unlifted operators are, so that we can mimic them.</para>
+
+      &betterpredicate.ghci:fixities;
+
+      <para>With these in hand, we can now write a parenthesis-free
+	expression that will be parsed identically to
+	<function>myTest3</function>.</para>
+
+      &BetterPredicate.hs:myTest3;
+
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.find.traverse">
+    <title>Controlling traversal</title>
+    
+    <para>When traversing the filesystem, we'd like to give ourselves
+      more control over which directories we enter, and when.  An easy
+      way in which we can allow this is to pass in a function that
+      takes a list of subdirectories of a given directory, and returns
+      another list.  This list can have elements removed, or it can be
+      ordered differently than the original list, or both.  The
+      simplest such control function is <function>id</function>, which
+      will return its input list unmodified.</para>
+
+    <para>For variety, we're going to change a few aspects of our
+      representation here.  Instead of an elaborate function type
+      <type>InfoP a</type>, we'll use a normal algebraic data type to
+      represent substantially the same information.</para>
+
+    &ControlledVisit.hs:Info;
+
+    <para>We're using record syntax to give ourselves
+      <quote>free</quote> accessor functions, such as
+      <function>infoPath</function>.  The type of our
+      <function>traverse</function> function is simple, as we proposed
+      above.  To obtain <type>Info</type> about a file or directory,
+      we call the <function>getInfo</function> action.</para>
+
+    &ControlledVisit.hs:traverse.type;
+
+    <para>The definition of <function>traverse</function> is short,
+      but dense.</para>
+
+    &ControlledVisit.hs:traverse;
+
+    <para>While we're not introducing any new techniques here, this is
+      one of the densest function definitions we've yet encountered.
+      Let's walk through it almost line by line, explaining what is
+      going on.  The first few lines hold no mystery, as they're
+      almost verbatim copies of code we've already seen.</para>
+
+    <para>Things begin to get interesting when we assign to the
+      variable <varname>contents</varname>.  Let's read this line from
+      right to left.  We already know that
+      <varname>usefulNames</varname> is a list of directory entries;
+      we put the empty string on the front of the list, to represent
+      the current directory, <varname>path</varname>.  The code
+      <code>getInfo . (path &lt;/&gt;)</code> joins
+      <varname>path</varname> and one of these entries together, then
+      calls <function>getInfo</function> on the result.  (Using
+      <function>(&lt;/&gt;)</function> to combine
+      <varname>path</varname> with the empty string gives us
+      <varname>path</varname> again, which is why we put the empty
+      string onto the front of our list.)  Finally, we use
+      <function>mapM</function> to apply this function to
+      <varname>path</varname> and every one of its directory
+      entries.</para>
+
+    <para>The line that follows is even more dense.  Again reading
+      from right to left, we see that the last element of the line is
+      an anonymous function.  Given one <type>Info</type> value, it
+      either visits a directory recursively (there's an extra check to
+      make sure we don't visit <varname>path</varname> again), or
+      returns that value as a single-element list (to match the return
+      type of <function>traverse</function>).</para>
+
+    <para>We use <function>forM</function> to apply this function to
+      each element of the list of <type>Info</type> values returned by
+      <varname>order</varname>, the user-supplied traversal control
+      function.</para>
+
+    <para>Finally, at the beginning of the line, we have another use
+      of lifting.  The <function>liftM</function> function takes a
+      regular function, <function>concat</function> and lifts it into
+      the <type>IO</type> monad.  In other words, it takes the result
+      of <function>forM</function> (of type <type>[[Info]]</type>) out
+      of the <type>IO</type> monad, applies
+      <function>concat</function> to it (yielding a result of type
+      <type>[Info]</type>, which is what we need), and puts the result
+      back into the <type>IO</type> monad.</para>
+
+    <para>Finally, we mustn't forget to define our
+      <function>getInfo</function> function.</para>
+
+    &ControlledVisit.hs:getInfo;
+
+    <para>The only noteworthy thing here is  a useful combinator,
+      <function>maybeIO</function>, which turns an <type>IO</type>
+      action that might throw an exception into one that wraps its
+      result in <type>Maybe</type>.</para>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>What should you pass to <function>traverse</function>
+	      to traverse a directory tree in reverse alphabetic
+	      order?</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Using <function>id</function> as a control function,
+	      <code>traverse id</code> performs a
+	      <emphasis>preorder</emphasis> traversal of a tree: it
+	      returns a parent directory before its children.  Write a
+	      control function that makes <code>traverse</code>
+	      perform a <emphasis>postorder</emphasis> traversal, in
+	      which it returns children before their parent.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Take the predicates and combinators from <xref
+	    linkend="hs.find.predicate.combinator"/> and make them
+	      work with our new <type>Info</type> type.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Write a wrapper for <function>traverse</function>
+	      that lets you control traversal using one predicate, and
+	      filter results using another.</para>
+	  </question>
+	</qandaentry>
+
+      </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Density, readability, and the learning process</title>
+
+    <para>Code as dense as <function>traverse</function>  isn't all
+      that unusual in Haskell.  The gain in expressiveness is
+      significant, and it requires a relatively small amount of
+      practice to be able to fluently read and write code in this
+      style.</para>
+
+    <para>For comparison, here's a less dense presentation of the same
+      code.  This might be more typical of a less experienced Haskell
+      programmer.</para>
+
+    &ControlledVisit.hs:traverse;
+
+    <para>All we've done here is make a few substitutions.  Instead of
+      using partial application and function composition liverally,
+      we've defined some local functions in a &where; block.  In place
+      of the <function>maybe</function> combinator, we're using a
+      &case; expression.  And instead of using
+      <function>liftM</function>, we're manually lifting
+      <function>concat</function> ourselves.</para>
+
+    <para>This is not to say that density is a uniformly good
+      property.  Each line of the original
+      <function>traverse</function> function is short.  We introduce a
+      local variable (<varname>usefulNames</varname>) and a local
+      function (<function>isDirectory</function>) specifically to keep
+      the lines short and the code clearer.  Our names names are
+      descriptive.  While we use function composition and pipelining,
+      the longest pipeline contains only three elements.</para>
+
+    <para>The key to writing maintainable Haskell code is to find a
+      balance between density and readability.  Where your code falls
+      on this continuum is likely to be influenced by your level of
+      experience.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>As a beginning Haskell programmer, Andrew doesn't know
+	  his way around the standard libraries very well.  As a
+	  result, he duplicates a lot of standard library code.</para>
+      </listitem>
+
+      <listitem>
+	<para>Zack has been programming for a few months, and has
+	  mastered the use of <function>(.)</function> to compose long
+	  pipelines of code.  Every time the needs of his program
+	  change slightly, he has to construct a new pipeline from
+	  scratch, because he can't understand the existing one any
+	  longer and it's too fragile to change in any case.</para>
+      </listitem>
+
+      <listitem>
+	<para>Monica has been hacking for a while.  She's familiar
+	  enough with Haskell libraries and idioms to write tight
+	  code, but she avoids a hyperdense style in order to keep her
+	  code maintainable and easy to refactor in the face of
+	  changing needs.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>While much of good programming taste comes from experience,
+      we have a few general guidelines to offer.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>If you find yourself proudly thinking that a particular
+	  piece of code is fiendishly clever, consider whether you'll
+	  be able to understand it again after you've stepped away
+	  from it for a month.</para>
+
+	<para>Until you've been working with Haskell for a substantial
+	  amount of time, spend a few minutes searching for library
+	  functions before you write small functions.  This applies
+	  particularly to ubiquitous types like lists,
+	  <type>Maybe</type>, and <type>Either</type>.  If the
+	  standard libraries don't already provide exactly what you
+	  need, you might be able to combine a few functions to obtain
+	  the result you desire.</para>
+
+	<para>Long pipelines of composed functions are hard to read.
+	  If you have one, use a &let; or &where; block to break it
+	  down into smaller pipelines.  Give each one of these
+	  pipeline elements a meaningful name, then glue them back
+	  together.  If you can't think of a meaningful name for an
+	  element, you probably can't describe what it's supposed to
+	  be doing.</para>
+      </listitem>
+    </itemizedlist>
   </sect1>
 
   <sect1>
@@ -623,9 +938,8 @@
     <para>Although the file finding code we described in this chapter
       is a good vehicle for learning, it's not ideal for real systems
       programming tasks, because Haskell's portable I/O libraries
-      don't expose enough information.  As an we must open a file to
-      find out what size it is. This is inefficient, and sometimes
-      impossible.  We also can't find out who owns a file.</para>
+      don't expose enough information to let us write interesting and
+      complicated queries.</para>
 
     <qandaset defaultlabel="number">
       <qandaentry>
