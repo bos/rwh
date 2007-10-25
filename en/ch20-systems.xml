@@ -466,7 +466,7 @@ data TimeDiff = TimeDiff
       command-line arguments to pass to it, and returns an exit code.  You
       can even test it from &ghci; like this:
     </para>
-    &cmd.hs:all;
+    &cmd.ghci:all;
     <para>
       <literal>rawSystem</literal> does not pass the command or its arguments
       through the shell.  This is an important safety and integrity feature.
