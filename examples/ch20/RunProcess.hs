@@ -79,7 +79,7 @@ instance CommandLike SysCommand where
                    closeFd stdinread
                    closeFd stdoutwrite
                    hPutStrLn stderr $ "Closing closefds: " ++ show closefds
-                   mapM_ closeFd closefds
+                   mapM_ (\fd -> catch (closeFd fd) (\_ -> return ())) closefds
                    executeFile cmd True args Nothing
 
 addCloseFDs :: CloseFDs -> [Fd] -> IO ()
