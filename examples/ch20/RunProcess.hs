@@ -6,6 +6,9 @@ module RunProcess where
 import System.Process
 import Control.Concurrent
 import Control.Concurrent.MVar
+import Control.Exception(evaluate)
+import System.Posix.Directory
+import System.Directory(setCurrentDirectory)
 import System.IO
 import System.Exit
 import Text.Regex
@@ -13,7 +16,7 @@ import System.Posix.Process
 import System.Posix.IO
 import System.Posix.Types
 import Data.List
-import System.Environment
+import System.Posix.Env(getEnv)
 
 {- | The type for running external commands.  The first part
 of the tuple is the program name.  The list represents the
@@ -101,8 +104,8 @@ instance CommandLike String where
            -- if any.  Otherwise, use /bin/sh
            esh <- getEnv "SHELL"
            let sh = case esh of
-               Nothing -> "/bin/sh"
-               Just x -> x
+                       Nothing -> "/bin/sh"
+                       Just x -> x
            invoke (sh, ["-c", cmd]) closefds input
 
 -- Add FDs to the list of FDs that must be closed post-fork in a child
@@ -134,7 +137,7 @@ instance CommandLike (String -> IO String) where
 instance CommandLike (String -> String) where
     invoke func = invoke iofunc
         where iofunc :: String -> IO String
-              iofunc = reutrn . func
+              iofunc = return . func
 
 -- It's also useful to operate on lines.  Define support for line-based
 -- functions both within and without the IO monad.
@@ -142,7 +145,7 @@ instance CommandLike (String -> String) where
 instance CommandLike ([String] -> IO [String]) where
     invoke func _ input =
            return $ CommandResult linedfunc (return (Exited ExitSuccess))
-       where linedfunc = func (line input) >>= (return . unlines)
+       where linedfunc = func (lines input) >>= (return . unlines)
 
 instance CommandLike ([String] -> [String]) where
     invoke func = invoke (unlines . func . lines)
@@ -267,8 +270,6 @@ checkResult ps =
 that returns @IO ()@.  This prevents you from having to cast to it
 all the time when you do not care about the result of 'run'.
 -}
-
-{- | Execute a 'CommandLike'. -}
 runIO :: CommandLike a => a -> IO ()
 runIO = run
 
@@ -280,12 +281,12 @@ cd = setCurrentDirectory
  
 {- | Takes a string and sends it on as standard output.
 The input to this function is never read. -}
-echo :: String -> String
-echo = id
+echo :: String -> String -> String
+echo inp _ = inp
 
 -- | Search for the regexp in the lines.  Return those that match.
 grep :: String -> [String] -> [String]
-egrep pat = filter (ismatch regex)
+grep pat = filter (ismatch regex)
     where regex = mkRegex pat
           ismatch r inp = case matchRegex r inp of
                             Nothing -> False

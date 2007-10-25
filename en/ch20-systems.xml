@@ -720,7 +720,88 @@ TERMCAP
         the command, displays its output, and checks its exit status.
       </para>
     </sect2>
+    <sect2 id="hs.piping.extended">
+      <title>Better Piping</title>
+      <para>
+        Our previous example solved the basic need of letting us set up
+        shell-like pipes.  There are some other features that it would be
+        nice to have though:
+      </para>
+      <itemizedlist><listitem><para>Supporting more shell-like
+            syntax</para></listitem>
+        <listitem><para>Letting people pipe data into external programs or
+            regular Haskell functions, freely mixing and matching the
+            two</para></listitem>
+        <listitem><para>Returning the final output and exit code in a way
+            that Haskell programs can readily use</para></listitem>
+      </itemizedlist>
+      <para>
+        Fortunately, we already have most of the pieces to support this in
+        place.  We need only add a few more instances of
+        <literal>CommandLike</literal> to support this, and a few more
+        functions similar to <literal>runIO</literal>.  Here is a revised
+        example that implements all of these features:
+      </para>
+      &RunProcess.hs:all;
+      <para>
+        Here's what has changed:
+      </para>
+      <itemizedlist>
+        <listitem><para>A new <literal>CommandLike</literal> instance for
+            &String; that uses the shell to evaluate and invoke the string.
+        </para></listitem>
+        <listitem><para>New <literal>CommandLike</literal> instances for 
+            <literal>String -> IO String</literal> and various other types
+            that are implemented in terms of this one.  These process Haskell
+            functions as commands.
+        </para></listitem>
+        <listitem><para>A new <literal>RunResult</literal> typeclass that
+            defines a function <literal>run</literal> that returns
+            information about the command in many different ways.  See the
+            comments in the source for more information.
+            <literal>runIO</literal> is now just an alias for one particular
+            <literal>RunResult</literal> instance.
+        </para></listitem>
+        <listitem><para>A few utility functions providing Haskell
+            implementations of familiar Unix shell commands.
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        Let's try out the new shell features.  First, let's make sure that
+        the command we used in the previous example still works.  Then,
+        let's try it using a more shell-like syntax.
+      </para>
+      &rp.ghci:shell;
+      <para>
+        That was a lot easier to type.  Let's try substituting our native
+        Haskell implementation of <literal>grep</literal> and try out some
+        other new features as well:
+      </para>
+      &rp.ghci:hask;
+    </sect2>
 
+    <sect2 id="hs.systems.piping.finalwords">
+      <title>Final Words on Pipes</title>
+      <para>
+        We have developed a sophisticated system here.  We warned you earlier
+        that POSIX can be complex.  One other thing we need to highlight: you
+        must always make sure to evaluate the &String; returned by these
+        functions before you attempt to evaluate the exit code of the child
+        process.  The child process will often not exit until it can write all of
+        its data, and if you do this in the wrong order, your program will
+        hang.
+      </para>
+      <para>
+        In this chapter, we have developed, from the ground up, a simplified
+        version of HSH.  If you wish to use these shell-like capabilities in
+        your own programs, we recommend HSH instead of the example developed
+        here due to optimizations present in HSH.  HSH also comes with a
+        larger set of utility functions and more capabilities.  Some of the
+        utility functions presented here, in fact, were copied verbatim from
+        HSH.
+      </para>
+    </sect2>
   </sect1>
 
 </chapter>
