@@ -12,14 +12,13 @@ import Text.Regex
 import System.Posix.Process
 import System.Posix.IO
 import System.Posix.Types
+import Data.List
+import System.Environment
 
 {- | The type for running external commands.  The first part
 of the tuple is the program name.  The list represents the
 command-line parameters to pass to the command. -}
 type SysCommand = (String, [String])
-
-{- | The type for running Haskell functions and IO actions. -}
-type HsCommand = String -> IO String
 
 {- | The result of running any command -}
 data CommandResult = CommandResult {
@@ -94,6 +93,18 @@ instance CommandLike SysCommand where
                    -- Start the program
                    executeFile cmd True args Nothing
 
+{- | An instance of 'CommandLike' for an external command.  The String is
+passed to a shell for evaluation and invocation. -}
+instance CommandLike String where
+    invoke cmd closefds input =
+        do -- Use the shell given by the environment variable SHELL,
+           -- if any.  Otherwise, use /bin/sh
+           esh <- getEnv "SHELL"
+           let sh = case esh of
+               Nothing -> "/bin/sh"
+               Just x -> x
+           invoke (sh, ["-c", cmd]) closefds input
+
 -- Add FDs to the list of FDs that must be closed post-fork in a child
 addCloseFDs :: CloseFDs -> [Fd] -> IO ()
 addCloseFDs closefds newfds =
@@ -115,9 +126,26 @@ removeCloseFDs closefds removethem =
         | otherwise = x : removefd xs fd
 
 -- Support for running Haskell commands
-instance CommandLike HsCommand where
+instance CommandLike (String -> IO String) where
     invoke func _ input =
        return $ CommandResult (func input) (return (Exited ExitSuccess))
+
+-- Support pure Haskell functions by wrapping them in IO
+instance CommandLike (String -> String) where
+    invoke func = invoke iofunc
+        where iofunc :: String -> IO String
+              iofunc = reutrn . func
+
+-- It's also useful to operate on lines.  Define support for line-based
+-- functions both within and without the IO monad.
+
+instance CommandLike ([String] -> IO [String]) where
+    invoke func _ input =
+           return $ CommandResult linedfunc (return (Exited ExitSuccess))
+       where linedfunc = func (line input) >>= (return . unlines)
+
+instance CommandLike ([String] -> [String]) where
+    invoke func = invoke (unlines . func . lines)
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
@@ -150,35 +178,142 @@ getEC src dest =
             Exited ExitSuccess -> return dec
             x -> return x
 
-{- | Execute a 'CommandLike'. -}
-runIO :: CommandLike a => a -> IO ()
-runIO cmd =
+{- | Different ways to get data from 'run'.
+
+ * IO () runs, throws an exception on error, and sends stdout to stdout
+
+ * IO String runs, throws an exception on error, reads stdout into
+   a buffer, and returns it as a string.
+
+ * IO [String] is same as IO String, but returns the results as lines
+
+ * IO ProcessStatus runs and returns a ProcessStatus with the exit
+   information.  stdout is sent to stdout.  Exceptions are not thrown.
+
+ * IO (String, ProcessStatus) is like IO ProcessStatus, but also
+   includes a description of the last command in the pipe to have
+   an error (or the last command, if there was no error)
+
+ * IO Int returns the exit code from a program directly.  If a signal
+   caused the command to be reaped, returns 128 + SIGNUM.
+
+ * IO Bool returns True if the program exited normally (exit code 0,
+   not stopped by a signal) and False otherwise.
+
+-}
+class RunResult a where
+    {- | Runs a command (or pipe of commands), with results presented
+       in any number of different ways. -}
+    run :: (CommandLike b) => b -> a
+
+-- | Utility function for use by 'RunResult' instances
+setUpCommand :: CommandLike a => a -> IO CommandResult
+setUpCommand cmd = 
     do -- Initialize our closefds list
        closefds <- newMVar []
 
        -- Invoke the command
-       res <- invoke cmd closefds []
+       invoke cmd closefds []
 
-       -- Process its output
-       output <- cmdOutput res
-       putStr output
+instance RunResult (IO ()) where
+    run cmd = run cmd >>= checkResult
 
-       -- Wait for termination and get exit status
-       ec <- getExitStatus res
-       case ec of
-            Exited ExitSuccess -> return ()
-            x -> fail $ "Exited: " ++ show x
+instance RunResult (IO ProcessStatus) where
+    run cmd = 
+        do res <- setUpCommand cmd
+
+           -- Process its output
+           output <- cmdOutput res
+           putStr output
+
+           getExitStatus res
+           
+instance RunResult (IO Int) where
+    run cmd = do rc <- run cmd
+                 case rc of
+                   Exited (ExitSuccess) -> return 0
+                   Exited (ExitFailure x) -> return x
+                   Terminated x -> return (128 + (fromIntegral x))
+                   Stopped x -> return (128 + (fromIntegral x))
+
+instance RunResult (IO Bool) where
+    run cmd = do rc <- run cmd
+                 return ((rc::Int) == 0)
+
+instance RunResult (IO [String]) where
+    run cmd = do r <- run cmd
+                 return (lines r)
+
+instance RunResult (IO String) where
+    run cmd =
+        do res <- setUpCommand cmd
+
+           output <- cmdOutput res
+
+           -- Force output to be buffered
+           evaluate (length output)
+
+           ec <- getExitStatus res
+           checkResult ec
+           return output
+
+checkResult :: ProcessStatus -> IO ()
+checkResult ps =
+    case ps of
+         Exited (ExitSuccess) -> return ()
+         x -> fail (show x)
+
+{- | A convenience function.  Refers only to the version of 'run'
+that returns @IO ()@.  This prevents you from having to cast to it
+all the time when you do not care about the result of 'run'.
+-}
+
+{- | Execute a 'CommandLike'. -}
+runIO :: CommandLike a => a -> IO ()
+runIO = run
+
+------------------------------------------------------------
+-- Utility Functions
+------------------------------------------------------------
+cd :: FilePath -> IO ()
+cd = setCurrentDirectory
+ 
+{- | Takes a string and sends it on as standard output.
+The input to this function is never read. -}
+echo :: String -> String
+echo = id
+
+-- | Search for the regexp in the lines.  Return those that match.
+grep :: String -> [String] -> [String]
+egrep pat = filter (ismatch regex)
+    where regex = mkRegex pat
+          ismatch r inp = case matchRegex r inp of
+                            Nothing -> False
+                            Just _ -> True
+
+{- | Creates the given directory.  A value of 0o755 for mode would be typical.
+An alias for System.Posix.Directory.createDirectory. -}
+mkdir :: FilePath -> FileMode -> IO ()
+mkdir = createDirectory
+
+{- | Remove duplicate lines from a file (like Unix uniq).
+Takes a String representing a file or output and plugs it through 
+lines and then nub to uniqify on a line basis. -}
+uniq :: String -> String
+uniq = unlines . nub . lines
+
+-- | Count number of lines.  wc -l
+wcL, wcW :: [String] -> [String]
+wcL inp = [show (genericLength inp :: Integer)]
+
+-- | Count number of words in a file (like wc -w)
+wcW inp = [show ((genericLength $ words $ unlines inp) :: Integer)]
+
+sortLines :: [String] -> [String]
+sortLines = sort
 
 -- | Count the lines in the input
 countLines :: String -> IO String
 countLines = return . (++) "\n" . show . length . lines
 
--- | Find matching lines
-grep :: String -> String -> IO String
-grep pattern = 
-    return . unlines . filter isMatch . lines
-    where regex = mkRegex pattern
-          isMatch line = case matchRegex regex line of
-                              Nothing -> False
-                              Just _ -> True
 {-- /snippet all --}
