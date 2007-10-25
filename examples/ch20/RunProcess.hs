@@ -64,6 +64,9 @@ instance CommandLike SysCommand where
 
            -- Prepare to receive output from the command
            stdouthdl <- fdToHandle stdoutread
+
+           -- Set up the function to call when ready to wait for the
+           -- child to exit.
            let waitfunc = 
                 do status <- getProcessStatus True False childPID
                    case status of
@@ -74,18 +77,28 @@ instance CommandLike SysCommand where
            return $ CommandResult {cmdOutput = hGetContents stdouthdl,
                                    getExitStatus = waitfunc}
 
+        -- Define what happens in the child process
         where child closefds stdinread stdoutwrite = 
-                do dupTo stdinread stdInput
+                do -- Copy our pipes over the regular stdin/stdout FDs
+                   dupTo stdinread stdInput
                    dupTo stdoutwrite stdOutput
+
+                   -- Now close the original pipe FDs
                    closeFd stdinread
                    closeFd stdoutwrite
+
+                   -- Close all the open FDs we inherited from the parent
                    mapM_ (\fd -> catch (closeFd fd) (\_ -> return ())) closefds
+
+                   -- Start the program
                    executeFile cmd True args Nothing
 
+-- Add FDs to the list of FDs that must be closed post-fork in a child
 addCloseFDs :: CloseFDs -> [Fd] -> IO ()
 addCloseFDs closefds newfds =
     modifyMVar_ closefds (\oldfds -> return $ oldfds ++ newfds)
 
+-- Remove FDs from the list
 removeCloseFDs :: CloseFDs -> [Fd] -> IO ()
 removeCloseFDs closefds removethem =
     modifyMVar_ closefds (\fdlist -> return $ procfdlist fdlist removethem)
@@ -124,12 +137,6 @@ instance (CommandLike a, CommandLike b) =>
            res2 <- invoke dest closefds output1
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
-{- | Utility function to copy data from one Handle to another. -}
-copy :: Handle -> Handle -> IO ()
-copy src dest =
-    do c <- hGetContents src
-       hPutStr dest c
-
 {- | Given two 'CommandResult' items, evaluate the exit codes for
 both and then return a "combined" exit code.  This will be ExitSuccess
 if both exited successfully.  Otherwise, it will reflect the first
@@ -145,10 +152,17 @@ getEC src dest =
 {- | Execute a 'CommandLike'. -}
 runIO :: CommandLike a => a -> IO ()
 runIO cmd =
-    do closefds <- newMVar []
+    do -- Initialize our closefds list
+       closefds <- newMVar []
+
+       -- Invoke the command
        res <- invoke cmd closefds []
+
+       -- Process its output
        output <- cmdOutput res
        putStr output
+
+       -- Wait for termination and get exit status
        ec <- getExitStatus res
        case ec of
             Exited ExitSuccess -> return ()
@@ -158,6 +172,7 @@ runIO cmd =
 countLines :: String -> IO String
 countLines = return . (++) "\n" . show . length . lines
 
+-- | Find matching lines
 grep :: String -> String -> IO String
 grep pattern = 
     return . unlines . filter isMatch . lines
