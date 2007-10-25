@@ -797,9 +797,11 @@ TERMCAP
         version of HSH.  If you wish to use these shell-like capabilities in
         your own programs, we recommend HSH instead of the example developed
         here due to optimizations present in HSH.  HSH also comes with a
-        larger set of utility functions and more capabilities.  Some of the
+        larger set of utility functions and more capabilities, but the source
+        code behind the library is much more complex and large.  Some of the
         utility functions presented here, in fact, were copied verbatim from
-        HSH.
+        HSH.  HSH is available from <ulink
+          url="http://software.complete.org/hsh"/>.
       </para>
     </sect2>
   </sect1>
