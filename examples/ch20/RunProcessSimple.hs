@@ -1,3 +1,4 @@
+{-- snippet all --}
 {-# OPTIONS_GHC -fglasgow-exts #-}
 -- RunProcessSimple.hs
 
@@ -160,3 +161,4 @@ runIO cmd =
        case ec of
             Exited ExitSuccess -> return ()
             x -> fail $ "Exited: " ++ show x
+{-- /snippet all --}

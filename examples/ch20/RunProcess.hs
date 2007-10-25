@@ -1,3 +1,4 @@
+{-- snippet all --}
 {-# OPTIONS_GHC -fglasgow-exts #-}
 
 module RunProcess where
@@ -180,4 +181,4 @@ grep pattern =
           isMatch line = case matchRegex regex line of
                               Nothing -> False
                               Just _ -> True
-
+{-- /snippet all --}
