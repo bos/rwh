@@ -8,6 +8,9 @@ import Control.Concurrent.MVar
 import System.IO
 import System.Exit
 import Text.Regex
+import System.Posix.Process
+import System.Posix.IO
+import System.Posix.Types
 
 {- | The type for running external commands.  The first part
 of the tuple is the program name.  The list represents the
@@ -32,7 +35,7 @@ class CommandLike a where
     {- | Given the command and a String representing input,
          invokes the command.  Returns a String
          representing the output of the command. -}
-    invoke :: a -> ClientFDs -> String -> IO String
+    invoke :: a -> CloseFDs -> String -> IO String
 
 -- Support for running system commands
 instance CommandLike SysCommand where
@@ -44,8 +47,8 @@ instance CommandLike SysCommand where
            -- We add the parent FDs to this list because we always need
            -- to close them in the clients.
            addCloseFDs closefds [stdinwrite, stdoutread]
-           childPID <- withMVar clientfds (\closefds ->
-                          forkProcess (child closefds stdinread stdoutwrite))
+           childPID <- withMVar closefds (\fds ->
+                          forkProcess (child fds stdinread stdoutwrite))
 
            -- Now, on the parent, close the client-side FDs.
            closeFd stdinread
@@ -60,10 +63,11 @@ instance CommandLike SysCommand where
            stdouthdl <- fdToHandle stdoutread
            output <- hGetContents stdouthdl
            let waitfunc = 
-               do status <- getProcessStatus True False childPID
-                  case status of
+                do status <- getProcessStatus True False childPID
+                   case status of
                        Nothing -> fail $ "Error: Nothing from getProcessStatus"
-                       Just ps -> do removeCloseFDs [stdinwrite, stdoutread]
+                       Just ps -> do removeCloseFDs closefds 
+                                          [stdinwrite, stdoutread]
                                      return ps
            return $ CommandResult {cmdOutput = output,
                                    getExitStatus = waitfunc}
@@ -75,6 +79,15 @@ instance CommandLike SysCommand where
                    closeFd stdoutwrite
                    mapM_ closeFd closefds
                    executeFile cmd True args Nothing
+
+addCloseFDs :: CloseFDs -> [Fd] -> IO ()
+addCloseFDs closefds newfds =
+    modifyMVar_ closefds (\oldfds -> oldfds ++ newfds)
+
+removeCloseFDs :: CloseFDs -> [Fd] -> IO ()
+removeCloseFDs closefds removethem =
+    modifyMVar_ closefds (\fdlist -> filter (\fd -> notElem fd removethem))
+
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
