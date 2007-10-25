@@ -35,7 +35,7 @@ class CommandLike a where
     {- | Given the command and a String representing input,
          invokes the command.  Returns a String
          representing the output of the command. -}
-    invoke :: a -> CloseFDs -> String -> IO String
+    invoke :: a -> CloseFDs -> String -> IO CommandResult
 
 -- Support for running system commands
 instance CommandLike SysCommand where
@@ -82,17 +82,19 @@ instance CommandLike SysCommand where
 
 addCloseFDs :: CloseFDs -> [Fd] -> IO ()
 addCloseFDs closefds newfds =
-    modifyMVar_ closefds (\oldfds -> oldfds ++ newfds)
+    modifyMVar_ closefds (\oldfds -> return $ oldfds ++ newfds)
 
 removeCloseFDs :: CloseFDs -> [Fd] -> IO ()
 removeCloseFDs closefds removethem =
-    modifyMVar_ closefds (\fdlist -> filter (\fd -> notElem fd removethem))
+    modifyMVar_ closefds (\fdlist -> return $ 
+                             filter (\fd -> notElem fd removethem) fdlist)
 
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
     invoke func _ input =
-       return $ CommandResult (func input) (return (Exited ExitSuccess))
+       do result <- func input
+          return $ CommandResult result (return (Exited ExitSuccess))
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
@@ -125,7 +127,7 @@ copy src dest =
 both and then return a "combined" exit code.  This will be ExitSuccess
 if both exited successfully.  Otherwise, it will reflect the first
 error encountered. -}
-getEC :: CommandResult -> CommandResult -> IO ExitCode
+getEC :: CommandResult -> CommandResult -> IO ProcessStatus 
 getEC src dest =
     do sec <- getExitStatus src
        dec <- getExitStatus dest
@@ -136,9 +138,10 @@ getEC src dest =
 {- | Execute a 'CommandLike'. -}
 runIO :: CommandLike a => a -> IO ()
 runIO cmd =
-    do res <- invoke cmd (Left [])
+    do closefds <- newMVar []
+       res <- invoke cmd closefds []
        putStrLn "91"
-       putStr res
+       putStr (cmdOutput res)
        putStrLn "95"
        ec <- getExitStatus res
        putStrLn "97"
