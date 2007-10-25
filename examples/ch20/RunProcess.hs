@@ -114,10 +114,10 @@ if both exited successfully.  Otherwise, it will reflect the first
 error encountered. -}
 getEC :: CommandResult -> CommandResult -> IO ExitCode
 getEC src dest =
-    do sec <- getExitCode src
-       dec <- getExitCode dest
+    do sec <- getExitStatus src
+       dec <- getExitStatus dest
        case sec of
-            ExitSuccess -> return dec
+            Exited ExitSuccess -> return dec
             x -> return x
 
 {- | Execute a 'CommandLike'. -}
@@ -125,15 +125,13 @@ runIO :: CommandLike a => a -> IO ()
 runIO cmd =
     do res <- invoke cmd (Left [])
        putStrLn "91"
-       case (cmdOutput res) of
-            Left str -> putStr str
-            Right hdl -> copy hdl stdout
+       putStr res
        putStrLn "95"
-       ec <- getExitCode res
+       ec <- getExitStatus res
        putStrLn "97"
        case ec of
-            ExitSuccess -> return ()
-            ExitFailure code -> fail $ "Exited with code " ++ show code
+            Exited ExitSuccess -> return ()
+            x -> fail $ "Exited: " ++ show x
 
 -- | Count the lines in the input
 countLines :: String -> IO String
