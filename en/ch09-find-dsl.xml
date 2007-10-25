@@ -702,7 +702,7 @@
 	expression that will be parsed identically to
 	<function>myTest3</function>.</para>
 
-      &BetterPredicate.hs:myTest3;
+      &BetterPredicate.hs:myTest4;
 
     </sect2>
   </sect1>
@@ -853,7 +853,7 @@
       code.  This might be more typical of a less experienced Haskell
       programmer.</para>
 
-    &ControlledVisit.hs:traverse;
+    &ControlledVisit.hs:traverseVerbose;
 
     <para>All we've done here is make a few substitutions.  Instead of
       using partial application and function composition liverally,
