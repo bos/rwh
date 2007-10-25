@@ -75,8 +75,10 @@ instance CommandLike SysCommand where
         where child closefds stdinread stdoutwrite = 
                 do dupTo stdinread stdInput
                    dupTo stdoutwrite stdOutput
+                   hPutStrLn stderr $ "Closing stdinread, stdoutwrite: " ++ show [stdinread,stdoutwrite]
                    closeFd stdinread
                    closeFd stdoutwrite
+                   hPutStrLn stderr $ "Closing closefds: " ++ show closefds
                    mapM_ closeFd closefds
                    executeFile cmd True args Nothing
 
