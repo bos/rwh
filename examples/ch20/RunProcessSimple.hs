@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fglasgow-exts #-}
 -- RunProcessSimple.hs
 
-module RunProcess where
+module RunProcessSimple where
 
 import System.Process
 import Control.Concurrent
@@ -113,7 +113,7 @@ removeCloseFDs closefds removethem =
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
-'CommandLine'. -}
+'CommandLike'. -}
 data (CommandLike src, CommandLike dest) => 
      PipeCommand src dest = PipeCommand src dest 
 
