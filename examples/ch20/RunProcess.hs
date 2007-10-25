@@ -19,7 +19,7 @@ type HsCommand = String -> IO String
 
 {- | The result of running any command -}
 data CommandResult = CommandResult {
-    cmdOutput :: IO String,              -- ^ IO action that yields the output
+    cmdOutput :: String,              -- ^ IO action that yields the output
     getExitStatus :: IO ProcessStatus    -- ^ IO action that yields exit result
     }
 
@@ -58,14 +58,14 @@ instance CommandLike SysCommand where
 
            -- Prepare to receive output from the command
            stdouthdl <- fdToHandle stdoutread
-           let readfunc = hGetContents stdouthdl
+           output <- hGetContents stdouthdl
            let waitfunc = 
                do status <- getProcessStatus True False childPID
                   case status of
                        Nothing -> fail $ "Error: Nothing from getProcessStatus"
                        Just ps -> do removeCloseFDs [stdinwrite, stdoutread]
                                      return ps
-           return $ CommandResult {cmdOutput = readfunc,
+           return $ CommandResult {cmdOutput = output,
                                    getExitStatus = waitfunc}
 
         where child closefds stdinread stdoutwrite = 
@@ -78,11 +78,8 @@ instance CommandLike SysCommand where
 
 -- Support for running Haskell commands
 instance CommandLike HsCommand where
-    invoke func input =
-       do result <- case input of 
-              Left str -> func str
-              Right hdl -> hGetContents hdl >>= func
-          return $ CommandResult (Left result) (return ExitSuccess)
+    invoke func _ input =
+       return $ CommandResult (func input) (return (Exited ExitSuccess))
 
 {- | Type representing a pipe.  A 'PipeCommand' consists of a source
 and destination part, both of which must be instances of
@@ -97,11 +94,11 @@ data (CommandLike src, CommandLike dest) =>
 {- | Make 'PipeCommand' runnable as a command -}
 instance (CommandLike a, CommandLike b) =>
          CommandLike (PipeCommand a b) where
-    invoke (PipeCommand src dest) input =
-        do res1 <- invoke src input
+    invoke (PipeCommand src dest) closefds input =
+        do res1 <- invoke src closefds input
            putStrLn "62"
            putStrLn "64"
-           res2 <- invoke dest (cmdOutput res1)
+           res2 <- invoke dest closefds (cmdOutput res1)
            putStrLn "66"
            return $ CommandResult (cmdOutput res2) (getEC res1 res2)
 
