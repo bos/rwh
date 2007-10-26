@@ -86,6 +86,7 @@
 <!ENTITY hTell "<literal>hTell</literal>">
 <!ENTITY hugs "<command>hugs</command>">
 <!ENTITY if "<literal>if</literal>">
+<!ENTITY in "<literal>in</literal>">
 <!ENTITY interact "<literal>interact</literal>">
 <!ENTITY larrow "<literal>&lt;-</literal>">
 <!ENTITY let "<literal>let</literal>">

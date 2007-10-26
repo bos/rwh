@@ -1089,8 +1089,10 @@
 	where tabs belong, you can't rely on someone else's editor
 	honouring your preferences.  Any indentation that uses tabs is
 	going to look broken under <emphasis>someone's</emphasis>
-	configuration; this could lead to compilation problems, too.
-	Using space characters instead avoids this problem
+	configuration.  In fact, this could lead to compilation
+	problems, as the Haskell language standard requires
+	implementations to use the Unix tab width convention.
+	Using space characters avoids these problem
 	entirely.</para>
     </sect2>
 
