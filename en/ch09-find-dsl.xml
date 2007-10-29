@@ -16,7 +16,8 @@
     <command>find</command>-like capability in the programmer's
     toolbox.  In this chapter, we'll develop a library that gives us
     many of <command>find</command>'s capabilities, without leaving
-    Haskell.</para>
+    Haskell.  We'll explore several different approaches to writing
+    this library, each with different strengths.</para>
 
   <sect1 id="hs.find.getRecursiveContents">
     <title>The find command</title>
@@ -1174,6 +1175,13 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
+	    <para>Modify <function>foldTree</function> to allow the
+	      caller to change the order of traversal of entries in a
+	      directory.</para>
+	  </question>
+	</qandaentry>
+	<qandaentry>
+	  <question>
 	    <para>The <function>foldTree</function> function performs
 	      preorder traversal.  Modify it to allow the caller to
 	      determine the order of traversal.</para>
@@ -1184,8 +1192,8 @@
 	  <question>
 	    <para>Write a combinator library that makes it possible to
 	      express the kinds of iterators that
-	      <function>foldTree</function> accepts.  Does it actually
-	      make writing iterators any more succinct?</para>
+	      <function>foldTree</function> accepts.  Does it
+	      make the iterators you write any more succinct?</para>
 	  </question>
 	</qandaentry>
       </qandaset>
