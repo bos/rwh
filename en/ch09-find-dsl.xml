@@ -1000,13 +1000,206 @@
   </sect1>
 
   <sect1>
+    <title>Another way of looking at traversal</title>
+    
+    <para>While the <function>traverse</function> function gives us
+      more control than our original <function>betterFind</function>
+      function, it still has a significant failing: we can avoid
+      recursing into directories, but we can't filter other names
+      until after we've generated the entire list of names in a tree.
+      If we are traversing a directory containing 100,000 files of
+      which we care about three, we'll allocate a 100,000-element list
+      before we have a chance to trim it down to the three we really
+      want.</para>
+
+    <para>One approach would be to provide a filter function as a new
+      argument to <function>traverse</function>, which we would apply
+      to the list of names as we generate it.  This would allow us to
+      allocate a list of only as many elements as we need.</para>
+
+    <para>However, this approach also has a weakness: say we know that
+      we want at most three entries from our list, and that those
+      three entries happen to be the first three of the 100,000 that
+      we traverse.  In this case, we'll needlessly visit 99,997 other
+      entries.  This is not by any means a contrived example: for
+      example, the Maildir mailbox format stores a folder of email
+      messages as a directory of individual files.  It's common for a
+      single directory representing a mailbox to contain tens of
+      thousands of files.</para>
+
+    <para>We can address the weaknesses of our two prior traversal
+      functions by taking a different perspective: what if we think of
+      filesystem traversal as a <emphasis>fold</emphasis> over the
+      directory hierarchy?</para>
+
+    <para>The familiar folds, <function>foldr</function> and
+      <function>foldl'</function>, neatly generalise the idea of
+      traversing a list while accumulating a result.  It's hardly a
+      stretch to extend the idea of folding from lists to directory
+      trees, but we'd like to add an element of
+      <emphasis>control</emphasis> to our fold.  We'll represent this
+      control as an algebraic data type.</para>
+
+    &FoldDir.hs:Iterate;
+
+    <para>The <type>Iterator</type> type gives us a convenient alias
+      for the function that we fold with.  It takes a seed and an
+      <type>Info</type> value representing a directory entry, and
+      returns both a new seed and an instruction for our fold
+      function, where the instructions are represented as the
+      constructors of the <type>Iterate</type> type.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>If the instruction is <code>Done</code>, traversal
+	  should cease immediately.  The value wrapped by
+	  <code>Done</code> should be returned as the result.</para>
+      </listitem>
+
+      <listitem>
+	<para>If the instruction is <code>Skip</code> and the current
+	  <type>Info</type> represents a directory, traversal will not
+	  recurse into that directory.</para>
+      </listitem>
+
+      <listitem>
+	<para>Otherwise, the traversal should continue, using the
+	  wrapped value as the input to the next call to the fold
+	  function.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Our fold is logically a kind of left fold, because we start
+      folding from the first entry we encounter, and the seed for each
+      step is the result of the prior step.</para>
+
+    &FoldDir.hs:foldTree;
+
+    <para>There are a few interesting things about the way this code
+      is written.  The first is the use of scoping to avoid having to
+      pass extra parameters around.  The top-level
+      <function>foldTree</function> function is just a wrapper for
+      <function>fold</function> that peels off the constructor of the
+      <function>fold</function>'s final result.</para>
+
+    <para>Because <function>fold</function> is a local function, we
+      don't have to pass <function>foldTree</function>'s
+      <varname>iter</varname> variable into it; it can already access
+      it in the outer scope.  Similarly, <function>walk</function> can
+      see <varname>path</varname> in its outer scope.  Even though
+      both <function>fold</function> and <function>foldTree</function>
+      have variables named <varname>path</varname>, Haskell's scope
+      rules ensure that <varname>path</varname> in the closest
+      enclosing scope (<function>fold</function>) is the one that
+      <function>walk</function> can see.</para>
+
+    <para>Another point to note is that <function>walk</function> is a
+      tali recursive loop, instead of an anonymous function called by
+      <function>forM</function> as in our earlier functions.  By
+      taking the reins ourselves, we can stop early if we need to.
+      This lets us drop out when our iterator returns
+      <code>Done</code>.</para>
+      
+    <para>Although <function>fold</function> calls
+      <function>walk</function>, <function>walk</function> calls
+      <function>fold</function> recursively to traverse
+      subdirectories.  Each function returns a seed wrapped in an
+      <type>Iterate</type>: when <function>fold</function> is called
+      by <function>walk</function> and returns,
+      <function>walk</function> examines its result to see whether it
+      should continue or drop out because it returned
+      <code>Done</code>.  In this way, a return of
+      <function>Done</function> from the called-supplied iterator
+      immediately terminates all mutually recursive calls between the
+      two functions.</para>
+
+    <para>What does an iterator look like in practice?  Here's a
+      somewhat complicated example that looks for at most three bitmap
+      images, and won't recurse into Subversion metadata
+      directories.</para>
+
+    &FoldDir.hs:atMostThreePictures;
+
+    <para>To use this, we'd call <code>foldTree atMostThreePictures
+	[]</code>, giving us a return value of type <type>IO
+	[FilePath]</type>.</para>
+
+    <para>Of course, iterators don't have to be this complicated.
+      Here's one that counts the number of directories it
+      encounters.</para>
+
+    &FoldDir.hs:countDirectories;
+
+    <para>Here, the initial seed that we pass to
+      <function>foldTree</function> should be the number zero.</para>
+
+    <sect2>
+      <title>Using guards to substitute for multi-way ifs</title>
+
+      <para>One of the things that makes our
+	<function>atMostThreePictures</function> function a little
+	unwieldy is the nesting of &if; expressions.  Although Haskell
+	doesn't have multi-way &if; expressions (often seen in other
+	languages as <code>else if</code> or <code>elif</code>
+	blocks), we can emulate them as follows.</para>
+
+      <para>Write a &case; expression, using
+	<varname>undefined</varname> as the expression to evaluate,
+	and a single wild card as the only pattern.  Write each branch
+	of the multi-way &if; as a guard expression on that
+	pattern.</para>
+
+      &FoldDir.hs:secondTake;
+
+      <para>This trick relies on Haskell's non-strict evaluation.
+	Because we use a wild card as a pattern, it doesn't matter
+	what the expression we're matching on is: it won't be
+	evaluated.  We match on <varname>undefined</varname> (which
+	would throw an exception if it were actually evaluated) as a
+	form of documentation, to make it explicit that we're not
+	using the &case; expression in the usual way.</para>
+
+      <para>This is a useful form to remember when you have a
+	complicated series of &if; expressions that would otherwise be
+	deeply nested.  Often, such expressions tend to march off the
+	right hand side of the screen as each successive level of
+	nesting requires more indentation. Using this trick, we get a
+	clean sequence of as many expressions as we need, each
+	starting in the same column.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>The <function>foldTree</function> function performs
+	      preorder traversal.  Modify it to allow the caller to
+	      determine the order of traversal.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Write a combinator library that makes it possible to
+	      express the kinds of iterators that
+	      <function>foldTree</function> accepts.  Does it actually
+	      make writing iterators any more succinct?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
     <title>Exercises</title>
     
     <para>Although the file finding code we described in this chapter
       is a good vehicle for learning, it's not ideal for real systems
-      programming tasks, because Haskell's portable I/O libraries
-      don't expose enough information to let us write interesting and
-      complicated queries.</para>
+      programming tasks, because Haskell's standard portable I/O
+      libraries don't expose enough information to let us write
+      interesting and complicated queries.</para>
 
     <qandaset defaultlabel="number">
       <qandaentry>

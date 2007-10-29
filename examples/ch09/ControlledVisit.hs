@@ -1,3 +1,11 @@
+module ControlledVisit
+    (
+      Info(..)
+    , getInfo
+    , getUsefulContents
+    , isDirectory
+    ) where
+
 import Control.Monad (filterM, forM, liftM)
 import Data.List (partition)
 import Data.Maybe (isJust)
@@ -35,14 +43,20 @@ traverse :: ([Info] -> [Info]) -> FilePath -> IO [Info]
 {-- /snippet traverse.type --}
 {-- snippet traverse --}
 traverse order path = do
-    names <- getDirectoryContents path
-    let usefulNames = filter (not . (`elem` [".", ".."])) names
-    contents <- mapM (getInfo . (path </>)) ("" : usefulNames)
+    names <- getUsefulContents path
+    contents <- mapM (getInfo . (path </>)) ("" : names)
     liftM concat $ forM (order contents) $ \info -> do
         if isDirectory info && infoPath info /= path
             then traverse order (infoPath info)
             else return [info]
-  where isDirectory = maybe False searchable . infoPerms
+
+getUsefulContents :: FilePath -> IO [String]
+getUsefulContents path = do
+    names <- getDirectoryContents path
+    return (filter (not . (`elem` [".", ".."])) names)
+
+isDirectory :: Info -> Bool
+isDirectory = maybe False searchable . infoPerms
 {-- /snippet traverse --}
 
 {-- snippet traverseVerbose --}
