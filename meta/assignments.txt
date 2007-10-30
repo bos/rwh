@@ -1,27 +1,27 @@
 Shared     1. Why functional programming? Why Haskell?
 Shared     2. Getting started: compiler, interpreter, values, simple 
-              functions, and types
-Shared     3. Syntax, type system basics, type class basics
-BOS?       4. FP
+              functions, and types (DONE)
+Shared     3. Syntax, type system basics, type class basics (DONE)
+BOS        4. FP (DONE)
 BOS/DONS   5. Write a real library: the rope data structure, cabal,
               building  projects
-JG         6. Typeclasses and their use
-JG         7. All about I/O
+JG         6. Typeclasses and their use (DONE)
+JG         7. All about I/O (DONE)
 BOS        8. Bringing it all together: file name matching and 
-              regular expressions
-BOS        9. I/O case study: a DSL for searching the filesystem
+              regular expressions (DONE)
+BOS        9. I/O case study: a DSL for searching the filesystem (DONE)
 BOS       10. Code case study: barcode recognition
 DONS      11. Testing the Haskell way: QuickCheck
 BOS       12. Handling binary files and formats
-JG        13. Designing and using data structures
+JG        13. Designing and using data structures (DONE)
 BOS       14. Monads
 BOS       15. Monad case study: refactoring the filesystem seacher
 DONS      16. Monad transformers
-JG        17. Using parsec:
+JG        17. Using parsec: (PARTIAL)
 BOS            parsing a bioinformatics format
 DONS      18. Interfacing with C: the FFI
 DONS      19. Error handling
-JG        20. Haskell for systems programming
+JG        20. Haskell for systems programming (DONE)
 JG        21. Talking to databases: Data.Typeable
 JG        22. Web client programming: client/server networking
 BOS       23. GUI programming: gtk2hs
