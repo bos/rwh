@@ -60,7 +60,11 @@
     <title>Installing HDBC and Drivers</title>
     <para>
       To connect to a given database with HDBC, you need at two packages:
-      the generic interface, and a driver for your specific database.
+      the generic interface, and a driver for your specific database.  You
+      can obtain the generic HDBC package from <ulink
+        url="http://software.complete.org/hdbc"/>.  <remark>FIXME: insert
+        link to section on installing software</remark>.  For this chapter,
+      we will use HDBC version 1.1.3 for examples.
     </para>
     <para><remark>FIXME</remark></para>
   </sect1>
