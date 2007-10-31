@@ -3,13 +3,65 @@
 <chapter id="hs.databases" revision="unpublished">
   <title>Using Databases</title>
 
+  <para>
+    Many different applications have the need to store data in databases.
+    Everything from web forums to podcatchers or even backup programs
+    frequently use databases for persistent storage.  SQL-based databases are
+    often quite convenient: they are fast, can scale from tiny to massive
+    sizes, can operate over the network, often help handle locking and
+    transactions, and can even provide failover and redundancy improvements
+    for applications.  Databases come in many different shapes: the large
+    commercial databases such as Oracle, Open Source engines such as
+    PostgreSQL or MySQL, and even embeddable engines such as Sqlite.
+  </para>
+  <para>
+    Because databases are so important, Haskell support for them is important
+    as well.  In this chapter, we will introduce you to one of the Haskell
+    frameworks for working with databases.  We will also use this framework
+    to begin building a podcast downloader, which we will further develop in
+    <remark>FIXME: insert link to ch22</remark>.
+  </para>
+
   <sect1 id="hs.databases.hdbc">
     <title>Overview of HDBC</title>
-    <para><remark>FIXME</remark></para>
+    <para>
+      At the bottom of the database stack is the database engine.  The
+      database engine is responsible for actually storing data on disk.
+      Well-known database engines include PostgreSQL, MySQL, and Oracle.
+    </para>
+    <para>
+      Most modern database engines support SQL, the Structured Query
+      Language, as a standard way of getting data into and out of relational
+      databases.  This book will not provide a tutorial on SQL or relational
+      database management; for background on that, please refer to
+      <remark>FIXME: add reference to an appropriate O'Reilly title</remark>.
+    </para>
+    <para>
+      Once you have a database engine that supports SQL, you need a way to
+      communicate with it.  Each database has its own protocol.  Since SQL is
+      reasonably constant across databases, it is possible to make a generic
+      interface that uses drivers for each individual protocol.
+    </para>
+    <para>
+      Haskell has several different database frameworks available, some
+      providing high-level layers atop others.  For this chapter, we will
+      concentrate on HDBC, the Haskell DataBase Connectivity system.  HDBC is
+      a database abstraction library.  That is, you can write code that uses
+      HDBC and can access data stored in almost any SQL database with little
+      or no modification.<footnote><para>This assumes you restrict yourself to
+          using standard SQL.</para></footnote>  Even if you may never need
+      to switch underlying database engines, the HDBC system of drivers makes
+      a large number of choices available to you with a single constant
+      interface.
+    </para>
   </sect1>
 
   <sect1 id="hs.databases.hdbc.install">
     <title>Installing HDBC and Drivers</title>
+    <para>
+      To connect to a given database with HDBC, you need at two packages:
+      the generic interface, and a driver for your specific database.
+    </para>
     <para><remark>FIXME</remark></para>
   </sect1>
 
