@@ -26,6 +26,7 @@
 <!ENTITY ch16     SYSTEM "ch16-monad-trans.xml">
 <!ENTITY ch17     SYSTEM "ch17-parsec.xml">
 <!ENTITY ch20     SYSTEM "ch20-systems.xml">
+<!ENTITY ch21     SYSTEM "ch21-databases.xml">
 
 <!-- Appendices. -->
 
@@ -119,6 +120,7 @@
   &ch16;
   &ch17;
   &ch20;
+  &ch21;
 
   &appA;
   &appB;

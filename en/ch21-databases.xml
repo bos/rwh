@@ -1,0 +1,62 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.databases" revision="unpublished">
+  <title>Using Databases</title>
+
+  <sect1 id="hs.databases.hdbc">
+    <title>Overview of HDBC</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.hdbc.install">
+    <title>Installing HDBC and Drivers</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.connect">
+    <title>Connecting to Databases</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.simplequeries">
+    <title>Simple Queries</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.preparedQueries">
+    <title>Prepared Queries</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.readingresults">
+    <title>Reading Results</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.metadata">
+    <title>Database Metadata</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.errors">
+    <title>Error Handling</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.threading">
+    <title>Threading</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+
+  <sect1 id="hs.databases.typeable">
+    <title>Data.Typeable</title>
+    <para><remark>FIXME</remark></para>
+  </sect1>
+</chapter>
+ 
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
