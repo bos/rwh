@@ -783,6 +783,6 @@ Loading package base ... linking ... done.
 
 <!--
 local variables: 
-sgml-parent-document: ("00book.xml" "chapter")
+sgml-parent-document: ("00book.xml" "book")
 end:
 -->
