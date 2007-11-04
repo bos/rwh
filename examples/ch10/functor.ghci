@@ -1,0 +1,43 @@
+:load TreeMap
+
+--# map
+
+map (+1) [1,2,3]
+map show [1,2,3]
+:type map show
+
+--# treeLengths
+
+let tree = Node (Leaf "foo") (Node (Leaf "x") (Leaf "quux"))
+treeLengths tree
+treeMap length tree
+treeMap (odd . length) tree
+
+--# fmap
+
+fmap length ["foo","quux"]
+fmap length (Tree (Leaf "livingstone") (Leaf "i presume"))
+
+--# EitherInt
+
+:load EitherInt
+
+--# EitherIntFlexible
+
+:load EitherIntFlexible
+fmap (== "cheeseburger") (Left 1 :: Either Int String)
+fmap (== "cheeseburger") (Right "fries" :: Either Int String)
+
+--# id
+
+fmap id (Tree (Leaf "a") (Leaf "b"))
+
+--# shape
+
+fmap odd (Just 1)
+fmap odd Nothing
+
+--# composition
+
+(fmap even . fmap length) (Just "twelve")
+fmap (even . length) (Just "twelve")

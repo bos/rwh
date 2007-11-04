@@ -1,0 +1,484 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.binary" revision="unpublished">
+  <title>Code case study: parsing a binary file format</title>
+
+  <para>In this chapter, we'll discuss a common task: parsing a binary
+    file.  We're going to use this for two purposes.  Our first is to
+    talk a little about parsing, but our main goal is to talk about
+    program organisation and <quote>boilerplate
+      removal</quote>.</para>
+
+  <para>As our task, we'll choose parsing a few different netpbm file
+    types.  These file formats have the dual advantages of wide use
+    and being fairly easy, but not completely trivial, to parse.  Most
+    importantly for our convenienve, netpbm files are not
+    compressed.</para>
+
+  <sect1>
+    <title>Greyscale files</title>
+
+    <para>The name of netpbm's greyscale file format is PGM
+      (<quote>portable grey map</quote>).  It is actually not one
+      format, but two; the <quote>plain</quote> (or <quote>P2</quote>)
+      format is encoded as ASCII, while the more common
+      <quote>raw</quote> (<quote>P5</quote>) format is mostly
+      binary.</para>
+
+    <para>A file of either format starts with a header, which in turn
+      begins with a <quote>magic</quote> string describing the format.
+      For a plain file, the string is <literal>P5</literal>, and for
+      raw, it's <literal>P2</literal>. The magic string is followed by
+      white space, then by three numbers: the width, height, and
+      maximum grey value of the image. These numbers are represented
+      as ASCII decimal numbers, separated by white space.</para>
+
+    <para>After the maximum grey value comes the image data.  In a raw
+      file, this is a string of binary values.  In a plain file, the
+      values are represented as ASCII decimal numbers separated by
+      white space.</para>
+
+    <para>A raw file can contain a sequence of images, one after the
+      other, each with its own header.  A plain file contains only one
+      image.</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Parsing a raw PGM file</title>
+
+    <para>For our first try at a parsing function, we'll only worry
+      about raw PGM files. We'll write our PGM parser as a
+      <emphasis>pure</emphasis> function. It's not responsible for
+      obtaining the data to parse, just for the actual parsing.  This
+      is a common approach in Haskell programs. By separating the
+      reading of the data from what we subsequently do with it, we
+      gain flexibility in where we take the data from.</para>
+
+    <para>We'll use the <type>ByteString</type> type to store our
+      greymap data, because it's compact.</para>
+
+    &PNM.hs:imports;
+
+    <para>For our purposes, it doesn't matter whether we use a lazy or
+      strict <type>ByteString</type>, so we've somewhat arbitrarily
+      chosen the lazy kind.</para>
+
+    <para>The <type>ByteString</type> module contains many definitions
+      that have the same names as existing Prelude definitions that
+      are automatically imported for us.  Because of this, if we try
+      to use a name that is present in both the
+      <type>ByteString</type> module and the Prelude, the compiler
+      will complain about ambiguity.  We avoid this problem by
+      importing the module under an alias, <code>L</code>: every time
+      you see a name prefixed with <code>L.</code>, we're using the
+      name from <type>ByteString</type>.</para>
+
+    <para>We'll use a straightforward data type to represent PGM
+      files.</para>
+
+    &PNM.hs:Greymap;
+
+    <para>Normally, a Haskell <type>Show</type> instance should
+      produce a string representation that we can read back by calling
+      <function>read</function>.  However, for a bitmap graphics file,
+      this would potentially produce huge text strings, for example if
+      we were to <function>show</function> a photo.  For this reason,
+      we're not going to let the compiler automatically derive a
+      <type>Show</type> instance for us: we'll write our own,
+      intentionally less capable, implementation.</para>
+
+    &PNM.hs:Show;
+
+    <para>Because our <type>Show</type> instance intentionally avoids
+      printing the bitmap data, there's no point in writing a
+      <type>Read</type> instance, as we can't reconstruct a valid
+      <type>Greymap</type> from the result of
+      <function>show</function>.</para>
+
+    <para>Here's an obvious type for our parsing function.</para>
+
+    &PNM.hs:parseP5.type;
+
+    <para>This will take a <type>ByteString</type>, and if the parse
+      succeeds, it will return the parsed <type>Greymap</type>, along
+      with the string that remains after parsing.</para>
+
+    <para>Our parsing function has to consume a little bit of its
+      input at a time.  First, we need to assure ourselves that we're
+      really looking at a raw PGM file; then we need to parse the
+      numbers from the remainder of the header; then we consume the
+      bitmap data.  Here's an obvious way to express this.</para>
+
+    &PNM.hs:parseP5;
+
+    <para>This is a very direct piece of code.  Each function that it
+      calls returns the residual <type>ByteString</type> left over
+      after it has finished.  It deconstructs each result in turn,
+      either failing if the function failed, or building up a piece of
+      the result as it continues.  The bodies of the functions that it
+      calls aren't especially interesting.</para>
+
+    &PNM.hs:parseP5.functions;
+
+  </sect1>
+
+  <sect1>
+    <title>Getting rid of boilerplate code</title>
+
+    <para>Our <function>parseP5</function>  function is somehow
+      unsatisfying.  It marches steadily to the right of the screen,
+      so it's clear that a slightly more complicated function would
+      <quote>run out of space</quote>.  And it repeats a pattern of
+      constructing and then deconstructing <type>Maybe</type> values,
+      only continuing if a particular value matches
+      <function>Just</function>.  All of the similar &case;
+      expressions act as <quote>boilerplate code</quote>, lots of
+      busywork that obscures what we're really trying to do.  In
+      short, this function is begging for a little abstraction.</para>
+
+    <para>If we step back a little, we can see two patterns.  First is
+      that the functions that we're calling have similar types.  Each
+      takes a <type>ByteString</type> as its last argument, and
+      returns <type>Maybe</type> something else.  Secondly, every step
+      in the <quote>ladder</quote> of our <function>parseP5</function>
+      function deconstructs a <type>Maybe</type> value, and either
+      fails or passes the unwrapped result to a function.</para>
+
+    <para>We can quite easily write a function that captures this
+      second pattern.</para>
+
+    &PNM.hs:then;
+
+    <para>The <function>(&gt;&gt;&gt;)</function> function acts very
+      simply: it takes a value as its left argument, and a function as
+      its right. If the value is not <literal>Nothing</literal>, it
+      calls the function.  We have written this function as an
+      operator so that we can use it to chain functions
+      together.</para>
+
+    <para>With this chaining function in hand, we can take a second
+      try at our parsing function.</para>
+
+    &PNM.hs:parseP5_take2;
+
+    <para>The key to understanding this function is to think about the
+      chaining.  On the left hand side of each
+      <function>(&gt;&gt;&gt;)</function> is a <type>Maybe</type>
+      value; on the right is a function that returns a
+      <type>Maybe</type> value.  Each expression is thus of type
+      <type>Maybe</type>, suitable for passing to the following
+      <function>(&gt;&gt;&gt;)</function> expression.</para>
+
+    <para>The other change that we've made to improve readability is
+      add a <function>skipSpace</function> function.  With these
+      changes, we've exactly halved the number of lines of code
+      compared to our original parsing function.  By removing the
+      boilerplate &case; expressions, we've made the code easier to
+      follow.</para>
+
+    <para>However, we're not yet out of the woods.  This code
+      explicitly passes two-tuples around, using one element for an
+      intermediate part of the parsed result and the other for the
+      current residual <type>ByteString</type>.  If we want to extend
+      the code, for example to track the number of bytes we've
+      consumed so that we can report the location of a parse failure,
+      we need to modify eight different locations so that we can pass
+      a three-tuple around.</para>
+  </sect1>
+
+  <sect1>
+    <title>Implicit state</title>
+
+    <para>While we've gotten rid of some boilerplate code, the
+      two-tuple that we use to pass around our partial result and
+      residual string is a serious problem: it makes our code
+      difficult to change.</para>
+
+    <para>We can do something about this, though.  First, let's
+      augment the state that our parser uses.</para>
+
+    &Parse.hs:ParseState;
+
+    <para>We can now track both the current residual string and the
+      offset into the original string since we started parsing.  This
+      lets us think of parsing as a function from one
+      <type>ParseState</type> to another, also returning the result of
+      the parse.</para>
+
+    &Parse.hs:Parse;
+
+    <para>The &newtype; declaration for the <type>Parse</type> type
+      just acts as a safety wrapper around this function type.  It
+      allows us to ensure that we can't accidentally run a
+      parser.</para>
+
+    <para>Let's try to define a minimal parser.</para>
+
+    &Parse.hs:identity;
+
+    <para>All this function has to do is take a parse state, leave it
+      untouched, and use the function's argument as the result of the
+      parse.  We wrap this function in our <type>Parse</type> type,
+      but how can we actually use this wrapped function to parse
+      something?</para>
+
+    <para>The first thing we must do is peel off the
+      <function>Parse</function> wrapper so that we can get at the
+      function inside.  We do this by calling
+      <function>runParse</function>.  We also need to construct a
+      <type>ParseState</type>, then run our parsing function on that
+      parse state.  Finally, we'd like to extract the result of the
+      parse from the final <type>ParseState</type>.</para>
+
+    &Parse.hs:parse;
+
+    <para>Because neither the <function>identity</function> parser nor
+      the <function>parse</function> function examine the parse state
+      at all, we don't even need to bother creating an input string in
+      order to try this out.</para>
+
+    &parse.ghci:parse;
+
+    <para>A parser that doesn't even inspect its input isn't very
+      interesting, but at least we have confidence that our types are
+      correct.  Let's focus now on writing a parser that does
+      something meaningful.  We're not going to get very ambitious
+      yet, though: all we want to do is parse a single byte.</para>
+
+    &Parse.hs:parseByte;
+
+    <para>There's some unfamiliar code in use here, so let's take a
+      deeper look.  The <function>(==&gt;)</function> function serves
+      a similar purpose as our earlier
+      <function>(&gt;&gt;&gt;)</function> function, acting as
+      <quote>glue</quote> to let us chain functions together.</para>
+
+    &Parse.hs:then;
+
+    <para>Indeed, the types of the two functions are very similar. The
+      body of <function>(==&gt;)</function> is interesting, and ever
+      so slightly tricky.  Remember that <type>Parse</type> is really
+      a function type with a wrapper.  Therefore,
+      <function>(==&gt;)</function> must return a function, in a
+      wrapper.  It doesn't really <quote>do</quote> much: it just
+      creates a <emphasis>closure</emphasis> to remember the values of
+      <varname>x</varname> and <varname>f</varname>.  This closure
+      won't be unwrapped and called until we call
+      <function>parse</function>.  At that point, it will be called
+      with a <type>ParseState</type>.  It will call the
+      <type>Parse</type> that is its left argument and inspect its
+      result.  If that parse failed, the closure fails too. Otherwise,
+      it passes the result of the parse and the new
+      <type>ParseState</type> to <varname>f</varname>.</para>
+
+    <para>This is really quite fancy and subtle stuff: we're
+      effectively passing the <type>ParseState</type> down the chain
+      of <type>Parse</type> values in a hidden argument.  Our
+      <function>parseByte</function> function doesn't take the parse
+      state as an argument.  Instead, it has to call
+      <function>getState</function> to get a copy of the state, and
+      <function>putState</function> to replace the current state with
+      a new one.</para>
+
+    &Parse.hs:getPut;
+
+    <para>When reading these functions, recall that the left element
+      of the tuple is the result of a <type>Parse</type>, while the
+      right is the current <type>ParseState</type>.  This makes it
+      easier to follow what these functions are doing.</para>
+    
+  </sect1>
+
+  <sect1>
+    <title>Introducing functors</title>
+
+    <para>We're by now thoroughly familiar with the
+      <function>map</function> function, which applies a function to
+      every element of a list, returning a list of possibly a
+      different type.</para>
+
+    &functor.ghci:map;
+
+    <para>This <function>map</function>-like activity can be useful in
+      other instances.  For example, consider a binary tree.</para>
+
+    &TreeMap.hs:Tree;
+
+    <para>If we want to take a tree of strings and turn it into a tree
+      containing the lengths of those strings, we could write a
+      function to do this.</para>
+
+    &TreeMap.hs:treeLengths;
+
+    <para>Now that our eyes are attuned to looking for patterns that
+      we can turn into generally useful functions, we can see a
+      possible case of this here.</para>
+
+    &TreeMap.hs:treeMap;
+
+    <para>As we might hope, <function>treeLengths</function> and
+      <function>treeMap length</function> give the same
+      results.</para>
+
+    &functor.ghci:treeLengths;
+
+    <para>Haskell provides a well-known typeclass to further
+      generalise <function>treeMap</function>.  This typeclass is
+      named <type>Functor</type>, and it defines one function,
+      <function>fmap</function>.</para>
+
+    &TreeMap.hs:Functor;
+
+    <para>We can think of <function>fmap</function> as a kind of
+      <emphasis>lifting</emphasis> function, as we introduced in <xref
+      linkend="hs.find.predicate.lift"/>.  It takes a function over
+      ordinary values <type>a -&gt; b</type> and turns it into a
+      function over containers <type>f a -&gt; f b</type>, where
+      <varname>f</varname> is the container type.</para>
+
+    <para>If we substitute <type>Tree</type> for the type variable
+      <varname>f</varname>, for example, the type of
+      <function>fmap</function> is identical to the type of
+      <function>treeMap</function>, and in fact we can use
+      <function>treeMap</function> as the implementation of
+      <function>fmap</function> over <type>Tree</type>s.</para>
+
+    &TreeMap.hs:Functor.Tree;
+
+    <para>We can also use <function>map</function> as the
+      implementation of <function>fmap</function> for lists.</para>
+
+    &TreeMap.hs:Functor.List;
+
+    <para>We can now use <function>fmap</function> over different
+      container types.</para>
+
+    &functor.ghci:fmap;
+
+    <para>The Prelude defines instances of <type>Functor</type> for
+      several common types.  The instance for lists is provided in the
+      Prelude, as is the instance for <type>Maybe</type>.</para>
+
+    &TreeMap.hs:Functor.Maybe;
+
+    <para>The instance for <type>Maybe</type> makes it particularly
+      clear what an <function>fmap</function> implementation needs to
+      do.  The implementation must have a sensible behaviour for each
+      of a type's constructors.  If a value is wrapped in
+      <code>Just</code>, for example, the <function>fmap</function>
+      implementation calls the function on the unwrapped value, then
+      rewraps it in <code>Just</code>.</para>
+
+    <para>The definition of <type>Functor</type> imposes a few obvious
+      restrictions on what we can do with <function>fmap</function>.
+      For example, we can only make instances of
+      <function>Functor</function> from types that have exactly one
+      free type variable.</para>
+
+    <note>
+      <title>What's a free type variable?</title>
+
+      <para>A free type variable is a lower-case type variable, such
+	as <varname>a</varname>, that hasn't been bound to a
+	particular type.  For example, the type <type>Maybe a</type>
+	has one free type variable, but <type>Maybe Int</type> has
+	none.  We say that the type variable <varname>a</varname> is
+	<emphasis>bound to</emphasis> the type
+	<type>Int</type>.</para>
+    </note>
+
+    <para>We can't write an <function>fmap</function> implementation
+      for <type>Either a b</type> or <type>(a, b)</type>, for example,
+      because these have two free type variables. We also can't write
+      work with <type>Bool</type> or <type>Int</type>, as they have no
+      free type variables.</para>
+
+    <sect2>
+      <title>Flexible instances</title>
+
+      <para>You might hope that we could write a <type>Functor</type>
+	instance for the type <type>Either Int b</type>, which has one
+	free type variable.</para>
+
+      &EitherInt.hs:Functor;
+
+      <para>However, the type system of Haskell 98 cannot guarantee
+	that checking the constraints on such an instance will
+	terminate.  A non-terminating constraint check will send a
+	compiler into an infinite loop, so instances of this form are
+	forbidden.</para>
+
+      &functor.ghci:EitherInt;
+
+      <para>&GHC; has a more powerful type system than the base
+	Haskell 98 standard.  It operates in standard compatibility
+	mode by default, for maximal portability.  We can instruct it
+	to allow more flexible instances using a special compiler
+	directive.</para>
+
+      &EitherIntFlexible.hs:Functor;
+
+      <para>The directive is embedded in the specially formatted
+	<code>LANGUAGE</code> comment.  These directives are usually
+	referred to as <quote>pragmas</quote>.  Pragmas are always
+	enclosed in the special comment sequences <code>{-#</code>, to
+	begin, and <code>#-}</code>, to end.</para>
+
+      <para>&GHC; supports many kinds of pragma.  Most pragmas only
+	have meaning at specific locations in a source file.  Language
+	pragmas, for example, are only obeyed if they are present at
+	the beginning of a source file.</para>
+
+      <para>With our <type>Functor</type> instance in hand, let's try
+	out <function>fmap</function> on <type>Either
+	  Int</type>.</para>
+
+      &functor.ghci:EitherIntFlexible;
+
+    </sect2>
+
+    <sect2>
+      <title>Thinking more about functors</title>
+
+      <para>We've made a few implicit assumptions about how functors
+	ought to work.  It's helpful to make these explicit and to
+	think of them as rules to follow, because this lets us treat
+	functors as uniform, well-behaved objects.</para>
+
+      <para>Our first rule is that a functor must preserve
+	<emphasis>identity</emphasis>.  That is, applying <code>fmap
+	  id</code> to a value should give us back an identical
+	value.</para>
+
+      &functor.ghci:id;
+
+      <para>Our second rule is that a functor must preserve
+	<emphasis>shape</emphasis>.  The structure of a collection
+	should not be affected by a functor; only the values that it
+	contains should change.</para>
+
+      &functor.ghci:shape;
+
+      <para>Finally, functors must be <emphasis>composable</emphasis>.
+	That is, composing two uses of <function>fmap</function>
+	should give the same result as one <function>fmap</function>
+	with the same functions composed.</para>
+
+      &functor.ghci:composition;
+
+      <para>If you're writing a <type>Functor</type> instance, it's
+	useful to keep these rules in mind, and indeed to test them.
+	Otherwise, the behaviour they specify is
+	<quote>natural</quote> enough that there's no need to memorise
+	them; they just formalise the notions of <quote>do what I
+	  mean</quote>.</para>
+    </sect2>
+  </sect1>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "chapter")
+end:
+-->
