@@ -1,8 +1,13 @@
+module Parse where
+
+import Control.Applicative ((<$>))
 import qualified Data.ByteString.Lazy as L
 import Data.ByteString.Lazy.Char8 (pack)
-import Data.Char (chr, ord, isDigit)
+import Data.Char (chr, ord, isDigit, isSpace)
 import Data.Int (Int64)
 import Data.Word (Word8)
+
+import PNM (Greymap(..))
 
 {-- snippet ParseState --}
 data ParseState = ParseState {
@@ -34,8 +39,6 @@ x ==> f = Parse (\st -> case runParse x st of
                           Left err -> Left err
                           Right (a, st') -> runParse (f a) st')
 {-- /snippet then --}
-
-x ==>! f = x ==> \_ -> f
 
 {-- snippet parse --}
 parse :: Parse a -> L.ByteString -> Either String a
@@ -74,39 +77,101 @@ parseByte =
                      in putState st' ==> \_ -> identity c
 {-- /snippet parseByte --}
 
+{-- snippet peekByte --}
 peekByte :: Parse (Maybe Word8)
-peekByte = getState ==> (identity . fmap fst . uncons . string)
+peekByte = (fmap fst . uncons . string) <$> getState
+{-- /snippet peekByte --}
 
+{-- snippet Functor --}
 instance Functor Parse where
     fmap f p = Parse (\st -> case runParse p st of
                                Left err -> Left err
                                Right (a, st') -> let fa = identity (f a)
                                                  in runParse fa st')
+{-- /snippet Functor --}
 
-parseEnd :: Parse Bool
-parseEnd = (L.null . string) `fmap` getState
+{-- snippet peekChar --}
+peekChar :: Parse (Maybe Char)
+peekChar = fmap w2c <$> peekByte
+{-- /snippet peekChar --}
 
+{-- snippet parseChar --}
+w2c :: Word8 -> Char
 w2c = chr . fromIntegral
 
-peekChar :: Parse (Maybe Char)
-peekChar = fmap w2c `fmap` peekByte
 parseChar :: Parse Char
-parseChar = w2c `fmap` parseByte
+parseChar = w2c <$> parseByte
+{-- /snippet parseChar --}
 
-parseWhile :: (Char -> Bool) -> Parse [Char]
-parseWhile p = peekChar ==> \mc ->
-               case mc of
-                 Nothing -> identity []
-                 Just c | p c -> parseChar ==>!
-                                 parseWhile p ==> \cs ->
-                                 identity (c:cs)
-                        | otherwise -> identity []
+{-- snippet parseWhile --}
+parseWhile :: (Word8 -> Bool) -> Parse [Word8]
+parseWhile p = (fmap p <$> peekByte) ==> \mp ->
+               if mp == Just True
+               then parseByte ==> \b ->
+                    (b:) <$> parseWhile p
+               else identity []
+{-- /snippet parseWhile --}
+
+{-- snippet parseWhileVerbose --}
+parseWhileVerbose p =
+    peekByte ==> \mc ->
+    case mc of
+      Nothing -> identity []
+      Just _ -> parseByte ==> \b ->
+                if p b
+                then parseWhileVerbose p ==> \bs ->
+                     identity (b:bs)
+                else identity []
+{-- /snippet parseWhileVerbose --}
+
+{-- snippet parseNat --}
+parseWhileWith :: (Word8 -> a) -> (a -> Bool) -> Parse [a]
+parseWhileWith f p = fmap f <$> parseWhile (p . f)
 
 parseNat :: Parse Int
-parseNat = parseWhile isDigit ==> \digits ->
+parseNat = parseWhileWith w2c isDigit ==> \digits ->
            if null digits
            then bail "no more input"
            else let n = read digits
                 in if n < 0
                    then bail "integer overflow"
                    else identity n
+{-- /snippet parseNat --}
+
+{-- snippet helpers --}
+(==>&) :: Parse a -> Parse b -> Parse b
+p ==>& f = p ==> \_ -> f
+
+skipSpaces :: Parse ()
+skipSpaces = parseWhileWith w2c isSpace ==>& identity ()
+
+assert :: Bool -> String -> Parse ()
+assert True  _   = identity ()
+assert False err = bail err
+{-- /snippet helpers --}
+
+{-- snippet parseBytes --}
+parseBytes :: Int -> Parse L.ByteString
+parseBytes n =
+    getState ==> \st ->
+    let n' = fromIntegral n
+        (h, t) = L.splitAt n' (string st)
+        st' = st { offset = offset st + L.length h, string = t }
+    in putState st' ==>&
+       assert (L.length h == n') "end of input" ==>&
+       identity h
+{-- /snippet parseBytes --}
+
+{-- snippet parseRawPGM --}
+parseRawPGM =
+    parseWhileWith w2c (/= '\n') ==> \header ->
+    assert (header == "P5") "invalid raw header" ==>&
+    parseNat ==> \width ->
+    skipSpaces ==>&
+    parseNat ==> \height ->
+    skipSpaces ==>&
+    parseNat ==> \maxGrey ->
+    parseByte ==>&
+    parseBytes (width * height) ==> \bitmap ->
+    identity (Greymap width height maxGrey bitmap)
+{-- /snippet parseRawPGM --}

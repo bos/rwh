@@ -114,10 +114,12 @@
 
     <para>This is a very direct piece of code.  Each function that it
       calls returns the residual <type>ByteString</type> left over
-      after it has finished.  It deconstructs each result in turn,
-      either failing if the function failed, or building up a piece of
-      the result as it continues.  The bodies of the functions that it
-      calls aren't especially interesting.</para>
+      after it has consumed all it needs from its input string.  This
+      residual string can then be passed along to the next step.  It
+      deconstructs each result in turn, either failing if the function
+      failed, or building up a piece of the result as it continues.
+      The bodies of the functions that it calls aren't especially
+      interesting.</para>
 
     &PNM.hs:parseP5.functions;
 
@@ -212,6 +214,13 @@
       just acts as a safety wrapper around this function type.  It
       allows us to ensure that we can't accidentally run a
       parser.</para>
+
+    <para>The <type>Parse</type> type is encoding two concepts in one.
+      The first is the possibility of failure, reported via an error
+      message.  This we achieve using <type>Either</type> to represent
+      two possible results of a parse.  The second is the update of
+      the parser state and presentation of an intermediate result,
+      represented by the type of <function>runParse</function>.</para>
 
     <para>Let's try to define a minimal parser.</para>
 
@@ -395,6 +404,34 @@
       free type variables.</para>
 
     <sect2>
+      <title>Functors as operators</title>
+
+      <para>Quite often, you'll see <function>fmap</function> called as
+	an operator.</para>
+
+      &functor.ghci:operator;
+
+      <para>Perhaps strangely, plain old <function>map</function> is
+	almost never used in this way.</para>
+
+      <para>One possible reason for the stickiness of the
+	<function>fmap</function>-as-operator meme is that this use
+	lets us omit parentheses from its second argument.  Fewer
+	parentheses leads to reduced mental juggling while reading a
+	function.</para>
+
+      &functor.ghci:prefix;
+
+      <para>If you really want to use <function>fmap</function> as an
+	operator, the <code>Control.Applicative</code> module contains
+	an operator <function>(&lt;$&gt;)</function> that is an alias
+	for <function>fmap</function>.  The <code>$</code> in its name
+	appeals to the similarity between applying a function to its
+	arguments (using the <function>($)</function> operator) and
+	lifting a function into a functor.</para>
+    </sect2>
+
+    <sect2>
       <title>Flexible instances</title>
 
       <para>You might hope that we could write a <type>Functor</type>
@@ -474,6 +511,139 @@
 	them; they just formalise the notions of <quote>do what I
 	  mean</quote>.</para>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Writing a functor instance for Parse</title>
+
+    <para>For the types we have surveyed so far, the behaviour we
+      ought to expect of <function>fmap</function> has been obvious.
+      This is a little less clear for <type>Parse</type>, due to its
+      complexity.  A reasonable guess is that the function we're
+      <function>fmap</function>ping should be applied to the current
+      result of a parse, and leave the parse state untouched.</para>
+
+      &Parse.hs:Functor;
+
+    <para>Since this definition isn't especially easy to read, let's
+      perform a few quick experiments to see if we're following our
+      rules for functors.</para>
+
+    <para>First, we'll check that identity is preserved.  Let's try
+      this first on a parse that should fail: trying to parse a byte
+      from an empty string.</para>
+
+      &parse.ghci:id.fail;
+
+    <para>Good.  Now for a parse that should succeed.</para>
+
+      &parse.ghci:id.success;
+
+    <para>By inspecting the results above, we can also see that our
+      functor instance is obeying our second rule, that of preserving
+      shape.  Failure is preserved as failure, and success as
+      success.</para>
+      
+    <para>Finally, we'll ensure that composability is
+      preserved.</para>
+
+      &parse.ghci:compose;
+
+    <para>On the basis of this brief inspection, our
+      <type>Functor</type> instance appears to be well behaved.</para>
+  </sect1>
+
+  <sect1>
+    <title>Using functors for parsing</title>
+
+    <para>All of this talk about functors had a purpose: they often
+      let us write tidy, expressive code.  Recall the
+      <function>parseByte</function> function that we introduced
+      earlier.  In recasting our PGM parser to use our new parser
+      infrastructure, we'll often want to work with ASCII characters
+      instead of <type>Word8</type> values.</para>
+
+    <para>While we could write a <function>parseChar</function>
+      function that has a similar structure to
+      <function>parseByte</function>, we can now avoid this code
+      duplication by taking advantage of the functor nature of
+      <type>Parse</type>.  Our functor takes the result of a parse and
+      applies a function to it, so what we need is a function that
+      turns a <type>Word8</type> into a <type>Char</type>.</para>
+      
+    &Parse.hs:parseChar;
+
+    <para>We can also use functors to write a compact
+      <quote>peek</quote> function.  This returns <code>Nothing</code>
+      if we're at the end of the input string.  Otherwise, it returns
+      the next character without consuming it (i.e. it inspects, but
+      doesn't disturb, the current parsing state).</para>
+
+    &Parse.hs:peekByte;
+
+    <para>The same lifting trick that let us define
+      <function>parseChar</function> lets us write a compact
+      definition for <function>peekChar</function>.</para>
+
+    &Parse.hs:peekChar;
+
+    <para>Notice that <function>peekByte</function> and
+      <function>peekChar</function> each make two calls to
+      <function>fmap</function>, one of which is disguised as
+      <function>(&lt;$&gt;)</function>. This is necessary because the
+      type <type>Parse (Maybe a)</type> is a functor within a functor.
+      We thus have to lift a function twice to <quote>get it
+	into</quote> the inner function.</para>
+
+    <para>Finally, we'll write another generic combinator, which is
+      the <type>Parse</type> analogue of the familiar
+      <function>takeWhile</function>: it consumes its input while its
+      predicate returns <function>True</function>.</para>
+
+    &Parse.hs:parseWhile;
+
+    <para>Once again, we're using functors in several places to reduce
+      the verbosity of our code.  Here's a rewrite of the same
+      function in a more direct style that does not use functors.</para>
+
+    &Parse.hs:parseWhileVerbose;
+  </sect1>
+
+  <sect1>
+    <title>Rewriting our PGM parser</title>
+
+    <para>With our new parsing code, what does the raw PGM parsing
+      function look like now?</para>
+
+    &Parse.hs:parseRawPGM;
+
+    <para>This definition makes use of a few more helper functions
+      that we present here, following a pattern that should by now be
+      familiar.</para>
+
+    &Parse.hs:helpers;
+
+    <para>The <function>(==&gt;&amp;)</function> combinator chains
+      parsers like <function>(==&gt;)</function>, but the right hand
+      side ignores the result from the left.  The
+      <function>assert</function> function lets us check a property,
+      and abort parsing with a useful error message if the property is
+      <code>False</code>.</para>
+
+    <para>Notice how few of the functions that we have written make
+      any reference to the current parsing state.  Most notably, where
+      our old <function>parseP5</function> function explicitly passed
+      two-tuples down the chain of dataflow, all of the state
+      management in <function>parseRawPGM</function> is hidden from
+      us.</para>
+
+    <para>Of course, we can't completely avoid inspecting and
+      modifying the parsing state.  Here's a case in point, the last
+      of the helper functions needed by
+      <function>parseRawPGM</function>.</para>
+
+    &Parse.hs:parseBytes;
+
   </sect1>
 </chapter>
 

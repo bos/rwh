@@ -41,3 +41,16 @@ fmap odd Nothing
 
 (fmap even . fmap length) (Just "twelve")
 fmap (even . length) (Just "twelve")
+
+--# operator
+
+(1+) `fmap` [1,2,3] ++ [4,5,6]
+
+--# prefix
+
+fmap (1+) ([1,2,3] ++ [4,5,6])
+
+--# applicative
+
+:m +Control.Applicative
+(1+) <$> Just 2
