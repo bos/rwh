@@ -1,0 +1,5 @@
+--# conn
+:m Database.HDBC Database.HDBC.Sqlite3
+conn <- connectSqlite3 "test1.db"
+:t conn
+disconnect conn

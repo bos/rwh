@@ -179,6 +179,12 @@
         &commit;, no final change would have been written to the
         database at all.
       </para>
+      <para>
+        The &run; function returns the number of rows each query
+        modified.  For the first query, which created a table, no rows
+        were modified.  The second query inserted a single row, so
+        &run; returned <literal>1</literal>.
+      </para>
     </sect1>
 
     <sect1 id="hs.database.sqlvalue">
@@ -208,8 +214,102 @@
     <sect1 id="hs.databases.args">
       <title>Query Parameters</title>
       <para>
-        FIXME
+        HDBC, like most databases, supports a notion of replacable
+        paramaters in queries.  There are two primary benefits of
+        using replacable parameters: they improve performance when
+        executing similar queries repeatedly, and they permit easy and
+        portable insertion of data into queries.
       </para>
+      <para>
+        Let's say you wanted to add thousands of rows into our new
+        table <literal>test</literal>.  You could issue thousands of
+        queries looking like <literal>INSERT INTO test VALUES (0,
+        'zero')</literal> and <literal>INSERT INTO test VALUES (1,
+        'one')</literal>.  This forces the database server to parse
+        each SQL statement individually.  If you could replace the two
+        values with a placeholder, the server could parse the SQL
+        query once, and just execute it multiple times with the
+        different data.
+      </para>
+      <para>
+        A second problem involves escaping.  What if you wanted to
+        insert the string <literal>I don't like 1</literal>?  SQL uses
+        the single quote character to show the end of the field.  Most
+        SQL databases would require you to write this as <literal>I
+        don''t like 1</literal>.  But rules for other special
+        charcters such as backslashes differ between databases.
+        Rather than trying to code this yourself, HDBC can handle it
+        all for you.  Let's look at an example.
+      </para>
+      &query.ghci:runargs;
+      <para>
+        The question marks in the INSERT query in this example are the
+        placeholders.  We then passed the parameters that are going to
+        go there.  &run; takes a list of &SqlValue;, so we used
+        &toSql; to convert each item into an &SqlValue;.  HDBC
+        automatically handled conversion of the &String;
+        <literal>"zero"</literal> into the appropriate representation
+        for the database in use.
+      </para>
+      <para>
+        This approach won't actually achieve any performance benefits
+        when inserting large amounts of data.  For that, we need more
+        control over the process of creating the SQL query.  We'll
+        discuss that in the next section.
+      </para>
+    </sect1>
+
+    <sect1 id="hs.databases.statements">
+      <title>Prepared Statements</title>
+      <para>
+        HDBC defines a function &prepare; that will prepare a SQL
+        query, but it does not yet bind
+        the parameters to the query.  &prepare; returns a
+        &Statement; representing the compiled query.  
+      </para>
+      <para>
+        Once you have a &Statement;, you can do a number of things
+        with it.  You can call &execute; on it one or more times.
+        After calling &execute; on a query that returns data, you can
+        use one of the fetch functions to retrieve that data.
+        Functions like &run; and &quickQueryp; use statements and
+        &execute; internally; they are simply shortcuts to let you
+        perform common tasks quickly.  When you need more control over
+        what's happening, you can use a &Statement; instead of a
+        function like &run;.
+      </para>
+      <para>
+        Let's look at using statements to insert multiple values with
+        a single query.  Here's an example:
+      </para>
+      &query.ghci:mult;
+      <para>
+        In this example, we created a prepared statement and called it
+        <literal>stmt</literal>.  We then executed that statement four
+        times, and passed different parameters each time.  These
+        parameters are used, in order, to replace the question marks
+        in the original query string.  Finally, we commit the changes
+        and disconnect the database.
+      </para>
+      <para>
+        HDBC also provides a function &executeMany; that can be useful
+        in situations such as this.  &executeMany; simply takes a list
+        rows of data to call the statement with.  Here's an example:
+      </para>
+      &query.ghci:executeMany;
+      <note>
+        <para>
+          On the server, most databases will have an optimization that
+          they can apply to <literal>executeMany</literal> so that they only have to compile
+          this query string once, rather than twice.<footnote><para>HDBC
+              emulates this behavior for databases that do not provide it,
+              providing programmers a unified API for running queries
+              repeatedly.</para> </footnote> This can lead to a dramatic
+          performance gain when inserting large amounts of data at
+          once.  Some databases can also apply this optimization to
+          <literal>execute</literal>, but not all.
+        </para>
+      </note>
     </sect1>
 
     <sect1 id="hs.databases.readingresults">

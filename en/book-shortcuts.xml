@@ -145,5 +145,5 @@
 <!ENTITY rollback "<literal>rollback</literal>">
 <!ENTITY commit "<literal>commit</literal>">
 <!ENTITY run "<literal>run</literal>">
-
-
+<!ENTITY prepare "<literal>prepare</literal>">
+<!ENTITY Statement "<literal>Statement</literal>">

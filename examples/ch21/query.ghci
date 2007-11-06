@@ -1,0 +1,31 @@
+--# setup
+:m Database.HDBC Database.HDBC.Sqlite3
+conn <- connectSqlite3 "test1.db"
+run conn "CREATE TABLE test (id INTEGER NOT NULL, desc VARCHAR(80))" []
+run conn "INSERT INTO test (id) VALUES (0)" []
+commit conn
+disconnect conn
+
+--# runargs
+conn <- connectSqlite3 "test1.db"
+run conn "INSERT INTO test VALUES (?, ?)" [toSql 0, toSql "zero"]
+commit conn
+disconnect conn
+
+--# mult
+conn <- connectSqlite3 "test1.db"
+stmt <- prepare conn "INSERT INTO test VALUES (?, ?)"
+execute stmt [toSql 1, toSql "one"]
+execute stmt [toSql 2, toSql "two"]
+execute stmt [toSql 3, toSql "three"]
+execute stmt [toSql 4, SqlNull]
+commit conn
+disconnect conn
+
+--# executeMany
+conn <- connectSqlite3 "test1.db"
+stmt <- prepare conn "INSERT INTO test VALUES (?, ?)"
+executeMany stmt [[toSql 5, toSql "five's nice"], [toSql 6, SqlNull]]
+commit conn
+disconnect conn
+
