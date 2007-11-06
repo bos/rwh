@@ -257,6 +257,19 @@
         control over the process of creating the SQL query.  We'll
         discuss that in the next section.
       </para>
+      <note>
+        <para>
+          Replacable parameters only work for parts of the queries
+          where the server is expecting a value, such as a WHERE
+          clause in a SELECT statement or a value for an INSERT
+          statement.  You cannot say <literal>run "SELECT * from ?"
+          [toSql "tablename"]</literal> and expect it to work.  A
+          table name is not a value, and most databases will not
+          accept this syntax.  That's not a big problem in practice,
+          because there is rarely a call for replacing things that
+          aren't values in this way.
+        </para>
+      </note>
     </sect1>
 
     <sect1 id="hs.databases.statements">
@@ -315,13 +328,63 @@
     <sect1 id="hs.databases.readingresults">
       <title>Reading Results</title>
       <para>
-        We can get data back out of the database fairly easily as
-        well.  HDBC provides a number of functions for doing this.  To
-        start with, we'll use &quickQueryp;.
+        So far, we have discussed queries that insert or change data.
+        Let's discuss getting data back out of the database.  The
+        function &quickQueryp; looks very similar to &run;, but it
+        returns a list of results instead of a count of changed rows.
+        &quickQueryp; is normally used with SELECT statements.  Let's
+        see an example:
       </para>
-      <para><remark>FIXME</remark></para>
-    </sect1>
+      &query.ghci:qqp;
+      <para>
+        &quickQueryp; returns a list of rows, where each row is itself
+        represented as <literal>[SqlValue]</literal>.  The values in
+        the row are listed in the order returned by the database.  You
+        can use <literal>fromSql</literal> to convert them into
+        regular Haskell types as needed.
+      </para>
+      <para>
+        It's a bit hard to read that output.  Let's extend this
+        example to format the results nicely.  Here's some code to do
+        that:
+      </para>
+      &query.hs:all;
+      <para>
+        This program does mostly the same thing as our example with
+        &ghci;, but with a new addition: the
+        <literal>convRow</literal> function.  This function takes a
+        row of data from the database and converts it to a &String;.
+        This string can then be easily printed out.
+      </para>
+      <para>
+        Notice how we took <literal>intid</literal> from
+        <literal>fromSql</literal> directly, but processed
+        <literal>fromSql sqlDesc</literal> as a <literal>Maybe
+        String</literal> type.  If you recall, we declared that the
+        first column in this table can never contain a NULL value, but
+        that the second column could.  Therefore, we can safely ignore
+        the potential for a NULL in the first column, but not in the
+        second.  It is possible to use <literal>fromSql</literal> to
+        convert the second column to a &String; directly, and it would
+        even work -- until a row with a NULL in that position was
+        encountered, which would cause a runtime exception.  So, we
+        convert a SQL NULL value into the string
+        <literal>"NULL"</literal>.  When printed, this will be
+        indistinguishable from a SQL string <literal>'NULL'</literal>,
+        but that's acceptable for this example.
+      </para>
+      <sect2 id="hs.databases.readingstatements">
+        <title>Reading with Statements</title>
+        <para><remark>FIXME</remark></para>
+      </sect2>
 
+      <sect2 id="hs.databases.readinglazy">
+        <title>Lazy Reading</title>
+        <para><remark>FIXME</remark></para>
+      </sect2>
+
+    </sect1>
+        
     <sect1 id="hs.databases.metadata">
       <title>Database Metadata</title>
       <para><remark>FIXME</remark></para>

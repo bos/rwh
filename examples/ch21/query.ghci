@@ -29,3 +29,10 @@ executeMany stmt [[toSql 5, toSql "five's nice"], [toSql 6, SqlNull]]
 commit conn
 disconnect conn
 
+--# qqp
+conn <- connectSqlite3 "test1.db"
+quickQuery' conn "SELECT * from test where id < 2" []
+disconnect conn
+
+--# queryhs
+query 2
