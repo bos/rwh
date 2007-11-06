@@ -142,5 +142,8 @@
 <!ENTITY SqlInteger "<literal>SqlInteger</literal>">
 <!ENTITY toSql "<literal>toSql</literal>">
 <!ENTITY fromSql "<literal>fromSql</literal>">
+<!ENTITY rollback "<literal>rollback</literal>">
+<!ENTITY commit "<literal>commit</literal>">
+<!ENTITY run "<literal>run</literal>">
 
 
