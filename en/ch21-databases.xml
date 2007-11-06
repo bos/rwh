@@ -81,8 +81,42 @@
 
     <sect1 id="hs.databases.connect">
       <title>Connecting to Databases</title>
-      <para><remark>FIXME</remark></para>
+      <para>
+        To connect to a database, you will use a connection function
+        from a database backend driver.  Each database has its own
+        unique method of connecting.  The initial connection is
+        generally the only time you will call anything from a backend
+        driver module directly.
+      </para>
+      <para>
+        The database connection function will return a database
+        handle.  The precise type of this handle may vary from one
+        driver to the next, but it will always be an instance of the
+        &IConnection; typeclass.  All of the functions you will use to
+        operate on databases will work with any type that is an
+        instance of &IConnection;.  When you're done talking to the
+        database, call the <literal>disconnect</literal> function.  It
+        will disconnect you from the database.  Here's an example of
+        connecting to a Sqlite database:
+      </para>
+      &connect.ghci:conn;
     </sect1>
+
+    <sect1 id="hs.databases.transactions">
+      <title>Transactions</title>
+      <para>
+        Most modern SQL databases have a notion of transactions.
+        Transactions are useful for many things.  A transaction is
+        designed to ensure that all components of a modification get
+        applied, or that none of them do.  Furthermore, transactions
+        help prevent other processes accessing the same database from
+        seeing partial data from modifications that are in progress.
+      </para>
+      <para>
+        Many databases require you to either explicitly commit all
+        your changes before they appear on disk, or to run in an
+        "autocommit" mode.  The "autocommit" mode runs an implicit
+        commit after every statement.
 
     <sect1 id="hs.databases.simplequeries">
       <title>Simple Queries</title>
