@@ -141,19 +141,82 @@
         function to do this.  If you are using &withTransaction;, any
         uncaught exception will cause a roll back to be issued.
       </para>
+      <warning>
+        <para>
+          One popular database, MySQL, does not support transactions
+          with its default table type.  In its default configuration,
+          MySQL will silently ignore calls to &commit; or &rollback;
+          and will commit all changes to disk immediately.  The HDBC
+          ODBC driver has instructions for configuring MySQL to
+          indicate to HDBC that it does not support transactions,
+          which will cause &commit; and &rollback; to generate
+          errors.  Alternatively, you can use InnoDB tables with
+          MySQL, which do support transactions.  InnoDB tables are
+          recommended for use with HDBC.
+        </para>
+      </warning>
+    </sect1>
 
     <sect1 id="hs.databases.simplequeries">
       <title>Simple Queries</title>
-      <para><remark>FIXME</remark></para>
+      <para>
+        Some of the simplest queries in SQL involve statements that
+        don't return any data.  These queries can be used to create
+        tables, insert data, delete data, and set database parameters.
+      </para>
+      <para>
+        The most basic function for sending queries to a database is
+        &run;.  This function takes an &IConnection;, a &String;
+        representing the query itself, and a list of parameters.
+        Let's use it to set up some things in our database.
+      </para>
+      &query.ghci:setup;
+      <para>
+        After connecting to the database, we first created a table
+        called <literal>test</literal>.  Then we inserted one row of
+        data into the table.  Finally, we committed the changes and
+        disconnected from the database.  Note that if we hadn't called
+        &commit;, no final change would have been written to the
+        database at all.
+      </para>
     </sect1>
 
-    <sect1 id="hs.databases.preparedQueries">
-      <title>Prepared Queries</title>
-      <para><remark>FIXME</remark></para>
+    <sect1 id="hs.database.sqlvalue">
+      <title>SqlValues</title>
+      <para>
+        Before proceeding any farther, we need to discuss a data type
+        introduced in HDBC: &SqlValue;.  Since both Haskell and SQL
+        are strongly-typed systems, HDBC tries to preserve type
+        information as much as possible.  At the same time, Haskell
+        and SQL types don't exactly mirror each other.  Furthermore,
+        different databases have different ways of representing things
+        such as dates or special characters in strings.
+      </para>
+      <para>
+        &SqlValue; is a data type that has a number of constructors
+        such as &SqlString;, &SqlBool;, &SqlNull;, &SqlInteger;, and
+        more.  This lets you represent various types of data in
+        argument lists to the database, and to see various types of
+        data in the results coming back, and still store it all in a
+        list.  There are convenience functions &toSql; and &fromSql;
+        that you will normally use.  If you care about the precise
+        representation of data, you can still manually construct
+        &SqlValue; data if you need to.
+      </para>
     </sect1>
+
+    <sect1 id="hs.databases.args">
+      <title>Query Parameters</title>
+      <para>
+        
 
     <sect1 id="hs.databases.readingresults">
       <title>Reading Results</title>
+      <para>
+        We can get data back out of the database fairly easily as
+        well.  HDBC provides a number of functions for doing this.  To
+        start with, we'll use &quickQueryp;.
+      </para>
       <para><remark>FIXME</remark></para>
     </sect1>
 

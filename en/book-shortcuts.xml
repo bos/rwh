@@ -134,3 +134,13 @@
 <!ENTITY commit "<literal>commit</literal>">
 <!ENTITY withTransaction "<literal>withTransaction</literal>">
 <!ENTITY IConnection "<literal>IConnection</literal>">
+<!ENTITY quickQueryp "<literal>quickQuery'</literal>">
+<!ENTITY SqlValue "<literal>SqlValue</literal>">
+<!ENTITY SqlString "<literal>SqlString</literal>">
+<!ENTITY SqlBool "<literal>SqlBool</literal>">
+<!ENTITY SqlNull "<literal>SqlNull</literal>">
+<!ENTITY SqlInteger "<literal>SqlInteger</literal>">
+<!ENTITY toSql "<literal>toSql</literal>">
+<!ENTITY fromSql "<literal>fromSql</literal>">
+
+
