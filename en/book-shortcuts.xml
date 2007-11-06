@@ -131,3 +131,6 @@
 <!ENTITY ctWDay "<literal>ctWDay</literal>">
 <!ENTITY ctTZName "<literal>ctTZName</literal>">
 <!ENTITY ctYDay "<literal>ctYDay</literal>">
+<!ENTITY commit "<literal>commit</literal>">
+<!ENTITY withTransaction "<literal>withTransaction</literal>">
+<!ENTITY IConnection "<literal>IConnection</literal>">

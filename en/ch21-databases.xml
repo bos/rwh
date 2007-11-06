@@ -116,7 +116,31 @@
         Many databases require you to either explicitly commit all
         your changes before they appear on disk, or to run in an
         "autocommit" mode.  The "autocommit" mode runs an implicit
-        commit after every statement.
+        commit after every statement.   This may make the adjustment
+        to transactional databases easier for programmers not
+        accustomed to them, but complicates the life of people that
+        actually want transactions.
+      </para>
+      <para>
+        HDBC intentionally does not support autocommit mode.  When you
+        modify data in your databases, you must explicitly cause it to
+        be committed to disk.  There are two ways to do that in HDBC:
+        you can call &commit; when you're ready to write the data to
+        disk, or you can use the &withTransaction; function to wrap
+        around your modification code.   &withTransaction; will cause
+        data to be committed upon successful completion of your
+        function.
+      </para>
+      <para>
+        Sometimes a problem will occur while you are working on
+        writing data to the database.  Perhaps you get an error from
+        the database or discover a problem with the data.  In these
+        instances, you can "roll back" your changes.  This will cause
+        all changes you were making since your last &commit; or roll
+        back to be forgotten.  In HDBC, you can call the &rollback;
+        function to do this.  If you are using &withTransaction;, any
+        uncaught exception will cause a roll back to be issued.
+      </para>
 
     <sect1 id="hs.databases.simplequeries">
       <title>Simple Queries</title>
