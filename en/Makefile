@@ -230,7 +230,7 @@ $(tools:%=../tools/bin/%): ../tools/.setup-config ../tools/*.hs
 ../tools/.setup-config: ../tools/tools.cabal
 	cd ../tools && $(runhaskell) Setup configure --prefix=`pwd`
 
-auto-snippets.xml: $(stamp-examples)
+auto-snippets.xml: x $(stamp-examples)
 	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
 	cat $(sort $^) | sort >> $@
 
@@ -288,22 +288,22 @@ vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
 x:
 	mkdir -p x
 
-x/.stamp-%.c: %.c ../tools/bin/snippets x
+x/.stamp-%.c: %.c ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.cpp: %.cpp ../tools/bin/snippets x
+x/.stamp-%.cpp: %.cpp ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.hs: %.hs ../tools/bin/snippets x
+x/.stamp-%.hs: %.hs ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.java: %.java ../tools/bin/snippets x
+x/.stamp-%.java: %.java ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.py: %.py ../tools/bin/snippets x
+x/.stamp-%.py: %.py ../tools/bin/snippets
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession x
+x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
 $(obj-websup)/%.css: %.css
