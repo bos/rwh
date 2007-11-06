@@ -147,3 +147,5 @@
 <!ENTITY run "<literal>run</literal>">
 <!ENTITY prepare "<literal>prepare</literal>">
 <!ENTITY Statement "<literal>Statement</literal>">
+<!ENTITY execute "<literal>execute</literal>">
+<!ENTITY executeMany "<literal>executeMany</literal>">
