@@ -35,4 +35,5 @@ quickQuery' conn "SELECT * from test where id < 2" []
 disconnect conn
 
 --# queryhs
+:l query.hs
 query 2

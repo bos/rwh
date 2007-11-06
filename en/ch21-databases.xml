@@ -371,11 +371,47 @@
         convert a SQL NULL value into the string
         <literal>"NULL"</literal>.  When printed, this will be
         indistinguishable from a SQL string <literal>'NULL'</literal>,
-        but that's acceptable for this example.
+        but that's acceptable for this example.  Let's try calling
+        this function in &ghci;:
       </para>
+      &query.ghci:queryhs;
+
       <sect2 id="hs.databases.readingstatements">
         <title>Reading with Statements</title>
-        <para><remark>FIXME</remark></para>
+        <para>
+          As we discussed in <xref
+          linkend="hs.databases.statements"/>, you can use statements
+          for reading.  There are a number of ways of reading data
+          from statements that can be useful in certain situations.
+          Like &run;, &quickQueryp; is a convenience function that in
+          fact uses statements to accomplish its task.
+        </para>
+        <para>
+          To create a statement for reading, you use &prepare; just as
+          you would for a statement that will be used to write data.
+          You also use &execute; to execute it on the database
+          server.  Then, you can use various functions to read data
+          from the &Statement;.  The &fetchAllRowsp; function returns
+          <literal>[[SqlValue]]</literal>, just like &quickQueryp;.
+          There is also a function called
+          <literal>sFetchAllRows'</literal>, which converts every
+          column's data to a <literal>Maybe String</literal> before
+          returning it.  Finally, there is
+          <literal>fetchAllRowsAL'</literal>, which returns
+          <literal>(String, SqlValue)</literal> pairs for each
+          column.  The &String; is the column name as returned by the
+          database; see <xref linkend="hs.databases.metadata"/> for
+          other ways to obtain column names.
+        </para>
+        <para>
+          You can also read data one row at a time by calling
+          <literal>fetchRow</literal>, which returns <literal>IO
+          (Maybe [SqlValue])</literal>.  It will be &Nothing; if all
+          the results have already been read, or one row otherwise.
+        </para>
+        <remark>FIXME: start here</remark>
+
+
       </sect2>
 
       <sect2 id="hs.databases.readinglazy">

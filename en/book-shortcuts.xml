@@ -149,3 +149,4 @@
 <!ENTITY Statement "<literal>Statement</literal>">
 <!ENTITY execute "<literal>execute</literal>">
 <!ENTITY executeMany "<literal>executeMany</literal>">
+<!ENTITY fetchAllRowsp "<literal>fetchAllRows'</literal>">
