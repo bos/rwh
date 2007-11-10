@@ -1,39 +1,28 @@
-#ifndef Pty_H
-#define Pty_H
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifndef INLINE
-# if defined(__GNUC__)
-#  define INLINE extern inline
-# else
-#  define INLINE inline
-# endif
-#endif
-
-INLINE char *__pty_ptsname(int fd)
+char *__pty_ptsname(int fd)
 {
     extern char *ptsname(int);
     return ptsname(fd);
 }
 
-INLINE int __pty_grantpt(int fd)
+int __pty_grantpt(int fd)
 {
     extern int grantpt(int);
     return grantpt(fd);
 }
 
-INLINE int __pty_unlockpt(int fd)
+int __pty_unlockpt(int fd)
 {
     extern int unlockpt(int);
     return unlockpt(fd);
 }
 
-INLINE int __pty_setctty(int fd)
+int __pty_setctty(int fd)
 {
 #ifdef TIOCSCTTY
     if (ioctl(fd, TIOCSCTTY, NULL) == -1)
@@ -61,5 +50,3 @@ INLINE int __pty_setctty(int fd)
 #endif
     return 0;
 }
-
-#endif /* Pty_H */

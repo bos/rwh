@@ -13,17 +13,24 @@ module Pty
 #include "Pty.h"
 
 import Control.Monad (when)
-import Foreign.C.Error (throwErrnoIfMinus1_, throwErrnoIfNull)
-import Foreign.C.String (CString, peekCString)
+import Foreign.C.Error (throwErrnoIfMinus1_)
 import Foreign.C.Types (CInt)
-import qualified GHC.Handle as H (openFd)
 import System.IO (Handle, IOMode(..))
-import System.Posix.IO ( OpenFileFlags(..), OpenMode(..), defaultFileFlags,
-                         closeFd, openFd, dupTo, stdInput, stdOutput,
+import System.Posix.IO ( closeFd, dupTo, stdInput, stdOutput,
                          stdError )
 import System.Posix.Process (createSession, executeFile, forkProcess)
 import System.Posix.Terminal (getTerminalName)
 import System.Posix.Types
+#if __GLASGOW_HASKELL__ >= 608
+import System.Posix.Terminal (getSlaveTerminalName, openPseudoTerminal)
+import GHC.Handle (fdToHandle')
+#else
+import Foreign.C.Error (throwErrnoIfNull)
+import Foreign.C.String (CString, peekCString)
+import System.Posix.IO ( OpenFileFlags(..), OpenMode(..), defaultFileFlags,
+                         closeFd, openFd, dupTo, stdInput, stdOutput,
+                         stdError )
+import qualified GHC.Handle as H (openFd)
 
 openPseudoTerminal :: IO (Fd, Fd)
 openPseudoTerminal = do
@@ -48,6 +55,9 @@ getSlaveTerminalName (Fd fd) = do
 
 foreign import ccall unsafe "__pty_ptsname"
   c_ptsname :: CInt -> IO CString
+
+fdToHandle' = H.openFd
+#endif
 
 prepareForLogin :: Fd -> IO ()
 prepareForLogin fd = do
@@ -88,5 +98,5 @@ executePseudoTerminal :: FilePath  -- ^ Command
 executePseudoTerminal path search args env = do
     (fd@(Fd fd'), pid) <- forkPseudoTerminal (executeFile path search args env)
     name <- getTerminalName fd                 
-    h <- H.openFd (fromIntegral fd') Nothing False name ReadWriteMode True
+    h <- fdToHandle' (fromIntegral fd') Nothing False name ReadWriteMode True
     return (h, pid)
