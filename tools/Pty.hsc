@@ -16,8 +16,7 @@ import Control.Monad (when)
 import Foreign.C.Error (throwErrnoIfMinus1_)
 import Foreign.C.Types (CInt)
 import System.IO (Handle, IOMode(..))
-import System.Posix.IO ( closeFd, dupTo, stdInput, stdOutput,
-                         stdError )
+import System.Posix.IO ( closeFd, dupTo, stdInput, stdOutput, stdError )
 import System.Posix.Process (createSession, executeFile, forkProcess)
 import System.Posix.Terminal (getTerminalName)
 import System.Posix.Types
@@ -28,8 +27,7 @@ import GHC.Handle (fdToHandle')
 import Foreign.C.Error (throwErrnoIfNull)
 import Foreign.C.String (CString, peekCString)
 import System.Posix.IO ( OpenFileFlags(..), OpenMode(..), defaultFileFlags,
-                         closeFd, openFd, dupTo, stdInput, stdOutput,
-                         stdError )
+                         openFd, )
 import qualified GHC.Handle as H (openFd)
 
 openPseudoTerminal :: IO (Fd, Fd)
