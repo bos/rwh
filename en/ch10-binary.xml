@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="hs.binary" revision="unpublished">
-  <title>Code case study: parsing a binary file format</title>
+  <title>Code case study: parsing a binary data format</title>
 
   <para>In this chapter, we'll discuss a common task: parsing a binary
     file.  We're going to use this for two purposes.  Our first is to
@@ -645,10 +645,33 @@
     &Parse.hs:parseBytes;
 
   </sect1>
+
+  <sect1>
+    <title>Conclusions</title>
+
+    <para>In this chapter, we started with a naive file parser, and
+      successively refined it into code that is at once less brittle
+      and more general.  Although our initial task was parsing
+      graphics files, the combinator-based library that we developed
+      along the way is not tied to graphics.</para>
+
+    <para>Our main theme in this chapter has been abstraction.  We
+      found passing explicit state down a chain of functions to be
+      unsatisfactory, so we abstracted this detail away.  We noticed
+      some recurring needs as we worked out our parsing code, and
+      abstracted those into common functions.  Along the way, we
+      introduced the notion of a functor as offering a generalised way
+      to map over a container type.</para>
+
+    <para>We will revisit parsing in <xref linkend="hs.parsec"/>, to
+      discuss Parsec, a widely used and flexible parsing library.  And
+      in <xref linkend="hs.monads"/>, we will return to our theme of
+      abstraction.</para>
+  </sect1>
 </chapter>
 
 <!--
 local variables: 
-sgml-parent-document: ("00book.xml" "book")
+sgml-parent-document: ("00book.xml" "chapter")
 end:
 -->
