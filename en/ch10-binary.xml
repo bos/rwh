@@ -108,18 +108,21 @@
       input at a time.  First, we need to assure ourselves that we're
       really looking at a raw PGM file; then we need to parse the
       numbers from the remainder of the header; then we consume the
-      bitmap data.  Here's an obvious way to express this.</para>
+      bitmap data.  Here's an obvious, brutish way to express
+      this.</para>
 
     &PNM.hs:parseP5;
 
-    <para>This is a very direct piece of code.  Each function that it
-      calls returns the residual <type>ByteString</type> left over
-      after it has consumed all it needs from its input string.  This
-      residual string can then be passed along to the next step.  It
-      deconstructs each result in turn, either failing if the function
-      failed, or building up a piece of the result as it continues.
-      The bodies of the functions that it calls aren't especially
-      interesting.</para>
+    <para>Stylistically, this is a very <quote>direct</quote> piece of
+      code, doing all of the parsing in one long staircase of &case;
+      expressions.  Each function that it calls returns the residual
+      <type>ByteString</type> left over after it has consumed all it
+      needs from its input string.  This residual string can then be
+      passed along to the next step.  It deconstructs each result in
+      turn, either failing if the function failed, or building up a
+      piece of the result as it continues. The bodies of the functions
+      that it calls aren't especially interesting, but we'll include
+      them for completeness.</para>
 
     &PNM.hs:parseP5.functions;
 
@@ -131,13 +134,13 @@
     <para>Our <function>parseP5</function>  function is somehow
       unsatisfying.  It marches steadily to the right of the screen,
       so it's clear that a slightly more complicated function would
-      <quote>run out of space</quote>.  And it repeats a pattern of
+      soon run out of visual real estate.  And it repeats a pattern of
       constructing and then deconstructing <type>Maybe</type> values,
       only continuing if a particular value matches
       <function>Just</function>.  All of the similar &case;
-      expressions act as <quote>boilerplate code</quote>, lots of
-      busywork that obscures what we're really trying to do.  In
-      short, this function is begging for a little abstraction.</para>
+      expressions act as <quote>boilerplate code</quote>, busywork
+      that obscures what we're really trying to do.  In short, this
+      function is begging for some abstraction and refactoring.</para>
 
     <para>If we step back a little, we can see two patterns.  First is
       that the functions that we're calling have similar types.  Each
@@ -152,7 +155,7 @@
 
     &PNM.hs:then;
 
-    <para>The <function>(&gt;&gt;&gt;)</function> function acts very
+    <para>The <function>(&gt;&gt;?)</function> function acts very
       simply: it takes a value as its left argument, and a function as
       its right. If the value is not <literal>Nothing</literal>, it
       calls the function.  We have written this function as an
@@ -166,18 +169,22 @@
 
     <para>The key to understanding this function is to think about the
       chaining.  On the left hand side of each
-      <function>(&gt;&gt;&gt;)</function> is a <type>Maybe</type>
-      value; on the right is a function that returns a
-      <type>Maybe</type> value.  Each expression is thus of type
+      <function>(&gt;&gt;?)</function> is a <type>Maybe</type> value;
+      on the right is a function that returns a <type>Maybe</type>
+      value.  Each left-and-right-sides expression is thus of type
       <type>Maybe</type>, suitable for passing to the following
-      <function>(&gt;&gt;&gt;)</function> expression.</para>
+      <function>(&gt;&gt;?)</function> expression.</para>
 
     <para>The other change that we've made to improve readability is
       add a <function>skipSpace</function> function.  With these
-      changes, we've exactly halved the number of lines of code
-      compared to our original parsing function.  By removing the
-      boilerplate &case; expressions, we've made the code easier to
-      follow.</para>
+      changes, we've halved the number of lines of code compared to
+      our original parsing function.  By removing the boilerplate
+      &case; expressions, we've made the code easier to follow.</para>
+
+    <para>While we warned against overuse of anonymous functions in
+      <xref linkend="hs.fp.anonymous"/>, we use several in our chain
+      of functions here.  Because these functions are so small, we
+      wouldn't improve readability by giving them names.</para>
 
     <para>However, we're not yet out of the woods.  This code
       explicitly passes two-tuples around, using one element for an
@@ -260,7 +267,7 @@
     <para>There's some unfamiliar code in use here, so let's take a
       deeper look.  The <function>(==&gt;)</function> function serves
       a similar purpose as our earlier
-      <function>(&gt;&gt;&gt;)</function> function, acting as
+      <function>(&gt;&gt;?)</function> function, acting as
       <quote>glue</quote> to let us chain functions together.</para>
 
     &Parse.hs:then;
@@ -406,8 +413,8 @@
     <sect2>
       <title>Functors as operators</title>
 
-      <para>Quite often, you'll see <function>fmap</function> called as
-	an operator.</para>
+      <para>Quite often, you'll see <function>fmap</function> called
+	as an operator.</para>
 
       &functor.ghci:operator;
 
@@ -602,11 +609,38 @@
 
     &Parse.hs:parseWhile;
 
-    <para>Once again, we're using functors in several places to reduce
-      the verbosity of our code.  Here's a rewrite of the same
-      function in a more direct style that does not use functors.</para>
+    <para>Once again, we're using functors in several places (doubled
+      up, when necessary) to reduce the verbosity of our code.  Here's
+      a rewrite of the same function in a more direct style that does
+      not use functors.</para>
 
     &Parse.hs:parseWhileVerbose;
+
+    <para>The more verbose definition is likely easier to read when
+      you are less familiar with functors.  However, use of functors
+      is sufficiently common in Haskell code that the more compact
+      representation should become second nature (both to read and to
+      write) fairly quickly.</para>
+
+    <tip>
+      <title>Hanging lambdas</title>
+
+      <para>The definitions of both parsing functions above have a
+	visual style to them that we haven't discussed before.  Each
+	contains anonymous functions in which the parameters and
+	<code>&rarrow;</code> sit at the end of a line, with the
+	function's body following on the next line.</para>
+
+      <para>This style of laying out an anonymous function doesn't
+	have an official name, so let's call it a <quote>hanging
+	  lambda</quote>.  Its main use is to make room for more text
+	in the body of the function.  It also makes it a little
+	visually clearer that there's a relationship between one
+	function and the one that follows.  Most often, either the
+	first function is taking the second function as a parameter,
+	or its result is being passed as a parameter to the
+	second.</para>
+    </tip>
   </sect1>
 
   <sect1>
@@ -667,6 +701,42 @@
       discuss Parsec, a widely used and flexible parsing library.  And
       in <xref linkend="hs.monads"/>, we will return to our theme of
       abstraction.</para>
+  </sect1>
+
+  <sect1>
+    <title>Exercises</title>
+
+    <qandaset>
+      <qandaentry>
+	<question>
+	  <para>Write a parser for <quote>plain</quote> PGM
+	    files.</para>
+	</question>
+      </qandaentry>
+
+      <qandaentry>
+	<question>
+	  <para>In our description of <quote>raw</quote> PGM files, we
+	    omitted a small detail.  If the <quote>maximum
+	      grey</quote> value in the header is less than 256, each
+	    pixel is represented by a single byte.  However, it can
+	    range up to 65535, in which case each pixel will be
+	    represented by two bytes, in big endian order (most
+	    significant byte first).</para>
+
+	  <para>Rewrite the raw PGM parser to accommodate both the
+	    single- and double-byte pixel formats.</para>
+	</question>
+      </qandaentry>
+
+      <qandaentry>
+	<question>
+	  <para>Extend your parser so that it can identify a raw or
+	    plain PGM file, and parse the appropriate file
+	    type.</para>
+	</question>
+      </qandaentry>
+    </qandaset>
   </sect1>
 </chapter>
 
