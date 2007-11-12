@@ -17,7 +17,7 @@ JG        13. Designing and using data structures (DONE)
 BOS       14. Monads
 BOS       15. Monad case study: refactoring the filesystem seacher
 DONS      16. Monad transformers
-JG        17. Using parsec: (PARTIAL)
+JG        17. Using parsec: (DONE)
 BOS            parsing a bioinformatics format
 DONS      18. Interfacing with C: the FFI
 DONS      19. Error handling
