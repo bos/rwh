@@ -8,6 +8,6 @@
 
 <!--
 local variables: 
-sgml-parent-document: ("00book.xml" "book")
+sgml-parent-document: ("00book.xml" "book" "chapter")
 end:
 -->

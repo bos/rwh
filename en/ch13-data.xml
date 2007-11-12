@@ -732,6 +732,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
 <!--
 local variables: 
-sgml-parent-document: ("00book.xml" "book")
+sgml-parent-document: ("00book.xml" "book" "chapter")
 end:
 -->

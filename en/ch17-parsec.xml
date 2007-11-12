@@ -478,6 +478,6 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
 <!--
 local variables: 
-sgml-parent-document: ("00book.xml" "book")
+sgml-parent-document: ("00book.xml" "book" "chapter")
 end:
 -->
