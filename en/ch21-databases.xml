@@ -490,6 +490,11 @@
         may be NULL.  The full specification is given in the HDBC API
         reference.
       </para>
+      <para>
+        Please note that some databases may not be able to provide all
+        this metadata.  In these circumstances, an exception will be
+        raised.
+      </para>
     </sect1>
 
     <sect1 id="hs.databases.errors">
@@ -532,17 +537,19 @@
         functions.  <literal>catchSql</literal> and
         <literal>handleSql</literal> will intercept only HDBC errors.
         <remark>FIXME: insert ref to ch19</remark>
+        <remark>FIXME: insert ref to data.typeable, app c</remark>
       </para>
-    </sect1>
-
-    <sect1 id="hs.databases.typeable">
-      <title>Data.Typeable</title>
-      <para><remark>FIXME</remark></para>
     </sect1>
 
     <sect1 id="hs.databases.threading">
       <title>Threading</title>
-      <para><remark>FIXME</remark></para>
+      <para>
+        Different database systems have different capabilities
+        regarding multithreading.  The HDBC API spec suggests that, to
+        be safe, you should not try to issue more than one
+        simultaneous query over a single connection.  Though you may
+        use a single connection serially across multiple threads.
+      </para>
     </sect1>
 
   </chapter>
