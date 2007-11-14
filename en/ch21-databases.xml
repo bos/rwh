@@ -501,7 +501,7 @@
         message, and the database's numeric error code, if any.
       </para>
       <para>
-        &ghc; does not know how to display an &SqlErorr; on the screen
+        &ghc; does not know how to display an &SqlError; on the screen
         when it occurs.  While the exception will cause the program to
         terminate, it will not display a useful message.  Here's an
         example:

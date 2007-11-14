@@ -151,3 +151,6 @@
 <!ENTITY execute "<literal>execute</literal>">
 <!ENTITY executeMany "<literal>executeMany</literal>">
 <!ENTITY fetchAllRowsp "<literal>fetchAllRows'</literal>">
+<!ENTITY IOError "<literal>IOError</literal>">
+<!ENTITY SqlError "<literal>SqlError</literal>">
+<!ENTITY handleSqlError "<literal>handleSqlError</literal>">
