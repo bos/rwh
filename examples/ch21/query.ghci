@@ -37,3 +37,22 @@ disconnect conn
 --# queryhs
 :l query.hs
 query 2
+
+--# metadata
+conn <- connectSqlite3 "test1.db"
+getTables conn
+proxiedClientName conn
+dbServerVer conn
+dbTransactionSupport conn
+disconnect conn
+
+--# error1
+conn <- connectSqlite3 "test1.db"
+quickQuery' conn "SELECT * from test2" []
+disconnect conn
+
+--# error2
+conn <- connectSqlite3 "test1.db"
+handleSqlError $ quickQuery' conn "SELECT * from test2" []
+disconnect conn
+

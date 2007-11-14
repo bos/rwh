@@ -409,25 +409,134 @@
           (Maybe [SqlValue])</literal>.  It will be &Nothing; if all
           the results have already been read, or one row otherwise.
         </para>
-        <remark>FIXME: start here</remark>
-
-
       </sect2>
 
       <sect2 id="hs.databases.readinglazy">
         <title>Lazy Reading</title>
-        <para><remark>FIXME</remark></para>
+        <para>
+          Back in <xref linkend="hs.io.lazy"/>, we talked about lazy
+          I/O from files.  It is also possible to read data lazily
+          from databases.  This can be particularly useful when
+          dealing with queries that return an exceptionally large
+          amount of data.  By reading data lazily, you can still use
+          convenient functions such as
+          <literal>fetchAllRows</literal> instead of having to
+          manually read each row as it comes in.  Yet, if you are
+          careful in your use of the data, you can avoid having to
+          buffer all of the results in memory.
+        </para>
+        <para>
+          Lazy reading from a database, however, is more complex that
+          reading from a file.  When you're done reading data lazily
+          from a file, the file is closed, and that's generally fine.
+          When you're done reading data lazily from a database, the
+          database connection is still open -- you may be submitting
+          other queries with it, for instance.  Some databases can
+          even support multiple simultaneous queries, so HDBC can't
+          just close the connection when you're done.
+        </para>
+        <para>
+          When using lazy reading, it is critically important that you
+          finish reading the entire data set before you attempt to
+          close the connection or execute a new query.  We encourage
+          you to use the strict functions, or row-by-row processing,
+          wherever possible to minimize complex interactions with lazy
+          reading.
+        </para>
+        <para>
+          To read lazily from a database, you use the same functions
+          you used before, without the apostrophe.  For instance,
+          you'd use <literal>fetchAllRows</literal> instead of
+          &fetchAllRowsp;.  The types of the lazy functions are the
+          same as their strict cousins.
+        </para>
       </sect2>
 
     </sect1>
         
     <sect1 id="hs.databases.metadata">
       <title>Database Metadata</title>
-      <para><remark>FIXME</remark></para>
+      <para>
+        Sometimes it can be useful for a program to learn information about
+        the database itself.  For instance, a program may want to see
+        what tables exist so that it can automatically create missing
+        tables or upgrade the database schema.  In some cases, a
+        program may need to alter its behavior depending on the
+        database backend in use.
+      </para>
+      <para>
+        First, there is a <literal>getTables</literal> function that
+        will obtain a list of defined tables in a database.  You can
+        also use the <literal>describeTable</literal> function, which
+        will provide information about the defined columns in a given
+        table.
+      </para>
+      <para>
+        You can learn about the database server in use by caling
+        <literal>dbServerVer</literal> and
+        <literal>proxiedClientName</literal>, for instance.  The
+        <literal>dbTransactionSupport</literal> function can be used
+        to determine whether or not a given database supports
+        transactions.  Let's look at an example of some of these items:
+      </para>
+      &query.ghci:metadata;
+      <para>
+        You can also learn about the results of a specific query by
+        obtaining information from its statement.  The
+        <literal>describeResult</literal> function returns 
+        <literal>[(String, SqlColDesc)]</literal>, a list of pairs.
+        The first item gives the column name, and the second provides
+        information about the column: the type, the size, whether it
+        may be NULL.  The full specification is given in the HDBC API
+        reference.
+      </para>
     </sect1>
 
     <sect1 id="hs.databases.errors">
       <title>Error Handling</title>
+      <para>
+        HDBC will raise exceptions when errors occur.  The exceptions
+        have type &SqlError;.  The convey information from the
+        underlying SQL engine, such as the database's state, the error
+        message, and the database's numeric error code, if any.
+      </para>
+      <para>
+        &ghc; does not know how to display an &SqlErorr; on the screen
+        when it occurs.  While the exception will cause the program to
+        terminate, it will not display a useful message.  Here's an
+        example:
+      </para>
+      &query.ghci:error1;
+      <para>
+        Here we tried to SELECT data from a table that didn't exist.
+        The error message we got back wasn't helpful.  There's a
+        utility function, &handleSqlError;, that will catch an
+        &SqlError; and re-raise it as an &IOError;.  In this form, it
+        will be printable on-screen, but it will be more difficult to
+        extract specific pieces of information programmatically.
+        Let's look at its usage:
+      </para>
+      &query.ghci:error2;
+      <para>
+        Here we got more information, including even a message saying
+        that there is no such table as test2.  This is much more
+        helpful.  Many HDBC programmers make it a standard practice to
+        start their programs with <literal>main = handleSqlError $
+        do</literal>, which will ensure that every un-caught
+        &SqlError; will be printed in a helpful manner.
+      </para>
+      <para>
+        There are also <literal>catchSql</literal> and
+        <literal>handleSql</literal> -- similar to the standard
+        <literal>catch</literal> and <literal>handle</literal>
+        functions.  <literal>catchSql</literal> and
+        <literal>handleSql</literal> will intercept only HDBC errors.
+        <remark>FIXME: insert ref to ch19</remark>
+      </para>
+    </sect1>
+
+    <sect1 id="hs.databases.typeable">
+      <title>Data.Typeable</title>
       <para><remark>FIXME</remark></para>
     </sect1>
 
@@ -436,15 +545,11 @@
       <para><remark>FIXME</remark></para>
     </sect1>
 
-    <sect1 id="hs.databases.typeable">
-      <title>Data.Typeable</title>
-      <para><remark>FIXME</remark></para>
-    </sect1>
   </chapter>
   
 
   <!--
   local variables: 
-  sgml-parent-document: ("00book.xml" "book" "chapter")
+  sgml-parent-document: ("00book.xml" "book")
   end:
   -->
