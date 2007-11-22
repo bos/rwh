@@ -488,7 +488,8 @@
       <para>We've made a few implicit assumptions about how functors
 	ought to work.  It's helpful to make these explicit and to
 	think of them as rules to follow, because this lets us treat
-	functors as uniform, well-behaved objects.</para>
+	functors as uniform, well-behaved objects.  We have only two
+	rules to remember, and they're simple.</para>
 
       <para>Our first rule is that a functor must preserve
 	<emphasis>identity</emphasis>.  That is, applying <code>fmap
@@ -497,19 +498,20 @@
 
       &functor.ghci:id;
 
-      <para>Our second rule is that a functor must preserve
-	<emphasis>shape</emphasis>.  The structure of a collection
-	should not be affected by a functor; only the values that it
-	contains should change.</para>
-
-      &functor.ghci:shape;
-
-      <para>Finally, functors must be <emphasis>composable</emphasis>.
-	That is, composing two uses of <function>fmap</function>
-	should give the same result as one <function>fmap</function>
-	with the same functions composed.</para>
+      <para>Our second rule is that functors must be
+	<emphasis>composable</emphasis>. That is, composing two uses
+	of <function>fmap</function> should give the same result as
+	one <function>fmap</function> with the same functions
+	composed.</para>
 
       &functor.ghci:composition;
+
+      <para>Another way of looking at these two rules is that a
+	functor must preserve <emphasis>shape</emphasis>.  The
+	structure of a collection should not be affected by a functor;
+	only the values that it contains should change.</para>
+
+      &functor.ghci:shape;
 
       <para>If you're writing a <type>Functor</type> instance, it's
 	useful to keep these rules in mind, and indeed to test them.
