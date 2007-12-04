@@ -33,6 +33,8 @@ DONS      28. Performance and efficiency: profiling
 DONS      29. Advanced Haskell: MPTCs, TH, strong typing, GADTs
 JG        30. Sockets, Syslog   (agreed to)
 BOS       31. Reverse HTTP Proxy example
-JG     APP A. HUGS  (??)
-JG     APP B. Posix
-JG     APP C. Data.Typeable
+BOS    APP A. Installation of GHC (done)
+BOS    APP B. Escapes (done)
+JG     APP C. Posix (??)
+JG     APP D. HUGS  (??)
+JG     APP E. Data.Typeable (??)
