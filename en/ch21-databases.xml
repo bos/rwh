@@ -4,7 +4,6 @@
     <title>Using Databases</title>
 
     <para>
-      Many different applications have the need to store data in databases.
       Everything from web forums to podcatchers or even backup programs
       frequently use databases for persistent storage.  SQL-based databases are
       often quite convenient: they are fast, can scale from tiny to massive
@@ -54,6 +53,16 @@
         a large number of choices available to you with a single constant
         interface.
       </para>
+      <para>
+        Another database abstraction library for Haskell is HSQL,
+        which shares a similar purpose with HDBC.  There is also a
+        higher-level framework called HaskellDB, which sits atop
+        either HDBC or HSQL, and is designed to help insulate the
+        programmer from the details of working with SQL.  However, it
+        does not have as broad appeal because its design limits it to
+        certain -- albeit quite common -- database access patterns.
+      </para>
+
     </sect1>
 
     <sect1 id="hs.databases.hdbc.install">
@@ -76,6 +85,19 @@
         known HDBC backend drivers.  The specific driver for Sqlite
         version 3 can be obtained from <ulink
           url="http://software.complete.org/hdbc-sqlite3"/>. 
+      </para>
+      <para>
+        If you want to use HDBC with other databases, check out the
+        HDBC Known Drivers page at <ulink
+        url="http://software.complete.org/hdbc/wiki/KnownDrivers"/>.
+        There you will find a link to the ODBC binding, which lets you
+        connect to virtually any database on virtually any platform
+        (Windows, POSIX, and others).  You will also find a PostgreSQL
+        binding.  MySQL is supported via the ODBC binding, and
+        specific information for MySQL users can be found in the
+        <ulink
+        url="http://software.complete.org/hdbc-odbc/static/doc/Database-HDBC-ODBC.html">HDBC-ODBC
+        API documentation</ulink>.
       </para>
     </sect1>
 
@@ -141,6 +163,13 @@
         function to do this.  If you are using &withTransaction;, any
         uncaught exception will cause a roll back to be issued.
       </para>
+      <para>
+        Note that a rollback operation only rolls back the changes
+        since the last &commit;, &rollback;, or &withTransaction;.  A
+        database does not maintain an extensive history like a
+        version-control system, and there are not multiple levels of
+        undo in a database.
+      </para>
       <warning>
         <para>
           One popular database, MySQL, does not support transactions
@@ -155,6 +184,11 @@
           recommended for use with HDBC.
         </para>
       </warning>
+      <para>
+        You will see examples of &commit; later in this chapter, and
+        examples of &withTransaction; in <remark>FIXME: insert ref to
+        ch22</remark>. 
+      </para>
     </sect1>
 
     <sect1 id="hs.databases.simplequeries">
@@ -449,6 +483,15 @@
           you'd use <literal>fetchAllRows</literal> instead of
           &fetchAllRowsp;.  The types of the lazy functions are the
           same as their strict cousins.
+          Here's an example of lazy reading:
+        </para>
+        &query.ghci:far;
+        <para>
+          Note that you could have used
+          <literal>fetchAllRowsAL'</literal> here as well.  However,
+          if you had a large data set to read, it would have consumed
+          a lot of memory.  By reading the data lazily, we can print
+          out extremely large result sets.
         </para>
       </sect2>
 
@@ -538,17 +581,6 @@
         <literal>handleSql</literal> will intercept only HDBC errors.
         <remark>FIXME: insert ref to ch19</remark>
         <remark>FIXME: insert ref to data.typeable, app c</remark>
-      </para>
-    </sect1>
-
-    <sect1 id="hs.databases.threading">
-      <title>Threading</title>
-      <para>
-        Different database systems have different capabilities
-        regarding multithreading.  The HDBC API spec suggests that, to
-        be safe, you should not try to issue more than one
-        simultaneous query over a single connection.  Though you may
-        use a single connection serially across multiple threads.
       </para>
     </sect1>
 

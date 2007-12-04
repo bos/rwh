@@ -34,6 +34,14 @@ conn <- connectSqlite3 "test1.db"
 quickQuery' conn "SELECT * from test where id < 2" []
 disconnect conn
 
+--# far
+conn <- connectSqlite3 "test1.db"
+stmt <- prepare conn "SELECT * from test where id < 2"
+execute stmt []
+results <- fetchAllRowsAL stmt
+mapM_ print results
+disconnect conn
+
 --# queryhs
 :l query.hs
 query 2

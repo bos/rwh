@@ -22,7 +22,7 @@ BOS            parsing a bioinformatics format
 DONS      18. Interfacing with C: the FFI
 DONS      19. Error handling
 JG        20. Haskell for systems programming (DONE)
-JG        21. Talking to databases: Data.Typeable
+JG        21. Talking to databases (DONE)
 JG        22. Web client programming: client/server networking
 BOS       23. GUI programming: gtk2hs
           24. Data mining and web applications
@@ -35,4 +35,4 @@ JG        30. Sockets, Syslog   (agreed to)
 BOS       31. Reverse HTTP Proxy example
 JG     APP A. HUGS  (??)
 JG     APP B. Posix
-
+JG     APP C. Data.Typeable
