@@ -25,8 +25,20 @@
 <!ENTITY ch15     SYSTEM "ch15-monad-case.xml">
 <!ENTITY ch16     SYSTEM "ch16-monad-trans.xml">
 <!ENTITY ch17     SYSTEM "ch17-parsec.xml">
+<!ENTITY ch18     SYSTEM "ch18-ffi.xml">
+<!ENTITY ch19     SYSTEM "ch19-errors.xml">
 <!ENTITY ch20     SYSTEM "ch20-systems.xml">
 <!ENTITY ch21     SYSTEM "ch21-databases.xml">
+<!ENTITY ch22     SYSTEM "ch22-webclient.xml">
+<!ENTITY ch23     SYSTEM "ch23-gui.xml">
+<!ENTITY ch24     SYSTEM "ch24-datamining.xml">
+<!ENTITY ch25     SYSTEM "ch25-concurrent.xml">
+<!ENTITY ch26     SYSTEM "ch26-advanced-concurrent.xml">
+<!ENTITY ch27     SYSTEM "ch27-stm.xml">
+<!ENTITY ch28     SYSTEM "ch28-profiling.xml">
+<!ENTITY ch29     SYSTEM "ch29-advanced-haskell.xml">
+<!ENTITY ch30     SYSTEM "ch30-sockets.xml">
+<!ENTITY ch31     SYSTEM "ch31-http-proxy.xml">
 
 <!-- Appendices. -->
 

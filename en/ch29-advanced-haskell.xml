@@ -1,0 +1,13 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.advhs" revision="unpublished">
+  <title>Advanced Haskell: MPTCs, TH, strong typing, GADTs</title>
+
+  <remark>FIXME</remark>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "book" "chapter")
+end:
+-->

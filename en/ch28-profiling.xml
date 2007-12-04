@@ -1,0 +1,13 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="hs.profiling" revision="unpublished">
+  <title>Performance and efficiency: profiling</title>
+
+  <remark>FIXME</remark>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "book" "chapter")
+end:
+-->
