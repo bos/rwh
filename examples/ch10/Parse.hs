@@ -1,4 +1,19 @@
-module Parse where
+module Parse
+    (
+      ParseState(..)
+    , Parse(..)
+    , (==>)
+    , (==>&)
+    , parseByte
+    , parseNat
+    , skipSpaces
+    , assert
+    , w2c
+    , parseWhile
+    , parseWhileWith
+    , identity
+    , parse
+    ) where
 
 import Control.Applicative ((<$>))
 import qualified Data.ByteString.Lazy as L
@@ -6,6 +21,7 @@ import Data.ByteString.Lazy.Char8 (pack)
 import Data.Char (chr, ord, isDigit, isSpace)
 import Data.Int (Int64)
 import Data.Word (Word8)
+import Debug.Trace
 
 import PNM (Greymap(..))
 
@@ -164,12 +180,10 @@ parseBytes n =
 
 {-- snippet parseRawPGM --}
 parseRawPGM =
-    parseWhileWith w2c (/= '\n') ==> \header ->
+    parseWhileWith w2c (/= '\n') ==> \header -> skipSpaces ==>&
     assert (header == "P5") "invalid raw header" ==>&
-    parseNat ==> \width ->
-    skipSpaces ==>&
-    parseNat ==> \height ->
-    skipSpaces ==>&
+    parseNat ==> \width -> skipSpaces ==>&
+    parseNat ==> \height -> skipSpaces ==>&
     parseNat ==> \maxGrey ->
     parseByte ==>&
     parseBytes (width * height) ==> \bitmap ->

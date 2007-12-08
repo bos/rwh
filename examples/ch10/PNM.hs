@@ -87,23 +87,23 @@ getBytes n s = let n' = fromIntegral n
 {-- /snippet parseP5.functions --}
 
 {-- snippet then --}
-(>>>) :: Maybe a -> (a -> Maybe b) -> Maybe b
-Nothing >>> _ = Nothing
-Just v >>> f  = f v
+(>>?) :: Maybe a -> (a -> Maybe b) -> Maybe b
+Nothing >>? _ = Nothing
+Just v >>? f  = f v
 {-- /snippet then --}
 
 {-- snippet parseP5_take2 --}
 parseP5_take2 :: L.ByteString -> Maybe (Greymap, L.ByteString)
 parseP5_take2 s =
-    matchHeader (L.pack "P5") s       >>>
-    \s -> skipSpace ((), s)           >>>
-    (getNat . snd)                    >>>
-    skipSpace                         >>>
-    \(width, s) ->   getNat s         >>>
-    skipSpace                         >>>
-    \(height, s) ->  getNat s         >>>
-    \(maxGrey, s) -> getBytes 1 s     >>>
-    (getBytes (width * height) . snd) >>>
+    matchHeader (L.pack "P5") s       >>?
+    \s -> skipSpace ((), s)           >>?
+    (getNat . snd)                    >>?
+    skipSpace                         >>?
+    \(width, s) ->   getNat s         >>?
+    skipSpace                         >>?
+    \(height, s) ->  getNat s         >>?
+    \(maxGrey, s) -> getBytes 1 s     >>?
+    (getBytes (width * height) . snd) >>?
     \(bitmap, s) -> Just (Greymap width height maxGrey bitmap, s)
 
 skipSpace :: (a, L.ByteString) -> Maybe (a, L.ByteString)
