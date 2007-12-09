@@ -10,9 +10,9 @@ JG         7. All about I/O (DONE)
 BOS        8. Bringing it all together: file name matching and 
               regular expressions (DONE)
 BOS        9. I/O case study: a DSL for searching the filesystem (DONE)
-BOS       10. Code case study: barcode recognition (DONE)
+BOS       10. Code case study: barcode recognition
 DONS      11. Testing the Haskell way: QuickCheck
-BOS       12. Handling binary files and formats
+BOS       12. Code case study: barcode recognition
 JG        13. Designing and using data structures (DONE)
 BOS       14. Monads
 BOS       15. Monad case study: refactoring the filesystem seacher
