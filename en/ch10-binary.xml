@@ -10,10 +10,11 @@
       removal</quote>.</para>
 
   <para>As our task, we'll choose parsing a few different netpbm file
-    types.  These file formats have the dual advantages of wide use
-    and being fairly easy, but not completely trivial, to parse.  Most
-    importantly for our convenienve, netpbm files are not
-    compressed.</para>
+    types.  The netpbm suite is an ancient and venerable collection of
+    programs and file formats for working with bitmap images.  These
+    file formats have the dual advantages of wide use and being fairly
+    easy, but not completely trivial, to parse.  Most importantly for
+    our convenience, netpbm files are not compressed.</para>
 
   <sect1>
     <title>Greyscale files</title>
