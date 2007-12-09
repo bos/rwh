@@ -4,7 +4,7 @@ import Data.Array (Array(..), (!), bounds, elems, indices, ixmap, listArray)
 import Data.Char (isDigit, ord)
 import Data.Ratio (Ratio, (%))
 import Data.Ix (Ix(..))
-import Data.List (foldl', group, isInfixOf, mapAccumR, sort, sortBy, tails)
+import Data.List (foldl', group, sort, sortBy, tails)
 import Data.Maybe (catMaybes, listToMaybe)
 import qualified Data.ByteString.Lazy.Char8 as L
 import Control.Applicative ((<$>))
@@ -35,11 +35,11 @@ leftEvenList = map reverse rightList
 parityList = ["111111", "110100", "110010", "110001", "101100",
               "100110", "100011", "101010", "101001", "100101"]
 
-outerGuard = "101"
-centerGuard = "01010"
-
+listToArray :: [a] -> Array Int a
 listToArray xs = listArray (0,l-1) xs
     where l = length xs
+
+leftOddCodes, leftEvenCodes, rightCodes, parityCodes :: Array Int String
 
 leftOddCodes = listToArray leftOddList
 leftEvenCodes = listToArray leftEvenList
@@ -47,56 +47,41 @@ rightCodes = listToArray rightList
 parityCodes = listToArray parityList
 {-- /snippet encodingTables --}
 
-
+{-- snippet encode --}
 encodeEAN13 :: String -> String
 encodeEAN13 = concat . encodeDigits . map asDigit
 
-asDigit :: Char -> Int
-asDigit c | isDigit c = ord c - ord '0'
-          | otherwise = error "not a digit"
-
+-- | This function computes the check digit; don't pass one in.
 encodeDigits :: [Int] -> [String]
 encodeDigits s@(first:rest) =
     outerGuard : lefties ++ centerGuard : righties ++ [outerGuard]
   where (left, right) = splitAt 5 rest
         lefties = zipWith leftEncode (parityCodes ! first) left
-        righties = map (rightCodes !) (right ++ [checkDigit s])
-        leftEncode '1' = (leftOddCodes !)
-        leftEncode '0' = (leftEvenCodes !)
+        righties = map rightEncode (right ++ [checkDigit s])
 
+leftEncode :: Char -> Int -> String
+leftEncode '1' = (leftOddCodes !)
+leftEncode '0' = (leftEvenCodes !)
+
+rightEncode :: Int -> String
+rightEncode = (rightCodes !)
+
+asDigit :: Char -> Int
+asDigit c | isDigit c = ord c - ord '0'
+          | otherwise = error "not a digit"
+
+outerGuard = "101"
+centerGuard = "01010"
+{-- /snippet encode --}
+
+{-- snippet Pixmap --}
 type Pixel = Word8
 type RGB = (Pixel, Pixel, Pixel)
 
-data Pixmap = Pixmap {
-      pixWidth :: Int
-    , pixHeight :: Int
-    , pixMax :: Int
-    , pixData :: Array (Int,Int) RGB
-    } deriving (Eq)
+type Pixmap = Array (Int,Int) RGB
+{-- /snippet Pixmap --}
 
-instance Show Pixmap where
-    show p = "Pixmap " ++ show (pixWidth p) ++ "x" ++ show (pixHeight p)
-
-data Greymap = Greymap {
-      greyWidth :: Int
-    , greyHeight :: Int
-    , greyMax :: Int
-    , greyData :: Array (Int,Int) Pixel
-    } deriving (Eq)
-
-instance Show Greymap where
-    show p = "Greymap " ++ show (greyWidth p) ++ "x" ++ show (greyHeight p)
-
-parseTimes :: Int -> Parse a -> Parse [a]
-parseTimes 0 f = identity []
-parseTimes n f = f ==> \x -> (x:) <$> parseTimes (n-1) f
-    
-parseRGB :: Parse (Pixel, Pixel, Pixel)
-parseRGB = parseByte ==> \r ->
-           parseByte ==> \g ->
-           parseByte ==> \b ->
-           identity (r,g,b)
-
+{-- snippet parseRawPPM --}
 parseRawPPM :: Parse Pixmap
 parseRawPPM =
     parseWhileWith w2c (/= '\n') ==> \header -> skipSpaces ==>&
@@ -104,44 +89,62 @@ parseRawPPM =
     parseNat ==> \width -> skipSpaces ==>&
     parseNat ==> \height -> skipSpaces ==>&
     parseNat ==> \maxValue ->
+    assert (maxValue == 255) "max value out of spec" ==>&
     parseByte ==>&
     parseTimes (width * height) parseRGB ==> \pxs ->
-    let pixmap = listArray ((0,0),(width-1,height-1)) pxs
-    in identity (Pixmap width height maxValue pixmap)
+    identity (listArray ((0,0),(width-1,height-1)) pxs)
 
-luminance :: Pixmap -> Greymap
-luminance p = Greymap {
-                greyWidth = pixWidth p
-              , greyHeight = pixHeight p
-              , greyMax = pixMax p
-              , greyData = lumPixel <$> pixData p
-              }
-    where lumPixel (r,g,b) = round (r' * 0.30 + g' * 0.59 + b' * 0.11)
-              where r' = fromIntegral r
-                    g' = fromIntegral g
-                    b' = fromIntegral b
+parseRGB :: Parse RGB
+parseRGB = parseByte ==> \r ->
+           parseByte ==> \g ->
+           parseByte ==> \b ->
+           identity (r,g,b)
+
+parseTimes :: Int -> Parse a -> Parse [a]
+parseTimes 0 _ = identity []
+parseTimes n p = p ==> \x -> (x:) <$> parseTimes (n-1) p
+{-- /snippet parseRawPPM --}
+    
+{-- snippet luminance --}
+luminance :: (Pixel, Pixel, Pixel) -> Pixel
+luminance (r,g,b) = round (r' * 0.30 + g' * 0.59 + b' * 0.11)
+    where r' = fromIntegral r
+          g' = fromIntegral g
+          b' = fromIntegral b
+{-- /snippet luminance --}
+
+{-- snippet pixmapToGreymap --}
+type Greymap = Array (Int,Int) Pixel
+
+pixmapToGreymap :: Pixmap -> Greymap
+pixmapToGreymap = fmap luminance
+{-- /snippet pixmapToGreymap --}
 
 row :: (Ix a, Ix b) => b -> Array (a,b) c -> Array a c
 row j a = ixmap (l,u) project a
     where project i = (i,j)
           ((l,_), (u,_)) = bounds a
 
-col :: (Ix a, Ix b) => a -> Array (a,b) c -> Array b c
-col i a = ixmap (l,u) project a
-    where project j = (i,j)
-          ((_,l), (_,u)) = bounds a
-
+{-- snippet fold --}
+-- | Strict left fold, similar to foldl' on lists.
 foldA :: Ix k => (a -> b -> a) -> a -> Array k b -> a
 foldA f s a = go s (indices a)
-    where go s (j:js) = go (f s (a ! j)) js
+    where go s (j:js) = let s' = f s (a ! j)
+                        in s' `seq` go s' js
           go s _ = s
 
+-- | Strict left fold using the first element of the array as its
+-- starting value, similar to foldl1 on lists.
 foldA1 :: Ix k => (a -> a -> a) -> Array k a -> a
 foldA1 f a = foldA f (a ! fst (bounds a)) a
+{-- /snippet fold --}
+
+data Bit = On | Off
+           deriving (Eq, Ord, Show)
 
 threshold :: (Ix k, Integral a) => Double -> Array k a -> Array k a
 threshold n a = binary <$> a
-    where binary i | i < pivot = 0
+    where binary i | i < pivot  = 0
                    | otherwise  = 1
           pivot = round $ least + (greatest - least) * n
           least = fromIntegral $ choose (<) a
@@ -264,12 +267,12 @@ buildMap = M.mapKeys (10 -)
 addFirstDigit :: ParityMap -> DigitMap
 addFirstDigit = M.foldWithKey seqFirstDigit M.empty
 
-(+&) :: Digit -> Digit -> Digit
-a +& b = (a + b) `mod` 10
+insertMap :: Digit -> Digit -> [a] -> M.Map Digit [a] -> M.Map Digit [a]
+insertMap key digit val m = val `seq` M.insert key' val m
+    where key' = (key + digit) `mod` 10
 
 seqFirstDigit :: Digit -> [Parity Digit] -> DigitMap -> DigitMap
-seqFirstDigit key seq m =
-    M.insert (key +& digit) (digit:renormalize qes) m
+seqFirstDigit key seq = insertMap key digit (digit:renormalize qes)
   where renormalize = mapEveryOther (`div` 3) . map fromParity
         digit = firstDigit qes
         qes = reverse seq
@@ -278,7 +281,7 @@ finalDigits :: [[Parity Digit]] -> ParityMap
 finalDigits = foldl' incorporateDigits (M.singleton 0 [])
             . mapEveryOther (map (fmap (*3)))
 
--- | Generate a new solution map considering a new set of digits
+-- | Generate a new solution map, considering a new set of digits.
 incorporateDigits :: ParityMap -> [Parity Digit] -> ParityMap
 incorporateDigits old digits = foldl' (useDigit old) M.empty digits
 
@@ -291,29 +294,24 @@ useDigit old new digit =
 -- | Create a new map entry from the previous data.
 updateMap :: Parity Digit -> Digit -> [Parity Digit] -> ParityMap
           -> ParityMap
-updateMap digit key seq m = M.insert (key +& digit') (digit:seq) m
-    where digit' = fromParity digit
+updateMap digit key seq = insertMap key (fromParity digit) (digit:seq)
 
 
-(-*>) :: Either e a -> (a -> Either e b) -> Either e b
-Left err -*> _ = Left err
-Right a -*> f = f a
-
--- fnord :: L.ByteString -> Pixmap
 parseGreymap :: L.ByteString -> Either String Greymap
-parseGreymap bs = parse parseRawPPM bs -*> (Right . luminance)
-
-maybeEither Nothing = Left "fail"
-maybeEither (Just a) = Right a
+parseGreymap bs = case parse parseRawPPM bs of
+                    Left err -> Left err
+                    Right a -> Right (pixmapToGreymap a)
 
 withRow :: Int -> Greymap -> (RunLength Pixel -> t) -> t
 withRow n greymap f = f . runLength . elems $ posterized
-    where posterized = threshold 0.4 . row n . greyData $ greymap
+    where posterized = threshold 0.4 . row n $ greymap
 
-fnord greymap =
-    let center = greyHeight greymap `div` 2
-    in withRow center greymap (fmap head . listToMaybe . match)
+findEAN13 :: Greymap -> Maybe [Digit]
+findEAN13 greymap =
+    withRow center greymap (fmap head . listToMaybe . match)
   where match = filter (not . null) . map (solve . candidateDigits) . tails
+        (_, (maxX, maxY)) = bounds greymap
+        center = (maxX + 1) `div` 2
 
 main = do
   args <- getArgs
@@ -321,7 +319,7 @@ main = do
     e <- (parseGreymap) <$> L.readFile arg
     case e of
       Left err -> print $ "error: " ++ err
-      Right greymap -> print (fnord greymap)
+      Right greymap -> print $ findEAN13 greymap
 
 a :: [Int]
 a=[1,1,1,1,1,1,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
