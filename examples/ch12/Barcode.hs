@@ -233,6 +233,7 @@ bestRight = map None . bestScores rightSRL
 -- possible matches at that position, along with the parity with which
 -- which every match was encoded.
 candidateDigits :: RunLength Pixel -> [[Parity Digit]]
+candidateDigits ((_, 1):_) = []
 candidateDigits rle =
     if all (not . null) match
     then map (map (fmap snd)) match
@@ -249,6 +250,7 @@ type DigitMap = M.Map Digit [Digit]
 type ParityMap = M.Map Digit [Parity Digit]
 
 solve :: [[Parity Digit]] -> [[Digit]]
+solve [] = []
 solve xs = catMaybes $ map (addCheckDigit m) checkDigits
     where checkDigits = map fromParity (last xs)
           m = buildMap (init xs)
@@ -310,8 +312,8 @@ withRow n greymap f = f . runLength . elems $ posterized
 
 fnord greymap =
     let center = greyHeight greymap `div` 2
-    in withRow center greymap (listToMaybe . map match . tails)
-  where match = solve . candidateDigits
+    in withRow center greymap (fmap head . listToMaybe . match)
+  where match = filter (not . null) . map (solve . candidateDigits) . tails
 
 main = do
   args <- getArgs
