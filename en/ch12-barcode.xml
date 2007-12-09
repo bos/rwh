@@ -1,8 +1,536 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.xxx" revision="unpublished">
-  <title>FIXME</title>
-  <remark>FIXME.</remark>
+<chapter id="hs.barcode" revision="unpublished">
+  <title>Barcode recognition</title>
+
+  <para>In this chapter, we'll make use of the image parsing library
+    we developed in <xref linkend="hs.binary"/> to build a barcode
+    recognition application.  This lets us take a picture of the back
+    of a book using a camera phone, and extract its ISBN
+    number.</para>
+
+  <para>As usual, our application is a vehicle for introducing new
+    concepts.</para>
+
+  <sect1>
+    <title>A little bit about barcodes</title>
+
+    <para>The vast majority of packaged and mass-produced consumer
+      goods sold have a barcode somewhere on them.  Although there are
+      dozens of barcode systems used across a variety specialised
+      domains, consumer products typically only have two to contend
+      with: UPC-A and EAN-13.  UPC-A was developed in the United
+      States, while EAN-13 is European in origin.</para>
+
+    <para>EAN-13 was developed after UPC-A, as a superset.  (In fact,
+      UPC-A has been officially declared obsolete since 2005, though
+      it's still widely used within the United States.)  Any software
+      or hardware that can understand EAN-13 barcodes will
+      automatically handle UPC-A barcodes.  This neatly reduces our
+      descriptive problem to one standard.</para>
+
+    <para>As the name suggests, EAN-13 is a 13-digit sequence,
+      composed of four groups.  The first two digits describe the
+      <quote>number system</quote>.  This can indicate the nationality
+      of the manufacturer, or one of a few other miscellaneous
+      purposes, such as ISBN (book identifier) numbers.  The next five
+      digits are a manufacturer ID, assigned by a country's numbering
+      authority.  The five that follow are a product ID, assigned by
+      the manufacturer.  (Smaller manufacturers may have a longer
+      manufacturer ID and shorter product ID, still fitting into ten
+      digits.)  The last digit is a <quote>check digit</quote>,
+      allowing a scanner to validate the digit string it scans.</para>
+
+    <para>The only way in which an EAN-13 barcode differs from a UPC-A
+      barcode is that the latter uses a single digit to represent its
+      number system.  EAN-13 barcodes retain UPC-A compatibility by
+      simply setting the first number system digit to zero.</para>
+
+    <sect2>
+      <title>EAN-13 encoding</title>
+
+      <para>Before we worry about decoding an EAN-13 barcode, we need
+	to understand how they are encoded.  The system used by
+	EAN-13 is a little involved.  We start by computing the check
+	digit, which is the last digit of a string.</para>
+
+      &Barcode.hs:checkDigit;
+
+      <para>This is one of those algorithms that's more easily
+	understood via the code than a verbal description.  The
+	computation proceeds from the right of the string. Each
+	successive digit is either multiplied by three or left alone
+	(the <function>cycle</function> function repeats its input
+	list infinitely). The check digit is the difference between
+	their sum, modulo ten, and the number ten.</para>
+
+      <para>A barcode is a series of fixed-width bars, where black
+	represents a binary <quote>one</quote> digit, and white a
+	<quote>zero</quote>.  Consecutive same-valued bars thus look
+	like thicker bars.</para>
+
+      <para>The sequence of bits in a barcode is as follows.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>The leading guard sequence, encoded as 101.</para>
+	</listitem>
+	<listitem>
+	  <para>A group of six digits, each seven bits wide.</para>
+	</listitem>
+	<listitem>
+	  <para>Another guard sequence, encoded as 01010.</para>
+	</listitem>
+	<listitem>
+	  <para>A group of six more digits.</para>
+	</listitem>
+	<listitem>
+	  <para>The trailing guard sequence, encoded as 101.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>The digits in the left and right groups have separate
+	encodings. On the left, digits are encoded with parity bits.
+	The parity bits encode the 13th digit of the barcode.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Introducing arrays</title>
+
+    <para>The barcode encoding process can largely be table-driven, in
+      which we use small tables of bit patterns to decide how to
+      encode each digit.  Haskell's bread-and-butter data types, lists
+      and tuples, are not well suited to use for tables whose elements
+      may be accessed randomly.  A list has to be traversed linearly
+      to reach the Nth element.  A tuple doesn't have this problem,
+      but Haskell's type system makes it difficult to write a function
+      that takes a tuple and an element offset and returns the element
+      at that offset within the tuple.  (We'll explore why in the
+      exercises below.)</para>
+
+    <para>The usual data type for constant-time random access is of
+      course the array. Haskell provides several array data types.
+      We'll thus represent our encoding tables as arrays of
+      strings.</para>
+
+    &Barcode.hs:Array;
+
+    <para>The simplest array type is in the <code>Data.Array</code>
+      module, which we're using here.  This presents arrays that can
+      contain values of any Haskell type.  Like other common Haskell
+      types, these arrays are immutable.  An immutable array is
+      populated with values just once, when it is created.  Its
+      contents cannot subsequently be modified.  (The standard
+      libraries also provide other array types, some of which are
+      mutable, but we won't cover those for a while.)</para>
+
+    &Barcode.hs:encodingTables;
+
+    <para>The <function>listArray</function> function populates an
+      array from a list.  It takes as its first parameter the bounds
+      of the array to create; the second is the values with which to
+      populate it.</para>
+
+    <para>An unusual feature of the<type>Array</type> type is that its
+      type is parameterised over both the data it contains and the
+      index type. For example, the type of a one-dimensional array of
+      <type>String</type> is <type>Array Int String</type>, but a
+      two-dimensional array would have the type <type>Array (Int, Int)
+	String</type>.</para>
+
+    &array.ghci:type;
+
+    <para>We can construct an array easily.</para>
+
+    &array.ghci:chars;
+
+    <para>Notice that we have to specify the lower and uppoer bounds
+      of the array.  These bounds are inclusive, so an array from 0 to
+      2 has elements 0, 1, and 2.  The list that we use to populate
+      the array must contain at least as many elements as are in the
+      array.  If it is not, we'll get an error at runtime.</para>
+
+    &array.ghci:listArray;
+
+    <para>Once an array is constructed, we can use the
+      <function>(!)</function> operator to access its elements by
+      index.</para>
+
+    &array.ghci:index;
+
+    <para>Since the array construction function lets us specify the
+      bounds of an array, we don't have to use the zero-based array
+      indexing familiar to C programmers.  We can choose whatever
+      bounds are convenient for our purposes.</para>
+
+    &array.ghci:bounds;
+
+    <para>The index type can be any member of the <type>Ix</type>
+      type.  This lets us use, for example, <type>Char</type>s as
+      indices.</para>
+
+    &array.ghci:char;
+
+    <para>To create a higher-dimensioned array, we use a tuple of
+      <type>Ix</type> instances as the index type.  The Prelude makes
+      tuples of up to five elements members of the <type>Ix</type>
+      class.  To illustrate, here's a small three-dimensional array.</para>
+
+    &array.ghci:3d;
+
+    <sect2 id="hs.barcode.fold">
+      <title>Folding over arrays</title>
+
+      <para>The <function>bounds</function> function returns a tuple
+	describing the bounds that we used to create the array.  The
+	<function>indices</function> function returns a list of every
+	index.  We can use these to define some useful folds, since
+	the <code>Data.Array</code> module doesn't define any fold
+	functions itself.</para>
+
+      &Barcode.hs:fold;
+
+      <para>You might wonder why the array modules don't already
+	provide such useful things as folding functions.  For a
+	one-dimensional array, there's are some obvious
+	correspondences between an array and a list.  There are only
+	two natural ways in which we can fold sequentially:
+	left-to-right and right-to-left.  Additionally, we can only
+	fold over one element at a time.</para>
+
+      <para>This correspondence breaks down in two ways for
+	two-dimensional arrays.  The first is that there are several
+	kinds of fold that make sense.  We might still want to fold
+	over single elements, but we now have the possibility of
+	folding over rows or columns, too.  On top of this, for
+	element-at-a-time folding, there are no longer just two
+	sequences for traversal.</para>
+
+      <para>In other words, for two-dimensional arrays, there are
+	enough permutations of possibly useful behaviour that there
+	aren't many compelling reasons to choose a handful for a
+	standard library.  This problem is only compounded for higher
+	dimensions, so it's safest to let developers write folds that
+	suit the needs of their applications.  As we can see from our
+	examples above, this is not hard to do.</para>
+    </sect2>
+
+    <sect2>
+      <title>Modifying array elements</title>
+
+      <para>While there exist <quote>modification</quote> functions
+	for immutable arrays, they are not very practical.  For
+	example, the <function>accum</function> function takes an
+	array and a list of <code>(index, value)</code> pairs, and
+	returns a new array with the values at the given indices
+	replaced.</para>
+
+      <para>However, since arrays are immutable, modifying even one
+	element requires copying the entire array, which quickly
+	becomes prohibitively expensive on arrays of any non-trivial
+	size.</para>
+
+      <para>Another array type, <type>DiffArray</type> in the
+	<code>Data.Array.Diff</code> module, attempts to offset the
+	cost of small modifications by storing deltas between
+	successive versions of an array.  Unfortunately, it is not
+	implemented efficiently, and is hence too slow to be of
+	practical use.</para>
+
+      <note>
+	<para>It is in fact possible to modify arrays efficiently in
+	  Haskell, but this is a subject that we will have to return
+	  to later.</para>
+      </note>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <para>Let's briefly explore the suitability of tuples as
+	stand-ins for arrays.</para>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Write a function that takes two arguments: a
+	    four-element tuple, and an integer.  With an integer
+	    argument of zero, it should return the leftmost element of
+	    the tuple.  With an argument of one, it should return the
+	    next element.  And so on.  What restrictions do you have
+	    to put on the types of the arguments in order to write a
+	    function that typechecks correctly?</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Write a similar function that takes a six-tuple as
+	    its first argument.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Try refactoring the two functions to share any
+	      common code you can identify.  How much shared code are
+	      you able to you find?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Encoding an EAN-13 barcode</title>
+
+    <para>It's useful to have an encoder for reference.</para>
+
+    &Barcode.hs:encode;
+
+    <para>The string to encode is twelve digits long, with
+      <function>encodeDigits</function> adding a thirteenth check
+      digit.</para>
+
+    <para>The barcode is encoded as two groups of six digits, with
+      a guard sequence in the middle and <quote>outside</quote>
+      sequences on either side.  But if we have two groups of six
+      digits, what happened to the missing digit?</para>
+
+    <para>Each digit in the left group is encoded using either odd or
+      even parity, with the parity chosen based on the bits of the
+      first digit in the string.  If a bit of the first digit is zero,
+      the corresponding digit in the left group is encoded with even
+      parity.  A one bit causes the digit to be encoded with odd
+      parity.  This encoding is an elegant hack, chosen to make EAN-13
+      barcodes backwards compatible with the older UPC-A
+      standard.</para>
+  </sect1>
+    
+  <sect1>
+    <title>Constraints on our decoder</title>
+
+    <para>Before we talk about decoding, let's set a few practical
+      limits on what kinds of barcode image we can work with.</para>
+
+    <para>Phone cameras and webcams generally output JPEG images, but
+      we would spend an entire chapter writing a JPEG decoder. We'll
+      simplify our parsing task to working with the netpbm file
+      format, using parsing combinators we developed earlier, in <xref
+	linkend="hs.binary"/>.</para>
+
+    <para>We'd like to deal with real images from cheap, fixed-focus
+      cameras.  These tend to be out of focus, noisy, low in contrast,
+      and of poor resolution.  Fortunately, it's not hard to write
+      code that can handle noisy, defocused VGA-resolution (640x400)
+      images with terrible contrast ratios.  We've verified that the
+      code in this chapter captures barcodes from real books, from
+      pictures taken by authentically mediocre cameras.</para>
+
+    <para>We will avoid any image processing heroics, because that's
+      another chapter-consuming subject.  We won't correct
+      perspective.  Neither will we sharpen images taken from too near
+      to the subject, which causes narrow bars to fade out; or from
+      too far, which causes adjacent bars to blur together.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-bad-angled.jpg"/>
+    </informalfigure>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-bad-too-near.jpg"/>
+    </informalfigure>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-bad-too-far.jpg"/>
+    </informalfigure>
+  </sect1>
+
+  <sect1>
+    <title>Dividing and conquering</title>
+
+    <para>Our task is to take a camera image and extract a valid
+      barcode from it.  Given such a nonspecific description, it can
+      be hard to see how to make progress.  However, we can break the
+      big problem into a series of subproblems, each of which is
+      self-contained and more tractable.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Convert colour data into a form we can easily work
+	  with.</para>
+      </listitem>
+      <listitem>
+	<para>Sample a single scan line from the image, and extract a
+	  set of guesses as to what the encoded digits in this line
+	  could be.</para>
+      </listitem>
+      <listitem>
+	<para>From the guesses, create a list of valid
+	  decodings.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Many of these subproblems can be further divided, as we'll
+      see.</para>
+
+    <para>You might wonder how closely this approach of subdivision
+      mirrors the actual work we did when writing the code that we
+      present in this chapter.  The answer is that we're far from
+      image processing gurus, and when we started on this chapter we
+      didn't know exactly what the solution was going to look like. In
+      fact, we hadn't written any image processing code before.</para>
+    
+    <para>We made some early educated guesses as to what a reasonable
+      solution might look like, and came up with the list of subtasks
+      above.  We were then able to start tackling those parts that we
+      knew how to solve, devoting spare cycles to thinking about the
+      bits that we had no prior experience with.  We certainly didn't
+      have a pre-existing algorithm or master plan in mind.</para>
+
+    <para>Dividing the problem up like this helped us in two ways.  By
+      making progress on familiar ground, we had the psychological
+      advantage of starting to solve the problem, even when we didn't
+      really know where we were going.  And as we started to work on a
+      particular subproblem, we found ourselves able to further
+      subdivide it into more and less familiar tasks.  We continued to
+      focus on easier components, deferrring ones we hadn't thought
+      about in enough detail yet, jumping from one element of the
+      master list above to another. Eventually, we ran out of problems
+      that were both unfamiliar and unsolved, and we had a complete
+      solution.</para>
+  </sect1>
+
+  <sect1>
+    <title>Turning a colour image into something tractable</title>
+
+    <para>Since we want to work with barcodes, which are sequences of
+      black and white stripes, and we want to write a simple decoder,
+      it seems clear that the easiest representation to work with will
+      be a monochrome image, in which each pixel is either black or
+      white.</para>
+
+    <sect2>
+      <title>Parsing a colour image</title>
+
+      <para>As we mentioned earlier, we'll work with netpbm images.
+	The netpbm colour image format is only slightly more
+	complicated than the greyscale image format that we parsed in
+	<xref
+	linkend="hs.binary"/>.  The identifying string in a header is
+	<quote>P6</quote>, with the rest of the header layout
+	identical to the greyscale format.  In the body of an image,
+	each pixel is represented as three bytes, one each for red,
+	green and blue.</para>
+
+      <para>We'll represent the image data as a two-dimensional array
+	of pixels.  We're using arrays here purely to gain experience
+	with them.  For this application, we could just as well use a
+	list of lists.  The only advantage of an array here is slight:
+	we can efficiently extract a row.</para>
+
+      &Barcode.hs:Pixmap;
+
+      <para>We provide a few type synonyms to make our type signatures
+	more readable.</para>
+
+      <para>Since Haskell gives us considerable freedom in how we lay
+	out an array, we must choose a representation.  We'll play
+	safe and follow a popular convention: indices begin at zero.
+	We don't need to store the dimensions of the image explicitly,
+	since we can extract them using the
+	<function>bounds</function> function.</para>
+
+      <para>The actual parser is mercifully short, thanks to the
+	combinators we developed in <xref
+	  linkend="hs.binary"/>.</para>
+
+      &Barcode.hs:parseRawPPM;
+
+      <para>The only function of note above is
+	<function>parseTimes</function>, which calls another parser a
+	given number of times, building up a list of results.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Greyscale conversion</title>
+
+      <para>Now that we have a colour image in hand, we need to
+	convert the colour data into monochrome.  An intermediate step
+	is to convert the data to greyscale.  There's a simple, widely
+	used formula for converting an RGB image into a greyscale
+	image, based on the perceived brightness of each colour
+	channel.</para>
+
+      &Barcode.hs:luminance;
+
+      <para>Haskell arrays are members of the <code>Functor</code>
+	typeclass, so we can simply use <function>fmap</function> to
+	turn an entire image, or a single scanline, from colour into
+	greyscale.</para>
+
+      &Barcode.hs:pixmapToGreymap;
+
+      <para>This <function>pixmapToGreymap</function> function is just
+	for illustration.  Since we'll only be checking a few rows of
+	an image for possible barcodes, there's no reason to do the
+	extra work of converting data we'll never subsequently
+	use.</para>
+    </sect2>
+
+    <sect2>
+      <title>Greyscale to monochrome, and type safety</title>
+
+      <para>Our next subproblem is to convert the greyscale image into
+	a two-valued image, where each pixel is either on or
+	off.</para>
+
+      <para>In an image processing application, where we're juggling
+	lots of numbers, it would be easy to reuse the same numeric
+	type for several different purposes.  For example, we could
+	use the <type>Pixel</type> type to represent on/off states,
+	using the convention that the digit one represents a bit
+	that's <quote>on</quote>, and zero <quote>off</quote>.</para>
+
+      <para>However, reusing types for multiple purposes in this way
+	quickly becomes confusing.  To see whether a particular
+	<quote>Pixel</quote> is a number or an on/off value, we can no
+	longer simply glance at a type signature.</para>
+
+      <para>We could try to work around this by introducing a type
+	alias.  In the same way that we declared <type>Pixel</type> to
+	be a synonym of <type>Word8</type>, we could declare a
+	<type>Bit</type> type as a synonym of <type>Pixel</type>.
+	While this helps readability, type synonyms don't get the
+	compiler to do any work on our behalf.</para>
+
+      <para>Using type synonyms would cause the compiler to treat
+	<type>Pixel</type> and <type>Bit</type> as exactly the same
+	type, so it could not catch a mistake such as using a
+	<type>Pixel</type> value of 253 in a function that expects
+	<type>Bit</type> values of zero or one.</para>
+
+      <para>If we define the monochrome type ourselves, the compiler
+	will prevent us from accidentally mixing our types up like
+	this.</para>
+
+      &Barcode.hs:threshold;
+
+      <para>Our <function>threshold</function> function computes the
+	dynamic range of the values in its input array.  It turns
+	values below the given threshold of this range into
+	<code>Zero</code>, and those above into <code>One</code>.
+	Notice that we use one of the folding functions that we
+	defined in <xref
+	  linkend="hs.barcode.fold"/>.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title></title>
+  </sect1>
 </chapter>
 
 <!--

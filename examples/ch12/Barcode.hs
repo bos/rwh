@@ -139,17 +139,19 @@ foldA1 :: Ix k => (a -> a -> a) -> Array k a -> a
 foldA1 f a = foldA f (a ! fst (bounds a)) a
 {-- /snippet fold --}
 
-data Bit = On | Off
-           deriving (Eq, Ord, Show)
+{-- snippet threshold --}
+data Bit = Zero | One
+           deriving (Eq, Show)
 
-threshold :: (Ix k, Integral a) => Double -> Array k a -> Array k a
+threshold :: (Ix k, Integral a) => Double -> Array k a -> Array k Bit
 threshold n a = binary <$> a
-    where binary i | i < pivot  = 0
-                   | otherwise  = 1
+    where binary i | i < pivot  = Zero
+                   | otherwise  = One
           pivot = round $ least + (greatest - least) * n
           least = fromIntegral $ choose (<) a
           greatest = fromIntegral $ choose (>) a
-          choose f = foldA1 $ \a b -> if f a b then a else b
+          choose f = foldA1 $ \x y -> if f x y then x else y
+{-- /snippet threshold --}
 
 type Run = Int
 type RunLength a = [(Run, a)]
@@ -235,8 +237,8 @@ bestRight = map None . bestScores rightSRL
 -- | For each digit position in a scan, generate a sorted list of
 -- possible matches at that position, along with the parity with which
 -- which every match was encoded.
-candidateDigits :: RunLength Pixel -> [[Parity Digit]]
-candidateDigits ((_, 1):_) = []
+candidateDigits :: RunLength Bit -> [[Parity Digit]]
+candidateDigits ((_, One):_) = []
 candidateDigits rle =
     if all (not . null) match
     then map (map (fmap snd)) match
@@ -297,29 +299,24 @@ updateMap :: Parity Digit -> Digit -> [Parity Digit] -> ParityMap
 updateMap digit key seq = insertMap key (fromParity digit) (digit:seq)
 
 
-parseGreymap :: L.ByteString -> Either String Greymap
-parseGreymap bs = case parse parseRawPPM bs of
-                    Left err -> Left err
-                    Right a -> Right (pixmapToGreymap a)
-
-withRow :: Int -> Greymap -> (RunLength Pixel -> t) -> t
+withRow :: Int -> Pixmap -> (RunLength Bit -> t) -> t
 withRow n greymap f = f . runLength . elems $ posterized
-    where posterized = threshold 0.4 . row n $ greymap
+    where posterized = threshold 0.4 . fmap luminance . row n $ greymap
 
-findEAN13 :: Greymap -> Maybe [Digit]
-findEAN13 greymap =
-    withRow center greymap (fmap head . listToMaybe . match)
+findEAN13 :: Pixmap -> Maybe [Digit]
+findEAN13 pixmap =
+    withRow center pixmap (fmap head . listToMaybe . match)
   where match = filter (not . null) . map (solve . candidateDigits) . tails
-        (_, (maxX, maxY)) = bounds greymap
+        (_, (maxX, maxY)) = bounds pixmap
         center = (maxX + 1) `div` 2
 
 main = do
   args <- getArgs
   forM_ args $ \arg -> do
-    e <- (parseGreymap) <$> L.readFile arg
+    e <- parse parseRawPPM <$> L.readFile arg
     case e of
       Left err -> print $ "error: " ++ err
-      Right greymap -> print $ findEAN13 greymap
+      Right pixmap -> print $ findEAN13 pixmap
 
 a :: [Int]
 a=[1,1,1,1,1,1,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
