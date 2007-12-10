@@ -19,7 +19,10 @@ import Parse
 {-- snippet checkDigit --}
 checkDigit :: (Integral a) => [a] -> a
 checkDigit ds = 10 - (sum products `mod` 10)
-    where products = zipWith (*) (cycle [3,1]) (reverse ds)
+    where products = mapEveryOther (*3) (reverse ds)
+
+mapEveryOther :: (a -> a) -> [a] -> [a]
+mapEveryOther f = zipWith id (cycle [f,id])
 {-- /snippet checkDigit --}
 
 {-- snippet encodingTables --}
@@ -120,10 +123,12 @@ pixmapToGreymap :: Pixmap -> Greymap
 pixmapToGreymap = fmap luminance
 {-- /snippet pixmapToGreymap --}
 
+{-- snippet row --}
 row :: (Ix a, Ix b) => b -> Array (a,b) c -> Array a c
 row j a = ixmap (l,u) project a
     where project i = (i,j)
           ((l,_), (u,_)) = bounds a
+{-- /snippet row --}
 
 {-- snippet fold --}
 -- | Strict left fold, similar to foldl' on lists.
@@ -153,29 +158,43 @@ threshold n a = binary <$> a
           choose f = foldA1 $ \x y -> if f x y then x else y
 {-- /snippet threshold --}
 
+{-- snippet runLength --}
 type Run = Int
 type RunLength a = [(Run, a)]
 
 runLength :: Eq a => [a] -> RunLength a
 runLength = map rle . group
     where rle xs = (length xs, head xs)
+{-- /snippet runLength --}
 
+{-- snippet runLengths --}
 runLengths :: Eq a => [a] -> [Run]
 runLengths = map fst . runLength
+{-- /snippet runLengths --}
 
+{-- snippet scaleToOne --}
 type Score = Ratio Int
 
 scaleToOne :: [Run] -> [Score]
-scaleToOne xs = map (% sum xs) xs
+scaleToOne xs = map divide xs
+    where divide d = fromIntegral d / divisor
+          divisor = fromIntegral (sum xs)
+-- A more compact alternative that "knows" we're using Ratio Int:
+-- scaleToOne xs = map (% sum xs) xs
 
-asSRL :: [String] -> [[Score]]
+type ScoreTable = [[Score]]
+
+-- "SRL" means "scaled run length".
+asSRL :: [String] -> ScoreTable
 asSRL = map (scaleToOne . runLengths)
 
 leftOddSRL = asSRL leftOddList
 leftEvenSRL = asSRL leftEvenList
 rightSRL = asSRL rightList
 paritySRL = asSRL parityList
+{-- /snippet scaleToOne --}
 
+{-- snippet chunksOf --}
 chunkWith :: ([a] -> ([a], [a])) -> [a] -> [[a]]
 chunkWith _ [] = []
 chunkWith f xs = let (h, t) = f xs
@@ -183,13 +202,21 @@ chunkWith f xs = let (h, t) = f xs
 
 chunksOf :: Int -> [a] -> [[a]]
 chunksOf n = chunkWith (splitAt n)
+{-- /snippet chunksOf --}
 
-bestScores :: [[Score]] -> [Run] -> [(Score, Digit)]
+{-- snippet distance --}
+distance :: [Score] -> [Score] -> Score
+distance a b = sum . map abs $ zipWith (-) a b
+{-- /snippet distance --}
+
+{-- snippet bestScores --}
+bestScores :: ScoreTable -> [Run] -> [(Score, Digit)]
 bestScores srl ps = take 3 . sort $ scores
-    where scores = zip [score d (scaleToOne ps) | d <- srl] digits
-          score a b = sum . map abs $ zipWith (-) a b
+    where scores = zip [distance d (scaleToOne ps) | d <- srl] digits
           digits = [0..9]
+{-- /snippet bestScores --}
 
+{-- snippet firstDigit --}
 firstDigit :: [Parity a] -> Digit
 firstDigit = snd
            . head
@@ -197,11 +224,18 @@ firstDigit = snd
            . runLengths
            . map parityBit
            . take 6
-  where parityBit (Even _) = 0
-        parityBit (Odd _) = 1
+  where parityBit (Even _) = Zero
+        parityBit (Odd _) = One
+{-- /snippet firstDigit --}
 
+{-- snippet Parity --}
 data Parity a = Even a | Odd a | None a
                 deriving (Show)
+
+fromParity :: Parity a -> a
+fromParity (Even a) = a
+fromParity (Odd a) = a
+fromParity (None a) = a
 
 parityMap :: (a -> b) -> Parity a -> Parity b
 parityMap f (Even a) = Even (f a)
@@ -210,106 +244,140 @@ parityMap f (None a) = None (f a)
 
 instance Functor Parity where
     fmap = parityMap
+{-- /snippet Parity --}
 
-fromParity :: Parity a -> a
-fromParity (Even a) = a
-fromParity (Odd a) = a
-fromParity (None a) = a
+{-- snippet AltParity --}
+data AltParity a = AltEven {fromAltParity :: a}
+                 | AltOdd {fromAltParity :: a}
+                 | AltNone {fromAltParity :: a}
+                   deriving (Show)
+{-- /snippet AltParity --}
 
-type Digit = Word8
-
+{-- snippet compareWithoutParity --}
 on :: (a -> a -> b) -> (c -> a) -> c -> c -> b
 on f g x y = g x `f` g y
 
-instance Eq a => Eq (Parity a) where
-    (==) = (==) `on` fromParity
+compareWithoutParity = compare `on` fromParity
+{-- /snippet compareWithoutParity --}
 
-instance Ord a => Ord (Parity a) where
-    compare = compare `on` fromParity
+{-- snippet bestLeftRight --}
+type Digit = Word8
 
 bestLeft :: [Run] -> [Parity (Score, Digit)]
-bestLeft ps = sort ((map Odd (bestScores leftOddSRL ps)) ++
-                    (map Even (bestScores leftEvenSRL ps)))
+bestLeft ps = sortBy compareWithoutParity
+              ((map Odd (bestScores leftOddSRL ps)) ++
+               (map Even (bestScores leftEvenSRL ps)))
 
 bestRight :: [Run] -> [Parity (Score, Digit)]
 bestRight = map None . bestScores rightSRL
+{-- /snippet bestLeftRight --}
 
--- | For each digit position in a scan, generate a sorted list of
--- possible matches at that position, along with the parity with which
--- which every match was encoded.
+{-- snippet candidateDigits.head --}
 candidateDigits :: RunLength Bit -> [[Parity Digit]]
 candidateDigits ((_, One):_) = []
+candidateDigits rle | length rle < 59 = []
+{-- /snippet candidateDigits.head --}
+
+{-- snippet candidateDigits --}
 candidateDigits rle =
-    if all (not . null) match
-    then map (map (fmap snd)) match
-    else []
+    if any null match
+    then []
+    else map (map (fmap snd)) match
   where match = map bestLeft left ++ map bestRight right
         left = chunksOf 4 . take 24 . drop 3 $ runLengths
         right = chunksOf 4 . take 24 . drop 32 $ runLengths
-        (runLengths, bits) = unzip rle
+        runLengths = map fst rle
+{-- /snippet candidateDigits --}
 
-mapEveryOther :: (a -> a) -> [a] -> [a]
-mapEveryOther f = zipWith id (cycle [f,id])
+{-- snippet Map --}
+type Map a = M.Map Digit [a]
+{-- /snippet Map --}
 
-type DigitMap = M.Map Digit [Digit]
-type ParityMap = M.Map Digit [Parity Digit]
+{-- snippet MapTypes --}
+type DigitMap = Map Digit
+type ParityMap = Map (Parity Digit)
+{-- /snippet MapTypes --}
 
+{-- snippet solve --}
 solve :: [[Parity Digit]] -> [[Digit]]
 solve [] = []
 solve xs = catMaybes $ map (addCheckDigit m) checkDigits
     where checkDigits = map fromParity (last xs)
           m = buildMap (init xs)
           addCheckDigit m k = (++[k]) <$> M.lookup k m
+{-- /snippet solve --}
 
+{-- snippet buildMap --}
 buildMap :: [[Parity Digit]] -> DigitMap
 buildMap = M.mapKeys (10 -)
          . addFirstDigit
          . finalDigits
+{-- /snippet buildMap --}
 
+{-- snippet addFirstDigit --}
 addFirstDigit :: ParityMap -> DigitMap
-addFirstDigit = M.foldWithKey seqFirstDigit M.empty
+addFirstDigit = M.foldWithKey updateFirst M.empty
 
-insertMap :: Digit -> Digit -> [a] -> M.Map Digit [a] -> M.Map Digit [a]
-insertMap key digit val m = val `seq` M.insert key' val m
-    where key' = (key + digit) `mod` 10
-
-seqFirstDigit :: Digit -> [Parity Digit] -> DigitMap -> DigitMap
-seqFirstDigit key seq = insertMap key digit (digit:renormalize qes)
+updateFirst :: Digit -> [Parity Digit] -> DigitMap -> DigitMap
+updateFirst key seq = insertMap key digit (digit:renormalize qes)
   where renormalize = mapEveryOther (`div` 3) . map fromParity
         digit = firstDigit qes
         qes = reverse seq
+{-- /snippet addFirstDigit --}
 
+{-- snippet finalDigits --}
 finalDigits :: [[Parity Digit]] -> ParityMap
 finalDigits = foldl' incorporateDigits (M.singleton 0 [])
             . mapEveryOther (map (fmap (*3)))
+{-- /snippet finalDigits --}
 
--- | Generate a new solution map, considering a new set of digits.
+{-- snippet incorporateDigits --}
 incorporateDigits :: ParityMap -> [Parity Digit] -> ParityMap
 incorporateDigits old digits = foldl' (useDigit old) M.empty digits
+{-- /snippet incorporateDigits --}
 
--- | Update a new solution map based on a single digit and an old
--- solution map.
+{-- snippet useDigit --}
 useDigit :: ParityMap -> ParityMap -> Parity Digit -> ParityMap
 useDigit old new digit =
-  new `M.union` M.foldWithKey (updateMap digit) M.empty old
+    new `M.union` M.foldWithKey (updateMap digit) M.empty old
+{-- /snippet useDigit --}
 
--- | Create a new map entry from the previous data.
-updateMap :: Parity Digit -> Digit -> [Parity Digit] -> ParityMap
+{-- snippet updateMap --}
+updateMap :: Parity Digit       -- ^ new digit
+          -> Digit              -- ^ existing key
+          -> [Parity Digit]     -- ^ existing digit sequence
+          -> ParityMap          -- ^ map to update
           -> ParityMap
 updateMap digit key seq = insertMap key (fromParity digit) (digit:seq)
 
+insertMap :: Digit -> Digit -> [a] -> Map a -> Map a
+insertMap key digit val m = val `seq` M.insert key' val m
+    where key' = (key + digit) `mod` 10
+{-- /snippet updateMap --}
 
-withRow :: Int -> Pixmap -> (RunLength Bit -> t) -> t
+{-- snippet withRow --}
+withRow :: Int -> Pixmap -> (RunLength Bit -> a) -> a
 withRow n greymap f = f . runLength . elems $ posterized
     where posterized = threshold 0.4 . fmap luminance . row n $ greymap
+{-- /snippet withRow --}
 
+{-- snippet findMatch --}
+findMatch :: [(Run, Bit)] -> Maybe [[Digit]]
+findMatch = listToMaybe
+          . filter (not . null)
+          . map (solve . candidateDigits)
+          . tails
+{-- /snippet findMatch --}
+
+{-- snippet findEAN13 --}
 findEAN13 :: Pixmap -> Maybe [Digit]
-findEAN13 pixmap =
-    withRow center pixmap (fmap head . listToMaybe . match)
-  where match = filter (not . null) . map (solve . candidateDigits) . tails
-        (_, (maxX, maxY)) = bounds pixmap
+findEAN13 pixmap = withRow center pixmap (fmap head . findMatch)
+  where (_, (maxX, maxY)) = bounds pixmap
         center = (maxX + 1) `div` 2
+{-- /snippet findEAN13 --}
 
+{-- snippet main --}
+main :: IO ()
 main = do
   args <- getArgs
   forM_ args $ \arg -> do
@@ -317,7 +385,10 @@ main = do
     case e of
       Left err -> print $ "error: " ++ err
       Right pixmap -> print $ findEAN13 pixmap
+{-- /snippet main --}
 
 a :: [Int]
 a=[1,1,1,1,1,1,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-ra = runLength a
+d 1 = One
+d 0 = Zero
+input = tail . runLength $ map d a

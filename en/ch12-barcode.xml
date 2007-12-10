@@ -46,7 +46,7 @@
       number system.  EAN-13 barcodes retain UPC-A compatibility by
       simply setting the first number system digit to zero.</para>
 
-    <sect2>
+    <sect2 id="hs.barcode.encode">
       <title>EAN-13 encoding</title>
 
       <para>Before we worry about decoding an EAN-13 barcode, we need
@@ -95,7 +95,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.barcode.array">
     <title>Introducing arrays</title>
 
     <para>The barcode encoding process can largely be table-driven, in
@@ -495,22 +495,25 @@
 	that's <quote>on</quote>, and zero <quote>off</quote>.</para>
 
       <para>However, reusing types for multiple purposes in this way
-	quickly becomes confusing.  To see whether a particular
-	<quote>Pixel</quote> is a number or an on/off value, we can no
-	longer simply glance at a type signature.</para>
+	quickly leads to potential confusion.  To see whether a
+	particular <quote>Pixel</quote> is a number or an on/off
+	value, we can no longer simply glance at a type signature.  We
+	could easily use a value containing <quote>the wrong kind of
+	  number</quote> in some context, and the compiler won't catch
+	it because the types work out.</para>
 
       <para>We could try to work around this by introducing a type
 	alias.  In the same way that we declared <type>Pixel</type> to
 	be a synonym of <type>Word8</type>, we could declare a
 	<type>Bit</type> type as a synonym of <type>Pixel</type>.
-	While this helps readability, type synonyms don't get the
-	compiler to do any work on our behalf.</para>
+	While this helps readability, type synonyms still don't make
+	the compiler do any useful work on our behalf.</para>
 
-      <para>Using type synonyms would cause the compiler to treat
-	<type>Pixel</type> and <type>Bit</type> as exactly the same
-	type, so it could not catch a mistake such as using a
-	<type>Pixel</type> value of 253 in a function that expects
-	<type>Bit</type> values of zero or one.</para>
+      <para>The compiler would treat <type>Pixel</type> and
+	<type>Bit</type> as exactly the same type, so it could not
+	catch a mistake such as using a <type>Pixel</type> value of
+	253 in a function that expects <type>Bit</type> values of zero
+	or one.</para>
 
       <para>If we define the monochrome type ourselves, the compiler
 	will prevent us from accidentally mixing our types up like
@@ -519,17 +522,497 @@
       &Barcode.hs:threshold;
 
       <para>Our <function>threshold</function> function computes the
-	dynamic range of the values in its input array.  It turns
-	values below the given threshold of this range into
-	<code>Zero</code>, and those above into <code>One</code>.
-	Notice that we use one of the folding functions that we
-	defined in <xref
+	minimum and maximum values in its input array.  It takes these
+	and a threshold valued between zero and one, and computes a
+	<quote>pivot</quote> value.  Then for each value in the array,
+	if that value is less than the pivot, the result is
+	<code>Zero</code>, otherwise <code>One</code>. Notice that we
+	use one of the folding functions that we wrote in <xref
 	  linkend="hs.barcode.fold"/>.</para>
     </sect2>
   </sect1>
 
   <sect1>
-    <title></title>
+    <title>What have we done to our image?</title>
+
+    <para>Let's step back for a moment and consider what we've done to
+      our image when we converted it from colour to monochrome. Here's
+      an image captured from a VGA-resolution camera.  All we've done
+      is crop it down to the barcode.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-barcode-photo.jpg"/>
+    </informalfigure>
+
+    <para>The encoded digit string, 9780132114677, is printed below
+      the barcode.  The left group encodes the digits 780132, with 9
+      encoded in their parity.  The right group encodes the digits
+      114677, where the final 7 is the check digit.  Here's a clean
+      encoding of this barcode, from one of the many web sites that
+      offer barcode image generation for free.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-barcode-generated.png"/>
+    </informalfigure>
+
+    <para>We've chosen a row from the captured image, and stretched it
+      out vertically to make it easier to see.  We've superimposed
+      this on top of the perfect image, and stretched it out so that
+      the two are aligned.</para>
+
+    <informalfigure>
+      <graphic fileref="figs/ch12-barcode-example.png"/>
+    </informalfigure>
+
+    <para>The luminance-converted row from the photo is in the dark
+      grey band. It is low in contrast and poor in quality, with
+      plenty of blurring and noise.  The paler band is the same row
+      with the contrast adjusted.</para>
+
+    <para>Somewhat below these two bands is another: this shows the
+      effect of thresholding the luminance-converted row.  Notice that
+      some bars have gotten thicker, others thinner, and many bars
+      have moved a little to the left or right.</para>
+
+    <para>Clearly, any attempt to find exact matches in an image with
+      problems like these is not going to succeed very often.  We must
+      write code that's robust in the face of bars that are too thick,
+      too thin, or not exactly where they're supposed to be.  The
+      widths of our bars will depend on how far our book was from the
+      camera, so we can't make any assumptions about widths,
+      either.</para>
+  </sect1>
+
+  <sect1>
+    <title>Finding matching digits</title>
+
+    <para>Our first problem is to find the digits that
+      <emphasis>might</emphasis> be encoded at a given position.  For
+      the next while, we'll make a few simplifying assumptions.  The
+      first is that we're working with a single row.  The second is
+      that we know exactly where in a row the left edge of a barcode
+      begins.</para>
+
+    <sect2>
+      <title>Run length encoding</title>
+
+      <para>How can we overcome the problem of not even knowing how
+	thick our bars are?  The answer is to run-length encode our
+	image data.</para>
+
+      &Barcode.hs:runLength;
+
+      &barcode.ghci:runLength;
+
+      <para>Since the data we're run-length encoding are just ones and
+	zeros, the encoded numbers will simply alternate between one
+	and zero.  We can throw the encoded values away without losing
+	any useful information, keeping only the run lengths.</para>
+
+      &Barcode.hs:runLengths;
+
+      &barcode.ghci:runLengths;
+
+      <para>The bit patterns above aren't random; they're the left
+	outer guard and first encoded digit of a row from our captured
+	image. If we drop the guard bars, we're left with the run
+	lengths <code>[2,6,4,4]</code>.  How do we find matches
+	for these in the encoding tables we wrote in <xref
+	  linkend="hs.barcode.array"/>?</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Scaling run lengths, and finding approximate
+	matches</title>
+
+      <para>One possible approach is to scale the run lengths so that
+	they sum to one.  We'll use the <type>Ratio Int</type> type
+	instead of the usual <type>Double</type> to manage these
+	scaled values, as <type>Ratio</type>s print out more readably
+	in &ghci;.  This makes interactive debugging and development
+	much easier.</para>
+
+      &Barcode.hs:scaleToOne;
+
+      <para>We use the <type>Score</type> type synonym so that most of
+	our code won't have to care what the underlying type is.  Once
+	we're done developing our code and poking around with &ghci;,
+	we could, if we wish, go back and turn the
+	<quote>Score</quote> type synonym into <type>Double</type>s,
+	without changing any code.</para>
+
+      <para>We can use <function>scaleToOne</function> to scale a
+	sequence of digits that we're searching for.  We've now
+	corrected for variations in bar widths due to distance, as
+	there should be a pretty close match between an entry in a
+	scaled run length encoding table and a run length sequence
+	pulled from an image.</para>
+
+      <para>The next question is how we turn the intuitive idea of
+	<quote>pretty close</quote> into a measure of <quote>close
+	  enough</quote>. Given two scaled run length sequences, we
+	can calculate an approximate <quote>distance</quote> between
+	them as follows.</para>
+
+      &Barcode.hs:distance;
+
+      <para>An exact match will give a distance of zero, with weaker
+	matches resulting in larger distances.</para>
+
+      &barcode.ghci:distance;
+
+      <para>Given a scaled run length table, we choose the best few
+	matches in that table for a given input sequence.</para>
+
+      &Barcode.hs:bestScores;
+    </sect2>
+
+    <sect2>
+      <title>Remembering a match's parity</title>
+
+      <para>For each match in the left group, we have to remember
+	whether we found it in the even parity table or the odd
+	table.</para>
+
+      &Barcode.hs:Parity;
+
+      <para>We're wrapping a value in the parity with which it was
+	encoded, and making it a <code>Functor</code> instance so that
+	we can easily manipulate parity-encoded values.</para>
+
+      <para>We'd like to be able to sort parity-encoded values based
+	on the values they contain.  There's a lovely combinator we
+	can use for this called <function>on</function>.</para>
+
+      &Barcode.hs:compareWithoutParity;
+
+      <para>In case it's unclear, try thinking of
+	<function>on</function> as a function of two arguments,
+	<varname>f</varname> and <varname>g</varname>, which returns a
+	function of two arguments, <varname>x</varname> and
+	<varname>y</varname>.  It calls <function>g</function> on
+	<varname>x</varname> and on <varname>y</varname>, then
+	<function>f</function> on the two results (hence the name
+	<function>on</function>).</para>
+
+      <para>The <function>on</function> function was added to the
+	<code>Data.Function</code> module in &GHC; 6.8.1.  If you're
+	stuck using an older version of &GHC;, you'll have to define
+	it yourself.</para>
+
+      <para>Wrapping a match in a parity value is
+	straightforward.</para>
+
+      &Barcode.hs:bestLeftRight;
+
+      <para>Once we have the best left-hand matches from the even and
+	odd tables, we sort them based only on the quality of each
+	match.</para>
+
+      <sect3>
+	<title>Another kind of laziness, of the keyboarding
+	  variety</title>
+
+	<para>In our definition of the <type>Parity</type> type, we
+	  could have used Haskell's record syntax to avoid the need to
+	  write a <type>fromParity</type> function.  In other words,
+	  we could have written it as follows.</para>
+
+	&Barcode.hs:AltParity;
+
+	<para>So why didn't we do this?  The answer is slightly
+	  shameful, and has to do with interactive debugging in
+	  &ghci;.  When we tell &GHC; to automatically derive a
+	  <type>Show</type> instance for a type, it produces different
+	  code depending on whether or not we declare the type with
+	  record syntax.</para>
+
+	&barcode.ghci:verbosity;
+
+	<para>The <type>Show</type> instance for the variant that uses
+	  record syntax is considerably more verbose.  This creates
+	  much more noise that we must scan through when we're trying
+	  to read, say, a list of parity-encoded values output by
+	  &ghci;.</para>
+
+	<para>Of course we could write our own, less noisy,
+	  <type>Show</type> instance.  It's simply less effort to
+	  avoid record syntax and write our own
+	  <type>fromParity</type> function instead, letting &GHC;
+	  derive a more terse <type>Show</type> instance for us.  This
+	  isn't an especially satisfying rationale, but programmer
+	  laziness is an end in itself.</para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Chunking a list</title>
+
+      <para>A common aspect of working with lists is wanting to
+	<quote>chunk</quote> them.  For example, each digit in a
+	barcode is encoded using four runs, but the contents of a row
+	is a flat list.  We can turn it into a list of four-element
+	lists as follows.</para>
+
+      &Barcode.hs:chunksOf;
+
+      <para>It's somewhat rare that we need to write generically
+	useful list manipulation functions like this.  Quite often, a
+	glance through the <code>Data.List</code> module will find us
+	a function that does exactly, or close enough to, what we
+	need.</para>
+    </sect2>
+
+    <sect2>
+      <title>Generating a list of candidate digits</title>
+
+      <para>With our small army of helper functions deployed, the
+	function that generates lists of candidate matches for each
+	digit group is easy to write.  First of all, we take care of a
+	few early checks to determine whether matching even makes
+	sense.  A list of runs must start on a black
+	(<code>Zero</code>) bar, and contain enough bars.</para>
+
+      &Barcode.hs:candidateDigits.head;
+
+      <para>If any call to <function>bestLeft</function> or
+	<function>bestRight</function> results in an empty list, we
+	can't possibly have a match.  Otherwise, we throw away the
+	scores, and return a list of lists of parity-encoded candidate
+	digits.  The outer list is twelve elements long, one per digit
+	in the barcode.  The digits in each sublist are ordered by
+	match quality.</para>
+
+      <para>Here's a glance at the candidate digits chosen for each
+	group of bars, from a row taken from the image above.</para>
+
+      &barcode.ghci:candidateDigits;
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Turning digit soup into an answer</title>
+
+    <para>We've got yet another problem to solve now.  We have many
+      candidates for the last twelve digits of the barcode.  In
+      addition, we need to use the parities of the first six digits to
+      figure out what the first digit is.  Finally, we need to ensure
+      that our answer's check digit makes sense.</para>
+
+    <para>This seems quite challenging!  We have a lot of uncertain
+      data; what should we do?  It's reasonable to ask if we could
+      perform a brute force search.  Given the candidates we saw in
+      the &ghci; session above, how many combinations would we have to
+      examine?</para>
+
+    &barcode.ghci:combinations;
+
+    <para>So much for that idea.  Once again, we'll initially focus on
+      a subproblem that we know how to solve, and postpone worrying
+      about the rest.</para>
+
+    <sect2>
+      <title>Solving for check digits in parallel</title>
+
+      <para>Let's abandon the idea of searching for now, and focus on
+	computing a check digit.  The check digit for a barcode can
+	assume one of ten possible values.  For a given parity digit,
+	which input sequences can cause that digit to be
+	computed?</para>
+
+      &Barcode.hs:Map;
+
+      <para>In this map, the key is a check digit, and the value is a
+	sequence that evaluates to this check digit.  We have two
+	further map types based on this definition.</para>
+
+      &Barcode.hs:MapTypes;
+
+      <para>We'll generically refer to these as <quote>solution
+	  maps</quote>, because they show us the digit sequence that
+	<quote>solves for</quote> each check digit.</para>
+
+      <para>Given a single digit, here's how we can update an existing
+	solution map.</para>
+
+      &Barcode.hs:updateMap;
+
+      <para>With an existing check digit drawn from the map, the
+	sequence that solves for it, and a new input digit, this
+	function updates the map with the new sequence that leads to
+	the new check digit.</para>
+
+      <para>This might seem a bit much to digest, but an example will
+	make it clear.  Let's say the check digit we're looking at is
+	<code>4</code>, the sequence leading to it is
+	<code>[1,3]</code>, and the digit we want to add to the map is
+	<code>8</code>.  The sum of <code>4</code> and <code>8</code>,
+	modulo 10, is <code>2</code>, so this is the key we'll be
+	inserting into the map.  The sequence that leads to the new
+	check digit <code>2</code> is thus <code>[8,1,3]</code>, so
+	this is what we'll insert as the value.</para>
+
+      <para>For each digit in a sequence, we'll generate a new
+	solution map, using that digit and an older solution
+	map.</para>
+
+      &Barcode.hs:useDigit;
+
+      <para>Once again, let's illustrate what this code is doing using
+	some examples.  This time, we'll use &ghci;.</para>
+
+      &barcode.ghci:useDigit;
+
+      <para>The new solution map that we feed to
+	<function>useDigits</function> starts out empty.  We populate
+	it completely by folding <function>useDigits</function> over a
+	sequence of input digits.</para>
+
+      &Barcode.hs:incorporateDigits;
+
+      <para>This generates a complete new solution map from an old
+	one.</para>
+
+      &barcode.ghci:incorporateDigits;
+
+      <para>Finally, we must build the complete solution map.  We
+	start out with an empty map, then fold over each digit
+	position from the barcode in turn.  For each position, we
+	create a new map from our guesses at the digits in that
+	position.  This becomes the old map for the next round of the
+	fold.</para>
+
+      &Barcode.hs:finalDigits;
+
+      <para>(From the <function>checkDigit</function> function that we
+	defined in <xref linkend="hs.barcode.encode"/>, we remember that
+	the check digit computation requires that we multiply every
+	other digit by <code>3</code>.)</para>
+
+      <para>How long is the list with which we call
+	<function>finalDigits</function>?  We don't yet know what the
+	first digit of our sequence is, so obviously we can't provide
+	that.  And we don't want to include our guess at the check
+	digit.  So the list must be eleven elements long.</para>
+
+      <para>Once we've returned from <function>finalDigits</function>,
+	our solution map is necessarily incomplete, because we haven't
+	yet figured out what the first digit is.</para>
+    </sect2>
+
+    <sect2>
+      <title>Completing the solution map with the first digit</title>
+
+      <para>We haven't yet discussed how we should extract the value
+	of the first digit from the parities of the left group of
+	digits.  This is a straightforward matter of reusing code that
+	we've already written.</para>
+
+      &Barcode.hs:firstDigit;
+
+      <para>Each element of our partial solution map now contains a
+	reversed list of digits and parity data.  Our next task is to
+	create a completed solution map, by computing the first digit
+	in each sequence, and using it to create that last solution
+	map.</para>
+
+      &Barcode.hs:addFirstDigit;
+
+      <para>Along the way, we get rid of the <type>Parity</type> type,
+	and reverse our earlier multiplications by three.  Our last
+	step is to complete the check digit computation.</para>
+
+      &Barcode.hs:buildMap;
+    </sect2>
+
+    <sect2>
+      <title>Finding the correct sequence</title>
+
+      <para>We now have a map of all possible checksums and the
+	sequences that lead to each.  All that remains is to take our
+	guesses at the check digit, and see if we have a corresponding
+	solution map entry.</para>
+
+      &Barcode.hs:solve;
+
+      <para>Let's try this out on the row we picked from our
+	photo, and see if we get a sensible answer.</para>
+
+      &barcode.ghci:solve;
+
+      <para>Excellent!  This is exactly the string encoded in the
+	barcode we photographed.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Working with row data</title>
+    
+    <para>We've mentioned repeatedly that we are taking a single row
+      from our image.  Here's how.</para>
+
+    &Barcode.hs:withRow;
+
+    <para>The <function>withRow</function> function takes a row,
+      converts it to monochrome, then calls another function on the
+      run length encoded row data.  To get the row data, it calls
+      <function>row</function>.</para>
+
+    &Barcode.hs:row;
+
+    <para>This function takes a bit of explaining.  Whereas
+      <function>fmap</function> transforms the
+      <emphasis>values</emphasis> in an array,
+      <function>ixmap</function> transforms the
+      <emphasis>indices</emphasis> of an array.  It's a very powerful
+      function that lets us <quote>slice</quote> an array however we
+      please.</para>
+
+    <para>The first argument to <function>ixmap</function> is the
+      bounds of the new array.  These bounds can be of a different
+      dimension than the source array.  In <code>row</code>, for
+      example, we're extracting a one-dimensional array from a
+      two-dimensional array.</para>
+
+    <para>The second argument is a <emphasis>projection</emphasis>
+      function.  This takes an index from the new array and returns an
+      index into the source array.  The value at that projected index
+      then becomes the value in the new array at the original index.
+      For example, if we pass <code>2</code> into the projection
+      function and it returns <code>(2,2)</code>, the element at index
+      <code>2</code> of the new array will be taken from element
+      <code>(2,2)</code> of the source array.</para>
+  </sect1>
+
+  <sect1>
+    <title>Pulling it all together</title>
+
+    <para>Our <function>candidateDigits</function> function gives an
+      empty result unless we call it at the beginning of a barcode
+      sequence.  We can easily scan across a row until we get a match
+      as follows.</para>
+
+    &Barcode.hs:findMatch;
+
+    <para>Here, we're taking advantage of lazy evaluation.  The call
+      to <function>map</function> over <function>tails</function> will
+      only be evaluated until it results in a non-empty list.</para>
+
+    <para>Next, we choose a row from an image, and try to find a
+      barcode in it.</para>
+
+    &Barcode.hs:findEAN13;
+
+    <para>Finally, here's a very simple wrapper that prints barcodes
+      from whatever netpbm image files we pass into our program on the
+      command line.</para>
+
+    &Barcode.hs:main;
+
+    <para>Notice that, of the more than thirty functions we've defined
+      in this chapter, <function>main</function> is the only one that
+      lives in <type>IO</type>.</para>
   </sect1>
 </chapter>
 
