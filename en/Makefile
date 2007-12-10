@@ -33,7 +33,7 @@ src-examples := \
 	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs)
 
 src-figs := \
-	$(wildcard figs/*.jpg)
+	$(wildcard figs/*.jpg) \
 	$(wildcard figs/*.png)
 
 obj-web := html
