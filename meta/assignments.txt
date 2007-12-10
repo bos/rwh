@@ -12,7 +12,7 @@ BOS        8. Bringing it all together: file name matching and
 BOS        9. I/O case study: a DSL for searching the filesystem (DONE)
 BOS       10. Handling binary files and formats (DONE)
 DONS      11. Testing the Haskell way: QuickCheck
-BOS       12. Code case study: barcode recognition (DONE)
+BOS       12. Code case study: barcode recognition
 JG        13. Designing and using data structures (DONE)
 BOS       14. Monads
 BOS       15. Monad case study: refactoring the filesystem seacher
