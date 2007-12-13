@@ -216,7 +216,7 @@
 	examples above, this is not hard to do.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.barcode.array.mutable">
       <title>Modifying array elements</title>
 
       <para>While there exist <quote>modification</quote> functions
@@ -788,6 +788,268 @@
 	group of bars, from a row taken from the image above.</para>
 
       &barcode.ghci:candidateDigits;
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Life without arrays or hash tables</title>
+
+    <para>In an imperative language, the array is as much a
+      <quote>bread and butter</quote> type as a list or tuple in
+      Haskell.  We take it for granted that an array in an imperative
+      language is usually mutable; we can change an element of an
+      array whenever it suits us.</para>
+
+    <para>As we mentioned in <xref
+	linkend="hs.barcode.array.mutable"/>, Haskell arrays are
+      <emphasis>not</emphasis> mutable.  This means that to
+      <quote>modify</quote> a single array element, a copy of the
+      entire array is made, with that single element set to its new
+      value.  Clearly, this approach is not a winner for
+      performance.</para>
+
+    <para>The mutable array is a building block for another ubiquitous
+      imperative data structure, the hash table.  In the typical
+      implementation, an array acts as the <quote>spine</quote> of the
+      table, with each element containing a list of elements.  To add
+      an element to a hash table, we hash the element to find the
+      array offset, and modify the list at that offset to add the
+      element to it.</para>
+
+    <para>If arrays aren't mutable, to updating a hash table, we must
+      create a new one.  We copy the array, putting a new list at the
+      offset indicated by the element's hash.  We don't need to copy
+      the lists at other offsets, but we've already dealt performance
+      a fatal blow simply by having to copy the spine.</para>
+
+    <para>At a single stroke, then, immutable arrays have eliminated
+      <emphasis>two</emphasis> canonical imperative data structures
+      from our toolbox.  Arrays are barely useful in pure Haskell
+      code; we'll have to do quite a bit of learning before we can use
+      mutable arrays.</para>
+
+    <sect2>
+      <title>A forest of solutions</title>
+
+      <para>This is not the calamitous situation that it might seem,
+	though.  Arrays and hash tables are often used as collections
+	indexed by a key, and in Haskell we use
+	<emphasis>trees</emphasis> for this purpose.</para>
+
+      <para>Implementing a naive tree type is particularly easy in
+	Haskell.  Beyond that, more useful tree types are also
+	unusually easy to implement.  Self-balancing structures, such
+	as red-black trees, have struck fear into generations of
+	undergraduate computer science students, because the balancing
+	algorithms are notoriously hard to get right.</para>
+
+      <para>Haskell's combination of algebraic data types, pattern
+	matching, and guards reduce even the hairiest of balancing
+	operations to a few lines of code.  We'll bite back our
+	enthusiasm for building trees, however, and focus on why
+	they're particularly useful in a pure functional
+	language.</para>
+
+      <para>The attraction of a tree to a functional programmer is
+	<emphasis>cheap modification</emphasis>.  We don't break the
+	immutability rule: trees are immutable just like everything
+	else.  However, when we modify a tree, creating a new tree, we
+	can share most of the structure of the tree between the old
+	and new versions.  For example, in a tree containing 10,000
+	nodes, we might expect that the old and new versions will
+	share about 9,985 elements when we add or remove one.  In
+	other words, the number of elements modified per update
+	depends on the height of the tree, or the logarithm of the
+	size of the tree.</para>
+
+      <para>Haskell's standard libraries provide two collection types
+	that are implemented using balanced trees behind the scenes:
+	<code>Data.Map</code> for key/value pairs, and
+	<code>Data.Set</code> for sets of values.  As we'll be using
+	<code>Data.Map</code> in the sections that follow, we'll give
+	a quick introduction to it below. <code>Data.Set</code> is
+	sufficiently similar that you should be able to pick it up
+	quickly.</para>
+
+      <note>
+	<title>A word about performance</title>
+
+	<para>Compared to a hash table, a well-implemented purely
+	  functional tree data structure can perform competitively.
+	  You should not approach trees with the assumption that your
+	  code will pay a performance penalty.</para>
+      </note>
+    </sect2>
+
+    <sect2>
+      <title>A brief introduction to maps</title>
+
+      <para>The <code>Data.Map</code> module provides a parameterised
+	type, <type>Map k a</type>, that maps from a key type <varname
+	  role="type">k</varname> to a value type <varname
+	  role="type">a</varname>.  It is written as a size-balanced
+	binary tree, but the implementation is completely
+	opaque.</para>
+
+      <para><type>Map</type> is strict in its keys, but lazy in its
+	values.  In other words, the <quote>spine</quote>, or
+	structure, of the map is always kept up to date, but values in
+	the map aren't evaluated unless you force them to be.</para>
+
+      <para>It is very important to remember this, as
+	<type>Map</type>'s laziness over values is a frequent source
+	of space leaks among coders who are not expecting it.</para>
+
+      <para>Because the <code>Data.Map</code> module contains a number
+	of names that clash with Prelude names, it's usually imported
+	in qualified form.  In this chapter, we'll import it using the
+	prefix <code>M</code>.</para>
+
+      &Barcode.hs:import.Map;
+
+      <sect3>
+	<title>Type constraints</title>
+
+	<para>The <type>Map</type> type doesn't place any explicit
+	  constraints on its key type, but most of the module's useful
+	  functions require that keys be instances of
+	  <code>Ord</code>. This is noteworthy, as it's an example of
+	  a common design pattern in Haskell code: type constraints
+	  are pushed out to where they're actually needed, not
+	  necessarily applied at the point where they'd result in the
+	  least fingertyping for a library's author.</para>
+
+	<para>Neither the <type>Map</type> type nor any functions in
+	  the module constrain the types that can be used as
+	  values.</para>
+      </sect3>
+
+      <sect3>
+	<title>Partial application awkwardness</title>
+
+	<para>For some reason, the type signatures of the functions in
+	  <code>Data.Map</code> are not generally friendly to partial
+	  application. The map parameter always comes last, whereas it
+	  would be easier to partially apply if it were first.  As a
+	  result, code that uses partially applied map functions
+	  almost always contains adapter functions to fiddle with
+	  argument ordering.</para>
+      </sect3>
+
+      <sect3>
+	<title>Getting started with the API</title>
+
+	<para>The <code>Data.Map</code> module has a large
+	  <quote>surface area</quote>: it exports dozens of functions.
+	  Just a handful of these comprise the most frequently used
+	  core of the module.</para>
+
+	<para>To create an empty map, or one that contains one
+	  key/value pair, we use <function>empty</function> or
+	  <function>singleton</function>, respectively.</para>
+
+	&ch12-map.ghci:create;
+
+	<para>Since the implementation is abstract, we can't pattern
+	  match on <type>Map</type> values.  Instead, there are two
+	  common lookup functions.  The <function>lookup</function>
+	  function has a slightly tricky type signature, but don't
+	  worry; all will become clear shortly, in <xref
+	    linkend="hs.monads"/>.</para>
+
+	&ch12-map.ghci:lookup.type;
+
+	<para>Most often, the type parameter <varname
+	    role="type">m</varname> in the result is
+	  <type>Maybe</type>.  In other words, if the map contains a
+	  value for the given key, <function>lookup</function> will
+	  return the value wrapped in <code>Just</code>.  Otherwise,
+	  it will return <code>Nothing</code>.</para>
+
+	&ch12-map.ghci:lookup;
+
+	<para>The <function>findWithDefault</function> function takes
+	  a value to return if the key isn't in the map.</para>
+
+	<warning>
+	  <title>Beware the partial functions!</title>
+
+	  <para>There exists a <function>(!)</function> operator that
+	    performs a lookup and returns the unadorned value
+	    associated with a key (i.e. not wrapped in
+	    <code>Maybe</code> or whatever).  Unfortunately, it is not
+	    a total function: It calls <function>error</function> if
+	    the key is not present in the map.</para>
+
+	  <para>We mention this function only to urge you to avoid any
+	    temptation to use it.  Unless, that is, you like creating
+	    subtly buggy code.</para>
+	</warning>
+
+	<para>To add a key/value pair to the map, the most useful
+	  functions are <function>insert</function> and
+	  <function>insertWith'</function>.  The <code>insert</code>
+	  function simply inserts a value into the map, overwriting
+	  any matching value that may already have been
+	  present.</para>
+
+	&ch12-map.ghci:insert;
+
+	<para>The <function>insertWith'</function> function takes a
+	  further <emphasis>combining function</emphasis> as its
+	  argument.  If no key was present in the map, the new value
+	  is inserted verbatim.  Otherwise, the combining function is
+	  called on the new and old values, and its result is inserted
+	  into the map.</para>
+
+	&ch12-map.ghci:insertWith;
+	
+	<para>As the tick at the end of its name suggests,
+	  <function>insertWith'</function> evaluates the combining
+	  function strictly.  This allows you to avoid space leaks.
+	  While there exists a lazy variant
+	  (<function>insertWith</function> without the trailing tick
+	  in the name), it's rarely what you actually want.</para>
+
+	<para>The <function>delete</function> function deletes the
+	  given key from the map.  It returns the map unmodified if
+	  the key was not present.</para>
+
+	&ch12-map.ghci:delete;
+
+	<para>Finally, there are several efficient functions for
+	  performing set-like operations on maps.  Of these, we'll be
+	  using <function>union</function> below.  This function is
+	  <quote>left biased</quote>: if two maps contain the same
+	  key, the result will contain the value from the left
+	  map.</para>
+
+	&ch12-map.ghci:union;
+
+	<para>We have barely covered ten per cent of the
+	  <code>Data.Map</code> API.  For further inspiration, we
+	  encourage you to browse the module documentation.  It's an
+	  impressively complete module.</para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Further reading</title>
+
+      <para>The book <citation><biblioref
+	    linkend="bib.okasaki99"/></citation> gives a wonderful and
+	thorough implementor's tour of many pure functional data
+	structures, including several kinds of balanced tree.  It also
+	provides valuable insight into reasoning about the performance
+	of purely functional data structures and lazy
+	evaluation.</para>
+
+      <para>We recommend Okasaki's book as essential reading for
+	functional programmers.  If you're not convinced, Okasaki's
+	PhD thesis, <citation><biblioref
+	    linkend="bib.okasaki96"/></citation>, is a less complete
+	and polished version of the book, and it is available for free
+	online.</para>
     </sect2>
   </sect1>
 

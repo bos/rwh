@@ -25,6 +25,34 @@
       <issn>0956-7968</issn>
     </biblioset>
   </biblioentry>
+
+  <biblioentry id="bib.okasaki99">
+    <abbrev>Okasaki99</abbrev>
+    <copyright><year>1999</year></copyright>
+    <author><firstname>Chris</firstname><surname>Okasaki</surname></author>
+    <title>Purely Functional Data Structures</title>
+    <publisher>
+      <publishername><ulink
+	  url="http://www.cambridge.org/">Cambridge University
+	  Press</ulink></publishername>
+    </publisher>
+    <isbn>0521663504</isbn>
+  </biblioentry>
+
+  <biblioentry id="bib.okasaki96">
+    <abbrev>Okasaki96</abbrev>
+    <copyright><year>1996</year></copyright>
+    <author><firstname>Chris</firstname><surname>Okasaki</surname></author>
+    <title><ulink
+	url="http://www.cs.cmu.edu/~rwh/theses/okasaki.pdf">Purely
+	Functional Data Structures</ulink></title>
+    <affiliation>
+      <orgname>Carnegie Mellon University</orgname>
+    </affiliation>
+    <bibliomisc>This is Okasaki's PhD thesis, a less complete
+      precursor to <citation><biblioref
+	  linkend="bib.okasaki99"/></citation>.</bibliomisc>
+  </biblioentry>
 </bibliography>
 <!--
 local variables: 

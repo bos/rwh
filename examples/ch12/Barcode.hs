@@ -12,7 +12,9 @@ import Control.Monad (forM_)
 import Data.Bits (shiftR, xor, (.&.))
 import Data.Word (Word8)
 import System.Environment (getArgs)
+{-- snippet import.Map --}
 import qualified Data.Map as M
+{-- /snippet import.Map --}
 
 import Parse
 
