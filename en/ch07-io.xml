@@ -1018,7 +1018,7 @@ Data: Done!
         in a line printed out.
       </para>
     </sect2>
-    <sect2>
+    <sect2 id="hs.io.bind">
       <title>Sequencing</title>
       <para id="x_WE">
         We mentioned earlier that &do; blocks are a shortcut notation.  This

@@ -2,7 +2,240 @@
 
 <chapter id="hs.monads" revision="unpublished">
   <title>Monads</title>
-  <remark>FIXME.</remark>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>In <xref linkend="hs.io"/>, we talked about the
+      <type>IO</type> monad, but we intentionally kept the discussion
+      narrowly focused on how to communicate with the outside world.
+      We didn't discuss what a monad <emphasis>is</emphasis>.</para>
+
+    <para>Monads have a reputation of being abstract and difficult to
+      understand. If you've heard such concerns, please put aside for
+      a while any doubts you might have.  Concerning abstraction, we've
+      already seen in <xref linkend="hs.io"/> that the <type>IO</type>
+      monad is easy to work with.  Notational differences aside,
+      writing code in the <type>IO</type> monad isn't much different
+      from coding in any other imperative language.</para>
+
+    <para>As for difficulty, we quietly infiltrated monads into
+      several earlier chapters of this book, when we had practical
+      problems to solve.  What we aim to show you is that, far from
+      being difficult to understand, a monad is often an
+      <emphasis>obvious</emphasis> and <emphasis>practical</emphasis>
+      tool to help solve a problem.</para>
+
+    <para>In this chapter, we'll reveal where we hid those monads,
+      explain what they really are, and discuss each of the most
+      widely used monads.</para>
+  </sect1>
+
+  <sect1>
+    <title>Revisiting earlier code examples</title>
+
+    <sect2>
+      <title>Maybe chaining</title>
+
+      <para>Let's take another look at the
+	<function>parseP5</function> function that we wrote in <xref
+	  linkend="hs.binary"/>.</para>
+
+      &PNM.hs:parseP5.noid;
+
+      <para>That function threatened to march off the right side of
+	the page if it got much longer.  We brought the staircasing
+	under control using the <function>(&gt;&gt;?)</function>
+	function.</para>
+
+      &PNM.hs:bind.noid;
+
+      <para>We carefully chose the type of
+	<function>(&gt;&gt;?)</function> to let us chain together
+	functions that return <type>Maybe</type>.  So long as the
+	result type of one function matches the parameter of the next,
+	we can chain functions returning <type>Maybe</type> together
+	indefinitely.  The body of <function>(&gt;&gt;?)</function>
+	hides the details of whether the functions we pass in are
+	actually called.</para>
+    </sect2>
+
+    <sect2>
+      <title>Implicit state</title>
+
+      <para>Useful as <function>(&gt;&gt;?)</function> was for
+	cleaning up the structure of <function>parseP5</function>, we
+	had to incrementally consume pieces of a string as we parsed
+	it.  This forced us to pass the current value of the string
+	down our chain of <type>Maybe</type>s, wrapped up in a tuple.
+	Each function in the chain put a result into one element of
+	the tuple, and the unconsumed remainder of the string into the
+	other.</para>
+
+      &PNM.hs:parseP5_take2.noid;
+
+      <para>Once again, we were faced with a pattern of repeated
+	behaviour: consume some string, return a result, and return
+	the remaining string for the next function to consume.
+	However, this pattern was more insidious: if we wanted to pass
+	another piece of information down the chain, we'd have to
+	modify nearly every element of the chain, turning each
+	two-tuple into a three-tuple!</para>
+
+      <para>We addressed this by moving the responsibility for
+	managing the current piece of string out of the individual
+	functions in the chain, and into the function that we used to
+	chain them together.</para>
+
+      &Parse.hs:bind.noid;
+
+      <para>We also hid the details of the parsing state in the
+	<type>ParseState</type> type.  Even the
+	<function>getState</function> and
+	<function>putState</function> functions don't inspect the
+	parsing state, so any modification to <type>ParseState</type>
+	will have no effect on any existing code.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Looking for shared patterns</title>
+
+    <para>When we look at the above examples in detail, they don't
+      seem to have much in common.  Obviously, they're both concerned
+      with chaining functions together, and with hiding details to let
+      us write tidier code.  However, let's take a step back and
+      consider them in <emphasis>less</emphasis> detail.</para>
+
+    <para>First, let's look at the type definitions.</para>
+
+    &Maybe.hs:Maybe;
+
+    &Parse.hs:Parse;
+
+    <para>The common feature of these two types is that each has a
+      single free type variable on the left of the definition, which
+      is used somewhere on the right.</para>
+
+    <para>Next, we'll examine the chaining functions that we wrote for
+      the two types.</para>
+
+    &monadness.ghci:Maybe;
+
+    &monadness.ghci:Parse;
+
+    <para>These functions have strikingly similar types.  If we were
+      to turn those type constructors into a type variable, we'd end
+      up with a single more abstract type.</para>
+
+    &Maybe.hs:chain;
+
+    <para>Finally, in each case we have a function that takes a
+      <quote>plain</quote> value, and <quote>injects</quote> it into
+      the target type.  For <type>Maybe</type>, this function is
+      simply the value constructor <code>Just</code>, but the injector
+      for <type>Parse</type> is more complicated.</para>
+
+    &Parse.hs:identity;
+
+    <para>Again, it's not the details or complexity that we're
+      interested in, it's the fact that each of these types has this
+      <quote>injector</quote> function.</para>
+
+    &Maybe.hs:inject;
+
+    <para>It is <emphasis>exactly</emphasis> these three properties,
+      and a few rules about how we can use them together, that define
+      a monad in Haskell.  Let's revisit the above list in condensed
+      form.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>A type <varname role="type">m</varname> with one free
+	  type variable <varname role="type"></varname>.</para>
+      </listitem>
+      <listitem>
+	<para>A function of type <type>m a -> (a -> m b) -> m b</type>
+	  for chaining the output of one function into the input of
+	  another.</para>
+      </listitem>
+      <listitem>
+	<para>A function of type <type>a -> m a</type> for injecting a
+	  normal value into the chain, i.e. it wraps a type
+	  <type>a</type> with the type constructor
+	  <type>m</type>.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The properties that make the <type>Maybe</type> type a monad
+      are its type constructor <type>Maybe a</type>, our chaining
+      function <function>(&gt;&gt;?)</function>, and the injector
+      function <function>Just</function>.</para>
+
+    <para>For <type>Parse</type>, the corresponding properties are the
+      type constructor <type>Parse a</type>, the chaining function
+      <function>(==&gt;)</function>, and the injector function
+      <function>identity</function>.</para>
+
+    <para>We have intentionally said nothing about how the chaining
+      and injection functions of a monad should behave, and that's
+      because it very nearly doesn't matter.  In fact, monads are
+      ubiquitous in Haskell code precisely because they are so
+      simple and impose so few rules on how they're used.</para>
+  </sect1>
+
+  <sect1>
+    <title>The Monad typeclass</title>
+
+    <para>We can capture the notions of chaining and injection, and
+      the types we want them to have, in a Haskell typeclass.  The
+      <code>Monad</code> typeclass is a standard part of the
+      Prelude.</para>
+
+    &Maybe.hs:Monad;
+
+    <para>Here, &bind; is the chaining function.  We've already been
+      introduced to it in <xref linkend="hs.io.bind"/>.  It's often
+      referred to as <quote>bind</quote>, as it binds two adjacent
+      functions together so that one uses the result of the
+      other.</para>
+
+    <para>Our injection function is &return;.  As we noted in <xref
+      linkend="hs.io.return"/>, the choice of the name &return; is a
+      little unfortunate.  That name is widely used in imperative
+      languages, where it has a fairly well understood meaning.  In
+      Haskell, its behaviour is much less constrained.  In particular,
+      calling &return; in the middle of a chain of functions won't
+      cause the chain to exit early.  It's more helpful to remember it
+      as <quote>inject</quote>.</para>
+
+    <para>While &bind; and &return; are the core functions of the
+      <code>Monad</code> typeclass, it also defines two other
+      functions.  The first is &bind_;, which performs chaining, but
+      ignores whatever was wrapeyped up on the left.</para>
+
+    &Maybe.hs:bind_;
+
+    <para>As shown above, the default implementation for &bind_; is in
+      terms of <function>&bind;</function>.</para>
+
+    <para>The second non-core <code>Monad</code> function is &fail;,
+      which takes an error message and does something to make the
+      chain of functions fail.</para>
+
+    &Maybe.hs:fail;
+
+    <warning>
+      <title>Beware of fail</title>
+
+      <para>Many <code>Monad</code> instances don't override the
+	default implementation of &fail; that we show here, which
+	means that &fail; calls <function>error</function>.  Calling
+	<function>error</function> is usually highly undesirable, so
+	don't call &fail; unless you know that you're using a monad
+	that implements it to do something more sensible.</para>
+    </warning>
+  </sect1>
 </chapter>
 
 <!--

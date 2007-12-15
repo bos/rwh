@@ -86,11 +86,11 @@ getBytes n s = let n' = fromIntegral n
                   else Just ht
 {-- /snippet parseP5.functions --}
 
-{-- snippet then --}
+{-- snippet bind --}
 (>>?) :: Maybe a -> (a -> Maybe b) -> Maybe b
 Nothing >>? _ = Nothing
 Just v >>? f  = f v
-{-- /snippet then --}
+{-- /snippet bind --}
 
 {-- snippet parseP5_take2 --}
 parseP5_take2 :: L.ByteString -> Maybe (Greymap, L.ByteString)

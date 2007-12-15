@@ -154,7 +154,7 @@
     <para>We can quite easily write a function that captures this
       second pattern.</para>
 
-    &PNM.hs:then;
+    &PNM.hs:bind;
 
     <para>The <function>(&gt;&gt;?)</function> function acts very
       simply: it takes a value as its left argument, and a function as
@@ -228,7 +228,9 @@
       message.  This we achieve using <type>Either</type> to represent
       two possible results of a parse.  The second is the update of
       the parser state and presentation of an intermediate result,
-      represented by the type of <function>runParse</function>.</para>
+      represented by the type of <function>runParse</function>.  In
+      other words, if a parse succeeds, it will generate both a result
+      and a new parse state.</para>
 
     <para>Let's try to define a minimal parser.</para>
 
@@ -271,7 +273,7 @@
       <function>(&gt;&gt;?)</function> function, acting as
       <quote>glue</quote> to let us chain functions together.</para>
 
-    &Parse.hs:then;
+    &Parse.hs:bind;
 
     <para>Indeed, the types of the two functions are very similar. The
       body of <function>(==&gt;)</function> is interesting, and ever
@@ -305,6 +307,29 @@
       right is the current <type>ParseState</type>.  This makes it
       easier to follow what these functions are doing.</para>
     
+    <para>The <function>getState</function> function extracts the
+      current parsing state, so that the caller can access the string.
+      The <function>putState</function> function replaces the current
+      parsing state with a new one.  This becomes the state that will
+      be seen by the next function in the
+      <function>(==&gt;)</function> chain.</para>
+
+    <para>these functions let us move explicit state handling into the
+      bodies of only those functions that need it.  Many functions
+      don't need to know what the current state is, and so they'll
+      never call <function>getState</function> or
+      <function>putState</function>.  This lets us write more compact
+      code than our earlier parser, which had to pass tuples around by
+      hand.</para>
+
+    <para>Even better, because we've packaged up the details of the
+      parsing state into the <type>ParseState</type> type, if we want
+      to add more information to the parsing state, all we need to do
+      is modify the definition of <type>ParseState</type>, and the
+      bodies of whatever functions need the new information.  Compare
+      this to our earlier parsing code, where we'd have had to turn
+      every use of a two-tuple into a three-tuple, and the advantage
+      should be clear.</para>
   </sect1>
 
   <sect1>
@@ -457,7 +482,7 @@
       &functor.ghci:EitherInt;
 
       <para>&GHC; has a more powerful type system than the base
-	Haskell 98 standard.  It operates in standard compatibility
+	Haskell 98 standard.  It operates in Haskell 98 compatibility
 	mode by default, for maximal portability.  We can instruct it
 	to allow more flexible instances using a special compiler
 	directive.</para>
@@ -515,11 +540,12 @@
       &functor.ghci:shape;
 
       <para>If you're writing a <type>Functor</type> instance, it's
-	useful to keep these rules in mind, and indeed to test them.
-	Otherwise, the behaviour they specify is
-	<quote>natural</quote> enough that there's no need to memorise
-	them; they just formalise the notions of <quote>do what I
-	  mean</quote>.</para>
+	useful to keep these rules in mind, and indeed to test them,
+	because the compiler can't check the rules we've listed above.
+	On the other hand, if you're simply <emphasis>using</emphasis>
+	functors, the rules are <quote>natural</quote> enough that
+	there's no need to memorise them.  They just formalise a few
+	intuitive notions of <quote>do what I mean</quote>.</para>
     </sect2>
   </sect1>
 

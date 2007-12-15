@@ -1,0 +1,10 @@
+:set -i../ch10
+
+:load PNM
+--# Maybe
+:type (>>?)
+
+--#
+:load Parse
+--# Parse
+:type (==>)

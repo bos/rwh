@@ -49,12 +49,12 @@ bail err = Parse $ \s -> Left $
            "byte offset " ++ show (offset s) ++ ": " ++ err
 {-- /snippet bail --}
 
-{-- snippet then --}
+{-- snippet bind --}
 (==>) :: Parse a -> (a -> Parse b) -> Parse b
 x ==> f = Parse (\st -> case runParse x st of
                           Left err -> Left err
                           Right (a, st') -> runParse (f a) st')
-{-- /snippet then --}
+{-- /snippet bind --}
 
 {-- snippet parse --}
 parse :: Parse a -> L.ByteString -> Either String a
