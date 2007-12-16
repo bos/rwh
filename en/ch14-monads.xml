@@ -24,7 +24,8 @@
       problems to solve.  What we aim to show you is that, far from
       being difficult to understand, a monad is often an
       <emphasis>obvious</emphasis> and <emphasis>practical</emphasis>
-      tool to help solve a problem.</para>
+      tool to help solve a problem.  We'll define a few monads in this
+      chapter, to show how easy it is.</para>
 
     <para>In this chapter, we'll reveal where we hid those monads,
       explain what they really are, and discuss each of the most
@@ -180,8 +181,8 @@
     <para>We have intentionally said nothing about how the chaining
       and injection functions of a monad should behave, and that's
       because it very nearly doesn't matter.  In fact, monads are
-      ubiquitous in Haskell code precisely because they are so
-      simple and impose so few rules on how they're used.</para>
+      ubiquitous in Haskell code precisely because they are so simple:
+      many common programming patterns have a monadic structure.</para>
   </sect1>
 
   <sect1>
@@ -189,12 +190,12 @@
 
     <para>We can capture the notions of chaining and injection, and
       the types we want them to have, in a Haskell typeclass.  The
-      <code>Monad</code> typeclass is a standard part of the
-      Prelude.</para>
+      standard Prelude already defines just such a typeclass, named
+      <code>Monad</code>.</para>
 
     &Maybe.hs:Monad;
 
-    <para>Here, &bind; is the chaining function.  We've already been
+    <para>Here, &bind; is our chaining function.  We've already been
       introduced to it in <xref linkend="hs.io.bind"/>.  It's often
       referred to as <quote>bind</quote>, as it binds two adjacent
       functions together so that one uses the result of the
@@ -211,13 +212,15 @@
 
     <para>While &bind; and &return; are the core functions of the
       <code>Monad</code> typeclass, it also defines two other
-      functions.  The first is &bind_;, which performs chaining, but
-      ignores whatever was wrapeyped up on the left.</para>
+      functions.  The first is &bind_;.  Like &bind;, it performs
+      chaining, but it ignores the value on the left.</para>
 
     &Maybe.hs:bind_;
 
-    <para>As shown above, the default implementation for &bind_; is in
-      terms of <function>&bind;</function>.</para>
+    <para>We use this function for sequencing, when we want to perform
+      actions in a certain order, but don't care what the result of
+      one is.  As we show above, the default implementation for
+      &bind_; is in terms of <function>&bind;</function>.</para>
 
     <para>The second non-core <code>Monad</code> function is &fail;,
       which takes an error message and does something to make the
@@ -235,6 +238,179 @@
 	don't call &fail; unless you know that you're using a monad
 	that implements it to do something more sensible.</para>
     </warning>
+
+    <para>To revisit the parser that we developed in <xref
+	linkend="hs.binary"/>, here is its <code>Monad</code>
+      instance.</para>
+
+    &Parse.hs:Monad;
+
+  </sect1>
+
+  <sect1>
+    <title>Building a monad: show your work!</title>
+
+    <para>In our introduction to monads, we showed how some
+      pre-existing code was already monadic in form.  Now that we are
+      beginning to grasp what a monad is, and we've seen the
+      <code>Monad</code> typeclass, let's build a monad with
+      foreknowledge of what we're doing.</para>
+
+    <para>Pure Haskell code is wonderfully clean to write, but of
+      course it can't perform I/O.  Sometimes, though, we'd like to
+      have a record of decisions we took.  Let's develop a small
+      library to help with this.</para>
+
+    <para>Recall the <function>globToRegex</function> function that we
+      developed in <xref linkend="hs.glob.translate"/>.  Let's modify
+      it so that it keeps a record of each of the special pattern
+      sequences that it translates.  To do this, we'll add a
+      <code>Logger</code> type constructor to our result type.</para>
+
+    &Logger.hs:globToRegex.type;
+
+    <para>Before we get into the details of the <type>Logger</type>
+      monad, we'll show how we use it.</para>
+
+    <sect2>
+      <title>Information hiding</title>
+
+      <para>We'll intentionally keep the internals of the
+	<type>Logger</type> module abstract, and provide our users
+	with a simple interface.</para>
+
+      &Logger.hs:module;
+
+      <para>Hiding the details like this grants us considerable
+	flexibility in how we implement our monad.</para>
+
+      <para>The <type>Logger</type> type is purely a
+	<emphasis>type</emphasis> constructor.  We don't export the
+	<emphasis>value</emphasis> constructor that a user would need
+	to create a value of this type.  All they can do is write type
+	signatures.</para>
+
+      <para>The <type>Log</type> type is just a synonym, to make a few
+	signatures more readable.</para>
+
+      &Logger.hs:Log;
+
+      <para>To evaluate a logged action, users call the
+	<function>execLogger</function> function.  This returns both
+	the result of an action and whatever was logged while the
+	result was being computed.</para>
+
+      &Logger.hs:execLogger.type;
+
+      <para>Most monads have an <function>execLogger</function>-like
+	function, which is responsible for starting off execution of
+	the monad and extracting its result.  The notable exception to
+	this rule is <type>IO</type>.</para>
+
+      <para>When executing inside a <type>Logger</type> action, user
+	code calls <function>record</function> to record
+	something.</para>
+
+      &Logger.hs:record.type;
+
+      <para>Again, most monads provide helper functions that add
+	functionality on top of the base <code>Monad</code>
+	typeclass.</para>
+
+      <para>Our module also defines the <code>Monad</code> instance
+	for the <type>Logger</type> type.  These definitions are all
+	that a client module needs in order to be able to use this
+	monad.</para>
+    </sect2>
+
+    <sect2>
+      <title>Using the Logger monad</title>
+
+      <para>Here's how we kick off our glob-to-regexp conversion
+	inside the <type>Logger</type> monad.</para>
+
+      &Logger.hs:rooted;
+
+      <para>Remember the type of &bind;; it extracts the value on the
+	left from its <type>Logger</type> wrapper, and passes the
+	unwrapped value to the function on the right.  The function on
+	the right must, in turn, wrap <emphasis>its</emphasis> result
+	with the <type>Logger</type> wrapper.  This is exactly what
+	&return; does.</para>
+
+      &logger.ghci:bind.type;
+
+      <para>There are a few coding style issues worth mentioning here.
+	The body of the function starts on the line after its name. By
+	doing this, we gain some horizontal white space.  We've also
+	<quote>hung</quote> the parameter of the anonymous function at
+	the end of the line. This is common practice in monadic
+	code.</para>
+
+      <para>Even when we write a function that does almost nothing, we
+	must call <function>return</function> to wrap the result with
+	the correct type.</para>
+
+      &Logger.hs:eof;
+
+      <para>When we call <function>record</function> to save a log
+	entry, we use &bind_; instead of &bind; to chain it with the
+	following action.</para>
+
+      &Logger.hs:question;
+
+      <para>Recall that this is a variant of &bind; that ignores the
+	result on the left.  We know that the result of
+	<function>record</function> will always be <code>()</code>, so
+	there's no point in capturing it.</para>
+
+      <para>We can use &do; notation, which we first encountered in
+	<xref linkend="hs.io.bind"/>, to somewhat tidy up our
+	code.</para>
+
+      &Logger.hs:asterisk;
+
+      <para>The choice of &do; notation versus explicit &bind; with
+	anonymous functions is mostly a matter of taste. There is one
+	significant difference between the two, though, which we'll
+	return to in <xref linkend="hs.monads.do"/>.</para>
+
+      <remark>huh?</remark>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Putting a few misconceptions to rest</title>
+
+    <para>We've now seen enough examples of monads in action to have a
+      feeling for what's going on.  Before we continue, there are a
+      few oft-repeated myths about monads that we're going to
+      address.  You're bound to encounter these assertions <quote>in
+      the wild</quote>, so you might as well be prepared with a few
+      good retorts.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para><emphasis>Monads are only useful for I/O.</emphasis>
+	  While we use monads for I/O in Haskell, they're valuable for
+	  many other purposes besides.  We've already used them for
+	  short-circuiting a chain of computations, hiding complicated
+	  state, and logging.  Even so, we've barely scratched the
+	  surface.</para>
+      </listitem>
+
+      <listitem>
+	<para><emphasis>Monads are unique to Haskell.</emphasis>
+	  Haskell is probably the language that makes the most
+	  explicit use of monads, but people write them in other
+	  languages, too, ranging from C++ to OCaml.</para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+
+  <sect1 id="hs.monads.do">
+    <title>Desugaring of do blocks</title>
+    <para>Blorp.</para>
   </sect1>
 </chapter>
 

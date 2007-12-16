@@ -1,0 +1,8 @@
+:load Logger
+
+--# firstExample
+execLogger (globToRegex "foo*.[ch]")
+
+--# bind.type
+:type (>>=)
+:type (globToRegex "" >>=)
