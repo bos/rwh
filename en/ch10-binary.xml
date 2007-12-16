@@ -269,7 +269,7 @@
 
     <para>There's some unfamiliar code in use here, so let's take a
       deeper look.  The <function>(==&gt;)</function> function serves
-      a similar purpose as our earlier
+      a similar purpose to our earlier
       <function>(&gt;&gt;?)</function> function, acting as
       <quote>glue</quote> to let us chain functions together.</para>
 
@@ -293,9 +293,13 @@
 
     <para>This is really quite fancy and subtle stuff: we're
       effectively passing the <type>ParseState</type> down the chain
-      of <type>Parse</type> values in a hidden argument.  Our
-      <function>parseByte</function> function doesn't take the parse
-      state as an argument.  Instead, it has to call
+      of <type>Parse</type> values in a hidden argument.</para>
+
+    <sect2>
+      <title>Obtaining and modifying the parse state</title>
+
+    <para>Our <function>parseByte</function> function doesn't take the
+      parse state as an argument.  Instead, it has to call
       <function>getState</function> to get a copy of the state, and
       <function>putState</function> to replace the current state with
       a new one.</para>
@@ -330,6 +334,28 @@
       this to our earlier parsing code, where we'd have had to turn
       every use of a two-tuple into a three-tuple, and the advantage
       should be clear.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Reporting parse errors</title>
+
+      <para>We carefully defined our <type>Parse</type> type to
+	accommodate the possibility of failure.  The
+	<function>(==&gt;)</function> combinator checks for a parse
+	failure and stops parsing if it runs into a failure.  But we
+	haven't yet introduced the <function>bail</function> function,
+	which we use to report a parse error.</para>
+
+      &Parse.hs:bail;
+
+      <para>After we call <function>bail</function>,
+	<function>(==&gt;)</function> will successfully pattern match
+	on the <code>Left</code> constructor that it wraps the error
+	message with, and it will not invoke the next parser in the
+	chain.  This will cause the error message to percolate back
+	through the chain of prior callers.</para>
+    </sect2>
   </sect1>
 
   <sect1>
