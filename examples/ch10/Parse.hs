@@ -63,10 +63,12 @@ parse f s = case runParse f (ParseState s 0) of
               Right (a, _) -> Right a
 {-- /snippet parse --}
 
+{-- snippet Monad --}
 instance Monad Parse where
     return = identity
     (>>=) = (==>)
     fail = bail
+{-- /snippet Monad --}
 
 {-- snippet getPut --}
 getState :: Parse ParseState
