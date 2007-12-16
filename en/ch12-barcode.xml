@@ -1276,6 +1276,46 @@
       in this chapter, <function>main</function> is the only one that
       lives in <type>IO</type>.</para>
   </sect1>
+
+  <sect1>
+    <title>A few comments on development style</title>
+
+    <para>You may have noticed that many of the functions we presented
+      in this chapter were short functions at the top level of the
+      source file.  This is no accident.  As we mentioned earlier,
+      when we started on this chapter, we didn't know what form our
+      solution was going to take.</para>
+
+    <para>Quite often, then, we had to explore a problem space in
+      order to figure out where we were going.  To do this, we spent a
+      lot of time fiddling about in &ghci;, performing tiny
+      experiments on individual functions.  This kind of exploration
+      requires that a function be declared at the top level of a
+      source file, as otherwise &ghci; won't be able to see it.</para>
+
+    <para>Once we were satisfied that individual functions were
+      behaving themselves, we started to glue them together, again
+      investigating the consequences in &ghci;.  This is where our
+      devotion to writing type signatures paid back, as we immediately
+      discovered when a particular composition of functions couldn't
+      possibly work.</para>
+
+    <para>At the end of this process, we were left with a large number
+      of very small top-level functions, each with a type signature.
+      This isn't the most compact representation possible; we could
+      have hoisted many of those functions into &let; or &where;
+      blocks when we were done with them.  However, we find that the
+      added vertical space, small function bodies, and type signatures
+      make the code far more readable, so we generally avoided
+      <quote>golfing</quote> functions after we wrote them.</para>
+
+    <para>Working in a language with strong, static typing does not at
+      all interfere with incrementally and fluidly developing a
+      solution to a problem.  We find the turnaround between writing a
+      function and getting useful feedback from &ghci; to be very
+      rapid; it greatly assists us in writing good code
+      quickly.</para>
+  </sect1>
 </chapter>
 
 <!--
