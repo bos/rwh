@@ -8,30 +8,46 @@ module Logger
     ) where
 {-- /snippet module --}
 
-import Control.Monad (liftM, liftM2)
-
 {-- snippet Log --}
 type Log = [String]
 {-- /snippet Log --}
 
+{-- snippet Logger --}
 newtype Logger a = Logger { runLogger :: (a, Log) }
-    deriving (Show)
+{-- /snippet Logger --}
 
+{-- snippet return --}
 instance Monad Logger where
     return a = Logger (a, [])
+{-- /snippet return --}
+{-- snippet bind --}
     m >>= k = let (a, w) = runLogger m
-                  (b, x) = runLogger (k a)
+                  n      = k a
+                  (b, x) = runLogger n
               in Logger (b, w ++ x)
+{-- /snippet bind --}
+
+{-- snippet stricterBind --}
+stricterBind :: Logger a -> (a -> Logger a1) -> Logger a1
+stricterBind m k =
+    case runLogger m of
+      (a, w) -> let (b, x) = runLogger (k a)
+                in Logger (b, w ++ x)
+{-- /snippet stricterBind --}
 
 {-- snippet execLogger.type --}
 execLogger :: Logger a -> (a, Log)
 {-- /snippet execLogger.type --}
-execLogger m = runLogger m
+{-- snippet execLogger --}
+execLogger = runLogger
+{-- /snippet execLogger --}
 
 {-- snippet record.type --}
 record :: String -> Logger ()
 {-- /snippet record.type --}
+{-- snippet record --}
 record s = Logger ((), [s])
+{-- /snippet record --}
 
 {-- snippet globToRegex.type --}
 globToRegex :: String -> Logger String
@@ -96,8 +112,20 @@ charClass_wordy (c:cs) =
 {-- /snippet charClass_wordy --}
 
 {-- snippet charClass --}
-charClass :: String -> Logger String
 charClass (']':cs) = (']':) `liftM` globToRegex' cs
 charClass (c:cs) = (c:) `liftM` charClass cs
-charClass [] = fail "unterminated character class"
 {-- /snippet charClass --}
+
+{-- snippet liftM --}
+liftM :: (Monad m) => (a -> b) -> m a -> m b
+liftM f m = m >>= \i ->
+            return (f i)
+{-- /snippet liftM --}
+
+{-- snippet liftM2 --}
+liftM2 :: (Monad m) => (a -> b -> c) -> m a -> m b -> m c
+liftM2 f m1 m2 =
+    m1 >>= \a ->
+    m2 >>= \b ->
+    return (f a b)
+{-- /snippet liftM2 --}

@@ -358,7 +358,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="hs.binary.functor">
     <title>Introducing functors</title>
 
     <para>We're by now thoroughly familiar with the

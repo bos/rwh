@@ -128,7 +128,7 @@
 <!ENTITY openFile "<literal>openFile</literal>">
 <!ENTITY openTempFile "<literal>openTempFile</literal>">
 <!ENTITY prepare "<literal>prepare</literal>">
-<!ENTITY print "<literal>print</literal>">
+<!ENTITY print "<function>print</function>">
 <!ENTITY putStr "<literal>putStr</literal>">
 <!ENTITY putStrLn "<literal>putStrLn</literal>">
 <!ENTITY quickQueryp "<literal>quickQuery'</literal>">
