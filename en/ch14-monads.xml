@@ -112,7 +112,7 @@
 
     &Maybe.hs:Maybe;
 
-    &Parse.hs:Parse;
+    &Parse.hs:Parse.noid;
 
     <para>The common feature of these two types is that each has a
       single free type variable on the left of the definition, which
@@ -137,7 +137,7 @@
       simply the value constructor <code>Just</code>, but the injector
       for <type>Parse</type> is more complicated.</para>
 
-    &Parse.hs:identity;
+    &Parse.hs:identity.noid;
 
     <para>Again, it's not the details or complexity that we're
       interested in, it's the fact that each of these types has this
