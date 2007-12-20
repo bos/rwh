@@ -67,7 +67,8 @@ Welcome to Haskell, John!
     <para id="x_FC">
       You only need to use &do; if you have more than one action that you need
       to perform.  The return value of a &do; block is the return value
-      of the last action executed.
+      of the last action executed.  For a complete description of &do;
+      syntax, see <xref linkend="hs.monads.do"/>.
     </para>
 
     <para id="x_GC">

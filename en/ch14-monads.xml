@@ -663,16 +663,127 @@
 	&bind; is lazy.</para>
 
       <para>Like most other aspects of a monad's behaviour, strictness
-	is under the control of the monad's implementor, not something
-	that's shared by all monads.  Indeed, some monads come in
-	multiple flavours, each with different levels of
+	is under the control of the monad's implementor.  It's not a
+	constant that's shared by all monads.  Indeed, some monads
+	come in multiple flavours, each with different levels of
 	strictness.</para>
     </sect2>
   </sect1>
 
   <sect1 id="hs.monads.do">
     <title>Desugaring of do blocks</title>
-    <para>Blorp.</para>
+
+    <para>Haskell's &do; syntax is an example of <emphasis>syntactic
+	sugar</emphasis>: it provides an alternative way of writing
+      monadic code, without using &bind; and anonymous functions.
+      <emphasis>Desugaring</emphasis> is the translation of syntactic
+      sugar back to the core language.</para>
+
+    <para>The rules for desugaring a &do; block are easy to follow. We
+      can think of a compiler as applying these rules mechanically and
+      repeatedly to a &do; block until no more &do; keywords
+      remain.</para>
+
+    <para>A &do; keyword followed by a single action is translated to
+      that action by itself.</para>
+
+    <informaltable role="comparison">
+      <tgroup cols="2">
+	<tbody>
+	  <row>
+	    <entry>&Do.hs:doNotation1;</entry>
+	    <entry>&Do.hs:translated1;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>A &do; keyword followed by more than one action is
+      translated to the first action, then &bind_;, followed by a &do;
+      keyword and the remaining actions.  When we apply this rule
+      repeatedly, the entire &do; block ends up chained together by
+      applications of &bind_;.</para>
+
+    <informaltable role="comparison">
+      <tgroup cols="2">
+	<tbody>
+	  <row>
+	    <entry>&Do.hs:doNotation2;</entry>
+	    <entry>&Do.hs:translated2;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>The &larrow; notation has a translation that's worth paying
+      close attention to.  On the left of the &larrow; is a normal
+      Haskell pattern. This can be a single variable or something more
+      complicated.  A guard expression is not allowed.</para>
+
+    <informaltable role="comparison">
+      <tgroup cols="2">
+	<tbody>
+	  <row>
+	    <entry>&Do.hs:doNotation3;</entry>
+	    <entry>&Do.hs:translated3;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>This pattern is translated into a &let; binding that
+      declares a local function with a unique name (we're just using
+      <varname>f</varname> as an example above).  The action on the
+      right of the &larrow; is then chained with this function using
+      &bind;.</para>
+
+    <para>What's noteworthy about this translation is that if the
+      pattern match fails, the local function calls the monad's &fail;
+      implementation. Here's an example using the <type>Maybe</type>
+      monad.</para>
+
+    &Do.hs:robust;
+
+    <para>The &fail; implementation in the <type>Maybe</type> monad
+      simply returns <code>Nothing</code>.  If the pattern match in
+      the above function fails, we thus get <code>Nothing</code> as
+      our result.</para>
+
+    &do.ghci:robust;
+
+    <para>Finally, when we write a &let; expression in a &do; block,
+      we can omit the usual &in; keyword.  Subsequent actions in the
+      block must be lined up with the &let; keyword.</para>
+
+    <informaltable role="comparison">
+      <tgroup cols="2">
+	<tbody>
+	  <row>
+	    <entry>&Do.hs:doNotation4;</entry>
+	    <entry>&Do.hs:translated4;</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </informaltable>
+
+    <sect2>
+      <title>Monads as a programmable semicolon</title>
+
+      <para>Back in <xref linkend="hs.funcstypes.block"/>, we
+	mentioned that layout is the norm in Haskell, but it's not
+	<emphasis>required</emphasis>.  We can write a &do; block
+	using explicit structure instead of layout.</para>
+
+      &Do.hs:semicolon;
+
+      <para>Even though this use of explicit structure is rare, it has
+	given rise to the description of monads as a kind of
+	<quote>programmable semicolon</quote>, because the behaviours
+	of &bind_; and &bind; are different in each monad.</para>
+
+      &Do.hs:semicolonTranslated;
+
+    </sect2>
   </sect1>
 </chapter>
 
