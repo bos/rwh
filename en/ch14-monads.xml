@@ -774,15 +774,22 @@
 	<emphasis>required</emphasis>.  We can write a &do; block
 	using explicit structure instead of layout.</para>
 
-      &Do.hs:semicolon;
+      <informaltable role="comparison">
+	<tgroup cols="2">
+	  <tbody>
+	    <row>
+	      <entry>&Do.hs:semicolon;</entry>
+	      <entry>&Do.hs:semicolonTranslated;</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </informaltable>
 
-      <para>Even though this use of explicit structure is rare, it has
-	given rise to the description of monads as a kind of
+      <para>Even though this use of explicit structure is rare, the
+	fact that it uses semicolons to separate expressions has given
+	rise to an apt slogan: monads are a kind of
 	<quote>programmable semicolon</quote>, because the behaviours
 	of &bind_; and &bind; are different in each monad.</para>
-
-      &Do.hs:semicolonTranslated;
-
     </sect2>
   </sect1>
 </chapter>
