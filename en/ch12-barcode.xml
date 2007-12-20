@@ -924,7 +924,7 @@
 	  values.</para>
       </sect3>
 
-      <sect3>
+      <sect3 id="hs.barcode.map.partial">
 	<title>Partial application awkwardness</title>
 
 	<para>For some reason, the type signatures of the functions in

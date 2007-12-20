@@ -189,9 +189,9 @@
     <title>The Monad typeclass</title>
 
     <para>We can capture the notions of chaining and injection, and
-      the types we want them to have, in a Haskell typeclass.  The
-      standard Prelude already defines just such a typeclass, named
-      <code>Monad</code>.</para>
+      the types that we want them to have, in a Haskell typeclass.
+      The standard Prelude already defines just such a typeclass,
+      named <code>Monad</code>.</para>
 
     &Maybe.hs:Monad;
 
@@ -277,6 +277,23 @@
 	  instance of the <code>Monad</code> typeclass; a monadic
 	  <emphasis>value</emphasis> has a monadic type.</para>
       </listitem>
+
+      <listitem>
+	<para>When we say that a type <quote>is a monad</quote>, this
+	  is really an shorthand way of saying that it's an instance
+	  of the <code>Monad</code> typeclass.  Being an instance of
+	  <code>Monad</code> gives us the necessary monadic triple of
+	  type constructor, injection function, and chaining
+	  function.</para>
+      </listitem>
+
+      <listitem>
+	<para>In the same way, a reference to <quote>the
+	    <type>Foo</type> monad</quote> implies that we're talking
+	  about the type named <type>Foo</type>, and that it's an
+	  instance of <code>Monad</code>.</para>
+      </listitem>
+
       <listitem>
 	<para>An <quote>action</quote> is another name for a monadic
 	  value.  This use of the word probably originated with the
@@ -366,13 +383,16 @@
 	escape from by exiting a program.</para>
 
       <para>A monad execution function runs the code inside the monad
-	and extracts its result.  These functions are usually the only
-	means provided for values to escape.  Thus, the author of a
-	monad has complete control over the external visibility of
-	whatever happens inside the monad.  In our case, we can
-	imagine a few alternatives to <function>execLogger</function>:
-	one might only return the log messages, while another might
-	return just the result and drop the log messages.</para>
+	and unwraps its result.  Such a function are usually the only
+	means provided for a value to escape from its monadic wrapper.
+	The author of a monad thus has complete control over how
+	whatever happens inside the monad gets out.</para>
+
+      <para>Some monads have several execution functions.  In our
+	case, we can imagine a few alternatives to
+	<function>execLogger</function>: one might only return the log
+	messages, while another might return just the result and drop
+	the log messages.</para>
     </sect2>
 
     <sect2>
@@ -509,10 +529,11 @@
       value inside the functor, calling the function on it, and
       rewrapping the result with the same constructor.</para>
 
-    <para>We do exactly the same thing with a monad.  In fact, with a
-      monad, the job is easier, because the <code>Monad</code>
-      typeclass already provides unwrapping and rewrapping functions
-      for us, in the form of &bind; and &return;.</para>
+    <para>We do exactly the same thing with a monad.  Because the
+      <code>Monad</code> typeclass already provides the &bind; and
+      &return; functions that know how to wrap and unwrap a value, the
+      <function>liftM</function> function doesn't need any details of
+      a monad's implementation.</para>
 
     &Logger.hs:liftM;
 
@@ -562,6 +583,115 @@
       wraps that result.  In addition to <function>liftM2</function>,
       the variants in <code>Control.Monad</code> go up to
       <function>liftM5</function>.</para>
+  </sect1>
+
+  <sect1>
+    <title>The Maybe monad</title>
+
+    <para>The <type>Maybe</type> type is very nearly the simplest
+      instance of <code>Monad</code>.  It represents a computation
+      that might fail.</para>
+
+    &Maybe.hs:instance;
+
+    <para>When we chain together a number of computations over
+      <type>Maybe</type> using &bind; or &bind_;, and any returns
+      <code>Nothing</code>, then we don't evaluate any of the
+      remaining computations.</para>
+
+    <para>Note, though, that the chain is not completely
+      short-circuited.  Each &bind; or &bind_; in the chain will still
+      match a <code>Nothing</code> on its left, and produce a
+      <function>Nothing</function> on its right, all the way to the
+      end.  It's easy to forget this point: when a computation in the
+      chain fails, the subsequent production, chaining, and
+      consumption of <code>Nothing</code> values is cheap at runtime,
+      but it's not free.</para>
+
+    <sect2>
+      <title>Executing the Maybe monad</title>
+
+      <para>A function suitable for executing the <type>Maybe</type>
+	monad is <function>maybe</function>.  (Remember that
+	<quote>executing</quote> a monad involves evaluating it and
+	returning a result that's had the monad's type wrapper
+	removed.)</para>
+
+      &Maybe.hs:maybe;
+
+      <para>Its first parameter is the value to return if the result
+	is <code>Nothing</code>.  The second is a function to call on
+	a result wrapped in the <code>Just</code> constructor; the
+	result of that application is then returned.</para>
+
+      <para>Since the <type>Maybe</type> ADT is so simple, it's about
+	as common to simply pattern-match on a <type>Maybe</type>
+	value as it is to call <function>maybe</function>.  Each one
+	is more readable in different circumstances.</para>
+    </sect2>
+
+    <sect2>
+      <title>Maybe at work, and good API design</title>
+
+      <para>Here's an example of <type>Maybe</type> in use as a monad.
+	Given a customer's name, we want to find the billing address
+	of their mobile phone carrier.</para>
+
+      &Carrier.hs:findCarrierBillingAddress;
+
+      <para>Our first version is the dreaded ladder of code marching
+	off the right of the screen, with many boilerplate &case;
+	expressions.</para>
+
+      &Carrier.hs:variation1;
+
+      <para>The <code>Data.Map</code> module's
+	<function>lookup</function> function has a monadic return
+	type.</para>
+
+      &carrier.ghci:lookup;
+
+      <para>In other words, if the given key is present in the map,
+	<function>lookup</function> injects it into the monad using
+	&return;.  Otherwise, it calls &fail;.  This is a lovely piece
+	of API design!  The behaviours of success and failure are
+	automatically customised to our needs, based on the monad
+	we're calling <function>lookup</function> from.  Better yet,
+	<function>lookup</function> itself doesn't know or care what
+	those behaviours are.</para>
+
+      <para>The &case; expressions above typecheck because we're
+	comparing the result of <function>lookup</function> against
+	values of type <type>Maybe</type>.  But the code is horrible;
+	let's make more sensible use of <type>Maybe</type>'s status as
+	a monad.</para>
+
+      &Carrier.hs:variation2;
+
+      <para>If any of these lookups fails, the definitions of &bind;
+	and &bind_; mean that the result of the function as a whole
+	will be <code>Nothing</code>, just as it was for our first
+	attempt that used &case; explicitly.</para>
+
+      <para>This version is much tidier.  That being said, the
+	&return; isn't necessary.  Stylistically, it makes the code
+	look more regular, and perhaps more familiar to the eyes of an
+	imperative programmer, but behaviourally it's redundant.
+	Here's an equivalent piece of code.</para>
+
+      &Carrier.hs:variation2a;
+
+      <para>When we introduced maps, we mentioned in <xref
+	linkend="hs.barcode.map.partial"/> that the type signatures of
+	functions in the <code>Data.Map</code> module often make them
+	awkward to partially apply.  The <function>lookup</function>
+	function is a good example.  If we <function>flip</function>
+	its arguments, we can write the function body as a
+	one-liner.</para>
+	  
+      &Carrier.hs:variation3;
+
+    </sect2>
   </sect1>
 
   <sect1>
@@ -791,6 +921,12 @@
 	<quote>programmable semicolon</quote>, because the behaviours
 	of &bind_; and &bind; are different in each monad.</para>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Monads and functors</title>
+
+    <para>fmap! join!</para>
   </sect1>
 </chapter>
 
