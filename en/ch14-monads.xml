@@ -696,7 +696,7 @@
 
     <para>The <type>Maybe</type> type is very nearly the simplest
       instance of <code>Monad</code>.  It represents a computation
-      that might fail.</para>
+      that might not produce a result.</para>
 
     &Maybe.hs:instance;
 
@@ -798,6 +798,106 @@
       &Carrier.hs:variation3;
 
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>The list monad</title>
+
+    <para>While the <code>Maybe</code> type can represent either no
+      value or one one, there are many situations where we might want
+      to return more than one result.  Obviously, a list is well
+      suited to this purpose. The type of a list suggests that we
+      might be able to use it as a monad, because its type constructor
+      has one free variable.  And sure enough, we can use a list as a
+      monad.</para>
+
+    <para>Rather than simply present the Prelude's <code>Monad</code>
+      instance for the list type, let's try to figure out what the
+      instance <emphasis>ought</emphasis> to look like.  This is easy
+      to do: we'll look at the types of &bind; and &return;, and
+      perform some substitutions, and see if we can use a few familiar
+      list functions.</para>
+
+    <para>The more obvious of the two functions is &return;.  We know
+      that it takes a type <varname role="type">a</varname>, and wraps
+      it in a type constructor <varname role="type">m</varname> to
+      give the type <varname role="type">m a</varname>.  We also know
+      that the type constructor here is <type>[]</type>.  Substituting
+      this type constructor for the type variable <varname
+	role="type">m</varname> gives us the type <type>[] a</type>
+      (yes, this really is valid notation!), which we can rewrite in
+      more familiar form as <type>[a]</type>.</para>
+
+    <para>We now know that &return; for lists should have the type
+      <type>a &larrow; [a]</type>.  There are only a few sensible
+      possibilities for an implementation of this function.  It might
+      return the empty list, a singleton list, or an infinite list.
+      The most appealing behaviour, based on what we know so far about
+      monads, is the singleton list: it doesn't throw information
+      away, nor does it repeat it infinitely.</para>
+
+    &ListMonad.hs:returnSingleton;
+
+    <para>If we perform the same substitution trick on the type of
+      &bind; as we did with &return;, we discover that it should have
+      the type <type>[a] &rarrow; (a &rarrow; [b]) &rarrow;
+      [b]</type>.  This seems close to the type of
+      <function>map</function>.</para>
+
+    &listmonad.ghci:map;
+
+    <para>The ordering of the types in <function>map</function>'s
+      arguments doesn't match, but that's easy to fix.</para>
+
+    &listmonad.ghci:flipMap;
+
+    <para>We've still got a problem: the second argument of <code>flip
+	map</code> has the type <type>a &rarrow; b</type>, whereas the
+      second argument of &bind; for lists has the type <type>a
+      &rarrow; [b]</type>.  What do we do about this?</para>
+
+    <para>Let's do a little more substitution and see what happens
+      with the types.  The function <code>flip map</code> can return
+      any type <varname role="type">b</varname> as its result.  If we
+      substitute <varname role="type">[b]</varname> for <varname
+	role="type">b</varname> in both places where it appears in
+      <code>flip map</code>'s type signature, its type signature reads
+      as <type>a &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</type>.  In
+      other words, if we map a function that returns a list over a
+      list, we get a list of lists back.</para>
+
+    &listmonad.ghci:flipMapApp;
+
+    <para>Interestingly, we haven't really changed how closely our
+      type signatures match.  The type of &bind; is <type>[a] &rarrow;
+      (a &rarrow; [b]) &rarrow; [b]</type>, while that of <code>flip
+	map</code> when the mapped function returns a list is
+      <type>[a] &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</type>.
+      There's still a mismatch in one type term; we've just moved that
+      term from the middle of the type signature to the end.  However,
+      our juggling wasn't in vain: we now need a function that takes a
+      <type>[[b]]</type> and returns a <type>[b]</type>, and one
+      readily suggests itself in the form of
+      <function>concat</function>.</para>
+
+    &listmonad.ghci:concat;
+
+    <para>The types suggest that we should flip the arguments to
+      <function>map</function>, then <function>concat</function> the
+      results to give a single list.</para>
+
+    &listmonad.ghci:bind;
+
+    <para>This is exactly the definition of &bind; for lists.</para>
+
+    &ListMonad.hs:instance;
+
+    <para>With the two core definitions in hand, the implementations of
+      the non-core definitions that remain, &bind_; and &fail;, ought
+      to be obvious.</para>
+
+    &ListMonad.hs:rest;
+
   </sect1>
 
   <sect1 id="hs.monads.do">
