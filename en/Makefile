@@ -275,21 +275,27 @@ vpath %.lhs $(src-dirs)
 vpath %.ghci $(src-dirs)
 
 x/.stamp-%.c: %.c
+	-mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.cpp: %.cpp
+	-mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.hs: %.hs
+	-mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.java: %.java
+	-mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.py: %.py
+	-mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.ghci: %.ghci
+	-mkdir -p x
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
 $(obj-websup)/%.css: %.css
