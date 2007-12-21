@@ -22,19 +22,12 @@ src-files := $(src-master) \
 	$(wildcard ch*.xml) \
 	$(wildcard app*.xml)
 
-src-examples := \
-	$(wildcard ../examples/app[A-Z]/*.ghci) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.c) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.cpp) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.ghci) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.hs) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.java) \
-	$(wildcard ../examples/ch[0-9][0-9]/*.py) \
-	$(wildcard ../examples/ch[0-9][0-9]/*/*.hs)
+src-dirs := $(wildcard ../examples/app[A-Z] ../examples/ch[0-9][0-9])
 
-src-figs := \
-	$(wildcard figs/*.jpg) \
-	$(wildcard figs/*.png)
+src-examples := $(foreach d,$(src-dirs),$(wildcard $d/*.c $d/*.cpp $d/*.ghci \
+			$d/*.hs $d/*.java $d/*.py))
+
+src-figs := $(wildcard figs/*.jpg figs/*.png)
 
 obj-web := html
 obj-websup := html/support
@@ -278,13 +271,13 @@ vpath %.html.in ../web
 vpath %.css ../web
 vpath %.js ../web/javascript
 
-vpath %.c $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.cpp $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.hs $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.java $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.py $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.lhs $(addprefix ../examples/,$(dir $(src-examples)))
-vpath %.ghci $(addprefix ../examples/,$(dir $(src-examples)))
+vpath %.c $(src-dirs)
+vpath %.cpp $(src-dirs)
+vpath %.hs $(src-dirs)
+vpath %.java $(src-dirs)
+vpath %.py $(src-dirs)
+vpath %.lhs $(src-dirs)
+vpath %.ghci $(src-dirs)
 
 x:
 	mkdir -p x
