@@ -829,7 +829,7 @@
       more familiar form as <type>[a]</type>.</para>
 
     <para>We now know that &return; for lists should have the type
-      <type>a &larrow; [a]</type>.  There are only a few sensible
+      <code>a &larrow; [a]</code>.  There are only a few sensible
       possibilities for an implementation of this function.  It might
       return the empty list, a singleton list, or an infinite list.
       The most appealing behaviour, based on what we know so far about
@@ -840,8 +840,8 @@
 
     <para>If we perform the same substitution trick on the type of
       &bind; as we did with &return;, we discover that it should have
-      the type <type>[a] &rarrow; (a &rarrow; [b]) &rarrow;
-      [b]</type>.  This seems close to the type of
+      the type <code>[a] &rarrow; (a &rarrow; [b]) &rarrow;
+      [b]</code>.  This seems close to the type of
       <function>map</function>.</para>
 
     &listmonad.ghci:map;
