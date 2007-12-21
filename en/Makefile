@@ -59,8 +59,6 @@ obj-beta := $(obj-web)/beta
 
 # Tools.
 
-tools := autoid ghcisession snippets
-
 runhaskell ?= runghc
 
 xmllint := xmllint
@@ -184,7 +182,7 @@ $(obj-beta)/.htaccess: ../web/beta.htaccess
 	cp $< $@
 
 .PHONY: complete
-html: $(obj-complete)/index.html $(obj-complete)/.htaccess
+html: tools $(obj-complete)/index.html $(obj-complete)/.htaccess
 
 $(obj-complete)/hs.preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-complete))
@@ -213,22 +211,19 @@ xxx-book-index.xml: $(src-master) $(chapter-files)
 	rm -r index
 
 .PHONY: valid
-valid: .validated-00book.xml
+valid: tools .validated-00book.xml
 
-.PHONY: tools
-tools: $(tools:%=../tools/bin/%)
+tools: ../tools/.built
 
-$(tools:%=../tools/bin/%): ../tools/.setup-config ../tools/*.hs
-	cd ../tools && $(runhaskell) Setup build && $(runhaskell) Setup install
+../tools/.built: ../tools/*.hs ../tools/tools.cabal
+	$(MAKE) -C ../tools
 
-../tools/.setup-config: ../tools/tools.cabal
-	cd ../tools && $(runhaskell) Setup configure --prefix=`pwd`
-
-auto-snippets.xml: x $(stamp-examples)
+auto-snippets.xml: $(stamp-examples)
+	mkdir -p x
 	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
 	cat $(sort $^) | sort >> $@
 
-.validated-%: % $(tools:%=../tools/bin/%) $(src-files)
+.validated-%: % $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $<
 	touch $@
 
@@ -261,10 +256,10 @@ book.zip: .validated-00book.xml $(src-figs)
 	rm -r bookzip
 
 clean:
+	-$(MAKE) -C ../tools clean
 	-rm -f .validated* .stamp-* *-entities.txt $(obj-pdf) 00book.zip
-	-rm -rf x html index ../tools/dist ../tools/bin
+	-rm -rf x html index *.ghci:*.xml
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
-	-rm -f ../tools/.setup-config ../tools/Pty.hs *.ghci:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
 
 vpath %.html.in ../web
@@ -279,25 +274,22 @@ vpath %.py $(src-dirs)
 vpath %.lhs $(src-dirs)
 vpath %.ghci $(src-dirs)
 
-x:
-	mkdir -p x
-
-x/.stamp-%.c: %.c ../tools/bin/snippets
+x/.stamp-%.c: %.c
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.cpp: %.cpp ../tools/bin/snippets
+x/.stamp-%.cpp: %.cpp
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.hs: %.hs ../tools/bin/snippets
+x/.stamp-%.hs: %.hs
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.java: %.java ../tools/bin/snippets
+x/.stamp-%.java: %.java
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.py: %.py ../tools/bin/snippets
+x/.stamp-%.py: %.py
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
-x/.stamp-%.ghci: %.ghci ../tools/bin/ghcisession
+x/.stamp-%.ghci: %.ghci
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
 $(obj-websup)/%.css: %.css
