@@ -852,9 +852,9 @@
     &listmonad.ghci:flipMap;
 
     <para>We've still got a problem: the second argument of <code>flip
-	map</code> has the type <type>a &rarrow; b</type>, whereas the
-      second argument of &bind; for lists has the type <type>a
-      &rarrow; [b]</type>.  What do we do about this?</para>
+	map</code> has the type <code>a &rarrow; b</code>, whereas the
+      second argument of &bind; for lists has the type <code>a
+      &rarrow; [b]</code>.  What do we do about this?</para>
 
     <para>Let's do a little more substitution and see what happens
       with the types.  The function <code>flip map</code> can return
@@ -862,17 +862,17 @@
       substitute <varname role="type">[b]</varname> for <varname
 	role="type">b</varname> in both places where it appears in
       <code>flip map</code>'s type signature, its type signature reads
-      as <type>a &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</type>.  In
+      as <code>a &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</code>.  In
       other words, if we map a function that returns a list over a
       list, we get a list of lists back.</para>
 
     &listmonad.ghci:flipMapApp;
 
     <para>Interestingly, we haven't really changed how closely our
-      type signatures match.  The type of &bind; is <type>[a] &rarrow;
-      (a &rarrow; [b]) &rarrow; [b]</type>, while that of <code>flip
+      type signatures match.  The type of &bind; is <code>[a] &rarrow;
+      (a &rarrow; [b]) &rarrow; [b]</code>, while that of <code>flip
 	map</code> when the mapped function returns a list is
-      <type>[a] &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</type>.
+      <code>[a] &rarrow; (a &rarrow; [b]) &rarrow; [[b]]</code>.
       There's still a mismatch in one type term; we've just moved that
       term from the middle of the type signature to the end.  However,
       our juggling wasn't in vain: we now need a function that takes a

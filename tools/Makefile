@@ -1,12 +1,14 @@
-all: .setup-config *.hs
+all: .built
+
+.built: *.hs tools.cabal
+	runhaskell Setup configure --prefix=`pwd`
 	runhaskell Setup build
 	runhaskell Setup install
-
-.setup-config: tools.cabal Setup.lhs
-	runhaskell Setup configure --prefix=`pwd`
+	touch .built
 
 clean:
 	runhaskell Setup clean
+	rm .built
 
 distclean: clean
 	rm -f *~
