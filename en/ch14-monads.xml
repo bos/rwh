@@ -586,6 +586,112 @@
   </sect1>
 
   <sect1>
+    <title>Putting a few misconceptions to rest</title>
+
+    <para>We've now seen enough examples of monads in action to have
+      some feel for what's going on.  Before we continue, there are a
+      few oft-repeated myths about monads that we're going to address.
+      You're bound to encounter these assertions <quote>in the
+	wild</quote>, so you might as well be prepared with a few good
+      retorts.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para><emphasis>Monads are hard to understand.</emphasis>
+	  We've already shown that monads <quote>fall out
+	    naturally</quote> from several problems.  We've found that
+	  the best key to understanding them is to explain several
+	  concrete examples, then talk about what they have in
+	  common.</para>
+      </listitem>
+
+      <listitem>
+	<para><emphasis>Monads are only useful for I/O and imperative
+	    coding.</emphasis> While we use monads for I/O in Haskell,
+	  they're valuable for many other purposes besides.  We've
+	  already used them for short-circuiting a chain of
+	  computations, hiding complicated state, and logging.  Even
+	  so, we've barely scratched the surface.</para>
+      </listitem>
+
+      <listitem>
+	<para><emphasis>Monads are unique to Haskell.</emphasis>
+	  Haskell is probably the language that makes the most
+	  explicit use of monads, but people write them in other
+	  languages, too, ranging from C++ to OCaml.</para>
+      </listitem>
+
+      <listitem>
+	<para><emphasis>Monads are for controlling the order of
+	    evaluation.</emphasis></para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+
+  <sect1>
+    <title>Building the Logger monad</title>
+    
+    <para>The definition of our <type>Logger</type> type is very
+      simple.</para>
+
+    &Logger.hs:Logger;
+
+    <para>It's a two-tuple, where the first element is the result of
+      an action, and the second is a list of messages logged while
+      that action was run.</para>
+
+    <para>We've wrapped the tuple in a &newtype; to make it a distinct
+      type.  The <function>runLogger</function> function extracts the
+      tuple from its wrapper.  The function that we're exporting to
+      execute a logged action, <function>execLogger</function>, is
+      just a synonym for <function>runLogger</function>.</para>
+
+    &Logger.hs:execLogger;
+
+    <para>Our <function>record</function> helper function creates a
+      singleton list of the message we pass it.  The result of this
+      action is <code>()</code>, so that's the value we put in the
+      result slot.</para>
+
+    <para>Let's begin our <code>Monad</code> instance with &return;,
+      which is trivial: it logs nothing, and stores its input in the
+      return slot of the tuple.</para>
+
+    &Logger.hs:return;
+
+    <para>Slightly more interesting is &bind;, which is the heart of
+      the monad.  It combines an action and a monadic function to give
+      a new result and a new log.</para>
+
+    &Logger.hs:bind;
+
+    <para>Let's spell out explicitly what is going on. We use
+      <function>runLogger</function> to extract the result
+      <varname>a</varname> from the action <varname>m</varname>, and
+      we pass it to the monadic function <varname>k</varname>.  We
+      extract the result <varname>b</varname> from that in turn, and
+      put it into the result slot of the final action.  We concatenate
+      the logs <varname>w</varname> and <varname>x</varname> to give
+      the new log.</para>
+
+    <sect2>
+      <title>Sequential logging, not sequential evaluation</title>
+
+      <para>Our definition of &bind; ensures that messages logged on
+	the left will appear in the new log before those on the right.
+	However, it says nothing about when the values
+	<varname>a</varname> and <varname>b</varname> are evaluated:
+	&bind; is lazy.</para>
+
+      <para>Like most other aspects of a monad's behaviour, strictness
+	is under the control of the monad's implementor.  It's not a
+	constant that's shared by all monads.  Indeed, some monads
+	come in multiple flavours, each with different levels of
+	strictness.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
     <title>The Maybe monad</title>
 
     <para>The <type>Maybe</type> type is very nearly the simplest
@@ -691,112 +797,6 @@
 	  
       &Carrier.hs:variation3;
 
-    </sect2>
-  </sect1>
-
-  <sect1>
-    <title>Putting a few misconceptions to rest</title>
-
-    <para>We've now seen enough examples of monads in action to have
-      some feel for what's going on.  Before we continue, there are a
-      few oft-repeated myths about monads that we're going to address.
-      You're bound to encounter these assertions <quote>in the
-	wild</quote>, so you might as well be prepared with a few good
-      retorts.</para>
-
-    <itemizedlist>
-      <listitem>
-	<para><emphasis>Monads are hard to understand.</emphasis>
-	  We've already shown that monads <quote>fall out
-	    naturally</quote> from several problems.  We've found that
-	  the best key to understanding them is to explain several
-	  concrete examples, then talk about what they have in
-	  common.</para>
-      </listitem>
-
-      <listitem>
-	<para><emphasis>Monads are only useful for I/O and imperative
-	    coding.</emphasis> While we use monads for I/O in Haskell,
-	  they're valuable for many other purposes besides.  We've
-	  already used them for short-circuiting a chain of
-	  computations, hiding complicated state, and logging.  Even
-	  so, we've barely scratched the surface.</para>
-      </listitem>
-
-      <listitem>
-	<para><emphasis>Monads are unique to Haskell.</emphasis>
-	  Haskell is probably the language that makes the most
-	  explicit use of monads, but people write them in other
-	  languages, too, ranging from C++ to OCaml.</para>
-      </listitem>
-
-      <listitem>
-	<para><emphasis>Monads are for controlling the order of
-	    evaluation.</emphasis></para>
-      </listitem>
-    </itemizedlist>
-  </sect1>
-
-  <sect1>
-    <title>Building the Logger monad</title>
-    
-    <para>The definition of our <type>Logger</type> type is very
-      simple.</para>
-
-    &Logger.hs:Logger;
-
-    <para>It's a two-tuple, where the first element is the result of
-      an action, and the second is a list of messages logged while
-      that action was run.</para>
-
-    <para>We've wrapped the tuple in a &newtype; to make it a distinct
-      type.  The <function>runLogger</function> function extracts the
-      tuple from its wrapper.  The function that we're exporting to
-      execute a logged action, <function>execLogger</function>, is
-      just a synonym for <function>runLogger</function>.</para>
-
-    &Logger.hs:execLogger;
-
-    <para>Our <function>record</function> helper function creates a
-      singleton list of the message we pass it.  The result of this
-      action is <code>()</code>, so that's the value we put in the
-      result slot.</para>
-
-    <para>Let's begin our <code>Monad</code> instance with &return;,
-      which is trivial: it logs nothing, and stores its input in the
-      return slot of the tuple.</para>
-
-    &Logger.hs:return;
-
-    <para>Slightly more interesting is &bind;, which is the heart of
-      the monad.  It combines an action and a monadic function to give
-      a new result and a new log.</para>
-
-    &Logger.hs:bind;
-
-    <para>Let's spell out explicitly what is going on. We use
-      <function>runLogger</function> to extract the result
-      <varname>a</varname> from the action <varname>m</varname>, and
-      we pass it to the monadic function <varname>k</varname>.  We
-      extract the result <varname>b</varname> from that in turn, and
-      put it into the result slot of the final action.  We concatenate
-      the logs <varname>w</varname> and <varname>x</varname> to give
-      the new log.</para>
-
-    <sect2>
-      <title>Sequential logging, not sequential evaluation</title>
-
-      <para>Our definition of &bind; ensures that messages logged on
-	the left will appear in the new log before those on the right.
-	However, it says nothing about when the values
-	<varname>a</varname> and <varname>b</varname> are evaluated:
-	&bind; is lazy.</para>
-
-      <para>Like most other aspects of a monad's behaviour, strictness
-	is under the control of the monad's implementor.  It's not a
-	constant that's shared by all monads.  Indeed, some monads
-	come in multiple flavours, each with different levels of
-	strictness.</para>
     </sect2>
   </sect1>
 
