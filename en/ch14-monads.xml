@@ -892,12 +892,81 @@
 
     &ListMonad.hs:instance;
 
-    <para>With the two core definitions in hand, the implementations of
-      the non-core definitions that remain, &bind_; and &fail;, ought
-      to be obvious.</para>
+    <para>It applies <varname>f</varname> to every element in the list
+      <varname>xs</varname>, and concatenates the results to return a
+      single list.</para>
+
+    <para>With our two core <code>Monad</code> definitions in hand,
+      the implementations of the non-core definitions that remain,
+      &bind_; and &fail;, ought to be obvious.</para>
 
     &ListMonad.hs:rest;
 
+    <sect2>
+      <title>Understanding the list monad</title>
+
+      <para>The list monad is similar to a familiar Haskell tool, the
+	list comprehension.  We can illustrate the similarity by
+	computing the Cartesian product of two lists.  First, we'll
+	write a list comprehension.</para>
+
+      &CartesianProduct.hs:comprehensive;
+
+      <para>For once, we'll use explicit notation for the monadic code
+	instead of block notation.  This will highlight how
+	structurally similar the monadic code is to the list
+	comprehension.</para>
+
+      &CartesianProduct.hs:monadic;
+
+      <para>The only real difference is that the value we're
+	constructing comes at the end of the sequence of expressions,
+	instead of the beginning as in the list comprehension. Also,
+	the results of the two functions are identical.</para>
+      
+      &cartesian.ghci:comparison;
+
+      <para>It's easy to be baffled by the list monad early on, so
+	let's walk through our monadic Cartesian product code again in
+	more detail.  This time, we'll rearrange the function to use
+	layout instead of explicit notation.</para>
+
+      &CartesianProduct.hs:blockyDo;
+      
+      <para>For every element in the list <varname>xs</varname>, the
+	rest of the function is evaluated once, with
+	<varname>x</varname> bound to a different value from the list
+	each time.  Then for every element in the list
+	<varname>ys</varname>, the remainder of the function is
+	evaluated once, with <varname>y</varname> bound to a different
+	value from the list each time.</para>
+
+      <para>What we really have here is a doubly nested loop!  This
+	highlights an important fact about monads: you
+	<emphasis>cannot</emphasis> predict how a block of monadic
+	code will behave unless you know what monad it will execute
+	in.</para>
+
+      <para>We'll now walk through the code even more explicitly, but
+	first let's get rid of the &do; notation, to make the
+	underlying structure clearer.  We've indented the code a
+	little unusually to make the loop nesting more obvious.</para>
+
+      &CartesianProduct.hs:blockyPlain;
+
+      <para>If <varname>xs</varname> has the value
+	<code>[1,2,3]</code>, the two lines that follow are evaluated
+	with <varname>x</varname> bound to <code>1</code>, then to
+	<code>2</code>, and finally to <varname>3</varname>. If
+	<varname>ys</varname> has the value <code>[True,
+	  False]</code>, the final line is evaluated
+	<emphasis>six</emphasis> times: once with <varname>x</varname>
+	as <code>1</code> and <varname>y</varname> as
+	<code>True</code>; again with <varname>x</varname> as
+	<code>1</code> and <varname>y</varname> as <code>False</code>;
+	and so on.  The &return; expression wraps each tuple in a
+	single-element list.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.monads.do">
@@ -1020,6 +1089,30 @@
 	rise to an apt slogan: monads are a kind of
 	<quote>programmable semicolon</quote>, because the behaviours
 	of &bind_; and &bind; are different in each monad.</para>
+    </sect2>
+
+    <sect2 id="hs.monads.do.avoid">
+      <title>Why go sugar-free?</title>
+
+      <para>When we write &bind; explicitly in our code, it reminds us
+	that we're calling stitching functions together using
+	combinators, not simply sequencing actions.</para>
+
+      <para>As long as you feel like a novice with monads, we think
+	you should prefer to explicitly write &bind; over the
+	syntactic sugar of &do; notation.  The repeated reinforcement
+	of what's really happening seems, for many programmers, to
+	help to keep things clear. (It can be easy for an imperative
+	programmer to relax a little too much from exposure to the
+	<type>IO</type> monad, and assume that a &do; block means
+	nothing more than a simple sequence of actions.)</para>
+
+      <para>Once you're feeling more familiar with monads, you can
+	choose whichever style seems more appropriate for writing a
+	particular function.  Indeed, when you read other people's
+	monadic code, you'll see that it's unusual, but by no means
+	rare, to mix <emphasis>both</emphasis> &do; notation and
+	&bind; in a single function.</para>
     </sect2>
   </sect1>
 
