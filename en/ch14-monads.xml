@@ -967,6 +967,13 @@
 	and so on.  The &return; expression wraps each tuple in a
 	single-element list.</para>
     </sect2>
+
+    <sect2>
+      <title>Using the list monad</title>
+
+      <remark>XXX I think I need a shortish, compelling example here,
+	and I don't have any in mind.  Help!</remark>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.monads.do">
