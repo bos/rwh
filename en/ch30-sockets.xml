@@ -3,6 +3,91 @@
 <chapter id="hs.sockets" revision="unpublished">
   <title>Sockets and Syslog</title>
 
+  <sect1 id="sockets.basics">
+    <title>Basic Networking</title>
+    <para>
+      In several earlier chapters of this book <remark>FIXME: insert
+      refs</remark>, we have discussed services that operate over a
+      network.  Two examples are client/server databases and web
+      services.  When the need arises to devise a new protocol, or to
+      communicate with a protocol that doesn't have an existing helper
+      library in Haskell, you'll need to use the lower-level
+      networking tools in the Haskell library.
+    </para>
+    <para>
+      In this chapter, we will discuss these lower-level tools.
+      Network communication is a broad topic with entire books devoted
+      to it.  In this chapter, we will show you how to use Haskell to
+      apply low-level network knowledge you already have.  If you need
+      a background on network programming, we suggest <remark>FIXME:
+      insert reference to an appropriate book</remark>.
+    </para>
+    <para>
+      Haskell's networking functions almost always correspond directly
+      to familiar C function calls.  As most other languages also
+      layer atop C, you should find this interface familiar.
+    </para>
+  </sect1>
+  
+  <sect1 id="sockets.udp">
+    <title>Communicating with UDP</title>
+    <para>
+      UDP breaks data down into packets.  It does not ensure that the
+      data reaches its destination, or reaches it only once.  It does
+      use checksumming to ensure that packets that arrive have not
+      been corrupted.  UDP tends to be used in applications that are
+      performance- or latency-sensitive, in which each individual
+      packet of data is less important than the overall performance of
+      the system.  It may also be used where the TCP behavior isn't
+      the most efficient, such as ones that send short, discrete
+      messages.  Examples of systems that tend to use UDP
+      include audio and video conferencing, time synchronization,
+      network-based filesystems, and logging systems.
+    </para>
+
+    <sect2 id="sockets.udp.client">
+      <title>UDP Client Example: syslog</title>
+      <para>
+        The traditional Unix syslog service allows programs to send
+        log messages over a network to a central server that records
+        them.  Some programs are quite performance-sensitive, and may
+        generate a large volume of messages.   In these programs, it
+        could be more important to have the logging impose a minimal
+        performance overhead than to guarantee every message is
+        logged.  Moreover, it may be desirable to continue program
+        operation even if the logging server is unreachable.  For this
+        reason, UDP is one of the protocols supported by syslog for
+        the transmission of log messages.  The protocol is simple and
+        we present a Haskell implementation of a client here.
+      </para>
+      
+    </sect2>
+
+    <sect2 id="sockets.udp.server">
+      <title>UDP Syslog Server</title>
+      <para>
+        FIXME
+      </para>
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="sockets.tcp">
+    <title>Communicating with TCP</title>
+    <para>
+      Nature of TCP
+    </para>
+    <para>
+      Difference from UDP
+    </para>
+    <para>
+      Reimplementation of syslog protocol in TCP
+    </para>
+    <para>
+      Multithreading to handle multiple connections
+    </para>
+  </sect1>
+
   <remark>FIXME</remark>
 </chapter>
 
