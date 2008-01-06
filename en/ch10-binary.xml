@@ -293,7 +293,9 @@
 
     <para>This is really quite fancy and subtle stuff: we're
       effectively passing the <type>ParseState</type> down the chain
-      of <type>Parse</type> values in a hidden argument.</para>
+      of <type>Parse</type> values in a hidden argument.  (We'll be
+      revisiting this kind of code in a few chapters, so don't fret if
+      that description seemed dense.)</para>
 
     <sect2>
       <title>Obtaining and modifying the parse state</title>

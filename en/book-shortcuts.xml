@@ -121,7 +121,7 @@
 <!ENTITY map "<literal>map</literal>">
 <!ENTITY mapM "<literal>mapM</literal>">
 <!ENTITY mapM_ "<literal>mapM_</literal>">
-<!ENTITY newtype "<literal>newtype</literal>">
+<!ENTITY newtype "<code>newtype</code>">
 <!ENTITY notEqual "&#8800;">
 <!ENTITY openBinaryFile "<literal>openBinaryFile</literal>">
 <!ENTITY openBinaryTempFile "<literal>openBinaryTempFile</literal>">

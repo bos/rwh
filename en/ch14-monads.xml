@@ -906,7 +906,7 @@
       <title>Understanding the list monad</title>
 
       <para>The list monad is similar to a familiar Haskell tool, the
-	list comprehension.  We can illustrate the similarity by
+	list comprehension.  We can illustrate this similarity by
 	computing the Cartesian product of two lists.  First, we'll
 	write a list comprehension.</para>
 
@@ -969,7 +969,7 @@
     </sect2>
 
     <sect2>
-      <title>Using the list monad</title>
+      <title>Putting the list monad to work</title>
 
       <remark>XXX I think I need a shortish, compelling example here,
 	and I don't have any in mind.  Help!</remark>
@@ -1120,6 +1120,155 @@
 	monadic code, you'll see that it's unusual, but by no means
 	rare, to mix <emphasis>both</emphasis> &do; notation and
 	&bind; in a single function.</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.monads.state">
+    <title>The state monad</title>
+
+    <para>We discovered earlier in this chapter that the
+      <type>Parse</type> from <xref
+	linkend="hs.binary"/> was a monad.  It has two logically
+      distinct aspects.  One is the idea of a parse failing, and
+      providing a message with the details: we represented this using
+      the <type>Either</type> type.  The other involves carrying
+      around a piece of implicit state, in our case the partially
+      consumed <type>ByteString</type>.</para>
+
+    <para>This need for a way to read and write state is common enough
+      in Haskell programs that the standard libraries provide a monad
+      named <type>State</type> that is dedicated to this purpose. This
+      monad lives in the <code>Control.Monad.State</code>
+      module.</para>
+
+    <para>Where our <type>Parse</type> type carried around a
+      <type>ByteString</type> as its piece of state, the
+      <type>State</type> monad can carry any type of state.  We'll
+      refer to the state's unknown type as <varname
+	role="type">s</varname>.</para>
+
+    <para>What's an obvious and general thing we might want to do with
+      a state?  Given a state value, we inspect it, then produce a
+      result and a new state value.  Let's say the result can be of
+      any type <varname role="type">a</varname>.  A type signature
+      that captures this idea is <type>s -&gt; (a, s)</type>: take a
+      state <varname role="type">s</varname>, and return a result
+      <varname role="type">a</varname> and a new state <varname
+	role="type">s</varname>.</para>
+
+    <sect2>
+      <title>Almost a state monad</title>
+
+      <para>Let's develop some simple code that's
+	<emphasis>almost</emphasis> the <type>State</type> monad, then
+	we'll take a look at the real thing.  We'll start with our
+	type definition, which has exactly the obvious type we
+	described above.</para>
+
+      &SimpleState.hs:SimpleState;
+
+      <para>Yes, this is a type synonym, not a new type, and so we're
+	cheating a little.  Bear with us for now; this simplifies the
+	description that follows.</para>
+
+      <para>Earlier in this chapter, we said that a monad has a type
+	constructor with a single type variable, and yet here we have
+	a type with two variables.  The key here is to understand that
+	we can partially apply a <emphasis>type</emphasis> just as we
+	can partially apply a normal function.  This is easiest to
+	follow with an example.</para>
+
+      &SimpleState.hs:StringState;
+
+      <para>Here, we've bound the type variable <varname
+	  role="type">s</varname> to <type>String</type>. The type
+	<type>StringState</type> still has an unbound type variable
+	<varname role="type">a</varname>, though.  It's now more
+	obvious that we have a suitable type constructor for a monad.
+	In other words, our monad's type constructor is
+	<type>SimpleState s</type>, not <type>SimpleState</type>
+	alone.</para>
+
+      <para>The next ingredient we need to make a monad is a
+	definition for the &return; function.</para>
+
+      &SimpleState.hs:returnSt;
+
+      <para>All this does is take the result and the current state,
+	and <quote>tuple them up</quote>.  You may by now be used to
+	the idea that a Haskell function with multiple parameters is
+	just a chain of single-parameter functions, but just in case
+	you're not, here's a more familiar way of writing
+	<function>returnSt</function> that makes it more obvious how
+	simple this function is.</para>
+
+      &SimpleState.hs:returnAlt;
+
+      <para>Our final piece of the monadic puzzle is a definition for
+	&bind;.  Here it is, using the actual variable names from the
+	standard library's definition of &bind; for
+	<type>State</type>.</para>
+
+      &SimpleState.hs:bindSt;
+
+      <para>Those single-letter variable names aren't exactly a boon
+	to readability, so let's see if we can substitute some more
+	meaningful names.</para>
+
+      &SimpleState.hs:bindAlt;
+
+      <para>To understand this definition, remember that
+	<varname>step</varname> is a function with the type <type>s
+	  -&gt; (a, s)</type>.  When we evaluate this, we get a tuple,
+	and we have to use this to return a new function of type
+	<type>s -&gt; (a, s)</type>.  This is perhaps easier to follow
+	if we get rid of the <type>SimpleState</type> type synonyms
+	from <function>bindAlt</function>'s type signature, and
+	examine the types of its parameters and result.</para>
+
+      &SimpleState.hs:bindAlt.type;
+
+    </sect2>
+    
+    <sect2>
+      <title>The real thing</title>
+
+      <para>The only simplifying trick we played in the previous
+	section was to use a type synonym instead of a type definition
+	for <type>SimpleState</type>.  In order to define a
+	<code>Monad</code> instance, we have to provide a proper type
+	constructor as well as definitions for &bind; and &return;.
+	This leads us to the <emphasis>real</emphasis> definition of
+	<type>State</type>.</para>
+
+      &State.hs:State;
+
+      <para>All we've done is wrap our <type>s -&gt; (a, s)</type>
+	type in a <code>State</code> constructor.  By using Haskell's
+	record syntax to define the type, we're automatically given a
+	<function>runState</function> function that will unwrap a
+	<type>State</type> value from its constructor.  The type of
+	<function>runState</function> is <type>State s a -&gt; s -&gt;
+	  (a, s)</type>.</para>
+
+      <para>The definition of &return; is almost the same as for
+	<type>SimpleState</type>, except we wrap our function with a
+	<code>State</code> constructor.</para>
+
+      &State.hs:returnState;
+
+      <para>The definition of &bind; is a little more complicated,
+	because it has to use <function>runState</function> to remove
+	the <code>State</code> wrappers.</para>
+
+      &State.hs:bindState;
+
+      <para>It should now be clear why we introduced a simpler &bind;
+	definition first, in the form of <function>bindAlt</function>.
+	This version differs only in adding the wrapping and
+	unwrapping of a few values.  By separating the real work from
+	the bookkeeping, we've hopefully made it clearer what's really
+	happening.</para>
     </sect2>
   </sect1>
 
