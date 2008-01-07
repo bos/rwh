@@ -54,3 +54,6 @@ fmap (1+) ([1,2,3] ++ [4,5,6])
 
 :m +Control.Applicative
 (1+) <$> Just 2
+
+--# invalid
+:load ValidFunctor

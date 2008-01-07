@@ -403,7 +403,7 @@
     <para>We can think of <function>fmap</function> as a kind of
       <emphasis>lifting</emphasis> function, as we introduced in <xref
       linkend="hs.find.predicate.lift"/>.  It takes a function over
-      ordinary values <type>a -&gt; b</type> and turns it into a
+      ordinary values <type>a -&gt; b</type> and lifts it to become a
       function over containers <type>f a -&gt; f b</type>, where
       <varname>f</varname> is the container type.</para>
 
@@ -463,6 +463,89 @@
       because these have two free type variables. We also can't write
       work with <type>Bool</type> or <type>Int</type>, as they have no
       free type variables.</para>
+
+    <para>In addition, we can't place any constraints on our type
+      definition.  What does this mean?  To illustrate, let's first
+      look at a normal &data; definition and its <code>Functor</code>
+      instance.</para>
+
+    &ValidFunctor.hs:Foo;
+
+    <para>When we define a new type, we can add a type constraint just
+      after the &data; keyword as follows.</para>
+
+    &ValidFunctor.hs:Bar;
+
+    <para>This says that we can only put a type <varname
+	role="type">a</varname> into a n<type>Foo</type> if <varname
+	role="type">a</varname> is a member of the <code>Eq</code>
+      typeclass.  However, the constraint renders it impossible to
+      write a <code>Functor</code> instance for
+      <type>Bar</type>.</para>
+
+    &functor.ghci:invalid;
+
+    <sect2>
+      <title>Constraints on type definitions are bad</title>
+
+      <para>Adding a  constraint to a type definition is never a good
+	idea.  It has the effect of forcing you to add type
+	constraints to <emphasis>every</emphasis> function that will
+	operate on values of that type.  Let's say that we need a
+	stack data structure that we want to be able to query to see
+	whether its elements obey some ordering.  Here's a naive
+	definition of the data type.</para>
+
+      &TypeConstraint.hs:OrdStack;
+
+      <para>If we want to write a function that checks the stack to
+	see whether it is monotonic (i.e. either every element is
+	bigger than the element below it, or every element is
+	smaller), we'll obviously need an <code>Ord</code> constraint
+	to perform the pairwise comparisons.</para>
+
+      &TypeConstraint.hs:isMonotonic;
+
+      <para>However, because we wrote the type constraint on the type
+	definition, that constraint ends up infecting places where it
+	isn't needed at all: we need to add the <code>Ord</code>
+	constraint to <function>push</function>, which does not care
+	at all about the ordering of elements on the stack.</para>
+
+      &TypeConstraint.hs:push;
+
+      <para>Try removing that <code>Ord</code> constraint above, and
+	the definition of <function>push</function> will fail to
+	typecheck.</para>
+
+      <para>This is why our attempt to write a <code>Functor</code>
+	instance for <type>Bar</type> failed earlier: it would have
+	required an <code>Eq</code> constraint to somehow get
+	retroactively added to the signature of
+	<function>fmap</function>.</para>
+
+      <para>Now that we've tentatively established that putting a type
+	constraint on a type definition is a misfeature of Haskell,
+	what's a more sensible alternative?  The answer is simply to
+	omit type constraints from type definitions, and instead place
+	them on the functions that need them.</para>
+
+      <para>In this example, we can drop the <code>Ord</code>
+	constraints from <code>OrdStack</code> and
+	<function>push</function>.  It needs to stay on
+	<function>isMonotonic</function>, which otherwise couldn't
+	call <function>compare</function>.  We now have the
+	constraints where they actually matter.  This has the further
+	benefit of making the type signatures better document the real
+	requirements of each function.</para>
+
+      <para>Most Haskell container types follow this pattern.  The
+	<type>Map</type> type in the <code>Data.Map</code> module
+	requires that its keys be ordered, but this constraint is
+	expressed on functions like <function>insert</function>, where
+	it's actually needed, and not on <function>size</function>,
+	where ordering isn't used.</para>
+    </sect2>
 
     <sect2>
       <title>Functors as operators</title>
