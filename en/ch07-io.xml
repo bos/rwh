@@ -569,8 +569,8 @@ I/O IS FUN
         Finally, &SeekFromEnd; will seek to the specified number of bytes
         before the end of the file.  <literal>hSeek handle SeekFromEnd
           0</literal> will take you to the end of the file.
+        For an example of &hSeek;, refer to <xref linkend="hs.io.example"/>.
       </para>
-      <remark>FIXME: do we need an example?</remark>
       <para id="x_qC">
         Not all &Handle;s are seekable.  A &Handle; usually corresponds to a
         file, but it can also correspond to other things such as network
