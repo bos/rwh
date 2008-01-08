@@ -70,7 +70,7 @@ Welcome to Haskell, John!
     &basicio.ghci:all;
     <para id="x_HC">
       Notice that both of these types have &IO; in their return value.  That
-      is your key to knowing that they may have side-effects, or that
+      is your key to knowing that they may have side effects, or that
       they may return different values even when called with the same
       arguments, or both.  The type of &putStrLn; looks like
       a function.  It takes a parameter of type &String; and returns
@@ -125,7 +125,10 @@ Welcome to Haskell, John!
         effect when called by something else in an I/O context.
           </para>
         </listitem>
-        <listitem><para>Performing an action of type <literal>IO
+        <listitem><para>An expression may produce an action as its
+        value, but the action will not perform I/O until it is performed</para>
+        </listitem>
+        <listitem><para>Performing (executing) an action of type <literal>IO
         t</literal> may perform I/O and will ultimately deliver a
         result of type <literal>t</literal></para>
         </listitem>
@@ -136,17 +139,22 @@ Welcome to Haskell, John!
       rather than a function.  And in fact, that is one way to look at it:
       &getLine; is storing an I/O action.  When that action is run, you get
       a &String;.  The &larrow; operator is used to "pull out" the result
-      from an I/O action and store it in a variable.
+      from an I/O action and store it in a
+      variable.<footnote><para>Or, more technically, it is used to
+      pull pure code into an I/O action.</para>
+        </footnote>
     </para>
     <para id="x_LC">
-      Finally, &main; itself is an I/O action with type <literal>IO
-        ()</literal>.  You can only execute I/O actions or use &larrow; from
-      within other I/O actions.  So all I/O in Haskell programs is driven
+      &main; itself is an I/O action with type <literal>IO
+        ()</literal>.  You can only perform I/O actions from
+      within other I/O actions.  All I/O in Haskell programs is driven
       from the top at &main;, which is where execution of every Haskell
       program begins.  This, then, is the mechanism that provides
-      isolation from side-effects in Haskell: you perform I/O in
+      isolation from side effects in Haskell: you perform I/O in
       your <literal>IO</literal> actions, and call pure (non-I/O) functions
-      from there.
+      from there.  Most Haskell programs will still have the majority
+        of their code outside <literal>IO</literal> actions; the I/O
+        actions are just used to perform I/O and call the pure code.
     </para>
 
 
@@ -175,10 +183,9 @@ Welcome to Haskell, John!
       Notice the <literal>name2reply</literal> function in this example.  It
       is a regular Haskell function and obeys all the rules we've told you
       about: it always returns the same result when given the same input, it
-      has no side-effects, and it operates lazily.  It uses other Haskell
+      has no side effects, and it operates lazily.  It uses other Haskell
       functions: <literal>(++)</literal>, <literal>show</literal>, and
-      <literal>length</literal>.   You can play with it in &ghci; just as you
-      would any other function.
+      <literal>length</literal>.
     </para>
     <para id="x_OC">
       Down in <literal>main</literal>, we assign the result of
@@ -187,16 +194,20 @@ Welcome to Haskell, John!
       results from &IO; actions and &let; to get results from pure code.
     </para>
     <para id="x_PC">
-      You can see here how we read from the keyboard the person's name.
+      You can see here how we read the person's name from the keyboard.
       Then, that data got passed to a pure function, and its result was
-      printed.  In fact, the last line of &main; could have been replaced
+      printed.  In fact, the last two lines of &main; could have been replaced
       with <literal>putStrLn (name2reply inpStr)</literal>.  So, while &main;
-      did have side-effects&emdash;it caused things to appear on the terminal,
-      for instance&emdash;<literal>name2reply</literal> did not and could not.
+      did have side effects&emdash;it caused things to appear on the terminal,
+      for instance&emdash;<literal>name2reply</literal> did not and
+      could not.  That's because <literal>name2reply</literal> is pure
+      code, and not an action.
     </para>
     <para id="x_QC">
       Let's examine this with &ghci;:
     </para>
+
+      <remark>FIXME: have we introduced :l?</remark>
 
     &callingpure.ghci:all;
 
@@ -216,18 +227,90 @@ Welcome to Haskell, John!
 
     <para id="x_TC">
       After looking at these example programs, you may be wondering if Haskell
-      is really imperative rather than lazy.  It sure looks like a sequence
-      of actions to be followed in order.  There's more to it than that,
-      though.  We'll discuss that question later in this chapter in 
+      is really imperative rather than pure, lazy, and functional.
+        Some of these examples look like a sequence
+        of actions to be followed in order.  There's more to it than that,
+        though.  We'll discuss that question later in this chapter in 
         <xref
           linkend="hs.io.imperative"/> and <xref linkend="hs.io.lazy"/>.
     </para>
 
-    <para id="x_UC">
-      Haskell defines quite a few basic functions for I/O.  The library
-      reference for <literal>System.IO</literal> provides a good summary of
-      them all, should you need one that we haven't demonstrated here.
-    </para>
+    <sect2 id="hs.io.purevsimpure">
+      <title>Pure vs. Impure Code</title>
+      <para>
+        As a way to help with understanding the differences between
+        pure and impure code, here's a comparison table.  When we
+        speak of pure code, we are talking about Haskell functions
+        that always return the same result when given the same input
+        and have no side effects.  In Haskell, the only impure code is
+        the execution of I/O actions.
+      </para>
+      <table id="hs.io.purevsimpure.table">
+        <title>Pure vs. Impure Code</title>
+        <tgroup cols='2' align='left'>
+          <colspec colname='c1'/>
+          <colspec colname='c2'/>
+          <thead>
+            <row>
+              <entry>Pure</entry>
+              <entry>Impure</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>Always produces the same result when given the
+                same parameters</entry>
+              <entry>May produce different results for the same
+                parameters</entry>
+            </row>
+            <row>
+              <entry>Never has side effects</entry>
+              <entry>May have side effects</entry>
+            </row>
+            <row>
+              <entry>May alter the global state of the program,
+              system, or world</entry>
+              <entry>Never alters state</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </sect2>
+                
+
+    <sect2 id="hs.io.purity">
+      <title>Why Purity Matters</title>
+      <para>
+        In this section, we've discussed how Haskell draws a clear
+        distinction between pure and impure code.  Most languages
+        don't draw this distinction.  In languages such as C or Java, 
+        there is no such thing as a function that is guaranteed by the
+        compiler to
+        always return the same result for the same arguments, or a
+        function that is guaranteed to never have side effects.  The
+        only way to know if a given function has side effects is to
+        read its documentation and hope that it's accurate.
+      </para>
+      <para>
+        Many bugs in programs are caused by unanticipated side
+        effects.  Still more are caused by misunderstanding
+        circumstances in which functions may return different results
+        for the same input.  As multithreadining and other forms of
+        parallelism becomt more and more common, it becomes more
+        difficult to manage global side effects.
+      </para>
+      <para>
+        Haskell's method of isolating side effects into I/O actions
+        provides a clear boundary.  You can always know which parts of
+        the system may alter state and which won't.  You can always be
+        sure that the pure parts of your program aren't having
+        unanticipated results.  This helps you to think about the
+        program.  It also helps the compiler to think about it.
+        Recent versions of &ghc;, for instance, can provide a level of
+        automatic parallelism for the pure parts of your code --
+        something of a holy grail for computing.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.io.files">
@@ -237,6 +320,17 @@ Welcome to Haskell, John!
       So far,  you've seen how to work with the terminal.  Of course, you'll
       often need to manipulate specific files.  That's easy to do, too.  
     </para>
+
+    <para id="x_UC">
+      Haskell defines quite a few basic functions for I/O.  The library
+      reference for <literal>System.IO</literal> provides a good summary of
+      them all, should you need one that we aren't touching upon
+      here.  Many of these are similar to functions you would see in
+      other programming languages.
+      <remark>FIXME: insert xref to instructions on finding library
+      ref</remark> 
+    </para>
+
     <para id="x_WC">
       You will
       generally begin by using &openFile;, which will give you a file &Handle;.
@@ -252,8 +346,9 @@ Welcome to Haskell, John!
     </para>
 
     <para id="x_XC">
-      Let's start with an imperative way to read and write files.  This will
-      probably seem familiar to a <literal>while</literal> loop that you may
+      Let's start with an imperative way to read and write files.
+ This should
+      seem similar to a <literal>while</literal> loop that you may
       find in other languages.  This isn't the best way to write it in
       Haskell; later, you'll see examples of more Haskellish approaches.
     </para>
@@ -736,7 +831,7 @@ Which could be expressed as this Haskell literal:
       <para id="x_eD">
         Notice that &hGetContents; handled <emphasis>all</emphasis> of the
         reading for us.  Also, take a look at <literal>processData</literal>.
-        It's a pure function since it has no side-effects and always returns
+        It's a pure function since it has no side effects and always returns
         the same result each time it is called.  It has no need to know&emdash;and no way to tell&emdash;that its input is being read lazily from a file
         in this case.  It can work perfectly well with a 20-character literal
         or a 500GB data dump on disk.
@@ -1167,13 +1262,13 @@ Data: Done!
   </sect1>
 
   <sect1 id="hs.io.sideeffects">
-    <title>Side-Effects with Lazy I/O</title>
+    <title>Side Effects with Lazy I/O</title>
     <para id="x_eE">
       Earlier in this chapter, you read about &hGetContents;.
       We explained that the &String; it returns can be used in pure code.
     </para>
     <para id="x_fE">
-      We need to get a bit more specific about what side-effects are.  When
+      We need to get a bit more specific about what side effects are.  When
       we say Haskell has no side-effects, what exactly does that mean?
     </para>
     <para id="x_gE">
@@ -1183,8 +1278,8 @@ Data: Done!
       swapped to disk.
     </para>
     <para id="x_hE">
-      When we speak of no side-effects, we mean that pure code in Haskell
-      can't run commands that trigger side-effects.  Pure functions 
+      When we speak of no side effects, we mean that pure code in Haskell
+      can't run commands that trigger side effects.  Pure functions 
       can't modify a global variable, request I/O, or run a command to take
       down a system.
     </para>
