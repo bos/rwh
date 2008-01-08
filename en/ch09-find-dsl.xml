@@ -419,7 +419,7 @@
       fact here we can do so by making our function
       <emphasis>shorter</emphasis>.</para>
 
-    <sect2>
+    <sect2 id="hs.find.acquire.use.release">
       <title>The acquire-use-release cycle</title>
 
       <para>We need <function>hClose</function> to always be called if
