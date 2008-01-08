@@ -1636,7 +1636,7 @@
       </note>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.fp.aspattern.codereuse">
       <title>Code reuse</title>
 
       <para id="x_OA">It seems a shame to introduce a new function,
