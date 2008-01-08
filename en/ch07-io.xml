@@ -360,7 +360,7 @@ Welcome to Haskell, John!
       <literal>main</literal>.  Two files are opened:
       <literal>input.txt</literal> is opened for reading, and
       <literal>output.txt</literal> is opened for writing.  Then we call
-      <literal>mainloop</literal>.
+      <literal>mainloop</literal> to process the file.
     </para>
     <para id="x_ZC">
       <literal>mainloop</literal> begins by checking to see if we're at the
@@ -369,7 +369,12 @@ Welcome to Haskell, John!
       value.  Otherwise, we read a line from the input.  We write out the
       same line to the output, after first converting it to uppercase.  Then
       we recursively call <literal>mainloop</literal> again to continue
-      processing the file.
+      processing the file.<footnote><para>Imperative programmers might
+      be concerned that such a recursive call would consume large
+      amounts of stack space.  In Haskell, recursion is a common
+      idiom, and the compiler is smart enough to avoid consuming much
+      stack by optimizing tail-recursive functions.</para>
+      </footnote>
     </para>
     <para id="x_aC">
       Notice that &return; call.  This is not really the same as &return; in
@@ -378,15 +383,20 @@ Welcome to Haskell, John!
       the caller.  In Haskell, &return; is the opposite of &larrow;.  That
       is, &return; takes a pure value and wraps it inside &IO;.  Since every
       I/O action must return some &IO; type, if your result came from pure
-      computation, you must use &return; to wrap it in &IO;.  For more
-      details on &return;, see <xref linkend="hs.io.return"/>.
+      computation, you must use &return; to wrap it in &IO;.  As an
+      example, if <literal>7</literal> is an &Int;, then
+      <literal>return 7</literal> would create an action stored in a 
+      value of type
+      <literal>IO Int</literal>.  When executed, that action would
+      produce the result <literal>7</literal>.  For more
+      details on &return;, see <xref linkend="hs.io.return"/>.  
     </para>
     <para id="x_bC">
       Let's try running the program.  We've got a file named
       <literal>input.txt</literal> that looks like this:
     </para>
     <programlisting>
-This is ch06/input.txt
+This is ch07/input.txt
 
 Test Input
 I like Haskell
@@ -401,7 +411,7 @@ I/O is fun
       like this:
     </para>
     <programlisting>
-THIS IS CH06/INPUT.TXT
+THIS IS CH07/INPUT.TXT
 
 TEST INPUT
 I LIKE HASKELL
@@ -458,7 +468,7 @@ I/O IS FUN
               <entry>No</entry>
               <entry>Yes</entry>
               <entry>Beginning of file</entry>
-              <entry>File is truncated if it already existed</entry>
+              <entry>File is truncated (completely emptied) if it already existed</entry>
             </row>
             <row>
               <entry>&ReadWriteMode;</entry>
@@ -502,13 +512,13 @@ I/O IS FUN
       <para id="x_iC">
         As you'll see in <xref linkend="hs.io.buffering"/>, Haskell maintains
         internal buffers for files.  This provides an important performance
-        boost.  However, it means that if you fail to &hClose; a file that is
-        open for writing, your data may not all be flushed out to disk until
-        you call &hClose;.
+        boost.  However, it means that until you call &hClose; on a
+        file that is open for writing, your data may not be flushed
+        out to disk.  
       </para>
       <para id="x_jC">
         Another reason to make sure to &hClose; files is that open files take
-        up memory on the system.  If your program runs for a long time, and
+        up resources on the system.  If your program runs for a long time, and
         opens many files but fails to close them, it is conceivable that your
         program could even crash due to resource exhaustion.
       </para>
@@ -518,6 +528,12 @@ I/O IS FUN
         which this may not happen<footnote><para id="x_lC">If there was a bug in the C
             part of a hybrid program, for instance</para></footnote>, so once
         again, it is best to be responsible and call &hClose; all the time.
+      </para>
+      <para>
+        Haskell provides several tools for you to use to easily ensure
+        this happens, regardless of whether errors are present.  One
+        such function is <literal>bracket</literal>, which is
+        discussed in <xref linkend="hs.find.acquire.use.release"/>.
       </para>
     </sect2>
 
