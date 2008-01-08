@@ -472,7 +472,7 @@
 	<function>zipWith7</function>.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.fp.lists.strings">
       <title>Special string-handling functions</title>
 
       <para id="x_e7">We've already encountered the standard

@@ -30,9 +30,9 @@ myAction tempname temph =
                   tempdata
        hPutStrLn temph tempdata
 
-       -- Get our new position.  This doesn't actually modify pos,
-       -- but makes the name "pos" correspond to a different value for
-       -- the remainder of the "do" block.
+       -- Get our new position.  This doesn't actually modify pos
+       -- in memory, but makes the name "pos" correspond to a different 
+       -- value for the remainder of the "do" block.
        pos <- hTell temph
        putStrLn $ "After writing, my new position is " ++ show pos
 
@@ -76,7 +76,8 @@ withTempFile pattern func =
        -- file.  finally takes two actions.  The first is the action to run.
        -- The second is an action to run after the first, regardless of
        -- whether the first action raised an exception.  This way, we ensure
-       -- the temporary file is always deleted.
+       -- the temporary file is always deleted.  The return value from finally
+       -- is the first action's return value.
        finally (func tempfile temph) 
                (do hClose temph
                    removeFile tempfile)

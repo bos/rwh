@@ -531,9 +531,10 @@ I/O IS FUN
       </para>
       <para>
         Haskell provides several tools for you to use to easily ensure
-        this happens, regardless of whether errors are present.  One
-        such function is <literal>bracket</literal>, which is
-        discussed in <xref linkend="hs.find.acquire.use.release"/>.
+        this happens, regardless of whether errors are present.  
+        You can read about <literal>finally</literal> in <xref
+        linkend="hs.io.example"/> and <literal>bracket</literal> in
+        <xref linkend="hs.find.acquire.use.release"/>.
       </para>
     </sect2>
 
@@ -554,7 +555,7 @@ I/O IS FUN
           Integer</literal> with your position.
       </para>
       <para id="x_oC">
-        The companion to &hTell; is &hSeek;.  &hSeek; lets you reposition the
+        The companion to &hTell; is &hSeek;.  &hSeek; lets you change the
         file position.  It takes three parameters: a &Handle;, a &SeekMode;,
         and a position.
       </para>
@@ -584,7 +585,8 @@ I/O IS FUN
       <para id="x_rC">
         Earlier, I pointed out that for each non-"h" function, there is
         usually also a corresponding "h" function that works on any &Handle;.
-        The non-"h" functions nothing more than shortcuts, in fact.
+        In fact, the non-"h" functions are nothing more than shortcuts for
+        their "h" counterparts.
       </para>
       <para id="x_sC">
         There are three pre-defined &Handle;s in
@@ -605,6 +607,12 @@ getLine = hGetLine stdin
 putStrLn = hPutStrLn stdout
 print = hPrint stdout
 </programlisting>
+      <tip>
+        <para>We're using partial application here.  If this isn't
+        making sense, consult
+          <xref linkend="hs.fp.partialapp"/> for a refresher.
+        </para>
+      </tip>
       <para id="x_vC">
         Earlier, I told you what the three standard file handles "normally"
         correspond to.  That's because some operating systems let you
@@ -618,19 +626,20 @@ print = hPrint stdout
         specific files.  This lets you interact with a human at the terminal.
         But it also lets you work with input and output files&emdash;or even
         combine your code with other programs&emdash;if that's
-        what's requested.
+        what's requested.<footnote><para>For more information on
+        interoperating with other programs with pipes, see <xref linkend="hs.systems.piping"/>.</para>
+        </footnote>
       </para>
       <para id="x_xC">
         As an example, we can provide input to
         <literal>callingpure.hs</literal> in advance like this:
       </para>
       <screen>
-$ <userinput>echo John | runhaskell callingpure.hs</userinput>
+$ <userinput>echo John|runghc callingpure.hs</userinput>
 Greetings once again.  What is your name?
 Pleased to meet you, John.
 Your name contains 4 characters.
       </screen>
-      <remark>FIXME: does this work on windows?</remark>
       <para id="x_yC">
         While <literal>callingpure.hs</literal> was running, it did not wait
         for input at the keyboard; instead it received
@@ -639,7 +648,7 @@ Your name contains 4 characters.
         <literal>John</literal> on a separate line as it did when this
         program was run at the keyboard.  The terminal normally echoes
         everything you type back to you, but that is technically input, and
-        this not included in the output stream.
+        is not included in the output stream.
       </para>
     </sect2>
 
@@ -665,14 +674,14 @@ Your name contains 4 characters.
         There are many other functions in &System.Directory; for doing things
         such as creating and removing directories, finding lists of files in
         directories, and testing for file existence.  These are discussed in
-        <remark>FIXME: add ref to appropriate section of chapter 19</remark>.
+        <xref linkend="hs.systems.directories"/>.
       </para>
     </sect2>
 
     <sect2 id="hs.io.files.temp">
       <title>Temporary Files</title>
       <para id="x_DD">
-        Programmers frequently have a need for temporary files.  These files
+        Programmers frequently need temporary files.  These files
         may be used to store large amounts of data needed for computations, data to be
         used by other programs, or any number of other uses.
       </para>
@@ -691,10 +700,11 @@ Your name contains 4 characters.
         <literal>System.Directory.getTemporaryDirectory</literal> to find the
         best place for temporary files on a given machine.  The template is used
         as the basis for the file name; it will have some random characters
-        added to it to ensure that the result is truly unique.  
+        added to it to ensure that the result is truly unique.  It
+        guarantees that it will be working on a unique filename, in fact.
       </para>
       <para id="x_GD">
-        The result of this function is <literal>IO (FilePath,
+        The return type of &openTempFile; is <literal>IO (FilePath,
           Handle)</literal>.  The first part of the tuple is the name of the
         file created, and the second is a &Handle; opened in &ReadWriteMode;
         over that file.  When you're done with the file, you'll want to
@@ -720,14 +730,19 @@ Your name contains 4 characters.
       Let's start looking at this program from the end.  The
       <literal>withTempFile</literal> function demonstrates that Haskell
       doesn't forget its functional nature when I/O is introduced.  This
-      function takes a &String; and another function.  The passed function is
-      passed the name and &Handle; of a temporary file.  When that function
-      exits, the temporary file is closed and deleted.
+      function takes a &String; and another function.  The function
+      passed to <literal>withTempFile</literal> is invoked with the
+      name and &Handle; of a temporary file.  When that function
+      exits, the temporary file is closed and deleted.  So even when
+      dealing with I/O, we can still find the idiom of passing
+      functions as parameters to be convenient.  Lisp programmers
+      might find our <literal>withTempFile</literal> function similar
+      to Lisp's <literal>with-open-file</literal> function.
     </para>
     <para id="x_JD">
       There is some exception handling going on to make the program more
       robust in the face of errors.  You normally want the temporary files to
-      be deleted all the time, even if something went wrong.  So we make sure
+      be deleted after processing completes, even if something went wrong.  So we make sure
       that happens.  For more on exception handling, and the use of &catch;
       and &finally; see <remark>FIXME: add ref (ch 18 or 24?)</remark>.
     </para>
@@ -794,6 +809,12 @@ Which could be expressed as this Haskell literal:
       <listitem><para id="x_VD">The <literal>\n</literal> is the newline character from
           the original &hPutStrLn;.</para></listitem>
     </orderedlist>
+    <para>
+      As a final note, the byte counts may be different on some
+      operating systems.  Windows, for instance, uses the two-byte sequence
+      <literal>\r\n</literal> as the end-of-line marker, so you may
+      see differences on that platform.
+    </para>
   </sect1>
 
   <sect1 id="hs.io.lazy">
@@ -822,26 +843,32 @@ Which could be expressed as this Haskell literal:
             file.</para></footnote>
       </para>
       <para id="x_bD">
-        In an imperative language, use of such a function is often a bad idea.
+        In a strictly-evaluated language, using such a function is often a bad idea.
         It may be fine to read the entire contents of a 2KB file, but if you
         try to read the entire contents of a 500GB file, you are likely to
-        crash due to lack of RAM to store all that data.
+        crash due to lack of RAM to store all that data.  In these
+        languages, you would traditionally use mechanisms such as 
+        loops to process the file's entire data.
       </para>
       <para id="x_cD">
         But &hGetContents; is different.  The &String; it returns is evaluated
         lazily.  At the moment you call &hGetContents;, nothing is actually
         read.  Data is only read from the &Handle; as the elements (characters)
         of the list are processed.  As elements of the &String; are no longer
-        used, Haskell automatically frees that memory.  All of this happens
+        used, Haskell's garbage collector automatically frees that
+        memory.  
+        All of this happens
         completely transparently to you.  And since you have what looks like&emdash;and, really, is&emdash;a pure &String;, you can pass it to pure (non-&IO;)
         code.
       </para>
+      <remark>FIXME: suggestion for a graphic from Eric Lavigne: Following Peter's (2007-09-27) comment, with which I strongly agree, I suggest a picture that uses colored boxes to represent lines in the file: red for no longer in scope, green for line being used right now, and yellow for not yet accessed. Explain that a Haskell program can be doing something with the green block while the red blocks are no longer taking up memory (due to garbage collection) and the yellow blocks haven't been read from the file yet (due to laziness).</remark>
       <para id="x_dD">
         Let's take a quick look at an example.  Back in
         <xref linkend="hs.io.files"/>, you saw an imperative program
         that converted the entire content of a file to uppercase.  Its
         imperative algorithm was similar to what you'd see in many other
-        languages.  Here now is the much simpler lazy algorithm:
+        languages.  Here now is the much simpler algorithm that
+        exploits lazy evaluation:
       </para>
       &toupper-lazy1.hs:all;
       <para id="x_eD">
@@ -870,7 +897,19 @@ Which could be expressed as this Haskell literal:
         for you automatically.  The same principle applies to data read from
         the file.  Whenever a given piece of data will never again be
         needed, the Haskell environment releases the memory it was stored
-        within.
+        within.  Strictly speaking, we wouldn't have to call
+        <literal>hClose</literal> at all in this example program.
+        However, it is still a good practice to get into, as later
+        changes to a program could make the call to
+        <literal>hClose</literal> important.
+      </para>
+      <para>
+        When using &hGetContents;, it is important to remember that
+        even though you may never again explicitly reference &Handle;
+        directly in the rest of the program, you must not close the
+        &Handle; until you have finished consuming its results via
+        &hGetContents;.  Doing so would cause you to miss on some or
+        all of the file's data.
       </para>
     </sect2>
     <sect2 id="hs.io.lazy.readFile">
@@ -890,10 +929,19 @@ Which could be expressed as this Haskell literal:
       </para>
       &toupper-lazy3.hs:all;
       <para id="x_kD">
-        Look at that&emdash;the guts of the program takes up only two lines!
+        Look at that&emdash;the guts of the program take up only two lines!
         &readFile; returned a lazy &String;, which we stored in
         <literal>inpStr</literal>.  We then took that, processed it, and
         passed it to &writeFile; for writing.
+      </para>
+      <para>
+        Neither &readFile; nor &writeFile; ever provide a &Handle; for
+        you to work with, so there is nothing to ever &hClose;.
+        &readFile; uses &hGetContents; internally, and the underlying
+        &Handle; will be closed when the returned &String; is
+        garbage-collected or all the input has been consumed.
+        &writeFile; will close its underlying &Handle; when the entire
+        &String; supplied to it has been written.
       </para>
     </sect2>
     <sect2 id="hs.io.lazy.output">
@@ -904,7 +952,7 @@ Which could be expressed as this Haskell literal:
       </para>
       <para id="x_mD">
         As you know, nothing in Haskell is evaluated before its value is
-        needed.  Since functions such as &putStr; write out the entire
+        needed.  Since functions such as &writeFile; and &putStr; write out the entire
         &String; passed to them, that entire &String; must be evaluated.  So
         you are guaranteed that the argument to &putStr; will be evaluated in
         full.<footnote><para id="x_nD">Excepting I/O errors such as a full
@@ -920,7 +968,10 @@ Which could be expressed as this Haskell literal:
         The answer is no.  &putStr; (and all the similar output functions)
         write out data as it becomes available.  They also have no need for
         keeping around data already written, so as long as nothing else in
-        the program needs it, the memory can be freed immediately.
+        the program needs it, the memory can be freed immediately.  In
+        a sense, you can think of the &String; between &readFile; and
+        &writeFile; as a pipe linking the two.  Data goes in one end,
+        is transformed some way, and flows back out the other.
       </para>
       <para id="x_qD">
         You can verify this yourself by generating a large
@@ -938,7 +989,9 @@ Which could be expressed as this Haskell literal:
         different file.  There's a situation that's even more common than
         that: reading from standard input, making a conversion, and writing
         the result to standard output.  For that situation, there is a
-        function called &interact;.  &interact; takes one argument: a
+        function called &interact;.  The type of &interact; is
+        <literal>(String -> String) -> IO ()</literal>.   That is, it
+        takes one argument: a
         function of type <literal>String -> String</literal>.  That function
         is passed the result of <literal>getContents</literal>&emdash;that is,
         standard input read lazily.  The result of that function is sent to
@@ -1003,20 +1056,23 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           &interact;:
         </para>
         &filter.hs:all;
+        <tip><para>If the use of the <literal>.</literal> operator is
+        confusing, you might wish to refer to <xref
+        linkend="hs.fp.aspattern.codereuse"/>.
+          </para>
+        </tip>
         <para id="x_BE">
           This may have introduced three functions that you aren't familiar
           with yet.  Let's inspect their types with &ghci;:
         </para>
         &filter.ghci:all;
         <para id="x_CE">
-          Can you guess what these functions do just by looking at their types?
-          With Haskell, in some cases, you can.
-        </para>
-        <para id="x_DE">
-          &lines; takes a &String; and returns a list of &String;s, each one
-          representing one line in the input.  &unlines; does the opposite: it
-          takes a list of &String;s, joins them together, and puts the end of
-          line character in between them.  You'll frequently see &lines; and
+          Can you guess what these functions do just by looking at
+          their types?
+          If not, you can find them explained in <xref
+          linkend="hs.fp.splitlines"/> and <xref
+          linkend="hs.fp.lists.strings"/>. 
+          You'll frequently see &lines; and
           &unlines; used with I/O.  Finally, &elem; takes a element and a list
           and returns &True; if that element occurs anywhere in the list.
         </para>
