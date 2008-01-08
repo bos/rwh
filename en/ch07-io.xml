@@ -133,7 +133,7 @@ Welcome to Haskell, John!
         result of type <literal>t</literal></para>
         </listitem>
       </itemizedlist>
-      <para>
+    </note>
     <para id="x_KC">
       The type of &getLine; may look strange to you.  It looks like a value,
       rather than a function.  And in fact, that is one way to look at it:
