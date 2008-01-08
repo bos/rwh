@@ -11,10 +11,14 @@
 
   <para id="x_yB">
     Haskell's I/O system is powerful and expressive.  It is easy to work
-    with and important to understand.  I/O is the one area where the rest of
-    Haskell's lack of side effects doesn't always apply.  Haskell provides
-    nice tools for separating I/O from computation, which helps isolate code
-    that could introduce side effects.
+    with and important to understand.  Normally, Haskell has no side
+    effects.  I/O is the one exception to that rule, and it's
+    important to understand how it fits in.
+    Haskell provides helpful
+    tools for separating I/O from computation, which helps isolate code
+    that could introduce side effects.  It also permits compilers to
+    automatically 
+    introduce optimizations and parallelism.
   </para>
 
   <para id="x_zB">
@@ -29,8 +33,8 @@
     <remark>FIXME: have we already explained main?</remark>
     <remark>FIXME: have we already explained $ ?</remark>
     <para id="x_AC">
-      Let's get started with I/O by looking at a program that looks
-      surprisingly similar to I/O in other languages.
+      Let's get started with I/O in Haskell by looking at a program that looks
+      surprisingly similar to I/O in other languages such as C or Perl.
     </para>
     &basicio.hs:all;
     <remark>FIXME: have we explained how to compile to a standalone
@@ -51,24 +55,12 @@ Welcome to Haskell, John!
       writes out a &String;, followed by an end-of-line character.  &getLine;
       reads a line from standard input.  The &larrow; operator may be new to
       you.  Put simply, that operator assigns the result from executing an
-      I/O action to a name.
+      I/O action to a name. 
       <footnote><para id="x_DC">You will later see that it has a more
         broad application, but it is sufficient to think of it in these terms
         for now.</para></footnote>
       We use the simple list concatenation operator
       <literal>++</literal> to join the input string with our own text.
-    </para>
-    <para id="x_EC">
-      &do; is a convenient way to define a sequence of actions.  As you'll
-      see later, there are other ways.  When you use &do; in this way,
-      indentation is significant; make sure you line up your actions
-      properly.
-    </para>
-    <para id="x_FC">
-      You only need to use &do; if you have more than one action that you need
-      to perform.  The return value of a &do; block is the return value
-      of the last action executed.  For a complete description of &do;
-      syntax, see <xref linkend="hs.monads.do"/>.
     </para>
 
     <para id="x_GC">
@@ -78,9 +70,11 @@ Welcome to Haskell, John!
     &basicio.ghci:all;
     <para id="x_HC">
       Notice that both of these types have &IO; in their return value.  That
-      is your key to knowing that they may have side-effects or return
-      different values at different times.  The type of &putStrLn; looks like
-      a function.  It takes a parameter&emdash;a &String;&emdash;and returns an
+      is your key to knowing that they may have side-effects, or that
+      they may return different values even when called with the same
+      arguments, or both.  The type of &putStrLn; looks like
+      a function.  It takes a parameter of type &String; and returns
+      value of type
       <literal>IO ()</literal>.  Just what is an <literal>IO ()</literal>
       though?
     </para>
@@ -90,17 +84,53 @@ Welcome to Haskell, John!
       <emphasis>action</emphasis>.  You can store it and nothing will happen.
       I could say <literal>writefoo = putStrLn "foo"</literal> and nothing
       happens right then.  But if I later call <literal>writefoo</literal> in
-      the middle of another I/O action, it will be executed.  The
+      the middle of another I/O action, the
+        <literal>writefoo</literal> action will be executed when its
+        parent action is executed. The
       <literal>()</literal> is, essentially, an empty return value; there is
-      no return value to speak of from &putStrLn;.  Let's look at that with
+      no return value to speak of from &putStrLn;.  This is similar to
+        <literal>void</literal> in Java or C.<footnote><para>  Strictly speaking,
+        <literal>()</literal> is a 0-element tuple; see <xref
+        linkend="hs.funcstypes.unit"/> for details.</para>
+      </footnote>
+    </para>
+    <para>Let's look at this with
       &ghci;:
     </para>
     &basicio.ghci:putStrLn;
     <para id="x_JC">
       In this example, the output <literal>foo</literal> is not a return
-      value from &putStrLn;.  Rather, it's the result of &putStrLn; actually
+      value from &putStrLn;.  Rather, it's the side effect of &putStrLn; actually
       writing <literal>foo</literal> to the terminal.
     </para>
+    <para>
+      Notice one other thing: &ghci; actually executed
+      <literal>writefoo</literal>.  This means that, when given an I/O
+      action, &ghci; will perform it for you on the spot.
+    </para>
+    <note>
+      <title>What Is An Action?</title>
+      <para>
+        Actions:
+      </para>
+      <itemizedlist>
+        <listitem><para>Have the type <literal>IO <replaceable>t</replaceable></literal></para>
+        </listitem>
+        <listitem><para>Are first-class values in Haskell
+          </para>
+        </listitem>
+        <listitem><para>Produce an effect when
+        <emphasis>performed</emphasis>, but not when
+        <emphasis>evaluated</emphasis>.  That is, they only produce an
+        effect when called by something else in an I/O context.
+          </para>
+        </listitem>
+        <listitem><para>Performing an action of type <literal>IO
+        t</literal> may perform I/O and will ultimately deliver a
+        result of type <literal>t</literal></para>
+        </listitem>
+      </itemizedlist>
+      <para>
     <para id="x_KC">
       The type of &getLine; may look strange to you.  It looks like a value,
       rather than a function.  And in fact, that is one way to look at it:
@@ -118,6 +148,21 @@ Welcome to Haskell, John!
       your <literal>IO</literal> actions, and call pure (non-I/O) functions
       from there.
     </para>
+
+
+    <para id="x_EC">
+      &do; is a convenient way to define a sequence of actions.  As you'll
+      see later, there are other ways.  When you use &do; in this way,
+      indentation is significant; make sure you line up your actions
+      properly.
+    </para>
+    <para id="x_FC">
+      You only need to use &do; if you have more than one action that you need
+      to perform.  The value of a &do; block is the value
+      of the last action executed.  For a complete description of &do;
+      syntax, see <xref linkend="hs.monads.do"/>.
+    </para>
+
 
     <para id="x_MC">
       Let's consider an example of calling pure code from within
