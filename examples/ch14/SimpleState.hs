@@ -33,3 +33,11 @@ bindAlt step makeStep oldState =
     let (result, newState) = step oldState
     in (makeStep result) newState
 {-- /snippet bindAlt --}
+
+{-- snippet getPut --}
+getSt :: SimpleState s s
+getSt = \s -> (s, s)
+
+putSt :: s -> SimpleState s ()
+putSt s = \_ -> ((), s)
+{-- /snippet getPut --}

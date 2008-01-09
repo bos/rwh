@@ -20,3 +20,11 @@ instance Monad (State s) where
     return a = returnState a
     m >>= k = bindState m k
 {-- /snippet Monad --}
+
+{-- snippet getPut --}
+get :: State s s
+get = State $ \s -> (s, s)
+
+put :: s -> State s ()
+put s = State $ \_ -> ((), s)
+{-- /snippet getPut --}

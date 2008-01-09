@@ -367,7 +367,7 @@
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.monads.escape">
       <title>Controlled escape</title>
 
       <para>The <code>Monad</code> typeclass doesn't provide any means
@@ -1231,7 +1231,23 @@
     </sect2>
     
     <sect2>
-      <title>The real thing</title>
+      <title>Reading and modifying the state</title>
+
+      <para>The definitions of &bind; and &return; for the state monad
+	simply act as plumbing: they move a piece of state around, but
+	they don't touch it in any way.  We need a few other simple
+	functions to actually do useful work with the state.</para>
+
+      &SimpleState.hs:getPut;
+
+      <para>The <function>getSt</function> function simply takes the
+	current state and returns it as the result, while
+	<function>putSt</function> ignores the current state and
+	replaces it with a new state.</para>
+    </sect2>
+      
+    <sect2>
+      <title>Will the real state monad please stand up?</title>
 
       <para>The only simplifying trick we played in the previous
 	section was to use a type synonym instead of a type definition
@@ -1263,12 +1279,189 @@
 
       &State.hs:bindState;
 
-      <para>It should now be clear why we introduced a simpler &bind;
-	definition first, in the form of <function>bindAlt</function>.
-	This version differs only in adding the wrapping and
-	unwrapping of a few values.  By separating the real work from
-	the bookkeeping, we've hopefully made it clearer what's really
-	happening.</para>
+      <para>This function differs from our earlier
+	<function>bindSt</function> only in adding the wrapping and
+	unwrapping of a few values.  By separating the <quote>real
+	  work</quote> from the bookkeeping, we've hopefully made it
+	clearer what's really happening.</para>
+
+      <para>We modify the functions for reading and modifying the
+	state in the same way, by adding a little wrapping.</para>
+
+      &State.hs:getPut;
+
+    </sect2>
+
+    <sect2>
+      <title>Using the state monad: generating random values</title>
+
+      <para>We've already used <type>Parse</type>, our precursor to
+	the state monad, to parse binary data.  If we'd been using the
+	state monad directly, we would have used a
+	<type>ByteString</type> as the state.</para>
+
+      <para>The State monad will probably feel much familiar to you
+	than many other monads if you have a background in imperative
+	languages.  After all, imperative languages are all about
+	carrying around some implicit state, reading some parts, and
+	modifying others through assignment, and this is just what the
+	state monad is for.</para>
+
+      <para>So instead of unnecessarily cheerleading for the idea of
+	using the state monad, we'll begin by demonstrating how to use
+	it for something simple: pseudorandom value generation.  In
+	an imperative language, there's usually an easily available
+	source of uniform pseudorandom numbers.  For example, in C, there's
+	a standard <function>rand</function> function that generates a
+	pseudorandom number, using a global state that it
+	updates.</para>
+
+      <para>Haskell's standard random generation module is named
+	<code>System.Random</code>.  It allows the generation of
+	random values of any type, not just numbers.  The module
+	contains several handy functions that live in the
+	<type>IO</type> monad.  For example, a rough equivalent of C's
+	<function>rand</function> function would be the
+	following:</para>
+
+      &Random.hs:rand;
+
+      <para>(The <function>randomR</function> function takes an
+	inclusive range within which the generated random value
+	should lie.)</para>
+
+      <para>The <code>System.Random</code> module provides a
+	typeclass, <code>RandomGen</code>, that lets us define new
+	sources of random values.  The type <type>StdGen</type> is the
+	standard <code>RandomGen</code> instance, and generated
+	pseudorandom values.  If we had an external source of truly
+	random data, we could make it an instance of
+	<code>RandomGen</code> and get truly random, instead of merely
+	pseudorandom, values.</para>
+
+      <para>Another typeclass, <code>Random</code>, indicates how to
+	generate random values of a particular type.  The module
+	defines <code>Random</code> instances for all of the usual
+	simple types.</para>
+
+      <para>Incidentally, the definition of <function>rand</function>
+	above reads and modifies a built-in global random generator
+	that inhabits the <type>IO</type> monad.</para>
+
+      <sect3>
+	<title>A first attempt at purity</title>
+
+	<para>After all of our emphasis so far on avoiding the
+	  <type>IO</type> monad wherever possible, it would be a shame
+	  if we were dragged back into it just to generate some random
+	  values.  Indeed, <code>System.Random</code> contains pure
+	  random number generation functions.</para>
+
+	<para>The traditional downside of purity is that we have to
+	  get or create a random number generator, then ship it from
+	  the point we created it to the place where it's needed. When
+	  we finally call it, it returns a <emphasis>new</emphasis>
+	  random number generator: we're in pure code, remember, so we
+	  can't modify the state of the existing generator.</para>
+
+	<para>If we forget about immutability and reuse the same
+	  generator within a function, we get back exactly the same
+	  <quote>random</quote> number every time.</para>
+
+	&Random.hs:twoBadRandoms;
+
+	<para>Needless to say, this has nasty consequences.</para>
+
+	&random.ghci:twoBadRandoms;
+
+	<para>(The <function>random</function> function uses an
+	  implicit range instead of the user-supplied range used by
+	  <function>randomR</function>.  The
+	  <function>getStdGen</function> function retrieves the
+	  current value of the global standard number generator from
+	  the <type>IO</type> monad.)</para>
+
+	<para>Unfortunately, correctly passing around and using
+	  successive versions of the generator does not make for
+	  palatable reading.  Here's a simple example.</para>
+
+	&Random.hs:twoGoodRandoms;
+
+	<para>Now that we know about the state monad, though, it looks
+	  like a fine candidate to hide the generator.</para>
+      </sect3>
+
+      <sect3>
+	<title>Random values in the state monad</title>
+
+	<para>Here's a state monad that carries around a
+	  <type>StdGen</type> as its piece of state.</para>
+
+	&Random.hs:RandomState;
+
+	<para>The type synonym is of course not necessary, but it's
+	  handy. It saves a little keyboarding, and if we wanted to
+	  swap another random generator for <type>StdGen</type>, it
+	  would reduce the number of type signatures we'd need to
+	  change.</para>
+
+	<para>Generating a random value is now a matter of fetching
+	  the current generator, using it, then modifying the state to
+	  replace it with the new generator.</para>
+
+	&Random.hs:getRandom;
+
+	<para>We can now use some of the monadic machinery that we saw
+	  earlier to write a much more concise function for giving us
+	  a pair of random numbers.</para>
+
+	&Random.hs:getTwoRandoms;
+      </sect3>
+
+      <sect3>
+	<title>Exercises</title>
+
+	<qandaset defaultlabel="number">
+	  <qandaentry>
+	    <question>
+	      <para>Rewrite <function>getRandom</function> to use &do;
+		notation.</para>
+	    </question>
+	  </qandaentry>
+	</qandaset>
+
+      </sect3>
+
+      <sect3>
+	<title>Running the state monad</title>
+
+	<para>As we've already mentioned, each monad has its own
+	  specialised evaluation functions.  In the case of the state
+	  monad, we have several to choose from.</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para><function>runState</function> returns both the
+	      result and the final state.</para>
+	  </listitem>
+	  <listitem>
+	    <para><function>evalState</function> returns only the
+	      result, throwing away the final state.</para>
+	  </listitem>
+	  <listitem>
+	    <para><function>execState</function> throws the result
+	      away, returning only the final state.</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>The <function>evalState</function> and
+	  <function>execState</function> functions are simply
+	  compositions of <function>fst</function> and
+	  <function>snd</function> with <function>runState</function>,
+	  respectively. Thus, of the three,
+	  <function>runState</function> is the one most worth
+	  remembering.</para>
+      </sect3>
     </sect2>
   </sect1>
 
