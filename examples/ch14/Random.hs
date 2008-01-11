@@ -44,8 +44,8 @@ getRandomDo = do
   return val
 {-- /snippet getRandomDo --}
 
-getTwoRandoms :: Random a => RandomState (a, a)
-getTwoRandoms = do
+getTwoRandomsUgly :: Random a => RandomState (a, a)
+getTwoRandomsUgly = do
   a <- getRandom
   b <- getRandom
   return (a, b)
@@ -54,3 +54,40 @@ getTwoRandoms = do
 getTwoRandoms :: Random a => RandomState (a, a)
 getTwoRandoms = liftM2 (,) getRandom getRandom
 {-- /snippet getTwoRandoms --}
+
+{-- snippet runTwoRandoms --}
+runTwoRandoms :: IO (Int, Int)
+runTwoRandoms = do
+  oldState <- getStdGen
+  let (result, newState) = runState getTwoRandoms oldState
+  setStdGen newState
+  return result
+{-- /snippet runTwoRandoms --}
+
+{-- snippet CountedRandom --}
+data CountedRandom = CountedRandom {
+      crGen :: StdGen
+    , crCount :: Int
+    }
+
+type CRState = State CountedRandom
+
+getCountedRandom :: Random a => CRState a
+getCountedRandom = do
+  st <- get
+  let (val, gen') = random (crGen st)
+  put CountedRandom { crGen = gen', crCount = crCount st + 1 }
+  return val
+{-- /snippet CountedRandom --}
+
+{-- snippet getCount --}
+getCount :: CRState Int
+getCount = crCount `liftM` get
+{-- /snippet getCount --}
+
+{-- snippet putCount --}
+putCount :: Int -> CRState ()
+putCount a = do
+  st <- get
+  put st { crCount = a }
+{-- /snippet putCount --}

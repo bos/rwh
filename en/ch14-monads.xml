@@ -1435,22 +1435,22 @@
       <sect3>
 	<title>Running the state monad</title>
 
-	<para id="x_Ca">As we've already mentioned, each monad has its own
-	  specialised evaluation functions.  In the case of the state
-	  monad, we have several to choose from.</para>
+	<para id="x_Ca">As we've already mentioned, each monad has its
+	  own specialised evaluation functions.  In the case of the
+	  state monad, we have several to choose from.</para>
 
 	<itemizedlist>
 	  <listitem>
-	    <para id="x_Da"><function>runState</function> returns both the
-	      result and the final state.</para>
+	    <para id="x_Da"><function>runState</function> returns both
+	      the result and the final state.</para>
 	  </listitem>
 	  <listitem>
-	    <para id="x_Ea"><function>evalState</function> returns only the
-	      result, throwing away the final state.</para>
+	    <para id="x_Ea"><function>evalState</function> returns
+	      only the result, throwing away the final state.</para>
 	  </listitem>
 	  <listitem>
-	    <para id="x_Fa"><function>execState</function> throws the result
-	      away, returning only the final state.</para>
+	    <para id="x_Fa"><function>execState</function> throws the
+	      result away, returning only the final state.</para>
 	  </listitem>
 	</itemizedlist>
 
@@ -1461,6 +1461,65 @@
 	  respectively. Thus, of the three,
 	  <function>runState</function> is the one most worth
 	  remembering.</para>
+
+	<para>Here's a complete example of how to run our
+	  <function>getTwoRandoms</function> function.</para>
+
+	&Random.hs:runTwoRandoms;
+
+	<para>The call to <function>runState</function> follows a
+	  standard pattern: we pass it a function in the state monad
+	  and an initial state.  It returns the result of the function
+	  and the final state.</para>
+
+	<para>The code surrounding the call to
+	  <function>runState</function> merely obtains the current
+	  global <type>StdGen</type> value, then replaces it
+	  afterwards so that subsequent calls to
+	  <function>runTwoRandoms</function> or other random
+	  generation functions will pick up the updated state.</para>
+      </sect3>
+
+      <sect3>
+	<title>What about a little more state?</title>
+
+	<para>It's a little hard to imagine writing much interesting
+	  code in which there's only a single state value to pass
+	  around.  When we want to track multiple pieces of state at
+	  once, the usual trick is to maintain them in a data type.
+	  Here's an example: keeping track of the number of random
+	  numbers we are handing out.</para>
+
+	&Random.hs:CountedState;
+
+	<para>This example happens to consume both elements of the
+	  state, and construct a completely new state, every time we
+	  call into it.  More frequently, we're likely to read or
+	  modify only part of a state.  This function gets the number
+	  of random values generated so far.</para>
+
+	&Random.hs:getRandom;
+
+	<para>We deliberately used record syntax to define our
+	  <type>CountedRandom</type> state, and this example should
+	  make it clear why.  It gives us accessor functions that we
+	  can glue together with <function>get</function> to read
+	  specific pieces of the state.</para>
+
+	<para>If we want to partially update a state, the code doesn't
+	  come out quite so appealingly.</para>
+
+	&Random.hs:putRandom;
+
+	<para>Here, instead of a function, we're using record update
+	  syntax.  The expression <code>st { crCount = a }</code>
+	  creates a new value that's an identical copy of
+	  <varname>st</varname>, except in its <code>crCount</code>
+	  field, which is given the value <varname>a</varname>.
+	  Because this is a syntactic hack, we don't get the same kind
+	  of flexibility as with a function.  Record syntax may not
+	  exhibit Haskell's usual elegance, but it at least gets the
+	  job done.</para>
       </sect3>
     </sect2>
   </sect1>
