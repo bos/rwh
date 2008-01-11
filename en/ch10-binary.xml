@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.binary" revision="unpublished">
+<chapter id="hs.binary" revision="alpha">
   <title>Code case study: parsing a binary data format</title>
 
   <para id="x_sQ">In this chapter, we'll discuss a common task: parsing a binary
