@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.glob" revision="unpublished">
+<chapter id="hs.glob" revision="alpha">
   <title>Case study: regular expressions and file name
     matching</title>
 
