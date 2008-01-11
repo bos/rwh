@@ -3,7 +3,7 @@
   <chapter id="hs.databases" revision="unpublished">
     <title>Using Databases</title>
 
-    <para>
+    <para id="x_Ec">
       Everything from web forums to podcatchers or even backup programs
       frequently use databases for persistent storage.  SQL-based databases are
       often quite convenient: they are fast, can scale from tiny to massive
@@ -13,7 +13,7 @@
       commercial databases such as Oracle, Open Source engines such as
       PostgreSQL or MySQL, and even embeddable engines such as Sqlite.
     </para>
-    <para>
+    <para id="x_Fc">
       Because databases are so important, Haskell support for them is important
       as well.  In this chapter, we will introduce you to one of the Haskell
       frameworks for working with databases.  We will also use this framework
@@ -23,37 +23,37 @@
 
     <sect1 id="hs.databases.hdbc">
       <title>Overview of HDBC</title>
-      <para>
+      <para id="x_Gc">
         At the bottom of the database stack is the database engine.  The
         database engine is responsible for actually storing data on disk.
         Well-known database engines include PostgreSQL, MySQL, and Oracle.
       </para>
-      <para>
+      <para id="x_Hc">
         Most modern database engines support SQL, the Structured Query
         Language, as a standard way of getting data into and out of relational
         databases.  This book will not provide a tutorial on SQL or relational
         database management; for background on that, please refer to
         <remark>FIXME: add reference to an appropriate O'Reilly title</remark>.
       </para>
-      <para>
+      <para id="x_Ic">
         Once you have a database engine that supports SQL, you need a way to
         communicate with it.  Each database has its own protocol.  Since SQL is
         reasonably constant across databases, it is possible to make a generic
         interface that uses drivers for each individual protocol.
       </para>
-      <para>
+      <para id="x_Jc">
         Haskell has several different database frameworks available, some
         providing high-level layers atop others.  For this chapter, we will
         concentrate on HDBC, the Haskell DataBase Connectivity system.  HDBC is
         a database abstraction library.  That is, you can write code that uses
         HDBC and can access data stored in almost any SQL database with little
-        or no modification.<footnote><para>This assumes you restrict yourself to
+        or no modification.<footnote><para id="x_Kc">This assumes you restrict yourself to
             using standard SQL.</para></footnote>  Even if you may never need
         to switch underlying database engines, the HDBC system of drivers makes
         a large number of choices available to you with a single constant
         interface.
       </para>
-      <para>
+      <para id="x_Lc">
         Another database abstraction library for Haskell is HSQL,
         which shares a similar purpose with HDBC.  There is also a
         higher-level framework called HaskellDB, which sits atop
@@ -67,7 +67,7 @@
 
     <sect1 id="hs.databases.hdbc.install">
       <title>Installing HDBC and Drivers</title>
-      <para>
+      <para id="x_Mc">
         To connect to a given database with HDBC, you need at two packages:
         the generic interface, and a driver for your specific database.  You
         can obtain the generic HDBC package from <ulink
@@ -75,7 +75,7 @@
           link to section on installing software</remark>.  For this chapter,
         we will use HDBC version 1.1.3 for examples.
       </para>
-      <para>
+      <para id="x_Nc">
         You'll also need a database backend and backend driver.  For
         this chapter, we'll use Sqlite version 3.  Sqlite is an embedded
         database, so it doesn't require a separate server and is easy to
@@ -86,7 +86,7 @@
         version 3 can be obtained from <ulink
           url="http://software.complete.org/hdbc-sqlite3"/>. 
       </para>
-      <para>
+      <para id="x_Oc">
         If you want to use HDBC with other databases, check out the
         HDBC Known Drivers page at <ulink
         url="http://software.complete.org/hdbc/wiki/KnownDrivers"/>.
@@ -103,14 +103,14 @@
 
     <sect1 id="hs.databases.connect">
       <title>Connecting to Databases</title>
-      <para>
+      <para id="x_Pc">
         To connect to a database, you will use a connection function
         from a database backend driver.  Each database has its own
         unique method of connecting.  The initial connection is
         generally the only time you will call anything from a backend
         driver module directly.
       </para>
-      <para>
+      <para id="x_Qc">
         The database connection function will return a database
         handle.  The precise type of this handle may vary from one
         driver to the next, but it will always be an instance of the
@@ -126,7 +126,7 @@
 
     <sect1 id="hs.databases.transactions">
       <title>Transactions</title>
-      <para>
+      <para id="x_Rc">
         Most modern SQL databases have a notion of transactions.
         Transactions are useful for many things.  A transaction is
         designed to ensure that all components of a modification get
@@ -134,7 +134,7 @@
         help prevent other processes accessing the same database from
         seeing partial data from modifications that are in progress.
       </para>
-      <para>
+      <para id="x_Sc">
         Many databases require you to either explicitly commit all
         your changes before they appear on disk, or to run in an
         "autocommit" mode.  The "autocommit" mode runs an implicit
@@ -143,7 +143,7 @@
         accustomed to them, but complicates the life of people that
         actually want transactions.
       </para>
-      <para>
+      <para id="x_Tc">
         HDBC intentionally does not support autocommit mode.  When you
         modify data in your databases, you must explicitly cause it to
         be committed to disk.  There are two ways to do that in HDBC:
@@ -153,7 +153,7 @@
         data to be committed upon successful completion of your
         function.
       </para>
-      <para>
+      <para id="x_Uc">
         Sometimes a problem will occur while you are working on
         writing data to the database.  Perhaps you get an error from
         the database or discover a problem with the data.  In these
@@ -163,7 +163,7 @@
         function to do this.  If you are using &withTransaction;, any
         uncaught exception will cause a roll back to be issued.
       </para>
-      <para>
+      <para id="x_Vc">
         Note that a rollback operation only rolls back the changes
         since the last &commit;, &rollback;, or &withTransaction;.  A
         database does not maintain an extensive history like a
@@ -171,7 +171,7 @@
         undo in a database.
       </para>
       <warning>
-        <para>
+        <para id="x_Wc">
           One popular database, MySQL, does not support transactions
           with its default table type.  In its default configuration,
           MySQL will silently ignore calls to &commit; or &rollback;
@@ -184,7 +184,7 @@
           recommended for use with HDBC.
         </para>
       </warning>
-      <para>
+      <para id="x_Xc">
         You will see examples of &commit; later in this chapter, and
         examples of &withTransaction; in <remark>FIXME: insert ref to
         ch22</remark>. 
@@ -193,19 +193,19 @@
 
     <sect1 id="hs.databases.simplequeries">
       <title>Simple Queries</title>
-      <para>
+      <para id="x_Yc">
         Some of the simplest queries in SQL involve statements that
         don't return any data.  These queries can be used to create
         tables, insert data, delete data, and set database parameters.
       </para>
-      <para>
+      <para id="x_Zc">
         The most basic function for sending queries to a database is
         &run;.  This function takes an &IConnection;, a &String;
         representing the query itself, and a list of parameters.
         Let's use it to set up some things in our database.
       </para>
       &query.ghci:setup;
-      <para>
+      <para id="x_ac">
         After connecting to the database, we first created a table
         called <literal>test</literal>.  Then we inserted one row of
         data into the table.  Finally, we committed the changes and
@@ -213,7 +213,7 @@
         &commit;, no final change would have been written to the
         database at all.
       </para>
-      <para>
+      <para id="x_bc">
         The &run; function returns the number of rows each query
         modified.  For the first query, which created a table, no rows
         were modified.  The second query inserted a single row, so
@@ -223,7 +223,7 @@
 
     <sect1 id="hs.database.sqlvalue">
       <title>SqlValues</title>
-      <para>
+      <para id="x_cc">
         Before proceeding any farther, we need to discuss a data type
         introduced in HDBC: &SqlValue;.  Since both Haskell and SQL
         are strongly-typed systems, HDBC tries to preserve type
@@ -232,7 +232,7 @@
         different databases have different ways of representing things
         such as dates or special characters in strings.
       </para>
-      <para>
+      <para id="x_dc">
         &SqlValue; is a data type that has a number of constructors
         such as &SqlString;, &SqlBool;, &SqlNull;, &SqlInteger;, and
         more.  This lets you represent various types of data in
@@ -247,14 +247,14 @@
 
     <sect1 id="hs.databases.args">
       <title>Query Parameters</title>
-      <para>
+      <para id="x_ec">
         HDBC, like most databases, supports a notion of replacable
         paramaters in queries.  There are two primary benefits of
         using replacable parameters: they improve performance when
         executing similar queries repeatedly, and they permit easy and
         portable insertion of data into queries.
       </para>
-      <para>
+      <para id="x_fc">
         Let's say you wanted to add thousands of rows into our new
         table <literal>test</literal>.  You could issue thousands of
         queries looking like <literal>INSERT INTO test VALUES (0,
@@ -265,7 +265,7 @@
         query once, and just execute it multiple times with the
         different data.
       </para>
-      <para>
+      <para id="x_gc">
         A second problem involves escaping.  What if you wanted to
         insert the string <literal>I don't like 1</literal>?  SQL uses
         the single quote character to show the end of the field.  Most
@@ -276,7 +276,7 @@
         all for you.  Let's look at an example.
       </para>
       &query.ghci:runargs;
-      <para>
+      <para id="x_hc">
         The question marks in the INSERT query in this example are the
         placeholders.  We then passed the parameters that are going to
         go there.  &run; takes a list of &SqlValue;, so we used
@@ -285,14 +285,14 @@
         <literal>"zero"</literal> into the appropriate representation
         for the database in use.
       </para>
-      <para>
+      <para id="x_ic">
         This approach won't actually achieve any performance benefits
         when inserting large amounts of data.  For that, we need more
         control over the process of creating the SQL query.  We'll
         discuss that in the next section.
       </para>
       <note>
-        <para>
+        <para id="x_jc">
           Replacable parameters only work for parts of the queries
           where the server is expecting a value, such as a WHERE
           clause in a SELECT statement or a value for an INSERT
@@ -308,13 +308,13 @@
 
     <sect1 id="hs.databases.statements">
       <title>Prepared Statements</title>
-      <para>
+      <para id="x_kc">
         HDBC defines a function &prepare; that will prepare a SQL
         query, but it does not yet bind
         the parameters to the query.  &prepare; returns a
         &Statement; representing the compiled query.  
       </para>
-      <para>
+      <para id="x_lc">
         Once you have a &Statement;, you can do a number of things
         with it.  You can call &execute; on it one or more times.
         After calling &execute; on a query that returns data, you can
@@ -325,12 +325,12 @@
         what's happening, you can use a &Statement; instead of a
         function like &run;.
       </para>
-      <para>
+      <para id="x_mc">
         Let's look at using statements to insert multiple values with
         a single query.  Here's an example:
       </para>
       &query.ghci:mult;
-      <para>
+      <para id="x_nc">
         In this example, we created a prepared statement and called it
         <literal>stmt</literal>.  We then executed that statement four
         times, and passed different parameters each time.  These
@@ -338,17 +338,17 @@
         in the original query string.  Finally, we commit the changes
         and disconnect the database.
       </para>
-      <para>
+      <para id="x_oc">
         HDBC also provides a function &executeMany; that can be useful
         in situations such as this.  &executeMany; simply takes a list
         rows of data to call the statement with.  Here's an example:
       </para>
       &query.ghci:executeMany;
       <note>
-        <para>
+        <para id="x_pc">
           On the server, most databases will have an optimization that
           they can apply to <literal>executeMany</literal> so that they only have to compile
-          this query string once, rather than twice.<footnote><para>HDBC
+          this query string once, rather than twice.<footnote><para id="x_qc">HDBC
               emulates this behavior for databases that do not provide it,
               providing programmers a unified API for running queries
               repeatedly.</para> </footnote> This can lead to a dramatic
@@ -361,7 +361,7 @@
 
     <sect1 id="hs.databases.readingresults">
       <title>Reading Results</title>
-      <para>
+      <para id="x_rc">
         So far, we have discussed queries that insert or change data.
         Let's discuss getting data back out of the database.  The
         function &quickQueryp; looks very similar to &run;, but it
@@ -370,27 +370,27 @@
         see an example:
       </para>
       &query.ghci:qqp;
-      <para>
+      <para id="x_sc">
         &quickQueryp; returns a list of rows, where each row is itself
         represented as <literal>[SqlValue]</literal>.  The values in
         the row are listed in the order returned by the database.  You
         can use <literal>fromSql</literal> to convert them into
         regular Haskell types as needed.
       </para>
-      <para>
+      <para id="x_tc">
         It's a bit hard to read that output.  Let's extend this
         example to format the results nicely.  Here's some code to do
         that:
       </para>
       &query.hs:all;
-      <para>
+      <para id="x_uc">
         This program does mostly the same thing as our example with
         &ghci;, but with a new addition: the
         <literal>convRow</literal> function.  This function takes a
         row of data from the database and converts it to a &String;.
         This string can then be easily printed out.
       </para>
-      <para>
+      <para id="x_vc">
         Notice how we took <literal>intid</literal> from
         <literal>fromSql</literal> directly, but processed
         <literal>fromSql sqlDesc</literal> as a <literal>Maybe
@@ -412,7 +412,7 @@
 
       <sect2 id="hs.databases.readingstatements">
         <title>Reading with Statements</title>
-        <para>
+        <para id="x_wc">
           As we discussed in <xref
           linkend="hs.databases.statements"/>, you can use statements
           for reading.  There are a number of ways of reading data
@@ -420,7 +420,7 @@
           Like &run;, &quickQueryp; is a convenience function that in
           fact uses statements to accomplish its task.
         </para>
-        <para>
+        <para id="x_xc">
           To create a statement for reading, you use &prepare; just as
           you would for a statement that will be used to write data.
           You also use &execute; to execute it on the database
@@ -437,7 +437,7 @@
           database; see <xref linkend="hs.databases.metadata"/> for
           other ways to obtain column names.
         </para>
-        <para>
+        <para id="x_yc">
           You can also read data one row at a time by calling
           <literal>fetchRow</literal>, which returns <literal>IO
           (Maybe [SqlValue])</literal>.  It will be &Nothing; if all
@@ -447,7 +447,7 @@
 
       <sect2 id="hs.databases.readinglazy">
         <title>Lazy Reading</title>
-        <para>
+        <para id="x_zc">
           Back in <xref linkend="hs.io.lazy"/>, we talked about lazy
           I/O from files.  It is also possible to read data lazily
           from databases.  This can be particularly useful when
@@ -459,7 +459,7 @@
           careful in your use of the data, you can avoid having to
           buffer all of the results in memory.
         </para>
-        <para>
+        <para id="x_Ad">
           Lazy reading from a database, however, is more complex that
           reading from a file.  When you're done reading data lazily
           from a file, the file is closed, and that's generally fine.
@@ -469,7 +469,7 @@
           even support multiple simultaneous queries, so HDBC can't
           just close the connection when you're done.
         </para>
-        <para>
+        <para id="x_Bd">
           When using lazy reading, it is critically important that you
           finish reading the entire data set before you attempt to
           close the connection or execute a new query.  We encourage
@@ -477,7 +477,7 @@
           wherever possible to minimize complex interactions with lazy
           reading.
         </para>
-        <para>
+        <para id="x_Cd">
           To read lazily from a database, you use the same functions
           you used before, without the apostrophe.  For instance,
           you'd use <literal>fetchAllRows</literal> instead of
@@ -486,7 +486,7 @@
           Here's an example of lazy reading:
         </para>
         &query.ghci:far;
-        <para>
+        <para id="x_Dd">
           Note that you could have used
           <literal>fetchAllRowsAL'</literal> here as well.  However,
           if you had a large data set to read, it would have consumed
@@ -499,7 +499,7 @@
         
     <sect1 id="hs.databases.metadata">
       <title>Database Metadata</title>
-      <para>
+      <para id="x_Ed">
         Sometimes it can be useful for a program to learn information about
         the database itself.  For instance, a program may want to see
         what tables exist so that it can automatically create missing
@@ -507,14 +507,14 @@
         program may need to alter its behavior depending on the
         database backend in use.
       </para>
-      <para>
+      <para id="x_Fd">
         First, there is a <literal>getTables</literal> function that
         will obtain a list of defined tables in a database.  You can
         also use the <literal>describeTable</literal> function, which
         will provide information about the defined columns in a given
         table.
       </para>
-      <para>
+      <para id="x_Gd">
         You can learn about the database server in use by caling
         <literal>dbServerVer</literal> and
         <literal>proxiedClientName</literal>, for instance.  The
@@ -523,7 +523,7 @@
         transactions.  Let's look at an example of some of these items:
       </para>
       &query.ghci:metadata;
-      <para>
+      <para id="x_Hd">
         You can also learn about the results of a specific query by
         obtaining information from its statement.  The
         <literal>describeResult</literal> function returns 
@@ -533,7 +533,7 @@
         may be NULL.  The full specification is given in the HDBC API
         reference.
       </para>
-      <para>
+      <para id="x_Id">
         Please note that some databases may not be able to provide all
         this metadata.  In these circumstances, an exception will be
         raised.
@@ -542,20 +542,20 @@
 
     <sect1 id="hs.databases.errors">
       <title>Error Handling</title>
-      <para>
+      <para id="x_Jd">
         HDBC will raise exceptions when errors occur.  The exceptions
         have type &SqlError;.  The convey information from the
         underlying SQL engine, such as the database's state, the error
         message, and the database's numeric error code, if any.
       </para>
-      <para>
+      <para id="x_Kd">
         &ghc; does not know how to display an &SqlError; on the screen
         when it occurs.  While the exception will cause the program to
         terminate, it will not display a useful message.  Here's an
         example:
       </para>
       &query.ghci:error1;
-      <para>
+      <para id="x_Ld">
         Here we tried to SELECT data from a table that didn't exist.
         The error message we got back wasn't helpful.  There's a
         utility function, &handleSqlError;, that will catch an
@@ -565,7 +565,7 @@
         Let's look at its usage:
       </para>
       &query.ghci:error2;
-      <para>
+      <para id="x_Md">
         Here we got more information, including even a message saying
         that there is no such table as test2.  This is much more
         helpful.  Many HDBC programmers make it a standard practice to
@@ -573,7 +573,7 @@
         do</literal>, which will ensure that every un-caught
         &SqlError; will be printed in a helpful manner.
       </para>
-      <para>
+      <para id="x_Nd">
         There are also <literal>catchSql</literal> and
         <literal>handleSql</literal> -- similar to the standard
         <literal>catch</literal> and <literal>handle</literal>

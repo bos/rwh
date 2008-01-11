@@ -5,7 +5,7 @@
 
   <sect1 id="sockets.basics">
     <title>Basic Networking</title>
-    <para>
+    <para id="x_Od">
       In several earlier chapters of this book <remark>FIXME: insert
       refs</remark>, we have discussed services that operate over a
       network.  Two examples are client/server databases and web
@@ -14,7 +14,7 @@
       library in Haskell, you'll need to use the lower-level
       networking tools in the Haskell library.
     </para>
-    <para>
+    <para id="x_Pd">
       In this chapter, we will discuss these lower-level tools.
       Network communication is a broad topic with entire books devoted
       to it.  In this chapter, we will show you how to use Haskell to
@@ -22,7 +22,7 @@
       a background on network programming, we suggest <remark>FIXME:
       insert reference to an appropriate book</remark>.
     </para>
-    <para>
+    <para id="x_Qd">
       Haskell's networking functions almost always correspond directly
       to familiar C function calls.  As most other languages also
       layer atop C, you should find this interface familiar.
@@ -31,7 +31,7 @@
   
   <sect1 id="sockets.udp">
     <title>Communicating with UDP</title>
-    <para>
+    <para id="x_Rd">
       UDP breaks data down into packets.  It does not ensure that the
       data reaches its destination, or reaches it only once.  It does
       use checksumming to ensure that packets that arrive have not
@@ -47,7 +47,7 @@
 
     <sect2 id="sockets.udp.client">
       <title>UDP Client Example: syslog</title>
-      <para>
+      <para id="x_Sd">
         The traditional Unix syslog service allows programs to send
         log messages over a network to a central server that records
         them.  Some programs are quite performance-sensitive, and may
@@ -65,7 +65,7 @@
 
     <sect2 id="sockets.udp.server">
       <title>UDP Syslog Server</title>
-      <para>
+      <para id="x_Td">
         FIXME
       </para>
     </sect2>
@@ -74,16 +74,16 @@
 
   <sect1 id="sockets.tcp">
     <title>Communicating with TCP</title>
-    <para>
+    <para id="x_Ud">
       Nature of TCP
     </para>
-    <para>
+    <para id="x_Vd">
       Difference from UDP
     </para>
-    <para>
+    <para id="x_Wd">
       Reimplementation of syslog protocol in TCP
     </para>
-    <para>
+    <para id="x_Xd">
       Multithreading to handle multiple connections
     </para>
   </sect1>

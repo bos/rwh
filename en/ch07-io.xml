@@ -89,12 +89,12 @@ Welcome to Haskell, John!
         parent action is executed. The
       <literal>()</literal> is, essentially, an empty return value; there is
       no return value to speak of from &putStrLn;.  This is similar to
-        <literal>void</literal> in Java or C.<footnote><para>  Strictly speaking,
+        <literal>void</literal> in Java or C.<footnote><para id="x_KN">  Strictly speaking,
         <literal>()</literal> is a 0-element tuple; see <xref
         linkend="hs.funcstypes.unit"/> for details.</para>
       </footnote>
     </para>
-    <para>Let's look at this with
+    <para id="x_LN">Let's look at this with
       &ghci;:
     </para>
     &basicio.ghci:putStrLn;
@@ -103,32 +103,32 @@ Welcome to Haskell, John!
       value from &putStrLn;.  Rather, it's the side effect of &putStrLn; actually
       writing <literal>foo</literal> to the terminal.
     </para>
-    <para>
+    <para id="x_MN">
       Notice one other thing: &ghci; actually executed
       <literal>writefoo</literal>.  This means that, when given an I/O
       action, &ghci; will perform it for you on the spot.
     </para>
     <note>
       <title>What Is An Action?</title>
-      <para>
+      <para id="x_NN">
         Actions:
       </para>
       <itemizedlist>
-        <listitem><para>Have the type <literal>IO <replaceable>t</replaceable></literal></para>
+        <listitem><para id="x_ON">Have the type <literal>IO <replaceable>t</replaceable></literal></para>
         </listitem>
-        <listitem><para>Are first-class values in Haskell
+        <listitem><para id="x_PN">Are first-class values in Haskell
           </para>
         </listitem>
-        <listitem><para>Produce an effect when
+        <listitem><para id="x_QN">Produce an effect when
         <emphasis>performed</emphasis>, but not when
         <emphasis>evaluated</emphasis>.  That is, they only produce an
         effect when called by something else in an I/O context.
           </para>
         </listitem>
-        <listitem><para>An expression may produce an action as its
+        <listitem><para id="x_RN">An expression may produce an action as its
         value, but the action will not perform I/O until it is performed</para>
         </listitem>
-        <listitem><para>Performing (executing) an action of type <literal>IO
+        <listitem><para id="x_SN">Performing (executing) an action of type <literal>IO
         t</literal> may perform I/O and will ultimately deliver a
         result of type <literal>t</literal></para>
         </listitem>
@@ -140,7 +140,7 @@ Welcome to Haskell, John!
       &getLine; is storing an I/O action.  When that action is run, you get
       a &String;.  The &larrow; operator is used to "pull out" the result
       from an I/O action and store it in a
-      variable.<footnote><para>Or, more technically, it is used to
+      variable.<footnote><para id="x_TN">Or, more technically, it is used to
       pull pure code into an I/O action.</para>
         </footnote>
     </para>
@@ -237,7 +237,7 @@ Welcome to Haskell, John!
 
     <sect2 id="hs.io.purevsimpure">
       <title>Pure vs. Impure Code</title>
-      <para>
+      <para id="x_UN">
         As a way to help with understanding the differences between
         pure and impure code, here's a comparison table.  When we
         speak of pure code, we are talking about Haskell functions
@@ -280,7 +280,7 @@ Welcome to Haskell, John!
 
     <sect2 id="hs.io.purity">
       <title>Why Purity Matters</title>
-      <para>
+      <para id="x_VN">
         In this section, we've discussed how Haskell draws a clear
         distinction between pure and impure code.  Most languages
         don't draw this distinction.  In languages such as C or Java, 
@@ -291,7 +291,7 @@ Welcome to Haskell, John!
         only way to know if a given function has side effects is to
         read its documentation and hope that it's accurate.
       </para>
-      <para>
+      <para id="x_WN">
         Many bugs in programs are caused by unanticipated side
         effects.  Still more are caused by misunderstanding
         circumstances in which functions may return different results
@@ -299,7 +299,7 @@ Welcome to Haskell, John!
         parallelism becomt more and more common, it becomes more
         difficult to manage global side effects.
       </para>
-      <para>
+      <para id="x_XN">
         Haskell's method of isolating side effects into I/O actions
         provides a clear boundary.  You can always know which parts of
         the system may alter state and which won't.  You can always be
@@ -310,7 +310,7 @@ Welcome to Haskell, John!
         automatic parallelism for the pure parts of your code --
         something of a holy grail for computing.
       </para>
-      <para>
+      <para id="x_YN">
         For more discussion on this topic, refer to <xref
         linkend="hs.io.sideeffects"/>.</para>
     </sect2>
@@ -372,7 +372,7 @@ Welcome to Haskell, John!
       value.  Otherwise, we read a line from the input.  We write out the
       same line to the output, after first converting it to uppercase.  Then
       we recursively call <literal>mainloop</literal> again to continue
-      processing the file.<footnote><para>Imperative programmers might
+      processing the file.<footnote><para id="x_ZN">Imperative programmers might
       be concerned that such a recursive call would consume large
       amounts of stack space.  In Haskell, recursion is a common
       idiom, and the compiler is smart enough to avoid consuming much
@@ -532,7 +532,7 @@ I/O IS FUN
             part of a hybrid program, for instance</para></footnote>, so once
         again, it is best to be responsible and call &hClose; all the time.
       </para>
-      <para>
+      <para id="x_aN">
         Haskell provides several tools for you to use to easily ensure
         this happens, regardless of whether errors are present.  
         You can read about <literal>finally</literal> in <xref
@@ -611,7 +611,7 @@ putStrLn = hPutStrLn stdout
 print = hPrint stdout
 </programlisting>
       <tip>
-        <para>We're using partial application here.  If this isn't
+        <para id="x_bN">We're using partial application here.  If this isn't
         making sense, consult
           <xref linkend="hs.fp.partialapp"/> for a refresher.
         </para>
@@ -629,7 +629,7 @@ print = hPrint stdout
         specific files.  This lets you interact with a human at the terminal.
         But it also lets you work with input and output files&emdash;or even
         combine your code with other programs&emdash;if that's
-        what's requested.<footnote><para>For more information on
+        what's requested.<footnote><para id="x_cN">For more information on
         interoperating with other programs with pipes, see <xref linkend="hs.systems.piping"/>.</para>
         </footnote>
       </para>
@@ -812,7 +812,7 @@ Which could be expressed as this Haskell literal:
       <listitem><para id="x_VD">The <literal>\n</literal> is the newline character from
           the original &hPutStrLn;.</para></listitem>
     </orderedlist>
-    <para>
+    <para id="x_dN">
       As a final note, the byte counts may be different on some
       operating systems.  Windows, for instance, uses the two-byte sequence
       <literal>\r\n</literal> as the end-of-line marker, so you may
@@ -906,7 +906,7 @@ Which could be expressed as this Haskell literal:
         changes to a program could make the call to
         <literal>hClose</literal> important.
       </para>
-      <para>
+      <para id="x_eN">
         When using &hGetContents;, it is important to remember that
         even though you may never again explicitly reference &Handle;
         directly in the rest of the program, you must not close the
@@ -937,7 +937,7 @@ Which could be expressed as this Haskell literal:
         <literal>inpStr</literal>.  We then took that, processed it, and
         passed it to &writeFile; for writing.
       </para>
-      <para>
+      <para id="x_fN">
         Neither &readFile; nor &writeFile; ever provide a &Handle; for
         you to work with, so there is nothing to ever &hClose;.
         &readFile; uses &hGetContents; internally, and the underlying
@@ -1059,7 +1059,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           &interact;:
         </para>
         &filter.hs:all;
-        <tip><para>If the use of the <literal>.</literal> operator is
+        <tip><para id="x_gN">If the use of the <literal>.</literal> operator is
         confusing, you might wish to refer to <xref
         linkend="hs.fp.aspattern.codereuse"/>.
           </para>
@@ -1225,7 +1225,7 @@ Data: Done!
         function that returns a list.  It doesn't&emdash;and can't&emdash;actually
         execute actions directly.  &mapM; is a utility that lives in the
         &IO; monad and thus can actually execute the
-        actions.<footnote><para>Technically speaking, &mapM; combines
+        actions.<footnote><para id="x_hN">Technically speaking, &mapM; combines
         a bunch of separate I/O actions into one big action.  The
         separate actions are executed when the big action is.</para>
         </footnote>
@@ -1280,25 +1280,25 @@ Data: Done!
         this when you define a &do; block.
       </para>
       <tip>
-        <para>Forgetting how to use <literal>\</literal> (lambda
+        <para id="x_iN">Forgetting how to use <literal>\</literal> (lambda
         expressions)?  See <xref linkend="hs.fp.anonymous"/>.
         </para>
       </tip>
     </sect2>
     <sect2 id="hs.io.return">
       <title>The True Nature of Return</title>
-      <para>
+      <para id="x_jN">
         Earlier in this chapter, we mentioned that &return; is probably not
         what it looks like.  Many languages have a keyword named &return;
         that aborts execution of a function immediately and returns a value
         to the caller.
       </para>
-      <para>
+      <para id="x_kN">
         The Haskell &return; function is quite different.  In Haskell,
         &return; is used to wrap data in a monad.  When speaking about I/O,
         &return; is used to take pure data and bring it into the IO monad.
       </para>
-      <para>
+      <para id="x_lN">
         Now, why would we want to do that?  Remember that anything whose
         result depends on I/O must be within the IO monad.  So if we are
         writing a function that performs I/O, then a pure computation, we
@@ -1307,26 +1307,26 @@ Data: Done!
         occur.  Here's an example:
       </para>
       &return1.hs:all;
-      <para>
+      <para id="x_mN">
         We have a pure computation that yields a &Bool;.  That computation is
         passed to &return;, which puts it into the &IO; monad.  Since it is
         the last value in the &do; block, it becomes the return value of
         <literal>isGreen</literal>, but this is not because we used the
         &return; function.
       </para>
-      <para>
+      <para id="x_nN">
         Here's a version of the same program with the pure computation broken
         out into a separate function.  This helps keep the pure code
         separate, and can also make the intent more clear.
       </para>
       &return2.hs:all;
-      <para>
+      <para id="x_oN">
         Finally, here's a contrived example to show that &return; truly does
         not have to occur at the end of a &do; block.  In practice, it
         usually is, but it need not be so.
       </para>
       &return3.hs:all;
-      <para>
+      <para id="x_pN">
         Notice that we used &larrow; in combination with &return;, but &let;
         in combination with the simple literal.  That's because we needed
         both values to be pure in order to add them, and &larrow; pulls

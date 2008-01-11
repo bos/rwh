@@ -3,7 +3,7 @@
 <chapter id="hs.starting" revision="alpha">
   <title>Getting Started</title>
 
-  <para>As you read this chapter and the few that follow, it's good to
+  <para id="x_TM">As you read this chapter and the few that follow, it's good to
     keep in mind that early on, we will sometimes introduce ideas in
     restricted, simplified form.  Haskell is a deep language, and
     presenting every aspect of a given subject all at once is likely
@@ -76,7 +76,7 @@
       Python, it's somewhat similar to the interactive Python
       interpreter.</para>
 
-      <para>The &ghci; command is a tool for evaluating Haskell
+      <para id="x_UM">The &ghci; command is a tool for evaluating Haskell
       expressions, using existing code from libraries or source files
       that we've written.  It also provides commands that let us
       inspect some details of modules and expressions.  It is not a
@@ -86,7 +86,7 @@
       interactive Python interpreter, which can accept all Python
       code.</para>
 
-    <para>On Unix-like systems, we run &ghci; as a command in a shell
+    <para id="x_VM">On Unix-like systems, we run &ghci; as a command in a shell
       window.  On Windows, it's available as a menu item accessible
       off the Start Menu.  For example, if you installed using the
       &GHC; installer on Windows XP, you should go to <quote>All
@@ -130,7 +130,7 @@ Loading package base ... linking ... done.
 	often grow long enough to leave little visual room on a single
 	line for our input.</para>
 
-      <para>For brevity and consistency, we have replaced &ghci;'s
+      <para id="x_WM">For brevity and consistency, we have replaced &ghci;'s
 	default prompts throughout this book with the prompt string
 	<prompt>ghci&gt;</prompt>.</para>
     </note>
@@ -163,13 +163,13 @@ Loading package base ... linking ... done.
       <tip>
 	<title>Where to look for more information</title>
 
-	<para>We've barely scratched the surface of command line
+	<para id="x_XM">We've barely scratched the surface of command line
 	  editing here.  Since you can work more effectively if you're
 	  more familiar with the capabilities of your command line
 	  editing system, you might find it useful to do some further
 	  reading.</para>
 
-	<para>On Unix-like systems, &ghci; uses the <ulink
+	<para id="x_YM">On Unix-like systems, &ghci; uses the <ulink
 	    url="http://tiswww.case.edu/php/chet/readline/rltop.html#Documentation">GNU 
 	    readline library</ulink>, which is powerful and
 	  customisable.  On Windows, &ghci;'s command line editing
@@ -202,7 +202,7 @@ Loading package base ... linking ... done.
     
       &basics.ghci:arithmetic;
 
-      <para>Operators are normal Haskell functions; the infix style of
+      <para id="x_ZM">Operators are normal Haskell functions; the infix style of
 	writing an expression is just a convenience.</para>
 
       <para id="x_T1">As the expressions above imply, Haskell has a notion of
@@ -216,7 +216,7 @@ Loading package base ... linking ... done.
       <note>
 	<title>Why are there parentheses around operators?</title>
 
-	<para>When we write an operator by itself, we'll usually
+	<para id="x_aM">When we write an operator by itself, we'll usually
 	  write it surrounded by parentheses, for example
 	  <function>(+)</function>.  This is a standard Haskell way of
 	  writing an operator as an ordinary function.</para>
@@ -231,11 +231,11 @@ Loading package base ... linking ... done.
 	number in parentheses.  This affects us as soon as we move
 	beyond the simplest expressions.</para>
 
-      <para>We'll start by writing a negative number.</para>
+      <para id="x_bM">We'll start by writing a negative number.</para>
 
       &basics.ghci:neg.simple;
 
-      <para>The <code>-</code> above is a unary operator.  In other
+      <para id="x_cM">The <code>-</code> above is a unary operator.  In other
 	words, we didn't write the single number <quote>-3</quote>; we
 	wrote the number <quote>3</quote>, and applied the operator
 	<code>-</code> to it.  The <code>-</code> operator is
@@ -244,7 +244,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:neg.error;
 
-      <para>If we want to use the unary minus near an infix operator,
+      <para id="x_dM">If we want to use the unary minus near an infix operator,
 	we must wrap the expression it applies to in
 	parentheses.</para>
 
@@ -291,7 +291,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:boolean;
 
-      <para>Here, <function>(&amp;&amp;)</function> is logical
+      <para id="x_eM">Here, <function>(&amp;&amp;)</function> is logical
 	<quote>and</quote>, and <function>(||)</function> is logical
 	<quote>or</quote>.</para>
 
@@ -302,7 +302,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:boolean.bad;
 
-      <para>Once again, we're faced with a substantial-looking error
+      <para id="x_fM">Once again, we're faced with a substantial-looking error
 	message. In brief, it tells us that the Boolean type, <type>Bool</type>,
 	is not a member of the family of numeric types,
 	<code>Num</code>.  The error message is rather long because
@@ -322,7 +322,7 @@ Loading package base ... linking ... done.
 	  of error messages that now seem obscure will become easier
 	  to follow.</para>
 
-	<para>The numerous error messages have a purpose: they
+	<para id="x_gM">The numerous error messages have a purpose: they
 	  actually help us in writing correct code, by making us
 	  perform some amount of debugging <quote>up front</quote>,
 	  before we ever run a program.  If you are coming from a
@@ -346,7 +346,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:neq;
 
-      <para>Also, where C and Perl use <function>!</function> for
+      <para id="x_hM">Also, where C and Perl use <function>!</function> for
 	logical negation, Haskell uses the <function>not</function>
 	function.</para>
 
@@ -368,7 +368,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:parens;
 
-      <para>Haskell assigns numeric precedence values to operators,
+      <para id="x_iM">Haskell assigns numeric precedence values to operators,
 	with 1 being the lowest precedence and 9 the highest.  A
 	higher-precedence operator gets parsed before a
 	lower-precedence operator.  We can use &ghci; to inspect the
@@ -377,12 +377,12 @@ Loading package base ... linking ... done.
 
       &basics.ghci:precedence;
 
-      <para>Since <function>(*)</function> has a higher precedence
+      <para id="x_jM">Since <function>(*)</function> has a higher precedence
 	than <function>(+)</function>, we can now see why <code>1 + 4
 	  * 4</code> is parsed as <code>1 + (4 * 4)</code>, and not
 	<code>(1 + 4) * 4</code>.</para>
 
-      <para>Haskell also defines <emphasis>associativity</emphasis> of
+      <para id="x_kM">Haskell also defines <emphasis>associativity</emphasis> of
 	operators.  This determines whether an expression containing
 	multiple uses of an operator is parsed from left to right, or
 	right to left.  The <function>(+)</function> and
@@ -391,7 +391,7 @@ Loading package base ... linking ... done.
 	above.  A right associative operator would be displayed with
 	<code>infixr</code>.</para>
 
-      <para>The combination of precedence and associativity rules are
+      <para id="x_lM">The combination of precedence and associativity rules are
 	usually referred to as <emphasis>fixity</emphasis>
 	rules.</para>
     </sect2>
@@ -427,7 +427,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:let;
 
-      <para>This is a call to the base-<varname>e</varname>
+      <para id="x_mM">This is a call to the base-<varname>e</varname>
 	exponential function, <function>exp</function>, and our first
 	example of calling a function in Haskell.  While languages
 	like Python require parentheses around the arguments to a
@@ -441,7 +441,7 @@ Loading package base ... linking ... done.
       <warning>
 	<title>This syntax is ghci-specific</title>
 
-	<para>The syntax for &let; that &ghci; accepts is not the same
+	<para id="x_nM">The syntax for &let; that &ghci; accepts is not the same
 	  as we would use in a normal Haskell program.  We'll see the
 	  normal syntax in <xref linkend="hs.funcstypes.locals"/>.</para>
       </warning>
@@ -461,14 +461,14 @@ Loading package base ... linking ... done.
 	different notions of what even a short, parenthesis-free
 	expression is supposed to do.</para>
 
-      <para>Here's a cautionary example of mixing different operators
+      <para id="x_oM">Here's a cautionary example of mixing different operators
 	of the same fixities: <function>(*)</function> and
 	<function>(/)</function>. The following two expressions give
 	subtly different results.</para>
 
       &basics.ghci:grouping;
 
-      <para>When deciding whether to use parentheses, you can probably
+      <para id="x_pM">When deciding whether to use parentheses, you can probably
 	rely on yourself and your readers to remember the language's
 	precedence rules for the most common arithmetic and logical
 	operators: <function>(||)</function> is <code>2</code>;
@@ -494,7 +494,7 @@ Loading package base ... linking ... done.
     <note>
       <title>Commas are separators, not terminators</title>
 
-      <para>Some languages permit the last element in a list to be
+      <para id="x_qM">Some languages permit the last element in a list to be
 	followed by an optional trailing comma before a closing
 	bracket, but Haskell doesn't allow this.  If you leave in a
 	trailing comma, you'll get a parse error.</para>
@@ -520,7 +520,7 @@ Loading package base ... linking ... done.
     
     &basics.ghci:range;
 
-    <para>Here, the <literal>..</literal> characters denote a range.
+    <para id="x_rM">Here, the <literal>..</literal> characters denote a range.
       We can only use range notation for types whose elements we can
       enumerate. Range notation makes no sense for rational numbers,
       for example, because there is not a countable number of
@@ -541,7 +541,7 @@ Loading package base ... linking ... done.
       sensibly missing the end point of the range, because it isn't an
       element of the series we defined.</para>
 
-    <para>We can omit the end point of a range.  If the type we're
+    <para id="x_sM">We can omit the end point of a range.  If the type we're
       enumerating has an upper bound on its values (or a lower bound
       if the step is negative), that bound will be the end point of
       the range.  Otherwise, the range will continue indefinitely.
@@ -553,16 +553,16 @@ Loading package base ... linking ... done.
     <warning>
       <title>Beware ranges of floating point numbers</title>
 
-      <para>Here's a non-intuitive bit of behaviour.</para>
+      <para id="x_tM">Here's a non-intuitive bit of behaviour.</para>
 
       &basics.ghci:range.double;
 
-      <para>Behind the scenes, the Haskell implementation is
+      <para id="x_uM">Behind the scenes, the Haskell implementation is
 	converting the floating point numbers into integers,
 	enumerating the range as integers, then turning them back into
 	floating point numbers.</para>
 
-      <para>While this is peculiar, there's worse in store.  The range
+      <para id="x_vM">While this is peculiar, there's worse in store.  The range
 	<literal>[0,0.1..1]</literal> steps in increments of 0.1
 	between zero and one, but the number of elements in the list
 	depends on the amount of rounding error in the
@@ -570,20 +570,20 @@ Loading package base ... linking ... done.
 	will <emphasis>probably</emphasis> get a list of eleven
 	elements, but you <emphasis>might</emphasis> get ten.</para>
 
-      <para>Because of these limitations, range notation over floating
+      <para id="x_wM">Because of these limitations, range notation over floating
 	point numbers is not really safe to use.</para>
     </warning>
 
     <sect2 id="hs.starting.list.op">
       <title>Operators on lists</title>
 
-      <para>There are two ubiquitous operators for working with
+      <para id="x_xM">There are two ubiquitous operators for working with
 	lists.  We concatenate two lists using the
 	<function>(++)</function> operator.</para>
 
       &basics.ghci:concat;
 
-      <para>More basic is the <function>(:)</function> operator, which
+      <para id="x_yM">More basic is the <function>(:)</function> operator, which
 	adds an element to the front of a list.  This is pronounced
 	<quote>cons</quote> (short for
 	<quote>construct</quote>).</para>
@@ -636,7 +636,7 @@ Loading package base ... linking ... done.
       been using, and it's mostly been willing to accept our
       input.</para>
 
-    <para>Haskell requires type names to start with an uppercase
+    <para id="x_zM">Haskell requires type names to start with an uppercase
       letter, and variable names must start with a lowercase letter.
       Bear this in mind as you read on; it makes it much easier to
       follow the names.</para>

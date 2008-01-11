@@ -28,7 +28,7 @@
 	of type <code>X</code></quote>; the two phrases mean the same
       thing.  Functions, being values, have types too.</para>
 
-    <para>Here are a few examples of values, expressions, and their
+    <para id="x_AN">Here are a few examples of values, expressions, and their
       types: the value <literal>'a'</literal> has type
       <type>Char</type>; the expression <literal>"a" ++ "b"</literal>
       has type <type>String</type>.  We call an expression that obeys
@@ -48,7 +48,7 @@
       number). The most general interpretation of it is that it will
       accept a value of any numeric type.</para>
 
-    <para>Strong typing means that any attempt to apply a function to
+    <para id="x_BN">Strong typing means that any attempt to apply a function to
       a value of a different type causes an error.  Another aspect of
       Haskell's view of strong typing is that it will not
       automatically coerce values from one type to another.  For
@@ -81,7 +81,7 @@
 
     &ch03.basics.ghci:error;
 
-    <para>This error message is of a kind we've seen before.  It's
+    <para id="x_CN">This error message is of a kind we've seen before.  It's
       telling us that the value <literal>"false"</literal> cannot be treated
       as a <type>Bool</type>.</para>
 
@@ -102,7 +102,7 @@
       value, but the presence of type inference means that only rarely
       <emphasis>must</emphasis> we do so.</para>
 
-    <para>While strong, static typing makes Haskell safe, type
+    <para id="x_DN">While strong, static typing makes Haskell safe, type
       inference makes it concise.  The result is potent: we end up
       with a language that's both safer than popular statically typed
       languages, and often more expressive than dynamic

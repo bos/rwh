@@ -6,12 +6,12 @@
   <sect1>
     <title>Introduction</title>
 
-    <para>In <xref linkend="hs.io"/>, we talked about the
+    <para id="x_XW">In <xref linkend="hs.io"/>, we talked about the
       <type>IO</type> monad, but we intentionally kept the discussion
       narrowly focused on how to communicate with the outside world.
       We didn't discuss what a monad <emphasis>is</emphasis>.</para>
 
-    <para>Monads have a reputation of being abstract and difficult to
+    <para id="x_YW">Monads have a reputation of being abstract and difficult to
       understand. If you've heard such concerns, please put aside for
       a while any doubts you might have.  Concerning abstraction, we've
       already seen in <xref linkend="hs.io"/> that the <type>IO</type>
@@ -19,7 +19,7 @@
       writing code in the <type>IO</type> monad isn't much different
       from coding in any other imperative language.</para>
 
-    <para>As for difficulty, we quietly infiltrated monads into
+    <para id="x_ZW">As for difficulty, we quietly infiltrated monads into
       several earlier chapters of this book, when we had practical
       problems to solve.  What we aim to show you is that, far from
       being difficult to understand, a monad is often an
@@ -27,7 +27,7 @@
       tool to help solve a problem.  We'll define a few monads in this
       chapter, to show how easy it is.</para>
 
-    <para>In this chapter, we'll reveal where we hid those monads,
+    <para id="x_aW">In this chapter, we'll reveal where we hid those monads,
       explain what they really are, and discuss each of the most
       widely used monads.</para>
   </sect1>
@@ -38,20 +38,20 @@
     <sect2>
       <title>Maybe chaining</title>
 
-      <para>Let's take another look at the
+      <para id="x_bW">Let's take another look at the
 	<function>parseP5</function> function that we wrote in <xref
 	  linkend="hs.binary"/>.</para>
 
       &PNM.hs:parseP5.noid;
 
-      <para>That function threatened to march off the right side of
+      <para id="x_cW">That function threatened to march off the right side of
 	the page if it got much longer.  We brought the staircasing
 	under control using the <function>(&gt;&gt;?)</function>
 	function.</para>
 
       &PNM.hs:bind.noid;
 
-      <para>We carefully chose the type of
+      <para id="x_dW">We carefully chose the type of
 	<function>(&gt;&gt;?)</function> to let us chain together
 	functions that return <type>Maybe</type>.  So long as the
 	result type of one function matches the parameter of the next,
@@ -64,7 +64,7 @@
     <sect2>
       <title>Implicit state</title>
 
-      <para>Useful as <function>(&gt;&gt;?)</function> was for
+      <para id="x_eW">Useful as <function>(&gt;&gt;?)</function> was for
 	cleaning up the structure of <function>parseP5</function>, we
 	had to incrementally consume pieces of a string as we parsed
 	it.  This forced us to pass the current value of the string
@@ -75,7 +75,7 @@
 
       &PNM.hs:parseP5_take2.noid;
 
-      <para>Once again, we were faced with a pattern of repeated
+      <para id="x_fW">Once again, we were faced with a pattern of repeated
 	behaviour: consume some string, return a result, and return
 	the remaining string for the next function to consume.
 	However, this pattern was more insidious: if we wanted to pass
@@ -83,14 +83,14 @@
 	modify nearly every element of the chain, turning each
 	two-tuple into a three-tuple!</para>
 
-      <para>We addressed this by moving the responsibility for
+      <para id="x_gW">We addressed this by moving the responsibility for
 	managing the current piece of string out of the individual
 	functions in the chain, and into the function that we used to
 	chain them together.</para>
 
       &Parse.hs:bind.noid;
 
-      <para>We also hid the details of the parsing state in the
+      <para id="x_hW">We also hid the details of the parsing state in the
 	<type>ParseState</type> type.  Even the
 	<function>getState</function> and
 	<function>putState</function> functions don't inspect the
@@ -102,36 +102,36 @@
   <sect1>
     <title>Looking for shared patterns</title>
 
-    <para>When we look at the above examples in detail, they don't
+    <para id="x_iW">When we look at the above examples in detail, they don't
       seem to have much in common.  Obviously, they're both concerned
       with chaining functions together, and with hiding details to let
       us write tidier code.  However, let's take a step back and
       consider them in <emphasis>less</emphasis> detail.</para>
 
-    <para>First, let's look at the type definitions.</para>
+    <para id="x_jW">First, let's look at the type definitions.</para>
 
     &Maybe.hs:Maybe;
 
     &Parse.hs:Parse.noid;
 
-    <para>The common feature of these two types is that each has a
+    <para id="x_kW">The common feature of these two types is that each has a
       single free type variable on the left of the definition, which
       is used somewhere on the right.</para>
 
-    <para>Next, we'll examine the chaining functions that we wrote for
+    <para id="x_lW">Next, we'll examine the chaining functions that we wrote for
       the two types.</para>
 
     &monadness.ghci:Maybe;
 
     &monadness.ghci:Parse;
 
-    <para>These functions have strikingly similar types.  If we were
+    <para id="x_mW">These functions have strikingly similar types.  If we were
       to turn those type constructors into a type variable, we'd end
       up with a single more abstract type.</para>
 
     &Maybe.hs:chain;
 
-    <para>Finally, in each case we have a function that takes a
+    <para id="x_nW">Finally, in each case we have a function that takes a
       <quote>plain</quote> value, and <quote>injects</quote> it into
       the target type.  For <type>Maybe</type>, this function is
       simply the value constructor <code>Just</code>, but the injector
@@ -139,46 +139,46 @@
 
     &Parse.hs:identity.noid;
 
-    <para>Again, it's not the details or complexity that we're
+    <para id="x_oW">Again, it's not the details or complexity that we're
       interested in, it's the fact that each of these types has this
       <quote>injector</quote> function.</para>
 
     &Maybe.hs:inject;
 
-    <para>It is <emphasis>exactly</emphasis> these three properties,
+    <para id="x_pW">It is <emphasis>exactly</emphasis> these three properties,
       and a few rules about how we can use them together, that define
       a monad in Haskell.  Let's revisit the above list in condensed
       form.</para>
 
     <itemizedlist>
       <listitem>
-	<para>A type <varname role="type">m</varname> with one free
+	<para id="x_qW">A type <varname role="type">m</varname> with one free
 	  type variable <varname role="type"></varname>.</para>
       </listitem>
       <listitem>
-	<para>A function of type <type>m a -> (a -> m b) -> m b</type>
+	<para id="x_rW">A function of type <type>m a -> (a -> m b) -> m b</type>
 	  for chaining the output of one function into the input of
 	  another.</para>
       </listitem>
       <listitem>
-	<para>A function of type <type>a -> m a</type> for injecting a
+	<para id="x_sW">A function of type <type>a -> m a</type> for injecting a
 	  normal value into the chain, i.e. it wraps a type
 	  <type>a</type> with the type constructor
 	  <type>m</type>.</para>
       </listitem>
     </itemizedlist>
 
-    <para>The properties that make the <type>Maybe</type> type a monad
+    <para id="x_tW">The properties that make the <type>Maybe</type> type a monad
       are its type constructor <type>Maybe a</type>, our chaining
       function <function>(&gt;&gt;?)</function>, and the injector
       function <function>Just</function>.</para>
 
-    <para>For <type>Parse</type>, the corresponding properties are the
+    <para id="x_uW">For <type>Parse</type>, the corresponding properties are the
       type constructor <type>Parse a</type>, the chaining function
       <function>(==&gt;)</function>, and the injector function
       <function>identity</function>.</para>
 
-    <para>We have intentionally said nothing about how the chaining
+    <para id="x_vW">We have intentionally said nothing about how the chaining
       and injection functions of a monad should behave, and that's
       because it very nearly doesn't matter.  In fact, monads are
       ubiquitous in Haskell code precisely because they are so simple:
@@ -188,20 +188,20 @@
   <sect1>
     <title>The Monad typeclass</title>
 
-    <para>We can capture the notions of chaining and injection, and
+    <para id="x_wW">We can capture the notions of chaining and injection, and
       the types that we want them to have, in a Haskell typeclass.
       The standard Prelude already defines just such a typeclass,
       named <code>Monad</code>.</para>
 
     &Maybe.hs:Monad;
 
-    <para>Here, &bind; is our chaining function.  We've already been
+    <para id="x_xW">Here, &bind; is our chaining function.  We've already been
       introduced to it in <xref linkend="hs.io.bind"/>.  It's often
       referred to as <quote>bind</quote>, as it binds two adjacent
       functions together so that one uses the result of the
       other.</para>
 
-    <para>Our injection function is &return;.  As we noted in <xref
+    <para id="x_yW">Our injection function is &return;.  As we noted in <xref
       linkend="hs.io.return"/>, the choice of the name &return; is a
       little unfortunate.  That name is widely used in imperative
       languages, where it has a fairly well understood meaning.  In
@@ -210,14 +210,14 @@
       cause the chain to exit early.  It's more helpful to remember it
       as <quote>inject</quote>.</para>
 
-    <para>While &bind; and &return; are the core functions of the
+    <para id="x_zW">While &bind; and &return; are the core functions of the
       <code>Monad</code> typeclass, it also defines two other
       functions.  The first is &bind_;.  Like &bind;, it performs
       chaining, but it ignores the value on the left.</para>
 
     &Maybe.hs:bind_;
 
-    <para>We use this function when we want to perform actions in a
+    <para id="x_AX">We use this function when we want to perform actions in a
       certain order, but don't care what the result of one is.  This
       might seem pointless: why would we not care what a function's
       return value is?  Consider a function like &print;, which
@@ -225,20 +225,20 @@
 
     &bind.ghci:print;
 
-    <para>If we use plain &bind;, we have to provide as its right hand
+    <para id="x_BX">If we use plain &bind;, we have to provide as its right hand
       side a function that ignores its argument.</para>
 
     &bind.ghci:bind;
 
-    <para>But if we use &bind_;, we can omit the needless
+    <para id="x_CX">But if we use &bind_;, we can omit the needless
       function.</para>
 
     &bind.ghci:bind_;
 
-    <para>As we showed above, the default implementation of &bind_; is
+    <para id="x_DX">As we showed above, the default implementation of &bind_; is
       defined in terms of &bind;.</para>
 
-    <para>The second non-core <code>Monad</code> function is &fail;,
+    <para id="x_EX">The second non-core <code>Monad</code> function is &fail;,
       which takes an error message and does something to make the
       chain of functions fail.</para>
 
@@ -247,7 +247,7 @@
     <warning>
       <title>Beware of fail</title>
 
-      <para>Many <code>Monad</code> instances don't override the
+      <para id="x_FX">Many <code>Monad</code> instances don't override the
 	default implementation of &fail; that we show here, which
 	means that &fail; calls <function>error</function>.  Calling
 	<function>error</function> is usually highly undesirable, so
@@ -255,7 +255,7 @@
 	that implements it to do something more sensible.</para>
     </warning>
 
-    <para>To revisit the parser that we developed in <xref
+    <para id="x_GX">To revisit the parser that we developed in <xref
 	linkend="hs.binary"/>, here is its <code>Monad</code>
       instance.</para>
 
@@ -266,20 +266,20 @@
   <sect1>
     <title>And now, a jargon moment</title>
 
-    <para>There are a few terms of jargon around monads that you may
+    <para id="x_HX">There are a few terms of jargon around monads that you may
       not be familiar with.  These aren't formal terms, but they're in
       common use, so it's helpful to know about them.</para>
 
     <itemizedlist>
       <listitem>
-	<para><quote>Monadic</quote> simply means <quote>pertaining to
+	<para id="x_IX"><quote>Monadic</quote> simply means <quote>pertaining to
 	    monads</quote>.  A monadic <emphasis>type</emphasis> is an
 	  instance of the <code>Monad</code> typeclass; a monadic
 	  <emphasis>value</emphasis> has a monadic type.</para>
       </listitem>
 
       <listitem>
-	<para>When we say that a type <quote>is a monad</quote>, this
+	<para id="x_JX">When we say that a type <quote>is a monad</quote>, this
 	  is really an shorthand way of saying that it's an instance
 	  of the <code>Monad</code> typeclass.  Being an instance of
 	  <code>Monad</code> gives us the necessary monadic triple of
@@ -288,14 +288,14 @@
       </listitem>
 
       <listitem>
-	<para>In the same way, a reference to <quote>the
+	<para id="x_KX">In the same way, a reference to <quote>the
 	    <type>Foo</type> monad</quote> implies that we're talking
 	  about the type named <type>Foo</type>, and that it's an
 	  instance of <code>Monad</code>.</para>
       </listitem>
 
       <listitem>
-	<para>An <quote>action</quote> is another name for a monadic
+	<para id="x_LX">An <quote>action</quote> is another name for a monadic
 	  value.  This use of the word probably originated with the
 	  introduction of monads for I/O, where a monadic value like
 	  <code>print "foo"</code> can have an observable side effect.
@@ -308,7 +308,7 @@
   <sect1>
     <title>Using a new monad: show your work!</title>
 
-    <para>In our introduction to monads, we showed how some
+    <para id="x_MX">In our introduction to monads, we showed how some
       pre-existing code was already monadic in form.  Now that we are
       beginning to grasp what a monad is, and we've seen the
       <code>Monad</code> typeclass, let's build a monad with
@@ -316,19 +316,19 @@
       its interface, then we'll put it to use.  Once we have those out
       of the way, we'll finally build it.</para>
 
-    <para>Pure Haskell code is wonderfully clean to write, but of
+    <para id="x_NX">Pure Haskell code is wonderfully clean to write, but of
       course it can't perform I/O.  Sometimes, though, we'd like to
       have a record of decisions we took.  Let's develop a small
       library to help with this.</para>
 
-    <para>Recall the <function>globToRegex</function> function that we
+    <para id="x_OX">Recall the <function>globToRegex</function> function that we
       developed in <xref linkend="hs.glob.translate"/>.  We will
       modify it so that it keeps a record of each of the special
       pattern sequences that it translates.  We are revisiting
       familiar territory for a reason: it lets us compare non-monadic
       and monadic versions of the same code.</para>
 
-    <para>To start off, we'll wrap our result type with a
+    <para id="x_PX">To start off, we'll wrap our result type with a
       <code>Logger</code> type constructor.</para>
 
     &Logger.hs:globToRegex.type;
@@ -336,28 +336,28 @@
     <sect2>
       <title>Information hiding</title>
 
-      <para>We'll intentionally keep the internals of the
+      <para id="x_QX">We'll intentionally keep the internals of the
 	<type>Logger</type> module abstract.</para>
 
       &Logger.hs:module;
 
-      <para>Hiding the details like this has two benefits: it grants
+      <para id="x_RX">Hiding the details like this has two benefits: it grants
 	us considerable flexibility in how we implement our monad, and
 	more importantly, it gives users a simple interface.</para>
 
-      <para>The <type>Logger</type> type is purely a
+      <para id="x_SX">The <type>Logger</type> type is purely a
 	<emphasis>type</emphasis> constructor.  We don't export the
 	<emphasis>value</emphasis> constructor that a user would need
 	to create a value of this type.  All they can can use
 	<type>Logger</type> for is writing type signatures.</para>
 
-      <para>The <type>Log</type> type is just a synonym for a list of
+      <para id="x_TX">The <type>Log</type> type is just a synonym for a list of
 	strings, to make a few signatures more readable.  We're using
 	a list of strings to keep the implementation simple.</para>
 
       &Logger.hs:Log;
 
-      <para>Instead of giving our users a value constructor, we
+      <para id="x_UX">Instead of giving our users a value constructor, we
 	provide them with a function, <function>execLogger</function>,
 	that evaluates a logged action.  This returns both the result
 	of an action and whatever was logged while the result was
@@ -370,25 +370,25 @@
     <sect2 id="hs.monads.escape">
       <title>Controlled escape</title>
 
-      <para>The <code>Monad</code> typeclass doesn't provide any means
+      <para id="x_VX">The <code>Monad</code> typeclass doesn't provide any means
 	for values to escape their monadic shackles.  We can inject a
 	value into a monad using &return;.  We can extract a value
 	from a monad using &bind; but the function on the right that
 	can see an unwrapped value has to wrap its own result back up
 	again.</para>
 
-      <para>Most monads have one or more
+      <para id="x_WX">Most monads have one or more
 	<function>execLogger</function>-like functions.  The notable
 	exception is of course <type>IO</type>, which we usually only
 	escape from by exiting a program.</para>
 
-      <para>A monad execution function runs the code inside the monad
+      <para id="x_XX">A monad execution function runs the code inside the monad
 	and unwraps its result.  Such a function are usually the only
 	means provided for a value to escape from its monadic wrapper.
 	The author of a monad thus has complete control over how
 	whatever happens inside the monad gets out.</para>
 
-      <para>Some monads have several execution functions.  In our
+      <para id="x_YX">Some monads have several execution functions.  In our
 	case, we can imagine a few alternatives to
 	<function>execLogger</function>: one might only return the log
 	messages, while another might return just the result and drop
@@ -398,27 +398,27 @@
     <sect2>
       <title>Leaving a trace</title>
 
-      <para>When executing inside a <type>Logger</type> action, user
+      <para id="x_ZX">When executing inside a <type>Logger</type> action, user
 	code calls <function>record</function> to record
 	something.</para>
 
       &Logger.hs:record.type;
 
-      <para>Again, most monads provide helper functions that add
+      <para id="x_aX">Again, most monads provide helper functions that add
 	functionality on top of the base <code>Monad</code>
 	typeclass.</para>
 
-      <para>Our module also defines the <code>Monad</code> instance
+      <para id="x_bX">Our module also defines the <code>Monad</code> instance
 	for the <type>Logger</type> type.  These definitions are all
 	that a client module needs in order to be able to use this
 	monad.</para>
 
-      <para>We'll use &ghci; to produce a simple example of our monad
+      <para id="x_cX">We'll use &ghci; to produce a simple example of our monad
 	in use.</para>
 
       &logger.ghci:simple;
 
-      <para>When we run the logged action using
+      <para id="x_dX">When we run the logged action using
 	<function>execLogger</function>, we get back a two-tuple.  The
 	first element is the result, and the second is the list of
 	items logged while the action executed.  We haven't logged
@@ -431,12 +431,12 @@
     <sect2>
       <title>Using the Logger monad</title>
 
-      <para>Here's how we kick off our glob-to-regexp conversion
+      <para id="x_eX">Here's how we kick off our glob-to-regexp conversion
 	inside the <type>Logger</type> monad.</para>
 
       &Logger.hs:rooted;
 
-      <para>Remember the type of &bind;: it extracts the value on the
+      <para id="x_fX">Remember the type of &bind;: it extracts the value on the
 	left from its <type>Logger</type> wrapper, and passes the
 	unwrapped value to the function on the right.  The function on
 	the right must, in turn, wrap <emphasis>its</emphasis> result
@@ -445,47 +445,47 @@
 
       &logger.ghci:bind.type;
 
-      <para>There are a few coding style issues worth mentioning here.
+      <para id="x_gX">There are a few coding style issues worth mentioning here.
 	The body of the function starts on the line after its name. By
 	doing this, we gain some horizontal white space.  We've also
 	<quote>hung</quote> the parameter of the anonymous function at
 	the end of the line. This is common practice in monadic
 	code.</para>
 
-      <para>Even when we write a function that does almost nothing, we
+      <para id="x_hX">Even when we write a function that does almost nothing, we
 	must call <function>return</function> to wrap the result with
 	the correct type.</para>
 
       &Logger.hs:eof;
 
-      <para>When we call <function>record</function> to save a log
+      <para id="x_iX">When we call <function>record</function> to save a log
 	entry, we use &bind_; instead of &bind; to chain it with the
 	following action.</para>
 
       &Logger.hs:question;
 
-      <para>Recall that this is a variant of &bind; that ignores the
+      <para id="x_jX">Recall that this is a variant of &bind; that ignores the
 	result on the left.  We know that the result of
 	<function>record</function> will always be <code>()</code>, so
 	there's no point in capturing it.</para>
 
-      <para>We can use &do; notation, which we first encountered in
+      <para id="x_kX">We can use &do; notation, which we first encountered in
 	<xref linkend="hs.io.bind"/>, to somewhat tidy up our
 	code.</para>
 
       &Logger.hs:asterisk;
 
-      <para>The choice of &do; notation versus explicit &bind; with
+      <para id="x_lX">The choice of &do; notation versus explicit &bind; with
 	anonymous functions is mostly a matter of taste. There is one
 	significant difference between the two, though, which we'll
 	return to in <xref linkend="hs.monads.do"/>.</para>
 
-      <para>Parsing a character class mostly follows the same pattern
+      <para id="x_mX">Parsing a character class mostly follows the same pattern
 	that we've already seen.</para>
 
       &Logger.hs:class;
 
-      <para>The interesting exception is in the final clause above.
+      <para id="x_nX">The interesting exception is in the final clause above.
 	Where we called <function>error</function> in
 	<xref linkend="hs.glob.translate"/>, we now call
 	<function>fail</function> from the <code>Monad</code>
@@ -496,7 +496,7 @@
   <sect1 id="hs.monads.liftM">
     <title>Mixing pure and monadic code</title>
 
-    <para>Based on the code we've seen so far, monads seem to have a
+    <para id="x_oX">Based on the code we've seen so far, monads seem to have a
       substantial shortcoming: the type constructor that wraps a
       monadic value makes it tricky to use a normal, pure function on
       a value trapped inside a monadic wrapper.  Here's a simple
@@ -506,22 +506,22 @@
 
     &logger.ghci:m;
 
-    <para>If we want to find out the length of that string, we can't
+    <para id="x_pX">If we want to find out the length of that string, we can't
       simply call <function>length</function>: the string is wrapped,
       so the types don't match up.</para>
 
     &logger.ghci:m.length;
 
-    <para>What we've done so far to work around this is something like
+    <para id="x_qX">What we've done so far to work around this is something like
       the following.</para>
 
     &logger.ghci:m.length2;
 
-    <para>We use &bind; to unwrap the string, then write a small
+    <para id="x_rX">We use &bind; to unwrap the string, then write a small
       anonymous function that calls <function>length</function> and
       rewraps the result using <function>return</function>.</para>
 
-    <para>This need crops up so often in Haskell code that we won't be
+    <para id="x_sX">This need crops up so often in Haskell code that we won't be
       surprised to learn that a shorthand already exists.  We reuse
       the <emphasis>lifting</emphasis> technique that we introduced
       for functors in <xref linkend="hs.binary.functor"/>.  Lifting a
@@ -529,7 +529,7 @@
       value inside the functor, calling the function on it, and
       rewrapping the result with the same constructor.</para>
 
-    <para>We do exactly the same thing with a monad.  Because the
+    <para id="x_tX">We do exactly the same thing with a monad.  Because the
       <code>Monad</code> typeclass already provides the &bind; and
       &return; functions that know how to wrap and unwrap a value, the
       <function>liftM</function> function doesn't need any details of
@@ -537,7 +537,7 @@
 
     &Logger.hs:liftM;
 
-    <para>When we declare a type to be an instance of the
+    <para id="x_uX">When we declare a type to be an instance of the
       <code>Functor</code> typeclass, we have to write our own version
       of <function>fmap</function> specially tailored to that type. By
       contrast, <function>liftM</function> doesn't need to know
@@ -545,40 +545,40 @@
       &bind; and &return;.  We only need to write it once, with the
       appropriate type constraint.</para>
 
-    <para>The <function>liftM</function> function is predefined for us
+    <para id="x_vX">The <function>liftM</function> function is predefined for us
       in the standard <code>Control.Monad</code> module.</para>
 
-    <para>To see how <function>liftM</function> can help readability,
+    <para id="x_wX">To see how <function>liftM</function> can help readability,
       we'll compare two otherwise identical pieces of code. First, the
       familiar kind that does not use
       <function>liftM</function>.</para>
 
     &Logger.hs:charClass_wordy;
 
-    <para>Now we can eliminate the &bind; and anonymous function cruft
+    <para id="x_xX">Now we can eliminate the &bind; and anonymous function cruft
       with <function>liftM</function>.</para>
 
     &Logger.hs:charClass;
 
-    <para>As with <function>fmap</function>, we often use
+    <para id="x_yX">As with <function>fmap</function>, we often use
       <function>liftM</function> in infix form.  An easy way to read
       such an expression is <quote>apply the pure function on the left
 	to the result of the monadic action on the
 	right</quote>.</para>
 
-    <para>So useful is <function>liftM</function> that
+    <para id="x_zX">So useful is <function>liftM</function> that
       <code>Control.Monad</code> defines several variants that combine
       longer chains of actions.  We can see one in the last clause of
       our <function>globToRegex'</function> function.</para>
 
     &Logger.hs:last;
 
-    <para>The <function>liftM2</function> function that it uses is
+    <para id="x_AY">The <function>liftM2</function> function that it uses is
       defined as follows.</para>
 
     &Logger.hs:liftM2;
 
-    <para>It executes the first action, then the second, then combines
+    <para id="x_BY">It executes the first action, then the second, then combines
       their results using the pure function <varname>f</varname>, and
       wraps that result.  In addition to <function>liftM2</function>,
       the variants in <code>Control.Monad</code> go up to
@@ -588,7 +588,7 @@
   <sect1>
     <title>Putting a few misconceptions to rest</title>
 
-    <para>We've now seen enough examples of monads in action to have
+    <para id="x_CY">We've now seen enough examples of monads in action to have
       some feel for what's going on.  Before we continue, there are a
       few oft-repeated myths about monads that we're going to address.
       You're bound to encounter these assertions <quote>in the
@@ -597,7 +597,7 @@
 
     <itemizedlist>
       <listitem>
-	<para><emphasis>Monads are hard to understand.</emphasis>
+	<para id="x_DY"><emphasis>Monads are hard to understand.</emphasis>
 	  We've already shown that monads <quote>fall out
 	    naturally</quote> from several problems.  We've found that
 	  the best key to understanding them is to explain several
@@ -606,7 +606,7 @@
       </listitem>
 
       <listitem>
-	<para><emphasis>Monads are only useful for I/O and imperative
+	<para id="x_EY"><emphasis>Monads are only useful for I/O and imperative
 	    coding.</emphasis> While we use monads for I/O in Haskell,
 	  they're valuable for many other purposes besides.  We've
 	  already used them for short-circuiting a chain of
@@ -615,14 +615,14 @@
       </listitem>
 
       <listitem>
-	<para><emphasis>Monads are unique to Haskell.</emphasis>
+	<para id="x_FY"><emphasis>Monads are unique to Haskell.</emphasis>
 	  Haskell is probably the language that makes the most
 	  explicit use of monads, but people write them in other
 	  languages, too, ranging from C++ to OCaml.</para>
       </listitem>
 
       <listitem>
-	<para><emphasis>Monads are for controlling the order of
+	<para id="x_GY"><emphasis>Monads are for controlling the order of
 	    evaluation.</emphasis></para>
       </listitem>
     </itemizedlist>
@@ -631,16 +631,16 @@
   <sect1>
     <title>Building the Logger monad</title>
     
-    <para>The definition of our <type>Logger</type> type is very
+    <para id="x_HY">The definition of our <type>Logger</type> type is very
       simple.</para>
 
     &Logger.hs:Logger;
 
-    <para>It's a two-tuple, where the first element is the result of
+    <para id="x_IY">It's a two-tuple, where the first element is the result of
       an action, and the second is a list of messages logged while
       that action was run.</para>
 
-    <para>We've wrapped the tuple in a &newtype; to make it a distinct
+    <para id="x_JY">We've wrapped the tuple in a &newtype; to make it a distinct
       type.  The <function>runLogger</function> function extracts the
       tuple from its wrapper.  The function that we're exporting to
       execute a logged action, <function>execLogger</function>, is
@@ -648,24 +648,24 @@
 
     &Logger.hs:execLogger;
 
-    <para>Our <function>record</function> helper function creates a
+    <para id="x_KY">Our <function>record</function> helper function creates a
       singleton list of the message we pass it.  The result of this
       action is <code>()</code>, so that's the value we put in the
       result slot.</para>
 
-    <para>Let's begin our <code>Monad</code> instance with &return;,
+    <para id="x_LY">Let's begin our <code>Monad</code> instance with &return;,
       which is trivial: it logs nothing, and stores its input in the
       return slot of the tuple.</para>
 
     &Logger.hs:return;
 
-    <para>Slightly more interesting is &bind;, which is the heart of
+    <para id="x_MY">Slightly more interesting is &bind;, which is the heart of
       the monad.  It combines an action and a monadic function to give
       a new result and a new log.</para>
 
     &Logger.hs:bind;
 
-    <para>Let's spell out explicitly what is going on. We use
+    <para id="x_NY">Let's spell out explicitly what is going on. We use
       <function>runLogger</function> to extract the result
       <varname>a</varname> from the action <varname>m</varname>, and
       we pass it to the monadic function <varname>k</varname>.  We
@@ -677,13 +677,13 @@
     <sect2>
       <title>Sequential logging, not sequential evaluation</title>
 
-      <para>Our definition of &bind; ensures that messages logged on
+      <para id="x_OY">Our definition of &bind; ensures that messages logged on
 	the left will appear in the new log before those on the right.
 	However, it says nothing about when the values
 	<varname>a</varname> and <varname>b</varname> are evaluated:
 	&bind; is lazy.</para>
 
-      <para>Like most other aspects of a monad's behaviour, strictness
+      <para id="x_PY">Like most other aspects of a monad's behaviour, strictness
 	is under the control of the monad's implementor.  It's not a
 	constant that's shared by all monads.  Indeed, some monads
 	come in multiple flavours, each with different levels of
@@ -694,18 +694,18 @@
   <sect1>
     <title>The Maybe monad</title>
 
-    <para>The <type>Maybe</type> type is very nearly the simplest
+    <para id="x_QY">The <type>Maybe</type> type is very nearly the simplest
       instance of <code>Monad</code>.  It represents a computation
       that might not produce a result.</para>
 
     &Maybe.hs:instance;
 
-    <para>When we chain together a number of computations over
+    <para id="x_RY">When we chain together a number of computations over
       <type>Maybe</type> using &bind; or &bind_;, and any returns
       <code>Nothing</code>, then we don't evaluate any of the
       remaining computations.</para>
 
-    <para>Note, though, that the chain is not completely
+    <para id="x_SY">Note, though, that the chain is not completely
       short-circuited.  Each &bind; or &bind_; in the chain will still
       match a <code>Nothing</code> on its left, and produce a
       <function>Nothing</function> on its right, all the way to the
@@ -717,7 +717,7 @@
     <sect2>
       <title>Executing the Maybe monad</title>
 
-      <para>A function suitable for executing the <type>Maybe</type>
+      <para id="x_TY">A function suitable for executing the <type>Maybe</type>
 	monad is <function>maybe</function>.  (Remember that
 	<quote>executing</quote> a monad involves evaluating it and
 	returning a result that's had the monad's type wrapper
@@ -725,12 +725,12 @@
 
       &Maybe.hs:maybe;
 
-      <para>Its first parameter is the value to return if the result
+      <para id="x_UY">Its first parameter is the value to return if the result
 	is <code>Nothing</code>.  The second is a function to call on
 	a result wrapped in the <code>Just</code> constructor; the
 	result of that application is then returned.</para>
 
-      <para>Since the <type>Maybe</type> ADT is so simple, it's about
+      <para id="x_VY">Since the <type>Maybe</type> ADT is so simple, it's about
 	as common to simply pattern-match on a <type>Maybe</type>
 	value as it is to call <function>maybe</function>.  Each one
 	is more readable in different circumstances.</para>
@@ -739,25 +739,25 @@
     <sect2>
       <title>Maybe at work, and good API design</title>
 
-      <para>Here's an example of <type>Maybe</type> in use as a monad.
+      <para id="x_WY">Here's an example of <type>Maybe</type> in use as a monad.
 	Given a customer's name, we want to find the billing address
 	of their mobile phone carrier.</para>
 
       &Carrier.hs:findCarrierBillingAddress;
 
-      <para>Our first version is the dreaded ladder of code marching
+      <para id="x_XY">Our first version is the dreaded ladder of code marching
 	off the right of the screen, with many boilerplate &case;
 	expressions.</para>
 
       &Carrier.hs:variation1;
 
-      <para>The <code>Data.Map</code> module's
+      <para id="x_YY">The <code>Data.Map</code> module's
 	<function>lookup</function> function has a monadic return
 	type.</para>
 
       &carrier.ghci:lookup;
 
-      <para>In other words, if the given key is present in the map,
+      <para id="x_ZY">In other words, if the given key is present in the map,
 	<function>lookup</function> injects it into the monad using
 	&return;.  Otherwise, it calls &fail;.  This is a lovely piece
 	of API design!  The behaviours of success and failure are
@@ -766,7 +766,7 @@
 	<function>lookup</function> itself doesn't know or care what
 	those behaviours are.</para>
 
-      <para>The &case; expressions above typecheck because we're
+      <para id="x_aY">The &case; expressions above typecheck because we're
 	comparing the result of <function>lookup</function> against
 	values of type <type>Maybe</type>.  But the code is horrible;
 	let's make more sensible use of <type>Maybe</type>'s status as
@@ -774,12 +774,12 @@
 
       &Carrier.hs:variation2;
 
-      <para>If any of these lookups fails, the definitions of &bind;
+      <para id="x_bY">If any of these lookups fails, the definitions of &bind;
 	and &bind_; mean that the result of the function as a whole
 	will be <code>Nothing</code>, just as it was for our first
 	attempt that used &case; explicitly.</para>
 
-      <para>This version is much tidier.  That being said, the
+      <para id="x_cY">This version is much tidier.  That being said, the
 	&return; isn't necessary.  Stylistically, it makes the code
 	look more regular, and perhaps more familiar to the eyes of an
 	imperative programmer, but behaviourally it's redundant.
@@ -787,7 +787,7 @@
 
       &Carrier.hs:variation2a;
 
-      <para>When we introduced maps, we mentioned in <xref
+      <para id="x_dY">When we introduced maps, we mentioned in <xref
 	linkend="hs.barcode.map.partial"/> that the type signatures of
 	functions in the <code>Data.Map</code> module often make them
 	awkward to partially apply.  The <function>lookup</function>
@@ -803,7 +803,7 @@
   <sect1>
     <title>The list monad</title>
 
-    <para>While the <code>Maybe</code> type can represent either no
+    <para id="x_eY">While the <code>Maybe</code> type can represent either no
       value or one one, there are many situations where we might want
       to return more than one result.  Obviously, a list is well
       suited to this purpose. The type of a list suggests that we
@@ -811,14 +811,14 @@
       has one free variable.  And sure enough, we can use a list as a
       monad.</para>
 
-    <para>Rather than simply present the Prelude's <code>Monad</code>
+    <para id="x_fY">Rather than simply present the Prelude's <code>Monad</code>
       instance for the list type, let's try to figure out what the
       instance <emphasis>ought</emphasis> to look like.  This is easy
       to do: we'll look at the types of &bind; and &return;, and
       perform some substitutions, and see if we can use a few familiar
       list functions.</para>
 
-    <para>The more obvious of the two functions is &return;.  We know
+    <para id="x_gY">The more obvious of the two functions is &return;.  We know
       that it takes a type <varname role="type">a</varname>, and wraps
       it in a type constructor <varname role="type">m</varname> to
       give the type <varname role="type">m a</varname>.  We also know
@@ -828,7 +828,7 @@
       (yes, this really is valid notation!), which we can rewrite in
       more familiar form as <type>[a]</type>.</para>
 
-    <para>We now know that &return; for lists should have the type
+    <para id="x_hY">We now know that &return; for lists should have the type
       <code>a &larrow; [a]</code>.  There are only a few sensible
       possibilities for an implementation of this function.  It might
       return the empty list, a singleton list, or an infinite list.
@@ -838,7 +838,7 @@
 
     &ListMonad.hs:returnSingleton;
 
-    <para>If we perform the same substitution trick on the type of
+    <para id="x_iY">If we perform the same substitution trick on the type of
       &bind; as we did with &return;, we discover that it should have
       the type <code>[a] &rarrow; (a &rarrow; [b]) &rarrow;
       [b]</code>.  This seems close to the type of
@@ -846,17 +846,17 @@
 
     &listmonad.ghci:map;
 
-    <para>The ordering of the types in <function>map</function>'s
+    <para id="x_jY">The ordering of the types in <function>map</function>'s
       arguments doesn't match, but that's easy to fix.</para>
 
     &listmonad.ghci:flipMap;
 
-    <para>We've still got a problem: the second argument of <code>flip
+    <para id="x_kY">We've still got a problem: the second argument of <code>flip
 	map</code> has the type <code>a &rarrow; b</code>, whereas the
       second argument of &bind; for lists has the type <code>a
       &rarrow; [b]</code>.  What do we do about this?</para>
 
-    <para>Let's do a little more substitution and see what happens
+    <para id="x_lY">Let's do a little more substitution and see what happens
       with the types.  The function <code>flip map</code> can return
       any type <varname role="type">b</varname> as its result.  If we
       substitute <varname role="type">[b]</varname> for <varname
@@ -868,7 +868,7 @@
 
     &listmonad.ghci:flipMapApp;
 
-    <para>Interestingly, we haven't really changed how closely our
+    <para id="x_mY">Interestingly, we haven't really changed how closely our
       type signatures match.  The type of &bind; is <code>[a] &rarrow;
       (a &rarrow; [b]) &rarrow; [b]</code>, while that of <code>flip
 	map</code> when the mapped function returns a list is
@@ -882,21 +882,21 @@
 
     &listmonad.ghci:concat;
 
-    <para>The types suggest that we should flip the arguments to
+    <para id="x_nY">The types suggest that we should flip the arguments to
       <function>map</function>, then <function>concat</function> the
       results to give a single list.</para>
 
     &listmonad.ghci:bind;
 
-    <para>This is exactly the definition of &bind; for lists.</para>
+    <para id="x_oY">This is exactly the definition of &bind; for lists.</para>
 
     &ListMonad.hs:instance;
 
-    <para>It applies <varname>f</varname> to every element in the list
+    <para id="x_pY">It applies <varname>f</varname> to every element in the list
       <varname>xs</varname>, and concatenates the results to return a
       single list.</para>
 
-    <para>With our two core <code>Monad</code> definitions in hand,
+    <para id="x_qY">With our two core <code>Monad</code> definitions in hand,
       the implementations of the non-core definitions that remain,
       &bind_; and &fail;, ought to be obvious.</para>
 
@@ -905,35 +905,35 @@
     <sect2>
       <title>Understanding the list monad</title>
 
-      <para>The list monad is similar to a familiar Haskell tool, the
+      <para id="x_rY">The list monad is similar to a familiar Haskell tool, the
 	list comprehension.  We can illustrate this similarity by
 	computing the Cartesian product of two lists.  First, we'll
 	write a list comprehension.</para>
 
       &CartesianProduct.hs:comprehensive;
 
-      <para>For once, we'll use explicit notation for the monadic code
+      <para id="x_sY">For once, we'll use explicit notation for the monadic code
 	instead of block notation.  This will highlight how
 	structurally similar the monadic code is to the list
 	comprehension.</para>
 
       &CartesianProduct.hs:monadic;
 
-      <para>The only real difference is that the value we're
+      <para id="x_tY">The only real difference is that the value we're
 	constructing comes at the end of the sequence of expressions,
 	instead of the beginning as in the list comprehension. Also,
 	the results of the two functions are identical.</para>
       
       &cartesian.ghci:comparison;
 
-      <para>It's easy to be baffled by the list monad early on, so
+      <para id="x_uY">It's easy to be baffled by the list monad early on, so
 	let's walk through our monadic Cartesian product code again in
 	more detail.  This time, we'll rearrange the function to use
 	layout instead of explicit notation.</para>
 
       &CartesianProduct.hs:blockyDo;
       
-      <para>For every element in the list <varname>xs</varname>, the
+      <para id="x_vY">For every element in the list <varname>xs</varname>, the
 	rest of the function is evaluated once, with
 	<varname>x</varname> bound to a different value from the list
 	each time.  Then for every element in the list
@@ -941,20 +941,20 @@
 	evaluated once, with <varname>y</varname> bound to a different
 	value from the list each time.</para>
 
-      <para>What we really have here is a doubly nested loop!  This
+      <para id="x_wY">What we really have here is a doubly nested loop!  This
 	highlights an important fact about monads: you
 	<emphasis>cannot</emphasis> predict how a block of monadic
 	code will behave unless you know what monad it will execute
 	in.</para>
 
-      <para>We'll now walk through the code even more explicitly, but
+      <para id="x_xY">We'll now walk through the code even more explicitly, but
 	first let's get rid of the &do; notation, to make the
 	underlying structure clearer.  We've indented the code a
 	little unusually to make the loop nesting more obvious.</para>
 
       &CartesianProduct.hs:blockyPlain;
 
-      <para>If <varname>xs</varname> has the value
+      <para id="x_yY">If <varname>xs</varname> has the value
 	<code>[1,2,3]</code>, the two lines that follow are evaluated
 	with <varname>x</varname> bound to <code>1</code>, then to
 	<code>2</code>, and finally to <varname>3</varname>. If
@@ -979,18 +979,18 @@
   <sect1 id="hs.monads.do">
     <title>Desugaring of do blocks</title>
 
-    <para>Haskell's &do; syntax is an example of <emphasis>syntactic
+    <para id="x_zY">Haskell's &do; syntax is an example of <emphasis>syntactic
 	sugar</emphasis>: it provides an alternative way of writing
       monadic code, without using &bind; and anonymous functions.
       <emphasis>Desugaring</emphasis> is the translation of syntactic
       sugar back to the core language.</para>
 
-    <para>The rules for desugaring a &do; block are easy to follow. We
+    <para id="x_AZ">The rules for desugaring a &do; block are easy to follow. We
       can think of a compiler as applying these rules mechanically and
       repeatedly to a &do; block until no more &do; keywords
       remain.</para>
 
-    <para>A &do; keyword followed by a single action is translated to
+    <para id="x_BZ">A &do; keyword followed by a single action is translated to
       that action by itself.</para>
 
     <informaltable role="comparison">
@@ -1004,7 +1004,7 @@
       </tgroup>
     </informaltable>
 
-    <para>A &do; keyword followed by more than one action is
+    <para id="x_CZ">A &do; keyword followed by more than one action is
       translated to the first action, then &bind_;, followed by a &do;
       keyword and the remaining actions.  When we apply this rule
       repeatedly, the entire &do; block ends up chained together by
@@ -1021,7 +1021,7 @@
       </tgroup>
     </informaltable>
 
-    <para>The &larrow; notation has a translation that's worth paying
+    <para id="x_DZ">The &larrow; notation has a translation that's worth paying
       close attention to.  On the left of the &larrow; is a normal
       Haskell pattern. This can be a single variable or something more
       complicated.  A guard expression is not allowed.</para>
@@ -1037,27 +1037,27 @@
       </tgroup>
     </informaltable>
 
-    <para>This pattern is translated into a &let; binding that
+    <para id="x_EZ">This pattern is translated into a &let; binding that
       declares a local function with a unique name (we're just using
       <varname>f</varname> as an example above).  The action on the
       right of the &larrow; is then chained with this function using
       &bind;.</para>
 
-    <para>What's noteworthy about this translation is that if the
+    <para id="x_FZ">What's noteworthy about this translation is that if the
       pattern match fails, the local function calls the monad's &fail;
       implementation. Here's an example using the <type>Maybe</type>
       monad.</para>
 
     &Do.hs:robust;
 
-    <para>The &fail; implementation in the <type>Maybe</type> monad
+    <para id="x_GZ">The &fail; implementation in the <type>Maybe</type> monad
       simply returns <code>Nothing</code>.  If the pattern match in
       the above function fails, we thus get <code>Nothing</code> as
       our result.</para>
 
     &do.ghci:robust;
 
-    <para>Finally, when we write a &let; expression in a &do; block,
+    <para id="x_HZ">Finally, when we write a &let; expression in a &do; block,
       we can omit the usual &in; keyword.  Subsequent actions in the
       block must be lined up with the &let; keyword.</para>
 
@@ -1075,7 +1075,7 @@
     <sect2>
       <title>Monads as a programmable semicolon</title>
 
-      <para>Back in <xref linkend="hs.funcstypes.block"/>, we
+      <para id="x_IZ">Back in <xref linkend="hs.funcstypes.block"/>, we
 	mentioned that layout is the norm in Haskell, but it's not
 	<emphasis>required</emphasis>.  We can write a &do; block
 	using explicit structure instead of layout.</para>
@@ -1091,7 +1091,7 @@
 	</tgroup>
       </informaltable>
 
-      <para>Even though this use of explicit structure is rare, the
+      <para id="x_JZ">Even though this use of explicit structure is rare, the
 	fact that it uses semicolons to separate expressions has given
 	rise to an apt slogan: monads are a kind of
 	<quote>programmable semicolon</quote>, because the behaviours
@@ -1101,11 +1101,11 @@
     <sect2 id="hs.monads.do.avoid">
       <title>Why go sugar-free?</title>
 
-      <para>When we write &bind; explicitly in our code, it reminds us
+      <para id="x_KZ">When we write &bind; explicitly in our code, it reminds us
 	that we're calling stitching functions together using
 	combinators, not simply sequencing actions.</para>
 
-      <para>As long as you feel like a novice with monads, we think
+      <para id="x_LZ">As long as you feel like a novice with monads, we think
 	you should prefer to explicitly write &bind; over the
 	syntactic sugar of &do; notation.  The repeated reinforcement
 	of what's really happening seems, for many programmers, to
@@ -1114,7 +1114,7 @@
 	<type>IO</type> monad, and assume that a &do; block means
 	nothing more than a simple sequence of actions.)</para>
 
-      <para>Once you're feeling more familiar with monads, you can
+      <para id="x_MZ">Once you're feeling more familiar with monads, you can
 	choose whichever style seems more appropriate for writing a
 	particular function.  Indeed, when you read other people's
 	monadic code, you'll see that it's unusual, but by no means
@@ -1126,7 +1126,7 @@
   <sect1 id="hs.monads.state">
     <title>The state monad</title>
 
-    <para>We discovered earlier in this chapter that the
+    <para id="x_NZ">We discovered earlier in this chapter that the
       <type>Parse</type> from <xref
 	linkend="hs.binary"/> was a monad.  It has two logically
       distinct aspects.  One is the idea of a parse failing, and
@@ -1135,19 +1135,19 @@
       around a piece of implicit state, in our case the partially
       consumed <type>ByteString</type>.</para>
 
-    <para>This need for a way to read and write state is common enough
+    <para id="x_OZ">This need for a way to read and write state is common enough
       in Haskell programs that the standard libraries provide a monad
       named <type>State</type> that is dedicated to this purpose. This
       monad lives in the <code>Control.Monad.State</code>
       module.</para>
 
-    <para>Where our <type>Parse</type> type carried around a
+    <para id="x_PZ">Where our <type>Parse</type> type carried around a
       <type>ByteString</type> as its piece of state, the
       <type>State</type> monad can carry any type of state.  We'll
       refer to the state's unknown type as <varname
 	role="type">s</varname>.</para>
 
-    <para>What's an obvious and general thing we might want to do with
+    <para id="x_QZ">What's an obvious and general thing we might want to do with
       a state?  Given a state value, we inspect it, then produce a
       result and a new state value.  Let's say the result can be of
       any type <varname role="type">a</varname>.  A type signature
@@ -1159,7 +1159,7 @@
     <sect2>
       <title>Almost a state monad</title>
 
-      <para>Let's develop some simple code that's
+      <para id="x_RZ">Let's develop some simple code that's
 	<emphasis>almost</emphasis> the <type>State</type> monad, then
 	we'll take a look at the real thing.  We'll start with our
 	type definition, which has exactly the obvious type we
@@ -1167,11 +1167,11 @@
 
       &SimpleState.hs:SimpleState;
 
-      <para>Yes, this is a type synonym, not a new type, and so we're
+      <para id="x_SZ">Yes, this is a type synonym, not a new type, and so we're
 	cheating a little.  Bear with us for now; this simplifies the
 	description that follows.</para>
 
-      <para>Earlier in this chapter, we said that a monad has a type
+      <para id="x_TZ">Earlier in this chapter, we said that a monad has a type
 	constructor with a single type variable, and yet here we have
 	a type with two variables.  The key here is to understand that
 	we can partially apply a <emphasis>type</emphasis> just as we
@@ -1180,7 +1180,7 @@
 
       &SimpleState.hs:StringState;
 
-      <para>Here, we've bound the type variable <varname
+      <para id="x_UZ">Here, we've bound the type variable <varname
 	  role="type">s</varname> to <type>String</type>. The type
 	<type>StringState</type> still has an unbound type variable
 	<varname role="type">a</varname>, though.  It's now more
@@ -1189,12 +1189,12 @@
 	<type>SimpleState s</type>, not <type>SimpleState</type>
 	alone.</para>
 
-      <para>The next ingredient we need to make a monad is a
+      <para id="x_VZ">The next ingredient we need to make a monad is a
 	definition for the &return; function.</para>
 
       &SimpleState.hs:returnSt;
 
-      <para>All this does is take the result and the current state,
+      <para id="x_WZ">All this does is take the result and the current state,
 	and <quote>tuple them up</quote>.  You may by now be used to
 	the idea that a Haskell function with multiple parameters is
 	just a chain of single-parameter functions, but just in case
@@ -1204,20 +1204,20 @@
 
       &SimpleState.hs:returnAlt;
 
-      <para>Our final piece of the monadic puzzle is a definition for
+      <para id="x_XZ">Our final piece of the monadic puzzle is a definition for
 	&bind;.  Here it is, using the actual variable names from the
 	standard library's definition of &bind; for
 	<type>State</type>.</para>
 
       &SimpleState.hs:bindSt;
 
-      <para>Those single-letter variable names aren't exactly a boon
+      <para id="x_YZ">Those single-letter variable names aren't exactly a boon
 	to readability, so let's see if we can substitute some more
 	meaningful names.</para>
 
       &SimpleState.hs:bindAlt;
 
-      <para>To understand this definition, remember that
+      <para id="x_ZZ">To understand this definition, remember that
 	<varname>step</varname> is a function with the type <type>s
 	  -&gt; (a, s)</type>.  When we evaluate this, we get a tuple,
 	and we have to use this to return a new function of type
@@ -1233,14 +1233,14 @@
     <sect2>
       <title>Reading and modifying the state</title>
 
-      <para>The definitions of &bind; and &return; for the state monad
+      <para id="x_aZ">The definitions of &bind; and &return; for the state monad
 	simply act as plumbing: they move a piece of state around, but
 	they don't touch it in any way.  We need a few other simple
 	functions to actually do useful work with the state.</para>
 
       &SimpleState.hs:getPut;
 
-      <para>The <function>getSt</function> function simply takes the
+      <para id="x_bZ">The <function>getSt</function> function simply takes the
 	current state and returns it as the result, while
 	<function>putSt</function> ignores the current state and
 	replaces it with a new state.</para>
@@ -1249,7 +1249,7 @@
     <sect2>
       <title>Will the real state monad please stand up?</title>
 
-      <para>The only simplifying trick we played in the previous
+      <para id="x_cZ">The only simplifying trick we played in the previous
 	section was to use a type synonym instead of a type definition
 	for <type>SimpleState</type>.  In order to define a
 	<code>Monad</code> instance, we have to provide a proper type
@@ -1259,7 +1259,7 @@
 
       &State.hs:State;
 
-      <para>All we've done is wrap our <type>s -&gt; (a, s)</type>
+      <para id="x_dZ">All we've done is wrap our <type>s -&gt; (a, s)</type>
 	type in a <code>State</code> constructor.  By using Haskell's
 	record syntax to define the type, we're automatically given a
 	<function>runState</function> function that will unwrap a
@@ -1267,25 +1267,25 @@
 	<function>runState</function> is <type>State s a -&gt; s -&gt;
 	  (a, s)</type>.</para>
 
-      <para>The definition of &return; is almost the same as for
+      <para id="x_eZ">The definition of &return; is almost the same as for
 	<type>SimpleState</type>, except we wrap our function with a
 	<code>State</code> constructor.</para>
 
       &State.hs:returnState;
 
-      <para>The definition of &bind; is a little more complicated,
+      <para id="x_fZ">The definition of &bind; is a little more complicated,
 	because it has to use <function>runState</function> to remove
 	the <code>State</code> wrappers.</para>
 
       &State.hs:bindState;
 
-      <para>This function differs from our earlier
+      <para id="x_gZ">This function differs from our earlier
 	<function>bindSt</function> only in adding the wrapping and
 	unwrapping of a few values.  By separating the <quote>real
 	  work</quote> from the bookkeeping, we've hopefully made it
 	clearer what's really happening.</para>
 
-      <para>We modify the functions for reading and modifying the
+      <para id="x_hZ">We modify the functions for reading and modifying the
 	state in the same way, by adding a little wrapping.</para>
 
       &State.hs:getPut;
@@ -1295,19 +1295,19 @@
     <sect2>
       <title>Using the state monad: generating random values</title>
 
-      <para>We've already used <type>Parse</type>, our precursor to
+      <para id="x_iZ">We've already used <type>Parse</type>, our precursor to
 	the state monad, to parse binary data.  If we'd been using the
 	state monad directly, we would have used a
 	<type>ByteString</type> as the state.</para>
 
-      <para>The State monad will probably feel much familiar to you
+      <para id="x_jZ">The State monad will probably feel much familiar to you
 	than many other monads if you have a background in imperative
 	languages.  After all, imperative languages are all about
 	carrying around some implicit state, reading some parts, and
 	modifying others through assignment, and this is just what the
 	state monad is for.</para>
 
-      <para>So instead of unnecessarily cheerleading for the idea of
+      <para id="x_kZ">So instead of unnecessarily cheerleading for the idea of
 	using the state monad, we'll begin by demonstrating how to use
 	it for something simple: pseudorandom value generation.  In
 	an imperative language, there's usually an easily available
@@ -1316,7 +1316,7 @@
 	pseudorandom number, using a global state that it
 	updates.</para>
 
-      <para>Haskell's standard random generation module is named
+      <para id="x_lZ">Haskell's standard random generation module is named
 	<code>System.Random</code>.  It allows the generation of
 	random values of any type, not just numbers.  The module
 	contains several handy functions that live in the
@@ -1326,11 +1326,11 @@
 
       &Random.hs:rand;
 
-      <para>(The <function>randomR</function> function takes an
+      <para id="x_mZ">(The <function>randomR</function> function takes an
 	inclusive range within which the generated random value
 	should lie.)</para>
 
-      <para>The <code>System.Random</code> module provides a
+      <para id="x_nZ">The <code>System.Random</code> module provides a
 	typeclass, <code>RandomGen</code>, that lets us define new
 	sources of random values.  The type <type>StdGen</type> is the
 	standard <code>RandomGen</code> instance, and generated
@@ -1339,79 +1339,79 @@
 	<code>RandomGen</code> and get truly random, instead of merely
 	pseudorandom, values.</para>
 
-      <para>Another typeclass, <code>Random</code>, indicates how to
+      <para id="x_oZ">Another typeclass, <code>Random</code>, indicates how to
 	generate random values of a particular type.  The module
 	defines <code>Random</code> instances for all of the usual
 	simple types.</para>
 
-      <para>Incidentally, the definition of <function>rand</function>
+      <para id="x_pZ">Incidentally, the definition of <function>rand</function>
 	above reads and modifies a built-in global random generator
 	that inhabits the <type>IO</type> monad.</para>
 
       <sect3>
 	<title>A first attempt at purity</title>
 
-	<para>After all of our emphasis so far on avoiding the
+	<para id="x_qZ">After all of our emphasis so far on avoiding the
 	  <type>IO</type> monad wherever possible, it would be a shame
 	  if we were dragged back into it just to generate some random
 	  values.  Indeed, <code>System.Random</code> contains pure
 	  random number generation functions.</para>
 
-	<para>The traditional downside of purity is that we have to
+	<para id="x_rZ">The traditional downside of purity is that we have to
 	  get or create a random number generator, then ship it from
 	  the point we created it to the place where it's needed. When
 	  we finally call it, it returns a <emphasis>new</emphasis>
 	  random number generator: we're in pure code, remember, so we
 	  can't modify the state of the existing generator.</para>
 
-	<para>If we forget about immutability and reuse the same
+	<para id="x_sZ">If we forget about immutability and reuse the same
 	  generator within a function, we get back exactly the same
 	  <quote>random</quote> number every time.</para>
 
 	&Random.hs:twoBadRandoms;
 
-	<para>Needless to say, this has nasty consequences.</para>
+	<para id="x_tZ">Needless to say, this has nasty consequences.</para>
 
 	&random.ghci:twoBadRandoms;
 
-	<para>(The <function>random</function> function uses an
+	<para id="x_uZ">(The <function>random</function> function uses an
 	  implicit range instead of the user-supplied range used by
 	  <function>randomR</function>.  The
 	  <function>getStdGen</function> function retrieves the
 	  current value of the global standard number generator from
 	  the <type>IO</type> monad.)</para>
 
-	<para>Unfortunately, correctly passing around and using
+	<para id="x_vZ">Unfortunately, correctly passing around and using
 	  successive versions of the generator does not make for
 	  palatable reading.  Here's a simple example.</para>
 
 	&Random.hs:twoGoodRandoms;
 
-	<para>Now that we know about the state monad, though, it looks
+	<para id="x_wZ">Now that we know about the state monad, though, it looks
 	  like a fine candidate to hide the generator.</para>
       </sect3>
 
       <sect3>
 	<title>Random values in the state monad</title>
 
-	<para>Here's a state monad that carries around a
+	<para id="x_xZ">Here's a state monad that carries around a
 	  <type>StdGen</type> as its piece of state.</para>
 
 	&Random.hs:RandomState;
 
-	<para>The type synonym is of course not necessary, but it's
+	<para id="x_yZ">The type synonym is of course not necessary, but it's
 	  handy. It saves a little keyboarding, and if we wanted to
 	  swap another random generator for <type>StdGen</type>, it
 	  would reduce the number of type signatures we'd need to
 	  change.</para>
 
-	<para>Generating a random value is now a matter of fetching
+	<para id="x_zZ">Generating a random value is now a matter of fetching
 	  the current generator, using it, then modifying the state to
 	  replace it with the new generator.</para>
 
 	&Random.hs:getRandom;
 
-	<para>We can now use some of the monadic machinery that we saw
+	<para id="x_Aa">We can now use some of the monadic machinery that we saw
 	  earlier to write a much more concise function for giving us
 	  a pair of random numbers.</para>
 
@@ -1424,7 +1424,7 @@
 	<qandaset defaultlabel="number">
 	  <qandaentry>
 	    <question>
-	      <para>Rewrite <function>getRandom</function> to use &do;
+	      <para id="x_Ba">Rewrite <function>getRandom</function> to use &do;
 		notation.</para>
 	    </question>
 	  </qandaentry>
@@ -1435,26 +1435,26 @@
       <sect3>
 	<title>Running the state monad</title>
 
-	<para>As we've already mentioned, each monad has its own
+	<para id="x_Ca">As we've already mentioned, each monad has its own
 	  specialised evaluation functions.  In the case of the state
 	  monad, we have several to choose from.</para>
 
 	<itemizedlist>
 	  <listitem>
-	    <para><function>runState</function> returns both the
+	    <para id="x_Da"><function>runState</function> returns both the
 	      result and the final state.</para>
 	  </listitem>
 	  <listitem>
-	    <para><function>evalState</function> returns only the
+	    <para id="x_Ea"><function>evalState</function> returns only the
 	      result, throwing away the final state.</para>
 	  </listitem>
 	  <listitem>
-	    <para><function>execState</function> throws the result
+	    <para id="x_Fa"><function>execState</function> throws the result
 	      away, returning only the final state.</para>
 	  </listitem>
 	</itemizedlist>
 
-	<para>The <function>evalState</function> and
+	<para id="x_Ga">The <function>evalState</function> and
 	  <function>execState</function> functions are simply
 	  compositions of <function>fst</function> and
 	  <function>snd</function> with <function>runState</function>,
@@ -1468,7 +1468,7 @@
   <sect1>
     <title>Monads and functors</title>
 
-    <para>fmap! join!</para>
+    <para id="x_Ha">fmap! join!</para>
   </sect1>
 </chapter>
 

@@ -4,7 +4,7 @@
   <title>I/O case study: a library for searching the
     filesystem</title>
 
-  <para>The problem of <quote>I know I have this file, but I don't
+  <para id="x_qN">The problem of <quote>I know I have this file, but I don't
       know where it is</quote> has been around for as long as
     computers have had hierarchical filesystems.  The fifth edition of
     Unix introduced the <command>find</command> command in 1974; it
@@ -12,7 +12,7 @@
     way: modern operating systems ship with advanced document indexing
     and search capabilities.</para>
 
-  <para>There's still a valuable place for
+  <para id="x_rN">There's still a valuable place for
     <command>find</command>-like capability in the programmer's
     toolbox.  In this chapter, we'll develop a library that gives us
     many of <command>find</command>'s capabilities, without leaving
@@ -22,13 +22,13 @@
   <sect1 id="hs.find.getRecursiveContents">
     <title>The find command</title>
 
-    <para>If you don't use a Unix-like operating system, or you're not
+    <para id="x_sN">If you don't use a Unix-like operating system, or you're not
       a heavy shell user, it's quite possible you won't have heard of
       <command>find</command>.  Given a list of directories, it
       searches each one recursively and prints the name of every entry
       that matches an expression.</para>
 
-    <para>Individual expressions can take such forms as <quote>name
+    <para id="x_tN">Individual expressions can take such forms as <quote>name
 	matches this glob pattern</quote>, <quote>entry is a plain
 	file</quote>, <quote>last modified before this date</quote>,
       and many more.  They can be stitched together into more complex
@@ -39,27 +39,27 @@
   <sect1>
     <title>Starting simple: recursively listing a directory</title>
 
-    <para>Before we plunge into designing our library, let's solve a
+    <para id="x_uN">Before we plunge into designing our library, let's solve a
       few smaller problems.  Our first problem is to get a list of the
       contents of a directory at all, and to do so recursively.</para>
 
     &RecursiveContents.hs:RecursiveContents;
 
-    <para>The <function>filter</function> expression ensures that a
+    <para id="x_vN">The <function>filter</function> expression ensures that a
       listing for a single directory won't contain the special
       directory names <literal>.</literal> or <literal>..</literal>,
       which refer to the current and parent directory, respectively.
       If we were to forget to filter these out, we'd recurse
       endlessly.</para>
 
-    <para>The <function>forM</function> function is a
+    <para id="x_wN">The <function>forM</function> function is a
       <function>flip</function>ped version of
       <function>mapM</function>, which we first saw in <xref
 	linkend="hs.io.monad"/>.</para>
 
     &recursivecontents.ghci:forM;
 
-    <para>The body of the loop checks to see whether the current entry
+    <para id="x_xN">The body of the loop checks to see whether the current entry
       is a directory.  If it is, it recursively calls
       <function>getRecursiveContents</function> to list that
       directory. Otherwise, it returns a single-element list that is
@@ -73,7 +73,7 @@
     <remark>Tie this into our earlier discussion of
       <function>return</function>.</remark>
 
-    <para>Another thing worth pointing out is the use of the variable
+    <para id="x_yN">Another thing worth pointing out is the use of the variable
       <varname>isDirectory</varname>.  In an imperative language such
       as Python, we'd normally write <code>if
 	os.path.isdir(path)</code>.  However, the
@@ -85,7 +85,7 @@
       action out of its <type>IO</type> wrapper, so we can use the
       plain, unwrapped <type>Bool</type> in the &if;.</para>
 
-    <para>Finally, each call to the loop body yields a list of names,
+    <para id="x_zN">Finally, each call to the loop body yields a list of names,
       so the result of <function>forM</function> is a list of lists.
       We use <function>concat</function> to flatten it into a single
       list.</para>
@@ -93,18 +93,18 @@
     <sect2>
       <title>Revisiting anonymous and named functions</title>
 
-      <para>In <xref linkend="hs.fp.anonymous"/>, we listed some
+      <para id="x_AO">In <xref linkend="hs.fp.anonymous"/>, we listed some
 	reasons not to use anonymous functions, and yet here we are,
 	using one as the body of a loop. This is one of the most
 	common uses of anonymous functions in Haskell.</para>
 
-      <para>We've already seen from their types that
+      <para id="x_BO">We've already seen from their types that
 	<function>forM</function> and <function>mapM</function> take
 	functions as arguments. Most loop bodies are blocks of code
 	that only appear once in a program. Since we're most likely to
 	use a loop body in only one place, why give it a name?</para>
 
-      <para>Of course, it does happen that we need to deploy exactly
+      <para id="x_CO">Of course, it does happen that we need to deploy exactly
 	the same code in several different loops. Rather than cutting
 	and pasting the same anonymous function, it makes sense here
 	to take an existing anonymous function and give it a
@@ -114,13 +114,13 @@
     <sect2>
       <title>Why provide both mapM and forM?</title>
 
-      <para>It might seem a bit odd that there exist two functions
+      <para id="x_DO">It might seem a bit odd that there exist two functions
 	that are identical but for the order in which they accept
 	their arguments.  However, <function>mapM</function> and
 	<function>forM</function> are convenient in different
 	circumstances.</para>
 
-      <para>Consider our example above, using an anonymous function as
+      <para id="x_EO">Consider our example above, using an anonymous function as
 	a loop body.  If we were to use <function>mapM</function>
 	instead of <function>forM</function>, we'd have to place the
 	variable <varname>properNames</varname> after the body of the
@@ -131,12 +131,12 @@
 	<function>forM</function> with <function>mapM</function>, and
 	see what this does to the readability of the code.</para>
 
-      <para>By contrast, if the body of the loop was already a named
+      <para id="x_FO">By contrast, if the body of the loop was already a named
 	function, and the list over which we were looping was computed
 	by a complicated expression, we'd have a good case for using
 	<function>mapM</function> instead.</para>
 
-      <para>The stylistic rule of thumb to follow here is to use
+      <para id="x_GO">The stylistic rule of thumb to follow here is to use
 	whichever of <function>mapM</function> or
 	<function>forM</function> lets you write the tidiest code.  If
 	the loop body and the expression computing the data over which
@@ -153,30 +153,30 @@
   <sect1 id="hs.find.simpleFind">
     <title>A naive finding function</title>
 
-    <para>We can use our <function>getRecursiveContents</function>
+    <para id="x_HO">We can use our <function>getRecursiveContents</function>
       function as the basis for a simple-minded file finder.</para>
 
     &SimpleFinder.hs:simpleFind;
 
-    <para>This function takes a predicate that we use to filter the
+    <para id="x_IO">This function takes a predicate that we use to filter the
       names returned by <function>getRecursiveContents</function>.
       Each name passed to the predicate is a complete path, so how can
       we perform a common operation like <quote>find all files ending
 	in the extension <code>.c</code></quote>?</para>
 
-    <para>The <code>System.FilePath</code> module contains numerous
+    <para id="x_JO">The <code>System.FilePath</code> module contains numerous
       invaluable functions that help us to manipulate file names. In
       this case, we want <function>takeExtension</function>.</para>
 
     &simplefinder.ghci:takeExtension;
 
-    <para>This gives us a simple matter of writing a function that
+    <para id="x_KO">This gives us a simple matter of writing a function that
       takes a path, extracts its extension, and compares it with
       <code>.c</code>.</para>
     
     &simplefinder.ghci:find.c;
 
-    <para>While <function>simpleFind</function> works, it has a few
+    <para id="x_LO">While <function>simpleFind</function> works, it has a few
       glaring problems.  The first is that the predicate is not very
       expressive.  It can only look at the name of a directory entry,
       and not for example find out whether it's a file or a directory.
@@ -184,7 +184,7 @@
       <function>simpleFind</function> will list directories ending in
       <code>.c</code> as well as files with the same extension.</para>
 
-    <para>The second problem is that <function>simpleFind</function>
+    <para id="x_MO">The second problem is that <function>simpleFind</function>
       gives us no control over how it traverses the filesystem.  To
       see why this is significant, consider the problem of searching
       for a source file in a tree managed by the Subversion revision
@@ -200,13 +200,13 @@
       cheaper to avoid traversing those 1,200 directories than to
       filter out the 30,000 files they contain.</para>
 
-    <para>Finally, <function>simpleFind</function> is strict.  If we
+    <para id="x_NO">Finally, <function>simpleFind</function> is strict.  If we
       have a million files to traverse, we get one huge result
       containing a million names, instead of a piecemeal lazy stream
       of results.  This is bad for both resource usage and
       responsiveness.</para>
 
-    <para>In the sections that follow, we'll overcome each one of
+    <para id="x_OO">In the sections that follow, we'll overcome each one of
       these problems.</para>
   </sect1>
 
@@ -214,11 +214,11 @@
     <title>Predicates: from poverty to riches, while remaining
       pure</title>
 
-    <para>Our predicates can only look at file names.  This excludes a
+    <para id="x_PO">Our predicates can only look at file names.  This excludes a
       wide variety of interesting behaviours: for instance, what if
       we'd like to list files of greater than a given size?</para>
 
-    <para>An easy reaction to this is to reach for <type>IO</type>:
+    <para id="x_QO">An easy reaction to this is to reach for <type>IO</type>:
       instead of our predicate being of type <type>FilePath ->
 	Bool</type>, why don't we change it to <type>FilePath -> IO
 	Bool</type>?  This would let us perform arbitrary I/O as part
@@ -227,21 +227,21 @@
       side effects, since a function with return type <type>IO
 	a</type> can have whatever side effects it pleases.</para>
 
-    <para>Let's enlist the type system in our quest to write more
+    <para id="x_RO">Let's enlist the type system in our quest to write more
       predictable, less buggy code: we'll keep predicates pure by
       avoiding the taint of <quote>IO</quote>.  This will ensure that
       they can't have any nasty side effects.   We'll feed them more
       information, too, so that they can gain the expressiveness we
       want without also becoming potentially dangerous.</para>
 
-    <para>Haskell's portable <code>System.Directory</code> module
+    <para id="x_SO">Haskell's portable <code>System.Directory</code> module
       provides a useful, albeit limited, set of file metadata.</para>
 
     &simplefinder.ghci:System.Directory;
 
     <itemizedlist>
       <listitem>
-	<para>We can use <function>doesFileExist</function> and
+	<para id="x_TO">We can use <function>doesFileExist</function> and
 	  <function>doesDirectoryExist</function> to determine whether
 	  a directory entry is a file or a directory.  There are not
 	  yet portable ways to query for other file types that have
@@ -253,18 +253,18 @@
       </listitem>
 
       <listitem>
-	<para>The <function>getPermissions</function> function lets us
+	<para id="x_UO">The <function>getPermissions</function> function lets us
 	  find out whether certain operations on a file or directory
 	  are allowed.</para>
 
 	&simplefinder.ghci:getPermissions;
 
-	<para>Directories are always <function>searchable</function>;
+	<para id="x_VO">Directories are always <function>searchable</function>;
 	  files never are.</para>
       </listitem>
 
       <listitem>
-	<para>Finally, <function>getModificationTime</function> tells
+	<para id="x_WO">Finally, <function>getModificationTime</function> tells
 	  us when an entry was last modified.</para>
 
 	&simplefinder.ghci:getModificationTime;
@@ -272,7 +272,7 @@
       </listitem>
     </itemizedlist>
 
-    <para>If we stick with portable, standard Haskell code, these
+    <para id="x_XO">If we stick with portable, standard Haskell code, these
       functions are all we have at our disposal.  (We can also find a
       file's size using a small hack; see below.)  They're also quite
       enough to let us illustrate the principles we're interested in,
@@ -282,7 +282,7 @@
       families provide much more detailed file metadata for the two
       major modern computing platforms.</para>
 
-    <para>How many pieces of data does our new, richer predicate need
+    <para id="x_YO">How many pieces of data does our new, richer predicate need
       to see?  Since we can find out whether an entry is a file or a
       directory by looking at its <type>Permissions</type>, we don't
       need to pass in the results of
@@ -292,23 +292,23 @@
 
     &BetterPredicate.hs:Predicate;
 
-    <para>Notice that the return value of this predicate is
+    <para id="x_ZO">Notice that the return value of this predicate is
       <type>Bool</type>, not <type>IO Bool</type>: the predicate is
       pure, and cannot perform I/O. With this type in hand, our more
       expressive finder function is still quite trim.</para>
 
     &BetterPredicate.hs:betterFind;
 
-    <para>Let's walk through the code.  We'll talk about
+    <para id="x_aO">Let's walk through the code.  We'll talk about
       <function>getFileSize</function> in some detail soon, so let's
       skip over it for now.</para>
 
-    <para>We can't use <function>filter</function> to call our
+    <para id="x_bO">We can't use <function>filter</function> to call our
       predicate <varname>p</varname>, as <varname>p</varname>'s purity
       means it cannot do the I/O needed to gather the metadata it
       requires.</para>
 
-    <para>This leads us to the unfamiliar function
+    <para id="x_cO">This leads us to the unfamiliar function
       <function>filterM</function>.  It behaves like the normal
       <function>filter</function> function, but in this case it
       evaluates its predicate in the <type>IO</type> monad, allowing
@@ -316,7 +316,7 @@
 
     &simplefinder.ghci:filterM;
 
-    <para>Our <function>check</function> predicate is an I/O-capable
+    <para id="x_dO">Our <function>check</function> predicate is an I/O-capable
       wrapper for our pure predicate <varname>p</varname>. It does all
       the <quote>dirty</quote> work of I/O on <varname>p</varname>'s
       behalf, so that we can keep <varname>p</varname> incapable of
@@ -329,7 +329,7 @@
   <sect1>
     <title>Sizing a file safely</title>
 
-    <para>Although <code>System.Directory</code> doesn't let us find
+    <para id="x_eO">Although <code>System.Directory</code> doesn't let us find
       out what size a file is, we can use the similarly portable
       <code>System.IO</code> module to do this.  It contains a
       function named <function>hFileSize</function>, which returns the
@@ -338,7 +338,7 @@
 
     &BetterPredicate.hs:simpleFileSize;
 
-    <para>While this function works, it's not yet suitable for us to
+    <para id="x_fO">While this function works, it's not yet suitable for us to
       use.  In <function>betterFind</function>, we call
       <function>getFileSize</function> unconditionally on all kinds of
       directory entry, and expect it to return <code>Nothing</code> if
@@ -348,18 +348,18 @@
       (perhaps due to insufficient permissions), and returns the size
       unwrapped.</para>
 
-    <para>Here's a safer version of this function.</para>
+    <para id="x_gO">Here's a safer version of this function.</para>
 
     &BetterPredicate.hs:saferFileSize;
 
-    <para>The body of the function is almost identical, save for the
+    <para id="x_hO">The body of the function is almost identical, save for the
       <function>handle</function> clause.  This is our first use of an
       exception handler.  Exception-related code lives in the
       <code>Control.Exception</code> module.</para>
 
     &simplefinder.ghci:handle;
 
-    <para>The <function>handle</function> function works by calling
+    <para id="x_iO">The <function>handle</function> function works by calling
       its second argument.  If that action returns normally,
       <function>handle</function> returns its result.  If the action
       throws an exception, <function>handle</function> catches the
@@ -369,12 +369,12 @@
       or it can return some value, which will in turn be returned by
       <function>handle</function>.</para>
 
-    <para>Our exception handler above ignores the exception it's
+    <para id="x_jO">Our exception handler above ignores the exception it's
       passed, and returns <code>Nothing</code>.  The only change to
       the body that follows is that it wraps the file size with
       <function>Just</function>.</para>
 
-    <para>The <function>saferFileSize</function> function now has the
+    <para id="x_kO">The <function>saferFileSize</function> function now has the
       correct type signature, and it won't throw any exceptions.  But
       it's still not completely well behaved.  There are directory
       entries on which <function>openFile</function> will succeed, but
@@ -383,24 +383,24 @@
       will be caught by <function>handle</function>, but our call to
       <function>hClose</function> will never occur.</para>
 
-    <para>A Haskell implementation will automatically close the file
+    <para id="x_lO">A Haskell implementation will automatically close the file
       handle when it notices that the handle is no longer being used,
       but that will not happen until the garbage collector runs, which
       can take a while. Until then, the file handle remains
       open.</para>
 
-    <para>File handles are scarce resources.  Their scarcity is
+    <para id="x_mO">File handles are scarce resources.  Their scarcity is
       enforced by the underlying operating system.  On Linux, for
       example, a process is by default only allowed to have 1024 files
       open simultaneously.</para>
 
-    <para>It's not hard to imagine a scenario in which a program that
+    <para id="x_nO">It's not hard to imagine a scenario in which a program that
       called a version of <function>betterFind</function> that used
       <function>saferFileSize</function> could crash because
       <function>betterFind</function> exhausted the supply of open
       files before enough garbage file handles could be closed.</para>
 
-    <para>This is a particularly pernicious kind of bug, as it has
+    <para id="x_oO">This is a particularly pernicious kind of bug, as it has
       several aspects that combine make it incredibly difficult to
       track down. It will only be triggered if
       <function>betterFind</function> visits a sufficiently large
@@ -415,14 +415,14 @@
       current run of the program is to triggering the garbage
       collector.</para>
 
-    <para>Fortunately, we can avoid this kind of error very easily, in
+    <para id="x_pO">Fortunately, we can avoid this kind of error very easily, in
       fact here we can do so by making our function
       <emphasis>shorter</emphasis>.</para>
 
     <sect2 id="hs.find.acquire.use.release">
       <title>The acquire-use-release cycle</title>
 
-      <para>We need <function>hClose</function> to always be called if
+      <para id="x_qO">We need <function>hClose</function> to always be called if
 	<function>openFile</function> succeeds.  The
 	<code>Control.Exception</code> module provides the
 	<function>bracket</function> function for exactly this
@@ -430,7 +430,7 @@
 
       &simplefinder.ghci:bracket;
 
-      <para>The <function>bracket</function> function takes three
+      <para id="x_rO">The <function>bracket</function> function takes three
 	actions as arguments.  The first action acquires a resource.
 	The second releases the resource.  The third runs in between,
 	while the resource is acquired; let's call this the
@@ -441,7 +441,7 @@
 	<quote>release</quote> actions are each passed the resource
 	acquired by the <quote>acquire</quote> action.</para>
 
-      <para>If an exception occurs while the <quote>use</quote> action
+      <para id="x_sO">If an exception occurs while the <quote>use</quote> action
 	is executing, <function>bracket</function> calls the
 	<quote>release</quote> action and rethrows the exception.  If
 	the <quote>use</quote> action succeeds,
@@ -449,21 +449,21 @@
 	action, and returns the value returned by the
 	<quote>use</quote> action.</para>
 
-      <para>We can now write a function that is completely safe: it
+      <para id="x_tO">We can now write a function that is completely safe: it
 	will not throw exceptions; neither will it accumulate garbage
 	file handles that could cause spurious failures elsewhere in
 	our program.</para>
     
       &BetterPredicate.hs:getFileSize;
 
-      <para>Look closely at the arguments of
+      <para id="x_uO">Look closely at the arguments of
 	<function>bracket</function> above.  The first opens the file,
 	and returns the open file handle.  The second closes the
 	handle.  The third simply calls <function>hFileSize</function>
 	on the handle and wraps the result in
 	<function>Just</function>.</para>
 
-      <para>We need to use both <function>bracket</function> and
+      <para id="x_vO">We need to use both <function>bracket</function> and
 	<function>handle</function> for this function to operate
 	correctly. The former ensures that we don't accumulate garbage
 	file handles, while the latter gets rid of exceptions.</para>
@@ -474,7 +474,7 @@
 	<qandaset defaultlabel="number">
 	  <qandaentry>
 	    <question>
-	      <para>Is the order in which <function>bracket</function>
+	      <para id="x_wO">Is the order in which <function>bracket</function>
 		and <function>handle</function> are called important?
 		Why?</para>
 	    </question>
@@ -487,27 +487,27 @@
   <sect1 id="hs.find.predicate">
     <title>Writing a predicate</title>
 
-    <para>Let's take a stab at writing a predicate, recalling the type
+    <para id="x_xO">Let's take a stab at writing a predicate, recalling the type
       signature for predicates.</para>
 
     &BetterPredicate.hs:Predicate.noid;
 
-    <para>Our predicate will check for a C source file that is over
+    <para id="x_yO">Our predicate will check for a C source file that is over
       100KB in size.</para>
 
     &BetterPredicate.hs:myTest;
 
-    <para>This isn't especially pleasing.  The predicate takes four
+    <para id="x_zO">This isn't especially pleasing.  The predicate takes four
       arguments, always ignores two of them, and requires two
       equations to define.  Surely we can do better.</para>
 
-    <para>One approach we can take is to write a function that returns
+    <para id="x_AP">One approach we can take is to write a function that returns
       one of its arguments.  This one extracts the path from the
       arguments passed to a <type>Predicate</type>.</para>
 
     &BetterPredicate.hs:pathP;
 
-    <para>If we don't provide a type signature, a Haskell
+    <para id="x_BP">If we don't provide a type signature, a Haskell
       implementation will infer a very general type for this function.
       This can later lead to error messages that are difficult to
       interpret, so let's give <function>pathP</function> a
@@ -515,29 +515,29 @@
 
     &BetterPredicate.hs:InfoP;
 
-    <para>We've gone a step further and created a type synonym that we
+    <para id="x_CP">We've gone a step further and created a type synonym that we
       can use as shorthand for writing other, similarly structured
       functions.</para>
 
     &BetterPredicate.hs:sizeP;
 
-    <para>(We're being a little sneaky here, and returning a size of
+    <para id="x_DP">(We're being a little sneaky here, and returning a size of
       -1 for entries that are not files, or that we couldn't
       open.)</para>
 
-    <para>In fact, a quick glance shows that the
+    <para id="x_EP">In fact, a quick glance shows that the
       <type>Predicate</type> type that we defined near the beginning
       of this chapter is the same type as <type>InfoP
 	Bool</type>.</para>
 
-    <para>What use are <function>pathP</function> and
+    <para id="x_FP">What use are <function>pathP</function> and
       <function>sizeP</function>?  With a little more glue, we can use
       them in a predicate.  This is where things start to get
       interesting.</para>
 
     &BetterPredicate.hs:equalP;
 
-    <para>The type signature of <function>equalP</function> deserves a
+    <para id="x_GP">The type signature of <function>equalP</function> deserves a
       little attention.  It takes an <type>InfoP a</type>, which is
       compatible with both <function>equalP</function> and
       <function>sizeP</function>.  It takes an <type>a</type>.  And it
@@ -545,12 +545,12 @@
       a synonym for <type>Predicate</type>.  In other words,
       <function>equalP</function> constructs a predicate.</para>
 
-    <para>The <function>equalP</function> function works by returning
+    <para id="x_HP">The <function>equalP</function> function works by returning
       an anonymous function.  That one takes the arguments accepted by
       a predicate, passes them to <varname>f</varname>, and compares
       the result to <varname>k</varname>.</para>
 
-    <para>This equation for <function>equalP</function>  emphasises
+    <para id="x_IP">This equation for <function>equalP</function>  emphasises
       the fact that we think of it as taking two arguments.  Since
       Haskell curries all functions, writing
       <function>equalP</function> in this way is not actually
@@ -560,17 +560,17 @@
 
     &BetterPredicate.hs:equalP2;
 
-    <para>Before we continue with our explorations, let's load our
+    <para id="x_JP">Before we continue with our explorations, let's load our
       module into &ghci;.</para>
 
     &betterpredicate.ghci:load;
     
-    <para>Let's see if a simple predicate constructed from these
+    <para id="x_KP">Let's see if a simple predicate constructed from these
       functions will work.</para>
 
     &betterpredicate.ghci:betterFind;
 
-    <para>Notice that we're not actually calling
+    <para id="x_LP">Notice that we're not actually calling
       <function>betterFind</function>, we're merely making sure that
       our expression typechecks.  We now have a more expressive way to
       list all files that are exactly one kilobyte in size.  Our
@@ -579,12 +579,12 @@
     <sect2 id="hs.find.predicate.lift">
       <title>Avoiding boilerplate with lifting</title>
 
-      <para>Besides <function>equalP</function>, we'd like to be able
+      <para id="x_MP">Besides <function>equalP</function>, we'd like to be able
 	to write other binary functions.  We'd prefer not to write
 	each one out in <quote>longhand</quote>, because that seems
 	unnecessarily verbose.</para>
 
-      <para>To address this, let's put Haskell's powers of abstraction
+      <para id="x_NP">To address this, let's put Haskell's powers of abstraction
 	to use.  We'll take the definition of
 	<function>equalP</function>, and instead of calling
 	<function>(==)</function> directly, we'll pass in as another
@@ -592,7 +592,7 @@
 
       &BetterPredicate.hs:liftPK;
 
-      <para>This act of taking a function, such as
+      <para id="x_OP">This act of taking a function, such as
 	<function>(>)</function>, and transforming it into another
 	function that operates in a different context, here
 	<function>greaterP</function>, is referred to as
@@ -602,11 +602,11 @@
 	We'll be using it a lot, in different guises, throughout the
 	rest of this book.</para>
 
-      <para>When we lift a function, we'll often refer to its original
+      <para id="x_PP">When we lift a function, we'll often refer to its original
 	and new versions as <emphasis>unlifted</emphasis> and
 	<emphasis>lifted</emphasis>, respectively.</para>
 
-      <para>By the way, our placement of <varname>f</varname>, the
+      <para id="x_QP">By the way, our placement of <varname>f</varname>, the
 	function to lift, as the first argument to
 	<function>liftPK</function>, was no accident.  This made it
 	possible for us to write such concise definitions of
@@ -623,17 +623,17 @@
     <sect2 id="hs.find.predicate.combinator">
       <title>Gluing predicates together</title>
 
-      <para>If we want to combine predicates, we can of course follow
+      <para id="x_RP">If we want to combine predicates, we can of course follow
 	the obvious path of doing so by hand.</para>
 
       &BetterPredicate.hs:simpleAndP;
 
-      <para>Now that we know about lifting, however, it becomes
+      <para id="x_SP">Now that we know about lifting, however, it becomes
 	tempting to lift our existing Boolean operators.</para>
 
       &BetterPredicate.hs:liftP2;
 
-      <para>Notice that <function>liftP2</function> is very similar to
+      <para id="x_TP">Notice that <function>liftP2</function> is very similar to
 	our earlier <function>liftPK</function>.  In fact, it's more
 	general, because we can write <function>liftPK</function> in
 	terms of <function>liftP2</function>.</para>
@@ -643,27 +643,27 @@
       <note>
 	<title>Combinators</title>
 
-	<para>In Haskell, we refer to functions that take other
+	<para id="x_UP">In Haskell, we refer to functions that take other
 	  functions as arguments, returning new functions, as
 	  <emphasis>combinators</emphasis>.</para>
       </note>
 
-      <para>Now that we have some helper functions in place, we can
+      <para id="x_VP">Now that we have some helper functions in place, we can
 	return to the <function>myTest</function> function we defined
 	earlier.</para>
 
       &BetterPredicate.hs:myTest.noid;
 
-      <para>How will this function look if we write it using our new
+      <para id="x_WP">How will this function look if we write it using our new
 	combinators?</para>
 
       &BetterPredicate.hs:myTest2;
 
-      <para>We've added one final combinator,
+      <para id="x_XP">We've added one final combinator,
 	<function>liftPath</function>, since manipulating file names
 	is such a common activity.</para>
 
-      <para>Our rewrite doesn't really look any shorter than the
+      <para id="x_YP">Our rewrite doesn't really look any shorter than the
 	original function, though it's perhaps a little easier to
 	read.</para>
 
@@ -672,18 +672,18 @@
     <sect2>
       <title>Defining and using new operators</title>
 
-      <para>We can address the length problem by defining new infix
+      <para id="x_ZP">We can address the length problem by defining new infix
 	operators, taking advantage of a Haskell feature that we first
 	mentioned briefly in <xref
 	  linkend="hs.starting.calc.neg"/>.</para>
 
       &BetterPredicate.hs:myTest3;
 
-      <para>We chose names like <function>(==?)</function> for the
+      <para id="x_aP">We chose names like <function>(==?)</function> for the
 	lifted functions specifically for their visual similarity to
 	their unlifted counterparts.</para>
 
-      <para>The parentheses in our definition above are necessary,
+      <para id="x_bP">The parentheses in our definition above are necessary,
 	because we haven't told Haskell about the precedence or
 	associativity of our new operators.  The language specifies
 	that operators without fixity declarations should be treated
@@ -693,13 +693,13 @@
 	<code>(((liftPath takeExtension) ==? ".cpp") &amp;&amp;?
 	  sizeP) &gt;? 1024</code>, which is horribly wrong.</para>
 
-      <para>We can respond by writing fixity declarations for our new
+      <para id="x_cP">We can respond by writing fixity declarations for our new
 	operators.  Our first step is to find out what the fixities of
 	the unlifted operators are, so that we can mimic them.</para>
 
       &betterpredicate.ghci:fixities;
 
-      <para>With these in hand, we can now write a parenthesis-free
+      <para id="x_dP">With these in hand, we can now write a parenthesis-free
 	expression that will be parsed identically to
 	<function>myTest3</function>.</para>
 
@@ -711,7 +711,7 @@
   <sect1 id="hs.find.traverse">
     <title>Controlling traversal</title>
     
-    <para>When traversing the filesystem, we'd like to give ourselves
+    <para id="x_eP">When traversing the filesystem, we'd like to give ourselves
       more control over which directories we enter, and when.  An easy
       way in which we can allow this is to pass in a function that
       takes a list of subdirectories of a given directory, and returns
@@ -720,14 +720,14 @@
       simplest such control function is <function>id</function>, which
       will return its input list unmodified.</para>
 
-    <para>For variety, we're going to change a few aspects of our
+    <para id="x_fP">For variety, we're going to change a few aspects of our
       representation here.  Instead of an elaborate function type
       <type>InfoP a</type>, we'll use a normal algebraic data type to
       represent substantially the same information.</para>
 
     &ControlledVisit.hs:Info;
 
-    <para>We're using record syntax to give ourselves
+    <para id="x_gP">We're using record syntax to give ourselves
       <quote>free</quote> accessor functions, such as
       <function>infoPath</function>.  The type of our
       <function>traverse</function> function is simple, as we proposed
@@ -736,18 +736,18 @@
 
     &ControlledVisit.hs:traverse.type;
 
-    <para>The definition of <function>traverse</function> is short,
+    <para id="x_hP">The definition of <function>traverse</function> is short,
       but dense.</para>
 
     &ControlledVisit.hs:traverse;
 
-    <para>While we're not introducing any new techniques here, this is
+    <para id="x_iP">While we're not introducing any new techniques here, this is
       one of the densest function definitions we've yet encountered.
       Let's walk through it almost line by line, explaining what is
       going on.  The first few lines hold no mystery, as they're
       almost verbatim copies of code we've already seen.</para>
 
-    <para>Things begin to get interesting when we assign to the
+    <para id="x_jP">Things begin to get interesting when we assign to the
       variable <varname>contents</varname>.  Let's read this line from
       right to left.  We already know that
       <varname>usefulNames</varname> is a list of directory entries;
@@ -764,7 +764,7 @@
       <varname>path</varname> and every one of its directory
       entries.</para>
 
-    <para>The line that follows is even more dense.  Again reading
+    <para id="x_kP">The line that follows is even more dense.  Again reading
       from right to left, we see that the last element of the line is
       an anonymous function.  Given one <type>Info</type> value, it
       either visits a directory recursively (there's an extra check to
@@ -772,12 +772,12 @@
       returns that value as a single-element list (to match the return
       type of <function>traverse</function>).</para>
 
-    <para>We use <function>forM</function> to apply this function to
+    <para id="x_lP">We use <function>forM</function> to apply this function to
       each element of the list of <type>Info</type> values returned by
       <varname>order</varname>, the user-supplied traversal control
       function.</para>
 
-    <para>Finally, at the beginning of the line, we have another use
+    <para id="x_mP">Finally, at the beginning of the line, we have another use
       of lifting.  The <function>liftM</function> function takes a
       regular function, <function>concat</function> and lifts it into
       the <type>IO</type> monad.  In other words, it takes the result
@@ -787,12 +787,12 @@
       <type>[Info]</type>, which is what we need), and puts the result
       back into the <type>IO</type> monad.</para>
 
-    <para>Finally, we mustn't forget to define our
+    <para id="x_nP">Finally, we mustn't forget to define our
       <function>getInfo</function> function.</para>
 
     &ControlledVisit.hs:getInfo;
 
-    <para>The only noteworthy thing here is  a useful combinator,
+    <para id="x_oP">The only noteworthy thing here is  a useful combinator,
       <function>maybeIO</function>, which turns an <type>IO</type>
       action that might throw an exception into one that wraps its
       result in <type>Maybe</type>.</para>
@@ -803,7 +803,7 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para>What should you pass to <function>traverse</function>
+	    <para id="x_pP">What should you pass to <function>traverse</function>
 	      to traverse a directory tree in reverse alphabetic
 	      order?</para>
 	  </question>
@@ -811,7 +811,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Using <function>id</function> as a control function,
+	    <para id="x_qP">Using <function>id</function> as a control function,
 	      <code>traverse id</code> performs a
 	      <emphasis>preorder</emphasis> traversal of a tree: it
 	      returns a parent directory before its children.  Write a
@@ -823,7 +823,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Take the predicates and combinators from <xref
+	    <para id="x_rP">Take the predicates and combinators from <xref
 	    linkend="hs.find.predicate.combinator"/> and make them
 	      work with our new <type>Info</type> type.</para>
 	  </question>
@@ -831,7 +831,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Write a wrapper for <function>traverse</function>
+	    <para id="x_sP">Write a wrapper for <function>traverse</function>
 	      that lets you control traversal using one predicate, and
 	      filter results using another.</para>
 	  </question>
@@ -844,19 +844,19 @@
   <sect1>
     <title>Density, readability, and the learning process</title>
 
-    <para>Code as dense as <function>traverse</function>  isn't all
+    <para id="x_tP">Code as dense as <function>traverse</function>  isn't all
       that unusual in Haskell.  The gain in expressiveness is
       significant, and it requires a relatively small amount of
       practice to be able to fluently read and write code in this
       style.</para>
 
-    <para>For comparison, here's a less dense presentation of the same
+    <para id="x_uP">For comparison, here's a less dense presentation of the same
       code.  This might be more typical of a less experienced Haskell
       programmer.</para>
 
     &ControlledVisit.hs:traverseVerbose;
 
-    <para>All we've done here is make a few substitutions.  Instead of
+    <para id="x_vP">All we've done here is make a few substitutions.  Instead of
       using partial application and function composition liverally,
       we've defined some local functions in a &where; block.  In place
       of the <function>maybe</function> combinator, we're using a
@@ -864,7 +864,7 @@
       <function>liftM</function>, we're manually lifting
       <function>concat</function> ourselves.</para>
 
-    <para>This is not to say that density is a uniformly good
+    <para id="x_wP">This is not to say that density is a uniformly good
       property.  Each line of the original
       <function>traverse</function> function is short.  We introduce a
       local variable (<varname>usefulNames</varname>) and a local
@@ -873,20 +873,20 @@
       descriptive.  While we use function composition and pipelining,
       the longest pipeline contains only three elements.</para>
 
-    <para>The key to writing maintainable Haskell code is to find a
+    <para id="x_xP">The key to writing maintainable Haskell code is to find a
       balance between density and readability.  Where your code falls
       on this continuum is likely to be influenced by your level of
       experience.</para>
 
     <itemizedlist>
       <listitem>
-	<para>As a beginning Haskell programmer, Andrew doesn't know
+	<para id="x_yP">As a beginning Haskell programmer, Andrew doesn't know
 	  his way around the standard libraries very well.  As a
 	  result, he duplicates a lot of standard library code.</para>
       </listitem>
 
       <listitem>
-	<para>Zack has been programming for a few months, and has
+	<para id="x_zP">Zack has been programming for a few months, and has
 	  mastered the use of <function>(.)</function> to compose long
 	  pipelines of code.  Every time the needs of his program
 	  change slightly, he has to construct a new pipeline from
@@ -895,7 +895,7 @@
       </listitem>
 
       <listitem>
-	<para>Monica has been hacking for a while.  She's familiar
+	<para id="x_AQ">Monica has been hacking for a while.  She's familiar
 	  enough with Haskell libraries and idioms to write tight
 	  code, but she avoids a hyperdense style in order to keep her
 	  code maintainable and easy to refactor in the face of
@@ -908,20 +908,20 @@
   <sect1>
     <title>Useful coding guidelines</title>
 
-    <para>While many good Haskell programming habits come with
+    <para id="x_BQ">While many good Haskell programming habits come with
       experience, we have a few general guidelines to offer so that
       you can write readable code more quickly.</para>
 
-    <para>As we already mentioned in <xref
+    <para id="x_CQ">As we already mentioned in <xref
 	    linkend="hs.funcstypes.tabs"/>, never use tab characters
       in Haskell source files.  Use spaces.</para>
 
-    <para>If you find yourself proudly thinking that a particular
+    <para id="x_DQ">If you find yourself proudly thinking that a particular
       piece of code is fiendishly clever, stop and consider whether
       you'll be able to understand it again after you've stepped away
       from it for a month.</para>
 
-    <para>The conventional way of naming types and variables with
+    <para id="x_EQ">The conventional way of naming types and variables with
       compound names is to use <quote>camel case</quote>, i.e.
       <varname>myVariableName</varname>.  This style is almost
       universal in Haskell code.  Regardless of your opinion of other
@@ -929,7 +929,7 @@
       Haskell code will be somewhat jarring to the eyes of other
       readers.</para>
 
-    <para>Until you've been working with Haskell for a substantial
+    <para id="x_FQ">Until you've been working with Haskell for a substantial
       amount of time, spend a few minutes searching for library
       functions before you write small functions.  This applies
       particularly to ubiquitous types like lists, <type>Maybe</type>,
@@ -937,7 +937,7 @@
       already provide exactly what you need, you might be able to
       combine a few functions to obtain the result you desire.</para>
 
-    <para>Long pipelines of composed functions are hard to read, where
+    <para id="x_GQ">Long pipelines of composed functions are hard to read, where
       <quote>long</quote> means a pipeline of more than three or four
       elements. If you have such a pipeline, use a &let; or &where;
       block to break it into smaller pipelines.  Give each one of
@@ -946,36 +946,36 @@
       element, you probably can't describe what it's supposed to be
       doing.</para>
 
-    <para>Even though it's easy to resize a text editor window far
+    <para id="x_HQ">Even though it's easy to resize a text editor window far
       beyond 80 columns, this is still a very common window width.
       Wider lines thus get wrapped in 80-column windows, which
       severely hurts readability. Treating lines as no more than 80
       characters long limits the amount of code you can cram onto a
       single line to a reasonably digestible amount.</para>
 
-    <para>A Haskell implementation won't make a fuss about indentation
+    <para id="x_IQ">A Haskell implementation won't make a fuss about indentation
       as long as your code follows the layout rules and can hence be
       parsed unambiguously.  That said, some layout patterns are
       widely used.</para>
 
-    <para>The &in; keyword is usually aligned directly under the &let;
+    <para id="x_JQ">The &in; keyword is usually aligned directly under the &let;
       keyword, with the expression immediately following it.</para>
 
     &Style.hs:goodLet;
 
-    <para>While it's <emphasis>legal</emphasis> to indent the &in;
+    <para id="x_KQ">While it's <emphasis>legal</emphasis> to indent the &in;
       differently, or to let it <quote>dangle</quote> at the end of a
       series of equations, the following would generally be considered
       odd.</para>
     
     &Style.hs:badLet;
 
-    <para>In contrast, it's usual to let a &do; dangle at the end of a
+    <para id="x_LQ">In contrast, it's usual to let a &do; dangle at the end of a
       line, rather than sit at the beginning of a line.</para>
 
     &Style.hs:do;
 
-    <para>Curly braces and semicolons, though legal, are almost never
+    <para id="x_MQ">Curly braces and semicolons, though legal, are almost never
       used.  There's nothing wrong with them; they just make code look
       strange due to their rarity.  They're really intended to let
       programs generate Haskell code without having to implement the
@@ -983,18 +983,18 @@
 
     &Style.hs:punctuation;
 
-    <para>If the right hand side of an equation starts on a new line,
+    <para id="x_NQ">If the right hand side of an equation starts on a new line,
       it's usually indented a small number of spaces relative to the
       name of the variable or function that it's defining.</para>
 
     &Style.hs:indent;
 
-    <para>The actual number of spaces used to indent varies, sometimes
+    <para id="x_OQ">The actual number of spaces used to indent varies, sometimes
       within a single file.  Depths of two, three, and four spaces are
       about equally common.  A single space is legal, but not very
       visually distinctive, so it's easy to misread.</para>
 
-    <para>When indenting a &where; clause, it's best to make it
+    <para id="x_PQ">When indenting a &where; clause, it's best to make it
       visually distinctive.</para>
 
     &Style.hs:where;
@@ -1003,7 +1003,7 @@
   <sect1>
     <title>Another way of looking at traversal</title>
     
-    <para>While the <function>traverse</function> function gives us
+    <para id="x_QQ">While the <function>traverse</function> function gives us
       more control than our original <function>betterFind</function>
       function, it still has a significant failing: we can avoid
       recursing into directories, but we can't filter other names
@@ -1013,12 +1013,12 @@
       before we have a chance to trim it down to the three we really
       want.</para>
 
-    <para>One approach would be to provide a filter function as a new
+    <para id="x_RQ">One approach would be to provide a filter function as a new
       argument to <function>traverse</function>, which we would apply
       to the list of names as we generate it.  This would allow us to
       allocate a list of only as many elements as we need.</para>
 
-    <para>However, this approach also has a weakness: say we know that
+    <para id="x_SQ">However, this approach also has a weakness: say we know that
       we want at most three entries from our list, and that those
       three entries happen to be the first three of the 100,000 that
       we traverse.  In this case, we'll needlessly visit 99,997 other
@@ -1028,12 +1028,12 @@
       single directory representing a mailbox to contain tens of
       thousands of files.</para>
 
-    <para>We can address the weaknesses of our two prior traversal
+    <para id="x_TQ">We can address the weaknesses of our two prior traversal
       functions by taking a different perspective: what if we think of
       filesystem traversal as a <emphasis>fold</emphasis> over the
       directory hierarchy?</para>
 
-    <para>The familiar folds, <function>foldr</function> and
+    <para id="x_UQ">The familiar folds, <function>foldr</function> and
       <function>foldl'</function>, neatly generalise the idea of
       traversing a list while accumulating a result.  It's hardly a
       stretch to extend the idea of folding from lists to directory
@@ -1043,7 +1043,7 @@
 
     &FoldDir.hs:Iterate;
 
-    <para>The <type>Iterator</type> type gives us a convenient alias
+    <para id="x_VQ">The <type>Iterator</type> type gives us a convenient alias
       for the function that we fold with.  It takes a seed and an
       <type>Info</type> value representing a directory entry, and
       returns both a new seed and an instruction for our fold
@@ -1052,38 +1052,38 @@
 
     <itemizedlist>
       <listitem>
-	<para>If the instruction is <code>Done</code>, traversal
+	<para id="x_WQ">If the instruction is <code>Done</code>, traversal
 	  should cease immediately.  The value wrapped by
 	  <code>Done</code> should be returned as the result.</para>
       </listitem>
 
       <listitem>
-	<para>If the instruction is <code>Skip</code> and the current
+	<para id="x_XQ">If the instruction is <code>Skip</code> and the current
 	  <type>Info</type> represents a directory, traversal will not
 	  recurse into that directory.</para>
       </listitem>
 
       <listitem>
-	<para>Otherwise, the traversal should continue, using the
+	<para id="x_YQ">Otherwise, the traversal should continue, using the
 	  wrapped value as the input to the next call to the fold
 	  function.</para>
       </listitem>
     </itemizedlist>
 
-    <para>Our fold is logically a kind of left fold, because we start
+    <para id="x_ZQ">Our fold is logically a kind of left fold, because we start
       folding from the first entry we encounter, and the seed for each
       step is the result of the prior step.</para>
 
     &FoldDir.hs:foldTree;
 
-    <para>There are a few interesting things about the way this code
+    <para id="x_aQ">There are a few interesting things about the way this code
       is written.  The first is the use of scoping to avoid having to
       pass extra parameters around.  The top-level
       <function>foldTree</function> function is just a wrapper for
       <function>fold</function> that peels off the constructor of the
       <function>fold</function>'s final result.</para>
 
-    <para>Because <function>fold</function> is a local function, we
+    <para id="x_bQ">Because <function>fold</function> is a local function, we
       don't have to pass <function>foldTree</function>'s
       <varname>iter</varname> variable into it; it can already access
       it in the outer scope.  Similarly, <function>walk</function> can
@@ -1094,14 +1094,14 @@
       enclosing scope (<function>fold</function>) is the one that
       <function>walk</function> can see.</para>
 
-    <para>Another point to note is that <function>walk</function> is a
+    <para id="x_cQ">Another point to note is that <function>walk</function> is a
       tali recursive loop, instead of an anonymous function called by
       <function>forM</function> as in our earlier functions.  By
       taking the reins ourselves, we can stop early if we need to.
       This lets us drop out when our iterator returns
       <code>Done</code>.</para>
       
-    <para>Although <function>fold</function> calls
+    <para id="x_dQ">Although <function>fold</function> calls
       <function>walk</function>, <function>walk</function> calls
       <function>fold</function> recursively to traverse
       subdirectories.  Each function returns a seed wrapped in an
@@ -1114,37 +1114,37 @@
       immediately terminates all mutually recursive calls between the
       two functions.</para>
 
-    <para>What does an iterator look like in practice?  Here's a
+    <para id="x_eQ">What does an iterator look like in practice?  Here's a
       somewhat complicated example that looks for at most three bitmap
       images, and won't recurse into Subversion metadata
       directories.</para>
 
     &FoldDir.hs:atMostThreePictures;
 
-    <para>To use this, we'd call <code>foldTree atMostThreePictures
+    <para id="x_fQ">To use this, we'd call <code>foldTree atMostThreePictures
 	[]</code>, giving us a return value of type <type>IO
 	[FilePath]</type>.</para>
 
-    <para>Of course, iterators don't have to be this complicated.
+    <para id="x_gQ">Of course, iterators don't have to be this complicated.
       Here's one that counts the number of directories it
       encounters.</para>
 
     &FoldDir.hs:countDirectories;
 
-    <para>Here, the initial seed that we pass to
+    <para id="x_hQ">Here, the initial seed that we pass to
       <function>foldTree</function> should be the number zero.</para>
 
     <sect2>
       <title>Using guards to substitute for multi-way ifs</title>
 
-      <para>One of the things that makes our
+      <para id="x_iQ">One of the things that makes our
 	<function>atMostThreePictures</function> function a little
 	unwieldy is the nesting of &if; expressions.  Although Haskell
 	doesn't have multi-way &if; expressions (often seen in other
 	languages as <code>else if</code> or <code>elif</code>
 	blocks), we can emulate them as follows.</para>
 
-      <para>Write a &case; expression, using
+      <para id="x_jQ">Write a &case; expression, using
 	<varname>undefined</varname> as the expression to evaluate,
 	and a single wild card as the only pattern.  Write each branch
 	of the multi-way &if; as a guard expression on that
@@ -1152,7 +1152,7 @@
 
       &FoldDir.hs:secondTake;
 
-      <para>This trick relies on Haskell's non-strict evaluation.
+      <para id="x_kQ">This trick relies on Haskell's non-strict evaluation.
 	Because we use a wild card as a pattern, it doesn't matter
 	what the expression we're matching on is: it won't be
 	evaluated.  We match on <varname>undefined</varname> (which
@@ -1160,7 +1160,7 @@
 	form of documentation, to make it explicit that we're not
 	using the &case; expression in the usual way.</para>
 
-      <para>This is a useful form to remember when you have a
+      <para id="x_lQ">This is a useful form to remember when you have a
 	complicated series of &if; expressions that would otherwise be
 	deeply nested.  Often, such expressions tend to march off the
 	right hand side of the screen as each successive level of
@@ -1175,14 +1175,14 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para>Modify <function>foldTree</function> to allow the
+	    <para id="x_mQ">Modify <function>foldTree</function> to allow the
 	      caller to change the order of traversal of entries in a
 	      directory.</para>
 	  </question>
 	</qandaentry>
 	<qandaentry>
 	  <question>
-	    <para>The <function>foldTree</function> function performs
+	    <para id="x_nQ">The <function>foldTree</function> function performs
 	      preorder traversal.  Modify it to allow the caller to
 	      determine the order of traversal.</para>
 	  </question>
@@ -1190,7 +1190,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Write a combinator library that makes it possible to
+	    <para id="x_oQ">Write a combinator library that makes it possible to
 	      express the kinds of iterators that
 	      <function>foldTree</function> accepts.  Does it
 	      make the iterators you write any more succinct?</para>
@@ -1203,7 +1203,7 @@
   <sect1>
     <title>Exercises</title>
     
-    <para>Although the file finding code we described in this chapter
+    <para id="x_pQ">Although the file finding code we described in this chapter
       is a good vehicle for learning, it's not ideal for real systems
       programming tasks, because Haskell's standard portable I/O
       libraries don't expose enough information to let us write
@@ -1212,7 +1212,7 @@
     <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
-	  <para>Port the code from this chapter to your platform's
+	  <para id="x_qQ">Port the code from this chapter to your platform's
 	    native API, either <code>System.Posix</code> or
 	    <code>System.Win32</code>.</para>
 	</question>
@@ -1220,7 +1220,7 @@
 
       <qandaentry>
 	<question>
-	  <para>Add the ability to find out who owns a directory entry
+	  <para id="x_rQ">Add the ability to find out who owns a directory entry
 	    to your code.  Make this information available to
 	    predicates.</para>
 	</question>

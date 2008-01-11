@@ -3,13 +3,13 @@
 <chapter id="hs.binary" revision="unpublished">
   <title>Code case study: parsing a binary data format</title>
 
-  <para>In this chapter, we'll discuss a common task: parsing a binary
+  <para id="x_sQ">In this chapter, we'll discuss a common task: parsing a binary
     file.  We're going to use this for two purposes.  Our first is to
     talk a little about parsing, but our main goal is to talk about
     program organisation and <quote>boilerplate
       removal</quote>.</para>
 
-  <para>As our task, we'll choose parsing a few different netpbm file
+  <para id="x_tQ">As our task, we'll choose parsing a few different netpbm file
     types.  The netpbm suite is an ancient and venerable collection of
     programs and file formats for working with bitmap images.  These
     file formats have the dual advantages of wide use and being fairly
@@ -19,14 +19,14 @@
   <sect1>
     <title>Greyscale files</title>
 
-    <para>The name of netpbm's greyscale file format is PGM
+    <para id="x_uQ">The name of netpbm's greyscale file format is PGM
       (<quote>portable grey map</quote>).  It is actually not one
       format, but two; the <quote>plain</quote> (or <quote>P2</quote>)
       format is encoded as ASCII, while the more common
       <quote>raw</quote> (<quote>P5</quote>) format is mostly
       binary.</para>
 
-    <para>A file of either format starts with a header, which in turn
+    <para id="x_vQ">A file of either format starts with a header, which in turn
       begins with a <quote>magic</quote> string describing the format.
       For a plain file, the string is <literal>P5</literal>, and for
       raw, it's <literal>P2</literal>. The magic string is followed by
@@ -34,12 +34,12 @@
       maximum grey value of the image. These numbers are represented
       as ASCII decimal numbers, separated by white space.</para>
 
-    <para>After the maximum grey value comes the image data.  In a raw
+    <para id="x_wQ">After the maximum grey value comes the image data.  In a raw
       file, this is a string of binary values.  In a plain file, the
       values are represented as ASCII decimal numbers separated by
       white space.</para>
 
-    <para>A raw file can contain a sequence of images, one after the
+    <para id="x_xQ">A raw file can contain a sequence of images, one after the
       other, each with its own header.  A plain file contains only one
       image.</para>
 
@@ -48,7 +48,7 @@
   <sect1>
     <title>Parsing a raw PGM file</title>
 
-    <para>For our first try at a parsing function, we'll only worry
+    <para id="x_yQ">For our first try at a parsing function, we'll only worry
       about raw PGM files. We'll write our PGM parser as a
       <emphasis>pure</emphasis> function. It's not responsible for
       obtaining the data to parse, just for the actual parsing.  This
@@ -56,16 +56,16 @@
       reading of the data from what we subsequently do with it, we
       gain flexibility in where we take the data from.</para>
 
-    <para>We'll use the <type>ByteString</type> type to store our
+    <para id="x_zQ">We'll use the <type>ByteString</type> type to store our
       greymap data, because it's compact.</para>
 
     &PNM.hs:imports;
 
-    <para>For our purposes, it doesn't matter whether we use a lazy or
+    <para id="x_AR">For our purposes, it doesn't matter whether we use a lazy or
       strict <type>ByteString</type>, so we've somewhat arbitrarily
       chosen the lazy kind.</para>
 
-    <para>The <type>ByteString</type> module contains many definitions
+    <para id="x_BR">The <type>ByteString</type> module contains many definitions
       that have the same names as existing Prelude definitions that
       are automatically imported for us.  Because of this, if we try
       to use a name that is present in both the
@@ -75,12 +75,12 @@
       you see a name prefixed with <code>L.</code>, we're using the
       name from <type>ByteString</type>.</para>
 
-    <para>We'll use a straightforward data type to represent PGM
+    <para id="x_CR">We'll use a straightforward data type to represent PGM
       files.</para>
 
     &PNM.hs:Greymap;
 
-    <para>Normally, a Haskell <type>Show</type> instance should
+    <para id="x_DR">Normally, a Haskell <type>Show</type> instance should
       produce a string representation that we can read back by calling
       <function>read</function>.  However, for a bitmap graphics file,
       this would potentially produce huge text strings, for example if
@@ -91,21 +91,21 @@
 
     &PNM.hs:Show;
 
-    <para>Because our <type>Show</type> instance intentionally avoids
+    <para id="x_ER">Because our <type>Show</type> instance intentionally avoids
       printing the bitmap data, there's no point in writing a
       <type>Read</type> instance, as we can't reconstruct a valid
       <type>Greymap</type> from the result of
       <function>show</function>.</para>
 
-    <para>Here's an obvious type for our parsing function.</para>
+    <para id="x_FR">Here's an obvious type for our parsing function.</para>
 
     &PNM.hs:parseP5.type;
 
-    <para>This will take a <type>ByteString</type>, and if the parse
+    <para id="x_GR">This will take a <type>ByteString</type>, and if the parse
       succeeds, it will return the parsed <type>Greymap</type>, along
       with the string that remains after parsing.</para>
 
-    <para>Our parsing function has to consume a little bit of its
+    <para id="x_HR">Our parsing function has to consume a little bit of its
       input at a time.  First, we need to assure ourselves that we're
       really looking at a raw PGM file; then we need to parse the
       numbers from the remainder of the header; then we consume the
@@ -114,7 +114,7 @@
 
     &PNM.hs:parseP5;
 
-    <para>Stylistically, this is a very <quote>direct</quote> piece of
+    <para id="x_IR">Stylistically, this is a very <quote>direct</quote> piece of
       code, doing all of the parsing in one long staircase of &case;
       expressions.  Each function that it calls returns the residual
       <type>ByteString</type> left over after it has consumed all it
@@ -132,7 +132,7 @@
   <sect1>
     <title>Getting rid of boilerplate code</title>
 
-    <para>Our <function>parseP5</function>  function is somehow
+    <para id="x_JR">Our <function>parseP5</function>  function is somehow
       unsatisfying.  It marches steadily to the right of the screen,
       so it's clear that a slightly more complicated function would
       soon run out of visual real estate.  And it repeats a pattern of
@@ -143,7 +143,7 @@
       that obscures what we're really trying to do.  In short, this
       function is begging for some abstraction and refactoring.</para>
 
-    <para>If we step back a little, we can see two patterns.  First is
+    <para id="x_KR">If we step back a little, we can see two patterns.  First is
       that the functions that we're calling have similar types.  Each
       takes a <type>ByteString</type> as its last argument, and
       returns <type>Maybe</type> something else.  Secondly, every step
@@ -151,24 +151,24 @@
       function deconstructs a <type>Maybe</type> value, and either
       fails or passes the unwrapped result to a function.</para>
 
-    <para>We can quite easily write a function that captures this
+    <para id="x_LR">We can quite easily write a function that captures this
       second pattern.</para>
 
     &PNM.hs:bind;
 
-    <para>The <function>(&gt;&gt;?)</function> function acts very
+    <para id="x_MR">The <function>(&gt;&gt;?)</function> function acts very
       simply: it takes a value as its left argument, and a function as
       its right. If the value is not <literal>Nothing</literal>, it
       calls the function.  We have written this function as an
       operator so that we can use it to chain functions
       together.</para>
 
-    <para>With this chaining function in hand, we can take a second
+    <para id="x_NR">With this chaining function in hand, we can take a second
       try at our parsing function.</para>
 
     &PNM.hs:parseP5_take2;
 
-    <para>The key to understanding this function is to think about the
+    <para id="x_OR">The key to understanding this function is to think about the
       chaining.  On the left hand side of each
       <function>(&gt;&gt;?)</function> is a <type>Maybe</type> value;
       on the right is a function that returns a <type>Maybe</type>
@@ -176,18 +176,18 @@
       <type>Maybe</type>, suitable for passing to the following
       <function>(&gt;&gt;?)</function> expression.</para>
 
-    <para>The other change that we've made to improve readability is
+    <para id="x_PR">The other change that we've made to improve readability is
       add a <function>skipSpace</function> function.  With these
       changes, we've halved the number of lines of code compared to
       our original parsing function.  By removing the boilerplate
       &case; expressions, we've made the code easier to follow.</para>
 
-    <para>While we warned against overuse of anonymous functions in
+    <para id="x_QR">While we warned against overuse of anonymous functions in
       <xref linkend="hs.fp.anonymous"/>, we use several in our chain
       of functions here.  Because these functions are so small, we
       wouldn't improve readability by giving them names.</para>
 
-    <para>However, we're not yet out of the woods.  This code
+    <para id="x_RR">However, we're not yet out of the woods.  This code
       explicitly passes two-tuples around, using one element for an
       intermediate part of the parsed result and the other for the
       current residual <type>ByteString</type>.  If we want to extend
@@ -200,17 +200,17 @@
   <sect1>
     <title>Implicit state</title>
 
-    <para>While we've gotten rid of some boilerplate code, the
+    <para id="x_SR">While we've gotten rid of some boilerplate code, the
       two-tuple that we use to pass around our partial result and
       residual string is a serious problem: it makes our code
       difficult to change.</para>
 
-    <para>We can do something about this, though.  First, let's
+    <para id="x_TR">We can do something about this, though.  First, let's
       augment the state that our parser uses.</para>
 
     &Parse.hs:ParseState;
 
-    <para>We can now track both the current residual string and the
+    <para id="x_UR">We can now track both the current residual string and the
       offset into the original string since we started parsing.  This
       lets us think of parsing as a function from one
       <type>ParseState</type> to another, also returning the result of
@@ -218,12 +218,12 @@
 
     &Parse.hs:Parse;
 
-    <para>The &newtype; declaration for the <type>Parse</type> type
+    <para id="x_VR">The &newtype; declaration for the <type>Parse</type> type
       just acts as a safety wrapper around this function type.  It
       allows us to ensure that we can't accidentally run a
       parser.</para>
 
-    <para>The <type>Parse</type> type is encoding two concepts in one.
+    <para id="x_WR">The <type>Parse</type> type is encoding two concepts in one.
       The first is the possibility of failure, reported via an error
       message.  This we achieve using <type>Either</type> to represent
       two possible results of a parse.  The second is the update of
@@ -232,17 +232,17 @@
       other words, if a parse succeeds, it will generate both a result
       and a new parse state.</para>
 
-    <para>Let's try to define a minimal parser.</para>
+    <para id="x_XR">Let's try to define a minimal parser.</para>
 
     &Parse.hs:identity;
 
-    <para>All this function has to do is take a parse state, leave it
+    <para id="x_YR">All this function has to do is take a parse state, leave it
       untouched, and use the function's argument as the result of the
       parse.  We wrap this function in our <type>Parse</type> type,
       but how can we actually use this wrapped function to parse
       something?</para>
 
-    <para>The first thing we must do is peel off the
+    <para id="x_ZR">The first thing we must do is peel off the
       <function>Parse</function> wrapper so that we can get at the
       function inside.  We do this by calling
       <function>runParse</function>.  We also need to construct a
@@ -252,14 +252,14 @@
 
     &Parse.hs:parse;
 
-    <para>Because neither the <function>identity</function> parser nor
+    <para id="x_aR">Because neither the <function>identity</function> parser nor
       the <function>parse</function> function examine the parse state
       at all, we don't even need to bother creating an input string in
       order to try this out.</para>
 
     &parse.ghci:parse;
 
-    <para>A parser that doesn't even inspect its input isn't very
+    <para id="x_bR">A parser that doesn't even inspect its input isn't very
       interesting, but at least we have confidence that our types are
       correct.  Let's focus now on writing a parser that does
       something meaningful.  We're not going to get very ambitious
@@ -267,7 +267,7 @@
 
     &Parse.hs:parseByte;
 
-    <para>There's some unfamiliar code in use here, so let's take a
+    <para id="x_cR">There's some unfamiliar code in use here, so let's take a
       deeper look.  The <function>(==&gt;)</function> function serves
       a similar purpose to our earlier
       <function>(&gt;&gt;?)</function> function, acting as
@@ -275,7 +275,7 @@
 
     &Parse.hs:bind;
 
-    <para>Indeed, the types of the two functions are very similar. The
+    <para id="x_dR">Indeed, the types of the two functions are very similar. The
       body of <function>(==&gt;)</function> is interesting, and ever
       so slightly tricky.  Remember that <type>Parse</type> is really
       a function type with a wrapper.  Therefore,
@@ -291,7 +291,7 @@
       it passes the result of the parse and the new
       <type>ParseState</type> to <varname>f</varname>.</para>
 
-    <para>This is really quite fancy and subtle stuff: we're
+    <para id="x_eR">This is really quite fancy and subtle stuff: we're
       effectively passing the <type>ParseState</type> down the chain
       of <type>Parse</type> values in a hidden argument.  (We'll be
       revisiting this kind of code in a few chapters, so don't fret if
@@ -300,7 +300,7 @@
     <sect2>
       <title>Obtaining and modifying the parse state</title>
 
-    <para>Our <function>parseByte</function> function doesn't take the
+    <para id="x_fR">Our <function>parseByte</function> function doesn't take the
       parse state as an argument.  Instead, it has to call
       <function>getState</function> to get a copy of the state, and
       <function>putState</function> to replace the current state with
@@ -308,19 +308,19 @@
 
     &Parse.hs:getPut;
 
-    <para>When reading these functions, recall that the left element
+    <para id="x_gR">When reading these functions, recall that the left element
       of the tuple is the result of a <type>Parse</type>, while the
       right is the current <type>ParseState</type>.  This makes it
       easier to follow what these functions are doing.</para>
     
-    <para>The <function>getState</function> function extracts the
+    <para id="x_hR">The <function>getState</function> function extracts the
       current parsing state, so that the caller can access the string.
       The <function>putState</function> function replaces the current
       parsing state with a new one.  This becomes the state that will
       be seen by the next function in the
       <function>(==&gt;)</function> chain.</para>
 
-    <para>these functions let us move explicit state handling into the
+    <para id="x_iR">these functions let us move explicit state handling into the
       bodies of only those functions that need it.  Many functions
       don't need to know what the current state is, and so they'll
       never call <function>getState</function> or
@@ -328,7 +328,7 @@
       code than our earlier parser, which had to pass tuples around by
       hand.</para>
 
-    <para>Even better, because we've packaged up the details of the
+    <para id="x_jR">Even better, because we've packaged up the details of the
       parsing state into the <type>ParseState</type> type, if we want
       to add more information to the parsing state, all we need to do
       is modify the definition of <type>ParseState</type>, and the
@@ -342,7 +342,7 @@
     <sect2>
       <title>Reporting parse errors</title>
 
-      <para>We carefully defined our <type>Parse</type> type to
+      <para id="x_kR">We carefully defined our <type>Parse</type> type to
 	accommodate the possibility of failure.  The
 	<function>(==&gt;)</function> combinator checks for a parse
 	failure and stops parsing if it runs into a failure.  But we
@@ -351,7 +351,7 @@
 
       &Parse.hs:bail;
 
-      <para>After we call <function>bail</function>,
+      <para id="x_lR">After we call <function>bail</function>,
 	<function>(==&gt;)</function> will successfully pattern match
 	on the <code>Left</code> constructor that it wraps the error
 	message with, and it will not invoke the next parser in the
@@ -363,51 +363,51 @@
   <sect1 id="hs.binary.functor">
     <title>Introducing functors</title>
 
-    <para>We're by now thoroughly familiar with the
+    <para id="x_mR">We're by now thoroughly familiar with the
       <function>map</function> function, which applies a function to
       every element of a list, returning a list of possibly a
       different type.</para>
 
     &functor.ghci:map;
 
-    <para>This <function>map</function>-like activity can be useful in
+    <para id="x_nR">This <function>map</function>-like activity can be useful in
       other instances.  For example, consider a binary tree.</para>
 
     &TreeMap.hs:Tree;
 
-    <para>If we want to take a tree of strings and turn it into a tree
+    <para id="x_oR">If we want to take a tree of strings and turn it into a tree
       containing the lengths of those strings, we could write a
       function to do this.</para>
 
     &TreeMap.hs:treeLengths;
 
-    <para>Now that our eyes are attuned to looking for patterns that
+    <para id="x_pR">Now that our eyes are attuned to looking for patterns that
       we can turn into generally useful functions, we can see a
       possible case of this here.</para>
 
     &TreeMap.hs:treeMap;
 
-    <para>As we might hope, <function>treeLengths</function> and
+    <para id="x_qR">As we might hope, <function>treeLengths</function> and
       <function>treeMap length</function> give the same
       results.</para>
 
     &functor.ghci:treeLengths;
 
-    <para>Haskell provides a well-known typeclass to further
+    <para id="x_rR">Haskell provides a well-known typeclass to further
       generalise <function>treeMap</function>.  This typeclass is
       named <type>Functor</type>, and it defines one function,
       <function>fmap</function>.</para>
 
     &TreeMap.hs:Functor;
 
-    <para>We can think of <function>fmap</function> as a kind of
+    <para id="x_sR">We can think of <function>fmap</function> as a kind of
       <emphasis>lifting</emphasis> function, as we introduced in <xref
       linkend="hs.find.predicate.lift"/>.  It takes a function over
       ordinary values <type>a -&gt; b</type> and lifts it to become a
       function over containers <type>f a -&gt; f b</type>, where
       <varname>f</varname> is the container type.</para>
 
-    <para>If we substitute <type>Tree</type> for the type variable
+    <para id="x_tR">If we substitute <type>Tree</type> for the type variable
       <varname>f</varname>, for example, the type of
       <function>fmap</function> is identical to the type of
       <function>treeMap</function>, and in fact we can use
@@ -416,23 +416,23 @@
 
     &TreeMap.hs:Functor.Tree;
 
-    <para>We can also use <function>map</function> as the
+    <para id="x_uR">We can also use <function>map</function> as the
       implementation of <function>fmap</function> for lists.</para>
 
     &TreeMap.hs:Functor.List;
 
-    <para>We can now use <function>fmap</function> over different
+    <para id="x_vR">We can now use <function>fmap</function> over different
       container types.</para>
 
     &functor.ghci:fmap;
 
-    <para>The Prelude defines instances of <type>Functor</type> for
+    <para id="x_wR">The Prelude defines instances of <type>Functor</type> for
       several common types.  The instance for lists is provided in the
       Prelude, as is the instance for <type>Maybe</type>.</para>
 
     &TreeMap.hs:Functor.Maybe;
 
-    <para>The instance for <type>Maybe</type> makes it particularly
+    <para id="x_xR">The instance for <type>Maybe</type> makes it particularly
       clear what an <function>fmap</function> implementation needs to
       do.  The implementation must have a sensible behaviour for each
       of a type's constructors.  If a value is wrapped in
@@ -440,7 +440,7 @@
       implementation calls the function on the unwrapped value, then
       rewraps it in <code>Just</code>.</para>
 
-    <para>The definition of <type>Functor</type> imposes a few obvious
+    <para id="x_yR">The definition of <type>Functor</type> imposes a few obvious
       restrictions on what we can do with <function>fmap</function>.
       For example, we can only make instances of
       <function>Functor</function> from types that have exactly one
@@ -449,7 +449,7 @@
     <note>
       <title>What's a free type variable?</title>
 
-      <para>A free type variable is a lower-case type variable, such
+      <para id="x_zR">A free type variable is a lower-case type variable, such
 	as <varname>a</varname>, that hasn't been bound to a
 	particular type.  For example, the type <type>Maybe a</type>
 	has one free type variable, but <type>Maybe Int</type> has
@@ -458,25 +458,25 @@
 	<type>Int</type>.</para>
     </note>
 
-    <para>We can't write an <function>fmap</function> implementation
+    <para id="x_AS">We can't write an <function>fmap</function> implementation
       for <type>Either a b</type> or <type>(a, b)</type>, for example,
       because these have two free type variables. We also can't write
       work with <type>Bool</type> or <type>Int</type>, as they have no
       free type variables.</para>
 
-    <para>In addition, we can't place any constraints on our type
+    <para id="x_BS">In addition, we can't place any constraints on our type
       definition.  What does this mean?  To illustrate, let's first
       look at a normal &data; definition and its <code>Functor</code>
       instance.</para>
 
     &ValidFunctor.hs:Foo;
 
-    <para>When we define a new type, we can add a type constraint just
+    <para id="x_CS">When we define a new type, we can add a type constraint just
       after the &data; keyword as follows.</para>
 
     &ValidFunctor.hs:Bar;
 
-    <para>This says that we can only put a type <varname
+    <para id="x_DS">This says that we can only put a type <varname
 	role="type">a</varname> into a n<type>Foo</type> if <varname
 	role="type">a</varname> is a member of the <code>Eq</code>
       typeclass.  However, the constraint renders it impossible to
@@ -488,7 +488,7 @@
     <sect2>
       <title>Constraints on type definitions are bad</title>
 
-      <para>Adding a  constraint to a type definition is never a good
+      <para id="x_ES">Adding a  constraint to a type definition is never a good
 	idea.  It has the effect of forcing you to add type
 	constraints to <emphasis>every</emphasis> function that will
 	operate on values of that type.  Let's say that we need a
@@ -498,7 +498,7 @@
 
       &TypeConstraint.hs:OrdStack;
 
-      <para>If we want to write a function that checks the stack to
+      <para id="x_FS">If we want to write a function that checks the stack to
 	see whether it is monotonic (i.e. either every element is
 	bigger than the element below it, or every element is
 	smaller), we'll obviously need an <code>Ord</code> constraint
@@ -506,7 +506,7 @@
 
       &TypeConstraint.hs:isMonotonic;
 
-      <para>However, because we wrote the type constraint on the type
+      <para id="x_GS">However, because we wrote the type constraint on the type
 	definition, that constraint ends up infecting places where it
 	isn't needed at all: we need to add the <code>Ord</code>
 	constraint to <function>push</function>, which does not care
@@ -514,23 +514,23 @@
 
       &TypeConstraint.hs:push;
 
-      <para>Try removing that <code>Ord</code> constraint above, and
+      <para id="x_HS">Try removing that <code>Ord</code> constraint above, and
 	the definition of <function>push</function> will fail to
 	typecheck.</para>
 
-      <para>This is why our attempt to write a <code>Functor</code>
+      <para id="x_IS">This is why our attempt to write a <code>Functor</code>
 	instance for <type>Bar</type> failed earlier: it would have
 	required an <code>Eq</code> constraint to somehow get
 	retroactively added to the signature of
 	<function>fmap</function>.</para>
 
-      <para>Now that we've tentatively established that putting a type
+      <para id="x_JS">Now that we've tentatively established that putting a type
 	constraint on a type definition is a misfeature of Haskell,
 	what's a more sensible alternative?  The answer is simply to
 	omit type constraints from type definitions, and instead place
 	them on the functions that need them.</para>
 
-      <para>In this example, we can drop the <code>Ord</code>
+      <para id="x_KS">In this example, we can drop the <code>Ord</code>
 	constraints from <code>OrdStack</code> and
 	<function>push</function>.  It needs to stay on
 	<function>isMonotonic</function>, which otherwise couldn't
@@ -539,7 +539,7 @@
 	benefit of making the type signatures better document the real
 	requirements of each function.</para>
 
-      <para>Most Haskell container types follow this pattern.  The
+      <para id="x_LS">Most Haskell container types follow this pattern.  The
 	<type>Map</type> type in the <code>Data.Map</code> module
 	requires that its keys be ordered, but this constraint is
 	expressed on functions like <function>insert</function>, where
@@ -550,15 +550,15 @@
     <sect2>
       <title>Functors as operators</title>
 
-      <para>Quite often, you'll see <function>fmap</function> called
+      <para id="x_MS">Quite often, you'll see <function>fmap</function> called
 	as an operator.</para>
 
       &functor.ghci:operator;
 
-      <para>Perhaps strangely, plain old <function>map</function> is
+      <para id="x_NS">Perhaps strangely, plain old <function>map</function> is
 	almost never used in this way.</para>
 
-      <para>One possible reason for the stickiness of the
+      <para id="x_OS">One possible reason for the stickiness of the
 	<function>fmap</function>-as-operator meme is that this use
 	lets us omit parentheses from its second argument.  Fewer
 	parentheses leads to reduced mental juggling while reading a
@@ -566,7 +566,7 @@
 
       &functor.ghci:prefix;
 
-      <para>If you really want to use <function>fmap</function> as an
+      <para id="x_PS">If you really want to use <function>fmap</function> as an
 	operator, the <code>Control.Applicative</code> module contains
 	an operator <function>(&lt;$&gt;)</function> that is an alias
 	for <function>fmap</function>.  The <code>$</code> in its name
@@ -578,13 +578,13 @@
     <sect2>
       <title>Flexible instances</title>
 
-      <para>You might hope that we could write a <type>Functor</type>
+      <para id="x_QS">You might hope that we could write a <type>Functor</type>
 	instance for the type <type>Either Int b</type>, which has one
 	free type variable.</para>
 
       &EitherInt.hs:Functor;
 
-      <para>However, the type system of Haskell 98 cannot guarantee
+      <para id="x_RS">However, the type system of Haskell 98 cannot guarantee
 	that checking the constraints on such an instance will
 	terminate.  A non-terminating constraint check will send a
 	compiler into an infinite loop, so instances of this form are
@@ -592,7 +592,7 @@
 
       &functor.ghci:EitherInt;
 
-      <para>&GHC; has a more powerful type system than the base
+      <para id="x_SS">&GHC; has a more powerful type system than the base
 	Haskell 98 standard.  It operates in Haskell 98 compatibility
 	mode by default, for maximal portability.  We can instruct it
 	to allow more flexible instances using a special compiler
@@ -600,18 +600,18 @@
 
       &EitherIntFlexible.hs:Functor;
 
-      <para>The directive is embedded in the specially formatted
+      <para id="x_TS">The directive is embedded in the specially formatted
 	<code>LANGUAGE</code> comment.  These directives are usually
 	referred to as <quote>pragmas</quote>.  Pragmas are always
 	enclosed in the special comment sequences <code>{-#</code>, to
 	begin, and <code>#-}</code>, to end.</para>
 
-      <para>&GHC; supports many kinds of pragma.  Most pragmas only
+      <para id="x_US">&GHC; supports many kinds of pragma.  Most pragmas only
 	have meaning at specific locations in a source file.  Language
 	pragmas, for example, are only obeyed if they are present at
 	the beginning of a source file.</para>
 
-      <para>With our <type>Functor</type> instance in hand, let's try
+      <para id="x_VS">With our <type>Functor</type> instance in hand, let's try
 	out <function>fmap</function> on <type>Either
 	  Int</type>.</para>
 
@@ -622,20 +622,20 @@
     <sect2>
       <title>Thinking more about functors</title>
 
-      <para>We've made a few implicit assumptions about how functors
+      <para id="x_WS">We've made a few implicit assumptions about how functors
 	ought to work.  It's helpful to make these explicit and to
 	think of them as rules to follow, because this lets us treat
 	functors as uniform, well-behaved objects.  We have only two
 	rules to remember, and they're simple.</para>
 
-      <para>Our first rule is that a functor must preserve
+      <para id="x_XS">Our first rule is that a functor must preserve
 	<emphasis>identity</emphasis>.  That is, applying <code>fmap
 	  id</code> to a value should give us back an identical
 	value.</para>
 
       &functor.ghci:id;
 
-      <para>Our second rule is that functors must be
+      <para id="x_YS">Our second rule is that functors must be
 	<emphasis>composable</emphasis>. That is, composing two uses
 	of <function>fmap</function> should give the same result as
 	one <function>fmap</function> with the same functions
@@ -643,14 +643,14 @@
 
       &functor.ghci:composition;
 
-      <para>Another way of looking at these two rules is that a
+      <para id="x_ZS">Another way of looking at these two rules is that a
 	functor must preserve <emphasis>shape</emphasis>.  The
 	structure of a collection should not be affected by a functor;
 	only the values that it contains should change.</para>
 
       &functor.ghci:shape;
 
-      <para>If you're writing a <type>Functor</type> instance, it's
+      <para id="x_aS">If you're writing a <type>Functor</type> instance, it's
 	useful to keep these rules in mind, and indeed to test them,
 	because the compiler can't check the rules we've listed above.
 	On the other hand, if you're simply <emphasis>using</emphasis>
@@ -663,7 +663,7 @@
   <sect1>
     <title>Writing a functor instance for Parse</title>
 
-    <para>For the types we have surveyed so far, the behaviour we
+    <para id="x_bS">For the types we have surveyed so far, the behaviour we
       ought to expect of <function>fmap</function> has been obvious.
       This is a little less clear for <type>Parse</type>, due to its
       complexity.  A reasonable guess is that the function we're
@@ -672,45 +672,45 @@
 
       &Parse.hs:Functor;
 
-    <para>Since this definition isn't especially easy to read, let's
+    <para id="x_cS">Since this definition isn't especially easy to read, let's
       perform a few quick experiments to see if we're following our
       rules for functors.</para>
 
-    <para>First, we'll check that identity is preserved.  Let's try
+    <para id="x_dS">First, we'll check that identity is preserved.  Let's try
       this first on a parse that should fail: trying to parse a byte
       from an empty string.</para>
 
       &parse.ghci:id.fail;
 
-    <para>Good.  Now for a parse that should succeed.</para>
+    <para id="x_eS">Good.  Now for a parse that should succeed.</para>
 
       &parse.ghci:id.success;
 
-    <para>By inspecting the results above, we can also see that our
+    <para id="x_fS">By inspecting the results above, we can also see that our
       functor instance is obeying our second rule, that of preserving
       shape.  Failure is preserved as failure, and success as
       success.</para>
       
-    <para>Finally, we'll ensure that composability is
+    <para id="x_gS">Finally, we'll ensure that composability is
       preserved.</para>
 
       &parse.ghci:compose;
 
-    <para>On the basis of this brief inspection, our
+    <para id="x_hS">On the basis of this brief inspection, our
       <type>Functor</type> instance appears to be well behaved.</para>
   </sect1>
 
   <sect1>
     <title>Using functors for parsing</title>
 
-    <para>All of this talk about functors had a purpose: they often
+    <para id="x_iS">All of this talk about functors had a purpose: they often
       let us write tidy, expressive code.  Recall the
       <function>parseByte</function> function that we introduced
       earlier.  In recasting our PGM parser to use our new parser
       infrastructure, we'll often want to work with ASCII characters
       instead of <type>Word8</type> values.</para>
 
-    <para>While we could write a <function>parseChar</function>
+    <para id="x_jS">While we could write a <function>parseChar</function>
       function that has a similar structure to
       <function>parseByte</function>, we can now avoid this code
       duplication by taking advantage of the functor nature of
@@ -720,7 +720,7 @@
       
     &Parse.hs:parseChar;
 
-    <para>We can also use functors to write a compact
+    <para id="x_kS">We can also use functors to write a compact
       <quote>peek</quote> function.  This returns <code>Nothing</code>
       if we're at the end of the input string.  Otherwise, it returns
       the next character without consuming it (i.e. it inspects, but
@@ -728,13 +728,13 @@
 
     &Parse.hs:peekByte;
 
-    <para>The same lifting trick that let us define
+    <para id="x_lS">The same lifting trick that let us define
       <function>parseChar</function> lets us write a compact
       definition for <function>peekChar</function>.</para>
 
     &Parse.hs:peekChar;
 
-    <para>Notice that <function>peekByte</function> and
+    <para id="x_mS">Notice that <function>peekByte</function> and
       <function>peekChar</function> each make two calls to
       <function>fmap</function>, one of which is disguised as
       <function>(&lt;$&gt;)</function>. This is necessary because the
@@ -742,21 +742,21 @@
       We thus have to lift a function twice to <quote>get it
 	into</quote> the inner function.</para>
 
-    <para>Finally, we'll write another generic combinator, which is
+    <para id="x_nS">Finally, we'll write another generic combinator, which is
       the <type>Parse</type> analogue of the familiar
       <function>takeWhile</function>: it consumes its input while its
       predicate returns <function>True</function>.</para>
 
     &Parse.hs:parseWhile;
 
-    <para>Once again, we're using functors in several places (doubled
+    <para id="x_oS">Once again, we're using functors in several places (doubled
       up, when necessary) to reduce the verbosity of our code.  Here's
       a rewrite of the same function in a more direct style that does
       not use functors.</para>
 
     &Parse.hs:parseWhileVerbose;
 
-    <para>The more verbose definition is likely easier to read when
+    <para id="x_pS">The more verbose definition is likely easier to read when
       you are less familiar with functors.  However, use of functors
       is sufficiently common in Haskell code that the more compact
       representation should become second nature (both to read and to
@@ -765,13 +765,13 @@
     <tip>
       <title>Hanging lambdas</title>
 
-      <para>The definitions of both parsing functions above have a
+      <para id="x_qS">The definitions of both parsing functions above have a
 	visual style to them that we haven't discussed before.  Each
 	contains anonymous functions in which the parameters and
 	<code>&rarrow;</code> sit at the end of a line, with the
 	function's body following on the next line.</para>
 
-      <para>This style of laying out an anonymous function doesn't
+      <para id="x_rS">This style of laying out an anonymous function doesn't
 	have an official name, so let's call it a <quote>hanging
 	  lambda</quote>.  Its main use is to make room for more text
 	in the body of the function.  It also makes it a little
@@ -786,32 +786,32 @@
   <sect1>
     <title>Rewriting our PGM parser</title>
 
-    <para>With our new parsing code, what does the raw PGM parsing
+    <para id="x_sS">With our new parsing code, what does the raw PGM parsing
       function look like now?</para>
 
     &Parse.hs:parseRawPGM;
 
-    <para>This definition makes use of a few more helper functions
+    <para id="x_tS">This definition makes use of a few more helper functions
       that we present here, following a pattern that should by now be
       familiar.</para>
 
     &Parse.hs:helpers;
 
-    <para>The <function>(==&gt;&amp;)</function> combinator chains
+    <para id="x_uS">The <function>(==&gt;&amp;)</function> combinator chains
       parsers like <function>(==&gt;)</function>, but the right hand
       side ignores the result from the left.  The
       <function>assert</function> function lets us check a property,
       and abort parsing with a useful error message if the property is
       <code>False</code>.</para>
 
-    <para>Notice how few of the functions that we have written make
+    <para id="x_vS">Notice how few of the functions that we have written make
       any reference to the current parsing state.  Most notably, where
       our old <function>parseP5</function> function explicitly passed
       two-tuples down the chain of dataflow, all of the state
       management in <function>parseRawPGM</function> is hidden from
       us.</para>
 
-    <para>Of course, we can't completely avoid inspecting and
+    <para id="x_wS">Of course, we can't completely avoid inspecting and
       modifying the parsing state.  Here's a case in point, the last
       of the helper functions needed by
       <function>parseRawPGM</function>.</para>
@@ -823,13 +823,13 @@
   <sect1>
     <title>Conclusions</title>
 
-    <para>In this chapter, we started with a naive file parser, and
+    <para id="x_xS">In this chapter, we started with a naive file parser, and
       successively refined it into code that is at once less brittle
       and more general.  Although our initial task was parsing
       graphics files, the combinator-based library that we developed
       along the way is not tied to graphics.</para>
 
-    <para>Our main theme in this chapter has been abstraction.  We
+    <para id="x_yS">Our main theme in this chapter has been abstraction.  We
       found passing explicit state down a chain of functions to be
       unsatisfactory, so we abstracted this detail away.  We noticed
       some recurring needs as we worked out our parsing code, and
@@ -837,7 +837,7 @@
       introduced the notion of a functor as offering a generalised way
       to map over a container type.</para>
 
-    <para>We will revisit parsing in <xref linkend="hs.parsec"/>, to
+    <para id="x_zS">We will revisit parsing in <xref linkend="hs.parsec"/>, to
       discuss Parsec, a widely used and flexible parsing library.  And
       in <xref linkend="hs.monads"/>, we will return to our theme of
       abstraction.</para>
@@ -849,14 +849,14 @@
     <qandaset>
       <qandaentry>
 	<question>
-	  <para>Write a parser for <quote>plain</quote> PGM
+	  <para id="x_AT">Write a parser for <quote>plain</quote> PGM
 	    files.</para>
 	</question>
       </qandaentry>
 
       <qandaentry>
 	<question>
-	  <para>In our description of <quote>raw</quote> PGM files, we
+	  <para id="x_BT">In our description of <quote>raw</quote> PGM files, we
 	    omitted a small detail.  If the <quote>maximum
 	      grey</quote> value in the header is less than 256, each
 	    pixel is represented by a single byte.  However, it can
@@ -864,14 +864,14 @@
 	    represented by two bytes, in big endian order (most
 	    significant byte first).</para>
 
-	  <para>Rewrite the raw PGM parser to accommodate both the
+	  <para id="x_CT">Rewrite the raw PGM parser to accommodate both the
 	    single- and double-byte pixel formats.</para>
 	</question>
       </qandaentry>
 
       <qandaentry>
 	<question>
-	  <para>Extend your parser so that it can identify a raw or
+	  <para id="x_DT">Extend your parser so that it can identify a raw or
 	    plain PGM file, and parse the appropriate file
 	    type.</para>
 	</question>

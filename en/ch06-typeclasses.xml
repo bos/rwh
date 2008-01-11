@@ -134,12 +134,12 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       <literal>isEqual</literal> for a particular type.
     </para>
     &eqclasses.hs:basicinstance;
-    <para>
+    <para id="x_EN">
       You can also use &ghci; to verify that we can now use
       <literal>isEqual</literal> on &Bool;s, but not on any other type:
     </para>
     &eqclasses.ghci:all;
-    <para>
+    <para id="x_FN">
       Notice that when we tried to compare two strings, &ghci; noticed that
       we hadn't provided an instance of <literal>BasicEq</literal> for
       &String;.  It therefore didn't know how to compare a &String;, and
@@ -147,7 +147,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       <literal>BasicEq</literal> for <literal>[Char]</literal>, which is the
       same as &String;.
     </para>
-    <para>
+    <para id="x_GN">
       We'll go into more detail on defining instances in <xref
         linkend="hs.typeclasses.instances"/>.  First, though, let's continue
       to look at ways to define typeclasses.  In this example, a
@@ -1055,7 +1055,7 @@ class  Eq a  where
     <para id="x_rB">
       For many simple data types, the Haskell compiler can automatically
       derive instances of &Read;, &Show;, &Bounded;, &Enum;, &Eq;, and &Ord;
-      for you.<footnote><para>While these are defined as regular Haskell
+      for you.<footnote><para id="x_HN">While these are defined as regular Haskell
           typeclasses without anything special magic, automatic derivation is a special
           feature of the compiler only supported with these particular
           typeclasses.</para></footnote>
@@ -1067,7 +1067,7 @@ class  Eq a  where
       Let's take a look at how these derived instances work for us:
     </para>
     &derived.ghci:all;
-    <para>
+    <para id="x_IN">
       Notice that the sort order for <literal>Color</literal>
       was based on the order that
       the constructors were defined, not on an alphabetical ordering.
@@ -1083,7 +1083,7 @@ class  Eq a  where
 
   <sect1 id="hs.typeclasses.conclusion">
     <title>Conclusion</title>
-    <para>In this chapter, you learned about the need for typeclasses and how
+    <para id="x_JN">In this chapter, you learned about the need for typeclasses and how
       to use them.  We talked about defining our own typeclasses and then
       covered some of the important typeclasses that are defined in the
       Haskell library.  Finally, we showed how to have the Haskell compiler

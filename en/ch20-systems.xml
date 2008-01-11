@@ -3,20 +3,20 @@
 <chapter id="hs.systems" revision="unpublished">
   <title>Systems Programming in Haskell</title>
 
-  <para>
+  <para id="x_Ia">
     So far, we've been talking mostly about high-level concepts.  Haskell can
     also be used for lower-level systems programming.  It is quite possible
     to write programs that interface with the operating system at a low level
     using Haskell.
   </para>
-  <para>
+  <para id="x_Ja">
     In this chapter, we are going to attempt something ambitious: a Perl-like
     "language" that is valid Haskell, implemented in pure Haskell, that makes
     shell scripting easy.  We are going to implement piping, easy command
     invocation, and some simple tools to handle tasks that might otherwise be
     performed with <literal>grep</literal> or <literal>sed</literal>.
   </para>
-  <para>
+  <para id="x_Ka">
     Specialized modules exist for different operating systems.  In this
     chapter, we will use generic OS-independent modules as much as possible.
     However, we will be focusing on the POSIX environment for much of the
@@ -28,7 +28,7 @@
 
   <sect1 id="hs.systems.running">
     <title>Running External Programs</title>
-    <para>
+    <para id="x_La">
       It is possible to invoke external commands from Haskell.  To do that,
       we suggest using <literal>rawSystem</literal> from the
       <literal>System.Cmd</literal> module.  This will invoke a specified
@@ -36,10 +36,10 @@
       that program.  You can play with it in &ghci;:
     </para>
     &rawSystem.ghci:s1;
-    <para>
+    <para id="x_Ma">
       Here, we run the equivolent of the shell command <literal>ls -l /usr</literal>.  
       <literal>rawSystem</literal> does not parse arguments from a string or
-      expand wildcards.<footnote><para>There is also a function
+      expand wildcards.<footnote><para id="x_Na">There is also a function
           <literal>system</literal> that takes only a single string and
           passes it through the shell to parse.  We recommend using
           <literal>rawSystem</literal> instead, because the shell attaches
@@ -54,7 +54,7 @@
 
   <sect1 id="hs.systems.directories">
     <title>Directory and File Information</title>
-    <para>
+    <para id="x_Oa">
       The <literal>System.Directory</literal> module contains quite a few
       functions that can be used to obtain information from the filesystem.
       You can get a list of files in a directory, rename or delete files,
@@ -62,7 +62,7 @@
       directories.  <literal>System.Directory</literal> is portable and works
       on any platform where GHC itself works.
     </para>
-    <para>
+    <para id="x_Pa">
       The <ulink
         url="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-Directory.html">library
         reference for <literal>System.Directory</literal></ulink> provides a
@@ -71,14 +71,14 @@
       equivolents to C library calls or shell commands.
     </para>
     &dir.ghci:setdir;
-    <para>
+    <para id="x_Qa">
       Here we saw commands to change the current working directory and obtain
       the current working directory from the system.  These are similar to
       the <literal>cd</literal> and <literal>pwd</literal> commands in the
       POSIX shell.
     </para>
     &dir.ghci:contents;
-    <para>
+    <para id="x_Ra">
       <literal>getDirectoryContents</literal> returns a list for every item
       in a given directory.  Note that on POSIX systems, this list normally
       includes the special values <literal>"."</literal> and
@@ -86,7 +86,7 @@
       when processing the content of the directory, perhaps like this:
     </para>
     &dir.ghci:contents2;
-    <para>
+    <para id="x_Sa">
       You can also query the system about the location of certain
       directories.   This query will ask the underlying operating system for
       the information.
@@ -96,7 +96,7 @@
 
   <sect1 id="hs.system.termination">
     <title>Program Termination</title>
-    <para>
+    <para id="x_Ta">
       Developers often write individual programs to accomplish particular
       tasks.  These individual parts may be combined to accomplish larger
       tasks.  A shell script or another program may execute them.  The
@@ -105,7 +105,7 @@
       indicates a non-successful exit whenever a program is aborted by an
       exception.
     </para>
-    <para>However, you may need more fine-grained control over the
+    <para id="x_Ua">However, you may need more fine-grained control over the
       exit code than that.   Perhaps you need to return different codes for
       different types of errors.
       The <literal>System.Exit</literal> module provides a way to exit the
@@ -119,7 +119,7 @@
 
   <sect1 id="hs.systems.datetime"> 
     <title>Dates and Times</title>
-    <para>
+    <para id="x_Va">
       Everything from file timestamps to business transactions involve dates
       and times.  Haskell provides ways for manipulating dates and times, as
       well as features for obtaining date and time information from the
@@ -127,21 +127,21 @@
     </para>
     <sect2 id="hs.systems.datetime.types">
       <title>ClockTime and CalendarTime</title>
-      <para> In Haskell, the
+      <para id="x_Wa"> In Haskell, the
         <literal>System.Time</literal> module is primarily responsible for
         date and time handling.  It defines two types: &ClockTime; and
-        &CalendarTime;.  </para> <para> &ClockTime; is the Haskell version of
+        &CalendarTime;.  </para> <para id="x_Xa"> &ClockTime; is the Haskell version of
         the traditional POSIX epoch.  A &ClockTime; represents the number of
         seconds since midnight the morning of January 1, 1970, UTC.  A
         negative &ClockTime; represents times prior to that date, while a
         positive number represents times after it.  
       </para> 
-      <para>
+      <para id="x_Ya">
         &ClockTime; is convenient for computations.  Since it tracks
         Coordinated Universal Time (UTC), it doesn't have to adjust for local
         timezones, daylight saving time, or other special cases in time
         handling.  Every day is exactly (60 * 60 * 24) or 86,400
-        seconds<footnote><para>Some will note that UTC defines leap seconds
+        seconds<footnote><para id="x_Za">Some will note that UTC defines leap seconds
             at irregular intervals.  The POSIX standard, which Haskell
             follows, states that every day is exactly 86,400 seconds in
             length in its representation, so you need not be concerned about
@@ -156,38 +156,38 @@
         elapsed.  You can then divide by 24 and display the elapsed time as a
         count of hours if you wish.
       </para>
-      <para>
+      <para id="x_aa">
         &ClockTime; is ideal for answering questions such as these:
       </para>
       <itemizedlist>
-        <listitem><para>How much time has elapsed?</para></listitem>
-        <listitem><para>What will be the &ClockTime; 14 days ahead of this
+        <listitem><para id="x_ba">How much time has elapsed?</para></listitem>
+        <listitem><para id="x_ca">What will be the &ClockTime; 14 days ahead of this
             precise instant?</para></listitem>
-        <listitem><para>When was the file last modified?</para></listitem>
-        <listitem><para>What is the precise time right now?</para></listitem>
+        <listitem><para id="x_da">When was the file last modified?</para></listitem>
+        <listitem><para id="x_ea">What is the precise time right now?</para></listitem>
       </itemizedlist>
-      <para>
+      <para id="x_fa">
         These are good uses of &ClockTime; because they refer to precise,
         unambiguous moments in time.  However, &ClockTime; is not as easily
         used for questions such as:
       </para>
       <itemizedlist>
-        <listitem><para>Is today Monday?</para></listitem>
-        <listitem><para>What will be the time on this date next
+        <listitem><para id="x_ga">Is today Monday?</para></listitem>
+        <listitem><para id="x_ha">What will be the time on this date next
             month?</para></listitem>
-        <listitem><para>What day of the week will May 1 fall on next
+        <listitem><para id="x_ia">What day of the week will May 1 fall on next
             year?</para></listitem>
-        <listitem><para>What is the current time in my local timezone,
+        <listitem><para id="x_ja">What is the current time in my local timezone,
             taking the potential presence of Daylight Saving Time (DST) into
             account?</para></listitem>
       </itemizedlist>
-      <para>
+      <para id="x_ka">
         &CalendarTime; stores a time the way humans do: with a year, month,
         day, hour, minute, second, timezone, and DST information.  It's easy
         to convert this into a conveniently-displayable string, or to answer
         questions about the local time.
       </para>
-      <para>
+      <para id="x_la">
         You can convert between &ClockTime; and &CalendarTime; at will.
         Haskell includes functions to convert a &ClockTime; to a
         &CalendarTime; in the local timezone, or to a &CalendarTime;
@@ -195,26 +195,26 @@
       </para>
       <sect3 id="hs.systems.clocktime">
         <title>Using ClockTime</title>
-        <para>
+        <para id="x_ma">
           &ClockTime; is defined in <literal>System.Time</literal> like this:
         </para>
         <programlisting>
 data ClockTime = TOD Integer Integer
         </programlisting>
-        <para>
+        <para id="x_na">
           The first &Integer; represents the number of seconds since the
           epoch.  The second &Integer; represents an additional number of
           picoseconds.  Because &ClockTime; in Haskell uses the unbounded
           &Integer; type, it can effectively represent a date range limited only
           by computational resources.
         </para>
-        <para>
+        <para id="x_oa">
           Let's look at some ways to use &ClockTime;.  First, there is the
           <literal>getClockTime</literal> function that returns the current
           time according to the system's clock.
         </para>
         &time.ghci:getClockTime;
-        <para>
+        <para id="x_pa">
           If you wait a second and run <literal>getClockTime</literal> again,
           you'll see it returning an updated time.  Notice that the output
           from this command was a nice-looking string, complete with
@@ -222,19 +222,19 @@ data ClockTime = TOD Integer Integer
           &ClockTime;.  Let's look at the &ClockTime; at a lower level:
         </para>
         &time.ghci:ClockTime2;
-        <para>
+        <para id="x_qa">
           Here we first construct a &ClockTime; representing the point in
           time 1500 seconds after midnight on January 1, 1970, UTC.
           Depending on your timezone, this moment in time may correspond to
           the evening of December 31, 1969, in your local timezone.
         </para>
-        <para>
+        <para id="x_ra">
           The second example shows us pulling the number of seconds out of
           the value returned by <literal>getClockTime</literal>.  We can now
           manipulate it, like so:
         </para>
         &time.ghci:ClockTime3;
-        <para>
+        <para id="x_sa">
           This will display what the time will be exactly 24 hours from now
           in your local timezone, since there are 86,400 seconds in 24 hours.
         </para>
@@ -242,7 +242,7 @@ data ClockTime = TOD Integer Integer
 
       <sect3 id="hs.system.calendartime">
         <title>Using CalendarTime</title>
-        <para>
+        <para id="x_ta">
           As its name implies, &CalendarTime; represents time like we would
           on a calendar.  It has fields for information such as year, month,
           and day.  &CalendarTime; and its associated types are defined like
@@ -270,12 +270,12 @@ data Month = January | February | March | April | May | June
 data Day = Sunday | Monday | Tuesday | Wednesday
            | Thursday | Friday | Saturday
         </programlisting>
-        <para>
+        <para id="x_ua">
           There are a few things about these structures that should be
           highlighted:
         </para>
         <itemizedlist>
-          <listitem><para>
+          <listitem><para id="x_va">
               &ctWDay;, &ctYDay;, and &ctTZName; are generated by the library
               functions that create a &CalendarTime;, but are not used
               in calculations.  If you are creating a &CalendarTime; by hand,
@@ -283,7 +283,7 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               unless your later calculations will depend upon them.
             </para>
           </listitem>
-          <listitem><para>
+          <listitem><para id="x_wa">
               All of these three types are members of the &Eq;, &Ord;,
               &Read;, and &Show; typeclasses.  In addition, 
               &Month; and &Day; are declared as members of the
@@ -291,13 +291,13 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               these typeclasses, refer to
               <xref linkend="hs.typeclasses.wellknown"/>.
             </para>
-            <para>
+            <para id="x_xa">
               You can generate &CalendarTime; values several ways.  You could
               start by converting a &ClockTime; to a &CalendarTime; such as
               this:
             </para>
             &calendartime.ghci:conv;
-            <para>
+            <para id="x_ya">
               We used <literal>getClockTime</literal> to obtain the current
               &ClockTime; from the system's clock.  Next,
               <literal>toCalendarTime</literal> converts the &ClockTime; to a
@@ -306,7 +306,7 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               but its result is in the UTC timezone instead of the local
               timezone.
             </para>
-            <para>
+            <para id="x_za">
               Notice that <literal>toCalendarTime</literal> is an &IO;
               function, but <literal>toUTCTime</literal> is not.  The reason
               is that <literal>toCalendarTime</literal> returns a different
@@ -314,11 +314,11 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               <literal>toUTCTime</literal> will return the exact same result
               whenever it is passed the same source &ClockTime;.
             </para>
-            <para>
+            <para id="x_Ab">
               It's easy to modify a &CalendarTime; value:
             </para>
             &calendartime.ghci:mod;
-            <para>
+            <para id="x_Bb">
               In this example, we first took the &CalendarTime; value from
               earlier and simply switched its year to 1960.  Then, we used
               <literal>toClockTime</literal> to convert the unmodified value
@@ -328,11 +328,11 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               That's to be expected, since a &ClockTime; is an offset from
               midnight on January 1, 1970, UTC, and this value is in 1960.
             </para>
-            <para>
+            <para id="x_Cb">
               You can also create &CalendarTime; values manually:
             </para>
             &calendartime.ghci:create;
-            <para>
+            <para id="x_Db">
               Note that even though January 15, 2010, isn't a Sunday -- and
               isn't day 0 in the year -- the system was able to process this
               just fine.  In fact, if we convert the value to a &ClockTime;
@@ -347,7 +347,7 @@ data Day = Sunday | Monday | Tuesday | Wednesday
 
       <sect3 id="hs.system.timediff">
         <title>TimeDiff for ClockTime</title>
-        <para>
+        <para id="x_Eb">
           Because it can be difficult to manage differences between
           &ClockTime; values in a human-friendly way, the
           <literal>System.Time</literal> module includes a &TimeDiff; type.
@@ -364,39 +364,39 @@ data TimeDiff = TimeDiff
     tdSec :: Int,
     tdPicosec :: Integer}
         </programlisting>
-        <para>
+        <para id="x_Fb">
           Functions such as <literal>diffClockTimes</literal> and
           <literal>addToClockTime</literal> take a &ClockTime; and a
           &TimeDiff; and handle the calculations internally by converting to
           a &CalendarTime; in UTC, applying the differences, and converting
           back to a &ClockTime;.
         </para>
-        <para>
+        <para id="x_Gb">
           Let's see how it works:
         </para>
         &timediff.ghci:all;
-        <para>
+        <para id="x_Hb">
           We started by generating a &ClockTime; representing midnight
           February 5, 2008 in UTC.  Note that, unless your timezone is the
           same as UTC, when this time is printed out on the display, it may
           show up as the evening of February 4 because it is formatted for
           your local timezone.
         </para>
-        <para>
+        <para id="x_Ib">
           Next, we add one month to to it by calling
           <literal>addToClockTime</literal>.  2008 is a leap year, but the
           system handled that properly and we get a result that has the same
           date and time in March.  By using <literal>toUTCTime</literal>, we
           can see the effect on this in the original UTC timezone.
         </para>
-        <para>
+        <para id="x_Jb">
           For a second experiment, we set up a time representing midnight 
           on January 30, 2009 in UTC.  2009 is not a leap year, so we might
           wonder what will happen when trying to add one month to it.  We can
           see that, since neither February 29 or 30 exist in 2009, we wind up
           with March 2.
         </para>
-        <para>
+        <para id="x_Kb">
           Finally, we can see how <literal>diffClockTimes</literal> turns two
           &ClockTime; values into a &TimeDiff;, though only the seconds and
           picoseconds are filled in.  The
@@ -408,7 +408,7 @@ data TimeDiff = TimeDiff
     </sect2>
     <sect2 id="hs.systems.modtime">
       <title>File Modification Times</title>
-      <para>
+      <para id="x_Lb">
         Many programs need to find out when particular files were last
         modified.  Programs such as <literal>ls</literal> or graphical file
         managers typically display the modification time of files.
@@ -418,7 +418,7 @@ data TimeDiff = TimeDiff
         file was last modified.  For instance:
       </para>
       &modtime.ghci:all;
-      <para>
+      <para id="x_Mb">
         POSIX platforms maintain not just a modification time (known as
         mtime), but also the time of last read or write access (atime) and
         the time of last status change (ctime).  Since this information is
@@ -429,7 +429,7 @@ data TimeDiff = TimeDiff
         to do that:
       </para>
       &posixtime.hs:all;
-      <para>
+      <para id="x_Nb">
         Notice that call to <literal>getFileStatus</literal>.  That call maps
         directly to the C function <literal>stat()</literal>.  Its return
         value stores a vast assortment of information, including file
@@ -440,10 +440,10 @@ data TimeDiff = TimeDiff
         <literal>FileStatus</literal> type returned by
         <literal>getFileStatus</literal>.
       </para>
-      <para>
+      <para id="x_Ob">
         <literal>System.Posix.Files</literal> also provides a
         <literal>setFileTimes</literal> function to set the atime and mtime
-        for a file.<footnote><para>It is not normally possible to set the
+        for a file.<footnote><para id="x_Pb">It is not normally possible to set the
             ctime on POSIX systems.</para></footnote>
       </para>
     </sect2>
@@ -451,7 +451,7 @@ data TimeDiff = TimeDiff
 
   <sect1 id="hs.systems.cmd">
     <title>Invoking External Commands</title>
-    <para>
+    <para id="x_Qb">
       The <literal>System.Cmd</literal> module provides a cross-platform way
       to invoke external commands.  This could let you call system utilities
       or
@@ -460,14 +460,14 @@ data TimeDiff = TimeDiff
       while the new program runs, then continue where it left off after the
       called program terminates.
     </para>
-    <para>
+    <para id="x_Rb">
       The most useful if the functions in <literal>System.Cmd</literal> is
       <literal>rawSystem</literal>.  It takes an executble name and a list of
       command-line arguments to pass to it, and returns an exit code.  You
       can even test it from &ghci; like this:
     </para>
     &cmd.ghci:all;
-    <para>
+    <para id="x_Sb">
       <literal>rawSystem</literal> does not pass the command or its arguments
       through the shell.  This is an important safety and integrity feature.
       The shell may perform wildcard expansion, argument parsing, and other
@@ -481,7 +481,7 @@ data TimeDiff = TimeDiff
 
   <sect1 id="hs.systems.piping">
     <title>Extended Example: Piping</title>
-    <para>
+    <para id="x_Tb">
       We've just seen how to invoke external programs.  Sometimes we need
       more control that that.  Perhaps we need to obtain the output from
       those programs, provide input, or even chain together multiple external
@@ -502,7 +502,7 @@ MAILCAP.ORDER
 MEDIAPRM
 TERMCAP
     </screen>
-    <para>
+    <para id="x_Ub">
       This command runs three programs, piping data between them.  It starts
       with <literal>ls /etc</literal>, which outputs a list of all files or
       directories in <literal>/etc</literal>.  The output of
@@ -515,12 +515,12 @@ TERMCAP
       output of <literal>tr</literal> isn't set anywhere in particular, so it
       is displayed on the screen.
     </para>
-    <para>
+    <para id="x_Vb">
       In this situation, the shell handles setting up all the pipelines
       between programs.  By using some of the POSIX tools in Haskell, we can
       accomplish the same thing.
     </para>
-    <para>
+    <para id="x_Wb">
       Before describing how to do this, we should first warn you that the
       <literal>System.Posix</literal> modules expose a very low-level
       interface to Unix systems.  The interfaces can be complex and their
@@ -532,7 +532,7 @@ TERMCAP
     </para>
     <sect2 id="hs.systems.piping.theory">
       <title>Using Pipes for Redirection</title>
-      <para>
+      <para id="x_Xb">
         POSIX defines a function that creates a pipe.  This function returns
         two file descriptors (FDs), which are similar in concept to a Haskell
         &Handle;.  One FD is the reading end of the pipe, and the other is the
@@ -541,7 +541,7 @@ TERMCAP
         In Haskell, you call <literal>createPipe</literal> to access this
         interface.
       </para>
-      <para>
+      <para id="x_Yb">
         Having a pipe is the first step to being able to pipe data between
         external programs.  We must also be able to redirect the output of a
         program to a pipe, and the input of another program from a pipe.  The
@@ -552,7 +552,7 @@ TERMCAP
         a pipe to one of those numbers, we effectively can cause programs to
         have their input or output redirected.
       </para>
-      <para>
+      <para id="x_Zb">
         There is another piece of the puzzle, however.  We can't just use
         <literal>dupTo</literal> before a call such as
         <literal>rawSystem</literal> because this would mess up the stdandard
@@ -574,7 +574,7 @@ TERMCAP
         to wait for the child processes to terminate and learn of their exit
         codes.
       </para>
-      <para>
+      <para id="x_ab">
         Whenever you run a command on POSIX systems, whether you've just typed
         <literal>ls</literal> on the command line or used
         <literal>rawSystem</literal> in Haskell, under the hood,
@@ -584,10 +584,10 @@ TERMCAP
         system uses to start up programs, and adding a few steps involving
         piping and redirection along the way.
       </para>
-      <para>
+      <para id="x_bb">
         There are a few other housekeeping things we must be careful about.
         When you call <literal>forkProcess</literal>, just about everything
-        about your program is cloned<footnote><para>The main exception is
+        about your program is cloned<footnote><para id="x_cb">The main exception is
             threads, which are not cloned.</para></footnote>  That includes
         the set of open file descriptors (handles).  Programs detect when
         they're done receiving input from a pipe by checking the end-of-file
@@ -600,16 +600,16 @@ TERMCAP
         processes.  We must also close the child ends of the pipes in the
         parent process as soon as possible.
       </para>
-      <para>
+      <para id="x_db">
         Here is an initial implementation of a system of piping in Haskell.
       </para>
       &RunProcessSimple.hs:all;
-      <para>
+      <para id="x_eb">
         Let's experiment with this in &ghci; a bit before looking at how it
         works.
       </para>
       &rps.ghci:all;
-      <para>
+      <para id="x_fb">
         We start by running a simple command, <literal>pwd</literal>, which
         just prints the name of the current working directory.  We pass
         <literal>[]</literal> for the list of arguments, because
@@ -618,7 +618,7 @@ TERMCAP
         <literal>[]</literal>, so we specifically mention that it's a
         &String;.
       </para>
-      <para>
+      <para id="x_gb">
         Then we get into more complex commands.  We run
         <literal>ls</literal>, sending it through <literal>grep</literal>.
         At the end, we set up a pipe to run the exact same command that we
@@ -626,19 +626,19 @@ TERMCAP
         yet as pleasant as it was in the shell, but then again our program is
         still relatively simple when compared to the shell.
       </para>
-      <para>
+      <para id="x_hb">
         Let's look at the program.  The very first line has a special
         <literal>OPTIONS_GHC</literal> clause.  This is the same as passing
         <literal>-fglasgow-exts</literal> to &ghc; or &ghci;.  We are using a
         GHC extension that permits us to use a <literal>(String,
           [String])</literal> type as an instance of a
-        typeclass.<footnote><para>This extension is well-supported in the
+        typeclass.<footnote><para id="x_ib">This extension is well-supported in the
             Haskell community; Hugs users can access the same thing with
             <literal>hugs -98 +o</literal>.</para></footnote>  By putting
         it in the source file, we don't have to remember to specify it every
         time we use this module.
       </para>
-      <para>
+      <para id="x_jb">
         After the <literal>import</literal> lines, we define a few types.
         First, we define <literal>type SysCommand = (String,
           [String])</literal> as an alias.  This is the type a command to be
@@ -649,7 +649,7 @@ TERMCAP
         represents the list of FDs that we must close upon forking a new
         child process.
       </para>
-      <para>
+      <para id="x_kb">
         Next, we define a class named <literal>CommandLike</literal>.  This
         class will be used to run "things", where a "thing" might be a
         standalone program, a pipe set up between two or more programs, or in
@@ -661,13 +661,13 @@ TERMCAP
         may have a whole stack of commands on one or both sides of a given
         command.
       </para>
-      <para>
+      <para id="x_lb">
         Our piping infrastructure is going to use strings as the way of
         sending data from one process to another.  We can take advantage of
         Haskell's support for lazy reading via &hGetContents; while reading
         data, and use <literal>forkIO</literal> to let writing occur in the
         background.  This will work well, although not as fast as connecting
-        the endpoints of two processes directly together.<footnote><para>The
+        the endpoints of two processes directly together.<footnote><para id="x_mb">The
             Haskell library HSH provides a similar API to that presented
             here, but uses a more efficient (and much more complex) mechanism
             of connecting pipes directly between external processes without
@@ -678,7 +678,7 @@ TERMCAP
         require the entire &String; to be buffered, and let Haskell's
         laziness do the rest.
       </para>
-      <para>
+      <para id="x_nb">
         Next, we define an instance of
         <literal>CommandLike</literal> for <literal>SysCommand</literal>.  We
         create two pipes: one to use for the new process's standard input,
@@ -698,7 +698,7 @@ TERMCAP
         closes the file descriptors it doesn't need, and executes the
         command.
       </para>
-      <para>
+      <para id="x_ob">
         Next, we define some utility functions to manage the list of file
         descriptors.  After that, we define the tools that help set up
         pipelines.  First, we define a new type
@@ -714,7 +714,7 @@ TERMCAP
         causes the <literal>getExitStatus</literal> function to wait for and
         check the exit statuses from both commands.
       </para>
-      <para>
+      <para id="x_pb">
         We finish by defining <literal>runIO</literal>.  This function
         establishes the list of FDs that must be closed in the client, starts
         the command, displays its output, and checks its exit status.
@@ -722,20 +722,20 @@ TERMCAP
     </sect2>
     <sect2 id="hs.piping.extended">
       <title>Better Piping</title>
-      <para>
+      <para id="x_qb">
         Our previous example solved the basic need of letting us set up
         shell-like pipes.  There are some other features that it would be
         nice to have though:
       </para>
-      <itemizedlist><listitem><para>Supporting more shell-like
+      <itemizedlist><listitem><para id="x_rb">Supporting more shell-like
             syntax</para></listitem>
-        <listitem><para>Letting people pipe data into external programs or
+        <listitem><para id="x_sb">Letting people pipe data into external programs or
             regular Haskell functions, freely mixing and matching the
             two</para></listitem>
-        <listitem><para>Returning the final output and exit code in a way
+        <listitem><para id="x_tb">Returning the final output and exit code in a way
             that Haskell programs can readily use</para></listitem>
       </itemizedlist>
-      <para>
+      <para id="x_ub">
         Fortunately, we already have most of the pieces to support this in
         place.  We need only add a few more instances of
         <literal>CommandLike</literal> to support this, and a few more
@@ -743,37 +743,37 @@ TERMCAP
         example that implements all of these features:
       </para>
       &RunProcess.hs:all;
-      <para>
+      <para id="x_vb">
         Here's what has changed:
       </para>
       <itemizedlist>
-        <listitem><para>A new <literal>CommandLike</literal> instance for
+        <listitem><para id="x_wb">A new <literal>CommandLike</literal> instance for
             &String; that uses the shell to evaluate and invoke the string.
         </para></listitem>
-        <listitem><para>New <literal>CommandLike</literal> instances for 
+        <listitem><para id="x_xb">New <literal>CommandLike</literal> instances for 
             <literal>String -> IO String</literal> and various other types
             that are implemented in terms of this one.  These process Haskell
             functions as commands.
         </para></listitem>
-        <listitem><para>A new <literal>RunResult</literal> typeclass that
+        <listitem><para id="x_yb">A new <literal>RunResult</literal> typeclass that
             defines a function <literal>run</literal> that returns
             information about the command in many different ways.  See the
             comments in the source for more information.
             <literal>runIO</literal> is now just an alias for one particular
             <literal>RunResult</literal> instance.
         </para></listitem>
-        <listitem><para>A few utility functions providing Haskell
+        <listitem><para id="x_zb">A few utility functions providing Haskell
             implementations of familiar Unix shell commands.
           </para>
         </listitem>
       </itemizedlist>
-      <para>
+      <para id="x_Ac">
         Let's try out the new shell features.  First, let's make sure that
         the command we used in the previous example still works.  Then,
         let's try it using a more shell-like syntax.
       </para>
       &rp.ghci:shell;
-      <para>
+      <para id="x_Bc">
         That was a lot easier to type.  Let's try substituting our native
         Haskell implementation of <literal>grep</literal> and try out some
         other new features as well:
@@ -783,7 +783,7 @@ TERMCAP
 
     <sect2 id="hs.systems.piping.finalwords">
       <title>Final Words on Pipes</title>
-      <para>
+      <para id="x_Cc">
         We have developed a sophisticated system here.  We warned you earlier
         that POSIX can be complex.  One other thing we need to highlight: you
         must always make sure to evaluate the &String; returned by these
@@ -792,7 +792,7 @@ TERMCAP
         its data, and if you do this in the wrong order, your program will
         hang.
       </para>
-      <para>
+      <para id="x_Dc">
         In this chapter, we have developed, from the ground up, a simplified
         version of HSH.  If you wish to use these shell-like capabilities in
         your own programs, we recommend HSH instead of the example developed
