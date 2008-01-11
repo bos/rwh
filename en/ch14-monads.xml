@@ -1490,7 +1490,7 @@
 	  Here's an example: keeping track of the number of random
 	  numbers we are handing out.</para>
 
-	&Random.hs:CountedState;
+	&Random.hs:CountedRandom;
 
 	<para>This example happens to consume both elements of the
 	  state, and construct a completely new state, every time we
@@ -1498,7 +1498,7 @@
 	  modify only part of a state.  This function gets the number
 	  of random values generated so far.</para>
 
-	&Random.hs:getRandom;
+	&Random.hs:getCount;
 
 	<para>We deliberately used record syntax to define our
 	  <type>CountedRandom</type> state, and this example should
@@ -1509,7 +1509,7 @@
 	<para>If we want to partially update a state, the code doesn't
 	  come out quite so appealingly.</para>
 
-	&Random.hs:putRandom;
+	&Random.hs:putCount;
 
 	<para>Here, instead of a function, we're using record update
 	  syntax.  The expression <code>st { crCount = a }</code>
