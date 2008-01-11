@@ -50,5 +50,7 @@ getTwoRandoms = do
   b <- getRandom
   return (a, b)
 
-getTwoCleaner :: Random a => RandomState (a, a)
-getTwoCleaner = liftM2 (,) getRandom getRandom
+{-- snippet getTwoRandoms --}
+getTwoRandoms :: Random a => RandomState (a, a)
+getTwoRandoms = liftM2 (,) getRandom getRandom
+{-- /snippet getTwoRandoms --}
