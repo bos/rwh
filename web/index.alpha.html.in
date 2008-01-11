@@ -36,6 +36,23 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 		src="/support/figs/rss.png"/></a></span>
 	  7. <a href="hs.io.html">Input and
 	Output</a></li>
+    <li class="zebra_a"><span class="chapinfo">2008-01-10 <a
+	      href="/feeds/comments/hs.glob/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  8. <a href="hs.glob.html">Case Study: Regular Expressions and
+	     File Name Matching</a></li>
+    <li class="zebra_b">9. <span class="unpublished">I/O Case Study:
+	  A Library For Searching The Filesystem</span></li>
+    <li class="zebra_a">10. <span class="unpublished">Code Case Study:
+	  Parsing a Binary Data Format</span></li>
+    <li class="zebra_b">11. <span
+	  class="unpublished">Testing</span></li>
+    <li class="zebra_a">12. <span class="unpublished">Barcode
+	  Recognition</span></li>
+    <li class="zebra_b"><span class="chapinfo">2008-01-10 <a
+	      href="/feeds/comments/hs.data/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  13. <a href="hs.data.html">Data Structures</a></li>
     <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.install/"><img
 		src="/support/figs/rss.png"/></a></span>
