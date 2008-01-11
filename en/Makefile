@@ -236,28 +236,9 @@ ids: all-ids.dat
 all-ids.dat: ../xsl/all-ids.xsl $(src-files)
 	$(xsltproc) $(xsltproc-opts) -o $@ ../xsl/all-ids.xsl $(src-master)
 
-# Generate a zip file with the kind of contents required by nostromo's
-# AH server.
-
-.PHONY: zip
-zip: book.zip
-
-book.zip: .validated-00book.xml $(src-figs)
-	rm -rf $@ bookzip
-	mkdir -p bookzip/figs
-	cp $(src-files) $(xml-examples) bookzip
-	cp $(src-figs) bookzip/figs
-	mv bookzip/00book.xml bookzip/book.xml
-	perl -pi -e 's,:([a-z0-9_.-]+\.xml">),.\1,i' bookzip/book.xml \
-	    bookzip/auto-snippets.xml
-	cd bookzip; for i in *:*.xml; do mv $$i $$(echo $$i | tr : .); done
-	cd bookzip; zip -qr8 ../book.zip .
-	cd bookzip; $(xmllint) --path '$(dtd-dir):.' $(xmllint-opts) book.xml
-	rm -r bookzip
-
 clean:
 	-$(MAKE) -C ../tools clean
-	-rm -f .validated* .stamp-* *-entities.txt $(obj-pdf) 00book.zip
+	-rm -f .validated* .stamp-* *-entities.txt $(obj-pdf)
 	-rm -rf x html index *.ghci:*.xml
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
