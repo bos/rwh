@@ -91,3 +91,8 @@ putCount a = do
   st <- get
   put st { crCount = a }
 {-- /snippet putCount --}
+
+{-- snippet putCountModify --}
+putCountModify :: Int -> CRState ()
+putCountModify a = modify $ \st -> st { crCount = a }
+{-- /snippet putCountModify --}

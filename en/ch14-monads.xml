@@ -1520,6 +1520,15 @@
 	  of flexibility as with a function.  Record syntax may not
 	  exhibit Haskell's usual elegance, but it at least gets the
 	  job done.</para>
+
+	<para>There exists a function named
+	  <function>modify</function> that combines the
+	  <function>get</function> and <function>put</function> steps.
+	  It takes as argument a state transformation function, but
+	  it's hardly more satisfactory: we still can't escape from the
+	  record update syntax.</para>
+
+	&Random.hs:putCountModify;
       </sect3>
     </sect2>
   </sect1>
