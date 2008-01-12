@@ -1,6 +1,7 @@
 :set -i../ch10
 
 :load PNM
+:m +Control.Monad
 --# Maybe
 :type (>>?)
 
@@ -8,3 +9,7 @@
 :load Parse
 --# Parse
 :type (==>)
+
+--# fmap
+:type fmap
+:type liftM

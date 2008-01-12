@@ -619,7 +619,7 @@
 
     </sect2>
 
-    <sect2>
+    <sect2 id="hs.binary.functor.laws">
       <title>Thinking more about functors</title>
 
       <para id="x_WS">We've made a few implicit assumptions about how functors
