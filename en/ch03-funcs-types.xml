@@ -16,7 +16,7 @@
       implementation.  Let's talk in more detail about each of these
       ideas.  Because Haskell is quite different from mainstream
       programming languages in how it treats types, let's not assume
-      too much shared understanding as we cover each one.</para>
+      too much shared understanding as we discuss each idea.</para>
 
     <para id="x_p2">Every value and expression in Haskell has a
       <emphasis>type</emphasis>, such as <type>Integer</type> or
@@ -28,33 +28,39 @@
 	of type <code>X</code></quote>; the two phrases mean the same
       thing.  Functions, being values, have types too.</para>
 
-    <para id="x_AN">Here are a few examples of values, expressions, and their
-      types: the value <literal>'a'</literal> has type
+    <para id="x_AN">Here are a few examples of values, expressions,
+      and their types: the value <literal>'a'</literal> has type
       <type>Char</type>; the expression <literal>"a" ++ "b"</literal>
-      has type <type>String</type>.  We call an expression that obeys
-      the language's type rules <emphasis>well typed</emphasis>.  An
+      has type <type>String</type> (the <function>++</function> is the
+      concatenation operator).  We call an expression that obeys the
+      language's type rules <emphasis>well typed</emphasis>.  An
       expression that disobeys the type rules, such as <code>10 +
 	"hello"</code>, is <emphasis>ill typed</emphasis>, and will be
-      rejected by a Haskell implementation.</para>
+      rejected by a Haskell implementation.  (Our example <code>10 +
+	"hello"</code> is ill typed because the
+      <function>(+)</function> operator works with numbers.)</para>
 
     <para id="x_q2">When we say that Haskell has a
       <quote>strong</quote> type system, we mean that every expression
       and value has exactly one <emphasis>most general
-	type</emphasis>.  The notion of a most general type is best
-      explained by example: the expression <literal>x - 1</literal> by
-      itself doesn't result in a specific kind of number: it will work
-      equally well given a value of <varname>x</varname> that's an
-      <type>Integer</type> or a <type>Double</type> (a floating point
-      number). The most general interpretation of it is that it will
-      accept a value of any numeric type.</para>
+	type</emphasis>, which is a notion we can explain by example.
+      The expression <literal>x - 1</literal> doesn't represent a
+      specific type of number: it will work equally well if
+      <varname>x</varname> is an <type>Integer</type> or a
+      <type>Double</type> (a floating point number). As a result, the
+      most general type for which the expression is valid is any
+      numeric type.  The expression <type>1 &lt; 2</type> is defined
+      to return a <type>Bool</type>, so its most general type is
+      <type>Bool</type>.</para>
 
-    <para id="x_BN">Strong typing means that any attempt to apply a function to
-      a value of a different type causes an error.  Another aspect of
-      Haskell's view of strong typing is that it will not
-      automatically coerce values from one type to another.  For
-      example, whereas a C compiler will automatically coerce a value
-      of type <type>int</type> into a <type>float</type> for us if a
-      function expects a parameter of type <type>float</type>, a
+    <para id="x_BN">Strong typing means that any attempt to apply a
+      function to a value of a different type causes an error. Another
+      aspect of Haskell's view of strong typing is that it will not
+      automatically coerce values from one type to another.  (Coercion
+      is also known as casting or conversion.)  For example, a C
+      compiler will automatically and silently coerce a value of type
+      <type>int</type> into a <type>float</type> on our behalf if a
+      function expects a parameter of type <type>float</type>, but a
       Haskell compiler will raise a compilation error in a similar
       situation.  We must explicitly coerce types ourselves.</para>
 
@@ -95,12 +101,11 @@
       realistic way of putting this is that Haskell code often has
       fewer trivial bugs.)</para>
 
-    <para id="x_v2">Finally, <quote>type inference</quote> means that
-      the compiler can automatically figure out the types of most
-      values and expressions, based on the context in which they
-      appear. Haskell allows us to explicitly declare the type of any
-      value, but the presence of type inference means that only rarely
-      <emphasis>must</emphasis> we do so.</para>
+    <para id="x_v2">Finally, the compiler can automatically deduce the
+      types of almost all values in a program. This process is known
+      as type inference. Haskell allows us to explicitly declare the
+      type of any value, but the presence of type inference means that
+      this is almost always optional, not something we must do.</para>
 
     <para id="x_DN">While strong, static typing makes Haskell safe, type
       inference makes it concise.  The result is potent: we end up
@@ -166,8 +171,8 @@
   <sect1 id="hs.funcstypes.composite">
     <title>Useful composite data types: lists and tuples</title>
 
-    <para id="x_D3">The most common composite data types in Haskell are the list
-      and tuple.</para>
+    <para id="x_D3">The most common composite data types in Haskell
+      are lists and tuples.</para>
 
     <para id="x_E3">We've already seen the list type mentioned in <xref
 	linkend="hs.starting.string"/>, where we found that Haskell
@@ -177,16 +182,22 @@
       simply an alias for <type>[Char]</type>.  You can use the two
       interchangeably.)</para>
 
-    <para id="x_F3">More generally, we can write the type <quote>list of
-	<varname role="type">a</varname></quote> for any type <varname
-	role="type">a</varname> by enclosing <varname
-	role="type">a</varname> in square brackets, <type>[a]</type>.
-      Lists are strongly typed: a list of one type has an identity of
-      its own, distinct from a list of another type. The type
-      <type>[Int]</type> is a list that can only contain values of
-      type <type>Int</type>, for example.  We also call the list type
-      <emphasis>polymorphic</emphasis>, because it can contain any
-      type of value.</para>
+    <para id="x_F3">We call the list type
+      <emphasis>polymorphic</emphasis> because it can contain any type
+      of value (see <xref linkend="hs.funcstypes.polymorphism"/> for
+      more details).  We can write the type <quote>list of <varname
+	  role="type">a</varname></quote> for any type <varname
+	role="type">a</varname> by enclosing the type in square
+      brackets: <type>[a]</type>.  The lowercase <varname
+	role="type">a</varname> is called a <emphasis>type
+	variable</emphasis>; it's a placeholder for some other type
+      whose details do not matter.</para>
+
+    <para>So, for example, the type <type>[Int]</type> is a list of
+      values of type <type>Int</type> (and <emphasis>only</emphasis>
+      of type <type>Int</type>!), the type
+      <type>[MyPersonalType]</type> is a list of values of type
+      <type>MyPersonalType</type>, and so on.</para>
 
     <para id="x_G3">Lists are the <quote>bread and butter</quote> of Haskell
       collections.  Whereas in an imperative language, we might repeat
@@ -320,61 +331,141 @@
 
       &func.ghci:headDrop;
 
-      <para id="x_Y3">We can read this as <quote>pass the result of the
-	  expression <code>drop 4 "azerty"</code> as the argument to
-	  <function>head</function></quote>.  If we were to leave out
-	the parentheses, Haskell would instead interpret the
+      <para id="x_Y3">We can read this as <quote>pass the result of
+	  the expression <code>drop 4 "azerty"</code> as the argument
+	  to <function>head</function></quote>.  If we were to leave
+	out the parentheses, Haskell would instead interpret the
 	expression as <quote>pass <function>drop</function> as the
-	  argument to <function>head</function></quote>.  Compilation
-	would fail with a type error, as <function>drop</function> is
-	a function, not a list.</para>
+	  argument to <function>head</function></quote> .  Compilation
+	would fail with a type error, as <function>head</function>
+	requires its argument to be a list, and
+	<function>drop</function> is a function.  (The offending
+	expression would actually be parsed as <code>(((head drop) 4)
+	  "azerty")</code>, where we've introduced lots of extra
+	  parentheses to eliminate any ambiguity.)</para>
     </sect2>
   </sect1>
 
   <sect1 id="hs.funcstypes.sigs">
     <title>Understanding a function's type signature</title>
 
-    <para id="x_Z3">A consequence of Haskell's strong typing is that
-      <function>fst</function> and <function>snd</function> only
-      accept two-tuples as arguments.  Let's see what &ghci; tells us
-      about their types.</para>
+    <para id="x_Z3">Let's take a look at a function's type.</para>
 
-    &func.ghci:fst.type;
+    &func.ghci:lines.type;
 
     <para id="x_a3">We can read the <literal>-&gt;</literal> above as
       <quote>returns</quote>.  The entire signature thus tells us that
-      <function>fst</function> takes any two-tuple whose elements are
-      of types <varname role="type">a</varname> and <varname
-	role="type">b</varname> (each of which can be of any type),
-      and returns a value with type <varname role="type">a</varname>.
-      Sure enough, if we try calling <function>fst</function> with a
-      three-tuple, things don't go so well.</para>
+      <function>lines</function> takes a value of type <type>String</type>
+      and returns a value with type <type>[String]</type>: it takes
+      one string, and returns a list of strings.</para>
 
-    &func.ghci:fst.bad;
+    &func.ghci:lines;
 
-    <para id="x_b3">Notice that the type signatures above give us a strong hint
-      as to what these functions might actually
+    <para id="x_b3">The <code>\n</code> in the input string is an
+      escaped newline character: <function>lines</function> splits a
+      string on line boundaries.  Notice that its type signature gave
+      us a strong hint as to what the functions might actually
       <emphasis>do</emphasis>. This is an incredibly valuable property
       of types in a functional language.  Since there aren't usually
-      any side effects for us to worry about, figuring what a function
-      does can often be a matter of reading its name and understanding
-      its type signature, with no <quote>regular documentation</quote>
-      required.</para>
+      any side effects for us to worry about, understanding what a
+      function does can often be a matter of reading its name and
+      understanding its type signature, with no <quote>regular
+	documentation</quote> required.</para>
+  </sect1>
 
-    <para id="x_c3">Just as we called the list type polymorphic because it can
-      contain values of any type, when a function has type variables
-      in its signature, indicating that some of its arguments can be
-      of any type, we call the function polymorphic, too.</para>
+  <sect1 id="hs.funcstypes.polymorphism">
+    <title>Polymorphism in Haskell</title>
 
-    <para id="x_d3">So far, we haven't seen a signature for a function that
-      takes <emphasis>more</emphasis> than one argument.  We've
+    <para>When we introduced lists, we mentioned that the list type is
+      polymorphic.  We'll spend a little time talking about
+      polymorphism in more detail here, because it's a generic term
+      that we should nail down.</para>
+
+    <para>If we want to fetch the last element of a list, we can call
+      the <function>last</function> function.  The value that it
+      returns must have the same type as the values in the list, but
+      <function>last</function> operates in the same way no matter
+      what that type actually <emphasis>is</emphasis>.</para>
+
+    &func.ghci:last;
+
+    <para>To capture the idea that <function>last</function> needs its
+      argument and result types to be the same, but doesn't need to
+      know their details, its type signature contains a <emphasis>type
+	variable</emphasis>.</para>
+
+    &func.ghci:last.type;
+
+    <para>Here, <varname role="type">a</varname> is the type
+      variable.</para>
+
+    <tip>
+      <title>Identifying a type variable</title>
+
+      <para>Type variables always start with a lowercase letter.  You
+	can always tell a type variable from a normal variable by
+	context, because the languages of types and functions are
+	separate: type variables live in type signatures, and regular
+	variables live in normal expressions.</para>
+
+      <para>It's common Haskell practice to keep the names of type
+	variables very short.  One letter is overwhelmingly common;
+	two is rare; and I don't think I've ever seen a type variable
+	that was three or more characters long.  Type signatures are
+	usually brief, so we aid readability more by keeping things
+	short than by making them descriptive.</para>
+    </tip>
+
+    <para id="x_c3">Just as we called the list type polymorphic
+      because it can contain values of any type, when a function has
+      type variables in its signature, indicating that some of its
+      arguments can be of any type, we call the function polymorphic,
+      too.</para>
+
+    <para>When we want to call <function>last</function> on, say, a
+      list of <type>Char</type>, we can substitute <type>Char</type>
+      for <varname role="type">a</varname> throughout the type
+      signature, which gives us the type of
+      <function>last</function>-over-<type>[Char]</type> as being
+      <type>[Char] -&gt; Char</type>.</para>
+
+    <para>The kind of polymorphism that Haskell supports is called
+      <emphasis>parametric</emphasis> polymorphism.  The choice of
+      naming is easy to understand: it lets us <quote>fill out</quote>
+      a type parameter <varname role="type">a</varname> with another
+      type.</para>
+
+    <para>Here are a few popular forms of polymorphism that Haskell
+      does not support.</para>
+
+    <para>In mainstream object oriented languages,
+      <emphasis>subtype</emphasis> polymorphism is more common than
+      parametric polymorphism.  The subclassing mechanisms of C++ and
+      Java give them subtype polymorphism.  A base class defines a set
+      of behaviours that its subclasses can modify and extend.</para>
+
+    <para>Also common is <emphasis>coercion</emphasis> polymorphism,
+      which allows a value of one type to be implicitly converted into
+      a value of another type.  Many languages provide limited forms
+      of coercion polymorphism, for example by automatically
+      converting integers into floating point numbers.</para>
+
+    <para>We'll refine our understanding of Haskell's support for
+      polymorphism in <xref linkend="hs.typeclasses"/>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Functions of more than one argument</title>
+
+    <para id="x_d3">So far, we haven't seen a signature for a function
+      that takes <emphasis>more</emphasis> than one argument.  We've
       already encountered a few such functions; let's look at
       <function>take</function>.</para>
 
     &func.ghci:take.type;
 
-    <para id="x_e3">It's pretty clear that there's something going on with an
-      <type>Int</type> and some lists, but why are there two
+    <para id="x_e3">It's pretty clear that there's something going on
+      with an <type>Int</type> and some lists, but why are there two
       <literal>-&gt;</literal> symbols in the signature?  Haskell
       parses this chain of arrows from right to left.  If we introduce
       parentheses, it makes it clearer how Haskell is interpreting
@@ -382,17 +473,16 @@
 
     &Take.hs:type;
 
-    <para id="x_f3">From this, it looks like we ought to read the type signature
-      as a function that takes one argument, an <type>Int</type>, and
-      returns another function.  That other function also takes one
-      argument, a list, and returns a list of the same type as its
-      argument.</para>
+    <para id="x_f3">From this, it looks like we ought to read the type
+      signature as a function that takes one argument, an
+      <type>Int</type>, and returns another function.  That other
+      function also takes one argument, a list, and returns a list of
+      the same type as its argument.</para>
 
-    <para id="x_g3">This is an intriguing idea, but it's not easy to see just
-      yet what its consequences might be.  We'll return to this topic
-      in <xref linkend="hs.fp.partialapp"/>, once we've spent a bit of
-      time writing functions.</para>
-
+    <para id="x_g3">This is an intriguing idea, but it's not yet easy
+      to see just yet what its consequences might be.  We'll return to
+      this topic in <xref linkend="hs.fp.partialapp"/>, once we've
+      spent a bit of time writing functions.</para>
   </sect1>
 
   <sect1 id="hs.funcstypes.srcfile">

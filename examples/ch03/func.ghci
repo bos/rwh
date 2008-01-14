@@ -19,14 +19,13 @@ snd (1,2)
 
 fst ("you", True)
 
---# fst.type
+--# lines.type
 
-:type fst
-:type snd
+:type lines
 
---# fst.bad
+--# lines
 
-fst (1,True,"foo")
+lines "the quick\nbrown fox"
 
 --# take.type
 
@@ -35,3 +34,12 @@ fst (1,True,"foo")
 --# headDrop
 
 head (drop 4 "azerty")
+
+--# last
+
+last [1,2,3,4,5]
+last "baz"
+
+--# last.type
+
+:type last
