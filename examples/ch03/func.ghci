@@ -1,15 +1,17 @@
 --# head
 
-head [1,2,3]
+head [1,2,3,4]
 
 --# tail
 
-tail [True, False]
+tail [1,2,3,4]
+tail [2,3,4]
+tail [3,4]
 
 --# takeDrop
 
-take 2 "abcdefg"
-drop 3 "abcdefg"
+take 2 [1,2,3,4,5]
+drop 3 [1,2,3,4,5]
 
 --# snd
 
@@ -43,3 +45,11 @@ last "baz"
 --# last.type
 
 :type last
+
+--# not.type
+
+:type not
+
+--# fst.type
+
+:type fst

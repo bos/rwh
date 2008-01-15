@@ -1,0 +1,5 @@
+--# shadow
+let x = 1
+x
+let x = "foo"
+x
