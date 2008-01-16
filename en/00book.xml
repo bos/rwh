@@ -11,35 +11,35 @@
 <!ENTITY ch01     SYSTEM "ch01-whyfp.xml">
 <!ENTITY ch02     SYSTEM "ch02-starting.xml">
 <!ENTITY ch03     SYSTEM "ch03-funcs-types.xml">
-<!ENTITY ch03a    SYSTEM "ch03a-defining-types.xml">
-<!ENTITY ch04     SYSTEM "ch04-fp.xml">
-<!ENTITY ch05     SYSTEM "ch05-library.xml">
-<!ENTITY ch06     SYSTEM "ch06-typeclasses.xml">
-<!ENTITY ch07     SYSTEM "ch07-io.xml">
-<!ENTITY ch08     SYSTEM "ch08-globs-and-regexps.xml">
-<!ENTITY ch09     SYSTEM "ch09-find-dsl.xml">
-<!ENTITY ch10     SYSTEM "ch10-binary.xml">
-<!ENTITY ch11     SYSTEM "ch11-testing.xml">
-<!ENTITY ch12     SYSTEM "ch12-barcode.xml">
-<!ENTITY ch13     SYSTEM "ch13-data.xml">
-<!ENTITY ch14     SYSTEM "ch14-monads.xml">
-<!ENTITY ch15     SYSTEM "ch15-monad-case.xml">
-<!ENTITY ch16     SYSTEM "ch16-monad-trans.xml">
-<!ENTITY ch17     SYSTEM "ch17-parsec.xml">
-<!ENTITY ch18     SYSTEM "ch18-ffi.xml">
-<!ENTITY ch19     SYSTEM "ch19-errors.xml">
-<!ENTITY ch20     SYSTEM "ch20-systems.xml">
-<!ENTITY ch21     SYSTEM "ch21-databases.xml">
-<!ENTITY ch22     SYSTEM "ch22-webclient.xml">
-<!ENTITY ch23     SYSTEM "ch23-gui.xml">
-<!ENTITY ch24     SYSTEM "ch24-datamining.xml">
-<!ENTITY ch25     SYSTEM "ch25-concurrent.xml">
-<!ENTITY ch26     SYSTEM "ch26-advanced-concurrent.xml">
-<!ENTITY ch27     SYSTEM "ch27-stm.xml">
-<!ENTITY ch28     SYSTEM "ch28-profiling.xml">
-<!ENTITY ch29     SYSTEM "ch29-advanced-haskell.xml">
-<!ENTITY ch30     SYSTEM "ch30-sockets.xml">
-<!ENTITY ch31     SYSTEM "ch31-http-proxy.xml">
+<!ENTITY ch04     SYSTEM "ch04-defining-types.xml">
+<!ENTITY ch05     SYSTEM "ch05-fp.xml">
+<!ENTITY ch06     SYSTEM "ch06-library.xml">
+<!ENTITY ch07     SYSTEM "ch07-typeclasses.xml">
+<!ENTITY ch08     SYSTEM "ch08-io.xml">
+<!ENTITY ch09     SYSTEM "ch09-globs-and-regexps.xml">
+<!ENTITY ch10     SYSTEM "ch10-find-dsl.xml">
+<!ENTITY ch11     SYSTEM "ch11-binary.xml">
+<!ENTITY ch12     SYSTEM "ch12-testing.xml">
+<!ENTITY ch13     SYSTEM "ch13-barcode.xml">
+<!ENTITY ch14     SYSTEM "ch14-data.xml">
+<!ENTITY ch15     SYSTEM "ch15-monads.xml">
+<!ENTITY ch16     SYSTEM "ch16-monad-case.xml">
+<!ENTITY ch17     SYSTEM "ch17-monad-trans.xml">
+<!ENTITY ch18     SYSTEM "ch18-parsec.xml">
+<!ENTITY ch19     SYSTEM "ch19-ffi.xml">
+<!ENTITY ch20     SYSTEM "ch20-errors.xml">
+<!ENTITY ch21     SYSTEM "ch21-systems.xml">
+<!ENTITY ch22     SYSTEM "ch22-databases.xml">
+<!ENTITY ch23     SYSTEM "ch23-webclient.xml">
+<!ENTITY ch24     SYSTEM "ch24-gui.xml">
+<!ENTITY ch25     SYSTEM "ch25-datamining.xml">
+<!ENTITY ch26     SYSTEM "ch26-concurrent.xml">
+<!ENTITY ch27     SYSTEM "ch27-advanced-concurrent.xml">
+<!ENTITY ch28     SYSTEM "ch28-stm.xml">
+<!ENTITY ch29     SYSTEM "ch29-profiling.xml">
+<!ENTITY ch30     SYSTEM "ch30-advanced-haskell.xml">
+<!ENTITY ch31     SYSTEM "ch31-sockets.xml">
+<!ENTITY ch32     SYSTEM "ch32-http-proxy.xml">
 
 <!-- Appendices. -->
 
@@ -118,7 +118,6 @@
   &ch01;
   &ch02;
   &ch03;
-  &ch03a;
   &ch04;
   &ch05;
   &ch06;
@@ -147,6 +146,7 @@
   &ch29;
   &ch30;
   &ch31;
+  &ch32;
 
   &appA;
   &appB;
