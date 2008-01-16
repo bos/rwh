@@ -13,18 +13,22 @@
       to construct new data types of our own.  We define a new data
       type using the <code>data</code> keyword.</para>
 
-    &MyType.hs:MyType;
+    &BookSection.hs:BookSection;
 
-    <para id="x_D4">The <type>MyType</type> after the <code>data</code> keyword
-      is the name of our new type.  (As we've already mentioned, a
-      type name must start with a capital letter.)  The string
-      <code>MyConstructor</code> is the name of the
-      <emphasis>constructor</emphasis> we'll call to create a value of
-      this type.  (As with a type name, a constructor name must start
-      with a capital letter.)  Finally, the <type>Int</type> and
-      <type>String</type> are the <emphasis>components</emphasis> of
-      the type.  A component serves the same purpose in Haskell as a
-      field in a structure or class would in another language.</para>
+    <para id="x_D4">The <type>BookSection</type> after the
+      <code>data</code> keyword is the name of our new type. We call
+      <type>BookSection</type> a <emphasis>type
+	constructor</emphasis>.  (As we've already mentioned, a type
+      name must start with a capital letter.)  The string
+      <code>Section</code> is the name of the <emphasis>value
+	constructor</emphasis> we'll apply to create a value of this
+      type.  (As with a type constructor, a value constructor's name
+      must start with a capital letter.)  Finally, the
+      <type>Int</type> and <type>String</type> that follow are the
+      <emphasis>components</emphasis> of the type.  A component serves
+      the same purpose in Haskell as a field in a structure or class
+      would in another language: it's a slot where we can place a
+      value.</para>
 
     <note>
       <title>Deriving what?</title>
@@ -37,29 +41,29 @@
 	print a value of this type.</para>
     </note>
 
-    <para id="x_F4">We can create a new value of type <type>MyType</type> by
-      treating <function>MyConstructor</function> as a function, and
-      calling it with arguments of types <type>Int</type> and
+    <para id="x_F4">We can create a new value of type
+      <type>BookSection</type> by treating
+      <function>Section</function> as a function, and applying it with
+      arguments of types <type>Int</type> and
       <type>String</type>.</para>
 
-    &MyType.hs:myValue;
+    &BookSection.hs:fp;
 
     <para id="x_G4">Once we've defined a type, we can experiment with it in
-      &ghci;, starting by using the <command>:load</command> command
+      &ghci;.  We begin by using the <command>:load</command> command
       to load our source file.</para>
 
-    &mytype.ghci:load;
+    &booksection.ghci:load;
 
-
-    <para id="x_H4">Remember the <code>myValue</code> variable we defined?  Here
+    <para id="x_H4">Remember the <code>fp</code> variable we defined?  Here
       it is.</para>
 
-    &mytype.ghci:myValue;
+    &booksection.ghci:fp;
 
     <para id="x_zK">A constructor serves as both a function for creating a value
       and a <quote>tag</quote> identifying what type of value we have.
       The value that &ghci; prints is telling us that we have created
-      a value with the tag <code>MyConstructor</code>, with the given
+      a value with the tag <code>BookSection</code>, with the given
       values in each <quote>slot</quote>.  (By the way, this is why we
       had to add <code>deriving (Show)</code> to the definition of our
       type; without that, &ghci; would print an error message, telling
@@ -69,29 +73,29 @@
     <para id="x_I4">We can construct new values interactively in &ghci;,
       too.</para>
 
-    &mytype.ghci:newValue;
+    &booksection.ghci:newValue;
 
     <para id="x_AL">The &ghci; command <command>:type</command> lets us see what
       the type of that expression is.</para>
 
-    &mytype.ghci:valueType;
+    &booksection.ghci:valueType;
 
     <para id="x_J4">To find out more about a type, we can use some of &ghci;'s
       browsing capabilities.  The <command>:info</command> command
       gets &ghci; to tell us everything it knows about a
       type.</para>
     
-    &mytype.ghci:info;
+    &booksection.ghci:info;
 
     <para id="x_K4">We can also find out why we use
-      <function>MyConstructor</function> to construct a new value of
-      type <type>MyType</type>.</para>
+      <function>Section</function> to construct a new value of
+      type <type>BookSection</type>.</para>
 
-    &mytype.ghci:type;
+    &booksection.ghci:type;
 
-    <para id="x_L4">From Haskell's perspective, then, a constructor is just
-      another function, one that happens to return a value of the type
-      we want to construct.</para>
+    <para id="x_L4">From Haskell's perspective, then, a value
+      constructor is just another function, one that happens to return
+      a value of the type we want to construct.</para>
   </sect1>
 
   <sect1 id="hs.deftypes.adt">

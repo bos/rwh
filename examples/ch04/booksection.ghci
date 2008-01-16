@@ -1,0 +1,22 @@
+--# load
+:load BookSection.hs
+
+--# fp
+fp
+:type fp
+
+--# newValue
+
+Section 1 "foo"
+
+--# valueType
+
+:type Section 1 "foo"
+
+--# info
+
+:info MyType
+
+--# type
+
+:type Section
