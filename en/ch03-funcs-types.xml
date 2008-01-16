@@ -400,7 +400,7 @@
     &func.ghci:fst;
 
     <note>
-      <title>Haskell tuples aren't just immutable lists</title>
+      <title>Haskell tuples aren't immutable lists</title>
 
       <para>If your background is in Python, you'll probably be used
 	to lists and tuples being almost interchangeable.  This isn't
