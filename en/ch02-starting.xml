@@ -443,7 +443,7 @@ Loading package base ... linking ... done.
 
 	<para id="x_nM">The syntax for &let; that &ghci; accepts is not the same
 	  as we would use in a normal Haskell program.  We'll see the
-	  normal syntax in <xref linkend="hs.funcstypes.locals"/>.</para>
+	  normal syntax in <xref linkend="hs.deftypes.locals"/>.</para>
       </warning>
     </sect2>
 

@@ -1,8 +1,9 @@
+{-- snippet myDrop.type --}
+myDrop :: Int -> [a] -> [a]
+{-- /snippet myDrop.type --}
+
 {-- snippet myDrop --}
 -- this is a comment, which continues until the end of the line
-
--- this is the function's type signature
-myDrop :: Int -> [a] -> [a]
 
 -- and this is the function definition
 myDrop n xs = if n <= 0 || null xs

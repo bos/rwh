@@ -91,7 +91,7 @@ Welcome to Haskell, John!
       no return value to speak of from &putStrLn;.  This is similar to
         <literal>void</literal> in Java or C.<footnote><para id="x_KN">  Strictly speaking,
         <literal>()</literal> is a 0-element tuple; see <xref
-        linkend="hs.funcstypes.unit"/> for details.</para>
+        linkend="hs.deftypes.unit"/> for details.</para>
       </footnote>
     </para>
     <para id="x_LN">Let's look at this with

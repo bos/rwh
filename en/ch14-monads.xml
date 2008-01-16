@@ -1075,7 +1075,7 @@
     <sect2>
       <title>Monads as a programmable semicolon</title>
 
-      <para id="x_IZ">Back in <xref linkend="hs.funcstypes.block"/>, we
+      <para id="x_IZ">Back in <xref linkend="hs.deftypes.block"/>, we
 	mentioned that layout is the norm in Haskell, but it's not
 	<emphasis>required</emphasis>.  We can write a &do; block
 	using explicit structure instead of layout.</para>

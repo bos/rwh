@@ -913,7 +913,7 @@
       you can write readable code more quickly.</para>
 
     <para id="x_CQ">As we already mentioned in <xref
-	    linkend="hs.funcstypes.tabs"/>, never use tab characters
+	    linkend="hs.deftypes.tabs"/>, never use tab characters
       in Haskell source files.  Use spaces.</para>
 
     <para id="x_DQ">If you find yourself proudly thinking that a particular

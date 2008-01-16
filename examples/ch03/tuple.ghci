@@ -2,8 +2,11 @@
 :type (True, "hello")
 (4, ['a', 'm'], (16, True))
 
---# type
-:type (False, ['a', 'm'], ("nested", True))
+--# type1
+:type (False, 'a')
+
+--# type2
+:type (False, 'a', 'b')
 
 --# complicated
 :load Tuple.hs

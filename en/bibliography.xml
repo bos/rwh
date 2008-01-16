@@ -53,6 +53,23 @@
       precursor to <citation><biblioref
 	  linkend="bib.okasaki99"/></citation>.</bibliomisc>
   </biblioentry>
+
+  <biblioentry id="bib.wadler89">
+    <abbrev>Wadler89</abbrev>
+    <biblioset relation="article">
+      <author><firstname>Philip</firstname><surname>Wadler</surname></author>
+      <title><ulink
+	  url="http://citeseer.ist.psu.edu/wadler89theorems.html">Theorems 
+	  for free!</ulink></title>
+    </biblioset>
+    <confgroup>
+      <confdates>September, 1989</confdates>
+      <conftitle>International Conference on Functional
+	Programming and Computer Architecture</conftitle>
+      <confnum>4</confnum>
+      <address>London, England</address>
+    </confgroup>
+  </biblioentry>
 </bibliography>
 <!--
 local variables: 

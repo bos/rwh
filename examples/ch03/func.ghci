@@ -27,7 +27,7 @@ fst ("you", True)
 
 --# lines
 
-lines "the quick\nbrown fox"
+lines "the quick\nbrown fox\njumps"
 
 --# take.type
 

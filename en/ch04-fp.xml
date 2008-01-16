@@ -274,7 +274,7 @@
 	assumption into Haskell.</para>
 
       <para id="x_D7">We've already seen the definition of the list algebraic
-	data type in <xref linkend="hs.funcstypes.listadt"/>, and know
+	data type in <xref linkend="hs.deftypes.listadt"/>, and know
 	that a list doesn't encode its own length.  Thus, the only way
 	that <function>length</function> can operate is to walk the
 	entire list.</para>
