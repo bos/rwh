@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="hs.deftypes" revision="alpha">
-  <title>Defining types, and more about functions</title>
+  <title>Defining Types, Streamlining Functions</title>
 
   <para>Topics: Creating new types.  Ways to write clearer
     functions.</para>

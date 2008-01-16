@@ -28,45 +28,50 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 		src="/support/figs/rss.png"/></a></span>
 	  3. <a href="hs.funcstypes.html">Types and
 	Functions</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-99-99 <a
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+	      href="/feeds/comments/hs.funcstypes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  4. <a href="hs.deftypes.html">Defining Types, Streamlining
+	  Functions</a></li>
+    <li class="zebra_b"><span class="chapinfo">2007-99-99 <a
 	      href="/feeds/comments/hs.fp/"><img
 		src="/support/figs/rss.png"/></a></span>
-	  4. <a href="hs.fp.html">Functional
+	  5. <a href="hs.fp.html">Functional
 	Programming</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-99-99 <a
+    <li class="zebra_a"><span class="chapinfo">2007-99-99 <a
 	      href="/feeds/comments/hs.library/"><img
 		src="/support/figs/rss.png"/></a></span>
-	  5. <a href="hs.library.html">Writing a
+	  6. <a href="hs.library.html">Writing a
 	Library</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.typeclasses/"><img
 		src="/support/figs/rss.png"/></a></span>
-	  6. <a href="hs.typeclasses.html">Using
+	  7. <a href="hs.typeclasses.html">Using
 	Typeclasses</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.io/"><img
 		src="/support/figs/rss.png"/></a></span>
-	  7. <a href="hs.io.html">Input and
+	  8. <a href="hs.io.html">Input and
 	Output</a></li>
-    <li class="zebra_a">13. <a href="hs.data.html">Data
+    <li class="zebra_b">14. <a href="hs.data.html">Data
 	Structures</a></li>
-    <li class="zebra_b">17. <a href="hs.parsec.html">Using
+    <li class="zebra_a">18. <a href="hs.parsec.html">Using
 	Parsec</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.install/"><img
 		src="/support/figs/rss.png"/></a></span>
 	A. <a href="hs.install.html">Installing GHC</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.escapes/"><img
 		src="/support/figs/rss.png"/></a></span>
 	B. <a href="hs.escapes.html">Characters, Strings,
 	and Escaping Rules</a></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.web/"><img
 		src="/support/figs/rss.png"/></a></span>
 	X. <a href="hs.web.html">Web Site and
 	Comment System Usage and Policies</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
 	      href="/feeds/comments/hs.bib/"><img
 		src="/support/figs/rss.png"/></a></span>
 	<a href="hs.bib.html">Bibliography</a></li>
