@@ -2,8 +2,8 @@
 :load BookSection.hs
 
 --# fp
-fp
-:type fp
+fpSection
+:type fpSection
 
 --# newValue
 
@@ -15,7 +15,7 @@ Section 1 "foo"
 
 --# info
 
-:info MyType
+:info BookSection
 
 --# type
 

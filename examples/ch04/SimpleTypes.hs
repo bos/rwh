@@ -1,15 +1,11 @@
-{-- snippet Coord --}
-data Coord = Coord Int Int
-{-- /snippet Coord --}
-
 {-- snippet accessors --}
-coordX (Coord x y) = x
-coordY (Coord x y) = y
+sectionNumber (BookSection n t) = n
+sectionTitle (BookSection n t) = t
 {-- /snippet accessors --}
 
 {-- snippet niceAccessors --}
-nicerX (Coord x _) = x
-nicerY (Coord _ y) = y
+nicerNumber (BookSection n _) = n
+nicerTitle (BookSection _ t) = t
 {-- /snippet niceAccessors --}
 
 {-- snippet Roygbiv --}

@@ -19,16 +19,18 @@
       <code>data</code> keyword is the name of our new type. We call
       <type>BookSection</type> a <emphasis>type
 	constructor</emphasis>.  (As we've already mentioned, a type
-      name must start with a capital letter.)  The string
-      <code>Section</code> is the name of the <emphasis>value
-	constructor</emphasis> we'll apply to create a value of this
-      type.  (As with a type constructor, a value constructor's name
-      must start with a capital letter.)  Finally, the
-      <type>Int</type> and <type>String</type> that follow are the
-      <emphasis>components</emphasis> of the type.  A component serves
-      the same purpose in Haskell as a field in a structure or class
-      would in another language: it's a slot where we can place a
-      value.</para>
+      name, and hence a type constructor, must start with a capital
+      letter.)  The string <code>Section</code> is the name of the
+      <emphasis>value constructor</emphasis> we'll apply to create a
+      value of this type.  (As with a type constructor, a value
+      constructor's name must start with a capital letter.)</para>
+
+    <para>Finally, the <type>Int</type> and <type>String</type> that
+      follow are the <emphasis>components</emphasis> of the type.  A
+      component serves the same purpose in Haskell as a field in a
+      structure or class would in another language: it's a
+      <quote>slot</quote> where we can put a value.  We'll often refer
+      to components as fields.</para>
 
     <note>
       <title>Deriving what?</title>
@@ -55,20 +57,10 @@
 
     &booksection.ghci:load;
 
-    <para id="x_H4">Remember the <code>fp</code> variable we defined?  Here
-      it is.</para>
+    <para id="x_H4">Remember the <code>fpSection</code> variable we
+      defined?  Here it is.</para>
 
     &booksection.ghci:fp;
-
-    <para id="x_zK">A constructor serves as both a function for creating a value
-      and a <quote>tag</quote> identifying what type of value we have.
-      The value that &ghci; prints is telling us that we have created
-      a value with the tag <code>BookSection</code>, with the given
-      values in each <quote>slot</quote>.  (By the way, this is why we
-      had to add <code>deriving (Show)</code> to the definition of our
-      type; without that, &ghci; would print an error message, telling
-      us that it doesn't know how to print a value of this
-      type.)</para>
 
     <para id="x_I4">We can construct new values interactively in &ghci;,
       too.</para>
@@ -93,98 +85,158 @@
 
     &booksection.ghci:type;
 
-    <para id="x_L4">From Haskell's perspective, then, a value
-      constructor is just another function, one that happens to return
-      a value of the type we want to construct.</para>
+    <para id="x_L4">We can treat a value constructor as just another
+      function, one that happens to create and return a new value of
+      the type we desire.</para>
+
+    <sect2>
+      <title>Naming types and values</title>
+
+      <para>When we introduced the type <type>BookSection</type>, we
+	deliberately chose to give the type constructor
+	<type>BookSection</type> a different name from the value
+	constructor <code>Section</code>, purely to make it obvious
+	which was which.</para>
+
+      <para>However, in Haskell, the names of types and values occupy
+	two independent <emphasis>namespaces</emphasis>, so there is
+	no ambiguity if we give a type constructor and a value
+	constructor the same name.</para>
+
+      &BookSection.hs:BookChapter;
+
+      <para>This definition says that the type named
+	<type>BookChapter</type> has a value constructor that is also
+	named <code>BookChapter</code>.  Since a type signature
+	doesn't contain value names, and a normal expression doesn't
+	contain type names, it's always clear from the context in
+	which we use a name whether that name refers to a type or a
+	value.</para>
+
+      <para>In fact, not only is it <emphasis>legal</emphasis> for a
+	value constructor to have the same name as its type
+	constructor, it's <emphasis>normal</emphasis>: you'll see this
+	all the time in regular Haskell code.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.adt">
     <title>Algebraic data types</title>
 
-    <para id="x_M4">The <type>Bool</type> type that we introduced earlier is the
-      simplest example of a sort of type called an <emphasis>algebraic
-	data type</emphasis>. An algebraic data type has a fixed set
-      of possible values, each of which is identified by a distinct
-      constructor.</para>
-
-    <para id="x_BL">The use of the word <quote>algebraic</quote> simply
-      indicates that the components of an algebraic data type are used
-      together.</para>
-
-    <para id="x_N4">In the case of <type>Bool</type>, the type has two
-      constructors, <code>True</code> and <code>False</code>.  Each
-      constructor is separated by a <literal>|</literal> character,
-      which we can read as <quote>or</quote>.  These are usually
-      referred to as alternatives or cases.</para>
+    <para id="x_M4">The <type>Bool</type> type that we introduced
+      earlier is the simplest example of a category of type called an
+      <emphasis>algebraic data type</emphasis>. An algebraic data type
+      has several value constructors.</para>
 
       &Bool.hs:Bool;
 
-    <para id="x_O4">Each constructor of an algebraic type can take
-      zero or more arguments; the numbers and types of the arguments
-      accepted by each constructor are independent.  For example,
+    <para id="x_N4">In the case of <type>Bool</type>, the type has two
+      value constructors, <code>True</code> and <code>False</code>.
+      Each value constructor is separated in the definition by a
+      <literal>|</literal> character, which we can read as
+      <quote>or</quote>.  The different value constructors are usually
+      referred to as <emphasis>alternatives</emphasis> or
+      <emphasis>cases</emphasis>.</para>
+
+    <note>
+      <title>Why <quote>algebraic</quote>?</title>
+
+      <para id="x_BL">The use of the word <quote>algebraic</quote> for
+	describing these data types comes from abstract
+	algebra.</para>
+
+      <para>Although the phrase <quote>algebraic data type</quote> is
+	long, we're being careful to avoid using the acronym
+	<quote>ADT</quote> instead.  That acronym is already widely
+	understood to stand for <quote><emphasis>abstract</emphasis>
+	data type</quote>, which is quite different.</para>
+    </note>
+
+    <para id="x_O4">Each of an algebraic data type's value
+      constructors can take zero or more arguments.  As an example,
       here's one way we might represent versions of the Windows
-      operating system, where old releases were monolithic, and newer
-      releases have <quote>service pack levels</quote> denoting major
-      updates after their initial releases.</para>
+      operating system.</para>
 
-      &OsVersion.hs:WindowsVersion;
+    &OsVersion.hs:WindowsVersion;
 
-    <para id="x_P4">The alternatives that represent older releases don't need
-      arguments, but those for the newer releases need an
-      <type>Int</type> to represent the patch level.</para>
+    <para id="x_P4">The alternatives that represent older releases
+      don't need arguments, but we use an <type>Int</type> to
+      represent a service pack level for newer releases.</para>
+      
+    &osversion.ghci:types;
 
     <sect2 id="hs.deftypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
 
-      <para id="x_Q4">Algebraic data types provide a single structuring
-	mechanism in instances where other languages have several
-	different building blocks.  Here are some analogues from C and
-	C++, which might make it clearer what we can do with algebraic
-	data types.</para>
+      <para id="x_Q4">Algebraic data types provide a uniform way to
+	describe data types.  Other languages often need several
+	different features to cover the same ground.  Here are some
+	analogues from C and C++, which might make it clearer what we
+	can do with algebraic data types, and how they relate to
+	concepts that might be more familiar.</para>
 
-      <para id="x_R4">With just one constructor, an algebraic data type groups
-	related values into one, and gives that value an identity
-	distinct from other types.  It corresponds to a
-	<code>struct</code> in C or C++, and its components correspond to the
-	fields of a struct.  Here's such a <code>struct</code>.</para>
+      <sect3>
+	<title>The struct</title>
 
-      &types.c:coord;
+	<para id="x_R4">With just one constructor, an algebraic data
+	  type is similar to a tuple: it groups related values
+	  together. It corresponds to a <code>struct</code> in C or
+	  C++, and its components correspond to the fields of a
+	  <code>struct</code>. Here's a C equivalent of the
+	  <type>BookSection</type> type that we defined
+	  earlier.</para>
 
-      <para id="x_CL">And here's an equivalent type in Haskell.</para>
+	&types.c:book_section;
 
-      &SimpleTypes.hs:Coord;
+	<para>The main difference between the two is that the fields
+	  in the Haskell type are anonymous and positional.</para>
 
-      <para id="x_DL">The only significant difference is that the fields in the
-	Haskell type are anonymous and positional.  In <xref
-	linkend="hs.deftypes.pattern"/>, we'll see how to use names
-	to access the fields of the <type>Coord</type> type.</para>
+	&BookSection.hs:BookSection;
 
-      <para id="x_S4">If an algebraic data type has multiple alternatives, we
-	can think of it as similar to a <code>union</code> in C or
-	C++.  A big difference between the two is that a union doesn't
-	tell us which alternative is actually present; we have to
-	record which alternative we're using ourselves, usually in
-	another field of a struct.  This means that unions can
-	sometimes be sources of bugs, where our notion of which
-	alternative we should be using is incorrect.</para>
+	<para>By <emphasis>positional</emphasis>, we mean that the
+	  section number is in the first field of the Haskell type,
+	  and the title is in the second.  In <xref
+	linkend="hs.deftypes.pattern"/>, we'll see how to access the
+	  fields of the <type>BookSection</type> type.</para>
 
-      <para id="x_T4">With an algebraic data type, Haskell stores the
-	constructor that we use in the value that we create, so we
-	don't need to manually sock it away somewhere else.</para>
+      </sect3>
 
-      <para id="x_U4">Algebraic data types also serve where we'd use
-	an <code>enum</code> in C or C++, to represent a range of
-	discrete symbolic values. Such algebraic data types are
-	sometimes referred to as enumeration types.  Here's an example
-	from C.</para>
+      <sect3>
+	<title>The union</title>
 
-      &types.c:roygbiv;
+	<para id="x_S4">If an algebraic data type has multiple
+	  alternatives, we can think of it as similar to a
+	  <code>union</code> in C or C++.  A big difference between
+	  the two is that a union doesn't tell us which alternative is
+	  actually present; we have to record which alternative we're
+	  using ourselves, usually in another field of a struct.  This
+	  means that unions can be sources of nasty bugs, where our
+	  notion of which alternative we should be using is
+	  incorrect.</para>
 
-      <para id="x_EL">And here's a Haskell equivalent.</para>
+	<para id="x_T4">With an algebraic data type, Haskell stores
+	  the constructor that we use in the value that we create, so
+	  we don't need to manually sock it away somewhere
+	  else.</para>
+      </sect3>
 
-      &SimpleTypes.hs:Roygbiv;
+      <sect3>
+	<title>The enum</title>
 
+	<para id="x_U4">Algebraic data types also serve where we'd use
+	  an <code>enum</code> in C or C++, to represent a range of
+	  discrete symbolic values. Such algebraic data types are
+	  sometimes referred to as enumeration types.  Here's an
+	  example from C.</para>
+
+	&types.c:roygbiv;
+
+	<para id="x_EL">And here's a Haskell equivalent.</para>
+
+	&SimpleTypes.hs:Roygbiv;
+
+      </sect3>
     </sect2>
 
     <sect2 id="hs.deftypes.adt.notes">

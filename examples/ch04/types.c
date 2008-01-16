@@ -1,9 +1,9 @@
-/** snippet coord */
-struct address {
-    int x;
-    int y;
+/** snippet book_section */
+struct book_section {
+    int number;
+    char *name;
 };
-/** /snippet coord */
+/** /snippet book_section */
 
 /** snippet roygbiv */
 enum roygbiv {

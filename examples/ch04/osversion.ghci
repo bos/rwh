@@ -1,0 +1,5 @@
+:load OsVersion
+
+--# types
+:type Win95
+:type WinXP
