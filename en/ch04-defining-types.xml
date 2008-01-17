@@ -192,13 +192,14 @@
 	<para>The main difference between the two is that the fields
 	  in the Haskell type are anonymous and positional.</para>
 
-	&BookSection.hs:BookSection;
+	&BookSection.hs:BookSection.noid;
 
 	<para>By <emphasis>positional</emphasis>, we mean that the
 	  section number is in the first field of the Haskell type,
-	  and the title is in the second.  In <xref
+	  and the title is in the second.  We refer to them by
+	  location, not by name.  In <xref
 	linkend="hs.deftypes.pattern"/>, we'll see how to access the
-	  fields of the <type>BookSection</type> type.</para>
+	  fields of a <type>BookSection</type> value.</para>
 
       </sect3>
 
