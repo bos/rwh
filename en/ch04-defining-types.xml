@@ -177,10 +177,11 @@
 
       <para id="x_Q4">Algebraic data types provide a uniform way to
 	describe data types.  Other languages often need several
-	different features to cover the same ground.  Here are some
-	analogues from C and C++, which might make it clearer what we
-	can do with algebraic data types, and how they relate to
-	concepts that might be more familiar.</para>
+	different features to achieve the same degree of
+	expressiveness.  Here are some analogues from C and C++, which
+	might make it clearer what we can do with algebraic data
+	types, and how they relate to concepts that might be more
+	familiar.</para>
 
       <sect3>
 	<title>The struct</title>
@@ -210,88 +211,110 @@
       </sect3>
 
       <sect3>
+	<title>The enum</title>
+
+	<para id="x_U4">Algebraic data types also serve where we'd use
+	  an <code>enum</code> in C or C++, to represent a range of
+	  symbolic values. Such algebraic data types are sometimes
+	  referred to as enumeration types.  Here's an example from
+	  C.</para>
+
+	&types.c:roygbiv;
+
+	<para id="x_EL">And here's a Haskell equivalent.</para>
+
+	&Roygbiv.hs:Roygbiv;
+
+	<tip>
+	  <title>Comparing for equality</title>
+
+	  <para>Notice that in the <code>deriving</code> clause for
+	    our <type>Roygbiv</type> type, we added another word,
+	    <code>Eq</code>.  This tells the Haskell implementation to
+	    allow us to compare the values for equality.</para>
+	</tip>
+
+	&roygbiv.ghci:using;
+
+	<para>In C, the values of an <code>enum</code> are unsigned
+	  integers.  We can use an integer in a context where an
+	  <code>enum</code> is expected.  A C compiler will
+	  automatically convert values between the two types.  In
+	  Haskell, this is not the case: each type is distinct.  We
+	  cannot compare <code>Red</code> with <code>True</code>,
+	  because they have different types.</para>
+
+	&roygbiv.ghci:types;
+
+	<para>Similarly, the values of <type>Roygbiv</type> aren't
+	  numeric, so a compiler will prevent us from accidentally use
+	  a number in place of a <type>Roygbiv</type> value.</para>
+      </sect3>
+
+      <sect3>
 	<title>The union</title>
 
 	<para id="x_S4">If an algebraic data type has multiple
 	  alternatives, we can think of it as similar to a
 	  <code>union</code> in C or C++.  A big difference between
 	  the two is that a union doesn't tell us which alternative is
-	  actually present; we have to record which alternative we're
-	  using ourselves, usually in another field of a struct.  This
-	  means that unions can be sources of nasty bugs, where our
-	  notion of which alternative we should be using is
-	  incorrect.</para>
+	  actually present; we have to explicitly and manually track
+	  which alternative we're using, usually in another field of
+	  an enclosing struct.  This means that unions can be sources
+	  of nasty bugs, where our notion of which alternative we
+	  should be using is incorrect.</para>
 
-	<para id="x_T4">With an algebraic data type, Haskell stores
-	  the constructor that we use in the value that we create, so
-	  we don't need to manually sock it away somewhere
-	  else.</para>
-      </sect3>
+	&types.c:shape;
 
-      <sect3>
-	<title>The enum</title>
+	<para>In the example above, the <code>union</code> can contain
+	  valid data for a <code>struct circle</code> or a
+	  <code>struct poly</code>, but not both at the same time.
+	  The <code>enum</code>, which we have to maintain and inspect
+	  by hand, indicates which kind of value is currently stored
+	  in the <code>union</code>.</para>
 
-	<para id="x_U4">Algebraic data types also serve where we'd use
-	  an <code>enum</code> in C or C++, to represent a range of
-	  discrete symbolic values. Such algebraic data types are
-	  sometimes referred to as enumeration types.  Here's an
-	  example from C.</para>
+	<para>The Haskell version of this code is both dramatically
+	  shorter and safer than the C equivalent.</para>
 
-	&types.c:roygbiv;
+	&ShapeUnion.hs:Shape;
 
-	<para id="x_EL">And here's a Haskell equivalent.</para>
-
-	&SimpleTypes.hs:Roygbiv;
-
+	<para id="x_T4">If we create a <type>Shape</type> value using
+	  the <code>Circle</code> constructor, the fact that we
+	  created a <code>Circle</code> is stored along with the
+	  circle's centre and radius.  When we later use a
+	  <code>Circle</code>, we can't accidentally treat it as a
+	  <code>Square</code>; we will see why in <xref
+	  linkend="hs.deftypes.pattern"/></para>
       </sect3>
     </sect2>
 
     <sect2 id="hs.deftypes.adt.notes">
-      <title>A few final notes</title>
+      <title>A few notes</title>
 
-      <para id="x_V4">From reading the preceding sections, it should be clear
-	that <emphasis>all</emphasis> of the data types that we define
-	with the <code>data</code> keyword are algebraic data types.
-	Some may have just one alternative; others have several; but
-	they're all using the same machinery.</para>
-
-      <para id="x_W4">Another useful thing to know is that it's perfectly okay
-	for the name of an algebraic type to have the same name as one
-	of its constructors to be the same.  It's always obvious from
-	context whether we're using a name to refer to a type or a
-	constructor, so this doesn't introduce any ambiguity.</para>
-
-      <para id="x_X4">Giving a type and its constructor the same name is in fact
-	something that we do frequently when the type has just one
-	constructor.</para>
-
-      &TypeName.hs:PerfectlyNormal;
-
-      <para id="x_Y4">When a type has multiple constructors, it's still legal to
-	give one of the constructors the  same name as the type, but
-	this is much less common.</para>
-
-      &TypeName.hs:LegalButWeird;
-
+      <para id="x_V4">From reading the preceding sections, it should
+	now be clear that <emphasis>all</emphasis> of the data types
+	that we define with the <code>data</code> keyword are
+	algebraic data types. Some may have just one alternative,
+	while others have several, but they're all using the same
+	machinery.</para>
     </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.paramtypes">
     <title>Parameterised types</title>
 
-    <para id="x_Z4">In our discussion of lists, we mentioned that we can create
-      a list of values of any type.  We can define our own types that
-      allow this, too.  To do this, we introduce variables into a type
-      declaration.</para>
+    <para id="x_Z4">We've repeatedly mentioned that the list type is
+      polymorphic: the elements of a list can be of any type.  We can
+      also add polymorphism to our own types. To do this, we introduce
+      type variables into a type declaration.</para>
 
       &Wrapper.hs:Wrapper;
 
-    <para id="x_a4">Here, the variable <varname role="type">a</varname> is not a
-      regular variable; it's called a <emphasis>type
-	variable</emphasis>, because it indicates that our
-      <type>Wrapper</type> type takes another type as its parameter
-      (hence calling it a parameterised type). What this lets us do is
-      use <type>Wrapper</type> on values of any type.</para>
+    <para id="x_a4">Here, the variable <varname
+	role="type">a</varname> is not a regular variable: it's a type
+      variable.  It indicates that our <type>Wrapper</type> type takes
+      another type as its parameter. This lets us use
+      <type>Wrapper</type> on values of any type.</para>
 
       &Wrapper.hs:wrappedTypes;
 
@@ -814,10 +837,10 @@
       of that parameter must be <type>Wrapper a</type>.</para>
     
     <para id="x_HL">And for good measure, here's how we can define functions to
-      access the fields of the <type>Coord</type> type we defined in
+      access the fields of the <type>BookSection</type> type we defined in
       <xref linkend="hs.deftypes.adt.comp"/>.</para>
 
-    &SimpleTypes.hs:accessors;
+    &BookSection.hs:accessors;
 
     <note>
       <title>The ordering of patterns is important</title>
@@ -887,7 +910,7 @@
       <para id="x_ML">Wild cards also help readability, as they make it easier
 	to tell which values we're really using.</para>
 
-      &SimpleTypes.hs:niceAccessors;
+      &BookSection.hs:niceAccessors;
 
     </sect2>
 
