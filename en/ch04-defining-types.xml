@@ -165,6 +165,12 @@
       
     &osversion.ghci:types;
 
+    <para>When we apply one of the later value constructors, we must
+      supply an argument of type <type>Int</type> in order to produce
+      a value.</para>
+
+    &osversion.ghci:apply;
+
     <sect2 id="hs.deftypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
