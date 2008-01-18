@@ -1,0 +1,10 @@
+:load Roygbiv
+
+--# using
+:type Yellow
+Red
+Red == Yellow
+Green == Green
+
+--# types
+Red == True
