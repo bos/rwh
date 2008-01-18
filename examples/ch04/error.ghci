@@ -9,3 +9,9 @@ head (mySecond [[9]])
 --# error
 
 error "an error message"
+
+--# safeSecond
+safeSecond []
+safeSecond [1]
+safeSecond [1,2]
+safeSecond [1,2,3]

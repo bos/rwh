@@ -1,17 +1,25 @@
 {-- snippet roots --}
 import Data.Complex
 
-roots :: Double -> Double -> Double
-      -> Either (Complex Double, Complex Double) (Double, Double)
+data Roots = Undefined
+           | RealValued Double Double
+           | ComplexValued (Complex Double) (Complex Double)
 
-roots a b c = if n >= 0
-              then Right ((-b + sqrt n) / a2, (-b - sqrt n) / a2)
-              else Left ((-b' + sqrt n') / a2', (-b' - sqrt n') / a2')
-    where n   = b**2 - 4 * a * c
-          a2  = 2 * a
-          n'  = n :+ 0
-          b'  = b :+ 0
-          a2' = a2 :+ 0
+roots :: Double -> Double -> Double -> Roots
+
+roots a b c =
+    if a == 0
+    then Undefined
+    else if n >= 0
+         then RealValued ((-b + s) / a2) ((-b - s) / a2)
+         else ComplexValued ((-b' + s') / a2') ((-b' - s') / a2')
+  where n   = b**2 - 4 * a * c
+        a2  = 2 * a
+        n'  = n :+ 0
+        b'  = b :+ 0
+        a2' = a2 :+ 0
+        s = sqrt n
+        s' = sqrt n'
 {-- /snippet roots --}
 
 {-- snippet isRealValued --}
@@ -22,14 +30,14 @@ isRealValued _        = True
 {-- /snippet isRealValued --}
 
 {-- snippet realRoots --}
+-- (b^2 - 4ac) / 2a
 realRoots :: Double -> Double -> Double -> Maybe (Double, Double)
 
-realRoots a b c = let n  = b**2 - 4 * a * c
+realRoots a b c = let n  = b^2 - 4 * a * c
                       a2 = 2 * a
-                      r1 = (-b + sqrt n) / a2
-                      r2 = (-b - sqrt n) / a2
-                  in if n >= 0 && a /= 0
-                     then Just (r1, r2)
+                      s = sqrt n
+                  in if a /= 0 && n >= 0
+                     then Just ((-b + s) / a2, (-b - s) / a2)
                      else Nothing
 {-- /snippet realRoots --}
 

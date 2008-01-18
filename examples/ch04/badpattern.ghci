@@ -1,0 +1,4 @@
+:load BadPattern
+
+--# error
+badExample [1]

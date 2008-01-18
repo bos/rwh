@@ -191,9 +191,12 @@
 
       &AlgebraicVector.hs:types;
 
-      <para>Because <type>Vector2D</type> and <type>Polar2D</type> are
-	distinct types, we can't accidentally mix up our
-	representations.</para>
+      <para>The Cartesian and polar forms represent equivalent
+	information using the same types for their two elements, but
+	using different ranges of values with distinct meanings.
+	Because <type>Vector2D</type> and <type>Polar2D</type> are
+	distinct types, Haskell will not let us accidentally mix up
+	these representations.</para>
 
       &algebraicvector.ghci:typed;
 
@@ -205,24 +208,22 @@
 
       <para>The type system can't rescue us here, because as far as
 	it's concerned, we're comparing two <type>(Double,
-	  Double)</type> pairs, which is a valid expression.</para>
+	  Double)</type> pairs, which is a valid thing to do.</para>
 
       <para>There's no hard and fast rule for deciding when it's
 	better to use a tuple or a distinct data type, but here's a
 	rule of thumb to follow.</para>
 
-      <para>If you're building and mixing many compound values that
-	will have long lives and propagate widely throughout your
-	code, the added type safety will almost certainly pay off by
-	enlisting the compiler to prevent bugs.  For smaller,
-	localised uses, such as returning multiple values from a
-	function and immediately consuming them, a tuple is
-	fine.</para>
+      <para>If you're using many similarly-structured compound values
+	that propagate widely throughout your code, adding type safety
+	will almost certainly pay off.  For smaller, localised uses,
+	such as returning multiple values from a function and
+	immediately consuming them, a tuple is fine.</para>
 
       <para>In general, as the cost of making a mistake, or locating a
-	bug, grows, then increasing type safety makes more sense.
-	Better yet, stronger typing can often add little or no cost in
-	either readability or performance.</para>
+	bug, grows, then increasing type safety makes more sense. In
+	practice, Haskell's type system often imposes little or no
+	cost in either readability or performance.</para>
     </sect2>
 
     <sect2 id="hs.deftypes.adt.comp">
@@ -238,7 +239,7 @@
 	familiar.</para>
 
       <sect3>
-	<title>The struct</title>
+	<title>The structure</title>
 
 	<para id="x_R4">With just one constructor, an algebraic data
 	  type is similar to a tuple: it groups related values
@@ -265,7 +266,7 @@
       </sect3>
 
       <sect3>
-	<title>The enum</title>
+	<title>The enumeration</title>
 
 	<para id="x_U4">Algebraic data types also serve where we'd use
 	  an <code>enum</code> in C or C++, to represent a range of
@@ -306,7 +307,7 @@
       </sect3>
 
       <sect3>
-	<title>The union</title>
+	<title>The discriminated union</title>
 
 	<para id="x_S4">If an algebraic data type has multiple
 	  alternatives, we can think of it as similar to a
@@ -359,20 +360,15 @@
 
     <para id="x_Z5">Now that we've seen how to construct values with
       algebraic data types, let's discuss how we work with them.  We
-      need to be able to distinguish between cases, and to extract
-      values from a compound value.  Haskell has a simple
+      need to be able to distinguish between alternatives, and to
+      extract elements from a compound value.  Haskell has a simple
       <emphasis>pattern matching</emphasis> facility that lets us do
       both of these.</para>
 
     <para id="x_a5">A pattern lets us peer inside a compound value and
-      bind variables to the values it contains.  In fact, when we
-      define a function, the parameters that we define are already
-      patterns. We're just adding to our existing knowledge
-      here.</para>
-
-    <para id="x_b5">Here's an example of pattern matching in action on
-      a list; we're going to add all elements of the list
-      together.</para>
+      bind variables to the values it contains.  Here's an example of
+      pattern matching in action on a list: we're going to add all
+      elements of the list together.</para>
 
     &add.hs:sumList;
 
@@ -397,98 +393,169 @@
 
     <para id="x_e5">It might initially look like we have two functions
       named <function>sumList</function> here, but Haskell lets us
-      define a function as a series of equations; so in fact these two
-      clauses are defining the behaviour of one function, over
-      different inputs.  (By the way, there's already a standard
-      function, <function>sum</function>, that does this
-      adding-of-a-list for us.  This <function>sumList</function> is
-      purely for illustration.)</para>
+      define a function as a <emphasis>series of equations</emphasis>:
+      so in fact these two clauses are defining the behaviour of one
+      function, over different input values.  The <code>[]</code> on
+      the left of the second equation is the constructor for an empty
+      list.</para>
 
-    <para id="x_f5">The syntax for pattern matching on a tuple is similar to the
-      syntax for constructing a tuple.  Here's a function that returns
-      the third element from a three-tuple.</para>
+      <note>
+	<title>Ordering is important</title>
 
-    &Tuple.hs:third;
+	<para id="x_m5">When applying a function, a Haskell
+	implementation checks patterns for matches in the order in
+	which we specify them in our equations. Matching proceeds from
+	top to bottom, and stops at the first success.</para>
+      </note>
 
-    <para id="x_g5">There's no limit on how <quote>deep</quote> within a value a
-      pattern can look.  Here's a definition that looks both inside a
-      tuple and inside a list within that tuple.</para>
+      <para>As a final note, there already exists a standard function,
+      <function>sum</function>, that performs this adding-of-a-list
+      for us.  Our <function>sumList</function> is purely for
+      illustration.</para>
 
-    &Tuple.hs:complicated;
+    <sect2>
+      <title>Construction and deconstruction</title>
 
-    <para id="x_h5">We can try this out interactively.</para>
+      <para>Let's step back and take a look at the relationship
+	between constructing a value and pattern matching on
+	it.</para>
 
-    &tuple.ghci:complicated;
+      <para>A value constructor builds a value.  The expression
+	<code>'a':['b']</code> applies the <function>(:)</function>
+	constructor to the values <code>'a'</code> and
+	<code>['b']</code> to produce a new compound value, the list
+	<code>['a', 'b']</code>.</para>
 
-    <para id="x_i5">Wherever a literal value is present in a pattern
-      (<literal>True</literal> and <literal>5</literal> in the tuple
-      pattern above), that value must match exactly for the pattern
-      match to succeed.  If every pattern within a series of equations
-      fails to match, we get a runtime error.</para>
+      <para>When we pattern match against the <function>(:)</function>
+	constructor, we <emphasis>reverse</emphasis> the construction
+	process.  First of all, we check to see if the value does in
+	fact contain that constructor.  If it does, we inspect the
+	compound value to get the individual values that we originally
+	passed to the constructor when we created the value.</para>
 
-    &tuple.ghci:nomatch;
+      <para>Let's consider what happens if we
+	match the pattern <code>(x:xs)</code> against our example
+	expression <code>'a': ['b']</code>.</para>
 
-    <para id="x_j5">We can pattern match on algebraic data types using their
-      constructors.  Remember the <type>Wrapper</type> type we defined
-      earlier?  Here's how we can extract a wrapped value from a
-      <type>Wrapper</type>.</para>
+      <itemizedlist>
+	<listitem>
+	  <para>The match will succeed, because the constructor in the
+	    value matches the one in our pattern.</para>
+	</listitem>
+	<listitem>
+	  <para>The variable <varname>x</varname> will be bound to
+	    <code>'a'</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>The variable <varname>xs</varname> will be bound to
+	    <code>['b']</code>.</para>
+	</listitem>
+      </itemizedlist>
+      
+      <para>Because pattern matching acts as the inverse of
+	construction, it's sometimes referred to as
+	<emphasis>de</emphasis>construction.</para>
 
-    &Wrapper.hs:unwrap;
+      <note>
+	<title>Deconstruction doesn't destroy anything</title>
 
-    <para id="x_k5">Let's see it in action.</para>
+	<para>If you're steeped in object oriented programming jargon,
+	  don't confuse deconstruction with destruction! Matching a
+	  pattern has no effect on the value we're examining: it just
+	  lets us <quote>look inside</quote> it.</para>
+      </note>
+    </sect2>
 
-    &wrapper.ghci:unwrap;
+    <sect2>
+      <title>Further adventures</title>
 
-    <para id="x_l5">Notice that Haskell infers the type of the
-      <function>unwrap</function> function based on the constructor
-      we're using in our pattern.  If we're trying to match a value
-      whose constructor is <function>Wrapper</function>, then the type
-      of that parameter must be <type>Wrapper a</type>.</para>
-    
-    <para id="x_HL">And for good measure, here's how we can define functions to
-      access the fields of the <type>BookSection</type> type we defined in
-      <xref linkend="hs.deftypes.adt.comp"/>.</para>
+      <para id="x_f5">The syntax for pattern matching on a tuple is
+	similar to the syntax for constructing a tuple.  Here's a
+	function that returns the last element of a 3-tuple.</para>
 
-    &BookSection.hs:accessors;
+      &Tuple.hs:third;
 
-    <note>
-      <title>The ordering of patterns is important</title>
+      <para id="x_g5">There's no limit on how <quote>deep</quote>
+	within a value a pattern can look.  This definition looks both
+	inside a tuple and inside a list within that tuple.</para>
 
-      <para id="x_m5">Haskell tests patterns for matches in the order in which
-	we list them in our code.  It goes from top to bottom and
-	stops at the first match; it <emphasis>does not</emphasis>
-	check every pattern and use the best match.</para>
+      &Tuple.hs:complicated;
 
-      <para id="x_n5">If you're familiar with pattern matching from a logic
-	programming language like Prolog, Haskell's facility is
-	simpler and less powerful.  It doesn't provide backtracking or
-	unification.</para>
-    </note>
+      <para id="x_h5">We can try this out interactively.</para>
 
-    <para id="x_IL">Here are some rules of thumb to help with remembering how
-      pattern matching works.  A constructor in a pattern
-      checks that the matched value has the right <quote>shape</quote>.  A
-      literal value ensures that that portion of the value has exactly
-      the matching contents.  And a variable makes no assertions about
-      either the shape or contents of the matched value; it matches anything,
-      and gives the variable that value.</para>
+      &tuple.ghci:complicated;
 
-    <para id="x_JL">So the pattern <code>(3:xs)</code> first of all is an
-      assertion that a matching value is a non-empty list, by matching
-      against the <function>(:)</function> constructor.  It also
-      ensures that the head of the list is the literal value
-      <literal>3</literal>.  And whatever the tail of the list is, it
-      will be bound to the variable <varname>xs</varname>.</para>
+      <para id="x_i5">Wherever a literal value is present in a pattern
+	(<literal>True</literal> and <literal>5</literal> in the tuple
+	pattern above), that value must match exactly for the pattern
+	match to succeed.  If every pattern within a series of
+	equations fails to match, we get a runtime error.</para>
+
+      &tuple.ghci:nomatch;
+
+      <para>For an explanation of this error message, skip forward a
+	little, to <xref
+	  linkend="hs.deftypes.patterns.nonexhaustive"/>.</para>
+
+      <para id="x_j5">We can pattern match on an algebraic data type
+	using its value constructors.  Remember the
+	<type>BookSection</type> type we defined earlier?  Here's how
+	we can extract the values from a
+	<type>BookSection</type>.</para>
+
+      &BookSection.hs:accessors;
+
+      <para id="x_k5">Let's see it in action.</para>
+
+      &booksection.ghci:unwrap;
+
+      <para id="x_l5">The compiler can infer the types of the accessor
+	functions based on the constructor we're using in our
+	pattern.</para>
+
+      &booksection.ghci:unwrap.types;
+
+      <para id="x_IL">Here are some rules of thumb to help with
+	remembering how pattern matching works.  A constructor in a
+	pattern checks that the matched value has the right
+	<quote>shape</quote>.  A literal value ensures that that
+	portion of the value has exactly the matching contents.  A
+	variable makes no assertions about either the shape or
+	contents of the matched value; it matches anything, and binds
+	the variable to that value.</para>
+
+      <para id="x_JL">So the pattern <code>(3:xs)</code> first of all
+	is an assertion that a matching value is a non-empty list, by
+	matching against the <function>(:)</function> constructor.  It
+	also ensures that the head of the list is the literal value
+	<literal>3</literal>.  If both of these conditions hold, the
+	tail of the list will be bound to the variable
+	<varname>xs</varname>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Variable naming in patterns</title>
+
+      <para>As you read functions that match on lists, you'll
+	frequently find that the names of the variables inside a
+	pattern resemble <code>(x:xs)</code> or <code>(d:ds)</code>.
+	This is a popular naming convention. The idea is that the name
+	<varname>xs</varname> is the <quote>plural</quote> of
+	<varname>x</varname>, because <varname>xs</varname> contains
+	the remainder of the list, and <varname>x</varname> its
+	head.</para>
+    </sect2>
 
     <sect2 id="hs.deftypes.dontcare">
       <title>The don't-care, or wild card, pattern</title>
 
-      <para id="x_o5">When we're writing a pattern, we can specify that we don't
-	care what value a particular value within a structure has,
-	without actually binding that value to a name.  The notation
-	for this is <code>_</code> (called a wild card or <quote>don't
-	  care</quote>), and we use it as follows.  This function
-	tells us whether the result of the <function>roots</function>
+      <para id="x_o5">When we're writing a pattern, we can specify
+	that we don't care what value a particular value within a
+	structure has, without actually binding that value to a name.
+	The notation for this is <code>_</code>, and we call it a
+	<emphasis>wild card</emphasis> or a <emphasis>don't
+	  care</emphasis>.  We use it as follows.  This function tells
+	us whether the result of the <function>roots</function>
 	function we defined earlier is real-valued or not.</para>
 
       &Roots.hs:isRealValued;
@@ -522,6 +589,40 @@
       &BookSection.hs:niceAccessors;
 
     </sect2>
+
+    <sect2 id="hs.deftypes.patterns.nonexhaustive">
+      <title>Non-exhaustive patterns</title>
+
+      <para>When writing a series of patterns, it's important to cover
+	all of a type's constructors.  For example, if we're
+	inspecting a list, we should have one equation that matches
+	the non-empty constructor <function>(:)</function>, and one
+	that matches the empty-list constructor
+	<function>[]</function>.</para>
+
+      <para>Let's see what happens if we fail to cover all the cases.
+	Here, we're deliberately omitting a match against the
+	<function>[]</function> constructor.</para>
+
+      &BadPattern.hs:badExample;
+
+      <para>If we call this with a value that it can't match, we'll
+	get an error at runtime: our software has a bug!</para>
+
+      &badpattern.ghci:error;
+
+      <para>In this example, the initial application of
+	<function>badExample</function> succeeds, because
+	<code>[1]</code> is a more compact way of printing <code>1 :
+	  []</code>.  The recursive application of <code>badExample
+	  xs</code> is the source of the error, because then the value
+	that's being matched against is simply <code>[]</code>.</para>
+
+      <para>&GHC; provides a helpful compilation option,
+	<option>-fwarn-incomplete-patterns</option>, that will cause
+	it to print a warning at compile time if a sequence of
+	patterns don't match all of a type's constructors.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.paramtypes">
@@ -530,346 +631,54 @@
     <para id="x_Z4">We've repeatedly mentioned that the list type is
       polymorphic: the elements of a list can be of any type.  We can
       also add polymorphism to our own types. To do this, we introduce
-      type variables into a type declaration.</para>
+      type variables into a type declaration.  Let's define a
+      <type>Nullable</type> type: we can use this to represent a
+      missing value, e.g. an empty field in a database row.</para>
 
-      &Wrapper.hs:Wrapper;
+    &Nullable.hs:Nullable;
 
     <para id="x_a4">Here, the variable <varname
 	role="type">a</varname> is not a regular variable: it's a type
-      variable.  It indicates that our <type>Wrapper</type> type takes
-      another type as its parameter. This lets us use
-      <type>Wrapper</type> on values of any type.</para>
-
-      &Wrapper.hs:wrappedTypes;
-
-    <para id="x_b4">As usual, we can load our source file into &ghci; and
-      experiment with it.</para>
-
-      &wrapper.ghci:experiment;
-
-    <para id="x_c4"><type>Wrapper</type> is a <quote>generic</quote> container
-      type (albeit a fairly useless one); we can construct a
-      <type>Wrapper</type> from a value of any type.  It is also
-      strongly typed; the type of whatever it contains is represented in
-      its own type.</para>
-
-    <para id="x_d4">To once again extend an analogy to more familiar languages,
-      this gives us a facility that bears some resemblance to
-      templates in C++, and to generics in Java.  (In fact, Java's
-      generics facility was inspired by several aspects of Haskell's
-      type system.)</para>
-
-    <para id="x_e4">We can nest uses of parameterised types inside each other,
-      but when we do, we may need to use parentheses to tell the
-      Haskell compiler what we mean.</para>
-
-      &Wrapper.hs:parens;
-  </sect1>
-
-  <sect1 id="hs.deftypes.locals">
-    <title>Back to writing functions: local variables</title>
-
-    <para id="x_f4">Let's take a break from writing about types for a few
-      moments.  Within the body of a function, we can introduce new
-      local variables whenever we need them, using a <code>let</code>
-      expression.  As an example, let's write a function that
-      calculates the real-valued roots of the quadratic equation
-      <literal>a * (x ** 2) + b * x + c == 0</literal>.</para>
-
-    &Roots.hs:realRoots;
-
-    <para id="x_g4">The keywords to look out for here are <code>let</code>,
-      which starts a block of variable declarations, and
-      <code>in</code>, which ends it.  Each line introduces a new
-      variable.  The name is on the left of the <literal>=</literal>,
-      and its value on the right.  We can use these variables both
-      within our block of variable declarations and in the expression
-      that follows the <code>in</code> keyword.</para>
-
-    <para id="x_h4">There's no problem with a variable earlier in a
-      <code>let</code> block referring to a later one, or even with
-      them referring to each other.  (In some functional languages,
-      this sort of flexible <code>let</code> is named
-      <code>letrec</code>.)</para>
-
-    <para id="x_i4">We can have multiple <code>let</code> blocks within an
-      expression.  There's also another mechanism we can use to
-      introduce local variables, called a <code>where</code> block.
-      The definitions in a <code>where</code> block apply to the code
-      that <emphasis>precedes</emphasis> it.  Let's illustrate what we
-      mean with another example.</para>
-
-    &Roots.hs:roots;
-
-    <para id="x_j4">Here, the <function>roots</function> function returns the
-      real roots when they're defined, and the complex roots
-      otherwise. (We left out the divide-by-zero case for simplicity.)
-      While a <quote>where</quote> clause initially looks very weird
-      to non-Haskell programmers, it's a great way to put the
-      <quote>important</quote> code early, followed by the auxiliary
-      definitions that support it.  After a while, you'll find
-      yourself missing <code>where</code> clauses in languages that
-      lack them!</para>
-
-    <para id="x_k4">The main difference between <code>let</code> and
-      <code>where</code> is one of scope.  The scope of a
-      <code>let</code> only extends to the expression after the
-      <code>in</code> keyword, while the variables introduced by a
-      <code>where</code> clause are visible upwards to the beginning
-      of the block that it <quote>belongs</quote> to. Also,
-      <code>let</code> is always paired with an expression, but
-      <code>where</code> is paired with a block of equations.</para>
-
-    <para id="x_l4">We'll be talking more about how to write <code>let</code>
-      expressions and <code>where</code> clauses in <xref
-	linkend="hs.deftypes.offside"/>.</para>
-
-    <note>
-      <title>A few observations about complex numbers</title>
-
-      <para id="x_m4">It's probably obvious from context above, but
-	<function>(:+)</function> is the constructor for a complex
-	number, taking the real part on the left and the imaginary
-	part on the right.</para>
-
-      <para id="x_n4">Also, <type>Complex</type> is parameterised over the type
-	of complex number it should represent.  In practice, it only
-	makes much sense to use <type>Complex Double</type>, since
-	&GHC; implements <type>Double</type> more efficiently than
-	<type>Float</type>.</para>
-    </note>
-
-    <sect2 id="hs.deftypes.locals.functions">
-      <title>Local functions</title>
-
-      <para id="x_FL">You'll have noticed that Haskell's syntax for defining a
-	variable looks very similar to its syntax for defining a
-	function.  This symmetry is preserved in <code>let</code> and
-	<code>where</code> blocks; we can define local
-	<emphasis>functions</emphasis> just as easily as local
-	<emphasis>variables</emphasis>.  All of the same syntax
-	applies as at the top level: we can use multiple equations,
-	patterns, and guards.</para>
-
-      &LocalFunction.hs:pluralise;
-
-      <para id="x_GL">In this example, we define and use a local function
-	<function>plural</function> using several equations.  Local
-	functions can freely use variables from the scopes that
-	enclose them; here, we use <varname>word</varname> from the
-	definition of the outer function
-	<function>pluralise</function>.  In the definition of
-	<function>pluralise</function>, the <function>map</function>
-	function (which we'll be revisiting in the next chapter)
-	applies the local function <function>plural</function> to
-	every element of the <varname>counts</varname> list.</para>
-    </sect2>
-  </sect1>
-
-  <sect1 id="hs.deftypes.error">
-    <title>Reporting errors</title>
-
-    <para id="x_w3">Haskell provides a standard function,
-      <function>error :: Char -&gt; a</function>, that we can call
-      when something has gone terribly wrong in our code.  We give it
-      a string parameter, which is the error message to display. Its
-      type signature looks peculiar; how can it produce a value of any
-      type <varname role="type">a</varname> given just a string? The
-      answer is that it doesn't, because <function>error</function> is
-      special.</para>
-
-    <para id="x_x3">It has that type so that we can call it anywhere
-      and it will always have the right type.   However, instead of
-      returning a value like a normal function, it immediately
-      terminates evaluation, and prints the error message we give it.
-      Here's an example.  The <function>mySecond</function> function
-      returns the second element of its input list, but fails if its
-      input list isn't long enough.</para>
-
-    &MySecond.hs:mySecond;
-
-    <para id="x_y3">As usual, we can see how this works in practice in
-      &ghci;.</para>
-
-      &error.ghci:mySecond;
-
-    <para id="x_z3">Notice that in the third case above, where we're
-      trying to use the result of the call to
-      <function>mySecond</function> as the argument to another
-      function, evaluation still terminates and drops us back to the
-      &ghci; prompt.  This is both the strength and weakness calling
-      <function>error</function>: it doesn't let us distinguish
-      between recoverable errors and problems so severe that they
-      really should terminate a program.  We'll see one way around
-      this problem in <xref linkend="hs.deftypes.maybe"/>.</para>
-  </sect1>
-
-  <sect1 id="hs.deftypes.maybe">
-    <title>How to represent a complicated result</title>
-
-    <para id="x_o4">We sneaked two previously unseen standard types,
-      <type>Maybe</type> and <type>Either</type>, into our
-      root-finding examples.  We use <type>Maybe</type> when it might
-      not make sense to return a normal result, for example because a
-      function's result is undefined for some inputs.  We use
-      <function>Just</function> to say <quote>we have a
-	result</quote>, and the argument to <function>Just</function>
-      is that result.  When we can't give a result, we use
-      <function>Nothing</function>, which takes no arguments.</para>
-
-    &realRoots.ghci:maybe;
-    
-    <para id="x_p4">Why do we need <type>Maybe</type> here?  The real-valued
-      roots of a quadratic equation are infinity when
-      <varname>a</varname>, the coefficient of <literal>x **
-	2</literal>, is zero.</para>
-
-    &realRoots.ghci:a0;
-
-    <para id="x_q4">They're also not defined when <literal>b ** 2 - 4 * a *
-	c</literal> is negative, because we would need to use complex
-      numbers to represent a negative square root.</para>
-
-    &realRoots.ghci:complex;
-
-    <para id="x_r4">Otherwise, we can return a normal result, wrapped in
-      <function>Just</function>.</para>
-
-    &realRoots.ghci:just;
-
-    <para id="x_s4">Compared to <function>error</function>, which we saw in
-      <xref linkend="hs.deftypes.error"/>, <type>Maybe</type> has
-      the huge advantage that it's a normal value, which we return to
-      our caller to deal with.  Calling <function>error</function>, by
-      contrast, is more akin to pulling on the program's ejector seat
-      handle as it disintegrates around us; something terrible has
-      happened, and we need to give up right now.</para>
-
-    <para id="x_t4">The <type>Either a b</type> type gives us even more
-      flexibility than <type>Maybe</type>, as it's got two type
-      parameters. We can wrap a value of any type <varname
-	role="type">a</varname> with <type>Left</type>, or a value of
-      an unrelated type <varname role="type">b</varname> with
-      <type>Right</type>.  Our <function>roots</function> function
-      uses this to return a <type>Double</type> when the real roots
-      are defined, and a <type>Complex Double</type> when they're
-      not.</para>
-  </sect1>
-
-  <sect1 id="hs.deftypes.offside">
-    <title>The offside rule, and white space in a function
-      body</title>
-
-    <para id="x_u4">In our definition of <function>realRoots</function>, the
-      left margin of our text wandered around quite a bit.  This was
-      not an accident: in Haskell, white space has meaning.</para>
-
-    <para id="x_v4">Haskell uses indentation as a cue to parse sections of code.
-      This use of layout to convey structure is sometimes called the
-      offside rule. At the top level, the first declaration or
-      definition can start in any column, and the Haskell compiler or
-      interpreter remembers that indentation level.  Every subsequent
-      top-level declaration must have the same indentation.</para>
-
-    <para id="x_w4">Here's an illustration of the top-level indentation rule.
-      Our first file, <filename>GoodIndent.hs</filename>, is well
-      behaved.</para>
-
-    &GoodIndent.hs:good;
-
-    <para id="x_x4">Our second, <filename>BadIndent.hs</filename>, doesn't play
-      by the rules.</para>
-
-    &BadIndent.hs:bad;
-
-    <para id="x_y4">Here's what happens when we try to load the two files into
-      &ghci;.</para>
-
-    &indent.ghci:load;
-
-    <para id="x_z4">An empty line is treated as a continuation of the current
-      item, as is a line indented to the right of the current current
-      item.</para>
-
-    <para id="x_A5">The rules for <code>let</code> expressions and
-      <code>where</code> clauses are similar.  After a
-      <code>let</code> or <code>where</code> keyword, the Haskell
-      compiler or interpreter remembers the indentation of the next
-      token it sees. If the next line is empty, or its indentation is
-      further to the right than the previous line, this counts as
-      continuing the previous line. On the other hand, if the
-      indentation is the same as the previous line, this is treated as
-      beginning a new item in the same block.</para>
-
-    <para id="x_B5">Here are nested uses of <code>let</code> and
-      <code>where</code>.</para>
-
-    &letwhere.hs:let;
-
-    <para id="x_C5">In the body of <varname>bar</varname>, the variable
-      <varname>a</varname> is only visible within the <code>let</code>
-      expression that defines it.  It's not visible to the
-      <code>let</code> expression that defines <varname>b</varname>;
-      only the <emphasis>result</emphasis> of the inner
-      <code>let</code> expression is visible.</para>
-
-    &letwhere.hs:where;
-
-    <para id="x_D5">Similarly, the scope of the first <code>where</code> clause
-      is the definition of <varname>foo</varname>, but the scope of
-      the second is just the first <code>where</code> clause.</para>
-
-    <para id="x_E5">The indentation we use for the <code>let</code> and
-      <code>where</code> clauses makes our intentions easy to figure
-      out.</para>
-
-    <sect2 id="hs.deftypes.tabs">
-      <title>A note about tabs versus spaces</title>
-
-      <para id="x_F5">If you are using a Haskell-aware text editor (e.g. Emacs),
-	it is probably already configured to use space characters for
-	all white space within a line.  If your editor is
-	<emphasis>not</emphasis> Haskell-aware, you should configure
-	it to only use space characters.</para>
-
-      <para id="x_G5">The reason for this is simple portability.  In an editor
-	that uses a fixed-width font, tab stops are by default placed
-	at different intervals on Unix-like systems (every eight
-	characters) than on Windows  (every four characters). This
-	means that no matter what your personal beliefs are about
-	where tabs belong, you can't rely on someone else's editor
-	honouring your preferences.  Any indentation that uses tabs is
-	going to look broken under <emphasis>someone's</emphasis>
-	configuration.  In fact, this could lead to compilation
-	problems, as the Haskell language standard requires
-	implementations to use the Unix tab width convention.
-	Using space characters avoids these problem
-	entirely.</para>
-    </sect2>
-
-    <sect2 id="hs.deftypes.block">
-      <title>The offside rule is not mandatory</title>
-
-      <para id="x_H5">We can use explicit structuring instead of layout to
-	indicate what we mean.  To do so, we start a block of
-	equations with an opening curly brace; separate each item with
-	a semicolon; and finish the block with a closing curly brace.
-	The following two uses of <code>let</code> have the same
-	meanings.</para>
-
-      &Braces.hs:braces;
-
-      <para id="x_I5">When we use explicit structuring, the normal layout rules
-	don't apply, which is why we can get away with unusual
-	indentation in the second <code>let</code> expression.</para>
-
-      <para id="x_J5">We can use explicit structuring anywhere that we'd
-	normally use layout.  It's valid for <code>where</code>
-	clauses, and even top-level declarations.  Just remember that
-	although the facility exists, explicit structuring is hardly
-	ever actually <emphasis>used</emphasis> in Haskell
-	programs.</para>
-    </sect2>
+      variable.  It indicates that our <type>Nullable</type> type
+      takes another type as its parameter.  This lets us use
+      <type>Nullable</type> on values of any type.</para>
+
+    &Nullable.hs:wrappedTypes;
+
+    <para id="x_b4">As usual, we can load our source file into &ghci;
+      and experiment with it.</para>
+
+    &nullable.ghci:experiment;
+
+    <para id="x_c4"><type>Nullable</type> is a polymorphic, or
+      generic, type.  When we create a type by giving the
+      <type>Nullable</type> type constructor a parameter, we can see
+      what the new type looks like by substituting that type for the
+      type variable <varname role="type">a</varname> everywhere in the
+      definition of <type>Nullable</type>.  The type <type>Nullable
+	String</type> has a value constructor, also named
+      <code>Nullable</code>, that takes a parameter of type
+      <type>String</type>.  As we might expect, the type
+      <type>Nullable Int</type> is distinct from <type>Nullable
+	Bool</type>, and so on.</para>
+
+    <para id="x_e4">We can nest uses of parameterised types inside
+      each other, but when we do, we may need to use parentheses to
+      tell the Haskell compiler how to parse our expression.</para>
+
+    &Nullable.hs:parens;
+
+    <para>If we omitted the parentheses, this would be parsed as
+      <code>(Really Really) Int</code>, which isn't valid.</para>
+
+    <para id="x_d4">To once again extend an analogy to more familiar
+      languages, parameterised types give us a facility that bears
+      some resemblance to templates in C++, and to generics in Java.
+      Just be aware that this is a shallow analogy.  Templates and
+      generics were added to their respective languages long after the
+      languages were initially defined, and have an awkward feel.
+      Haskell's parameterised types are simpler and easier to use, as
+      the language was designed with them  from the beginning.</para>
   </sect1>
 
   <sect1 id="hs.deftypes.recursive">
@@ -945,31 +754,282 @@
 
   </sect1>
 
-  <sect1 id="hs.deftypes.unit">
-    <title>Unit, the zero-element tuple</title>
+  <sect1 id="hs.deftypes.error">
+    <title>Reporting errors</title>
 
-    <para id="x_V5">Haskell has a special tuple type with no elements, written
-      <type>()</type>, and pronounced <quote>unit</quote>.</para>
+    <para id="x_w3">Haskell provides a standard function,
+      <function>error :: Char -&gt; a</function>, that we can call
+      when something has gone terribly wrong in our code.  We give it
+      a string parameter, which is the error message to display. Its
+      type signature looks peculiar: how can it produce a value of any
+      type <varname role="type">a</varname> given just a string? The
+      answer is that it doesn't, because <function>error</function> is
+      special.</para>
 
-    &unit.ghci:unit;
+    <para id="x_x3">It has a result type of <varname
+	role="type">a</varname> so that we can call it anywhere and it
+      will always have the right type.   However, instead of returning
+      a value like a normal function, it <emphasis>immediately aborts
+	evaluation</emphasis>, and prints the error message we give
+      it.</para>
 
-    <para id="x_W5">This type is only really used with parameterised data types,
-      to indicate that one of the type parameters isn't being used.
-      Since it doesn't encode any information, it's a rough equivalent
-      to <code>void</code> in C.</para>
+    <para>Here's an example.  The <function>mySecond</function>
+      function returns the second element of its input list, but fails
+      if its input list isn't long enough.</para>
 
-    <para id="x_X5">Here's an example of <type>()</type> in use.  We can
-      generalise our earlier <type>Tree</type> type a little, so that
-      internal nodes contain values of type <varname
-	role="type">a</varname>, while leaves contain values of type
-      <varname role="type">b</varname>.</para>
+    &MySecond.hs:mySecond;
 
-    &Tree.hs:ComplexTree;
+    <para id="x_y3">As usual, we can see how this works in practice in
+      &ghci;.</para>
 
-    <para id="x_Y5">If we wanted to create a <type>ComplexTree</type> where we
-      wanted to store <type>Int</type>s on the leaves, but don't care
-      about the internal nodes.  We would write its type as
-      <type>ComplexTree () Int</type>.</para>
+    &error.ghci:mySecond;
+
+    <para id="x_z3">Notice that in the third case above, where we're
+      trying to use the result of the call to
+      <function>mySecond</function> as the argument to another
+      function, evaluation still terminates and drops us back to the
+      &ghci; prompt.  This is the major weakness of using
+      <function>error</function>: it doesn't let our caller
+      distinguish between a recoverable error and a problem so severe
+      that it really should terminate our program.</para>
+
+    <sect2>
+      <title>A more controlled approach</title>
+
+      <para>Haskell defines a standard type, <type>Maybe</type>, that
+	we can use to represent the possibility of an error.  It has
+	the same structure as the <type>Nullable</type> type that we
+	defined earlier.</para>
+
+      &Maybe.hs:Maybe;
+
+      <para>If we want to represent <quote>fail</quote>, we use the
+	<function>Nothing</function> constructor.  Otherwise, we wrap
+	our value with the <function>Just</function>
+	constructor.</para>
+
+      <para>Let's see what our <function>mySecond</function> function
+	looks like if we return a <type>Maybe</type> value instead of
+	calling <function>error</function>.</para>
+
+      &MySecond.hs:safeSecond;
+
+      <para>If the list we're passed isn't long enough, instead of
+	crashing the program, we return <code>Nothing</code> to our
+	caller.  This lets them decide what to do if the list isn't
+	long enough, where a call to <function>error</function> would
+	force a crash.</para>
+
+      <para>To return to an earlier topic, we can use pattern matching
+	to clarify this function.</para>
+
+      &MySecond.hs:tidySecond;
+
+      <para>The first pattern only matches if the list is at least two
+	elements long (it contains two list constructors), and it
+	binds the variable <varname>x</varname> to the list's second
+	element. The second pattern is matched if the first
+	fails.</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.deftypes.locals">
+    <title>Introducing local variables</title>
+
+    <para id="x_f4">Within the body of a function, we can introduce
+      new local variables whenever we need them, using a
+      <code>let</code> expression.  As an example, let's write a
+      function that calculates the real-valued roots of the quadratic
+      equation <literal>a * (x ** 2) + b * x + c ==
+	0</literal>.</para>
+
+    <para>To represent the result, we'll use the <type>Maybe</type>
+      type.  The roots could potentially be infinite (if we divide by
+      zero) or complex numbers (if the square root term is negative),
+      in which cases we'll return <code>Nothing</code>.</para>
+
+    &realRoots.ghci:maybe;
+
+    <para>We'll use <function>Just</function> to contain the roots
+      when they're defined, and <function>Nothing</function> to
+      indicate that the result is undefined for the given
+      inputs.</para>
+
+    &Roots.hs:realRoots;
+
+    <para id="x_g4">The keywords to look out for here are
+      <code>let</code>, which starts a block of variable declarations,
+      and <code>in</code>, which ends it.  Each line introduces a new
+      variable.  The name is on the left of the <literal>=</literal>,
+      and the expression it's bound to is on the right.</para>
+
+    <note>
+      <title>Special notes</title>
+
+      <para>Let us re-emphasise our wording: a name in a &let; block
+	is bound to an <emphasis>expression</emphasis>, not to a
+	<emphasis>value</emphasis>.  Because Haskell is a lazy
+	language, the expression associated with a name won't actually
+	be evaluated until it's needed.</para>
+
+      <para>When we define a variable in a &let; block, we refer to it
+	as a <emphasis>&let;-bound</emphasis> variable.  This simply
+	means what it says: we bound the variable in a &let;
+	block.</para>
+
+      <para>Also, our use of white space here is important.  We'll
+	talk about the layout rules in <xref
+	linkend="hs.deftypes.offside"/>.</para>
+    </note>
+
+    <para>We can use the names of a variable in a &let; block both
+      within the block itself and in the expression that follows the
+      <code>in</code> keyword.</para>
+
+    <para>In general, we'll refer to the places within our code where
+      we can use a name as the name's <emphasis>scope</emphasis>.  If
+      we can use a name, it's <emphasis>in scope</emphasis>, otherwise
+      it's <emphasis>out of scope</emphasis>.</para>
+
+    <sect2>
+      <title>Local variables and lazy evaluation</title>
+
+      <para>In our definition of <function>realRoots</function>, we're
+	making use of laziness.  Here's how to follow what's going
+	on.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>To begin with, recall that the expressions in the
+	    &let; block aren't evaluated, they're just bound.</para>
+	</listitem>
+	<listitem>
+	  <para>The first value that is actually inspected is the &if;
+	    expression's predicate, <code>a /= 0 &amp;&amp; n &gt;=
+	      0</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>If the value of <varname>a</varname> is zero, then the
+	    left branch of the <function>(&amp;&amp;)</function>
+	    expression is <code>False</code>, and so the whole
+	    predicate is <code>False</code>.  No further computation
+	    is needed; we immediately return
+	    <code>Nothing</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>To compare <varname>n</varname> with zero, we must
+	    evaluate it.  If the <function>(&gt;=)</function>
+	    comparison fails, we again do no further work, and return
+	    <code>Nothing</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>Even when the predicate succeeds and we return the
+	    <function>Just</function> branch, we're returning an
+	    <emphasis>expression</emphasis>, not a value.  We still
+	    won't compute <code>sqrt n</code> until our caller
+	    actually needs one or other of the roots.</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Shadowing</title>
+
+      <para id="x_i4">We can <quote>nest</quote> multiple
+	<code>let</code> blocks inside each other in an
+	expression.</para>
+
+      &NestedLets.hs:foo;
+
+      <para>It's perfectly legal, but not exactly wise, to repeat a
+	variable name in a nested &let; expression.</para>
+
+      &NestedLets.hs:bar;
+
+      <para>Here, the inner <varname>x</varname> is hiding, or
+	<emphasis>shadowing</emphasis>, the outer
+	<varname>x</varname>.</para>
+
+      &nestedlets.ghci:bar;
+
+      <para>We can also shadow a function's parameters, leading to
+	even stranger results.  What is the type of this
+	function?</para>
+
+      &NestedLets.hs:quux;
+
+      <para>Because the argument <varname>a</varname> is never used in
+	the body of the function, due to being shadowed by the
+	&let;-bound <varname>a</varname>, the argument can have any
+	type at all.</para>
+
+      &nestedlets.ghci:quux;
+
+      <para>Shadowing can obviously lead to nasty bugs, so &GHC; has a
+	helpful <option>-fwarn-name-shadowing</option> option that
+	will print a warning message if we accidentally shadow a
+	name.</para>
+    </sect2>
+
+    <sect2>
+      <title>The where clause</title>
+
+      <para>There's another mechanism we can use to introduce local
+	variables, called a <code>where</code> clause. The definitions
+	in a <code>where</code> clause apply to the code that
+	<emphasis>precedes</emphasis> it.  Let's illustrate what we
+	mean with another example.</para>
+
+      <para>For variety, we'll introduce complex numbers to represent
+	the complex roots, and an abstract data type for the result.
+	The <function>(:+)</function> operator below constructs a
+	complex number from its real and imaginary parts.</para>
+
+      &Roots.hs:roots;
+
+      <para id="x_j4">Our <function>roots</function> function returns
+	the real-valued roots when they're defined, the complex roots
+	otherwise, and <code>Undefined</code> if the roots are
+	infinite due to <varname>a</varname> being zero.</para>
+
+      <para>A &where; clause can initially seem very weird to
+	non-Haskell programmers.  It's a great way to put your
+	reader's focus on the important details of an expression, with
+	the supportings definitions following afterwards.  After a
+	while, you'll find yourself missing <code>where</code> clauses
+	in languages that lack them!</para>
+
+      <para id="x_l4">As with &let; expressions, names are bound to
+	expressions in &where; clauses, and white space is
+	significant.  We'll be talking more about the layout rules
+	shortly, in <xref linkend="hs.deftypes.offside"/>.</para>
+    </sect2>
+
+    <sect2 id="hs.deftypes.locals.functions">
+      <title>Local functions</title>
+
+      <para id="x_FL">You'll have noticed that Haskell's syntax for
+	defining a variable looks very similar to its syntax for
+	defining a function.  This symmetry is preserved in
+	<code>let</code> and <code>where</code> blocks; we can define
+	local <emphasis>functions</emphasis> just as easily as local
+	<emphasis>variables</emphasis>.  All of the same syntax
+	applies as at the top level: we can use multiple equations,
+	patterns, and guards.</para>
+
+      &LocalFunction.hs:pluralise;
+
+      <para id="x_GL">In this example, we define and use a local
+	function <function>plural</function> using several equations.
+	Local functions can freely use variables from the scopes that
+	enclose them; here, we use <varname>word</varname> from the
+	definition of the outer function
+	<function>pluralise</function>.  In the definition of
+	<function>pluralise</function>, the <function>map</function>
+	function (which we'll be revisiting in the next chapter)
+	applies the local function <function>plural</function> to
+	every element of the <varname>counts</varname> list.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.case">
@@ -1199,6 +1259,122 @@
 	returns a function, and then treat that as an infix
 	function.</para>
     </note>
+  </sect1>
+
+  <sect1 id="hs.deftypes.offside">
+    <title>The offside rule, and white space in a function
+      body</title>
+
+    <para id="x_u4">In our definition of <function>realRoots</function>, the
+      left margin of our text wandered around quite a bit.  This was
+      not an accident: in Haskell, white space has meaning.</para>
+
+    <para id="x_v4">Haskell uses indentation as a cue to parse sections of code.
+      This use of layout to convey structure is sometimes called the
+      offside rule. At the top level, the first declaration or
+      definition can start in any column, and the Haskell compiler or
+      interpreter remembers that indentation level.  Every subsequent
+      top-level declaration must have the same indentation.</para>
+
+    <para id="x_w4">Here's an illustration of the top-level indentation rule.
+      Our first file, <filename>GoodIndent.hs</filename>, is well
+      behaved.</para>
+
+    &GoodIndent.hs:good;
+
+    <para id="x_x4">Our second, <filename>BadIndent.hs</filename>, doesn't play
+      by the rules.</para>
+
+    &BadIndent.hs:bad;
+
+    <para id="x_y4">Here's what happens when we try to load the two files into
+      &ghci;.</para>
+
+    &indent.ghci:load;
+
+    <para id="x_z4">An empty line is treated as a continuation of the current
+      item, as is a line indented to the right of the current current
+      item.</para>
+
+    <para id="x_A5">The rules for <code>let</code> expressions and
+      <code>where</code> clauses are similar.  After a
+      <code>let</code> or <code>where</code> keyword, the Haskell
+      compiler or interpreter remembers the indentation of the next
+      token it sees. If the next line is empty, or its indentation is
+      further to the right than the previous line, this counts as
+      continuing the previous line. On the other hand, if the
+      indentation is the same as the previous line, this is treated as
+      beginning a new item in the same block.</para>
+
+    <para id="x_B5">Here are nested uses of <code>let</code> and
+      <code>where</code>.</para>
+
+    &letwhere.hs:let;
+
+    <para id="x_C5">In the body of <varname>bar</varname>, the variable
+      <varname>a</varname> is only visible within the <code>let</code>
+      expression that defines it.  It's not visible to the
+      <code>let</code> expression that defines <varname>b</varname>;
+      only the <emphasis>result</emphasis> of the inner
+      <code>let</code> expression is visible.</para>
+
+    &letwhere.hs:where;
+
+    <para id="x_D5">Similarly, the scope of the first <code>where</code> clause
+      is the definition of <varname>foo</varname>, but the scope of
+      the second is just the first <code>where</code> clause.</para>
+
+    <para id="x_E5">The indentation we use for the <code>let</code> and
+      <code>where</code> clauses makes our intentions easy to figure
+      out.</para>
+
+    <sect2 id="hs.deftypes.tabs">
+      <title>A note about tabs versus spaces</title>
+
+      <para id="x_F5">If you are using a Haskell-aware text editor (e.g. Emacs),
+	it is probably already configured to use space characters for
+	all white space within a line.  If your editor is
+	<emphasis>not</emphasis> Haskell-aware, you should configure
+	it to only use space characters.</para>
+
+      <para id="x_G5">The reason for this is simple portability.  In an editor
+	that uses a fixed-width font, tab stops are by default placed
+	at different intervals on Unix-like systems (every eight
+	characters) than on Windows  (every four characters). This
+	means that no matter what your personal beliefs are about
+	where tabs belong, you can't rely on someone else's editor
+	honouring your preferences.  Any indentation that uses tabs is
+	going to look broken under <emphasis>someone's</emphasis>
+	configuration.  In fact, this could lead to compilation
+	problems, as the Haskell language standard requires
+	implementations to use the Unix tab width convention.
+	Using space characters avoids these problem
+	entirely.</para>
+    </sect2>
+
+    <sect2 id="hs.deftypes.block">
+      <title>The offside rule is not mandatory</title>
+
+      <para id="x_H5">We can use explicit structuring instead of layout to
+	indicate what we mean.  To do so, we start a block of
+	equations with an opening curly brace; separate each item with
+	a semicolon; and finish the block with a closing curly brace.
+	The following two uses of <code>let</code> have the same
+	meanings.</para>
+
+      &Braces.hs:braces;
+
+      <para id="x_I5">When we use explicit structuring, the normal layout rules
+	don't apply, which is why we can get away with unusual
+	indentation in the second <code>let</code> expression.</para>
+
+      <para id="x_J5">We can use explicit structuring anywhere that we'd
+	normally use layout.  It's valid for <code>where</code>
+	clauses, and even top-level declarations.  Just remember that
+	although the facility exists, explicit structuring is hardly
+	ever actually <emphasis>used</emphasis> in Haskell
+	programs.</para>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.end">

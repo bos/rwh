@@ -13,12 +13,11 @@ data BookChapter = BookChapter Int String [BookSection]
 {-- /snippet BookChapter --}
 
 {-- snippet accessors --}
-sectionNumber (BookSection n t) = n
-sectionTitle (BookSection n t) = t
+sectionNumber (Section num title) = n
+sectionTitle (Section num title) = t
 {-- /snippet accessors --}
 
 {-- snippet niceAccessors --}
-nicerNumber (BookSection n _) = n
-nicerTitle (BookSection _ t) = t
+nicerNumber (Section num _) = num
+nicerTitle (Section _ title) = title
 {-- /snippet niceAccessors --}
-
