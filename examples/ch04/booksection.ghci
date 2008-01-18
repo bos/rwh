@@ -20,3 +20,8 @@ Section 1 "foo"
 --# type
 
 :type Section
+
+--# tuple
+
+BookSection 4 "Not being Mrs. Grundy, who *was* Mr. Bounderby?"
+(4, "Not being Mrs. Grundy, who *was* Mr. Bounderby?")

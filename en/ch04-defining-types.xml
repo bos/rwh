@@ -171,6 +171,60 @@
 
     &osversion.ghci:apply;
 
+    <sect2>
+      <title>Tuples, algebraic data types, and when to use
+	each</title>
+
+      <para>There is some overlap between tuples and user-defined
+	algebraic data types.  If we wanted to, we could represent our
+	<type>BookSection</type> type from earlier as an <type>(Int,
+	  String)</type> pair.</para>
+
+      &booksection.ghci:tuple;
+
+      <para>An algebraic data type gives us additional discrimination:
+	two tuples with elements of the same type have the same type,
+	but two algebraic data types with elements of the same type
+	have distinct types.  This lets us bring the type system to
+	bear in writing programs with fewer bugs. Consider the
+	following representations of a two-dimensional vector.</para>
+
+      &AlgebraicVector.hs:types;
+
+      <para>Because <type>Vector2D</type> and <type>Polar2D</type> are
+	distinct types, we can't accidentally mix up our
+	representations.</para>
+
+      &algebraicvector.ghci:typed;
+
+      <para>If we used tuples to represent these values, we could
+	quickly land ourselves in hot water by mixing the two
+	representations inappropriately.</para>
+
+      &algebraicvector.ghci:tupled;
+
+      <para>The type system can't rescue us here, because as far as
+	it's concerned, we're comparing two <type>(Double,
+	  Double)</type> pairs, which is a valid expression.</para>
+
+      <para>There's no hard and fast rule for deciding when it's
+	better to use a tuple or a distinct data type, but here's a
+	rule of thumb to follow.</para>
+
+      <para>If you're building and mixing many compound values that
+	will have long lives and propagate widely throughout your
+	code, the added type safety will almost certainly pay off by
+	enlisting the compiler to prevent bugs.  For smaller,
+	localised uses, such as returning multiple values from a
+	function and immediately consuming them, a tuple is
+	fine.</para>
+
+      <para>In general, as the cost of making a mistake, or locating a
+	bug, grows, then increasing type safety makes more sense.
+	Better yet, stronger typing can often add little or no cost in
+	either readability or performance.</para>
+    </sect2>
+
     <sect2 id="hs.deftypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
@@ -188,11 +242,11 @@
 
 	<para id="x_R4">With just one constructor, an algebraic data
 	  type is similar to a tuple: it groups related values
-	  together. It corresponds to a <code>struct</code> in C or
-	  C++, and its components correspond to the fields of a
-	  <code>struct</code>. Here's a C equivalent of the
-	  <type>BookSection</type> type that we defined
-	  earlier.</para>
+	  together into a compound value. It corresponds to a
+	  <code>struct</code> in C or C++, and its components
+	  correspond to the fields of a <code>struct</code>. Here's a
+	  C equivalent of the <type>BookSection</type> type that we
+	  defined earlier.</para>
 
 	&types.c:book_section;
 
@@ -297,6 +351,176 @@
 	algebraic data types. Some may have just one alternative,
 	while others have several, but they're all using the same
 	machinery.</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.deftypes.pattern">
+    <title>Pattern matching</title>
+
+    <para id="x_Z5">Now that we've seen how to construct values with
+      algebraic data types, let's discuss how we work with them.  We
+      need to be able to distinguish between cases, and to extract
+      values from a compound value.  Haskell has a simple
+      <emphasis>pattern matching</emphasis> facility that lets us do
+      both of these.</para>
+
+    <para id="x_a5">A pattern lets us peer inside a compound value and
+      bind variables to the values it contains.  In fact, when we
+      define a function, the parameters that we define are already
+      patterns. We're just adding to our existing knowledge
+      here.</para>
+
+    <para id="x_b5">Here's an example of pattern matching in action on
+      a list; we're going to add all elements of the list
+      together.</para>
+
+    &add.hs:sumList;
+
+    <para id="x_c5">See that <code>(x:xs)</code> on the left of the first line?
+      The <code>:</code> means <quote>match the head of a
+	list</quote>; that's the familiar list constructor,
+      <function>(:)</function>, in action in a new way.  The variables
+      <varname>x</varname> and <varname>xs</varname> are given the
+      values of (<quote>bound to</quote>) the head and tail of the
+      list, respectively.  The whole pattern is wrapped in parentheses
+      so Haskell won't parse it as three separate arguments.</para>
+
+    <para id="x_d5">What effect does pattern matching have? Haskell will only
+      evaluate the right hand side of an equation if it can match all
+      of the patterns on the left hand side.  In the definition of
+      <function>sumList</function> above, the right hand side of the
+      first equation won't be evaluated if the input list is empty.
+      Instead, Haskell will <quote>fall through</quote> to the
+      equation on the following line, which <emphasis>does</emphasis>
+      have a pattern for the empty list, and it will evaluate
+      that.</para>
+
+    <para id="x_e5">It might initially look like we have two functions
+      named <function>sumList</function> here, but Haskell lets us
+      define a function as a series of equations; so in fact these two
+      clauses are defining the behaviour of one function, over
+      different inputs.  (By the way, there's already a standard
+      function, <function>sum</function>, that does this
+      adding-of-a-list for us.  This <function>sumList</function> is
+      purely for illustration.)</para>
+
+    <para id="x_f5">The syntax for pattern matching on a tuple is similar to the
+      syntax for constructing a tuple.  Here's a function that returns
+      the third element from a three-tuple.</para>
+
+    &Tuple.hs:third;
+
+    <para id="x_g5">There's no limit on how <quote>deep</quote> within a value a
+      pattern can look.  Here's a definition that looks both inside a
+      tuple and inside a list within that tuple.</para>
+
+    &Tuple.hs:complicated;
+
+    <para id="x_h5">We can try this out interactively.</para>
+
+    &tuple.ghci:complicated;
+
+    <para id="x_i5">Wherever a literal value is present in a pattern
+      (<literal>True</literal> and <literal>5</literal> in the tuple
+      pattern above), that value must match exactly for the pattern
+      match to succeed.  If every pattern within a series of equations
+      fails to match, we get a runtime error.</para>
+
+    &tuple.ghci:nomatch;
+
+    <para id="x_j5">We can pattern match on algebraic data types using their
+      constructors.  Remember the <type>Wrapper</type> type we defined
+      earlier?  Here's how we can extract a wrapped value from a
+      <type>Wrapper</type>.</para>
+
+    &Wrapper.hs:unwrap;
+
+    <para id="x_k5">Let's see it in action.</para>
+
+    &wrapper.ghci:unwrap;
+
+    <para id="x_l5">Notice that Haskell infers the type of the
+      <function>unwrap</function> function based on the constructor
+      we're using in our pattern.  If we're trying to match a value
+      whose constructor is <function>Wrapper</function>, then the type
+      of that parameter must be <type>Wrapper a</type>.</para>
+    
+    <para id="x_HL">And for good measure, here's how we can define functions to
+      access the fields of the <type>BookSection</type> type we defined in
+      <xref linkend="hs.deftypes.adt.comp"/>.</para>
+
+    &BookSection.hs:accessors;
+
+    <note>
+      <title>The ordering of patterns is important</title>
+
+      <para id="x_m5">Haskell tests patterns for matches in the order in which
+	we list them in our code.  It goes from top to bottom and
+	stops at the first match; it <emphasis>does not</emphasis>
+	check every pattern and use the best match.</para>
+
+      <para id="x_n5">If you're familiar with pattern matching from a logic
+	programming language like Prolog, Haskell's facility is
+	simpler and less powerful.  It doesn't provide backtracking or
+	unification.</para>
+    </note>
+
+    <para id="x_IL">Here are some rules of thumb to help with remembering how
+      pattern matching works.  A constructor in a pattern
+      checks that the matched value has the right <quote>shape</quote>.  A
+      literal value ensures that that portion of the value has exactly
+      the matching contents.  And a variable makes no assertions about
+      either the shape or contents of the matched value; it matches anything,
+      and gives the variable that value.</para>
+
+    <para id="x_JL">So the pattern <code>(3:xs)</code> first of all is an
+      assertion that a matching value is a non-empty list, by matching
+      against the <function>(:)</function> constructor.  It also
+      ensures that the head of the list is the literal value
+      <literal>3</literal>.  And whatever the tail of the list is, it
+      will be bound to the variable <varname>xs</varname>.</para>
+
+    <sect2 id="hs.deftypes.dontcare">
+      <title>The don't-care, or wild card, pattern</title>
+
+      <para id="x_o5">When we're writing a pattern, we can specify that we don't
+	care what value a particular value within a structure has,
+	without actually binding that value to a name.  The notation
+	for this is <code>_</code> (called a wild card or <quote>don't
+	  care</quote>), and we use it as follows.  This function
+	tells us whether the result of the <function>roots</function>
+	function we defined earlier is real-valued or not.</para>
+
+      &Roots.hs:isRealValued;
+
+      <para id="x_p5">Here, we don't care about the value of the result, just
+	about which constructor was used to create it.  If it was
+	<function>Left</function>, the result must be a complex
+	number, otherwise it must be real.  We can use a wild card for
+	the entire second pattern; there's no need to see if the
+	constructor is <function>Right</function>, because it
+	<emphasis>must</emphasis> be; <type>Either</type> only has two
+	constructors.</para>
+
+      <para id="x_KL">In a pattern, a wild card acts similarly
+	to a variable, only it doesn't bind the value to a name.
+	While we can't put the same variable name multiple times in a
+	single pattern, we can use a wild card as many times as we
+	need to.</para>
+
+      <para id="x_LL">Another advantage of wild cards is that a Haskell compiler
+	can warn us if we introduce a variable name in a pattern, but
+	don't use it in a function's body; defining something but
+	forgetting to use it can often indicate a bug.  Using a wild
+	card instead of an unused variable makes it explicit that we
+	really don't care what value is present, and will prevent such
+	a warning.</para>
+
+      <para id="x_ML">Wild cards also help readability, as they make it easier
+	to tell which values we're really using.</para>
+
+      &BookSection.hs:niceAccessors;
+
     </sect2>
   </sect1>
 
@@ -748,275 +972,108 @@
       <type>ComplexTree () Int</type>.</para>
   </sect1>
 
-  <sect1 id="hs.deftypes.pattern">
-    <title>Pattern matching</title>
+  <sect1 id="hs.deftypes.case">
+    <title>The case expression</title>
 
-    <para id="x_Z5">Although we introduced a handful of functions earlier that
-      can operate on lists, we've yet to see how we might generally
-      get values out of a constructed algebraic data type.  Haskell
-      has a simple pattern matching facility that we can use to this
-      end.</para>
-
-    <para id="x_a5">A pattern lets us peer inside a compound value and bind
-      variables to the values it contains.  In fact, when we define a
-      function, the parameters to that function are really patterns
-      that bind our variables to an entire value.</para>
-
-    <para id="x_b5">Here's an example of pattern matching in action on a list;
-      we're going to add all elements of the list together.</para>
-
-    &add.hs:sumList;
-
-    <para id="x_c5">See that <code>(x:xs)</code> on the left of the first line?
-      The <code>:</code> means <quote>match the head of a
-	list</quote>; that's the familiar list constructor,
-      <function>(:)</function>, in action in a new way.  The variables
-      <varname>x</varname> and <varname>xs</varname> are given the
-      values of (<quote>bound to</quote>) the head and tail of the
-      list, respectively.  The whole pattern is wrapped in parentheses
-      so Haskell won't parse it as three separate arguments.</para>
-
-    <para id="x_d5">What effect does pattern matching have? Haskell will only
-      evaluate the right hand side of an equation if it can match all
-      of the patterns on the left hand side.  In the definition of
-      <function>sumList</function> above, the right hand side of the
-      first equation won't be evaluated if the input list is empty.
-      Instead, Haskell will <quote>fall through</quote> to the
-      equation on the following line, which <emphasis>does</emphasis>
-      have a pattern for the empty list, and it will evaluate
-      that.</para>
-
-    <para id="x_e5">It might initially look like we have two functions
-      named <function>sumList</function> here, but Haskell lets us
-      define a function as a series of equations; so in fact these two
-      clauses are defining the behaviour of one function, over
-      different inputs.  (By the way, there's already a standard
-      function, <function>sum</function>, that does this
-      adding-of-a-list for us.  This <function>sumList</function> is
-      purely for illustration.)</para>
-
-    <para id="x_f5">The syntax for pattern matching on a tuple is similar to the
-      syntax for constructing a tuple.  Here's a function that returns
-      the third element from a three-tuple.</para>
-
-    &Tuple.hs:third;
-
-    <para id="x_g5">There's no limit on how <quote>deep</quote> within a value a
-      pattern can look.  Here's a definition that looks both inside a
-      tuple and inside a list within that tuple.</para>
-
-    &Tuple.hs:complicated;
-
-    <para id="x_h5">We can try this out interactively.</para>
-
-    &tuple.ghci:complicated;
-
-    <para id="x_i5">Wherever a literal value is present in a pattern
-      (<literal>True</literal> and <literal>5</literal> in the tuple
-      pattern above), that value must match exactly for the pattern
-      match to succeed.  If every pattern within a series of equations
-      fails to match, we get a runtime error.</para>
-
-    &tuple.ghci:nomatch;
-
-    <para id="x_j5">We can pattern match on algebraic data types using their
-      constructors.  Remember the <type>Wrapper</type> type we defined
-      earlier?  Here's how we can extract a wrapped value from a
-      <type>Wrapper</type>.</para>
-
-    &Wrapper.hs:unwrap;
-
-    <para id="x_k5">Let's see it in action.</para>
-
-    &wrapper.ghci:unwrap;
-
-    <para id="x_l5">Notice that Haskell infers the type of the
-      <function>unwrap</function> function based on the constructor
-      we're using in our pattern.  If we're trying to match a value
-      whose constructor is <function>Wrapper</function>, then the type
-      of that parameter must be <type>Wrapper a</type>.</para>
-    
-    <para id="x_HL">And for good measure, here's how we can define functions to
-      access the fields of the <type>BookSection</type> type we defined in
-      <xref linkend="hs.deftypes.adt.comp"/>.</para>
-
-    &BookSection.hs:accessors;
-
-    <note>
-      <title>The ordering of patterns is important</title>
-
-      <para id="x_m5">Haskell tests patterns for matches in the order in which
-	we list them in our code.  It goes from top to bottom and
-	stops at the first match; it <emphasis>does not</emphasis>
-	check every pattern and use the best match.</para>
-
-      <para id="x_n5">If you're familiar with pattern matching from a logic
-	programming language like Prolog, Haskell's facility is
-	simpler and less powerful.  It doesn't provide backtracking or
-	unification.</para>
-    </note>
-
-    <para id="x_IL">Here are some rules of thumb to help with remembering how
-      pattern matching works.  A constructor in a pattern
-      checks that the matched value has the right <quote>shape</quote>.  A
-      literal value ensures that that portion of the value has exactly
-      the matching contents.  And a variable makes no assertions about
-      either the shape or contents of the matched value; it matches anything,
-      and gives the variable that value.</para>
-
-    <para id="x_JL">So the pattern <code>(3:xs)</code> first of all is an
-      assertion that a matching value is a non-empty list, by matching
-      against the <function>(:)</function> constructor.  It also
-      ensures that the head of the list is the literal value
-      <literal>3</literal>.  And whatever the tail of the list is, it
-      will be bound to the variable <varname>xs</varname>.</para>
-
-    <sect2 id="hs.deftypes.dontcare">
-      <title>The don't-care, or wild card, pattern</title>
-
-      <para id="x_o5">When we're writing a pattern, we can specify that we don't
-	care what value a particular value within a structure has,
-	without actually binding that value to a name.  The notation
-	for this is <code>_</code> (called a wild card or <quote>don't
-	  care</quote>), and we use it as follows.  This function
-	tells us whether the result of the <function>roots</function>
-	function we defined earlier is real-valued or not.</para>
-
-      &Roots.hs:isRealValued;
-
-      <para id="x_p5">Here, we don't care about the value of the result, just
-	about which constructor was used to create it.  If it was
-	<function>Left</function>, the result must be a complex
-	number, otherwise it must be real.  We can use a wild card for
-	the entire second pattern; there's no need to see if the
-	constructor is <function>Right</function>, because it
-	<emphasis>must</emphasis> be; <type>Either</type> only has two
-	constructors.</para>
-
-      <para id="x_KL">In a pattern, a wild card acts similarly
-	to a variable, only it doesn't bind the value to a name.
-	While we can't put the same variable name multiple times in a
-	single pattern, we can use a wild card as many times as we
-	need to.</para>
-
-      <para id="x_LL">Another advantage of wild cards is that a Haskell compiler
-	can warn us if we introduce a variable name in a pattern, but
-	don't use it in a function's body; defining something but
-	forgetting to use it can often indicate a bug.  Using a wild
-	card instead of an unused variable makes it explicit that we
-	really don't care what value is present, and will prevent such
-	a warning.</para>
-
-      <para id="x_ML">Wild cards also help readability, as they make it easier
-	to tell which values we're really using.</para>
-
-      &BookSection.hs:niceAccessors;
-
-    </sect2>
-
-    <sect2 id="hs.deftypes.case">
-      <title>The case expression</title>
-
-      <para id="x_q5">We're not limited to using patterns in function
-	definitions.  The <code>case</code> expression lets us match
-	patterns at any time.  Here's what it looks like.</para>
+    <para id="x_q5">We're not limited to using patterns in function
+      definitions.  The <code>case</code> expression lets us match
+      patterns at any time.  Here's what it looks like.</para>
 
       &Roots.hs:hasRealRoots;
 
-      <para id="x_r5">The <code>case</code> keyword is followed by an arbitrary
-	expression; the result of this expression is what we're
-	pattern matching on.  The <code>of</code> keyword signifies
-	the end of the expression and the beginning of the block of
-	patterns and expressions.</para>
+    <para id="x_r5">The <code>case</code> keyword is followed by an
+      arbitrary expression; the result of this expression is what
+      we're pattern matching on.  The <code>of</code> keyword
+      signifies the end of the expression and the beginning of the
+      block of patterns and expressions.</para>
 
-      <para id="x_s5">Each item in the block consists of a pattern, followed by
-	an arrow <code>-&gt;</code>, followed by an expression to
-	evaluate if that pattern matches.  The result of the
-	<code>case</code> expression is the result of the expression
-	associated with the first pattern to match, taken from top to
-	bottom.</para>
+    <para id="x_s5">Each item in the block consists of a pattern,
+      followed by an arrow <code>-&gt;</code>, followed by an
+      expression to evaluate if that pattern matches.  The result of
+      the <code>case</code> expression is the result of the expression
+      associated with the first pattern to match, taken from top to
+      bottom.</para>
 
-      <para id="x_t5">To express <quote>here's the expression to evaluate if
-	  none of the other patterns match</quote>, we would just use
-	the wild card pattern <code>_</code> as the last in our list
-	of patterns.</para>
-    </sect2>
+    <para id="x_t5">To express <quote>here's the expression to
+	evaluate if none of the other patterns match</quote>, we would
+      just use the wild card pattern <code>_</code> as the last in our
+      list of patterns.</para>
 
     <sect2 id="hs.deftypes.where">
       <title>A flying visit back to the where clause</title>
 
-      <para id="x_u5">Now that we've seen that we can define a function as a
-	series of equations, the usefulness of the <code>where</code>
-	clause should be a bit more clear.  Variables that we define
-	inside a <code>where</code> clause are visible across all of
-	the equations that precede it in a single block.</para>
+      <para id="x_u5">Now that we've seen that we can define a
+	function as a series of equations, the usefulness of the
+	<code>where</code> clause should be a bit more clear.
+	Variables that we define inside a <code>where</code> clause
+	are visible across all of the equations that precede it in a
+	single block.</para>
     </sect2>
-    
-    <sect2 id="hs.deftypes.pattern.limits">
-      <title>Early pattern matching pitfalls</title>
+  </sect1>
+  
+  <sect1 id="hs.deftypes.pattern.limits">
+    <title>Common beginner mistakes with patterns</title>
 
-      <para id="x_NL">There are a few ways in which new Haskell programmers can
-	misunderstand or misuse patterns.  Here are a few potential
-	missteps that you can easily avoid.</para>
+    <para id="x_NL">There are a few ways in which new Haskell
+      programmers can misunderstand or misuse patterns.  Here are a
+      few potential missteps that you can easily avoid.</para>
 
-      <para id="x_v5">There's no way to write a pattern that compares
-	a value with a variable.  Matching a pattern only lets us
-	perform exact comparisons against combinations of constructors
-	and simple values.</para>
+    <para id="x_v5">There's no way to write a pattern that compares a
+      value with a variable.  Matching a pattern only lets us perform
+      exact comparisons against combinations of constructors and
+      simple values.</para>
 
-      <para id="x_OL">Here's a well-intentioned example of pattern matching gone
-	awry.  This code compiles cleanly, but depending on what you
-	expect it to do, it might surprise you.</para>
+    <para id="x_OL">Here's a well-intentioned example of pattern
+      matching gone awry.  This code compiles cleanly, but depending
+      on what you expect it to do, it might surprise you.</para>
 
-      &BogusPattern.hs:isHead;
+    &BogusPattern.hs:isHead;
 
-      <para id="x_w5">A naive glance suggests that this code is trying
-	to check the value of <function>f</function> to see if it's
-	actually the standard function <function>head</function>, but
-	here's what it is <emphasis>really</emphasis> doing.</para>
+    <para id="x_w5">A naive glance suggests that this code is trying
+      to check the value of <function>f</function> to see if it's
+      actually the standard function <function>head</function>, but
+      here's what it is <emphasis>really</emphasis> doing.</para>
 
-      <para id="x_x5">Because the first pattern in the
-	<code>case</code> expression is a variable, this branch of the
-	<code>case</code> will <emphasis>always</emphasis> match, no
-	matter what the value of <varname>f</varname> is.  The name
-	<varname>head</varname> thus acts as a local variable whose
-	value is the value of <varname>f</varname>, which hides the
-	global definition of the well-known <function>head</function>
-	function.  </para>
+    <para id="x_x5">Because the first pattern in the <code>case</code>
+      expression is a variable, this branch of the <code>case</code>
+      will <emphasis>always</emphasis> match, no matter what the value
+      of <varname>f</varname> is.  The name <varname>head</varname>
+      thus acts as a local variable whose value is the value of
+      <varname>f</varname>, which hides the global definition of the
+      well-known <function>head</function> function.  </para>
 
-      <note>
-	<title>Irrefutable patterns</title>
+    <note>
+      <title>Irrefutable patterns</title>
 
-	<para id="x_y5">A pattern that consists only of a variable will always
-	  match, because it's not being compared against any value that
-	  could cause the match to fail.  We refer to patterns that
-	  always match as <quote>irrefutable</quote>.</para>
-      </note>
+      <para id="x_y5">A pattern that consists only of a variable will
+	always match, because it's not being compared against any
+	value that could cause the match to fail.  We refer to
+	patterns that always match as
+	<quote>irrefutable</quote>.</para>
+    </note>
 
-      <para id="x_z5">The first pattern always matches, because it's
-	irrefutable.  But the second pattern <emphasis>also</emphasis>
-	always matches, because it uses a wild card.  However, because
-	Haskell attempts to match patterns in the order in which we
-	write them, the first pattern will always succeed, and the
-	second pattern will never actually be reached. Because the two
-	patterns will match the same values, they are said to
-	<emphasis>overlap</emphasis>.  If &GHC; ever complains to you
-	about overlapping patterns, it's telling you that one of your
-	patterns is the same as another, and so it will never actually
-	be matched.</para>
+    <para id="x_z5">The first pattern always matches, because it's
+      irrefutable.  But the second pattern <emphasis>also</emphasis>
+      always matches, because it uses a wild card.  However, because
+      Haskell attempts to match patterns in the order in which we
+      write them, the first pattern will always succeed, and the
+      second pattern will never actually be reached. Because the two
+      patterns will match the same values, they are said to
+      <emphasis>overlap</emphasis>.  If &GHC; ever complains to you
+      about overlapping patterns, it's telling you that one of your
+      patterns is the same as another, and so it will never actually
+      be matched.</para>
 
-      <para id="x_A6">Another thing to be aware of is that a variable
-	can only appear once in a pattern.  For example, we can't put
-	a variable in multiple places within a pattern to express the
-	notion <quote>this value and that should be
-	  identical</quote>.</para>
+    <para id="x_A6">Another thing to be aware of is that a variable
+      can only appear once in a pattern.  For example, we can't put a
+      variable in multiple places within a pattern to express the
+      notion <quote>this value and that should be
+	identical</quote>.</para>
 
-      <para id="x_B6">The way around these restrictions of Haskell's patterns is
-	to use patterns in combination with a language facility called
-	<emphasis>guards</emphasis>, which we'll talk about
-	next.</para>
-
-    </sect2>
+    <para id="x_B6">The way around these restrictions of Haskell's
+      patterns is to use patterns in combination with a language
+      facility called <emphasis>guards</emphasis>, which we'll talk
+      about next.</para>
   </sect1>
 
   <sect1 id="hs.deftypes.guard">
@@ -1158,7 +1215,6 @@
       functional programming and thinking skills.</para>
 
   </sect1>
-
 </chapter>
 <!--
 local variables: 

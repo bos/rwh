@@ -1,0 +1,7 @@
+:load AlgebraicVector
+
+--# typed
+Vector2D (sqrt 2) (sqrt 2) == Polar2D (pi / 4) 2
+
+--# tupled
+(sqrt 2, sqrt 2) == (pi / 4, 2)
