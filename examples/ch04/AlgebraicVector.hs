@@ -1,5 +1,5 @@
 {-- snippet types --}
--- X and Y coordinates.
+-- Cartesian (x and y) coordinates.
 data Vector2D = Vector2D Double Double
 
 -- Angle and distance.
