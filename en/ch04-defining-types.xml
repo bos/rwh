@@ -560,13 +560,14 @@
 
       &Roots.hs:isRealValued;
 
-      <para id="x_p5">Here, we don't care about the value of the result, just
-	about which constructor was used to create it.  If it was
-	<function>Left</function>, the result must be a complex
-	number, otherwise it must be real.  We can use a wild card for
-	the entire second pattern; there's no need to see if the
-	constructor is <function>Right</function>, because it
-	<emphasis>must</emphasis> be; <type>Either</type> only has two
+      <para id="x_p5">Here, we don't care about the value of the
+	result, just about which constructor was used to create it.
+	If the constructor was <function>Just</function>, the result
+	must be a real number, otherwise it's either infinite or
+	complex.  We can use a wild card for the entire second
+	pattern; there's no need to see if the constructor is
+	<function>Nothing</function>, because it
+	<emphasis>must</emphasis> be; <type>Maybe</type> only has two
 	constructors.</para>
 
       <para id="x_KL">In a pattern, a wild card acts similarly
@@ -1006,7 +1007,7 @@
     </sect2>
 
     <sect2 id="hs.deftypes.locals.functions">
-      <title>Local functions</title>
+      <title>Local functions, global variables</title>
 
       <para id="x_FL">You'll have noticed that Haskell's syntax for
 	defining a variable looks very similar to its syntax for

@@ -1,11 +1,11 @@
 {-- snippet roots --}
 import Data.Complex
 
-data Roots = Undefined
-           | RealValued Double Double
-           | ComplexValued (Complex Double) (Complex Double)
+data QuadraticRoots = Undefined
+                    | RealValued Double Double
+                    | ComplexValued (Complex Double) (Complex Double)
 
-roots :: Double -> Double -> Double -> Roots
+roots :: Double -> Double -> Double -> QuadraticRoots
 
 roots a b c =
     if a == 0
@@ -23,10 +23,9 @@ roots a b c =
 {-- /snippet roots --}
 
 {-- snippet isRealValued --}
-isRealValued :: Either (Complex Double, Complex Double) (Double, Double)
-             -> Bool
-isRealValued (Left _) = False
-isRealValued _        = True
+isRealValued :: Maybe (Double, Double) -> Bool
+isRealValued (Just _) = True
+isRealValued _        = False
 {-- /snippet isRealValued --}
 
 {-- snippet realRoots --}
