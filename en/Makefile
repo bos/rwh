@@ -220,8 +220,8 @@ tools: ../tools/.built
 
 auto-snippets.xml: $(stamp-examples)
 	@mkdir -p x
-	echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
-	cat $(sort $^) | sort >> $@
+	@echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
+	@cat $(sort $^) | sort >> $@
 
 .validated-%: % $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $<
