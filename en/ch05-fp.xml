@@ -273,11 +273,11 @@
 	things, it's not a good idea to blindly transplant such an
 	assumption into Haskell.</para>
 
-      <para id="x_D7">We've already seen the definition of the list algebraic
-	data type in <xref linkend="hs.deftypes.listadt"/>, and know
-	that a list doesn't encode its own length.  Thus, the only way
-	that <function>length</function> can operate is to walk the
-	entire list.</para>
+      <para id="x_D7">We've already seen the definition of the list
+	algebraic data type many times, and know that a list doesn't
+	store its own length explicitly.  Thus, the only way that
+	<function>length</function> can operate is to walk the entire
+	list.</para>
 
       <para id="x_E7">Therefore,  when we only care whether or not a list is
 	empty, calling <function>length</function> isn't a good

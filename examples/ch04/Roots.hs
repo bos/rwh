@@ -57,10 +57,17 @@ guardedRoots a b c
 {-- /snippet guardedRoots --}
 
 {-- snippet finalRoots --}
-finalRoots 0 _ _             = Nothing
-finalRoots a b c | n >= 0    = Just (r1, r2)
-                 | otherwise = Nothing
-    where n  = b**2 - 4 * a * c
-          r1 = (-b + sqrt n) / (2 * a)
-          r2 = (-b - sqrt n) / (2 * a)
+finalRoots :: Double -> Double -> Double -> QuadraticRoots
+
+finalRoots 0 b c = Undefined
+finalRoots a b c
+    | n >= 0     = RealValued ((-b + s) / a2) ((-b - s) / a2)
+    | otherwise  = ComplexValued ((-b' + s') / a2') ((-b' - s') / a2')
+  where n   = b**2 - 4 * a * c
+        a2  = 2 * a
+        n'  = n :+ 0
+        b'  = b :+ 0
+        a2' = a2 :+ 0
+        s = sqrt n
+        s' = sqrt n'
 {-- /snippet finalRoots --}

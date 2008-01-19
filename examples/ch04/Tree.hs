@@ -1,12 +1,11 @@
 {-- snippet Tree --}
-data Tree a = Node (Tree a) (Tree a)
-            | Leaf a
+data Tree a = Node a (Tree a) (Tree a)
+            | Empty
               deriving (Show)
 
 {-- /snippet Tree --}
 
-{-- snippet ComplexTree --}
-data ComplexTree a b = ComplexNode a (ComplexTree a b) (ComplexTree a b)
-                     | ComplexLeaf b
-                       deriving (Show)
-{-- /snippet ComplexTree --}
+{-- snippet simpleTree --}
+simpleTree = Node "parent" (Node "left child" Empty Empty)
+                           (Node "right child" Empty Empty)
+{-- /snippet simpleTree --}

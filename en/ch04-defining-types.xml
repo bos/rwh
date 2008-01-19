@@ -554,9 +554,14 @@
 	structure has, without actually binding that value to a name.
 	The notation for this is <code>_</code>, and we call it a
 	<emphasis>wild card</emphasis> or a <emphasis>don't
-	  care</emphasis>.  We use it as follows.  This function tells
-	us whether the result of the <function>roots</function>
-	function we defined earlier is real-valued or not.</para>
+	  care</emphasis>.  We use it as follows.</para>
+
+      <para>This function tells us whether the result of the
+	<function>roots</function> function we defined earlier is
+	real-valued or not.  We don't care about root-finding per se:
+	this is just a well-known function that's a little (but
+	<emphasis>only</emphasis> a little) complicated, so it's a
+	good vehicle to explore with.</para>
 
       &Roots.hs:isRealValued;
 
@@ -685,74 +690,100 @@
   <sect1 id="hs.deftypes.recursive">
     <title>Recursive types</title>
 
-    <para id="x_K5">Here's a definition of a binary tree type.</para>
+    <para>The familiar list type is <emphasis>recursive</emphasis>:
+      it's defined in terms of itself.  To understand what this means,
+      let's create our own list-like type.  We'll use
+      <code>Cons</code> in place of the <function>(:)</function>
+      constructor, and <code>Nil</code> in place of
+      <code>[]</code>.</para>
 
-      &Tree.hs:Tree;
+    &ListADT.hs:List;
 
-    <para id="x_L5">We call this a <emphasis>recursive</emphasis> type because
-      <type>Tree</type>, the type we're defining, appears both on the
-      left hand side and the right hand side of the definition: we
-      define the type in terms of itself.</para>
-  </sect1>
+    <para>We can visually identify this type as defined in terms of
+      itself because <type>List a</type> appears on both the left and
+      the right of the <code>=</code> sign.  What this means in
+      practice is that if we want to use the <code>Cons</code>
+      constructor to create a new value, we must supply a value of
+      type <varname role="type">a</varname>, and another value of type
+      <varname role="type">List a</varname>.</para>
 
-  <sect1 id="hs.deftypes.listadt">
-    <title>A little more about lists</title>
+    <para>The smallest value of type <type>List a</type> that we can
+      create is <code>Nil</code>.</para>
 
-    <para id="x_M5">Now that we're getting familiar with some of the jargon
-      around types, we can revisit lists.  Haskell's list type is a
-      parameterised type, because we can make lists of any other type.
-      It is also an algebraic data type, with two constructors.  One
-      is the empty list, written <code>[]</code> (sometimes pronounced
-      <quote>nil</quote>, which is borrowed from Lisp).</para>
+    &listadt.ghci:empty;
 
-    &list.ghci:empty;
+    <para>We can use <code>Nil</code>, which has the type <type>List
+	a</type>, as a parameter to <code>Cons</code>.</para>
 
-    <para id="x_N5">The other is the <function>(:)</function> operator, often
-      pronounced <quote>cons</quote> (this is short for
-      <quote>construct</quote>, and also borrowed from Lisp).  The
-      <function>(:)</function> operator takes an element and a list,
-      and constructs a new list.</para>
+    &listadt.ghci:tiny;
 
-    &list.ghci:cons;
+    <para>We can also use a value constructed using <code>Cons</code>
+      as a parameter to <code>Cons</code>.</para>
 
-    <para id="x_O5">We can use <function>(:)</function> repeatedly to add new
-      elements to the front of a list.</para>
+    &listadt.ghci:two;
 
-    &list.ghci:cons2;
+    <para>We could obviously continue in this fashion indefinitely,
+      creating ever longer <code>Cons</code> chains, each  with a
+      single <code>Nil</code> at the end.  This gives us another way
+      to look at <type>List</type> as recursive.</para>
+    
+    <para>To prove to ourselves that our <type>List a</type> type is
+      the same shape as <type>[a]</type>, we can write a function that
+      reproduces any value of type <type>[a]</type> in the form of a
+      value of type <type>List a</type>.</para>
 
-    <para id="x_P5">The right hand side of <function>(:)</function> must be a
-      list, and of the correct type.  If it's not, we'll get an
-      error.</para>
+    &ListADT.hs:fromList;
 
-    &list.ghci:cons.bad;
+    <para>By inspection, this clearly substitutes a <code>Cons</code>
+      for every <function>(:)</function>, and a <code>Nil</code> for
+      each <code>[]</code>.  The two types are
+      <emphasis>isomorphic</emphasis>.</para>
 
-    <para id="x_Q5">Because <function>(:)</function> constructs a list from
-      another list, the list type is recursive.  So here we have a
-      built-in type that's parameterised, recursive, and
-      algebraic.</para>
+    &listadt.ghci:fromList;
 
-    <para id="x_R5">One consequence of lists being generic is that lists of
-      lists, for example, aren't special in any way.</para>
+    <para id="x_K5">For a third perspective on what a recursive type
+      is, here's a definition of a binary tree type.</para>
 
-    &list.ghci:listlist;
+    &Tree.hs:Tree;
 
-    <para id="x_S5">This has type <type>[[String]]</type>, a list of lists of
-      strings.  But since <type>String</type> is just a synonym for
-      <type>[Char]</type>, it's <emphasis>really</emphasis> a list of
-      lists of lists of <type>Char</type>.  Whew!</para>
+    <para>This time, let's search for insight by looking at a more
+      familiar language.  Here's a comparable class definition in
+      Java.</para>
 
-    <para id="x_T5">We're not limited to building up lists one element at a
-      time.  Haskell defines an inline function,
-      <function>(++)</function>, that we can use to append one list
-      onto the end of another.</para>
+    &Tree.java:Tree;
 
-    &list.ghci:append;
+    <para>The one significant difference is that Java lets us use the
+      special value <code>null</code> anywhere to indicate
+      <quote>nothing</quote>, so we can use <code>null</code> to
+      indicate that a node doesn't have a left or right child.  Here's
+      a small function that constructs a tree with two leaves (a leaf,
+      by convention, has no children).</para>
 
-    <para id="x_U5">The <function>concat</function> function takes a list of
-      lists, and concatenates the whole lot into a single list.</para>
+    &Tree.java:Example;
 
-    &list.ghci:concat;
+    <para>In Haskell, we don't have an equivalent of
+      <code>null</code>. We could use the <type>Maybe</type> type to
+      provide a similar effect, but that bloats the pattern matching
+      (try it yourself).  Instead, we've decided to use a no-argument
+      <code>Empty</code> constructor.  Where the Java example provides
+      <code>null</code> to the <type>Tree</type> constructor, we
+      supply <code>Empty</code> in Haskell.</para>
 
+    &Tree.hs:simpleTree;
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Write the converse of <function>fromList</function>:
+	      a function that takes a <type>List a</type> and
+	      generates a <type>[a]</type>.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
   <sect1 id="hs.deftypes.error">
@@ -890,7 +921,9 @@
     <para>In general, we'll refer to the places within our code where
       we can use a name as the name's <emphasis>scope</emphasis>.  If
       we can use a name, it's <emphasis>in scope</emphasis>, otherwise
-      it's <emphasis>out of scope</emphasis>.</para>
+      it's <emphasis>out of scope</emphasis>.  If a name is visible
+      throughout a source file, we say it's at the <emphasis>top
+	level</emphasis>.</para>
 
     <sect2>
       <title>Local variables and lazy evaluation</title>
@@ -1012,7 +1045,7 @@
       <para id="x_FL">You'll have noticed that Haskell's syntax for
 	defining a variable looks very similar to its syntax for
 	defining a function.  This symmetry is preserved in
-	<code>let</code> and <code>where</code> blocks; we can define
+	<code>let</code> and <code>where</code> blocks: we can define
 	local <emphasis>functions</emphasis> just as easily as local
 	<emphasis>variables</emphasis>.  All of the same syntax
 	applies as at the top level: we can use multiple equations,
@@ -1030,6 +1063,18 @@
 	function (which we'll be revisiting in the next chapter)
 	applies the local function <function>plural</function> to
 	every element of the <varname>counts</varname> list.</para>
+
+      <para>We can also define variables, as well as functions, at the
+	top level of a source file.</para>
+
+      &GlobalVariable.hs:itemName;
+
+      <para>Global variables are frowned upon in imperative languages,
+	because they introduce coupling between distant pieces of
+	code.  Change a global variable in one function, and it
+	affects the behaviour of another, possibly unexpectedly.
+	Since values are immutable in Haskell, top level variables are
+	risk-free.</para>
     </sect2>
   </sect1>
 
@@ -1043,10 +1088,10 @@
       &Roots.hs:hasRealRoots;
 
     <para id="x_r5">The <code>case</code> keyword is followed by an
-      arbitrary expression; the result of this expression is what
-      we're pattern matching on.  The <code>of</code> keyword
-      signifies the end of the expression and the beginning of the
-      block of patterns and expressions.</para>
+      arbitrary expression: this is the expression that we're
+      checking0. The <code>of</code> keyword signifies the end of the
+      expression and the beginning of the block of patterns and
+      expressions.</para>
 
     <para id="x_s5">Each item in the block consists of a pattern,
       followed by an arrow <code>-&gt;</code>, followed by an
@@ -1110,7 +1155,8 @@
 	always match, because it's not being compared against any
 	value that could cause the match to fail.  We refer to
 	patterns that always match as
-	<quote>irrefutable</quote>.</para>
+	<emphasis>irrefutable</emphasis>. The wild card <code>_</code>
+	is also irrefutable.</para>
     </note>
 
     <para id="x_z5">The first pattern always matches, because it's
@@ -1263,8 +1309,7 @@
   </sect1>
 
   <sect1 id="hs.deftypes.offside">
-    <title>The offside rule, and white space in a function
-      body</title>
+    <title>The offside rule and white space in an expression</title>
 
     <para id="x_u4">In our definition of <function>realRoots</function>, the
       left margin of our text wandered around quite a bit.  This was
@@ -1312,12 +1357,11 @@
 
     &letwhere.hs:let;
 
-    <para id="x_C5">In the body of <varname>bar</varname>, the variable
-      <varname>a</varname> is only visible within the <code>let</code>
-      expression that defines it.  It's not visible to the
-      <code>let</code> expression that defines <varname>b</varname>;
-      only the <emphasis>result</emphasis> of the inner
-      <code>let</code> expression is visible.</para>
+    <para id="x_C5">The name <varname>a</varname> is only visible
+      within the inner <code>let</code> expression.  It's not visible
+      in the outer <code>let</code>.  If we try to use the name
+      <varname>a</varname> there, we'll get a compilation
+      error.</para>
 
     &letwhere.hs:where;
 
@@ -1338,7 +1382,7 @@
 	<emphasis>not</emphasis> Haskell-aware, you should configure
 	it to only use space characters.</para>
 
-      <para id="x_G5">The reason for this is simple portability.  In an editor
+      <para id="x_G5">The reason for this is portability.  In an editor
 	that uses a fixed-width font, tab stops are by default placed
 	at different intervals on Unix-like systems (every eight
 	characters) than on Windows  (every four characters). This
