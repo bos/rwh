@@ -110,7 +110,7 @@
 
     <para id="x_jW">First, let's look at the type definitions.</para>
 
-    &Maybe.hs:Maybe;
+    &Maybe.hs:Maybe.noid;
 
     &Parse.hs:Parse.noid;
 
