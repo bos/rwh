@@ -372,8 +372,8 @@
 
     &add.hs:sumList;
 
-    <para id="x_c5">See that <code>(x:xs)</code> on the left of the first line?
-      The <code>:</code> means <quote>match the head of a
+    <para id="x_c5">See that <code>(x:xs)</code> on the left of the
+      first line? The <code>:</code> means <quote>match the head of a
 	list</quote>; that's the familiar list constructor,
       <function>(:)</function>, in action in a new way.  The variables
       <varname>x</varname> and <varname>xs</varname> are given the
@@ -381,15 +381,15 @@
       list, respectively.  The whole pattern is wrapped in parentheses
       so Haskell won't parse it as three separate arguments.</para>
 
-    <para id="x_d5">What effect does pattern matching have? Haskell will only
-      evaluate the right hand side of an equation if it can match all
-      of the patterns on the left hand side.  In the definition of
-      <function>sumList</function> above, the right hand side of the
-      first equation won't be evaluated if the input list is empty.
-      Instead, Haskell will <quote>fall through</quote> to the
-      equation on the following line, which <emphasis>does</emphasis>
-      have a pattern for the empty list, and it will evaluate
-      that.</para>
+    <para id="x_d5">What effect does pattern matching have? Haskell
+      will only evaluate the right hand side of an equation if it can
+      match all of the patterns on the left hand side.  In the
+      definition of <function>sumList</function> above, the right hand
+      side of the first equation won't be evaluated if the input list
+      is empty. Instead, Haskell will <quote>fall through</quote> to
+      the equation on the following line, which
+      <emphasis>does</emphasis> have a pattern for the empty list, and
+      it will evaluate that.</para>
 
     <para id="x_e5">It might initially look like we have two functions
       named <function>sumList</function> here, but Haskell lets us
@@ -399,16 +399,16 @@
       the left of the second equation is the constructor for an empty
       list.</para>
 
-      <note>
-	<title>Ordering is important</title>
+    <note>
+      <title>Ordering is important</title>
 
-	<para id="x_m5">When applying a function, a Haskell
+      <para id="x_m5">When applying a function, a Haskell
 	implementation checks patterns for matches in the order in
 	which we specify them in our equations. Matching proceeds from
 	top to bottom, and stops at the first success.</para>
-      </note>
+    </note>
 
-      <para>As a final note, there already exists a standard function,
+    <para>As a final note, there already exists a standard function,
       <function>sum</function>, that performs this adding-of-a-list
       for us.  Our <function>sumList</function> is purely for
       illustration.</para>
@@ -433,9 +433,9 @@
 	compound value to get the individual values that we originally
 	passed to the constructor when we created the value.</para>
 
-      <para>Let's consider what happens if we
-	match the pattern <code>(x:xs)</code> against our example
-	expression <code>'a': ['b']</code>.</para>
+      <para>Let's consider what happens if we match the pattern
+	<code>(x:xs)</code> against our example expression <code>'a':
+	  ['b']</code>.</para>
 
       <itemizedlist>
 	<listitem>
@@ -566,31 +566,31 @@
       &Roots.hs:isRealValued;
 
       <para id="x_p5">Here, we don't care about the value of the
-	result, just about which constructor was used to create it.
-	If the constructor was <function>Just</function>, the result
-	must be a real number, otherwise it's either infinite or
-	complex.  We can use a wild card for the entire second
-	pattern; there's no need to see if the constructor is
+	result, just about which constructor was used to create it. If
+	the constructor was <function>Just</function>, the result must
+	be a real number, otherwise it's either infinite or complex.
+	We can use a wild card for the entire second pattern; there's
+	no need to see if the constructor is
 	<function>Nothing</function>, because it
 	<emphasis>must</emphasis> be; <type>Maybe</type> only has two
 	constructors.</para>
 
-      <para id="x_KL">In a pattern, a wild card acts similarly
-	to a variable, only it doesn't bind the value to a name.
-	While we can't put the same variable name multiple times in a
-	single pattern, we can use a wild card as many times as we
-	need to.</para>
+      <para id="x_KL">In a pattern, a wild card acts similarly to a
+	variable, only it doesn't bind the value to a name. While we
+	can't put the same variable name multiple times in a single
+	pattern, we can use a wild card as many times as we need
+	to.</para>
 
-      <para id="x_LL">Another advantage of wild cards is that a Haskell compiler
-	can warn us if we introduce a variable name in a pattern, but
-	don't use it in a function's body; defining something but
-	forgetting to use it can often indicate a bug.  Using a wild
-	card instead of an unused variable makes it explicit that we
-	really don't care what value is present, and will prevent such
-	a warning.</para>
+      <para id="x_LL">Another advantage of wild cards is that a
+	Haskell compiler can warn us if we introduce a variable name
+	in a pattern, but don't use it in a function's body; defining
+	something but forgetting to use it can often indicate a bug.
+	Using a wild card instead of an unused variable makes it
+	explicit that we really don't care what value is present, and
+	will prevent such a warning.</para>
 
-      <para id="x_ML">Wild cards also help readability, as they make it easier
-	to tell which values we're really using.</para>
+      <para id="x_ML">Wild cards also help readability, as they make
+	it easier to tell which values we're really using.</para>
 
       &BookSection.hs:niceAccessors;
 
@@ -1078,236 +1078,6 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.case">
-    <title>The case expression</title>
-
-    <para id="x_q5">We're not limited to using patterns in function
-      definitions.  The <code>case</code> expression lets us match
-      patterns at any time.  Here's what it looks like.</para>
-
-      &Roots.hs:hasRealRoots;
-
-    <para id="x_r5">The <code>case</code> keyword is followed by an
-      arbitrary expression: this is the expression that we're
-      checking0. The <code>of</code> keyword signifies the end of the
-      expression and the beginning of the block of patterns and
-      expressions.</para>
-
-    <para id="x_s5">Each item in the block consists of a pattern,
-      followed by an arrow <code>-&gt;</code>, followed by an
-      expression to evaluate if that pattern matches.  The result of
-      the <code>case</code> expression is the result of the expression
-      associated with the first pattern to match, taken from top to
-      bottom.</para>
-
-    <para id="x_t5">To express <quote>here's the expression to
-	evaluate if none of the other patterns match</quote>, we would
-      just use the wild card pattern <code>_</code> as the last in our
-      list of patterns.</para>
-
-    <sect2 id="hs.deftypes.where">
-      <title>A flying visit back to the where clause</title>
-
-      <para id="x_u5">Now that we've seen that we can define a
-	function as a series of equations, the usefulness of the
-	&where; clause should be a bit more clear.
-	Variables that we define inside a &where; clause
-	are visible across all of the equations that precede it in a
-	single block.</para>
-    </sect2>
-  </sect1>
-  
-  <sect1 id="hs.deftypes.pattern.limits">
-    <title>Common beginner mistakes with patterns</title>
-
-    <para id="x_NL">There are a few ways in which new Haskell
-      programmers can misunderstand or misuse patterns.  Here are a
-      few potential missteps that you can easily avoid.</para>
-
-    <para id="x_v5">There's no way to write a pattern that compares a
-      value with a variable.  Matching a pattern only lets us perform
-      exact comparisons against combinations of constructors and
-      simple values.</para>
-
-    <para id="x_OL">Here's a well-intentioned example of pattern
-      matching gone awry.  This code compiles cleanly, but depending
-      on what you expect it to do, it might surprise you.</para>
-
-    &BogusPattern.hs:isHead;
-
-    <para id="x_w5">A naive glance suggests that this code is trying
-      to check the value of <function>f</function> to see if it's
-      actually the standard function <function>head</function>, but
-      here's what it is <emphasis>really</emphasis> doing.</para>
-
-    <para id="x_x5">Because the first pattern in the <code>case</code>
-      expression is a variable, this branch of the <code>case</code>
-      will <emphasis>always</emphasis> match, no matter what the value
-      of <varname>f</varname> is.  The name <varname>head</varname>
-      thus acts as a local variable whose value is the value of
-      <varname>f</varname>, which hides the global definition of the
-      well-known <function>head</function> function.  </para>
-
-    <note>
-      <title>Irrefutable patterns</title>
-
-      <para id="x_y5">A pattern that consists only of a variable will
-	always match, because it's not being compared against any
-	value that could cause the match to fail.  We refer to
-	patterns that always match as
-	<emphasis>irrefutable</emphasis>. The wild card <code>_</code>
-	is also irrefutable.</para>
-    </note>
-
-    <para id="x_z5">The first pattern always matches, because it's
-      irrefutable.  But the second pattern <emphasis>also</emphasis>
-      always matches, because it uses a wild card.  However, because
-      Haskell attempts to match patterns in the order in which we
-      write them, the first pattern will always succeed, and the
-      second pattern will never actually be reached. Because the two
-      patterns will match the same values, they are said to
-      <emphasis>overlap</emphasis>.  If &GHC; ever complains to you
-      about overlapping patterns, it's telling you that one of your
-      patterns is the same as another, and so it will never actually
-      be matched.</para>
-
-    <para id="x_A6">Another thing to be aware of is that a variable
-      can only appear once in a pattern.  For example, we can't put a
-      variable in multiple places within a pattern to express the
-      notion <quote>this value and that should be
-	identical</quote>.</para>
-
-    <para id="x_B6">The way around these restrictions of Haskell's
-      patterns is to use patterns in combination with a language
-      facility called <emphasis>guards</emphasis>, which we'll talk
-      about next.</para>
-  </sect1>
-
-  <sect1 id="hs.deftypes.guard">
-    <title>Conditional evaluation with guards</title>
-
-    <para id="x_C6">We can further extend our expressive arsenal using
-      <emphasis>guards</emphasis>.  A guard is an expression of type
-      <type>Bool</type>; if it evaluates to <function>True</function>,
-      the equation that follows it is evaluated.  Otherwise, the next
-      guard in the series is evaluated, and so on.  A series of guards
-      is only checked if the patterns that they're associated with
-      match.  Here's an example of guards in action.</para>
-
-    &Roots.hs:guardedRoots;
-
-    <para id="x_D6">Each guard is introduced by a <code>|</code> symbol,
-      followed by the guard expression, then an <code>=</code> symbol
-      (or <code>-&gt;</code> if within a <code>case</code>
-      expression), then the expression to evaluate if the guard
-      succeeds.  A guard expression can use any variables matched in
-      the pattern that precedes it.</para>
-
-    <para id="x_E6">The <varname>otherwise</varname> used in the second guard
-      has an obvious meaning: it's the expression to evaluate if
-      previous guards all evaluate to <function>False</function>. It's
-      not a special piece of syntax, though; it's just a predefined variable
-      whose value is <function>True</function>.</para>
-
-    <para id="x_F6">We can use guards anywhere that we can use
-      patterns.  The advantage of writing a function as a series of
-      equations using pattern matching and guards is that it often
-      makes code much clearer.  Remember the
-      <function>myDrop</function> function we defined in <xref
-	linkend="hs.funcstypes.if"/>?</para>
-
-    &myDrop.hs:myDrop.noid;
-
-    <para id="x_H6">Here's a reformulation of that function using
-      patterns and guards.  Instead of reasoning about what an
-      <code>if</code> expression is doing and which branch will be
-      evaluated, the code uses a series of equations with simple
-      patterns and guards. Hoisting the control decisions to the
-      <quote>outside</quote> of the code, instead of burying it inside
-      with <code>if</code> expressions, lets us enumerate up front
-      the cases in which we expect the behaviour of the function to
-      differ.</para>
-
-    &myDrop.hs:niceDrop;
-
-    <para id="x_I6">Let's return to one of the limitations of patterns that we
-      mentioned in the previous section: the fact that we can't 
-      check two variables within a pattern for equality.
-      We can express this quite easily by following the pattern with a
-      guard.</para>
-
-    &Guard.hs:secondEqualsThird;
-
-    <para id="x_J6">Here, for good measure, we've illustrated guard
-      syntax in a <code>case</code> expression.  This guard expression
-      compares the variables matched in the pattern for equality.</para>
-  </sect1>
-
-  <sect1 id="hs.deftypes.infix">
-    <title>Infix functions</title>
-
-    <para id="x_K6">Usually, when we define or call a function in Haskell, we
-      write the name of the function, followed by its arguments; this
-      is called prefix notation, because the name of the function
-      comes before its arguments.  For a function that takes two
-      arguments, we have the option of using it in
-      <emphasis>infix</emphasis> form, between its first and second
-      arguments.  This allows us to write expressions using functions
-      as if they were infix operators.</para>
-
-    <para id="x_L6">The syntax for defining or calling a function in infix form
-      is to enclose the name of the function in backtick characters
-      (sometimes known as backquotes).  Here's a simple infix
-      definition.</para>
-
-    &Plus.hs:plus;
-
-    <para id="x_M6">Defining a function in infix form doesn't change anything
-      about the behaviour of the function.  We can call the function
-      using infix or prefix notation, as we prefer.</para>
-
-    &infix.ghci:plus;
-
-    <para id="x_N6">Infix notation is useful for more than just our own
-      functions.  For example, Haskell's standard
-      <code>Data.List</code> module defines a function,
-      <function>isPrefixOf</function>, that indicates whether all
-      elements of its first argument are equal to the first elements
-      of its second argument.</para>
-
-    &infix.ghci:type;
-
-    <para id="x_O6">Let's define a few variables in &ghci;.</para>
-
-    &infix.ghci:vars;
-
-    <para id="x_P6">If we call <function>isPrefixOf</function> using prefix
-      notation, we can have a hard time remembering which argument
-      we're checking for as a prefix of the other.</para>
-
-    &infix.ghci:prefix;
-
-    <para id="x_Q6">But if we use infix notation, the code <quote>reads</quote>
-      more naturally; it's now obvious that we're checking the
-      variable on the left to see if it's a prefix of the variable on
-      the right.</para>
-
-    &infix.ghci:infix;
-
-    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
-      to use infix versus prefix notation, although prefix notation is
-      far more common.  It's best to choose whichever makes your code
-      more readable in a specific situation.</para>
-
-    <note>
-      <para id="x_S6">The backtick notation is not a general mechanism: it's a
-	piece of special syntax that applies only to names.  For
-	example, we can't put backticks around an expression that
-	returns a function, and then treat that as an infix
-	function.</para>
-    </note>
-  </sect1>
-
   <sect1 id="hs.deftypes.offside">
     <title>The offside rule and white space in an expression</title>
 
@@ -1420,6 +1190,218 @@
 	ever actually <emphasis>used</emphasis> in Haskell
 	programs.</para>
     </sect2>
+  </sect1>
+
+  <sect1 id="hs.deftypes.case">
+    <title>The case expression</title>
+
+    <para id="x_q5">We're not limited to using patterns in function
+      definitions.  The <code>case</code> expression lets us match
+      patterns at any time.  Here's what it looks like.</para>
+
+      &Roots.hs:hasRealRoots;
+
+    <para id="x_r5">The <code>case</code> keyword is followed by an
+      arbitrary expression: this is the expression that we're
+      checking0. The <code>of</code> keyword signifies the end of the
+      expression and the beginning of the block of patterns and
+      expressions.</para>
+
+    <para id="x_s5">Each item in the block consists of a pattern,
+      followed by an arrow <code>-&gt;</code>, followed by an
+      expression to evaluate if that pattern matches.  These
+      expressions must all have the same type.  The result of the
+      <code>case</code> expression is the result of the expression
+      associated with the first pattern to match.  Matches are
+      attempted from top to bottom.</para>
+
+    <para id="x_t5">To express <quote>here's the expression to
+	evaluate if none of the other patterns match</quote>, we just
+      use the wild card pattern <code>_</code> as the last in our list
+      of patterns.</para>
+  </sect1>
+  
+  <sect1 id="hs.deftypes.pattern.limits">
+    <title>Common beginner mistakes with patterns</title>
+
+    <para id="x_NL">There are a few ways in which new Haskell
+      programmers can misunderstand or misuse patterns.  Here are a
+      few potential missteps that you can easily avoid.</para>
+
+    <para id="x_OL">Here are some attempts at pattern matching gone
+      awry.  Depending on what you expect one of these examples to do,
+      it might contain a surprise..</para>
+
+    <sect2>
+      <title>Matching against a variable</title>
+
+      &BogusPattern.hs:whichFruit;
+
+      <para id="x_w5">A naive glance suggests that this code is trying
+	to check the value <function>f</function> to see whether it
+	matches the value <varname>apple</varname> or
+	<varname>orange</varname>.</para>
+
+      <para id="x_x5">The first appearance of <varname>apple</varname>
+	in the <code>case</code> expression is a pattern,
+	<emphasis>not</emphasis> a use of the top level
+	<function>apple</function> variable. Because this pattern
+	doesn't mention a type constructor or a literal value (the two
+	things that might cause a pattern matching attempt to fail),
+	this branch of the <code>case</code> will
+	<emphasis>always</emphasis> match, no matter what the value of
+	<varname>f</varname> is.</para>
+
+      <note>
+	<title>Irrefutable patterns</title>
+
+	<para id="x_y5">We refer to a pattern that consists only of a
+	  variable name, and thus cannot fail to match, as
+	  <emphasis>irrefutable</emphasis>. The wild card pattern
+	  <code>_</code> is also irrefutable.</para>
+      </note>
+
+      <para>Here's a corrected version of this function.</para>
+
+      &BogusPattern.hs:betterFruit;
+
+      <para>Our bugfix involved making this function match against the
+	literal values <code>"apple"</code> and
+	<code>"orange"</code>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Comparing values for equality</title>
+
+      <para>What if we want to compare the values stored in two nodes
+	of type <type>Tree</type>, and return one of them if they're
+	equal?  Here's a naive attempt.</para>
+
+      &BadTree.hs:nodesAreSame;
+    
+      <para id="x_A6">A variable can only appear once in a function's
+	bindings. We can't place a variable in multiple positions to
+	express the notion <quote>this value and that should be
+	  identical</quote>.  Instead, we'll solve this problem using
+	<emphasis>guards</emphasis>, another invaluable language
+	feature.</para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="hs.deftypes.guard">
+    <title>Conditional evaluation with guards</title>
+
+    <para id="x_C6">Pattern matching only lets us make fixed tests of
+      a value's shape.  Although this is useful, we often need to
+      perform a more expressive check before evaluating a function's
+      body.  Haskell provides a feature, <emphasis>guards</emphasis>,
+      that give us this ability.  We'll introduce the idea with an
+      example.</para>
+
+    &Roots.hs:guardedRoots;
+
+    <para>A pattern can have zero or more guards, each an expression
+      of type <type>Bool</type>.  A guard is introduced by a
+      <code>|</code> symbol, followed by the guard expression, then an
+      <code>=</code> symbol (or <code>-&gt;</code> if we're in a
+      &case; expression), then the body to use if the guard succeeds.
+      If the pattern matches, each guard is evaluated in turn.  If a
+      guard succeeds, its associated body is used as the result of the
+      function.  If no guard succeeds, pattern matching moves on to
+      the next pattern.</para>
+
+    <para>A guard expression can use any variables mentioned in the
+      pattern that it's associated with.  The special-looking guard
+      expression <varname>otherwise</varname> is simply a variable
+      bound to the value <code>True</code>.</para>
+
+    <para>Here's another example of guards in action, where we've
+      rewritten our <function>nodesAreSame</function> example to be
+      correct and concise.</para>
+
+    &GoodTree.hs:nodesAreSame;
+
+    <para id="x_F6">We can use guards anywhere that we can use
+      patterns.  The advantage of writing a function as a series of
+      equations using pattern matching and guards is that it often
+      makes code much clearer.  Remember the
+      <function>myDrop</function> function we defined in <xref
+	linkend="hs.funcstypes.if"/>?</para>
+
+    &myDrop.hs:myDrop.noid;
+
+    <para id="x_H6">Here's a reformulation that uses patterns and
+      guards.</para>
+
+    &myDrop.hs:niceDrop;
+
+    <para>This change in style lets us enumerate <emphasis>up
+	front</emphasis> the cases in which we expect a function to
+      behave differently. If we bury the decisions inside a function
+      as &if; expressions, the code becomes harder to read.</para>
+  </sect1>
+
+  <sect1 id="hs.deftypes.infix">
+    <title>Infix functions</title>
+
+    <para id="x_K6">Usually, when we define or call a function in
+      Haskell, we write the name of the function, followed by its
+      arguments.  This notation is referred to as
+      <emphasis>prefix</emphasis>, because the name of the function
+      comes before its arguments. If a function takes two arguments,
+      we have the option of using it in <emphasis>infix</emphasis>
+      form, where we place it between its first and second arguments.
+      This allows us to write expressions using functions as if they
+      were infix operators.</para>
+
+    <para id="x_L6">To define or call a function using infix notation,
+      we enclose its name in backtick characters (sometimes known as
+      backquotes).  Here's a simple infix definition.</para>
+
+    &Plus.hs:plus;
+
+    <para id="x_M6">Using infix notation doesn't change anything about
+      a function's behaviour.</para>
+
+    &infix.ghci:plus;
+
+    <para id="x_N6">Infix notation is useful for more than just our own
+      functions.  For example, Haskell's standard
+      <code>Data.List</code> module defines a function,
+      <function>isPrefixOf</function>, that indicates whether all
+      elements of its first argument are equal to the first elements
+      of its second argument.</para>
+
+    <para id="x_O6">To illustrate its use, let's begin by defining a
+      few variables in &ghci;.</para>
+
+    &infix.ghci:vars;
+
+    <para id="x_P6">If we call <function>isPrefixOf</function> using
+      prefix notation, it can be hard to remember which argument is
+      supposed to be the one we're checking.</para>
+
+    &infix.ghci:prefix;
+
+    <para id="x_Q6">If we switch infix notation, the code
+      <quote>reads</quote> more naturally. It's now clearer that we're
+      checking the variable on the left to see if it's a prefix of the
+      variable on the right.</para>
+
+    &infix.ghci:infix;
+
+    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
+      to use infix versus prefix notation, although prefix notation is
+      far more common.  It's best to choose whichever makes your code
+      more readable in a specific situation.</para>
+
+    <note>
+      <para id="x_S6">The backtick notation is not a general mechanism: it's a
+	piece of special syntax that applies only to names.  For
+	example, we can't put backticks around an expression that
+	returns a function, and then treat that as an infix
+	function.</para>
+    </note>
   </sect1>
 
   <sect1 id="hs.deftypes.end">

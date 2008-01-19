@@ -1,3 +1,5 @@
+module Tree where
+
 {-- snippet Tree --}
 data Tree a = Node a (Tree a) (Tree a)
             | Empty

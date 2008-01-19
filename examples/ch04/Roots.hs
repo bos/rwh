@@ -48,12 +48,11 @@ hasRealRoots a b c = case realRoots a b c of
 
 {-- snippet guardedRoots --}
 guardedRoots a b c
-    | n >= 0 && a /= 0 = Just (r1, r2)
+    | n >= 0 && a /= 0 = Just ((-b + s) / a2, (-b - s) / a2)
     | otherwise        = Nothing
-    where n  = b**2 - 4 * a * c
-          a2 = 2 * a
-          r1 = (-b + sqrt n) / a2
-          r2 = (-b - sqrt n) / a2
+  where n  = b^2 - 4 * a * c
+        a2 = 2 * a
+        s = sqrt n
 {-- /snippet guardedRoots --}
 
 {-- snippet finalRoots --}
@@ -63,11 +62,11 @@ finalRoots 0 b c = Undefined
 finalRoots a b c
     | n >= 0     = RealValued ((-b + s) / a2) ((-b - s) / a2)
     | otherwise  = ComplexValued ((-b' + s') / a2') ((-b' - s') / a2')
-  where n   = b**2 - 4 * a * c
+  where n   = b^2 - 4 * a * c
         a2  = 2 * a
+        s   = sqrt n
         n'  = n :+ 0
         b'  = b :+ 0
         a2' = a2 :+ 0
-        s = sqrt n
-        s' = sqrt n'
+        s'  = sqrt n'
 {-- /snippet finalRoots --}
