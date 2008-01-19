@@ -870,7 +870,7 @@
 
     <para id="x_f4">Within the body of a function, we can introduce
       new local variables whenever we need them, using a
-      <code>let</code> expression.  As an example, let's write a
+      &let; expression.  As an example, let's write a
       function that calculates the real-valued roots of the quadratic
       equation <literal>a * (x ** 2) + b * x + c ==
 	0</literal>.</para>
@@ -890,7 +890,7 @@
     &Roots.hs:realRoots;
 
     <para id="x_g4">The keywords to look out for here are
-      <code>let</code>, which starts a block of variable declarations,
+      &let;, which starts a block of variable declarations,
       and <code>in</code>, which ends it.  Each line introduces a new
       variable.  The name is on the left of the <literal>=</literal>,
       and the expression it's bound to is on the right.</para>
@@ -970,7 +970,7 @@
       <title>Shadowing</title>
 
       <para id="x_i4">We can <quote>nest</quote> multiple
-	<code>let</code> blocks inside each other in an
+	&let; blocks inside each other in an
 	expression.</para>
 
       &NestedLets.hs:foo;
@@ -1009,8 +1009,8 @@
       <title>The where clause</title>
 
       <para>There's another mechanism we can use to introduce local
-	variables, called a <code>where</code> clause. The definitions
-	in a <code>where</code> clause apply to the code that
+	variables, called a &where; clause. The definitions
+	in a &where; clause apply to the code that
 	<emphasis>precedes</emphasis> it.  Let's illustrate what we
 	mean with another example.</para>
 
@@ -1030,7 +1030,7 @@
 	non-Haskell programmers.  It's a great way to put your
 	reader's focus on the important details of an expression, with
 	the supportings definitions following afterwards.  After a
-	while, you'll find yourself missing <code>where</code> clauses
+	while, you'll find yourself missing &where; clauses
 	in languages that lack them!</para>
 
       <para id="x_l4">As with &let; expressions, names are bound to
@@ -1045,7 +1045,7 @@
       <para id="x_FL">You'll have noticed that Haskell's syntax for
 	defining a variable looks very similar to its syntax for
 	defining a function.  This symmetry is preserved in
-	<code>let</code> and <code>where</code> blocks: we can define
+	&let; and &where; blocks: we can define
 	local <emphasis>functions</emphasis> just as easily as local
 	<emphasis>variables</emphasis>.  All of the same syntax
 	applies as at the top level: we can use multiple equations,
@@ -1110,8 +1110,8 @@
 
       <para id="x_u5">Now that we've seen that we can define a
 	function as a series of equations, the usefulness of the
-	<code>where</code> clause should be a bit more clear.
-	Variables that we define inside a <code>where</code> clause
+	&where; clause should be a bit more clear.
+	Variables that we define inside a &where; clause
 	are visible across all of the equations that precede it in a
 	single block.</para>
     </sect2>
@@ -1342,9 +1342,9 @@
       item, as is a line indented to the right of the current current
       item.</para>
 
-    <para id="x_A5">The rules for <code>let</code> expressions and
-      <code>where</code> clauses are similar.  After a
-      <code>let</code> or <code>where</code> keyword, the Haskell
+    <para id="x_A5">The rules for &let; expressions and
+      &where; clauses are similar.  After a
+      &let; or &where; keyword, the Haskell
       compiler or interpreter remembers the indentation of the next
       token it sees. If the next line is empty, or its indentation is
       further to the right than the previous line, this counts as
@@ -1352,25 +1352,25 @@
       indentation is the same as the previous line, this is treated as
       beginning a new item in the same block.</para>
 
-    <para id="x_B5">Here are nested uses of <code>let</code> and
-      <code>where</code>.</para>
+    <para id="x_B5">Here are nested uses of &let; and
+      &where;.</para>
 
     &letwhere.hs:let;
 
     <para id="x_C5">The name <varname>a</varname> is only visible
-      within the inner <code>let</code> expression.  It's not visible
-      in the outer <code>let</code>.  If we try to use the name
+      within the inner &let; expression.  It's not visible
+      in the outer &let;.  If we try to use the name
       <varname>a</varname> there, we'll get a compilation
       error.</para>
 
     &letwhere.hs:where;
 
-    <para id="x_D5">Similarly, the scope of the first <code>where</code> clause
+    <para id="x_D5">Similarly, the scope of the first &where; clause
       is the definition of <varname>foo</varname>, but the scope of
-      the second is just the first <code>where</code> clause.</para>
+      the second is just the first &where; clause.</para>
 
-    <para id="x_E5">The indentation we use for the <code>let</code> and
-      <code>where</code> clauses makes our intentions easy to figure
+    <para id="x_E5">The indentation we use for the &let; and
+      &where; clauses makes our intentions easy to figure
       out.</para>
 
     <sect2 id="hs.deftypes.tabs">
@@ -1404,17 +1404,17 @@
 	indicate what we mean.  To do so, we start a block of
 	equations with an opening curly brace; separate each item with
 	a semicolon; and finish the block with a closing curly brace.
-	The following two uses of <code>let</code> have the same
+	The following two uses of &let; have the same
 	meanings.</para>
 
       &Braces.hs:braces;
 
       <para id="x_I5">When we use explicit structuring, the normal layout rules
 	don't apply, which is why we can get away with unusual
-	indentation in the second <code>let</code> expression.</para>
+	indentation in the second &let; expression.</para>
 
       <para id="x_J5">We can use explicit structuring anywhere that we'd
-	normally use layout.  It's valid for <code>where</code>
+	normally use layout.  It's valid for &where;
 	clauses, and even top-level declarations.  Just remember that
 	although the facility exists, explicit structuring is hardly
 	ever actually <emphasis>used</emphasis> in Haskell
