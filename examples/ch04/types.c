@@ -1,11 +1,12 @@
 #include <sys/types.h>
 
-/** snippet book_section */
-struct book_section {
-    int number;
+/** snippet book_info */
+struct book_info {
+    int id;
     char *name;
+    char **authors;
 };
-/** /snippet book_section */
+/** /snippet book_info */
 
 /** snippet roygbiv */
 enum roygbiv {

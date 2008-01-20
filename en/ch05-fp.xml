@@ -174,6 +174,70 @@
     &splitlines.ghci:cons;
   </sect1>
 
+  <sect1 id="hs.fp.infix">
+    <title>Infix functions</title>
+
+    <para id="x_K6">Usually, when we define or call a function in
+      Haskell, we write the name of the function, followed by its
+      arguments.  This notation is referred to as
+      <emphasis>prefix</emphasis>, because the name of the function
+      comes before its arguments.</para>
+
+    <para>If a function or constructor takes two arguments, we have
+      the option of using it in <emphasis>infix</emphasis> form, where
+      we place it between its first and second arguments. This allows
+      us to write expressions using functions as if they were infix
+      operators.</para>
+
+    <para id="x_L6">To define or use a function, constructor, or type
+      using infix notation, we enclose its name in backtick characters
+      (sometimes known as backquotes).  Here are simple infix
+      definitions of a function and a type.</para>
+
+    &Plus.hs:plus;
+
+    <para id="x_M6">As a purely syntactic convenience, infix notation
+      doesn't change a function's behaviour.</para>
+
+    &infix.ghci:plus;
+
+    <para id="x_N6">Infix notation is useful for more than just our own
+      functions.  For example, Haskell's Prelude defines a function,
+      <function>elem</function>, that indicates whether a value is
+      present in a list. If we call <function>elem</function> using
+      prefix notation, it's not difficult to read.</para>
+
+    &infix.ghci:prefix;
+
+    <para id="x_Q6">However, if we switch to infix notation, the code
+      is easier to understand. It's now clearer that we're
+      checking to see if the value on the left is present in the list
+      on the right.</para>
+
+    &infix.ghci:infix;
+
+    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
+      to use infix versus prefix notation, although prefix notation is
+      far more common.  It's best to choose whichever makes your code
+      more readable in a specific situation.</para>
+
+    <note>
+      <title>Beware familiar notation in an unfamiliar
+	language</title>
+
+      <para>A few other programming languages use backticks, but in
+	spite of the visual similarities, the purpose of backticks in
+	Haskell does not remotely resemble their meaning in, for
+	example, Perl, Python, or Unix shell scripts.</para>
+
+      <para id="x_S6">The only legal thing we can do with backticks in
+	Haskell is wrap them around the name of a function.  We can't,
+	for example, use them to enclose a complex expression whose
+	type is a function.  It might be <emphasis>nice</emphasis> if
+	we could, but that's not how the language is today.</para>
+    </note>
+  </sect1>
+
   <sect1 id="hs.fp.lists">
     <title>Working with lists</title>
     
@@ -410,8 +474,9 @@
     <sect2 id="hs.fp.list.search">
       <title>Searching lists</title>
 
-      <para id="x_V7">The <function>elem</function> function indicates whether a
-	value is present in a list.  It has a companion function,
+      <para id="x_V7">As we've already seen, the
+	<function>elem</function> function indicates whether a value
+	is present in a list.  It has a companion function,
 	<function>notElem</function>.</para>
 
       &ch05.list.ghci:elem;
@@ -427,7 +492,8 @@
 	<function>isInfixOf</function>, and
 	<function>isSuffixOf</function>, let us test for the presence
 	of sublists within a bigger list.  The easiest way to use them
-	is as infix functions, where they read quite naturally.</para>
+	is using infix notation, which we introduced in <xref
+	linkend="hs.fp.infix"/>.</para>
 
       <para id="x_Y7">The <function>isPrefixOf</function> function tells us
 	whether its left argument matches the beginning of its right

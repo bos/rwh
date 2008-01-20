@@ -1,0 +1,46 @@
+--# load
+:load BookStore
+
+--# bookInfo
+bookInfo
+:type bookInfo
+
+--# newValue
+
+Book 0 "The Book of Imaginary Beings" ["Jorge Luis Borges"]
+
+--# valueType
+
+:type Book 1 "Cosmicomics" ["Italo Calvino"]
+
+--# info
+
+:info BookInfo
+
+--# type
+
+:type Book
+
+--# tuple
+
+Book 2 "The Wealth of Networks" ["Yochai Benkler"]
+(2, "The Wealth of Networks", ["Yochai Benkler"])
+
+--# unwrap
+
+bookID (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
+bookTitle (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
+bookAuthors (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
+
+--# unwrap.types
+
+:type bookID
+:type bookTitle
+:type bookAuthors
+
+--# customer1
+customer1
+
+--# accessor
+:type customerID
+customerName customer1

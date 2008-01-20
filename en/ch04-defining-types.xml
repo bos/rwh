@@ -9,28 +9,44 @@
   <sect1 id="hs.deftypes.data">
     <title>Defining a new data type</title>
       
-    <para id="x_C4">Although lists and tuples are useful, we'll still often want
-      to construct new data types of our own.  We define a new data
-      type using the <code>data</code> keyword.</para>
+    <para id="x_C4">Although lists and tuples are useful, we'll often
+      want to construct new data types of our own.  This allows us to
+      add structure to the values in our programs.  Instead of using
+      an anonymous tuple, we can give a collection of related values a
+      name.  Defining our own types also improves the type safety of
+      our code: Haskell will not allow us to accidentally mix values
+      of two types that are structurally similar but have different
+      names.</para>
 
-    &BookSection.hs:BookSection;
+    <para>We define a new data type using the <code>data</code>
+      keyword.</para>
 
-    <para id="x_D4">The <type>BookSection</type> after the
+    &BookStore.hs:BookInfo;
+
+    <para id="x_D4">The <type>BookInfo</type> after the
       <code>data</code> keyword is the name of our new type. We call
-      <type>BookSection</type> a <emphasis>type
-	constructor</emphasis>.  (As we've already mentioned, a type
-      name, and hence a type constructor, must start with a capital
-      letter.)  The string <code>Section</code> is the name of the
-      <emphasis>value constructor</emphasis> we'll apply to create a
-      value of this type.  (As with a type constructor, a value
-      constructor's name must start with a capital letter.)</para>
+      <type>BookInfo</type> a <emphasis>type constructor</emphasis>.
+      (As we've already mentioned, a type name, and hence a type
+      constructor, must start with a capital letter.)  The string
+      <code>Book</code> is the name of the <emphasis>value
+	constructor</emphasis> we'll apply to create a value of this
+      type.  (As with a type constructor, a value constructor's name
+      must start with a capital letter.)</para>
 
-    <para>Finally, the <type>Int</type> and <type>String</type> that
-      follow are the <emphasis>components</emphasis> of the type.  A
-      component serves the same purpose in Haskell as a field in a
-      structure or class would in another language: it's a
-      <quote>slot</quote> where we can put a value.  We'll often refer
-      to components as fields.</para>
+    <para>Finally, the <type>Int</type>, <type>String</type>, and
+      <type>[String]</type> that follow are the
+      <emphasis>components</emphasis> of the type.  A component serves
+      the same purpose in Haskell as a field in a structure or class
+      would in another language: it's a <quote>slot</quote> where we
+      can put a value.  We'll often refer to components as fields.
+      Here, the <type>Int</type> represents a book's identifier
+      (perhaps in a database), <type>String</type> its name, and
+      <type>[String]</type> the names of its authors.</para>
+
+    <para>The <type>BookInfo</type> type has the same components as an
+      <type>(Int, String, [String])</type> 3-tuple, but a distinct
+      type.  Haskell won't let us accidentally (or deliberately) use
+      one in a context where the other is expected.</para>
 
     <note>
       <title>Deriving what?</title>
@@ -44,46 +60,46 @@
     </note>
 
     <para id="x_F4">We can create a new value of type
-      <type>BookSection</type> by treating
-      <function>Section</function> as a function, and applying it with
-      arguments of types <type>Int</type> and
-      <type>String</type>.</para>
+      <type>BookStore</type> by treating
+      <function>Book</function> as a function, and applying it with
+      arguments of types <type>Int</type>,
+      <type>String</type>, and <type>[String]</type>.</para>
 
-    &BookSection.hs:fp;
+    &BookStore.hs:bookInfo;
 
-    <para id="x_G4">Once we've defined a type, we can experiment with it in
-      &ghci;.  We begin by using the <command>:load</command> command
-      to load our source file.</para>
+    <para id="x_G4">Once we've defined a type, we can experiment with
+      it in &ghci;.  We begin by using the <command>:load</command>
+      command to load our source file.</para>
 
-    &booksection.ghci:load;
+    &bookstore.ghci:load;
 
-    <para id="x_H4">Remember the <code>fpSection</code> variable we
+    <para id="x_H4">Remember the <code>fpBook</code> variable we
       defined?  Here it is.</para>
 
-    &booksection.ghci:fp;
+    &bookstore.ghci:bookInfo;
 
-    <para id="x_I4">We can construct new values interactively in &ghci;,
-      too.</para>
+    <para id="x_I4">We can construct new values interactively in
+      &ghci;, too.</para>
 
-    &booksection.ghci:newValue;
+    &bookstore.ghci:newValue;
 
-    <para id="x_AL">The &ghci; command <command>:type</command> lets us see what
-      the type of that expression is.</para>
+    <para id="x_AL">The &ghci; command <command>:type</command> lets
+      us see what the type of that expression is.</para>
 
-    &booksection.ghci:valueType;
+    &bookstore.ghci:valueType;
 
-    <para id="x_J4">To find out more about a type, we can use some of &ghci;'s
-      browsing capabilities.  The <command>:info</command> command
-      gets &ghci; to tell us everything it knows about a
+    <para id="x_J4">To find out more about a type, we can use some of
+      &ghci;'s browsing capabilities.  The <command>:info</command>
+      command gets &ghci; to tell us everything it knows about a
       type.</para>
     
-    &booksection.ghci:info;
+    &bookstore.ghci:info;
 
     <para id="x_K4">We can also find out why we use
-      <function>Section</function> to construct a new value of
-      type <type>BookSection</type>.</para>
+      <function>Book</function> to construct a new value of type
+      <type>BookStore</type>.</para>
 
-    &booksection.ghci:type;
+    &bookstore.ghci:type;
 
     <para id="x_L4">We can treat a value constructor as just another
       function, one that happens to create and return a new value of
@@ -92,10 +108,10 @@
     <sect2>
       <title>Naming types and values</title>
 
-      <para>When we introduced the type <type>BookSection</type>, we
+      <para>When we introduced the type <type>BookStore</type>, we
 	deliberately chose to give the type constructor
-	<type>BookSection</type> a different name from the value
-	constructor <code>Section</code>, purely to make it obvious
+	<type>BookStore</type> a different name from the value
+	constructor <code>Book</code>, purely to make it obvious
 	which was which.</para>
 
       <para>However, in Haskell, the names of types and values occupy
@@ -103,11 +119,11 @@
 	no ambiguity if we give a type constructor and a value
 	constructor the same name.</para>
 
-      &BookSection.hs:BookChapter;
+      &BookStore.hs:BookReview;
 
       <para>This definition says that the type named
-	<type>BookChapter</type> has a value constructor that is also
-	named <code>BookChapter</code>.  Since a type signature
+	<type>BookReview</type> has a value constructor that is also
+	named <code>BookReview</code>.  Since a type signature
 	doesn't contain value names, and a normal expression doesn't
 	contain type names, it's always clear from the context in
 	which we use a name whether that name refers to a type or a
@@ -177,10 +193,10 @@
 
       <para>There is some overlap between tuples and user-defined
 	algebraic data types.  If we wanted to, we could represent our
-	<type>BookSection</type> type from earlier as an <type>(Int,
+	<type>BookStore</type> type from earlier as an <type>(Int,
 	  String)</type> pair.</para>
 
-      &booksection.ghci:tuple;
+      &bookstore.ghci:tuple;
 
       <para>An algebraic data type gives us additional discrimination:
 	two tuples with elements of the same type have the same type,
@@ -246,22 +262,26 @@
 	  together into a compound value. It corresponds to a
 	  <code>struct</code> in C or C++, and its components
 	  correspond to the fields of a <code>struct</code>. Here's a
-	  C equivalent of the <type>BookSection</type> type that we
+	  C equivalent of the <type>BookStore</type> type that we
 	  defined earlier.</para>
 
-	&types.c:book_section;
+	&types.c:book_info;
 
 	<para>The main difference between the two is that the fields
 	  in the Haskell type are anonymous and positional.</para>
 
-	&BookSection.hs:BookSection.noid;
+	&BookStore.hs:BookInfo.noid;
 
 	<para>By <emphasis>positional</emphasis>, we mean that the
 	  section number is in the first field of the Haskell type,
 	  and the title is in the second.  We refer to them by
-	  location, not by name.  In <xref
-	linkend="hs.deftypes.pattern"/>, we'll see how to access the
-	  fields of a <type>BookSection</type> value.</para>
+	  location, not by name.</para>
+
+	<para>In <xref linkend="hs.deftypes.pattern"/>, we'll see how to access the
+	  fields of a <type>BookStore</type> value.  In <xref
+	  linkend="hs.deftypes.record"/>, we'll introduce an alternate
+	  syntax for defining data types that looks a little more
+	  C-like.</para>
 
       </sect3>
 
@@ -499,21 +519,21 @@
 
       <para id="x_j5">We can pattern match on an algebraic data type
 	using its value constructors.  Remember the
-	<type>BookSection</type> type we defined earlier?  Here's how
+	<type>BookStore</type> type we defined earlier?  Here's how
 	we can extract the values from a
-	<type>BookSection</type>.</para>
+	<type>BookStore</type>.</para>
 
-      &BookSection.hs:accessors;
+      &BookStore.hs:accessors;
 
       <para id="x_k5">Let's see it in action.</para>
 
-      &booksection.ghci:unwrap;
+      &bookstore.ghci:unwrap;
 
       <para id="x_l5">The compiler can infer the types of the accessor
 	functions based on the constructor we're using in our
 	pattern.</para>
 
-      &booksection.ghci:unwrap.types;
+      &bookstore.ghci:unwrap.types;
 
       <para id="x_IL">Here are some rules of thumb to help with
 	remembering how pattern matching works.  A constructor in a
@@ -592,7 +612,7 @@
       <para id="x_ML">Wild cards also help readability, as they make
 	it easier to tell which values we're really using.</para>
 
-      &BookSection.hs:niceAccessors;
+      &BookStore.hs:niceAccessors;
 
     </sect2>
 
@@ -626,9 +646,58 @@
 
       <para>&GHC; provides a helpful compilation option,
 	<option>-fwarn-incomplete-patterns</option>, that will cause
-	it to print a warning at compile time if a sequence of
+	it to print a warning during compilation if a sequence of
 	patterns don't match all of a type's constructors.</para>
     </sect2>
+  </sect1>
+
+  <sect1 id="hs.deftypes.record">
+    <title>Record syntax</title>
+
+    <para>Writing accessor functions for each of a data type's
+      components can be tedious.</para>
+
+    &BookStore.hs:niceAccessors.noid;
+
+    <para>Fortunately, Haskell provides a way of defining a data type,
+      and accessors for each of its components, simultaneously.</para>
+
+    &BookStore.hs:Customer;
+
+    <para>This is almost exactly identical in meaning to the
+      following, more familiar form.</para>
+
+    &AltCustomer.hs:Customer;
+    
+    <para>When we use record syntax and give a name to each field in a
+      data type, Haskell creates an accessor function with the name
+      that we supply.</para>
+
+    <para>We can still use the usual function call syntax to create a
+      value of this type.</para>
+
+    &BookStore.hs:customer1;
+
+    <para>When we use record syntax to define a type, we can
+      optionally use a more verbose form to create a value.</para>
+
+    &BookStore.hs:customer2;
+
+    <para>When we define a type using record syntax, it changes the
+      printed representation of the type's values.</para>
+
+    &bookstore.ghci:customer1;
+
+    <para>For comparison, let's take another look at a value of the
+      <type>BookInfo</type> type, which we defined without record
+      syntax.</para>
+
+    &bookstore.ghci:bookInfo.noid;
+
+    <para>The accessor functions that we get <quote>for free</quote>
+      when we use record syntax are normal Haskell functions.</para>
+
+    &bookstore.ghci:accessor;
   </sect1>
 
   <sect1 id="hs.deftypes.paramtypes">
@@ -1339,69 +1408,6 @@
 	front</emphasis> the cases in which we expect a function to
       behave differently. If we bury the decisions inside a function
       as &if; expressions, the code becomes harder to read.</para>
-  </sect1>
-
-  <sect1 id="hs.deftypes.infix">
-    <title>Infix functions</title>
-
-    <para id="x_K6">Usually, when we define or call a function in
-      Haskell, we write the name of the function, followed by its
-      arguments.  This notation is referred to as
-      <emphasis>prefix</emphasis>, because the name of the function
-      comes before its arguments. If a function takes two arguments,
-      we have the option of using it in <emphasis>infix</emphasis>
-      form, where we place it between its first and second arguments.
-      This allows us to write expressions using functions as if they
-      were infix operators.</para>
-
-    <para id="x_L6">To define or call a function using infix notation,
-      we enclose its name in backtick characters (sometimes known as
-      backquotes).  Here's a simple infix definition.</para>
-
-    &Plus.hs:plus;
-
-    <para id="x_M6">Using infix notation doesn't change anything about
-      a function's behaviour.</para>
-
-    &infix.ghci:plus;
-
-    <para id="x_N6">Infix notation is useful for more than just our own
-      functions.  For example, Haskell's standard
-      <code>Data.List</code> module defines a function,
-      <function>isPrefixOf</function>, that indicates whether all
-      elements of its first argument are equal to the first elements
-      of its second argument.</para>
-
-    <para id="x_O6">To illustrate its use, let's begin by defining a
-      few variables in &ghci;.</para>
-
-    &infix.ghci:vars;
-
-    <para id="x_P6">If we call <function>isPrefixOf</function> using
-      prefix notation, it can be hard to remember which argument is
-      supposed to be the one we're checking.</para>
-
-    &infix.ghci:prefix;
-
-    <para id="x_Q6">If we switch infix notation, the code
-      <quote>reads</quote> more naturally. It's now clearer that we're
-      checking the variable on the left to see if it's a prefix of the
-      variable on the right.</para>
-
-    &infix.ghci:infix;
-
-    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
-      to use infix versus prefix notation, although prefix notation is
-      far more common.  It's best to choose whichever makes your code
-      more readable in a specific situation.</para>
-
-    <note>
-      <para id="x_S6">The backtick notation is not a general mechanism: it's a
-	piece of special syntax that applies only to names.  For
-	example, we can't put backticks around an expression that
-	returns a function, and then treat that as an infix
-	function.</para>
-    </note>
   </sect1>
 
   <sect1 id="hs.deftypes.end">
