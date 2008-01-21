@@ -183,7 +183,7 @@
       <emphasis>prefix</emphasis>, because the name of the function
       comes before its arguments.</para>
 
-    <para>If a function or constructor takes two arguments, we have
+    <para id="x_Rh">If a function or constructor takes two arguments, we have
       the option of using it in <emphasis>infix</emphasis> form, where
       we place it between its first and second arguments. This allows
       us to write expressions using functions as if they were infix
@@ -225,7 +225,7 @@
       <title>Beware familiar notation in an unfamiliar
 	language</title>
 
-      <para>A few other programming languages use backticks, but in
+      <para id="x_Sh">A few other programming languages use backticks, but in
 	spite of the visual similarities, the purpose of backticks in
 	Haskell does not remotely resemble their meaning in, for
 	example, Perl, Python, or Unix shell scripts.</para>

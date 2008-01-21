@@ -1470,17 +1470,17 @@
 	<function>runState</function> is the one most worth
 	remembering.</para>
 
-      <para>Here's a complete example of how to run our
+      <para id="x_Th">Here's a complete example of how to run our
 	<function>getTwoRandoms</function> function.</para>
 
       &Random.hs:runTwoRandoms;
 
-      <para>The call to <function>runState</function> follows a
+      <para id="x_Uh">The call to <function>runState</function> follows a
 	standard pattern: we pass it a function in the state monad and
 	an initial state.  It returns the result of the function and
 	the final state.</para>
 
-      <para>The code surrounding the call to
+      <para id="x_Vh">The code surrounding the call to
 	<function>runState</function> merely obtains the current
 	global <type>StdGen</type> value, then replaces it afterwards
 	so that subsequent calls to <function>runTwoRandoms</function>
@@ -1491,7 +1491,7 @@
     <sect2>
       <title>What about a bit more state?</title>
 
-      <para>It's a little hard to imagine writing much interesting
+      <para id="x_Wh">It's a little hard to imagine writing much interesting
 	code in which there's only a single state value to pass
 	around.  When we want to track multiple pieces of state at
 	once, the usual trick is to maintain them in a data type.
@@ -1500,7 +1500,7 @@
 
       &Random.hs:CountedRandom;
 
-      <para>This example happens to consume both elements of the
+      <para id="x_Xh">This example happens to consume both elements of the
 	state, and construct a completely new state, every time we
 	call into it.  More frequently, we're likely to read or modify
 	only part of a state.  This function gets the number of random
@@ -1508,18 +1508,18 @@
 
       &Random.hs:getCount;
 
-      <para>We deliberately used record syntax to define our
+      <para id="x_Yh">We deliberately used record syntax to define our
 	<type>CountedRandom</type> state, and this example should make
 	it clear why.  It gives us accessor functions that we can glue
 	together with <function>get</function> to read specific pieces
 	of the state.</para>
 
-      <para>If we want to partially update a state, the code doesn't
+      <para id="x_Zh">If we want to partially update a state, the code doesn't
 	come out quite so appealingly.</para>
 
       &Random.hs:putCount;
 
-      <para>Here, instead of a function, we're using record update
+      <para id="x_ah">Here, instead of a function, we're using record update
 	syntax.  The expression <code>st { crCount = a }</code>
 	creates a new value that's an identical copy of
 	<varname>st</varname>, except in its <code>crCount</code>
@@ -1529,7 +1529,7 @@
 	Haskell's usual elegance, but it at least gets the job
 	done.</para>
 
-      <para>There exists a function named <function>modify</function>
+      <para id="x_bh">There exists a function named <function>modify</function>
 	that combines the <function>get</function> and
 	<function>put</function> steps. It takes as argument a state
 	transformation function, but it's hardly more satisfactory: we
@@ -1548,45 +1548,45 @@
       theory, but they did not make the transition completely
       unscathed.</para>
 
-    <para>In category theory, a monad is built from a functor.  You
+    <para id="x_ch">In category theory, a monad is built from a functor.  You
       might expect that in Haskell, the <code>Monad</code> typeclass
       would thus be a subclass of <code>Functor</code>, but it isn't
       defined as such in the standard Prelude.  This is an unfortunate
       oversight</para>
 
-    <para>However, authors of Haskell libraries use a workaround: when
+    <para id="x_dh">However, authors of Haskell libraries use a workaround: when
       someone defines an instance of <code>Monad</code> for a type,
       they almost always write a <code>Functor</code> instance for it,
       too.  You can fairly reliably take it for granted that you'll be
       able to use the <code>Functor</code> typeclass's
       <function>fmap</function> function with any monad.</para>
 
-    <para>If we compare the type signature of
+    <para id="x_eh">If we compare the type signature of
       <function>fmap</function> with those of some of the standard
       monad functions that we've already seen, and we get a hint as to
       what <function>fmap</function> on a monad does.</para>
 
     &monadness.ghci:fmap;
 
-    <para>Sure enough, <function>fmap</function> lifts a pure function
+    <para id="x_fh">Sure enough, <function>fmap</function> lifts a pure function
       into the monad, just as <function>liftM</function> does.</para>
 
     <sect2>
       <title>Another way of looking at monads</title>
 
-      <para>Now that we know about the relationship between functors
+      <para id="x_gh">Now that we know about the relationship between functors
 	and monads, If we take a look back at the list monad, we can
 	see something interesting.  Specifically, take a look at the
 	definition of &bind; for lists.</para>
 
       &ListMonad.hs:instance.noid;
 
-      <para>Recall that <varname>f</varname> has type <type>a -&gt;
+      <para id="x_hh">Recall that <varname>f</varname> has type <type>a -&gt;
 	  [a]</type>.  When we call <code>map f xs</code>, we get back
 	a value of type <type>[[a]]</type>, which we have to
 	<quote>flatten</quote> using <code>concat</code>.</para>
 
-      <para>Consider what we could do if <code>Monad</code> was a
+      <para id="x_ih">Consider what we could do if <code>Monad</code> was a
 	subclass of <function>Functor</function>.  Since
 	<function>fmap</function> for lists is defined to be
 	<function>map</function>, we could replace
@@ -1594,7 +1594,7 @@
 	definition of &bind;.  This is not very interesting by itself,
 	but suppose we could go further.</para>
 
-      <para>The <function>concat</function> function is of type
+      <para id="x_jh">The <function>concat</function> function is of type
 	<type>[[a]] -&gt; [a]</type>: as we mentioned, it flattens the
 	nesting of lists.  We could generalise this type signature
 	from lists to monads, giving us the <quote>remove a level of
@@ -1602,7 +1602,7 @@
 	function that has this type is conventionally named
 	<function>join</function>.</para>
 
-      <para>If we had definitions of <function>join</function> and
+      <para id="x_kh">If we had definitions of <function>join</function> and
 	<function>fmap</function>, we wouldn't need to write a
 	definition of &bind; for every monad, because it would be
 	completely generic.  Here's what an alternative definition of
@@ -1611,19 +1611,19 @@
 
       &AltMonad.hs:AltMonad;
 
-      <para>Neither definition of a monad is <quote>better</quote>,
+      <para id="x_lh">Neither definition of a monad is <quote>better</quote>,
 	since if we have <function>join</function> we can write
 	&bind;, and vice versa, but the different perspectives can be
 	refreshing.</para>
 
-      <para>Removing a layer of monadic wrapping can, in fact, be
+      <para id="x_mh">Removing a layer of monadic wrapping can, in fact, be
 	useful in realistic circumstances.  We can find a generic
 	definition of <function>join</function> in the
 	<code>Control.Monad</code> module.</para>
 
       &MonadJoin.hs:join;
 
-      <para>Here are some examples of what it does.</para>
+      <para id="x_nh">Here are some examples of what it does.</para>
 
       &monadjoin.ghci:examples;
     </sect2>
@@ -1632,18 +1632,18 @@
   <sect1>
     <title>The monad laws, and good coding style</title>
 
-    <para>In <xref linkend="binary.functor.laws"/>, we introduced
+    <para id="x_oh">In <xref linkend="binary.functor.laws"/>, we introduced
       two rules for how functors should always behave.</para>
 
     &MonadLaws.hs:functor;
     
-    <para>Not surprisingly, there are also rules for how monads ought
+    <para id="x_ph">Not surprisingly, there are also rules for how monads ought
       to behave.  The three laws below are referred to as the monad
       laws.  A Haskell implementation doesn't enforce these laws: it's
       up to the author of a <code>Monad</code> instance to follow
       them.</para>
 
-    <para>The monad laws are simply formal ways of saying <quote>a
+    <para id="x_qh">The monad laws are simply formal ways of saying <quote>a
 	monad shouldn't surprise me</quote>.  In principle, we could
       probably get away with skipping over them entirely.  It would be
       a shame if we did, however, because the laws contain gems of
@@ -1652,17 +1652,17 @@
     <tip>
       <title>Reading the laws</title>
 
-      <para>You can read each law below as <quote>the expression on
+      <para id="x_rh">You can read each law below as <quote>the expression on
 	  the left of the <code>==</code> is equivalent to that on the
 	  right.</quote></para>
     </tip>
 
-    <para>The first law states that &return; is a <emphasis>left
+    <para id="x_sh">The first law states that &return; is a <emphasis>left
 	identity</emphasis> for &bind;.</para>
 
     &MonadLaws.hs:leftIdentity;
     
-    <para>Another way to phrase this is that there's no reason to use
+    <para id="x_th">Another way to phrase this is that there's no reason to use
       &return; to wrap up a pure value if all you're going to do is
       unwrap it again with &bind;.  It's actually a common style error
       among programmers new to monads to wrap a value with &return;,
@@ -1672,17 +1672,17 @@
 
     &MonadLaws.hs:leftIdentityDo;
 
-    <para>This law has practical consequences for our coding style: we
+    <para id="x_uh">This law has practical consequences for our coding style: we
       don't want to write unnecessary code, and the law lets us assume
       that the terse code will be identical in its effect to the more
       verbose version.</para>
 
-    <para>The second monad law states that &return; is a
+    <para id="x_vh">The second monad law states that &return; is a
       <emphasis>right identity</emphasis> for &bind;.</para>
 
     &MonadLaws.hs:rightIdentity;
 
-    <para>This law also has style consequences in real programs,
+    <para id="x_wh">This law also has style consequences in real programs,
       particularly if you're coming from an imperative language:
       there's no need to call &return; if the last action in a block
       would otherwise be returning the correct result.  Let's look at
@@ -1690,43 +1690,43 @@
 
     &MonadLaws.hs:rightIdentityDo;
 
-    <para>Once again, if we assume that a monad obeys this law, we can
+    <para id="x_xh">Once again, if we assume that a monad obeys this law, we can
       write the shorter code in the knowledge that it will have the
       same effect as the longer code.</para>
 
-    <para>The final law is concerned with associativity.</para>
+    <para id="x_yh">The final law is concerned with associativity.</para>
 
     &MonadLaws.hs:associativity;
 
-    <para>This law can be a little more difficult to follow, so let's
+    <para id="x_zh">This law can be a little more difficult to follow, so let's
       look at the contents of the parentheses on each side of the
       equation.  We can rewrite the expression on the left as
       follows.</para>
 
     &MonadLaws.hs:associativityLeft;
 
-    <para>On the right, we can also rearrange things.</para>
+    <para id="x_Ai">On the right, we can also rearrange things.</para>
 
     &MonadLaws.hs:associativityRight;
 
-    <para>We're now claiming that the following two expressions are
+    <para id="x_Bi">We're now claiming that the following two expressions are
       equivalent.</para>
 
     &MonadLaws.hs:associativityRewrite;
 
-    <para>What this means is if we want to break up an action into
+    <para id="x_Ci">What this means is if we want to break up an action into
       smaller pieces, it doesn't matter which sub-actions we hoist out
       to make new actions with, provided we preserve their ordering.
       If we have three actions chained together, we can substitute the
       first two and leave the third in place, or we can replace the
       second two and leave the first in place.</para>
 
-    <para>Even this more complicated law has a practical consequence.
+    <para id="x_Di">Even this more complicated law has a practical consequence.
       If you're familiar with the terminology of software refactoring,
       this law essentially states that the <quote>extract
 	method</quote> technique applies to Haskell monads.</para>
 
-    <para>We've now seen how each of the monad laws offers us an
+    <para id="x_Ei">We've now seen how each of the monad laws offers us an
       insight into writing better monadic code.  The first two laws
       show us how to avoid unnecessary use of &return;.  The third
       suggests that we can safely refactor a complicated action into

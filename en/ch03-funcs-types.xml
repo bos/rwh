@@ -33,7 +33,7 @@
 	"b"</literal> has type <type>String</type> (the
       <function>(++)</function> is the concatenation operator).</para>
 
-    <para>We call an expression that obeys the language's type rules
+    <para id="x_Yd">We call an expression that obeys the language's type rules
       <emphasis>well typed</emphasis>.  An expression that disobeys
       the type rules, such as <code>10 + "hello"</code>, is
       <emphasis>ill typed</emphasis>, and will be rejected by a
@@ -75,13 +75,13 @@
 	still useful to speak broadly about the notion of strength in
 	type systems.</para>
 
-      <para>A hypothetical weak type system will accept as valid an
+      <para id="x_Zd">A hypothetical weak type system will accept as valid an
 	expression like <code>10 + "foo"</code>.  A stronger type
 	system will be less permissive in how it allows expressions of
 	different types to be mixed.  Under some strong type systems,
 	this expression is not valid.</para>
 
-      <para>Our example expression is valid in C, but not in Haskell,
+      <para id="x_ad">Our example expression is valid in C, but not in Haskell,
 	so we say that Haskell has a stronger type system.</para>
     </note>
 
@@ -210,7 +210,7 @@
 	variable</emphasis>; it's a placeholder for some other type
       whose details do not matter.</para>
 
-    <para>So, for example, the type <type>[Int]</type> is a list of
+    <para id="x_bd">So, for example, the type <type>[Int]</type> is a list of
       values of type <type>Int</type> (and <emphasis>only</emphasis>
       of type <type>Int</type>!), the type
       <type>[MyPersonalType]</type> is a list of values of type
@@ -222,7 +222,7 @@
       Haskell collections.  However, their utility goes beyond merely
       gathering values together.</para>
 
-    <para>In an imperative language, we might repeat a task over many
+    <para id="x_cd">In an imperative language, we might repeat a task over many
       items by iterating through a loop.  This is something that we
       often do in Haskell with operations over a list, either by
       recursing or using a function that recurses for us.  Lists are
@@ -242,18 +242,18 @@
       which is that a list has varying size and uniform type, while a
       tuple has a uniform size and varying type.</para>
 
-    <para>We write a tuple by enclosing its elements in parentheses
+    <para id="x_dd">We write a tuple by enclosing its elements in parentheses
       and separating them with commas.  We use the same notation for
       writing its type.</para>
 
     &tuple.ghci:tuple;
 
-    <para>There's a special type, <type>()</type>, that acts as a
+    <para id="x_ed">There's a special type, <type>()</type>, that acts as a
       tuple of zero elements.  This type has only one value, also
       written <code>()</code>.  Both the type and the value are
       usually pronounced <quote>unit</quote>.</para>
     
-    <para>Haskell doesn't have a notion of a one-element tuple. Tuples
+    <para id="x_fd">Haskell doesn't have a notion of a one-element tuple. Tuples
       are often referred to using the number of elements as a prefix,
       hence <quote>3-tuple</quote> for a tuple of three elements,
       <quote>5-tuple</quote> for five, and so on.</para>
@@ -263,14 +263,14 @@
       tuples of more than half a dozen elements are not often
       seen.</para>
 
-    <para>A tuple's type represents the number, positions, and types
+    <para id="x_gd">A tuple's type represents the number, positions, and types
       of its elements.  This means that tuples containing different
       numbers or types of elements have distinct types of their
       own.</para>
 
     &tuple.ghci:type1;
 
-    <para>In this example, the expression <code>(False, 'a')</code>
+    <para id="x_hd">In this example, the expression <code>(False, 'a')</code>
       has the type <type>(Bool, Char)</type>.  If we swapped the two
       elements, we'd get a tuple of type <type>(Char, Bool)</type>.
       Even though the number of elements and their types are the same,
@@ -279,7 +279,7 @@
 
     &tuple.ghci:type2;
 
-    <para>This type, <type>(Bool, Char, Char)</type>, is distinct from
+    <para id="x_id">This type, <type>(Bool, Char, Char)</type>, is distinct from
       <type>(Bool, Char)</type> because it contains an added
       element.</para>
 
@@ -344,14 +344,14 @@
     <note>
       <title>Jargon watch</title>
 
-      <para>When talking about functions, we'll use the terms
+      <para id="x_jd">When talking about functions, we'll use the terms
 	<emphasis>application</emphasis> and
 	<emphasis>calling</emphasis> interchangeably.  We'll do the
 	same with <emphasis>parameter</emphasis> and
 	<emphasis>argument</emphasis>.</para>
     </note>
 
-    <para>We don't use parentheses or commas to group or separate the
+    <para id="x_kd">We don't use parentheses or commas to group or separate the
       arguments to a function; merely writing the name of the
       function, followed by each argument in turn, is enough. As an
       example, let's apply the <function>head</function> function,
@@ -380,7 +380,7 @@
       languages, this notation can take a little getting used to, but
       it's simple and uniform.</para>
 
-    <para>Here's something to watch out for, until you gain a little
+    <para id="x_ld">Here's something to watch out for, until you gain a little
       more familiarity with the language. Under Haskell's convention
       for function application, the following expression is an
       application of <function>snd</function> to a single argument,
@@ -402,12 +402,12 @@
     <note>
       <title>Haskell tuples aren't immutable lists</title>
 
-      <para>If your background is in Python, you'll probably be used
+      <para id="x_md">If your background is in Python, you'll probably be used
 	to lists and tuples being almost interchangeable.  This isn't
 	the case in Haskell, so don't try to carry that idea with
 	you into unfamiliar linguistic territory.</para>
 
-      <para>As an illustration, take a look at the type signatures of
+      <para id="x_nd">As an illustration, take a look at the type signatures of
 	<function>fst</function> and <function>snd</function>: they're
 	defined <emphasis>only</emphasis> for pairs, and can't be used
 	with tuples of other sizes.  Haskell's type system makes it
@@ -471,7 +471,7 @@
     <note>
       <title>What if ghci cannot find your source file?</title>
 
-      <para>When you run &ghci; it may not be able to find your source
+      <para id="x_od">When you run &ghci; it may not be able to find your source
 	file.  It will search for source files in whatever directory
 	it was run.  If this is not the directory that your source
 	file is actually in, you can use &ghci;'s <code>:cd</code>
@@ -479,7 +479,7 @@
 
       &cd.ghci:cd;
 
-      <para>Alternatively, you can provide the path to your Haskell
+      <para id="x_pd">Alternatively, you can provide the path to your Haskell
 	source file as the argument to <code>:load</code>.   This path
 	can be either absolute or relative to &ghci;'s current
 	directory.</para>
@@ -497,7 +497,7 @@
       statement, as a function is a single expression, not a sequence
       of statements.</para>
 
-    <para>When you see an <literal>=</literal> symbol in Haskell code,
+    <para id="x_qd">When you see an <literal>=</literal> symbol in Haskell code,
       it represents <quote>equivalence</quote>: the name on the left
       is equivalent to the expression on the right. It does
       <emphasis>not</emphasis> represent <quote>assignment</quote> of
@@ -522,7 +522,7 @@
 	time, so that examoining the memory location repeatedly can
 	potentially give different results each time.</para>
 
-      <para>The critical difference between these two notions of a
+      <para id="x_rd">The critical difference between these two notions of a
 	variable is that in Haskell, once we've bound a variable to an
 	expression, we know that we can always substitute it for that
 	expression, because it will not change.  In an imperative
@@ -532,17 +532,17 @@
       <sect3>
 	<title>Shadowing</title>
 
-	<para>Sit with &ghci; for a few moments and enter the
+	<para id="x_sd">Sit with &ghci; for a few moments and enter the
 	  following series of expressions.</para>
 
 	&shadowing.ghci:shadow;
 
-	<para>It looks like we're giving <varname>x</varname> two
+	<para id="x_td">It looks like we're giving <varname>x</varname> two
 	  different values.  This seems to directly contradict our
 	  earlier statement that we can't change a variable's
 	  value!</para>
 
-	<para>However, what we've done with the second &let; is
+	<para id="x_ud">However, what we've done with the second &let; is
 	  introduce a new variable, <emphasis>also</emphasis> named
 	  <varname>x</varname>.  The older <varname>x</varname> is
 	  still present, and still has the value <literal>1</literal>.
@@ -550,7 +550,7 @@
 	  <varname>x</varname>: we say that it
 	  <emphasis>shadows</emphasis> the other variable.</para>
 
-	<para>While there's really nothing untoward going on here, we
+	<para id="x_vd">While there's really nothing untoward going on here, we
 	  won't be fully describing the rules for this particular case
 	  until <xref linkend="monads.do"/>.  We'll see another
 	  case of shadowing later in this chapter.</para>
@@ -590,7 +590,7 @@
 	in action, let's return to the source code and look at all the
 	novelties we've introduced.</para>
 
-      <para>First of all, we have introduced <code>--</code>, the
+      <para id="x_wd">First of all, we have introduced <code>--</code>, the
 	beginning of a single-line comment.  A single-line comment
 	stretches from this sequence until the end of the same
 	line.</para>
@@ -600,25 +600,25 @@
 
       <itemizedlist>
 	<listitem>
-	  <para>An expression of type <type>Bool</type>, immediately
+	  <para id="x_xd">An expression of type <type>Bool</type>, immediately
 	    following the &if;.  We refer to this as a
 	    <emphasis>predicate</emphasis>.</para>
 	</listitem>
 	<listitem>
-	  <para>A <code>then</code> keyword, followed by another
+	  <para id="x_yd">A <code>then</code> keyword, followed by another
 	    expression.  This expression will be used as the value of
 	    the &if; expression if the predicate evaluates to
 	    <code>True</code>.</para>
 	</listitem>
 	<listitem>
-	  <para>An <code>else</code> keyword, followed by another
+	  <para id="x_zd">An <code>else</code> keyword, followed by another
 	    expression.  This expression will be used as the value of
 	    the &if; expression if the predicate evaluates to
 	    <code>False</code>.</para>
 	</listitem>
       </itemizedlist>
 
-      <para>We'll refer to the expressions after the <code>then</code>
+      <para id="x_Ae">We'll refer to the expressions after the <code>then</code>
 	and <code>else</code> keywords as <quote>branches</quote>. The
 	branches must have the same types; the &if; expression will
 	also have this type.  An expression such as <code>if True then
@@ -645,7 +645,7 @@
       <tip>
 	<title>Operators are not special</title>
 
-	<para>Notice that we were able to find the type of
+	<para id="x_Be">Notice that we were able to find the type of
 	  <function>(||)</function> by wrapping it in parentheses. The
 	  <function>(||)</function> operator isn't <quote>built
 	    into</quote> the language: it's a normal function!</para>
@@ -670,20 +670,20 @@
   <sect1>
     <title>Understanding evaluation by example</title>
 
-    <para>In our description of <function>myDrop</function>, we have
+    <para id="x_Ce">In our description of <function>myDrop</function>, we have
       so far focused on surface features.  We need to go deeper, and
       develop a useful mental model of how function application works.
       To do this, we'll walk through the evaluation of the expression
       <code>myDrop 2 "abcd"</code>.</para>
 
-    <para>We've talked several times about substituting an expression
+    <para id="x_De">We've talked several times about substituting an expression
       for a variable, and we'll make use of this capability here. Our
       procedure will involve rewriting expressions over and over,
       substituting expressions for variables until we reach a final
       result. It's a good idea to transcribe this description using a
       paper and pencil, to be sure that you can follow it.</para>
 
-    <para>When we start, our first step is to apply the function
+    <para id="x_Ee">When we start, our first step is to apply the function
       <function>myTake</function>.  We do this by giving the variable
       <varname>n</varname> the value <literal>2</literal>, and
       <varname>xs</varname> the value <literal>"abcd"</literal>.  If
@@ -692,7 +692,7 @@
 
     &myDrop.ghci:myDrop1;
 
-    <para>We then evaluate enough of the predicate to find out what
+    <para id="x_Fe">We then evaluate enough of the predicate to find out what
       its value is.  We start by evaluating the
       <function>(||)</function> expression.  To determine its value,
       the <function>(||)</function> operator needs to examine the
@@ -700,12 +700,12 @@
 
     &myDrop.ghci:myDrop2;
 
-    <para>Substituting that value into the <function>(||)</function>
+    <para id="x_Ge">Substituting that value into the <function>(||)</function>
       expression leads to the following expression.</para>
 
     &myDrop.ghci:myDrop2a;
 
-    <para>If the left operand had evaluated to
+    <para id="x_He">If the left operand had evaluated to
       <literal>True</literal>, <function>(||)</function> would not
       need to evaluate its right operand, since it could not affect
       the result of the expression. Since it evaluates to
@@ -714,7 +714,7 @@
 
     &myDrop.ghci:myDrop3;
 
-    <para>We now substitute this value back into the
+    <para id="x_Ie">We now substitute this value back into the
       <function>(||)</function> expression.  Since both operands
       evaluate to <literal>False</literal>, the
       <function>(||)</function> expression does, too, thus the
@@ -722,33 +722,33 @@
 
     &myDrop.ghci:myDrop4;
 
-    <para>This causes the &if; expression's <code>else</code> branch
+    <para id="x_Je">This causes the &if; expression's <code>else</code> branch
       to be evaluated. This branch contains a recursive application of
       <function>myDrop</function>.</para>
 
     <sect2>
       <title>Recursion</title>
 
-      <para>When we apply <function>myDrop</function> recursively, we
+      <para id="x_Ke">When we apply <function>myDrop</function> recursively, we
 	substitute the values in the caller of <varname>n</varname>
 	and <varname>xs</varname> to get the expressions that we
 	should now use: <varname>n</varname> is bound to the
 	expression <code>2 - 1</code>, and <varname>xs</varname> to
 	the expression <code>tail "abcd"</code>.</para>
 
-      <para>We're now evaluating <function>myDrop</function> from the
+      <para id="x_Le">We're now evaluating <function>myDrop</function> from the
 	beginning again.  We substitute the new values of
 	<varname>n</varname> and <varname>xs</varname> into the
 	predicate.</para>
 
       &myDrop.ghci:myDrop5;
 
-      <para>Here's a condensed version of the evaluation of the left
+      <para id="x_Me">Here's a condensed version of the evaluation of the left
 	operand.</para>
 
       &myDrop.ghci:myDrop6;
 
-      <para>Notice that we didn't evaluate the expression <code>2 -
+      <para id="x_Ne">Notice that we didn't evaluate the expression <code>2 -
 	  1</code> until we needed its value.  This is our first step
 	towards understanding lazy evaluation!  We also evaluate the
 	right operand lazily, deferring <code>tail "abcd"</code> until
@@ -756,11 +756,11 @@
 
       &myDrop.ghci:myDrop7;
     
-      <para>The predicate again evaluates to <literal>False</literal>,
+      <para id="x_Oe">The predicate again evaluates to <literal>False</literal>,
 	causing the <code>else</code> branch to be evaluated once
 	more.</para>
 
-      <para>Because we've had to evaluate the expressions for
+      <para id="x_Pe">Because we've had to evaluate the expressions for
 	<varname>n</varname> and <varname>xs</varname> to evaluate the
 	predicate, we now know that in this application of
 	<function>myDrop</function>, <varname>n</varname> has the
@@ -771,24 +771,24 @@
     <sect2>
       <title>More recursion</title>
 
-      <para>In the next recursive application of
+      <para id="x_Qe">In the next recursive application of
 	<function>myDrop</function>, we bind <varname>n</varname> to
 	<code>1 - 1</code> and <varname>xs</varname> to <function>tail
 	  "bcd"</function>.</para>
 
       &myDrop.ghci:myDrop9;
 
-      <para>Once again, <function>(||)</function> needs to evaluate
+      <para id="x_Re">Once again, <function>(||)</function> needs to evaluate
 	its left operand first.</para>
 
       &myDrop.ghci:myDrop10;
 
-      <para>Finally, this expression has evaluated to
+      <para id="x_Se">Finally, this expression has evaluated to
 	<literal>True</literal>!</para>
 
       &myDrop.ghci:myDrop11;
 
-      <para>Because the right operand cannot affect the result of
+      <para id="x_Te">Because the right operand cannot affect the result of
 	<function>(||)</function>, it is not evaluated, and the result
 	of the predicate is <literal>True</literal>.  This causes us
 	to evaluate the <code>then</code> branch.</para>
@@ -800,7 +800,7 @@
     <sect2>
       <title>Returning from the recursion</title>
 
-      <para>Remember, we're now inside our second recursive
+      <para id="x_Ue">Remember, we're now inside our second recursive
 	application of <function>myDrop</function>.  This application
 	evaluates to <code>tail "bcd"</code>.  We return from the
 	application, substituting this expression for <code>myDrop (1
@@ -809,19 +809,19 @@
 
       &myDrop.ghci:myDrop13;
 
-      <para>We then return from the first recursive application,
+      <para id="x_Ve">We then return from the first recursive application,
 	substituting the result of the second recursive call for
 	<code>myDrop (2 - 1) (tail "abcd")</code>, to become the
 	result of this application.</para>
 
       &myDrop.ghci:myDrop14;
 
-      <para>Finally, we return from our original call, substituting
+      <para id="x_We">Finally, we return from our original call, substituting
 	the result of the first recursive call.</para>
 
       &myDrop.ghci:myDrop15;
 
-      <para>Notice that as we return from each successive recursive
+      <para id="x_Xe">Notice that as we return from each successive recursive
 	call, none of them needs to evaluate the expression <code>tail
 	  "bcd"</code>: the final result of applying this function is
 	an <emphasis>expression</emphasis>.  The expression is only
@@ -833,22 +833,22 @@
     <sect2>
       <title>What have we learned?</title>
 
-      <para>We have established several important points here.</para>
+      <para id="x_Ye">We have established several important points here.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para>It makes sense to use substitution and rewriting to
+	  <para id="x_Ze">It makes sense to use substitution and rewriting to
 	    understand the evaluation of a Haskell expression.</para>
 	</listitem>
 
 	<listitem>
-	  <para>Laziness leads us to defer evaluation until we need a
+	  <para id="x_ae">Laziness leads us to defer evaluation until we need a
 	    value, and to evaluate just enough of an expression to
 	    establish its value.</para>
 	</listitem>
 
 	<listitem>
-	  <para>The result of applying a function may be an expression
+	  <para id="x_be">The result of applying a function may be an expression
 	    whose evaluation has been deferred because it has not yet
 	    been needed.</para>
 	</listitem>
@@ -879,7 +879,7 @@
       the function might actually do.  This is an incredibly valuable
       property of types in a functional language.</para>
 
-    <para>A <emphasis>side effect</emphasis> modifies the state of the
+    <para id="x_ce">A <emphasis>side effect</emphasis> modifies the state of the
       system, for example by reading or writing a file.  Most Haskell
       functions can't cause side effects, so we refer to them as
       <emphasis>pure</emphasis>.  The result of applying a pure
@@ -890,20 +890,20 @@
 
     &func.ghci:not.type;
 
-    <para>Even if we didn't know the name of this function, its
+    <para id="x_de">Even if we didn't know the name of this function, its
       signature alone limits the possible valid behaviours it could
       have.</para>
 
     <itemizedlist>
       <listitem>
-	<para>Ignore its argument, and always return either
+	<para id="x_ee">Ignore its argument, and always return either
 	  <code>True</code> or <code>False</code>.</para>
       </listitem>
       <listitem>
-	<para>Return its argument unmodified.</para>
+	<para id="x_fe">Return its argument unmodified.</para>
       </listitem>
       <listitem>
-	<para>Negate its argument.</para>
+	<para id="x_ge">Negate its argument.</para>
       </listitem>
     </itemizedlist>
   </sect1>
@@ -911,13 +911,13 @@
   <sect1 id="funcstypes.polymorphism">
     <title>Polymorphism in Haskell</title>
 
-    <para>When we introduced lists, we mentioned that the list type is
+    <para id="x_he">When we introduced lists, we mentioned that the list type is
       polymorphic.  We'll talk about polymorphism in more detail here:
       like <quote>strong type</quote>, it's a generic term that has
       distinct meanings in different programming language
       communities.</para>
 
-    <para>If we want to fetch the last element of a list, we use the
+    <para id="x_ie">If we want to fetch the last element of a list, we use the
       <function>last</function> function.  The value that it returns
       must have the same type as the elements of the list, but
       <function>last</function> operates in the same way no matter
@@ -926,14 +926,14 @@
 
     &func.ghci:last;
 
-    <para>To capture the idea that <function>last</function> needs its
+    <para id="x_je">To capture the idea that <function>last</function> needs its
       argument and result types to be the same, but doesn't need to
       know their details, its type signature contains a <emphasis>type
 	variable</emphasis>.</para>
 
     &func.ghci:last.type;
 
-    <para>Here, <varname role="type">a</varname> is the type variable.
+    <para id="x_ke">Here, <varname role="type">a</varname> is the type variable.
       We can read the signature as <quote>takes a list, all of whose
 	elements have some type <varname role="type">a</varname>, and
 	returns a value of type <varname
@@ -942,13 +942,13 @@
     <tip>
       <title>Identifying a type variable</title>
 
-      <para>Type variables always start with a lowercase letter.  You
+      <para id="x_le">Type variables always start with a lowercase letter.  You
 	can always tell a type variable from a normal variable by
 	context, because the languages of types and functions are
 	separate: type variables live in type signatures, and regular
 	variables live in normal expressions.</para>
 
-      <para>It's common Haskell practice to keep the names of type
+      <para id="x_me">It's common Haskell practice to keep the names of type
 	variables very short.  One letter is overwhelmingly common;
 	two is rare; and three or more is practically unheard of.
 	Type signatures are usually brief, so we gain more in
@@ -960,14 +960,14 @@
       signature, indicating that some of its arguments can be of any
       type, we call the function polymorphic.</para>
 
-    <para>When we want to call <function>last</function> on, say, a
+    <para id="x_ne">When we want to call <function>last</function> on, say, a
       list of <type>Char</type>, we substitute <type>Char</type> for
       each <varname role="type">a</varname> throughout the type
       signature, which gives us the type of
       <function>last</function>-over-<type>[Char]</type> as
       <type>[Char] -&gt; Char</type>.</para>
 
-    <para>This kind of polymorphism is called
+    <para id="x_oe">This kind of polymorphism is called
       <emphasis>parametric</emphasis> polymorphism.  The choice of
       naming is easy to understand by analogy: just as a function can
       have parameters that we can later bind to real values, a Haskell
@@ -977,12 +977,12 @@
     <tip>
       <title>A little nomenclature</title>
 
-      <para>If the type of a function contains type parameters, we can
+      <para id="x_pe">If the type of a function contains type parameters, we can
 	call the function polymorphic, or say that it has a
 	parameterised type.  This is also the case for types.</para>
     </tip>
 
-    <para>When a function or type has a parameterised type, we've
+    <para id="x_qe">When a function or type has a parameterised type, we've
       already noted that it doesn't care what the actual type is.
       However, we can make a stronger statement: <emphasis>it has no
 	way to find out what the real type is</emphasis>, or to
@@ -991,12 +991,12 @@
       fully abstract <quote>black box</quote>.  We'll cover one reason
       that this is important soon.</para>
 
-    <para>Parametric polymorphism is the most visible kind of
+    <para id="x_re">Parametric polymorphism is the most visible kind of
       polymorphism that Haskell supports.  Here are a few forms of
       polymorphism that are common in other languages, but not present
       in Haskell.</para>
 
-    <para>In mainstream object oriented languages,
+    <para id="x_se">In mainstream object oriented languages,
       <emphasis>subtype</emphasis> polymorphism is more widespread
       than parametric polymorphism.  The subclassing mechanisms of C++
       and Java give them subtype polymorphism.  A base class defines a
@@ -1004,21 +1004,21 @@
       extend.  Since Haskell isn't an object oriented language, it
       doesn't provide subtype polymorphism.</para>
 
-    <para>Also common is <emphasis>coercion</emphasis> polymorphism,
+    <para id="x_te">Also common is <emphasis>coercion</emphasis> polymorphism,
       which allows a value of one type to be implicitly converted into
       a value of another type.  Many languages provide some form of
       coercion polymorphism: one example is automatic conversion
       between integers and floating point numbers.  Haskell avoids
       even this kind of simple automatic coercion.</para>
 
-    <para>This is not the whole story of polymorphism in Haskell:
+    <para id="x_ue">This is not the whole story of polymorphism in Haskell:
       we'll return to the subject in <xref
 	linkend="typeclasses"/>.</para>
 
     <sect2>
       <title>Reasoning about polymorphic functions</title>
 
-      <para>In <xref linkend="funcstypes.sigs"/>, we talked about
+      <para id="x_ve">In <xref linkend="funcstypes.sigs"/>, we talked about
 	figuring out the behaviour of a function based on its type
 	signature.  We can apply the same kind of reasoning to
 	polymorphic functions.  Let's look again at
@@ -1026,12 +1026,12 @@
 
       &func.ghci:fst.type;
 
-      <para>First of all, notice that its argument contains two type
+      <para id="x_we">First of all, notice that its argument contains two type
 	variables, <varname role="type">a</varname> and <varname
 	  role="type">b</varname>, signifying that the elements of the
 	tuple can be of different types.</para>
 
-      <para>The result type of <function>fst</function> is <varname
+      <para id="x_xe">The result type of <function>fst</function> is <varname
 	  role="type">a</varname>.  We've already mentioned that
 	parametric polymorphism makes the real type inaccessible:
 	<function>fst</function> doesn't have enough information to
@@ -1044,7 +1044,7 @@
       <sect3>
 	<title>Further reading</title>
       
-	<para>We can extend this line of reasoning to more complicated
+	<para id="x_ye">We can extend this line of reasoning to more complicated
 	  polymorphic functions.  The paper <citation><biblioref
 	      linkend="bib.wadler89"/></citation> covers this
 	  procedure in depth.</para>
@@ -1083,7 +1083,7 @@
       this topic in <xref linkend="fp.partialapp"/>, once we've
       spent a bit of time writing functions.</para>
 
-    <para>We can now write a type signature for the
+    <para id="x_ze">We can now write a type signature for the
       <function>myDrop</function> function that we defined
       earlier.</para>
 
