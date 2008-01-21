@@ -6,10 +6,10 @@ data Nullable a = Really a
 {-- snippet wrappedTypes --}
 nullableBool = Really True
 
-nullableString = Really String
+nullableString = Really "something"
 {-- /snippet wrappedTypes --}
                 
 
 {-- snippet parens --}
-Really (Really Int)
+wrapped = Really (Really "wrapped")
 {-- /snippet parens --}

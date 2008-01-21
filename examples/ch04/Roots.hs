@@ -15,11 +15,10 @@ roots a b c =
          else ComplexValued ((-b' + s') / a2') ((-b' - s') / a2')
   where n   = b**2 - 4 * a * c
         a2  = 2 * a
-        n'  = n :+ 0
         b'  = b :+ 0
         a2' = a2 :+ 0
         s = sqrt n
-        s' = sqrt n'
+        s' = sqrt (n :+ 0)
 {-- /snippet roots --}
 
 {-- snippet isRealValued --}
@@ -65,8 +64,7 @@ finalRoots a b c
   where n   = b^2 - 4 * a * c
         a2  = 2 * a
         s   = sqrt n
-        n'  = n :+ 0
         b'  = b :+ 0
         a2' = a2 :+ 0
-        s'  = sqrt n'
+        s'  = sqrt (n :+ 0)
 {-- /snippet finalRoots --}

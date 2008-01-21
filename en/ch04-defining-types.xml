@@ -3,8 +3,14 @@
 <chapter id="deftypes" revision="alpha">
   <title>Defining Types, Streamlining Functions</title>
 
-  <para>Topics: Creating new types.  Ways to write clearer
-    functions.</para>
+  <para>In this chapter, we're going to extend our basic Haskell
+    skills.  We'll discuss how to define new types, and how to write
+    more expressive functions.</para>
+
+  <para>Although we won't be covering many features of the language in
+    this chapter, many of them are likely to be unfamiliar.  We're
+    going to keep the pace relatively slow, and we'll provide plenty
+    of code examples and descriptions of what's happening.</para>
 
   <sect1 id="deftypes.data">
     <title>Defining a new data type</title>
@@ -13,10 +19,15 @@
       want to construct new data types of our own.  This allows us to
       add structure to the values in our programs.  Instead of using
       an anonymous tuple, we can give a collection of related values a
-      name.  Defining our own types also improves the type safety of
-      our code: Haskell will not allow us to accidentally mix values
-      of two types that are structurally similar but have different
-      names.</para>
+      name and a distinct type.  Defining our own types also improves
+      the type safety of our code: Haskell will not allow us to
+      accidentally mix values of two types that are structurally
+      similar but have different names.</para>
+
+    <para>For motivation, we'll consider a few kinds of data that a
+      small online bookstore might need to manage.  We won't make any
+      attempt at complete or realistic data definitions, but at least
+      we're tying them to the real world.</para>
 
     <para>We define a new data type using the <code>data</code>
       keyword.</para>
@@ -30,22 +41,25 @@
       constructor, must start with a capital letter.)  The string
       <code>Book</code> is the name of the <emphasis>value
 	constructor</emphasis> we'll apply to create a value of this
-      type.  (As with a type constructor, a value constructor's name
-      must start with a capital letter.)</para>
+      type.  (A value constructor's name must also start with a
+      capital letter.)</para>
 
     <para>Finally, the <type>Int</type>, <type>String</type>, and
       <type>[String]</type> that follow are the
       <emphasis>components</emphasis> of the type.  A component serves
       the same purpose in Haskell as a field in a structure or class
       would in another language: it's a <quote>slot</quote> where we
-      can put a value.  We'll often refer to components as fields.
-      Here, the <type>Int</type> represents a book's identifier
-      (perhaps in a database), <type>String</type> its name, and
-      <type>[String]</type> the names of its authors.</para>
+      keep a value.  (We'll often refer to components as
+      fields.)</para>
 
-    <para>The <type>BookInfo</type> type has the same components as an
-      <type>(Int, String, [String])</type> 3-tuple, but a distinct
-      type.  Haskell won't let us accidentally (or deliberately) use
+    <para>In this example, the <type>Int</type> represents a book's
+      identifier (e.g. in a stock database), <type>String</type> its
+      name, and <type>[String]</type> the names of its authors.</para>
+
+    <para>To make the link to a concept we've already seen, the
+      <type>BookInfo</type> type contains the same components as a
+      3-tuple of type <type>(Int, String, [String])</type>, but it has
+      a distinct type.  We can't accidentally (or deliberately) use
       one in a context where the other is expected.</para>
 
     <note>
@@ -53,17 +67,17 @@
 
       <para id="x_E4">We'll explain the full meaning of <code>deriving
 	  (Show)</code> later, in
-	<xref linkend="typeclasses.wellknown.show"/>.  For now,
-	it's enough to know that we need to tack this onto a type
+	<xref linkend="typeclasses.wellknown.show"/>.  For now, it's
+	enough to know that we need to tack this onto a type
 	declaration so that &ghci; will automatically know how to
 	print a value of this type.</para>
     </note>
 
     <para id="x_F4">We can create a new value of type
-      <type>BookStore</type> by treating
-      <function>Book</function> as a function, and applying it with
-      arguments of types <type>Int</type>,
-      <type>String</type>, and <type>[String]</type>.</para>
+      <type>BookStore</type> by treating <function>Book</function> as
+      a function, and applying it with arguments of types
+      <type>Int</type>, <type>String</type>, and
+      <type>[String]</type>.</para>
 
     &BookStore.hs:bookInfo;
 
@@ -111,47 +125,81 @@
       <para>When we introduced the type <type>BookStore</type>, we
 	deliberately chose to give the type constructor
 	<type>BookStore</type> a different name from the value
-	constructor <code>Book</code>, purely to make it obvious
-	which was which.</para>
+	constructor <code>Book</code>, purely to make it obvious which
+	was which.</para>
 
       <para>However, in Haskell, the names of types and values occupy
-	two independent <emphasis>namespaces</emphasis>, so there is
-	no ambiguity if we give a type constructor and a value
+	two independent <emphasis>namespaces</emphasis>.  A namespace
+	is a collection of unique names.  If we define a function, say
+	<function>foo</function>, its name is added to the value
+	namespace (a function is a kind of value).  Because names
+	within a namespace must be unique, we can't later define
+	another function named <function>foo</function> in the same
+	namespace.</para>
+
+      <para>When we define a type, its type constructor is added to
+	the type namespace, and its value constructor to the value
+	namespace.  Because the two namespaces are independent, there
+	is no ambiguity if we give a type constructor and a value
 	constructor the same name.</para>
 
       &BookStore.hs:BookReview;
 
       <para>This definition says that the type named
 	<type>BookReview</type> has a value constructor that is also
-	named <code>BookReview</code>.  Since a type signature
-	doesn't contain value names, and a normal expression doesn't
-	contain type names, it's always clear from the context in
-	which we use a name whether that name refers to a type or a
-	value.</para>
+	named <code>BookReview</code>.</para>
 
-      <para>In fact, not only is it <emphasis>legal</emphasis> for a
-	value constructor to have the same name as its type
-	constructor, it's <emphasis>normal</emphasis>: you'll see this
-	all the time in regular Haskell code.</para>
+      <para>Not only is it <emphasis>legal</emphasis> for a value
+	constructor to have the same name as its type constructor,
+	it's <emphasis>normal</emphasis>: you'll see this all the time
+	in regular Haskell code.</para>
     </sect2>
+  </sect1>
+
+  <sect1 id="deftypes.alias">
+    <title>Type synonyms</title>
+
+    <para>We can introduce a <emphasis>synonym</emphasis> for an
+      existing type at any time, for example to give a type a more
+      descriptive name.  For example, the <type>String</type> in our
+      <type>BookReview</type> type doesn't tell us what the string is
+      for, but we can clarify this.</para>
+
+    &BookStore.hs:BetterReview;
+
+    <para>The &type; keyword introduces a type synonym.  The new name
+      is on the left of the <code>=</code>, with the existing name on
+      the right.  The two names identify the same type, so type
+      synonyms are <emphasis>purely</emphasis> for making code more
+      readable.</para>
+
+    <para>We can also use a type synonym to create a shorter name for
+      a verbose type.</para>
+
+    &BookStore.hs:BookRecord;
+
+    <para>A type synonym just creates a new name for a type.  It does
+      not do anything with the type's value constructors.</para>
   </sect1>
 
   <sect1 id="deftypes.adt">
     <title>Algebraic data types</title>
 
-    <para id="x_M4">The <type>Bool</type> type that we introduced
-      earlier is the simplest example of a category of type called an
+    <para id="x_M4">The familiar <type>Bool</type> is the simplest
+      common example of a category of type called an
       <emphasis>algebraic data type</emphasis>. An algebraic data type
-      has several value constructors.</para>
+      can have more than one value constructor.</para>
 
       &Bool.hs:Bool;
 
-    <para id="x_N4">In the case of <type>Bool</type>, the type has two
-      value constructors, <code>True</code> and <code>False</code>.
-      Each value constructor is separated in the definition by a
+    <para id="x_N4">The <type>Bool</type> type has two value
+      constructors, <code>True</code> and <code>False</code>. Each
+      value constructor is separated in the definition by a
       <literal>|</literal> character, which we can read as
-      <quote>or</quote>.  The different value constructors are usually
-      referred to as <emphasis>alternatives</emphasis> or
+      <quote>or</quote>: we can construct a <type>Bool</type> that has
+      the value <code>True</code>, or the value <code>False</code>.
+      When a type has more than one value constructor, they are
+      usually referred to as <emphasis>alternatives</emphasis> or
       <emphasis>cases</emphasis>.</para>
 
     <note>
@@ -163,29 +211,30 @@
 
       <para>Although the phrase <quote>algebraic data type</quote> is
 	long, we're being careful to avoid using the acronym
-	<quote>ADT</quote> instead.  That acronym is already widely
-	understood to stand for <quote><emphasis>abstract</emphasis>
-	data type</quote>, which is quite different.</para>
+	<quote>ADT</quote>.  That acronym is already widely understood
+	to stand for <quote><emphasis>abstract</emphasis> data
+	  type</quote>.  Since Haskell supports both algebraic and
+	abstract data types, we'll avoid the acronym entirely.</para>
     </note>
 
     <para id="x_O4">Each of an algebraic data type's value
       constructors can take zero or more arguments.  As an example,
-      here's one way we might represent versions of the Windows
-      operating system.</para>
+      here's one way we might represent billing information.</para>
 
-    &OsVersion.hs:WindowsVersion;
+    &BookStore.hs:BillingInfo;
 
-    <para id="x_P4">The alternatives that represent older releases
-      don't need arguments, but we use an <type>Int</type> to
-      represent a service pack level for newer releases.</para>
+    <para id="x_P4">Here, we're saying that we support three ways to
+      bill our customers.  They can pay by credit card, if they supply
+      a card number, the holder's name, and the holder's billing
+      address.  Alternatively, they can pay the person who delivers
+      their shipment. Finally, we can send an invoice to the specified
+      customer.</para>
       
-    &osversion.ghci:types;
+    <para>When we apply a value constructors to create a value of type
+      <type>BillingInfo</type>, we must supply the appropriate
+      arguments.</para>
 
-    <para>When we apply one of the later value constructors, we must
-      supply an argument of type <type>Int</type> in order to produce
-      a value.</para>
-
-    &osversion.ghci:apply;
+    &bookstore.ghci:billingInfo;
 
     <sect2>
       <title>Tuples, algebraic data types, and when to use
@@ -193,7 +242,7 @@
 
       <para>There is some overlap between tuples and user-defined
 	algebraic data types.  If we wanted to, we could represent our
-	<type>BookStore</type> type from earlier as an <type>(Int,
+	<type>BookInfo</type> type from earlier as an <type>(Int,
 	  String)</type> pair.</para>
 
       &bookstore.ghci:tuple;
@@ -207,14 +256,18 @@
 
       &AlgebraicVector.hs:types;
 
-      <para>The Cartesian and polar forms represent equivalent
-	information using the same types for their two elements, but
-	using different ranges of values with distinct meanings.
-	Because <type>Vector2D</type> and <type>Polar2D</type> are
-	distinct types, Haskell will not let us accidentally mix up
-	these representations.</para>
+      <para>The Cartesian and polar forms use the same types for their
+	two elements.  However, the <emphasis>meanings</emphasis> of
+	the elements are different. Because <type>Vector2D</type> and
+	<type>Polar2D</type> are distinct types, the type system will
+	not let us accidentally use a <type>Vector2D</type> value
+	where a <type>Polar2D</type> is expected, or vice
+	versa.</para>
 
       &algebraicvector.ghci:typed;
+
+      <para>The <function>(==)</function> operator requires its
+	arguments to have the same type.</para>
 
       <para>If we used tuples to represent these values, we could
 	quickly land ourselves in hot water by mixing the two
@@ -228,27 +281,20 @@
 
       <para>There's no hard and fast rule for deciding when it's
 	better to use a tuple or a distinct data type, but here's a
-	rule of thumb to follow.</para>
-
-      <para>If you're using many similarly-structured compound values
-	that propagate widely throughout your code, adding type safety
-	will almost certainly pay off.  For smaller, localised uses,
-	such as returning multiple values from a function and
-	immediately consuming them, a tuple is fine.</para>
-
-      <para>In general, as the cost of making a mistake, or locating a
-	bug, grows, then increasing type safety makes more sense. In
-	practice, Haskell's type system often imposes little or no
-	cost in either readability or performance.</para>
+	rule of thumb to follow. If you're using compound values
+	widely in your code (as almost all non-trivial programs do),
+	adding &data; declarations will benefit you in both type
+	safety and readability. For smaller, localised uses, a tuple
+	is usually fine.</para>
     </sect2>
 
     <sect2 id="deftypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
 
-      <para id="x_Q4">Algebraic data types provide a uniform way to
-	describe data types.  Other languages often need several
-	different features to achieve the same degree of
+      <para id="x_Q4">Algebraic data types provide a single powerful
+	way to describe data types.  Other languages often need
+	several different features to achieve the same degree of
 	expressiveness.  Here are some analogues from C and C++, which
 	might make it clearer what we can do with algebraic data
 	types, and how they relate to concepts that might be more
@@ -262,7 +308,7 @@
 	  together into a compound value. It corresponds to a
 	  <code>struct</code> in C or C++, and its components
 	  correspond to the fields of a <code>struct</code>. Here's a
-	  C equivalent of the <type>BookStore</type> type that we
+	  C equivalent of the <type>BookInfo</type> type that we
 	  defined earlier.</para>
 
 	&types.c:book_info;
@@ -311,19 +357,16 @@
 
 	&roygbiv.ghci:using;
 
-	<para>In C, the values of an <code>enum</code> are unsigned
-	  integers.  We can use an integer in a context where an
-	  <code>enum</code> is expected.  A C compiler will
-	  automatically convert values between the two types.  In
-	  Haskell, this is not the case: each type is distinct.  We
-	  cannot compare <code>Red</code> with <code>True</code>,
-	  because they have different types.</para>
+	<para>In C, the elements of an <code>enum</code> are integers.
+	  We can use an integer in a context where an
+	  <code>enum</code> is expected, and vice versa: a C compiler
+	  will automatically convert values between the two types.
+	  This can be a source of nasty bugs.  In Haskell, this kind
+	  of problem does not occur.  For example, we cannot use a
+	  <type>Roygbiv</type> value where an <code>Int</code> is
+	  expected.</para>
 
 	&roygbiv.ghci:types;
-
-	<para>Similarly, the values of <type>Roygbiv</type> aren't
-	  numeric, so a compiler will prevent us from accidentally use
-	  a number in place of a <type>Roygbiv</type> value.</para>
       </sect3>
 
       <sect3>
@@ -342,11 +385,10 @@
 	&types.c:shape;
 
 	<para>In the example above, the <code>union</code> can contain
-	  valid data for a <code>struct circle</code> or a
-	  <code>struct poly</code>, but not both at the same time.
-	  The <code>enum</code>, which we have to maintain and inspect
-	  by hand, indicates which kind of value is currently stored
-	  in the <code>union</code>.</para>
+	  valid data for either a <code>struct circle</code> or a
+	  <code>struct poly</code>. We have to use the <code>enum
+	    shape_type</code> by hand to indicate which kind of value
+	  is currently stored in the <code>union</code>.</para>
 
 	<para>The Haskell version of this code is both dramatically
 	  shorter and safer than the C equivalent.</para>
@@ -355,10 +397,9 @@
 
 	<para id="x_T4">If we create a <type>Shape</type> value using
 	  the <code>Circle</code> constructor, the fact that we
-	  created a <code>Circle</code> is stored along with the
-	  circle's centre and radius.  When we later use a
-	  <code>Circle</code>, we can't accidentally treat it as a
-	  <code>Square</code>; we will see why in <xref
+	  created a <code>Circle</code> is stored.  When we later use
+	  a <code>Circle</code>, we can't accidentally treat it as a
+	  <code>Square</code>.  We will see why in <xref
 	  linkend="deftypes.pattern"/></para>
       </sect3>
     </sect2>
@@ -379,11 +420,25 @@
     <title>Pattern matching</title>
 
     <para id="x_Z5">Now that we've seen how to construct values with
-      algebraic data types, let's discuss how we work with them.  We
-      need to be able to distinguish between alternatives, and to
-      extract elements from a compound value.  Haskell has a simple
+      algebraic data types, let's discuss how we work with them.  If
+      we have a value of some type, there are two things we would like
+      to be able to do.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>If the type has more than one value constructor, we need
+	  to be able to tell which value constructor was used to
+	  create the value.</para>
+      </listitem>
+      <listitem>
+	<para>If the value constructor has data components, we need to
+	  be able to extract those values.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Haskell has a simple, but tremendously useful,
       <emphasis>pattern matching</emphasis> facility that lets us do
-      both of these.</para>
+      both of these things.</para>
 
     <para id="x_a5">A pattern lets us peer inside a compound value and
       bind variables to the values it contains.  Here's an example of
@@ -392,44 +447,67 @@
 
     &add.hs:sumList;
 
-    <para id="x_c5">See that <code>(x:xs)</code> on the left of the
-      first line? The <code>:</code> means <quote>match the head of a
-	list</quote>; that's the familiar list constructor,
-      <function>(:)</function>, in action in a new way.  The variables
-      <varname>x</varname> and <varname>xs</varname> are given the
-      values of (<quote>bound to</quote>) the head and tail of the
-      list, respectively.  The whole pattern is wrapped in parentheses
-      so Haskell won't parse it as three separate arguments.</para>
-
-    <para id="x_d5">What effect does pattern matching have? Haskell
-      will only evaluate the right hand side of an equation if it can
-      match all of the patterns on the left hand side.  In the
-      definition of <function>sumList</function> above, the right hand
-      side of the first equation won't be evaluated if the input list
-      is empty. Instead, Haskell will <quote>fall through</quote> to
-      the equation on the following line, which
-      <emphasis>does</emphasis> have a pattern for the empty list, and
-      it will evaluate that.</para>
-
     <para id="x_e5">It might initially look like we have two functions
       named <function>sumList</function> here, but Haskell lets us
       define a function as a <emphasis>series of equations</emphasis>:
-      so in fact these two clauses are defining the behaviour of one
-      function, over different input values.  The <code>[]</code> on
-      the left of the second equation is the constructor for an empty
-      list.</para>
+      these two clauses are defining the behaviour of the same
+      function for different patterns of input.  On each line, the
+      patterns are the items following the function name, up until the
+      <code>=</code> sign.</para>
+
+    <para>To understand how pattern matching works, let's step through
+      an example, say <code>sumList [1,2]</code>. Remember that the
+      expression <code>[1,2]</code> is syntactic sugar for the
+      expression <code>1:(2:[])</code>.</para>
+
+    <para>When we first call <function>sumList</function>, the value
+      we're matching is <code>1:(2:[])</code>.  We begin by trying to
+      match the pattern in the first equation.   In the
+      <code>(x:xs)</code> pattern, the <quote><code>:</code></quote>
+      is the familiar list constructor, <function>(:)</function>.
+      We're now using it to match with, not to construct a value. Our
+      value was constructed using <code>(:)</code>, so its constructor
+      matches the constructor in the pattern.  We say that the pattern
+      <emphasis>matches</emphasis>, or that the match
+      <emphasis>succeeds</emphasis>. The variables
+      <varname>x</varname> and <varname>xs</varname> are <quote>bound
+	to</quote> the constructor's arguments, so here
+      <varname>x</varname> is given the value <code>1</code>, and
+      <code>xs</code> the value <code>2:[]</code>.</para>
+
+    <para>The expression we're now evaluating is <code>1 + sumList
+	(2:[])</code>.  When we call <function>sumList
+	(2:[])</function>, the value we're matching is
+      <code>2:[]</code>.  Once again, this was constructed using
+      <code>(:)</code>, so the match succeeds: <varname>x</varname> is
+      bound to <code>2</code>, and <varname>xs</varname> to
+      <code>[]</code>.</para>
+
+    <para id="x_d5">Now we're evaluating <code>1 + (2 + sumList
+	[])</code>.  Haskell will only use the right hand side of an
+      equation if it can match all of the patterns on the left.  In
+      our call to <function>sumList []</function>, the value we're
+      matching is now <code>[]</code>.  The value's constructor does
+      not match the constructor in the first pattern, so we don't use
+      that equation's body.  Instead, we <quote>fall through</quote>
+      to the next pattern, which matches.  The right hand side of this
+      equation is thus chosen as the function's body.</para>
+
+    <para>The result of <code>sumList [1,2]</code> is thus <code>1 +
+	(2 + (0))</code>, or <code>3</code>.</para>
 
     <note>
       <title>Ordering is important</title>
 
-      <para id="x_m5">When applying a function, a Haskell
+      <para id="x_m5">As we've already mentioned, a Haskell
 	implementation checks patterns for matches in the order in
 	which we specify them in our equations. Matching proceeds from
-	top to bottom, and stops at the first success.</para>
+	top to bottom, and stops at the first success.  This means
+	that equations below a successful match have no effect.</para>
     </note>
 
     <para>As a final note, there already exists a standard function,
-      <function>sum</function>, that performs this adding-of-a-list
+      <function>sum</function>, that performs this sum-of-a-list
       for us.  Our <function>sumList</function> is purely for
       illustration.</para>
 
@@ -441,21 +519,22 @@
 	it.</para>
 
       <para>A value constructor builds a value.  The expression
-	<code>'a':['b']</code> applies the <function>(:)</function>
-	constructor to the values <code>'a'</code> and
-	<code>['b']</code> to produce a new compound value, the list
-	<code>['a', 'b']</code>.</para>
+	<code>Book 9 "Close Calls" ["John Long"]</code> applies the
+	<function>Book</function> constructor to the values
+	<code>9</code>, <code>"Close Calls"</code>, and <code>["John
+	  Long"]</code> to produce a new compound value.</para>
 
-      <para>When we pattern match against the <function>(:)</function>
-	constructor, we <emphasis>reverse</emphasis> the construction
-	process.  First of all, we check to see if the value does in
-	fact contain that constructor.  If it does, we inspect the
-	compound value to get the individual values that we originally
-	passed to the constructor when we created the value.</para>
+      <para>When we pattern match against the
+	<function>Book</function> constructor, we
+	<emphasis>reverse</emphasis> the construction process.  First
+	of all, we check to see if the value uses that constructor.
+	If it does, we inspect the compound value to obtain the
+	individual values that we originally passed to the constructor
+	when we created the value.</para>
 
       <para>Let's consider what happens if we match the pattern
-	<code>(x:xs)</code> against our example expression <code>'a':
-	  ['b']</code>.</para>
+	<code>(Book id name authors)</code> against our example
+	expression.</para>
 
       <itemizedlist>
 	<listitem>
@@ -463,12 +542,16 @@
 	    value matches the one in our pattern.</para>
 	</listitem>
 	<listitem>
-	  <para>The variable <varname>x</varname> will be bound to
-	    <code>'a'</code>.</para>
+	  <para>The variable <varname>id</varname> will be bound to
+	    <code>9'</code>.</para>
 	</listitem>
 	<listitem>
-	  <para>The variable <varname>xs</varname> will be bound to
-	    <code>['b']</code>.</para>
+	  <para>The variable <varname>name</varname> will be bound to
+	    <code>"Close Calls"</code>.</para>
+	</listitem>
+	<listitem>
+	  <para>The variable <varname>authors</varname> will be bound
+	    to <code>["John Long"]</code>.</para>
 	</listitem>
       </itemizedlist>
       
@@ -519,9 +602,8 @@
 
       <para id="x_j5">We can pattern match on an algebraic data type
 	using its value constructors.  Remember the
-	<type>BookStore</type> type we defined earlier?  Here's how
-	we can extract the values from a
-	<type>BookStore</type>.</para>
+	<type>BookStore</type> type we defined earlier?  Here's how we
+	can extract the values from a <type>BookStore</type>.</para>
 
       &BookStore.hs:accessors;
 
@@ -535,19 +617,13 @@
 
       &bookstore.ghci:unwrap.types;
 
-      <para id="x_IL">Here are some rules of thumb to help with
-	remembering how pattern matching works.  A constructor in a
-	pattern checks that the matched value has the right
-	<quote>shape</quote>.  A literal value ensures that that
-	portion of the value has exactly the matching contents.  A
-	variable makes no assertions about either the shape or
-	contents of the matched value; it matches anything, and binds
-	the variable to that value.</para>
-
-      <para id="x_JL">So the pattern <code>(3:xs)</code> first of all
-	is an assertion that a matching value is a non-empty list, by
-	matching against the <function>(:)</function> constructor.  It
-	also ensures that the head of the list is the literal value
+      <para id="x_IL">We can use literal values in a pattern, too.
+	Wherever we use a literal value in a pattern, the
+	corresponding part of the value we're matching against must be
+	identical. So the pattern <code>(3:xs)</code> first of all
+	checks that a value is a non-empty list, by matching against
+	the <function>(:)</function> constructor. It also ensures that
+	the head of the list is the literal value
 	<literal>3</literal>.  If both of these conditions hold, the
 	tail of the list will be bound to the variable
 	<varname>xs</varname>.</para>
@@ -560,64 +636,46 @@
 	frequently find that the names of the variables inside a
 	pattern resemble <code>(x:xs)</code> or <code>(d:ds)</code>.
 	This is a popular naming convention. The idea is that the name
-	<varname>xs</varname> is the <quote>plural</quote> of
-	<varname>x</varname>, because <varname>xs</varname> contains
-	the remainder of the list, and <varname>x</varname> its
-	head.</para>
+	<varname>xs</varname> has an <quote><code>s</code></quote> on
+	the end of its name as if it's the <quote>plural</quote> of
+	<varname>x</varname>, because <varname>x</varname> contains
+	the head of the list, and <varname>xs</varname> the remaining
+	elements.</para>
     </sect2>
 
-    <sect2 id="deftypes.dontcare">
-      <title>The don't-care, or wild card, pattern</title>
+    <sect2 id="deftypes.wildcard">
+      <title>The wild card pattern</title>
 
       <para id="x_o5">When we're writing a pattern, we can specify
 	that we don't care what value a particular value within a
 	structure has, without actually binding that value to a name.
-	The notation for this is <code>_</code>, and we call it a
-	<emphasis>wild card</emphasis> or a <emphasis>don't
-	  care</emphasis>.  We use it as follows.</para>
-
-      <para>This function tells us whether the result of the
-	<function>roots</function> function we defined earlier is
-	real-valued or not.  We don't care about root-finding per se:
-	this is just a well-known function that's a little (but
-	<emphasis>only</emphasis> a little) complicated, so it's a
-	good vehicle to explore with.</para>
-
-      &Roots.hs:isRealValued;
-
-      <para id="x_p5">Here, we don't care about the value of the
-	result, just about which constructor was used to create it. If
-	the constructor was <function>Just</function>, the result must
-	be a real number, otherwise it's either infinite or complex.
-	We can use a wild card for the entire second pattern; there's
-	no need to see if the constructor is
-	<function>Nothing</function>, because it
-	<emphasis>must</emphasis> be; <type>Maybe</type> only has two
-	constructors.</para>
-
-      <para id="x_KL">In a pattern, a wild card acts similarly to a
-	variable, only it doesn't bind the value to a name. While we
-	can't put the same variable name multiple times in a single
-	pattern, we can use a wild card as many times as we need
-	to.</para>
-
-      <para id="x_LL">Another advantage of wild cards is that a
-	Haskell compiler can warn us if we introduce a variable name
-	in a pattern, but don't use it in a function's body; defining
-	something but forgetting to use it can often indicate a bug.
-	Using a wild card instead of an unused variable makes it
-	explicit that we really don't care what value is present, and
-	will prevent such a warning.</para>
-
-      <para id="x_ML">Wild cards also help readability, as they make
-	it easier to tell which values we're really using.</para>
+	The notation for this is the character
+	<quote><code>_</code></quote>, and we call it a <emphasis>wild
+	  card</emphasis>.  We use it as follows.</para>
 
       &BookStore.hs:niceAccessors;
 
+      <para id="x_p5">Here, we've written tidier versions of the
+	accessor functions we introduced earlier.  Now, there's no
+	question about which element we're using in each
+	function.</para>
+
+      <para id="x_KL">In a pattern, a wild card acts similarly to a
+	variable, but it doesn't introduce a binding.  As the examples
+	above indicate, we can use more than one wild card in a single
+	pattern.</para>
+
+      <para id="x_LL">Another advantage of wild cards is that a
+	Haskell compiler can warn us if we introduce a variable name
+	in a pattern, but don't use it in a function's body.  This can
+	be useful because defining a variable, but forgetting to use
+	it, can often indicate the presence of a bug. If we use a wild
+	card instead of an unused variable variable, the compiler
+	won't complain.</para>
     </sect2>
 
     <sect2 id="deftypes.patterns.nonexhaustive">
-      <title>Non-exhaustive patterns</title>
+      <title>Exhaustive patterns and wild cards</title>
 
       <para>When writing a series of patterns, it's important to cover
 	all of a type's constructors.  For example, if we're
@@ -637,17 +695,31 @@
 
       &badpattern.ghci:error;
 
-      <para>In this example, the initial application of
-	<function>badExample</function> succeeds, because
-	<code>[1]</code> is a more compact way of printing <code>1 :
-	  []</code>.  The recursive application of <code>badExample
-	  xs</code> is the source of the error, because then the value
-	that's being matched against is simply <code>[]</code>.</para>
+      <para>In this example, there's no equation in the function's
+	definition that matches against the value
+	<code>[]</code>.</para>
 
-      <para>&GHC; provides a helpful compilation option,
-	<option>-fwarn-incomplete-patterns</option>, that will cause
-	it to print a warning during compilation if a sequence of
-	patterns don't match all of a type's constructors.</para>
+      <tip>
+	<title>Warning about incomplete patterns</title>
+
+	<para>&GHC; provides a helpful compilation option,
+	  <option>-fwarn-incomplete-patterns</option>, that will cause
+	  it to print a warning during compilation if a sequence of
+	  patterns don't match all of a type's constructors.</para>
+      </tip>
+
+      <para>If we need to provide a default behaviour in cases where
+	we don't care about specific constructors, we can use a wild
+	card pattern.</para>
+
+      &BadPattern.hs:goodExample;
+
+      <para>The wild card above will match the <code>[]</code>
+	constructor, so applying this function does not lead to a
+	crash.</para>
+
+      &badpattern.ghci:ok;
+
     </sect2>
   </sect1>
 
@@ -655,12 +727,15 @@
     <title>Record syntax</title>
 
     <para>Writing accessor functions for each of a data type's
-      components can be tedious.</para>
+      components can be repetitive and tedious.</para>
 
     &BookStore.hs:niceAccessors.noid;
 
-    <para>Fortunately, Haskell provides a way of defining a data type,
-      and accessors for each of its components, simultaneously.</para>
+    <para>We call this kind of code <emphasis>boilerplate</emphasis>:
+      necessary, but bulky and irksome.  Haskell programmers don't
+      like boilerplate.  Fortunately, the language addresses this
+      particular boilerplate problem: we can define a data type, and
+      accessors for each of its components, simultaneously.</para>
 
     &BookStore.hs:Customer;
 
@@ -669,17 +744,18 @@
 
     &AltCustomer.hs:Customer;
     
-    <para>When we use record syntax and give a name to each field in a
-      data type, Haskell creates an accessor function with the name
-      that we supply.</para>
+    <para>For each of the fields that we name in our type definition,
+      Haskell creates an accessor function of that name.</para>
+
+    &bookstore.ghci:accessor.type;
 
     <para>We can still use the usual function call syntax to create a
       value of this type.</para>
 
     &BookStore.hs:customer1;
 
-    <para>When we use record syntax to define a type, we can
-      optionally use a more verbose form to create a value.</para>
+    <para>Record syntax adds a more verbose notation for creating a
+      value.  This can sometimes make code more readable.</para>
 
     &BookStore.hs:customer2;
 
@@ -695,7 +771,8 @@
     &bookstore.ghci:bookInfo.noid;
 
     <para>The accessor functions that we get <quote>for free</quote>
-      when we use record syntax are normal Haskell functions.</para>
+      when we use record syntax really are normal Haskell
+      functions.</para>
 
     &bookstore.ghci:accessor;
   </sect1>
@@ -744,7 +821,8 @@
     &Nullable.hs:parens;
 
     <para>If we omitted the parentheses, this would be parsed as
-      <code>(Really Really) Int</code>, which isn't valid.</para>
+      <code>(Really Really) Int</code>, which would lead to a
+      compilation error.</para>
 
     <para id="x_d4">To once again extend an analogy to more familiar
       languages, parameterised types give us a facility that bears
@@ -768,75 +846,83 @@
 
     &ListADT.hs:List;
 
-    <para>We can visually identify this type as defined in terms of
-      itself because <type>List a</type> appears on both the left and
-      the right of the <code>=</code> sign.  What this means in
-      practice is that if we want to use the <code>Cons</code>
-      constructor to create a new value, we must supply a value of
-      type <varname role="type">a</varname>, and another value of type
-      <varname role="type">List a</varname>.</para>
+    <para>Because <type>List a</type> appears on both the left and the
+      right of the <code>=</code> sign, the type's definition refers
+      to itself.  What this means is that if we want to use the
+      <code>Cons</code> constructor to create a new value, we must
+      supply a value of type <varname role="type">a</varname>, and
+      another value of type <varname role="type">List a</varname>.
+      Let's see where this leads us in practice.</para>
 
     <para>The smallest value of type <type>List a</type> that we can
       create is <code>Nil</code>.</para>
 
     &listadt.ghci:empty;
 
-    <para>We can use <code>Nil</code>, which has the type <type>List
-	a</type>, as a parameter to <code>Cons</code>.</para>
+    <para>Because <code>Nil</code> has the type <type>List a</type>,
+      we can use it as a parameter to <code>Cons</code>.</para>
 
     &listadt.ghci:tiny;
 
-    <para>We can also use a value constructed using <code>Cons</code>
-      as a parameter to <code>Cons</code>.</para>
+    <para>And because <code>Cons 0 Nil</code> has the type <type>List
+	a</type>, we can use this as a parameter to
+      <code>Cons</code>.</para>
 
     &listadt.ghci:two;
 
     <para>We could obviously continue in this fashion indefinitely,
-      creating ever longer <code>Cons</code> chains, each  with a
+      creating ever longer <code>Cons</code> chains, each with a
       single <code>Nil</code> at the end.  This gives us another way
-      to look at <type>List</type> as recursive.</para>
+      of thinking about <type>List</type> as recursive.</para>
     
-    <para>To prove to ourselves that our <type>List a</type> type is
-      the same shape as <type>[a]</type>, we can write a function that
-      reproduces any value of type <type>[a]</type> in the form of a
-      value of type <type>List a</type>.</para>
+    <tip>
+      <title>Is List an acceptable list?</title>
 
-    &ListADT.hs:fromList;
+      <para>We can easily prove to ourselves that our <type>List
+	  a</type> type has the same shape as the built-in list type
+	<type>[a]</type>.  To do this, we write a function that
+	takes any value of type <type>[a]</type>, and produces a
+	value of type <type>List a</type>.</para>
 
-    <para>By inspection, this clearly substitutes a <code>Cons</code>
-      for every <function>(:)</function>, and a <code>Nil</code> for
-      each <code>[]</code>.  The two types are
-      <emphasis>isomorphic</emphasis>.</para>
+      &ListADT.hs:fromList;
 
-    &listadt.ghci:fromList;
+      <para>By inspection, this clearly substitutes a
+	<code>Cons</code> for every <function>(:)</function>, and a
+	<code>Nil</code> for each <code>[]</code>.  This covers both
+	of the built-in list type's constructors.  The two types are
+	<emphasis>isomorphic</emphasis>; they have the same
+	shape.</para>
+
+      &listadt.ghci:fromList;
+    </tip>
 
     <para id="x_K5">For a third perspective on what a recursive type
       is, here's a definition of a binary tree type.</para>
 
     &Tree.hs:Tree;
 
-    <para>This time, let's search for insight by looking at a more
-      familiar language.  Here's a comparable class definition in
-      Java.</para>
+    <para>This time, let's search for insight by comparing our
+      definition with one from a more familiar language.  Here's a
+      similar class definition in Java.</para>
 
     &Tree.java:Tree;
 
     <para>The one significant difference is that Java lets us use the
       special value <code>null</code> anywhere to indicate
       <quote>nothing</quote>, so we can use <code>null</code> to
-      indicate that a node doesn't have a left or right child.  Here's
-      a small function that constructs a tree with two leaves (a leaf,
+      indicate that a node is missing a left or right child.  Here's a
+      small function that constructs a tree with two leaves (a leaf,
       by convention, has no children).</para>
 
     &Tree.java:Example;
 
     <para>In Haskell, we don't have an equivalent of
       <code>null</code>. We could use the <type>Maybe</type> type to
-      provide a similar effect, but that bloats the pattern matching
-      (try it yourself).  Instead, we've decided to use a no-argument
-      <code>Empty</code> constructor.  Where the Java example provides
-      <code>null</code> to the <type>Tree</type> constructor, we
-      supply <code>Empty</code> in Haskell.</para>
+      provide a similar effect, but that bloats the pattern matching.
+      Instead, we've decided to use a no-argument <code>Empty</code>
+      constructor.  Where the Java example provides <code>null</code>
+      to the <type>Tree</type> constructor, we supply
+      <code>Empty</code> in Haskell.</para>
 
     &Tree.hs:simpleTree;
 
@@ -846,9 +932,20 @@
       <qandaset>
 	<qandaentry>
 	  <question>
-	    <para>Write the converse of <function>fromList</function>:
-	      a function that takes a <type>List a</type> and
-	      generates a <type>[a]</type>.</para>
+	    <para>Write the converse of <function>fromList</function>
+	      for the <type>List</type> type: a function that takes a
+	      <type>List a</type> and generates a
+	      <type>[a]</type>.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Define a tree type that has only one constructor,
+	      like our Java example.  Instead of the
+	      <code>Empty</code> constructor, use the
+	      <type>Maybe</type> type to refer to a node's
+	      children.</para>
 	  </question>
 	</qandaentry>
       </qandaset>
@@ -942,12 +1039,15 @@
       &let; expression.  As an example, let's write a
       function that calculates the real-valued roots of the quadratic
       equation <literal>a * (x ** 2) + b * x + c ==
-	0</literal>.</para>
+	0</literal>.  We're not interested in quadratic equations for
+      their own sake; this is simply a function that has a few
+      interesting properties.</para>
 
-    <para>To represent the result, we'll use the <type>Maybe</type>
-      type.  The roots could potentially be infinite (if we divide by
-      zero) or complex numbers (if the square root term is negative),
-      in which cases we'll return <code>Nothing</code>.</para>
+    <para>To represent the result, we'll begin by using the
+      <type>Maybe</type> type.  The roots could potentially be
+      infinite (if we divide by zero) or complex numbers (if the
+      square root term is negative), in either of which cases we'll
+      return <code>Nothing</code>.</para>
 
     &realRoots.ghci:maybe;
 
@@ -963,6 +1063,9 @@
       and <code>in</code>, which ends it.  Each line introduces a new
       variable.  The name is on the left of the <literal>=</literal>,
       and the expression it's bound to is on the right.</para>
+
+    <remark>Add a graphic here to indicate which variables are in
+      scope, and where.</remark>
 
     <note>
       <title>Special notes</title>
@@ -1013,24 +1116,30 @@
 	</listitem>
 	<listitem>
 	  <para>If the value of <varname>a</varname> is zero, then the
-	    left branch of the <function>(&amp;&amp;)</function>
+	    left argument of the <function>(&amp;&amp;)</function>
 	    expression is <code>False</code>, and so the whole
 	    predicate is <code>False</code>.  No further computation
-	    is needed; we immediately return
-	    <code>Nothing</code>.</para>
+	    is needed; we immediately return <code>Nothing</code>.  We
+	    have not needed to evaluate any of the variables we bound
+	    in the &let; expression: <varname>n</varname>,
+	    <varname>a2</varname>, or <varname>s</varname>.</para>
 	</listitem>
 	<listitem>
-	  <para>To compare <varname>n</varname> with zero, we must
-	    evaluate it.  If the <function>(&gt;=)</function>
-	    comparison fails, we again do no further work, and return
+	  <para>If <varname>a</varname> is non-zero, we must evaluate
+	    the right argument of the
+	    <function>(&amp;&amp;)</function> expression. To compare
+	    <varname>n</varname> with zero, we must evaluate it.  If
+	    the <function>(&gt;=)</function> comparison fails, we
+	    again do no further work, and return
 	    <code>Nothing</code>.</para>
 	</listitem>
 	<listitem>
 	  <para>Even when the predicate succeeds and we return the
 	    <function>Just</function> branch, we're returning an
 	    <emphasis>expression</emphasis>, not a value.  We still
-	    won't compute <code>sqrt n</code> until our caller
-	    actually needs one or other of the roots.</para>
+	    won't compute <code>sqrt n</code> or the value of either
+	    root until our caller actually needs one or other of the
+	    roots.</para>
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -1044,6 +1153,9 @@
 
       &NestedLets.hs:foo;
 
+      <remark>Add a graphic to indicate which variables are in scope,
+	and where.</remark>
+
       <para>It's perfectly legal, but not exactly wise, to repeat a
 	variable name in a nested &let; expression.</para>
 
@@ -1051,7 +1163,8 @@
 
       <para>Here, the inner <varname>x</varname> is hiding, or
 	<emphasis>shadowing</emphasis>, the outer
-	<varname>x</varname>.</para>
+	<varname>x</varname>.  It has the same name, but a different
+	type and value.</para>
 
       &nestedlets.ghci:bar;
 
@@ -1061,32 +1174,37 @@
 
       &NestedLets.hs:quux;
 
-      <para>Because the argument <varname>a</varname> is never used in
-	the body of the function, due to being shadowed by the
-	&let;-bound <varname>a</varname>, the argument can have any
-	type at all.</para>
+      <para>Because the function's argument <varname>a</varname> is
+	never used in the body of the function, due to being shadowed
+	by the &let;-bound <varname>a</varname>, the argument can have
+	any type at all.</para>
 
       &nestedlets.ghci:quux;
 
-      <para>Shadowing can obviously lead to nasty bugs, so &GHC; has a
-	helpful <option>-fwarn-name-shadowing</option> option that
-	will print a warning message if we accidentally shadow a
-	name.</para>
+      <tip>
+	<title>Compiler warnings are your friends</title>
+
+	<para>Shadowing can obviously lead to confusion and nasty
+	  bugs, so &GHC; has a helpful
+	  <option>-fwarn-name-shadowing</option> option.  When
+	  enabled, &GHC; will print a warning message any time we
+	  shadow a name.</para>
+      </tip>
     </sect2>
 
     <sect2>
       <title>The where clause</title>
 
       <para>There's another mechanism we can use to introduce local
-	variables, called a &where; clause. The definitions
-	in a &where; clause apply to the code that
+	variables, called a &where; clause. The definitions in a
+	&where; clause apply to the code that
 	<emphasis>precedes</emphasis> it.  Let's illustrate what we
-	mean with another example.</para>
-
-      <para>For variety, we'll introduce complex numbers to represent
-	the complex roots, and an abstract data type for the result.
-	The <function>(:+)</function> operator below constructs a
-	complex number from its real and imaginary parts.</para>
+	mean with another example. We'll use the same quadratic roots
+	formula, but for variety, we'll introduce complex numbers to
+	represent the complex roots, and an abstract data type for the
+	result. The <function>(:+)</function> operator below
+	constructs a complex number from its real and imaginary
+	parts.</para>
 
       &Roots.hs:roots;
 
@@ -1096,16 +1214,17 @@
 	infinite due to <varname>a</varname> being zero.</para>
 
       <para>A &where; clause can initially seem very weird to
-	non-Haskell programmers.  It's a great way to put your
-	reader's focus on the important details of an expression, with
-	the supportings definitions following afterwards.  After a
-	while, you'll find yourself missing &where; clauses
-	in languages that lack them!</para>
+	non-Haskell programmers.  However, it's a wonderful aid to
+	readability.  It lets us put our reader's focus on the
+	important details of an expression, with the supportings
+	definitions following afterwards.  After a while, you'll find
+	yourself missing &where; clauses in languages that lack
+	them!</para>
 
-      <para id="x_l4">As with &let; expressions, names are bound to
-	expressions in &where; clauses, and white space is
-	significant.  We'll be talking more about the layout rules
-	shortly, in <xref linkend="deftypes.offside"/>.</para>
+      <para id="x_l4">As with &let; expressions, white space is
+	significant in &where; clauses.  We'll be talking more about
+	the layout rules shortly, in <xref
+	  linkend="deftypes.offside"/>.</para>
     </sect2>
 
     <sect2 id="deftypes.locals.functions">
@@ -1116,9 +1235,7 @@
 	defining a function.  This symmetry is preserved in
 	&let; and &where; blocks: we can define
 	local <emphasis>functions</emphasis> just as easily as local
-	<emphasis>variables</emphasis>.  All of the same syntax
-	applies as at the top level: we can use multiple equations,
-	patterns, and guards.</para>
+	<emphasis>variables</emphasis>.</para>
 
       &LocalFunction.hs:pluralise;
 
@@ -1361,11 +1478,11 @@
     <title>Conditional evaluation with guards</title>
 
     <para id="x_C6">Pattern matching only lets us make fixed tests of
-      a value's shape.  Although this is useful, we often need to
-      perform a more expressive check before evaluating a function's
-      body.  Haskell provides a feature, <emphasis>guards</emphasis>,
-      that give us this ability.  We'll introduce the idea with an
-      example.</para>
+      a value's shape.  Although this is useful, we'd often like to be
+      able to perform a more expressive check before evaluating a
+      function's body.  Haskell provides a feature,
+      <emphasis>guards</emphasis>, that give us this ability.  We'll
+      introduce the idea with an example.</para>
 
     &Roots.hs:guardedRoots;
 

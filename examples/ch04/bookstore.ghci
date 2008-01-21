@@ -28,9 +28,9 @@ Book 2 "The Wealth of Networks" ["Yochai Benkler"]
 
 --# unwrap
 
-bookID (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
-bookTitle (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
-bookAuthors (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
+bookID (Book 3 "Probability Theory" ["E.T.H. Jaynes"])
+bookTitle (Book 3 "Probability Theory" ["E.T.H. Jaynes"])
+bookAuthors (Book 3 "Probability Theory" ["E.T.H. Jaynes"])
 
 --# unwrap.types
 
@@ -41,6 +41,14 @@ bookAuthors (Book 3 "Probability Theory", ["E.T.H. Jaynes"])
 --# customer1
 customer1
 
---# accessor
+--# accessor.type
 :type customerID
+
+--# accessor
+:type customerName
 customerName customer1
+
+--# billingInfo
+
+:type CreditCard
+CreditCard "2901650221064486" "Thomas Gradgrind" ["Dickens", "England"]

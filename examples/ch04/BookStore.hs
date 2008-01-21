@@ -7,13 +7,34 @@ data BookInfo = Book Int String [String]
 data BookReview = BookReview BookInfo Customer String
 {-- /snippet BookReview --}
 
+{-- snippet BetterReview --}
+type ReviewBody = String
+
+data BetterReview = BetterReview BookInfo Customer ReviewBody
+{-- /snippet BetterReview --}
+
+{-- snippet BookRecord --}
+type BookRecord = (BookInfo, BookReview)
+{-- /snippet BookRecord --}
+
 {-- snippet Customer --}
 data Customer = Customer {
       customerID      :: Int
     , customerName    :: String
-    , customerAddress :: [String]
+    , customerAddress :: Address
     } deriving (Show)
 {-- /snippet Customer --}
+
+{-- snippet BillingInfo --}
+type CardHolder = String
+type CardNumber = String
+type Address = [String]
+
+data BillingInfo = CreditCard CardNumber CardHolder Address
+                 | CashOnDelivery
+                 | Invoice Customer
+                   deriving (Show)
+{-- /snippet BillingInfo --}
 
 {-- snippet bookInfo --}
 bookInfo = Book 31337 "Algebra of Programming"
@@ -21,8 +42,8 @@ bookInfo = Book 31337 "Algebra of Programming"
 {-- /snippet bookInfo --}
 
 {-- snippet customer1 --}
-customer1 = Customer 271828 "J. Random Hacker"
-            ["65535 Syntax Ct",
+customer1 = Customer 271828 "J.R. Hacker"
+            ["255 Syntax Ct",
              "Milpitas, CA 95134",
              "USA"]
 {-- /snippet customer1 --}

@@ -1,9 +1,0 @@
-:load OsVersion
-
---# types
-:type Win95
-:type WinXP
-
---# apply
-WinXP 2
-:type WinXP 2

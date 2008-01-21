@@ -7,4 +7,5 @@ Red == Yellow
 Green == Green
 
 --# types
-Red == True
+take 3 "foobar"
+take Red "foobar"
