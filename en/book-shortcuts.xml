@@ -111,6 +111,7 @@
 <!ENTITY handleSqlError "<literal>handleSqlError</literal>">
 <!ENTITY hugs "<command>hugs</command>">
 <!ENTITY if "<literal>if</literal>">
+<!ENTITY import "<literal>import</literal>">
 <!ENTITY in "<literal>in</literal>">
 <!ENTITY interact "<literal>interact</literal>">
 <!ENTITY larrow "<literal>&lt;-</literal>">
