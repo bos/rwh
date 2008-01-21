@@ -152,10 +152,10 @@ webfigs:
 .PHONY: alpha
 alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
 
-$(obj-alpha)/hs.preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
+$(obj-alpha)/preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
 
-$(obj-alpha)/index.html: ../web/index.alpha.html.in $(obj-alpha)/hs.preface.html
+$(obj-alpha)/index.html: ../web/index.alpha.html.in $(obj-alpha)/preface.html
 	python ../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
@@ -168,10 +168,10 @@ $(obj-alpha)/.htaccess: ../web/alpha.htaccess
 .PHONY: beta
 beta: $(obj-beta)/index.html $(obj-beta)/.htaccess
 
-$(obj-beta)/hs.preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
+$(obj-beta)/preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
 
-$(obj-beta)/index.html: ../web/index.beta.html.in $(obj-beta)/hs.preface.html
+$(obj-beta)/index.html: ../web/index.beta.html.in $(obj-beta)/preface.html
 	python ../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
@@ -184,10 +184,10 @@ $(obj-beta)/.htaccess: ../web/beta.htaccess
 .PHONY: complete
 html: tools $(obj-complete)/index.html $(obj-complete)/.htaccess
 
-$(obj-complete)/hs.preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
+$(obj-complete)/preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-complete))
 
-$(obj-complete)/index.html: ../web/index.complete.html.in $(obj-complete)/hs.preface.html
+$(obj-complete)/index.html: ../web/index.complete.html.in $(obj-complete)/preface.html
 	python ../web/texpand.py $< $@
 	gzip -c < $@ > $@.gz
 
@@ -202,11 +202,11 @@ index: xxx-book-index.xml
 xxx-book-index.xml: $(src-master) $(chapter-files)
 	rm -rf index
 	mkdir index
-	collateindex.pl -i hs.index -N -o index/index.xml
+	collateindex.pl -i index -N -o index/index.xml
 	docbook-2-html -q -D openjade -O -V -O html-index $(src-master)
 	mv 00book-html/HTML.index index/
 	rm -r 00book-html
-	collateindex.pl -i hs.index -g -o index/index.xml index/HTML.index
+	collateindex.pl -i index -g -o index/index.xml index/HTML.index
 	mv index/index.xml book-index.xml
 	rm -r index
 
