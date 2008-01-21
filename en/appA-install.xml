@@ -1,4 +1,4 @@
-<appendix id="install" revision="alpha">
+<appendix id="install" revision="alpha;beta">
   <title>Installing GHC</title>
 
   <para id="x_l">We are providing the instructions below based on our

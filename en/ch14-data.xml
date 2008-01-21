@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="data" revision="alpha">
+<chapter id="data" revision="alpha;beta">
   <title>Data Structures</title>
   <remark>
     FIXME:

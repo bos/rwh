@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="deftypes" revision="alpha">
+<chapter id="deftypes" revision="alpha;beta">
   <title>Defining Types, Streamlining Functions</title>
 
   <para>In this chapter, we're going to extend our basic Haskell

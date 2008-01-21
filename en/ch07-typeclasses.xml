@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="typeclasses" revision="alpha">
+<chapter id="typeclasses" revision="alpha;beta">
   <title>Using Typeclasses</title>
 
   <para id="x_iA">

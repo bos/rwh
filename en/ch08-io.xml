@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="io" revision="alpha">
+<chapter id="io" revision="alpha;beta">
   <title>I/O</title>
 
   <para id="x_xB">

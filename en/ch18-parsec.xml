@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="parsec" revision="alpha">
+<chapter id="parsec" revision="alpha;beta">
   <title>Using Parsec</title>
   <remark>FIXME: do we still want to discuss parsing non-character data and
   a configuration file?</remark>

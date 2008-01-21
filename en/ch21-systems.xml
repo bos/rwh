@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="systems" revision="alpha">
+<chapter id="systems" revision="alpha;beta">
   <title>Systems Programming in Haskell</title>
 
   <para id="x_Ia">

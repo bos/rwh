@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="fp" revision="alpha">
+<chapter id="fp" revision="alpha;beta">
   <title>Functional programming</title>
 
   <sect1 id="fp.thinking">

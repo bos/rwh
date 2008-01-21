@@ -12,26 +12,49 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
     <li class="zebra_a"><span class="unpublished">Preface</span></li>
     <li class="zebra_b">1. <span class="unpublished">Why Functional
 	    Programming? Why Haskell?</span></li>
-    <li class="zebra_a">2. <span class="unpublished">Getting
-	    Started</span></li>
-    <li class="zebra_b">3. <span class="unpublished">Types and
-	    Functions</span></li>
-    <li class="zebra_a">4. <span class="unpublished">Functional
+    <li class="zebra_a"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.starting/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  2. <a href="starting.html">Getting
+	    Started</a></li>
+    <li class="zebra_b"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.funcstypes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  3. <a href="funcstypes.html">Types and
+	    Functions</a></li>
+    <li class="zebra_a"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.funcstypes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  4. <a href="deftypes.html">Defining Types, Streamlining
+	     Functions</a></li>
+    <li class="zebra_b">5. <span class="unpublished">Functional
 	    Programming</span></li>
-    <li class="zebra_b">5. <span class="unpublished">Writing a
+    <li class="zebra_a">6. <span class="unpublished">Writing a
 	    Library</span></li>
-    <li class="zebra_a">6. <span class="unpublished">Using
-	Typeclasses</span></li>
-    <li class="zebra_b">7. <span class="unpublished">Input and
-	Output</span></li>
-    <li class="zebra_a">A. <span class="unpublished">Installing GHC</span></li>
-    <li class="zebra_b">B. <span class="unpublished">Characters, Strings,
-	and Escaping Rules</span></li>
-    <li class="zebra_a"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_b"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.typeclasses/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  7. <a href="typeclasses.html">Using
+	Typeclasses</a></li>
+    <li class="zebra_a"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.io/"><img
+		src="/support/figs/rss.png"/></a></span>
+	  8. <a href="io.html">Input and
+	Output</a></li>
+    <li class="zebra_b"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.install/"><img
+		src="/support/figs/rss.png"/></a></span>
+	A. <a href="install.html">Installing GHC</a></li>
+    <li class="zebra_a"><span class="chapinfo">2008-01-21 <a
+	      href="/feeds/comments/hs.escapes/"><img
+		src="/support/figs/rss.png"/></a></span>
+	B. <a href="escapes.html">Characters, Strings,
+	and Escaping Rules</a></li>
+    <li class="zebra_b"><span class="chapinfo">2008-01-21 <a
 	      href="/feeds/comments/hs.web/"><img
 		src="/support/figs/rss.png"/></a></span>X. <a href="web.html">Web Site and
 	Comment System Usage and Policies</a></li>
-    <li class="zebra_b"><span class="chapinfo">2007-09-21 <a
+    <li class="zebra_a"><span class="chapinfo">2008-01-21 <a
 	      href="/feeds/comments/hs.bib/"><img
 		src="/support/figs/rss.png"/></a></span>
 	<a href="bib.html">Bibliography</a></li>
