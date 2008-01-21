@@ -1201,12 +1201,15 @@
 	<emphasis>precedes</emphasis> it.  Let's illustrate what we
 	mean with another example. We'll use the same quadratic roots
 	formula, but for variety, we'll introduce complex numbers to
-	represent the complex roots, and an abstract data type for the
-	result. The <function>(:+)</function> operator below
-	constructs a complex number from its real and imaginary
-	parts.</para>
+	represent the complex roots, and an algebraic data type for
+	the possible kinds of result.</para>
 
       &Roots.hs:roots;
+
+      <para>The &import; statement makes the contents of the
+	<code>Data.Complex</code> module available in our code, and
+	the <function>(:+)</function> operator constructs a complex
+	number from its real and imaginary parts.</para>
 
       <para id="x_j4">Our <function>roots</function> function returns
 	the real-valued roots when they're defined, the complex roots
