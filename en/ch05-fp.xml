@@ -1,9 +1,9 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.fp" revision="alpha">
+<chapter id="fp" revision="alpha">
   <title>Functional programming</title>
 
-  <sect1 id="hs.fp.thinking">
+  <sect1 id="fp.thinking">
     <title>Thinking in Haskell</title>
 
     <para id="x_V6">There are two aspects to the early stages of programming
@@ -34,7 +34,7 @@
       way.</para>
   </sect1>
 
-  <sect1 id="hs.fp.splitlines">
+  <sect1 id="fp.splitlines">
     <title>Warming up: portably splitting lines of text</title>
 
     <para id="x_Y6">Haskell provides a built-in function,
@@ -174,7 +174,7 @@
     &splitlines.ghci:cons;
   </sect1>
 
-  <sect1 id="hs.fp.infix">
+  <sect1 id="fp.infix">
     <title>Infix functions</title>
 
     <para id="x_K6">Usually, when we define or call a function in
@@ -238,7 +238,7 @@
     </note>
   </sect1>
 
-  <sect1 id="hs.fp.lists">
+  <sect1 id="fp.lists">
     <title>Working with lists</title>
     
     <para id="x_r6">As the bread and butter of functional programming, lists
@@ -273,7 +273,7 @@
       exercise is to write a definition of each function after you've
       read about it.</para>
 
-    <sect2 id="hs.fp.lists.basic">
+    <sect2 id="fp.lists.basic">
       <title>Basic list manipulation</title>
 
       <para id="x_u6">The simplest function on a list is
@@ -316,7 +316,7 @@
     
     </sect2>
 
-    <sect2 id="hs.fp.lists.safe">
+    <sect2 id="fp.lists.safe">
       <title>Safely and sanely working with unsafe functions</title>
 
       <para id="x_B7">When we want to use a function like
@@ -431,7 +431,7 @@
       <title>Working with sublists</title>
 
       <para id="x_Q7">The <function>take</function> function, which we already
-	met in <xref linkend="hs.funcstypes.calling"/>, returns a
+	met in <xref linkend="funcstypes.calling"/>, returns a
 	sublist consisting of the first several  elements from a list.
 	Its converse, <function>drop</function>, drops several
 	elements from the head of the list.</para>
@@ -458,7 +458,7 @@
 	  up</quote> the results of <function>take</function> and
 	<function>drop</function>, the functions
 	<function>break</function> (which we already saw in <xref
-	linkend="hs.fp.splitlines"/>) and <function>span</function>
+	linkend="fp.splitlines"/>) and <function>span</function>
 	tuple up the results of <function>takeWhile</function> and
 	<function>dropWhile</function>.</para>
 
@@ -471,7 +471,7 @@
 
     </sect2>
 
-    <sect2 id="hs.fp.list.search">
+    <sect2 id="fp.list.search">
       <title>Searching lists</title>
 
       <para id="x_V7">As we've already seen, the
@@ -493,7 +493,7 @@
 	<function>isSuffixOf</function>, let us test for the presence
 	of sublists within a bigger list.  The easiest way to use them
 	is using infix notation, which we introduced in <xref
-	linkend="hs.fp.infix"/>.</para>
+	linkend="fp.infix"/>.</para>
 
       <para id="x_Y7">The <function>isPrefixOf</function> function tells us
 	whether its left argument matches the beginning of its right
@@ -538,12 +538,12 @@
 	<function>zipWith7</function>.</para>
     </sect2>
 
-    <sect2 id="hs.fp.lists.strings">
+    <sect2 id="fp.lists.strings">
       <title>Special string-handling functions</title>
 
       <para id="x_e7">We've already encountered the standard
 	<function>lines</function> function in <xref
-	linkend="hs.fp.splitlines"/>.  It has a standard counterpart,
+	linkend="fp.splitlines"/>.  It has a standard counterpart,
 	<function>unlines</function>, which joins a list of lines
 	together using newline characters, and adds another newline to
 	the end of the string.</para>
@@ -590,7 +590,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.fp.loop">
+  <sect1 id="fp.loop">
     <title>How to think about loops</title>
 
     <para id="x_i7">Unlike traditional languages, Haskell has neither a
@@ -599,7 +599,7 @@
       several possible answers to this question, so let's build up a
       toolbox of answers.</para>
 
-    <sect2 id="hs.fp.tailrecursion">
+    <sect2 id="fp.tailrecursion">
       <title>Explicit recursion</title>
 
       <para id="x_j7">A straightforward way to make the jump from a language
@@ -705,7 +705,7 @@
       &intparse.ghci:bad;
 
       <para id="x_y7">We'll defer fixing our function's shortcomings to <xref
-	  linkend="hs.fp.asInt.fix"/>.</para>
+	  linkend="fp.asInt.fix"/>.</para>
 
       <para id="x_z7">Because the last thing that <function>loop</function> does
 	is simply call itself, it's an example of a tail recursive
@@ -891,7 +891,7 @@
 	a common aspect of Haskell programming.</para>
     </sect2>
 
-    <sect2 id="hs.fp.filter">
+    <sect2 id="fp.filter">
       <title>Selecting pieces of input</title>
 
       <para id="x_T8">Another common operation on a sequence of data is to comb
@@ -925,7 +925,7 @@
 	predicate evaluates to <code>True</code>.</para>
 
       <para id="x_Y8">We'll be discussing <function>filter</function> again
-	soon, in <xref linkend="hs.fp.foldr.filter"/>.</para>
+	soon, in <xref linkend="fp.foldr.filter"/>.</para>
     </sect2>
 
     <sect2>
@@ -997,7 +997,7 @@
 	right (the end).</para>
     </sect2>
 
-    <sect2 id="hs.fp.foldl">
+    <sect2 id="fp.foldl">
       <title>The left fold</title>
 
       &Fold.hs:foldl;
@@ -1139,7 +1139,7 @@
 	optimisation later, in chapter XXX.</para>
     </sect2>
 
-    <sect2 id="hs.fp.foldr.filter">
+    <sect2 id="fp.foldr.filter">
       <title>Folding from the right and primitive recursion</title>
 
       <para id="x_x8">The counterpart to <function>foldl</function> is
@@ -1151,7 +1151,7 @@
       <para id="x_XL">Let's follow the same manual evaluation process with
 	<function>foldr (+) 0 [1,2,3]</function> as we did with
 	<function>niceSum</function> in <xref
-	  linkend="hs.fp.foldl"/>.</para>
+	  linkend="fp.foldl"/>.</para>
 
       &Fold.hs:foldr.expand;
 
@@ -1175,7 +1175,7 @@
 	less useful than <function>foldl</function>: what use is a
 	function that folds from the right?  But consider the
 	Prelude's <function>filter</function> function, which we last
-	encountered in <xref linkend="hs.fp.filter"/>.  If we write
+	encountered in <xref linkend="fp.filter"/>.  If we write
 	<function>filter</function> using explicit recursion, it will
 	look something like this.</para>
 
@@ -1293,7 +1293,7 @@
 	<function>foldr</function> function is nearly as important a
 	member of our list-programming toolbox as the more basic list
 	functions we saw in <xref
-	  linkend="hs.fp.lists"/>.</para>
+	  linkend="fp.lists"/>.</para>
     </sect2>
 
     <sect2>
@@ -1314,11 +1314,11 @@
 
       <qandaset defaultlabel="number">
 	<qandaentry>
-	  <question id="hs.fp.asInt.fix">
+	  <question id="fp.asInt.fix">
 	    <para id="x_R9">Use a fold (choosing the appropriate fold will make
 	      your code much simpler) to rewrite and improve upon the
 	      <function>asInt</function> function from <xref
-		linkend="hs.fp.tailrecursion"/>.</para>
+		linkend="fp.tailrecursion"/>.</para>
 
 	    &ch05.exercises.hs:asInt_fold;
 
@@ -1407,7 +1407,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.fp.anonymous">
+  <sect1 id="fp.anonymous">
     <title>Anonymous (lambda) functions</title>
 
     <para id="x_d9">In many of the function definitions we've seen so far, we've
@@ -1499,7 +1499,7 @@
       <quote>glue</quote>.</para>
   </sect1>
 
-  <sect1 id="hs.fp.partialapp">
+  <sect1 id="fp.partialapp">
     <title>Partial function application and currying</title>
 
     <para id="x_o9">In Haskell, a single piece of syntax doesn't often get
@@ -1567,7 +1567,7 @@
     <para id="x_y9">Partial function application lets us avoid writing tiresome
       throwaway functions.  It's generally a lot better for this
       purpose than the anonymous functions we introduced in <xref
-	linkend="hs.fp.anonymous"/>.  Looking back at the
+	linkend="fp.anonymous"/>.  Looking back at the
       <function>isInAny</function> function we defined there, here's
       how we'd write it to use a partially applied function instead of
       a named helper function or a lambda.</para>
@@ -1584,7 +1584,7 @@
 
     <para id="x_eL">As another example of currying in use, let's return to the
       list-summing function we wrote in <xref
-	linkend="hs.fp.foldl"/>.</para>
+	linkend="fp.foldl"/>.</para>
 
       &Sum.hs:niceSum.noid;
 
@@ -1632,7 +1632,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.fp.aspattern">
+  <sect1 id="fp.aspattern">
     <title>As-patterns and function composition</title>
 
     <para id="x_FA">Haskell's <function>tails</function> function, in the
@@ -1702,7 +1702,7 @@
       </note>
     </sect2>
 
-    <sect2 id="hs.fp.aspattern.codereuse">
+    <sect2 id="fp.aspattern.codereuse">
       <title>Code reuse</title>
 
       <para id="x_OA">It seems a shame to introduce a new function,
@@ -1711,7 +1711,7 @@
 	we can do better?</para>
 
       <para id="x_PA">Remember the <function>init</function> function we
-	introduced in <xref linkend="hs.fp.lists"/>?</para>
+	introduced in <xref linkend="fp.lists"/>?</para>
 
       &SuffixTree.hs:suffixes2;
 
@@ -1816,7 +1816,7 @@
 	<title>Use your head wisely</title>
 
 	<para id="x_fA">After warning against unsafe list functions in <xref
-	    linkend="hs.fp.lists.safe"/>, here we are calling
+	    linkend="fp.lists.safe"/>, here we are calling
 	  <function>head</function>, one of those unsafe list
 	  functions.  What gives?</para>
 
@@ -1840,7 +1840,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.fp.readability">
+  <sect1 id="fp.readability">
     <title>Tips for writing readable code</title>
 
     <para id="x_gL">So far in this chapter, we've come across two tempting

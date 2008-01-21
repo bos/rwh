@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.glob" revision="alpha">
+<chapter id="glob" revision="alpha">
   <title>Case study: regular expressions and file name
     matching</title>
 
@@ -23,7 +23,7 @@
     we'll talk a little about writing portable code, good API design,
     and constructing code from small building blocks.</para>
 
-  <sect1 id="hs.glob.fnmatch">
+  <sect1 id="glob.fnmatch">
     <title>File name matching</title>
 
     <para id="x_BF">Many <quote>system-oriented</quote> programming languages
@@ -96,7 +96,7 @@
       Haskell.</para>
   </sect1>
 
-  <sect1 id="hs.glob.regex">
+  <sect1 id="glob.regex">
     <title>Regular expressions in Haskell</title>
 
     <para id="x_LF">In this section, I'll be assuming that you are already
@@ -347,7 +347,7 @@
 
   </sect1>
 
-  <sect1 id="hs.glob.translate">
+  <sect1 id="glob.translate">
     <title>Translating a glob pattern into a regular
       expression</title>
 
@@ -556,7 +556,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.glob.lazyfn">
+  <sect1 id="glob.lazyfn">
     <title>An important aside: writing lazy functions</title>
 
     <para id="x_LG">In an imperative language, the
@@ -701,7 +701,7 @@
       we can execute in constant space.</para>
   </sect1>
 
-  <sect1 id="hs.glob.use">
+  <sect1 id="glob.use">
     <title>Making use of our pattern matcher</title>
 
     <para id="x_cG">It's all very well to have a function that can match glob
@@ -927,7 +927,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.glob.errapi">
+  <sect1 id="glob.errapi">
     <title>Handling errors through API design</title>
 
     <para id="x_DH">It's not necessarily a disaster if our
@@ -996,7 +996,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.glob.work">
+  <sect1 id="glob.work">
     <title>Putting our code to work</title>
 
     <para id="x_LH">The <function>namesMatching</function> function isn't very
@@ -1040,7 +1040,7 @@
       its right hand side as an argument to its left.</para>
   </sect1>
 
-  <sect1 id="hs.glob.exercises">
+  <sect1 id="glob.exercises">
     <title>Exercises</title>
     <qandaset defaultlabel="number">
       <qandaentry>
@@ -1053,7 +1053,7 @@
     </qandaset>
   </sect1>
 
-  <sect1 id="hs.glob.conclusion">
+  <sect1 id="glob.conclusion">
     <title>Wrapping it up</title>
     
     <remark>Write some kind of intelligible conclusion.</remark>

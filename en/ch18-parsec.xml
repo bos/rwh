@@ -1,13 +1,13 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.parsec" revision="alpha">
+<chapter id="parsec" revision="alpha">
   <title>Using Parsec</title>
   <remark>FIXME: do we still want to discuss parsing non-character data and
   a configuration file?</remark>
   <para id="x_DJ">
     The task of parsing a file, or data of various types, is a common one for
     programmers.  You already learned about Haskell's support for regular
-    expressions back in <xref linkend="hs.glob.regex"/>.  Regular expressions
+    expressions back in <xref linkend="glob.regex"/>.  Regular expressions
     are nice for many tasks.  But they can become quite complex and difficult
     when dealing with a data format that is complex.  For instance, you
     probably wouldn't want to use regular expressions to parse C source code.
@@ -34,7 +34,7 @@
     We will also use Parsec to build a more complex parser for sectioned 
     configuration files.
   </para>
-  <sect1 id="hs.parsec.firststeps">
+  <sect1 id="parsec.firststeps">
     <title>First Steps with Parsec: Simple CSV Parsing</title>
     <para id="x_HJ">
       Let's jump right in by writing some code for parsing a CSV file.
@@ -173,7 +173,7 @@
     </para>
   </sect1>
 
-  <sect1 id="hs.parsec.sep">
+  <sect1 id="parsec.sep">
     <title>The sepBy and endBy Combinators</title>
     <para id="x_ZJ">
       We promised you earlier that we could simply our CSV parser
@@ -222,7 +222,7 @@
     </itemizedlist>
   </sect1>
 
-  <sect1 id="hs.parsec.choices">
+  <sect1 id="parsec.choices">
     <title>Choices and Errors</title>
     <para id="x_hJ">
       Different operating systems use different characters to mark the
@@ -304,7 +304,7 @@
       This time, we got the right result!  But we could have done it easier
       with Parsec's lookahead support.
     </para>
-    <sect2 id="hs.parsec.lookahead">
+    <sect2 id="parsec.lookahead">
       <title>Lookahead</title>
       <para id="x_sJ">
         Parsec has a function called &try; that is used to express
@@ -341,7 +341,7 @@
       </para>
     </sect2>
 
-    <sect2 id="hs.parsec.error">
+    <sect2 id="parsec.error">
       <title>Error Handling</title>
       <para id="x_wJ">
         At the beginning of this chapter, you saw how Parsec could generate
@@ -383,7 +383,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.csv">
+  <sect1 id="csv">
     <title>Extended Example: Full CSV Parser</title>
     <para id="x_DK">
       Our earlier CSV examples have had an important flaw: they weren't able

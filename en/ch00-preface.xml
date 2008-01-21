@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<preface id="hs.preface">
+<preface id="preface">
   <title>Preface</title>
 
   <para id="x_A">We use Haskell every day to solve problems that require
@@ -17,7 +17,7 @@
     composability help us to build maintainable code that we can adapt
     quickly to changes in circumstance.</para>
 
-  <sect1 id="hs.preface.audience">
+  <sect1 id="preface.audience">
     <title>Who is this book for?</title>
 
     <para id="x_C">We're writing this book for you, the curious programmer.  We
@@ -52,7 +52,7 @@
       trouble with Haskell.</para>
   </sect1>
 
-  <sect1 id="hs.preface.howtoread">
+  <sect1 id="preface.howtoread">
     <title>How to read this book</title>
 
     <para id="x_J">We've put this book together so that each chapter builds on

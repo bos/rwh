@@ -1,4 +1,4 @@
-<appendix id="hs.install" revision="alpha">
+<appendix id="install" revision="alpha">
   <title>Installing GHC</title>
 
   <para id="x_l">We are providing the instructions below based on our
@@ -9,7 +9,7 @@
   <para id="x_m">Because &GHC; runs on a large number of platforms,
     we've focused on a handful of the most popular.</para>
 
-  <sect1 id="hs.install.win">
+  <sect1 id="install.win">
     <title>Windows</title>
 
     <para id="x_n">The prebuilt binary packages of &GHC; should work
@@ -73,7 +73,7 @@
     </note>
   </sect1>
 
-  <sect1 id="hs.install.mac">
+  <sect1 id="install.mac">
     <title>Mac OS X</title>
 
     <para id="x_u">Installing &GHC; on Mac OS X takes several steps,
@@ -198,13 +198,13 @@
 
   </sect1>
 
-  <sect1 id="hs.install.debian">
+  <sect1 id="install.debian">
     <title>Ubuntu and Debian Linux</title>
       
     <remark>FIXME: actual content.</remark>
   </sect1>
 
-  <sect1 id="hs.install.fedora">
+  <sect1 id="install.fedora">
     <title>Fedora Linux</title>
       
     <para id="x_J1">&GHC; is available as a standard Fedora binary

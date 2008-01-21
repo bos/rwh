@@ -1,12 +1,12 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.deftypes" revision="alpha">
+<chapter id="deftypes" revision="alpha">
   <title>Defining Types, Streamlining Functions</title>
 
   <para>Topics: Creating new types.  Ways to write clearer
     functions.</para>
 
-  <sect1 id="hs.deftypes.data">
+  <sect1 id="deftypes.data">
     <title>Defining a new data type</title>
       
     <para id="x_C4">Although lists and tuples are useful, we'll often
@@ -53,7 +53,7 @@
 
       <para id="x_E4">We'll explain the full meaning of <code>deriving
 	  (Show)</code> later, in
-	<xref linkend="hs.typeclasses.wellknown.show"/>.  For now,
+	<xref linkend="typeclasses.wellknown.show"/>.  For now,
 	it's enough to know that we need to tack this onto a type
 	declaration so that &ghci; will automatically know how to
 	print a value of this type.</para>
@@ -136,7 +136,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.adt">
+  <sect1 id="deftypes.adt">
     <title>Algebraic data types</title>
 
     <para id="x_M4">The <type>Bool</type> type that we introduced
@@ -242,7 +242,7 @@
 	cost in either readability or performance.</para>
     </sect2>
 
-    <sect2 id="hs.deftypes.adt.comp">
+    <sect2 id="deftypes.adt.comp">
       <title>Analogues to algebraic data types in other
 	languages</title>
 
@@ -277,9 +277,9 @@
 	  and the title is in the second.  We refer to them by
 	  location, not by name.</para>
 
-	<para>In <xref linkend="hs.deftypes.pattern"/>, we'll see how to access the
+	<para>In <xref linkend="deftypes.pattern"/>, we'll see how to access the
 	  fields of a <type>BookStore</type> value.  In <xref
-	  linkend="hs.deftypes.record"/>, we'll introduce an alternate
+	  linkend="deftypes.record"/>, we'll introduce an alternate
 	  syntax for defining data types that looks a little more
 	  C-like.</para>
 
@@ -359,11 +359,11 @@
 	  circle's centre and radius.  When we later use a
 	  <code>Circle</code>, we can't accidentally treat it as a
 	  <code>Square</code>; we will see why in <xref
-	  linkend="hs.deftypes.pattern"/></para>
+	  linkend="deftypes.pattern"/></para>
       </sect3>
     </sect2>
 
-    <sect2 id="hs.deftypes.adt.notes">
+    <sect2 id="deftypes.adt.notes">
       <title>A few notes</title>
 
       <para id="x_V4">From reading the preceding sections, it should
@@ -375,7 +375,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.pattern">
+  <sect1 id="deftypes.pattern">
     <title>Pattern matching</title>
 
     <para id="x_Z5">Now that we've seen how to construct values with
@@ -515,7 +515,7 @@
 
       <para>For an explanation of this error message, skip forward a
 	little, to <xref
-	  linkend="hs.deftypes.patterns.nonexhaustive"/>.</para>
+	  linkend="deftypes.patterns.nonexhaustive"/>.</para>
 
       <para id="x_j5">We can pattern match on an algebraic data type
 	using its value constructors.  Remember the
@@ -566,7 +566,7 @@
 	head.</para>
     </sect2>
 
-    <sect2 id="hs.deftypes.dontcare">
+    <sect2 id="deftypes.dontcare">
       <title>The don't-care, or wild card, pattern</title>
 
       <para id="x_o5">When we're writing a pattern, we can specify
@@ -616,7 +616,7 @@
 
     </sect2>
 
-    <sect2 id="hs.deftypes.patterns.nonexhaustive">
+    <sect2 id="deftypes.patterns.nonexhaustive">
       <title>Non-exhaustive patterns</title>
 
       <para>When writing a series of patterns, it's important to cover
@@ -651,7 +651,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.record">
+  <sect1 id="deftypes.record">
     <title>Record syntax</title>
 
     <para>Writing accessor functions for each of a data type's
@@ -700,7 +700,7 @@
     &bookstore.ghci:accessor;
   </sect1>
 
-  <sect1 id="hs.deftypes.paramtypes">
+  <sect1 id="deftypes.paramtypes">
     <title>Parameterised types</title>
 
     <para id="x_Z4">We've repeatedly mentioned that the list type is
@@ -756,7 +756,7 @@
       the language was designed with them  from the beginning.</para>
   </sect1>
 
-  <sect1 id="hs.deftypes.recursive">
+  <sect1 id="deftypes.recursive">
     <title>Recursive types</title>
 
     <para>The familiar list type is <emphasis>recursive</emphasis>:
@@ -855,7 +855,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.error">
+  <sect1 id="deftypes.error">
     <title>Reporting errors</title>
 
     <para id="x_w3">Haskell provides a standard function,
@@ -934,7 +934,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.locals">
+  <sect1 id="deftypes.locals">
     <title>Introducing local variables</title>
 
     <para id="x_f4">Within the body of a function, we can introduce
@@ -980,7 +980,7 @@
 
       <para>Also, our use of white space here is important.  We'll
 	talk about the layout rules in <xref
-	linkend="hs.deftypes.offside"/>.</para>
+	linkend="deftypes.offside"/>.</para>
     </note>
 
     <para>We can use the names of a variable in a &let; block both
@@ -1105,10 +1105,10 @@
       <para id="x_l4">As with &let; expressions, names are bound to
 	expressions in &where; clauses, and white space is
 	significant.  We'll be talking more about the layout rules
-	shortly, in <xref linkend="hs.deftypes.offside"/>.</para>
+	shortly, in <xref linkend="deftypes.offside"/>.</para>
     </sect2>
 
-    <sect2 id="hs.deftypes.locals.functions">
+    <sect2 id="deftypes.locals.functions">
       <title>Local functions, global variables</title>
 
       <para id="x_FL">You'll have noticed that Haskell's syntax for
@@ -1147,7 +1147,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.offside">
+  <sect1 id="deftypes.offside">
     <title>The offside rule and white space in an expression</title>
 
     <para id="x_u4">In our definition of <function>realRoots</function>, the
@@ -1212,7 +1212,7 @@
       &where; clauses makes our intentions easy to figure
       out.</para>
 
-    <sect2 id="hs.deftypes.tabs">
+    <sect2 id="deftypes.tabs">
       <title>A note about tabs versus spaces</title>
 
       <para id="x_F5">If you are using a Haskell-aware text editor (e.g. Emacs),
@@ -1236,7 +1236,7 @@
 	entirely.</para>
     </sect2>
 
-    <sect2 id="hs.deftypes.block">
+    <sect2 id="deftypes.block">
       <title>The offside rule is not mandatory</title>
 
       <para id="x_H5">We can use explicit structuring instead of layout to
@@ -1261,7 +1261,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.case">
+  <sect1 id="deftypes.case">
     <title>The case expression</title>
 
     <para id="x_q5">We're not limited to using patterns in function
@@ -1290,7 +1290,7 @@
       of patterns.</para>
   </sect1>
   
-  <sect1 id="hs.deftypes.pattern.limits">
+  <sect1 id="deftypes.pattern.limits">
     <title>Common beginner mistakes with patterns</title>
 
     <para id="x_NL">There are a few ways in which new Haskell
@@ -1357,7 +1357,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.deftypes.guard">
+  <sect1 id="deftypes.guard">
     <title>Conditional evaluation with guards</title>
 
     <para id="x_C6">Pattern matching only lets us make fixed tests of
@@ -1395,7 +1395,7 @@
       equations using pattern matching and guards is that it often
       makes code much clearer.  Remember the
       <function>myDrop</function> function we defined in <xref
-	linkend="hs.funcstypes.if"/>?</para>
+	linkend="funcstypes.if"/>?</para>
 
     &myDrop.hs:myDrop.noid;
 
@@ -1410,7 +1410,7 @@
       as &if; expressions, the code becomes harder to read.</para>
   </sect1>
 
-  <sect1 id="hs.deftypes.end">
+  <sect1 id="deftypes.end">
     <title>Conclusion</title>
 
     <para>In this chapter, we've seen how to define our own
@@ -1420,7 +1420,7 @@
       handling.</para>
 
     <para>At this point, our basic toolbox is complete.  In
-      <xref linkend="hs.fp"/>, we'll use this knowledge to develop our
+      <xref linkend="fp"/>, we'll use this knowledge to develop our
       functional programming and thinking skills.</para>
 
   </sect1>

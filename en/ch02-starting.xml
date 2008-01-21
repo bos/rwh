@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.starting" revision="alpha">
+<chapter id="starting" revision="alpha">
   <title>Getting Started</title>
 
   <para id="x_TM">As you read this chapter and the few that follow, it's good to
@@ -10,7 +10,7 @@
     to prove overwhelming.  As we build a solid foundation in Haskell,
     we'll expand upon these initial explanations.</para>
 
-  <sect1 id="hs.starting.ghc">
+  <sect1 id="starting.ghc">
     <title>Your Haskell environment</title>
 
     <para id="x_g">Haskell is a language with many implementations, of
@@ -63,11 +63,11 @@
 
     <para id="x_nL">For more detailed information about how to install &GHC; on
       a variety of popular platforms, we've provided some instructions
-      in <xref linkend="hs.install"/>.</para>
+      in <xref linkend="install"/>.</para>
   </sect1>
 
 
-  <sect1 id="hs.starting.ghci">
+  <sect1 id="starting.ghci">
     <title>Getting started with ghci, the interpreter</title>
 
     <para id="x_L1">The interactive interpreter for &GHC; is a program named
@@ -91,7 +91,7 @@
       off the Start Menu.  For example, if you installed using the
       &GHC; installer on Windows XP, you should go to <quote>All
 	Programs</quote>, then <quote>GHC</quote>; you'll then see
-      &ghci; in the list.  (See <xref linkend="hs.install.win"/> for a
+      &ghci; in the list.  (See <xref linkend="install.win"/> for a
       screenshot.)</para>
 
     <para id="x_M1">When we run &ghci;, it displays a startup banner, followed
@@ -143,7 +143,7 @@ Loading package base ... linking ... done.
 
     &basics.ghci:module;
 
-    <sect2 id="hs.starting.ghci.edit">
+    <sect2 id="starting.ghci.edit">
       <title>Command line editing</title>
 
       <para id="x_O1">On most systems, &ghci; has some amount of
@@ -180,7 +180,7 @@ Loading package base ... linking ... done.
     </sect2>
   </sect1>
 
-  <sect1 id="hs.starting.calc">
+  <sect1 id="starting.calc">
     <title>Basic interaction: using ghci as a calculator</title>
 
     <para id="x_R1">In addition to providing a convenient interface
@@ -191,7 +191,7 @@ Loading package base ... linking ... done.
       Haskell. Even using the interpreter in this simple way can help
       us to become more comfortable with how Haskell works.</para>
 
-    <sect2 id="hs.starting.calc.arithmetic">
+    <sect2 id="starting.calc.arithmetic">
       <title>Simple arithmetic</title>
 
       <para id="x_S1">We can immediately start entering expressions,
@@ -223,7 +223,7 @@ Loading package base ... linking ... done.
       </note>
     </sect2>
 
-    <sect2 id="hs.starting.calc.neg">
+    <sect2 id="starting.calc.neg">
       <title>An arithmetic quirk: writing negative numbers</title>
 
       <para id="x_X1">Haskell presents us with one peculiarity in how we must
@@ -282,7 +282,7 @@ Loading package base ... linking ... done.
 	for this expressive power.</para>
     </sect2>
 
-    <sect2 id="hs.starting.calc.comparison">
+    <sect2 id="starting.calc.comparison">
       <title>Boolean logic, operators, and value comparisons</title>
 
       <para id="x_j1">The values of Boolean logic in Haskell are
@@ -354,7 +354,7 @@ Loading package base ... linking ... done.
       
     </sect2>
 
-    <sect2 id="hs.starting.calc.precedence">
+    <sect2 id="starting.calc.precedence">
       <title>Operator precedence and associativity</title>
 
       <para id="x_U1">Like other languages that use infix notation to
@@ -396,7 +396,7 @@ Loading package base ... linking ... done.
 	rules.</para>
     </sect2>
 
-    <sect2 id="hs.starting.calc.undef">
+    <sect2 id="starting.calc.undef">
       <title>Undefined values, and introducing variables</title>
 
       <para id="x_d1">Haskell's prelude, the standard library we
@@ -443,7 +443,7 @@ Loading package base ... linking ... done.
 
 	<para id="x_nM">The syntax for &let; that &ghci; accepts is not the same
 	  as we would use in a normal Haskell program.  We'll see the
-	  normal syntax in <xref linkend="hs.deftypes.locals"/>.</para>
+	  normal syntax in <xref linkend="deftypes.locals"/>.</para>
       </warning>
     </sect2>
 
@@ -483,7 +483,7 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1 id="hs.starting.list">
+  <sect1 id="starting.list">
     <title>Lists</title>
 
     <para id="x_K2">A list is surrounded by square brackets; the
@@ -574,7 +574,7 @@ Loading package base ... linking ... done.
 	point numbers is not really safe to use.</para>
     </warning>
 
-    <sect2 id="hs.starting.list.op">
+    <sect2 id="starting.list.op">
       <title>Operators on lists</title>
 
       <para id="x_xM">There are two ubiquitous operators for working with
@@ -593,7 +593,7 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1 id="hs.starting.string">
+  <sect1 id="starting.string">
     <title>Strings and characters</title>
 
     <para id="x_H2">If you know a language like Perl or C, you'll find
@@ -609,7 +609,7 @@ Loading package base ... linking ... done.
       used conventions established by the C language.  For example,
       <literal>'\n'</literal> denotes a newline character, and
       <literal>'\t'</literal> is a tab character.  For complete
-      details, see <xref linkend="hs.escapes"/>.</para>
+      details, see <xref linkend="escapes"/>.</para>
 
     &basics.ghci:newline;
     
@@ -627,7 +627,7 @@ Loading package base ... linking ... done.
 
   </sect1>
 
-  <sect1 id="hs.starting.types">
+  <sect1 id="starting.types">
     <title>First steps with types</title>
 
     <para id="x_S2">While we've talked a little about types already,
@@ -674,7 +674,7 @@ Loading package base ... linking ... done.
       </listitem>
     </itemizedlist>
 
-    <tip id="hs.starting.it">
+    <tip id="starting.it">
       <title>The joy of <quote>it</quote></title>
 
       <para id="x_Y2">That <varname>it</varname> variable is wonderfully handy
@@ -748,7 +748,7 @@ Loading package base ... linking ... done.
       evaluate the expression; it only checks its type and prints
       that.</para>
 
-    <sect2 id="hs.starting.types.exercises">
+    <sect2 id="starting.types.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
@@ -761,7 +761,7 @@ Loading package base ... linking ... done.
     </sect2>
   </sect1>
 
-  <sect1 id="hs.starting.conclusion">
+  <sect1 id="starting.conclusion">
     <title>Conclusion</title>
 
     <para id="x_k2">In this chapter, we've seen how to install &GHC; for our

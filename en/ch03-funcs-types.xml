@@ -1,11 +1,11 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.funcstypes" revision="alpha">
+<chapter id="funcstypes" revision="alpha">
   <title>Types and Functions</title>
 
   <para id="x_n2">Topics: built-in types.  Writing functions.</para>
 
-  <sect1 id="hs.funcstypes.types">
+  <sect1 id="funcstypes.types">
     <title>Haskell's type system</title>
     
     <para id="x_o2">There are three interesting aspects to types in
@@ -128,16 +128,16 @@
       languages.</para>
 
     <para id="x_w2">We've already briefly seen Haskell's notation for types in
-      <xref linkend="hs.starting.types"/>.  We write <code>expression
+      <xref linkend="starting.types"/>.  We write <code>expression
 	:: <type>MyType</type></code> to say that
       <code>expression</code> has the type <type>MyType</type>.</para>
   </sect1>
 
-  <sect1 id="hs.funcstypes.basic">
+  <sect1 id="funcstypes.basic">
     <title>Some common basic types</title>
     
     <para id="x_x2">In <xref
-	linkend="hs.starting.types"/>, we introduced a few types. Here
+	linkend="starting.types"/>, we introduced a few types. Here
       are some more of the most common base types, i.e. types that
       aren't composed of other types.</para>
 
@@ -184,7 +184,7 @@
     </itemizedlist>
   </sect1>
 
-  <sect1 id="hs.funcstypes.composite">
+  <sect1 id="funcstypes.composite">
     <title>Useful composite data types: lists and tuples</title>
 
     <para id="x_D3">The most common composite data types in Haskell
@@ -192,7 +192,7 @@
 
     <para id="x_E3">We've already seen the list type mentioned in
       <xref
-	linkend="hs.starting.string"/>, where we found that Haskell
+	linkend="starting.string"/>, where we found that Haskell
       represents a text string as a list of <type>Char</type> values,
       and that the type <quote>list of <type>Char</type></quote> is
       written <type>[Char]</type>.  (The type <type>String</type> is
@@ -201,7 +201,7 @@
 
     <para id="x_F3">We call the list type
       <emphasis>polymorphic</emphasis> because it can contain any type
-      of value (see <xref linkend="hs.funcstypes.polymorphism"/> for
+      of value (see <xref linkend="funcstypes.polymorphism"/> for
       more details).  We can write the type <quote>list of <varname
 	  role="type">a</varname></quote> for any type <varname
 	role="type">a</varname> by enclosing the type in square
@@ -229,7 +229,7 @@
       the easiest stepping stone into the idea that we can use data to
       structure our program and its control flow. We'll be spending a
       lot more time discussing lists in <xref
-	linkend="hs.fp"/>.</para>
+	linkend="fp"/>.</para>
 
     <para id="x_H3">A tuple is a fixed-size collection of values, each
       of which can be of any type.  Whereas the elements of a list
@@ -296,7 +296,7 @@
       collection of values, if the circumstances don't require a
       custom container type.</para>
 
-    <sect2 id="hs.funcstypes.composite.exercises">
+    <sect2 id="funcstypes.composite.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">
@@ -323,13 +323,13 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.funcstypes.calling">
+  <sect1 id="funcstypes.calling">
     <title>Function application</title>
 
     <para id="x_P3">Now that we've had our fill of data types for a while, let's
       turn our attention to <emphasis>working</emphasis> with some of
       the types we've seen.  We've already seen how to perform
-      arithmetic in <xref linkend="hs.starting.calc.arithmetic"/>, and it
+      arithmetic in <xref linkend="starting.calc.arithmetic"/>, and it
       looks quite similar to arithmetic in other languages.</para>
 
     <para id="x_Q3">Our discussion of lists and tuples mentioned how
@@ -415,7 +415,7 @@
 	  from any tuple, no matter how wide</quote> function.</para>
     </note>
 
-    <sect2 id="hs.funcstypes.calling.expr">
+    <sect2 id="funcstypes.calling.expr">
       <title>Passing an expression to a function</title>
 
       <para id="x_X3">Haskell parses an expression from left to right.
@@ -441,7 +441,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.funcstypes.srcfile">
+  <sect1 id="funcstypes.srcfile">
     <title>Haskell source files, and writing simple functions</title>
 
     <para id="x_h3">Now that we know how to apply functions, it's time
@@ -504,7 +504,7 @@
       a value to a memory location.  This distinction is very
       important.</para>
 
-    <sect2 id="hs.funcstypes.variable">
+    <sect2 id="funcstypes.variable">
       <title>Just what is a variable, anyway?</title>
 
       <para id="x_sK">In Haskell, a variable is a way of giving a name
@@ -552,12 +552,12 @@
 
 	<para>While there's really nothing untoward going on here, we
 	  won't be fully describing the rules for this particular case
-	  until <xref linkend="hs.monads.do"/>.  We'll see another
+	  until <xref linkend="monads.do"/>.  We'll see another
 	  case of shadowing later in this chapter.</para>
       </sect3>
     </sect2>
 
-    <sect2 id="hs.funcstypes.if">
+    <sect2 id="funcstypes.if">
       <title>Conditional evaluation</title>
 
       <para id="x_m3">Like other languages, Haskell has an
@@ -856,7 +856,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.funcstypes.sigs">
+  <sect1 id="funcstypes.sigs">
     <title>Understanding a function's type signature</title>
 
     <para id="x_Z3">Let's take a look at a function's type.</para>
@@ -908,7 +908,7 @@
     </itemizedlist>
   </sect1>
 
-  <sect1 id="hs.funcstypes.polymorphism">
+  <sect1 id="funcstypes.polymorphism">
     <title>Polymorphism in Haskell</title>
 
     <para>When we introduced lists, we mentioned that the list type is
@@ -1013,12 +1013,12 @@
 
     <para>This is not the whole story of polymorphism in Haskell:
       we'll return to the subject in <xref
-	linkend="hs.typeclasses"/>.</para>
+	linkend="typeclasses"/>.</para>
 
     <sect2>
       <title>Reasoning about polymorphic functions</title>
 
-      <para>In <xref linkend="hs.funcstypes.sigs"/>, we talked about
+      <para>In <xref linkend="funcstypes.sigs"/>, we talked about
 	figuring out the behaviour of a function based on its type
 	signature.  We can apply the same kind of reasoning to
 	polymorphic functions.  Let's look again at
@@ -1080,7 +1080,7 @@
 
     <para id="x_g3">This is an intriguing idea, but it's not yet easy
       to see just yet what its consequences might be.  We'll return to
-      this topic in <xref linkend="hs.fp.partialapp"/>, once we've
+      this topic in <xref linkend="fp.partialapp"/>, once we've
       spent a bit of time writing functions.</para>
 
     <para>We can now write a type signature for the
@@ -1091,7 +1091,7 @@
 
   </sect1>
 
-  <sect1 id="hs.funcstypes.sigs.exercises">
+  <sect1 id="funcstypes.sigs.exercises">
     <title>Exercises</title>
 
     <qandaset defaultlabel="number">
@@ -1118,7 +1118,7 @@
   </sect1>
 
 
-  <sect1 id="hs.funcstypes.end">
+  <sect1 id="funcstypes.end">
     <title>Conclusion</title>
 
     <para id="x_T6">In this chapter, we've had a whirlwind overview of
@@ -1128,7 +1128,7 @@
       expressions, and how to reason about lazy evaluation.</para>
 
     <para id="x_U6">This all amounts to a lot of information to
-      absorb.  In <xref linkend="hs.deftypes"/>, we'll build on this
+      absorb.  In <xref linkend="deftypes"/>, we'll build on this
       basic knowledge to further enhance our understanding of
       Haskell.</para>
 

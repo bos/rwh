@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.data" revision="alpha">
+<chapter id="data" revision="alpha">
   <title>Data Structures</title>
   <remark>
     FIXME:
@@ -32,7 +32,7 @@
     powerful and -- surprise -- even exciting.
   </para>
 
-  <sect1 id="hs.data.intro">
+  <sect1 id="data.intro">
     <title>Creating New Types</title>
     <para id="x_SH">
       To create a new type, we use the &data; keyword.  You can create an
@@ -40,7 +40,7 @@
       starting with the most simple, and moving on to more complex types.
     </para>
 
-    <sect2 id="hs.data.basic">
+    <sect2 id="data.basic">
       <title>Basic Type Creation</title>
       <para id="x_TH">
         To create a new type, we use the &data; keyword.  In its most simple,
@@ -68,7 +68,7 @@
         made our new type a member of the &Show; and &Eq; typeclasses.  We'll
         make a new example that is a member of these classes, and then we'll
         get more information out of &ghci;.  For more on typeclasses, refer to
-        <xref linkend="hs.typeclasses"/>.
+        <xref linkend="typeclasses"/>.
       </para>
       &data1.hs:silly2;
       <para id="x_YH">
@@ -88,7 +88,7 @@
       </para>
     </sect2>
 
-    <sect2 id="hs.data.multi">
+    <sect2 id="data.multi">
       <title>Multiple Type Constructors</title>
       <para id="x_bH">
         One way to make &data; more useful is to have multiple type
@@ -146,7 +146,7 @@
       <remark>FIXME: have we discussed prelude?</remark>
     </sect2>
 
-    <sect2 id="hs.data.records">
+    <sect2 id="data.records">
       <title>Defining Records</title>
       <para id="x_kH">
         Custom types need not be defined solely in terms of static data.  They
@@ -212,7 +212,7 @@
       </para>
     </sect2>
 
-    <sect2 id="hs.data.named">
+    <sect2 id="data.named">
       <title>Records with Named Fields</title>
       <para id="x_tH">
         Our earlier example of a type that holds a color looked easy enough.
@@ -307,7 +307,7 @@ data CalendarTime = CalendarTime {
         match against 12 different fields in order.
       </para>
     </sect2>
-    <sect2 id="hs.data.polymorphic">
+    <sect2 id="data.polymorphic">
       <title>Polymorphic Types</title>
       <para id="x_EI">
         Sometimes you don't know in advance what the types of the data you
@@ -365,7 +365,7 @@ data  Maybe a  =  Nothing | Just a
         Haskell code in general.
       </para>
     </sect2>
-    <sect2 id="hs.data.combining">
+    <sect2 id="data.combining">
       <title>A Final Word on Types</title>
       <para id="x_MI">
         We've shown you a lot of different ways to create your own types.
@@ -377,7 +377,7 @@ data  Maybe a  =  Nothing | Just a
     </sect2>
   </sect1>
 
-  <sect1 id="hs.data.assoc">
+  <sect1 id="data.assoc">
     <title>Association Lists and Maps</title>
     <para id="x_NI">
       Often times, we have to deal with data that is unordered but is indexed
@@ -489,7 +489,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
   </sect1>
 
-  <sect1 id="hs.data.funcs">
+  <sect1 id="data.funcs">
     <title>Functions Are Data, Too</title>
     <para id="x_rL">
       Back in the beginning of the chapter, we reminded you that Haskell isn't
@@ -535,7 +535,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
   </sect1>
 
-  <sect1 id="hs.data.passwd">
+  <sect1 id="data.passwd">
     <title>Extended Example: /etc/passwd</title>
     <para id="x_AJ">
       In order to illustrate the usage of a number of different data
@@ -561,7 +561,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
   </sect1>
 
-  <sect1 id="hs.data.num">
+  <sect1 id="data.num">
     <title>Extended example: Numeric Types</title>
     <para id="x_wL">
       We've told you how powerful and expressive Haskell's type system is.
@@ -569,7 +569,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       really see that in action.
     </para>
     <para id="x_xL">
-      Back in <xref linkend="hs.typeclasses.wellknown.numeric"/>, we showed
+      Back in <xref linkend="typeclasses.wellknown.numeric"/>, we showed
       the numeric typeclasses that come with Haskell.  Let's see what we can
       do by defining new types and utilizing the numeric typeclasses to
       integrate them with basic mathematics in Haskell.

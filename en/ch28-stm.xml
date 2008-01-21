@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.stm" revision="unpublished">
+<chapter id="stm" revision="unpublished">
   <title>Concurrency case study: lockless database with STM</title>
 
   <remark>FIXME</remark>

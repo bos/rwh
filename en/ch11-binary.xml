@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.binary" revision="alpha">
+<chapter id="binary" revision="alpha">
   <title>Code case study: parsing a binary data format</title>
 
   <para id="x_sQ">In this chapter, we'll discuss a common task: parsing a binary
@@ -183,7 +183,7 @@
       &case; expressions, we've made the code easier to follow.</para>
 
     <para id="x_QR">While we warned against overuse of anonymous functions in
-      <xref linkend="hs.fp.anonymous"/>, we use several in our chain
+      <xref linkend="fp.anonymous"/>, we use several in our chain
       of functions here.  Because these functions are so small, we
       wouldn't improve readability by giving them names.</para>
 
@@ -360,7 +360,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.binary.functor">
+  <sect1 id="binary.functor">
     <title>Introducing functors</title>
 
     <para id="x_mR">We're by now thoroughly familiar with the
@@ -402,7 +402,7 @@
 
     <para id="x_sR">We can think of <function>fmap</function> as a kind of
       <emphasis>lifting</emphasis> function, as we introduced in <xref
-      linkend="hs.find.predicate.lift"/>.  It takes a function over
+      linkend="find.predicate.lift"/>.  It takes a function over
       ordinary values <type>a -&gt; b</type> and lifts it to become a
       function over containers <type>f a -&gt; f b</type>, where
       <varname>f</varname> is the container type.</para>
@@ -619,7 +619,7 @@
 
     </sect2>
 
-    <sect2 id="hs.binary.functor.laws">
+    <sect2 id="binary.functor.laws">
       <title>Thinking more about functors</title>
 
       <para id="x_WS">We've made a few implicit assumptions about how functors
@@ -837,9 +837,9 @@
       introduced the notion of a functor as offering a generalised way
       to map over a container type.</para>
 
-    <para id="x_zS">We will revisit parsing in <xref linkend="hs.parsec"/>, to
+    <para id="x_zS">We will revisit parsing in <xref linkend="parsec"/>, to
       discuss Parsec, a widely used and flexible parsing library.  And
-      in <xref linkend="hs.monads"/>, we will return to our theme of
+      in <xref linkend="monads"/>, we will return to our theme of
       abstraction.</para>
   </sect1>
 

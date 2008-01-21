@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-  <chapter id="hs.databases" revision="unpublished">
+  <chapter id="databases" revision="unpublished">
     <title>Using Databases</title>
 
     <para id="x_Ec">
@@ -21,7 +21,7 @@
       <remark>FIXME: insert link to ch22</remark>.
     </para>
 
-    <sect1 id="hs.databases.hdbc">
+    <sect1 id="databases.hdbc">
       <title>Overview of HDBC</title>
       <para id="x_Gc">
         At the bottom of the database stack is the database engine.  The
@@ -65,7 +65,7 @@
 
     </sect1>
 
-    <sect1 id="hs.databases.hdbc.install">
+    <sect1 id="databases.hdbc.install">
       <title>Installing HDBC and Drivers</title>
       <para id="x_Mc">
         To connect to a given database with HDBC, you need at two packages:
@@ -101,7 +101,7 @@
       </para>
     </sect1>
 
-    <sect1 id="hs.databases.connect">
+    <sect1 id="databases.connect">
       <title>Connecting to Databases</title>
       <para id="x_Pc">
         To connect to a database, you will use a connection function
@@ -124,7 +124,7 @@
       &connect.ghci:conn;
     </sect1>
 
-    <sect1 id="hs.databases.transactions">
+    <sect1 id="databases.transactions">
       <title>Transactions</title>
       <para id="x_Rc">
         Most modern SQL databases have a notion of transactions.
@@ -191,7 +191,7 @@
       </para>
     </sect1>
 
-    <sect1 id="hs.databases.simplequeries">
+    <sect1 id="databases.simplequeries">
       <title>Simple Queries</title>
       <para id="x_Yc">
         Some of the simplest queries in SQL involve statements that
@@ -221,7 +221,7 @@
       </para>
     </sect1>
 
-    <sect1 id="hs.database.sqlvalue">
+    <sect1 id="database.sqlvalue">
       <title>SqlValues</title>
       <para id="x_cc">
         Before proceeding any farther, we need to discuss a data type
@@ -245,7 +245,7 @@
       </para>
     </sect1>
 
-    <sect1 id="hs.databases.args">
+    <sect1 id="databases.args">
       <title>Query Parameters</title>
       <para id="x_ec">
         HDBC, like most databases, supports a notion of replacable
@@ -306,7 +306,7 @@
       </note>
     </sect1>
 
-    <sect1 id="hs.databases.statements">
+    <sect1 id="databases.statements">
       <title>Prepared Statements</title>
       <para id="x_kc">
         HDBC defines a function &prepare; that will prepare a SQL
@@ -359,7 +359,7 @@
       </note>
     </sect1>
 
-    <sect1 id="hs.databases.readingresults">
+    <sect1 id="databases.readingresults">
       <title>Reading Results</title>
       <para id="x_rc">
         So far, we have discussed queries that insert or change data.
@@ -410,11 +410,11 @@
       </para>
       &query.ghci:queryhs;
 
-      <sect2 id="hs.databases.readingstatements">
+      <sect2 id="databases.readingstatements">
         <title>Reading with Statements</title>
         <para id="x_wc">
           As we discussed in <xref
-          linkend="hs.databases.statements"/>, you can use statements
+          linkend="databases.statements"/>, you can use statements
           for reading.  There are a number of ways of reading data
           from statements that can be useful in certain situations.
           Like &run;, &quickQueryp; is a convenience function that in
@@ -434,7 +434,7 @@
           <literal>fetchAllRowsAL'</literal>, which returns
           <literal>(String, SqlValue)</literal> pairs for each
           column.  The &String; is the column name as returned by the
-          database; see <xref linkend="hs.databases.metadata"/> for
+          database; see <xref linkend="databases.metadata"/> for
           other ways to obtain column names.
         </para>
         <para id="x_yc">
@@ -445,10 +445,10 @@
         </para>
       </sect2>
 
-      <sect2 id="hs.databases.readinglazy">
+      <sect2 id="databases.readinglazy">
         <title>Lazy Reading</title>
         <para id="x_zc">
-          Back in <xref linkend="hs.io.lazy"/>, we talked about lazy
+          Back in <xref linkend="io.lazy"/>, we talked about lazy
           I/O from files.  It is also possible to read data lazily
           from databases.  This can be particularly useful when
           dealing with queries that return an exceptionally large
@@ -497,7 +497,7 @@
 
     </sect1>
         
-    <sect1 id="hs.databases.metadata">
+    <sect1 id="databases.metadata">
       <title>Database Metadata</title>
       <para id="x_Ed">
         Sometimes it can be useful for a program to learn information about
@@ -540,7 +540,7 @@
       </para>
     </sect1>
 
-    <sect1 id="hs.databases.errors">
+    <sect1 id="databases.errors">
       <title>Error Handling</title>
       <para id="x_Jd">
         HDBC will raise exceptions when errors occur.  The exceptions

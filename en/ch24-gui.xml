@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.gui" revision="unpublished">
+<chapter id="gui" revision="unpublished">
   <title>GUI programming: gtk2hs</title>
 
   <remark>FIXME</remark>

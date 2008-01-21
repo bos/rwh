@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.httpproxy" revision="unpublished">
+<chapter id="httpproxy" revision="unpublished">
   <title>Reverse HTTP Proxy Example</title>
 
   <remark>FIXME</remark>

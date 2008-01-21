@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.typeclasses" revision="alpha">
+<chapter id="typeclasses" revision="alpha">
   <title>Using Typeclasses</title>
 
   <para id="x_iA">
@@ -12,7 +12,7 @@
     typeclasses are, though, we'd like to explain the need for them.
   </para>
 
-  <sect1 id="hs.typeclasses.need">
+  <sect1 id="typeclasses.need">
     <title>The need for typeclasses</title>
     <para id="x_jA">
       Let's imagine that for some unfathomable reason, the designers of the
@@ -50,7 +50,7 @@
       This is exactly what Haskell's typeclasses are for.  
     </para>
   </sect1>
-  <sect1 id="hs.typeclasses.whatarethey">
+  <sect1 id="typeclasses.whatarethey">
     <title>What are typeclasses?</title>
     <para id="x_nA">
       Typeclasses define a set of functions that can have different
@@ -89,7 +89,7 @@
   </sect1>
 
 
-  <sect1 id="hs.typeclasses.defining">
+  <sect1 id="typeclasses.defining">
     <title>Defining new typeclasses</title>
     <para id="x_tA">
       <remark>FIXME: use Eq instead?  (see comments)</remark>
@@ -149,7 +149,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     </para>
     <para id="x_GN">
       We'll go into more detail on defining instances in <xref
-        linkend="hs.typeclasses.instances"/>.  First, though, let's continue
+        linkend="typeclasses.instances"/>.  First, though, let's continue
       to look at ways to define typeclasses.  In this example, a
       not-equal-to function might be useful.
       Here's what we might say to define a typeclass with two functions:
@@ -222,7 +222,7 @@ class  Eq a  where
 
   </sect1>
 
-  <sect1 id="hs.typeclasses.instances">
+  <sect1 id="typeclasses.instances">
     <title>Declaring typeclass instances</title>
     <para id="x_GB">
       Now that you know how to define typeclasses, it's time to learn how to
@@ -234,20 +234,20 @@ class  Eq a  where
       <remark>FIXME: rearrange? see comments</remark>
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
-      linkend="hs.typeclasses.need"/>.
+      linkend="typeclasses.need"/>.
       Now let's see how we could make that same <literal>Color</literal>
       type a member of the <literal>BasicEq3</literal> class.
     </para>
     &eqclasses.hs:basiceq3inst;
     <para id="x_IB">
       Notice that we provide essentially the same function as we used
-      back in <xref linkend="hs.typeclasses.need"/>.  In fact, the
+      back in <xref linkend="typeclasses.need"/>.  In fact, the
       implementation is identical.  However, in this case, we can use
       <literal>isEqual3</literal> on <emphasis>any</emphasis> type that
       we declare is an instance of <literal>BasicEq3</literal>, not just
       this one color type.  We could define equality tests for any anything
       from numbers to graphics using the same basic pattern.  In fact, as you
-      will see in <xref linkend="hs.typeclasses.wellknown.equality"/>, this
+      will see in <xref linkend="typeclasses.wellknown.equality"/>, this
       works the same as making Haskell's <literal>==</literal> operator
       work for your own custom types.
     </para>
@@ -264,7 +264,7 @@ class  Eq a  where
 
   </sect1>
 
-  <sect1 id="hs.typeclasses.wellknown">
+  <sect1 id="typeclasses.wellknown">
     <title>Well-known typeclasses</title>
 
     <para id="x_KB">
@@ -279,7 +279,7 @@ class  Eq a  where
       complete definition.
     </para>
 
-    <sect2 id="hs.typeclasses.wellknown.show">
+    <sect2 id="typeclasses.wellknown.show">
       <title>Show</title>
       <para id="x_LB">
         The <literal>Show</literal> typeclass is used to convert values to
@@ -338,14 +338,14 @@ class  Eq a  where
         This example defines an instance of <literal>Show</literal> for our
         type 
         <literal>Color</literal> (see <xref
-          linkend="hs.typeclasses.need"/>).  The implementation is
+          linkend="typeclasses.need"/>).  The implementation is
         simple: we define a function <literal>show</literal> and that's all
         that's needed.
       </para>
 
     </sect2>
 
-    <sect2 id="hs.typeclasses.wellknown.read">
+    <sect2 id="typeclasses.wellknown.read">
       <title>Read</title>
       <para id="x_TB">
         The &Read; typeclass is essentially the opposite of &Show;: it
@@ -430,7 +430,7 @@ class  Eq a  where
       </para>
     </sect2>
 
-    <sect2 id="hs.typeclasses.wellknown.serialization">
+    <sect2 id="typeclasses.wellknown.serialization">
       <title>Serialization with Read and Show</title>
       <para id="x_cB">
         You may often have a data structure in memory that you need to
@@ -475,7 +475,7 @@ class  Eq a  where
       <para id="x_jB">
         Since so many different types are instances of &Read; and &Show; by
         default (and others can be made instances easily; see <xref
-          linkend="hs.typeclasses.auto.derivation"/>), you can use it for
+          linkend="typeclasses.auto.derivation"/>), you can use it for
         some really complex data structures.  Here are a few examples of
         slightly more complex data structures:
         <remark>FIXME: like to def of $, or explain it here</remark>
@@ -483,7 +483,7 @@ class  Eq a  where
       &serialization.ghci:ex3;
     </sect2>
 
-    <sect2 id="hs.typeclasses.wellknown.numeric">
+    <sect2 id="typeclasses.wellknown.numeric">
       <title>Numeric Types</title>
       <remark>FIXME: some of these tables don't render well under sgml2x.
       Will need to verify that they look good under the O'Reilly
@@ -500,12 +500,12 @@ class  Eq a  where
       <para id="x_lB">
         Let's begin our discussion of the typeclasses surrounding numeric
         types with an examination of the types themselves.  <xref
-          linkend="hs.numerictypes.summary"/> describes the most
+          linkend="numerictypes.summary"/> describes the most
         commonly-used numeric types in Haskell.  Note that there are also
         many more numeric types available for specific purposes such as
         interfacing to C.
       </para>
-      <table id="hs.numerictypes.summary" tocentry="1">
+      <table id="numerictypes.summary" tocentry="1">
         <title>Selected Numeric Types</title>
         <tgroup cols='2' align='left'>
           <colspec colname='c1'/>
@@ -586,10 +586,10 @@ class  Eq a  where
         These are quite a few different numeric types.  There are some
         operations, such as addition, that ought to work with all of them.
         There are others, such as <literal>asin</literal>, that only apply to
-        floating-point types.  <xref linkend="hs.numerictypes.funcs"/>
+        floating-point types.  <xref linkend="numerictypes.funcs"/>
         summarizes the different functions that operate on numeric types,
         and
-        <xref linkend="hs.numerictypes.typeclasses"/> matches the types with
+        <xref linkend="numerictypes.typeclasses"/> matches the types with
         their respective typeclasses.  As you read that table, keep in mind
         that Haskell operators are just functions: you can say either
         <literal>(+) 2 3</literal> or <literal>2 + 3</literal> with the same
@@ -601,7 +601,7 @@ class  Eq a  where
       <remark>FIXME: how to sort the operators?</remark>
       <remark>FIXME: start here with Calvin Smith's comment</remark>
 
-      <table id="hs.numerictypes.funcs" tocentry="1">
+      <table id="numerictypes.funcs" tocentry="1">
         <title>Selected Numeric Functions and Constants</title>
         <tgroup cols='4' align='left'>
           <colspec colname='c1'/>
@@ -829,7 +829,7 @@ class  Eq a  where
         </tgroup>
       </table>
 
-      <table id="hs.numerictypes.typeclasses" tocentry="1" pgwide="1">
+      <table id="numerictypes.typeclasses" tocentry="1" pgwide="1">
         <title>Typeclass Instances for Numeric Types</title>
         <tgroup cols='9' align='left'>
           <colspec colname='ctype'/>
@@ -954,13 +954,13 @@ class  Eq a  where
       </table>
       <para id="x_nB">
         Converting between numeric types is another common need.
-        <xref linkend="hs.numerictypes.funcs"/> listed many
+        <xref linkend="numerictypes.funcs"/> listed many
         functions that can be used for conversion.  However, it is not always
         obvious how to apply them to convert between two arbitrary types.  To
-        help you out, <xref linkend="hs.numerictypes.conversion"/> provides
+        help you out, <xref linkend="numerictypes.conversion"/> provides
         information on converting between different types.
       </para>
-      <table id='hs.numerictypes.conversion' tocentry='1'>
+      <table id='numerictypes.conversion' tocentry='1'>
         <title>Conversion Between Numeric Types</title>
         <tgroup cols='5'>
           <colspec colname='source'/>
@@ -1018,13 +1018,13 @@ class  Eq a  where
 
       <para id="x_oL">
         For an extended example demonstrating the use of these numeric
-        typeclasses, see <xref linkend="hs.data.num"/>.
+        typeclasses, see <xref linkend="data.num"/>.
       </para>
 
 
     </sect2>
 
-    <sect2 id="hs.typeclasses.wellknown.equality">
+    <sect2 id="typeclasses.wellknown.equality">
       <title>Equality, Ordering, and Comparisons</title>
       <para id="x_oB">
         We've already talked about the arithmetic operators such as
@@ -1050,7 +1050,7 @@ class  Eq a  where
     </sect2>
   </sect1>
 
-  <sect1 id="hs.typeclasses.auto.derivation">
+  <sect1 id="typeclasses.auto.derivation">
     <title>Automatic Derivation</title>
     <para id="x_rB">
       For many simple data types, the Haskell compiler can automatically
@@ -1081,7 +1081,7 @@ class  Eq a  where
     </para>
   </sect1>
 
-  <sect1 id="hs.typeclasses.conclusion">
+  <sect1 id="typeclasses.conclusion">
     <title>Conclusion</title>
     <para id="x_JN">In this chapter, you learned about the need for typeclasses and how
       to use them.  We talked about defining our own typeclasses and then
@@ -1092,14 +1092,14 @@ class  Eq a  where
   </sect1>
 
   <!-- FIXME: cover these? 
-  <sect1 id="hs.typeclasses.overlapping">
+  <sect1 id="typeclasses.overlapping">
     <title>Overlapping Instances</title>
     <para id="x_vB">
       FIXME
     </para>
   </sect1>
 
-  <sect1 id="hs.typeclasses.undecidable">
+  <sect1 id="typeclasses.undecidable">
     <title>Undecidable Instances</title>
     <para id="x_wB">
       FIXME

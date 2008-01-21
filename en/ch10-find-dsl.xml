@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.find" revision="alpha">
+<chapter id="find" revision="alpha">
   <title>I/O case study: a library for searching the
     filesystem</title>
 
@@ -19,7 +19,7 @@
     Haskell.  We'll explore several different approaches to writing
     this library, each with different strengths.</para>
 
-  <sect1 id="hs.find.getRecursiveContents">
+  <sect1 id="find.getRecursiveContents">
     <title>The find command</title>
 
     <para id="x_sN">If you don't use a Unix-like operating system, or you're not
@@ -55,7 +55,7 @@
     <para id="x_wN">The <function>forM</function> function is a
       <function>flip</function>ped version of
       <function>mapM</function>, which we first saw in <xref
-	linkend="hs.io.monad"/>.</para>
+	linkend="io.monad"/>.</para>
 
     &recursivecontents.ghci:forM;
 
@@ -93,7 +93,7 @@
     <sect2>
       <title>Revisiting anonymous and named functions</title>
 
-      <para id="x_AO">In <xref linkend="hs.fp.anonymous"/>, we listed some
+      <para id="x_AO">In <xref linkend="fp.anonymous"/>, we listed some
 	reasons not to use anonymous functions, and yet here we are,
 	using one as the body of a loop. This is one of the most
 	common uses of anonymous functions in Haskell.</para>
@@ -150,7 +150,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.find.simpleFind">
+  <sect1 id="find.simpleFind">
     <title>A naive finding function</title>
 
     <para id="x_HO">We can use our <function>getRecursiveContents</function>
@@ -419,7 +419,7 @@
       fact here we can do so by making our function
       <emphasis>shorter</emphasis>.</para>
 
-    <sect2 id="hs.find.acquire.use.release">
+    <sect2 id="find.acquire.use.release">
       <title>The acquire-use-release cycle</title>
 
       <para id="x_qO">We need <function>hClose</function> to always be called if
@@ -484,7 +484,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.find.predicate">
+  <sect1 id="find.predicate">
     <title>Writing a predicate</title>
 
     <para id="x_xO">Let's take a stab at writing a predicate, recalling the type
@@ -576,7 +576,7 @@
       list all files that are exactly one kilobyte in size.  Our
       success gives us enough confidence to continue.</para>
 
-    <sect2 id="hs.find.predicate.lift">
+    <sect2 id="find.predicate.lift">
       <title>Avoiding boilerplate with lifting</title>
 
       <para id="x_MP">Besides <function>equalP</function>, we'd like to be able
@@ -620,7 +620,7 @@
 	concision that partial application gives.</para>
     </sect2>
 
-    <sect2 id="hs.find.predicate.combinator">
+    <sect2 id="find.predicate.combinator">
       <title>Gluing predicates together</title>
 
       <para id="x_RP">If we want to combine predicates, we can of course follow
@@ -675,7 +675,7 @@
       <para id="x_ZP">We can address the length problem by defining new infix
 	operators, taking advantage of a Haskell feature that we first
 	mentioned briefly in <xref
-	  linkend="hs.starting.calc.neg"/>.</para>
+	  linkend="starting.calc.neg"/>.</para>
 
       &BetterPredicate.hs:myTest3;
 
@@ -708,7 +708,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.find.traverse">
+  <sect1 id="find.traverse">
     <title>Controlling traversal</title>
     
     <para id="x_eP">When traversing the filesystem, we'd like to give ourselves
@@ -824,7 +824,7 @@
 	<qandaentry>
 	  <question>
 	    <para id="x_rP">Take the predicates and combinators from <xref
-	    linkend="hs.find.predicate.combinator"/> and make them
+	    linkend="find.predicate.combinator"/> and make them
 	      work with our new <type>Info</type> type.</para>
 	  </question>
 	</qandaentry>
@@ -913,7 +913,7 @@
       you can write readable code more quickly.</para>
 
     <para id="x_CQ">As we already mentioned in <xref
-	    linkend="hs.deftypes.tabs"/>, never use tab characters
+	    linkend="deftypes.tabs"/>, never use tab characters
       in Haskell source files.  Use spaces.</para>
 
     <para id="x_DQ">If you find yourself proudly thinking that a particular

@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.profiling" revision="unpublished">
+<chapter id="profiling" revision="unpublished">
   <title>Performance and efficiency: profiling</title>
 
   <remark>FIXME</remark>

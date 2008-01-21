@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.systems" revision="alpha">
+<chapter id="systems" revision="alpha">
   <title>Systems Programming in Haskell</title>
 
   <para id="x_Ia">
@@ -26,7 +26,7 @@
     for Windows.
   </para>
 
-  <sect1 id="hs.systems.running">
+  <sect1 id="systems.running">
     <title>Running External Programs</title>
     <para id="x_La">
       It is possible to invoke external commands from Haskell.  To do that,
@@ -52,7 +52,7 @@
     &rawSystem.ghci:s2;
   </sect1>
 
-  <sect1 id="hs.systems.directories">
+  <sect1 id="systems.directories">
     <title>Directory and File Information</title>
     <para id="x_Oa">
       The <literal>System.Directory</literal> module contains quite a few
@@ -94,7 +94,7 @@
     &dir.ghci:query;
   </sect1>
 
-  <sect1 id="hs.system.termination">
+  <sect1 id="system.termination">
     <title>Program Termination</title>
     <para id="x_Ta">
       Developers often write individual programs to accomplish particular
@@ -117,7 +117,7 @@
     </para>
   </sect1>
 
-  <sect1 id="hs.systems.datetime"> 
+  <sect1 id="systems.datetime"> 
     <title>Dates and Times</title>
     <para id="x_Va">
       Everything from file timestamps to business transactions involve dates
@@ -125,7 +125,7 @@
       well as features for obtaining date and time information from the
       system.
     </para>
-    <sect2 id="hs.systems.datetime.types">
+    <sect2 id="systems.datetime.types">
       <title>ClockTime and CalendarTime</title>
       <para id="x_Wa"> In Haskell, the
         <literal>System.Time</literal> module is primarily responsible for
@@ -193,7 +193,7 @@
         &CalendarTime; in the local timezone, or to a &CalendarTime;
         representing UTC.
       </para>
-      <sect3 id="hs.systems.clocktime">
+      <sect3 id="systems.clocktime">
         <title>Using ClockTime</title>
         <para id="x_ma">
           &ClockTime; is defined in <literal>System.Time</literal> like this:
@@ -240,7 +240,7 @@ data ClockTime = TOD Integer Integer
         </para>
       </sect3>
 
-      <sect3 id="hs.system.calendartime">
+      <sect3 id="system.calendartime">
         <title>Using CalendarTime</title>
         <para id="x_ta">
           As its name implies, &CalendarTime; represents time like we would
@@ -289,7 +289,7 @@ data Day = Sunday | Monday | Tuesday | Wednesday
               &Month; and &Day; are declared as members of the
               &Enum; and &Bounded; typeclasses.  For more information on
               these typeclasses, refer to
-              <xref linkend="hs.typeclasses.wellknown"/>.
+              <xref linkend="typeclasses.wellknown"/>.
             </para>
             <para id="x_xa">
               You can generate &CalendarTime; values several ways.  You could
@@ -345,7 +345,7 @@ data Day = Sunday | Monday | Tuesday | Wednesday
 
       </sect3>
 
-      <sect3 id="hs.system.timediff">
+      <sect3 id="system.timediff">
         <title>TimeDiff for ClockTime</title>
         <para id="x_Eb">
           Because it can be difficult to manage differences between
@@ -406,7 +406,7 @@ data TimeDiff = TimeDiff
       </sect3>
 
     </sect2>
-    <sect2 id="hs.systems.modtime">
+    <sect2 id="systems.modtime">
       <title>File Modification Times</title>
       <para id="x_Lb">
         Many programs need to find out when particular files were last
@@ -449,7 +449,7 @@ data TimeDiff = TimeDiff
     </sect2>
   </sect1>
 
-  <sect1 id="hs.systems.cmd">
+  <sect1 id="systems.cmd">
     <title>Invoking External Commands</title>
     <para id="x_Qb">
       The <literal>System.Cmd</literal> module provides a cross-platform way
@@ -479,7 +479,7 @@ data TimeDiff = TimeDiff
     </para>
   </sect1>
 
-  <sect1 id="hs.systems.piping">
+  <sect1 id="systems.piping">
     <title>Extended Example: Piping</title>
     <para id="x_Tb">
       We've just seen how to invoke external programs.  Sometimes we need
@@ -530,7 +530,7 @@ TERMCAP
       chapter we will just scratch the surface.  <remark>FIXME: suggest some
       other ORA title?</remark>
     </para>
-    <sect2 id="hs.systems.piping.theory">
+    <sect2 id="systems.piping.theory">
       <title>Using Pipes for Redirection</title>
       <para id="x_Xb">
         POSIX defines a function that creates a pipe.  This function returns
@@ -720,7 +720,7 @@ TERMCAP
         the command, displays its output, and checks its exit status.
       </para>
     </sect2>
-    <sect2 id="hs.piping.extended">
+    <sect2 id="piping.extended">
       <title>Better Piping</title>
       <para id="x_qb">
         Our previous example solved the basic need of letting us set up
@@ -781,7 +781,7 @@ TERMCAP
       &rp.ghci:hask;
     </sect2>
 
-    <sect2 id="hs.systems.piping.finalwords">
+    <sect2 id="systems.piping.finalwords">
       <title>Final Words on Pipes</title>
       <para id="x_Cc">
         We have developed a sophisticated system here.  We warned you earlier

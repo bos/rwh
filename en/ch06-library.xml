@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.library" revision="unpublished">
+<chapter id="library" revision="unpublished">
   <title>Writing a Library</title>
 
   <remark>FIXME</remark>

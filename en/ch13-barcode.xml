@@ -1,10 +1,10 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.barcode" revision="alpha">
+<chapter id="barcode" revision="alpha">
   <title>Barcode recognition</title>
 
   <para id="x_ET">In this chapter, we'll make use of the image parsing library
-    we developed in <xref linkend="hs.binary"/> to build a barcode
+    we developed in <xref linkend="binary"/> to build a barcode
     recognition application.  This lets us take a picture of the back
     of a book using a camera phone, and extract its ISBN
     number.</para>
@@ -46,7 +46,7 @@
       number system.  EAN-13 barcodes retain UPC-A compatibility by
       simply setting the first number system digit to zero.</para>
 
-    <sect2 id="hs.barcode.encode">
+    <sect2 id="barcode.encode">
       <title>EAN-13 encoding</title>
 
       <para id="x_KT">Before we worry about decoding an EAN-13 barcode, we need
@@ -95,7 +95,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.barcode.array">
+  <sect1 id="barcode.array">
     <title>Introducing arrays</title>
 
     <para id="x_UT">The barcode encoding process can largely be table-driven, in
@@ -179,7 +179,7 @@
 
     &array.ghci:3d;
 
-    <sect2 id="hs.barcode.fold">
+    <sect2 id="barcode.fold">
       <title>Folding over arrays</title>
 
       <para id="x_fT">The <function>bounds</function> function returns a tuple
@@ -216,7 +216,7 @@
 	examples above, this is not hard to do.</para>
     </sect2>
 
-    <sect2 id="hs.barcode.array.mutable">
+    <sect2 id="barcode.array.mutable">
       <title>Modifying array elements</title>
 
       <para id="x_jT">While there exist <quote>modification</quote> functions
@@ -318,7 +318,7 @@
       we would spend an entire chapter writing a JPEG decoder. We'll
       simplify our parsing task to working with the netpbm file
       format, using parsing combinators we developed earlier, in <xref
-	linkend="hs.binary"/>.</para>
+	linkend="binary"/>.</para>
 
     <para id="x_xT">We'd like to deal with real images from cheap, fixed-focus
       cameras.  These tend to be out of focus, noisy, low in contrast,
@@ -418,7 +418,7 @@
 	The netpbm colour image format is only slightly more
 	complicated than the greyscale image format that we parsed in
 	<xref
-	linkend="hs.binary"/>.  The identifying string in a header is
+	linkend="binary"/>.  The identifying string in a header is
 	<quote>P6</quote>, with the rest of the header layout
 	identical to the greyscale format.  In the body of an image,
 	each pixel is represented as three bytes, one each for red,
@@ -444,7 +444,7 @@
 
       <para id="x_MU">The actual parser is mercifully short, thanks to the
 	combinators we developed in <xref
-	  linkend="hs.binary"/>.</para>
+	  linkend="binary"/>.</para>
 
       &Barcode.hs:parseRawPPM;
 
@@ -528,7 +528,7 @@
 	if that value is less than the pivot, the result is
 	<code>Zero</code>, otherwise <code>One</code>. Notice that we
 	use one of the folding functions that we wrote in <xref
-	  linkend="hs.barcode.fold"/>.</para>
+	  linkend="barcode.fold"/>.</para>
     </sect2>
   </sect1>
 
@@ -618,7 +618,7 @@
 	image. If we drop the guard bars, we're left with the run
 	lengths <code>[2,6,4,4]</code>.  How do we find matches
 	for these in the encoding tables we wrote in <xref
-	  linkend="hs.barcode.array"/>?</para>
+	  linkend="barcode.array"/>?</para>
 
     </sect2>
 
@@ -801,7 +801,7 @@
       array whenever it suits us.</para>
 
     <para id="x_FV">As we mentioned in <xref
-	linkend="hs.barcode.array.mutable"/>, Haskell arrays are
+	linkend="barcode.array.mutable"/>, Haskell arrays are
       <emphasis>not</emphasis> mutable.  This means that to
       <quote>modify</quote> a single array element, a copy of the
       entire array is made, with that single element set to its new
@@ -924,7 +924,7 @@
 	  values.</para>
       </sect3>
 
-      <sect3 id="hs.barcode.map.partial">
+      <sect3 id="barcode.map.partial">
 	<title>Partial application awkwardness</title>
 
 	<para id="x_VV">For some reason, the type signatures of the functions in
@@ -955,7 +955,7 @@
 	  common lookup functions.  The <function>lookup</function>
 	  function has a slightly tricky type signature, but don't
 	  worry; all will become clear shortly, in <xref
-	    linkend="hs.monads"/>.</para>
+	    linkend="monads"/>.</para>
 
 	&ch12-map.ghci:lookup.type;
 
@@ -1148,7 +1148,7 @@
       &Barcode.hs:finalDigits;
 
       <para id="x_zV">(From the <function>checkDigit</function> function that we
-	defined in <xref linkend="hs.barcode.encode"/>, we remember that
+	defined in <xref linkend="barcode.encode"/>, we remember that
 	the check digit computation requires that we multiply every
 	other digit by <code>3</code>.)</para>
 

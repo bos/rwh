@@ -1,11 +1,11 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.whyfp" revision="unpublished">
+<chapter id="whyfp" revision="unpublished">
   <title>Why Functional Programming?  Why Haskell?</title>
 
   <remark>FIXME</remark>
 
-  <sect1 id="hs.whyfp.goals">
+  <sect1 id="whyfp.goals">
     <title>Goals of Real-World Haskell</title>
   <remark>FIXME: goals of this book.   The emphasis will be practical: on
   using FP and Haskell to design, write, and fix real programs.  The
@@ -27,12 +27,12 @@
       days or weeks of getting started.</para>
   </sect1>
 
-  <sect1 id="hs.whyfp.fp">
+  <sect1 id="whyfp.fp">
     <title>The Nature of Functional Programming</title>
     <remark>FIXME</remark>
   </sect1>
 
-  <sect1 id="hs.whyfp.haskell">
+  <sect1 id="whyfp.haskell">
     <title>Features of Haskell</title>
     <remark>FIXME</remark>
     <remark>FIXME: roots in research</remark>
@@ -40,53 +40,53 @@
     refute</remark>
     
 
-    <sect2 id="hs.whyfp.haskell.typing">
+    <sect2 id="whyfp.haskell.typing">
       <title>Strong Typing and Type Inference</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.laziness">
+    <sect2 id="whyfp.haskell.laziness">
       <title>Laziness</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.compilation">
+    <sect2 id="whyfp.haskell.compilation">
       <title>Compiled or Interpreted</title>
       <remark>FIXME</remark>
     </sect2>
 
 
-    <sect2 id="hs.whyfp.haskell.purity">
+    <sect2 id="whyfp.haskell.purity">
       <title>Purity</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.modularity">
+    <sect2 id="whyfp.haskell.modularity">
       <title>Modularity</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.expressiveness">
+    <sect2 id="whyfp.haskell.expressiveness">
       <title>Expressiveness</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.composability">
+    <sect2 id="whyfp.haskell.composability">
       <title>Composability</title>
       <remark>FIXME</remark>
     </sect2>
 
-    <sect2 id="hs.whyfp.haskell.robustness">
+    <sect2 id="whyfp.haskell.robustness">
       <title>Robustness and Correctness</title>
       <remark>FIXME</remark>
     </sect2>
 
   </sect1>
 
-  <sect1 id="hs.whyfp.noths">
+  <sect1 id="whyfp.noths">
     <title>Things Haskell Doesn't Have (Or Need)</title>
 
-    <sect2 id="hs.whyfp.noths.vars">
+    <sect2 id="whyfp.noths.vars">
       <title>Mutable Variables</title>
       <para id="x_Q">
         In a language such as C, you might see a statement such as
@@ -130,7 +130,7 @@
       </para>
     </sect2>
 
-    <sect2 id="hs.whyfp.noths.loops">
+    <sect2 id="whyfp.noths.loops">
       <title>Looping with for or while</title>
       <para id="x_W">
         Chances are that most languages you've used before have the notion
@@ -201,7 +201,7 @@ void main(void) {
 
   </sect1>
 
-  <sect1 id="hs.whyfp.environment">
+  <sect1 id="whyfp.environment">
     <title>Haskell Environment</title>
     <remark>FIXME: 
   Mention the Haskell environment that the book assumes (GHC 6.6+).
@@ -210,7 +210,7 @@ void main(void) {
     </remark>
   </sect1>
 
-  <sect1 id="hs.whyfp.resources">
+  <sect1 id="whyfp.resources">
     <title>Helpful Resources</title>
     <remark>FIXME: 
   Provide pointers to long-lived web sites, mailing lists, and IRC

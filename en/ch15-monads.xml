@@ -1,12 +1,12 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.monads" revision="alpha">
+<chapter id="monads" revision="alpha">
   <title>Monads</title>
 
   <sect1>
     <title>Introduction</title>
 
-    <para id="x_XW">In <xref linkend="hs.io"/>, we talked about the
+    <para id="x_XW">In <xref linkend="io"/>, we talked about the
       <type>IO</type> monad, but we intentionally kept the discussion
       narrowly focused on how to communicate with the outside world.
       We didn't discuss what a monad <emphasis>is</emphasis>.</para>
@@ -14,7 +14,7 @@
     <para id="x_YW">Monads have a reputation of being abstract and difficult to
       understand. If you've heard such concerns, please put aside for
       a while any doubts you might have.  Concerning abstraction, we've
-      already seen in <xref linkend="hs.io"/> that the <type>IO</type>
+      already seen in <xref linkend="io"/> that the <type>IO</type>
       monad is easy to work with.  Notational differences aside,
       writing code in the <type>IO</type> monad isn't much different
       from coding in any other imperative language.</para>
@@ -40,7 +40,7 @@
 
       <para id="x_bW">Let's take another look at the
 	<function>parseP5</function> function that we wrote in <xref
-	  linkend="hs.binary"/>.</para>
+	  linkend="binary"/>.</para>
 
       &PNM.hs:parseP5.noid;
 
@@ -196,13 +196,13 @@
     &Maybe.hs:Monad;
 
     <para id="x_xW">Here, &bind; is our chaining function.  We've already been
-      introduced to it in <xref linkend="hs.io.bind"/>.  It's often
+      introduced to it in <xref linkend="io.bind"/>.  It's often
       referred to as <quote>bind</quote>, as it binds two adjacent
       functions together so that one uses the result of the
       other.</para>
 
     <para id="x_yW">Our injection function is &return;.  As we noted in <xref
-      linkend="hs.io.return"/>, the choice of the name &return; is a
+      linkend="io.return"/>, the choice of the name &return; is a
       little unfortunate.  That name is widely used in imperative
       languages, where it has a fairly well understood meaning.  In
       Haskell, its behaviour is much less constrained.  In particular,
@@ -256,7 +256,7 @@
     </warning>
 
     <para id="x_GX">To revisit the parser that we developed in <xref
-	linkend="hs.binary"/>, here is its <code>Monad</code>
+	linkend="binary"/>, here is its <code>Monad</code>
       instance.</para>
 
     &Parse.hs:Monad;
@@ -322,7 +322,7 @@
       library to help with this.</para>
 
     <para id="x_OX">Recall the <function>globToRegex</function> function that we
-      developed in <xref linkend="hs.glob.translate"/>.  We will
+      developed in <xref linkend="glob.translate"/>.  We will
       modify it so that it keeps a record of each of the special
       pattern sequences that it translates.  We are revisiting
       familiar territory for a reason: it lets us compare non-monadic
@@ -367,7 +367,7 @@
 
     </sect2>
 
-    <sect2 id="hs.monads.escape">
+    <sect2 id="monads.escape">
       <title>Controlled escape</title>
 
       <para id="x_VX">The <code>Monad</code> typeclass doesn't provide any means
@@ -470,7 +470,7 @@
 	there's no point in capturing it.</para>
 
       <para id="x_kX">We can use &do; notation, which we first encountered in
-	<xref linkend="hs.io.bind"/>, to somewhat tidy up our
+	<xref linkend="io.bind"/>, to somewhat tidy up our
 	code.</para>
 
       &Logger.hs:asterisk;
@@ -478,7 +478,7 @@
       <para id="x_lX">The choice of &do; notation versus explicit &bind; with
 	anonymous functions is mostly a matter of taste. There is one
 	significant difference between the two, though, which we'll
-	return to in <xref linkend="hs.monads.do"/>.</para>
+	return to in <xref linkend="monads.do"/>.</para>
 
       <para id="x_mX">Parsing a character class mostly follows the same pattern
 	that we've already seen.</para>
@@ -487,13 +487,13 @@
 
       <para id="x_nX">The interesting exception is in the final clause above.
 	Where we called <function>error</function> in
-	<xref linkend="hs.glob.translate"/>, we now call
+	<xref linkend="glob.translate"/>, we now call
 	<function>fail</function> from the <code>Monad</code>
 	typeclass instead.</para>
     </sect2>
   </sect1>
 
-  <sect1 id="hs.monads.liftM">
+  <sect1 id="monads.liftM">
     <title>Mixing pure and monadic code</title>
 
     <para id="x_oX">Based on the code we've seen so far, monads seem to have a
@@ -524,7 +524,7 @@
     <para id="x_sX">This need crops up so often in Haskell code that we won't be
       surprised to learn that a shorthand already exists.  We reuse
       the <emphasis>lifting</emphasis> technique that we introduced
-      for functors in <xref linkend="hs.binary.functor"/>.  Lifting a
+      for functors in <xref linkend="binary.functor"/>.  Lifting a
       pure function into a functor usually involves unwrapping the
       value inside the functor, calling the function on it, and
       rewrapping the result with the same constructor.</para>
@@ -788,7 +788,7 @@
       &Carrier.hs:variation2a;
 
       <para id="x_dY">When we introduced maps, we mentioned in <xref
-	linkend="hs.barcode.map.partial"/> that the type signatures of
+	linkend="barcode.map.partial"/> that the type signatures of
 	functions in the <code>Data.Map</code> module often make them
 	awkward to partially apply.  The <function>lookup</function>
 	function is a good example.  If we <function>flip</function>
@@ -976,7 +976,7 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.monads.do">
+  <sect1 id="monads.do">
     <title>Desugaring of do blocks</title>
 
     <para id="x_zY">Haskell's &do; syntax is an example of <emphasis>syntactic
@@ -1075,7 +1075,7 @@
     <sect2>
       <title>Monads as a programmable semicolon</title>
 
-      <para id="x_IZ">Back in <xref linkend="hs.deftypes.block"/>, we
+      <para id="x_IZ">Back in <xref linkend="deftypes.block"/>, we
 	mentioned that layout is the norm in Haskell, but it's not
 	<emphasis>required</emphasis>.  We can write a &do; block
 	using explicit structure instead of layout.</para>
@@ -1098,7 +1098,7 @@
 	of &bind_; and &bind; are different in each monad.</para>
     </sect2>
 
-    <sect2 id="hs.monads.do.avoid">
+    <sect2 id="monads.do.avoid">
       <title>Why go sugar-free?</title>
 
       <para id="x_KZ">When we write &bind; explicitly in our code, it reminds us
@@ -1123,12 +1123,12 @@
     </sect2>
   </sect1>
 
-  <sect1 id="hs.monads.state">
+  <sect1 id="monads.state">
     <title>The state monad</title>
 
     <para id="x_NZ">We discovered earlier in this chapter that the
       <type>Parse</type> from <xref
-	linkend="hs.binary"/> was a monad.  It has two logically
+	linkend="binary"/> was a monad.  It has two logically
       distinct aspects.  One is the idea of a parse failing, and
       providing a message with the details: we represented this using
       the <type>Either</type> type.  The other involves carrying
@@ -1632,7 +1632,7 @@
   <sect1>
     <title>The monad laws, and good coding style</title>
 
-    <para>In <xref linkend="hs.binary.functor.laws"/>, we introduced
+    <para>In <xref linkend="binary.functor.laws"/>, we introduced
       two rules for how functors should always behave.</para>
 
     &MonadLaws.hs:functor;

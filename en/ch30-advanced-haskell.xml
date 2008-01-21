@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.advhs" revision="unpublished">
+<chapter id="advhs" revision="unpublished">
   <title>Advanced Haskell: MPTCs, TH, strong typing, GADTs</title>
 
   <remark>FIXME</remark>

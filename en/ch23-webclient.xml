@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.webclient" revision="unpublished">
+<chapter id="webclient" revision="unpublished">
   <title>Web client programming</title>
 
   <remark>FIXME</remark>
