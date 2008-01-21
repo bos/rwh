@@ -6,6 +6,9 @@
     instructions inevitably become dated quickly; please bear this in
     mind as you read.</para>
 
+  <remark>We will update these instructions for GHC 6.8.2 when time
+    permits.</remark>
+
   <para id="x_m">Because &GHC; runs on a large number of platforms,
     we've focused on a handful of the most popular.</para>
 
