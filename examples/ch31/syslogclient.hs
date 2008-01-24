@@ -9,7 +9,6 @@ data SyslogHandle =
     SyslogHandle {slSocket :: Socket,
                   slProgram :: String,
                   slAddress :: SockAddr}
-type SyslogHandle = (Socket, String)
 
 openlog :: HostName             -- ^ Remote hostname, or localhost
         -> String               -- ^ Port number or name; 514 is default
