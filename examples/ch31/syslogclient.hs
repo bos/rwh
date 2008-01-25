@@ -33,7 +33,7 @@ syslog syslogh fac pri msg =
     sendstr sendmsg
     where code = makeCode fac pri
           sendmsg = "<" ++ show code ++ ">" ++ (slProgram syslogh) ++
-                    ": " ++ msg ++ "\0"
+                    ": " ++ msg
 
           -- Send until everything is done
           sendstr :: String -> IO ()
