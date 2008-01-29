@@ -1,5 +1,0 @@
---#all
-:l callingpure.hs
-name2reply "John"
-putStrLn (name2reply "John")
-

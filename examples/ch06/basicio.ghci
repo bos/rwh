@@ -1,6 +1,0 @@
---# all
-:t putStrLn
-:t getLine
---# putStrLn
-let writefoo = putStrLn "foo"
-writefoo

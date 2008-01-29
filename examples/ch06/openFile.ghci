@@ -1,3 +1,0 @@
---# all
-:m System.IO
-:t openFile
