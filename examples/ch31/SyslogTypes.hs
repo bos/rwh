@@ -1,3 +1,4 @@
+{-- snippet all --}
 -- ch31/SyslogTypes.hs
 
 module SyslogTypes where
@@ -76,4 +77,4 @@ facOfCode :: Int -> Facility
 facOfCode f = case lookup f codeToFac of
                 Just x -> x
                 _ -> error $ "Invalid code in facOfCode"
-
+{-- /snippet all --}

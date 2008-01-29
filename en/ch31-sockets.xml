@@ -60,6 +60,26 @@
         the transmission of log messages.  The protocol is simple and
         we present a Haskell implementation of a client here.
       </para>
+      &syslogclient.hs:all;
+      <para>
+        This also requires <literal>SyslogTypes.hs</literal>, shown
+        here:
+      </para>
+      &SyslogTypes.hs:all;
+      <para>
+        With &ghci;, you can send a message to a local syslog server.
+        You can use either the example syslog server presented in this
+        chapter, or an existing syslog server like you would typically
+        find on Linux or other POSIX systems.  Note that most of these
+        disable the UDP port by default and you may need to enable UDP
+        before your vendor-supplied syslog daemon will display
+        received messages.
+      </para>
+      <para>
+        If you were sending a message to a syslog server on the local
+        system, you might use a command such as this:
+      </para>
+      &syslogclient.ghci:all;
       
     </sect2>
 
@@ -67,6 +87,14 @@
       <title>UDP Syslog Server</title>
       <para id="x_Td">
         FIXME
+      </para>
+      &syslogserver.hs:all;
+      <para>
+        You can run this in &ghci;.  A call to <literal>serveLog
+        "1514" plainHandler</literal> will set up a UDP server on port
+        1514 that will use <literal>plainHandler</literal> to print
+        out every incoming UDP packet on that port.  Ctrl-C will
+        terminate the program.
       </para>
     </sect2>
 

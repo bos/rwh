@@ -1,3 +1,4 @@
+{-- snippet all --}
 -- ch31/syslogclient.hs
 
 import Data.Bits
@@ -52,3 +53,4 @@ makeCode fac pri =
         pricode = fromEnum pri 
         in
           (faccode `shiftL` 3) .|. pricode
+{-- /snippet all --}

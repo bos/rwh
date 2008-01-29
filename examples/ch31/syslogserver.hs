@@ -1,3 +1,4 @@
+{-- snippet all --}
 -- ch31/syslogclient.hs
 
 import Data.Bits
@@ -40,3 +41,4 @@ serveLog port handlerfunc =
 plainHAndler :: HandlerFunc
 plainHandler addr msg = 
     putStrLn $ "From " ++ show addr ++ ": " ++ msg
+{-- /snippet all --}
