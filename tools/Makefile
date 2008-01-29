@@ -8,7 +8,7 @@ all: .built
 
 clean:
 	runhaskell Setup clean
-	rm .built
+	rm -f .built
 
 distclean: clean
 	rm -f *~
