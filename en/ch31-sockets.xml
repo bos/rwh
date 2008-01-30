@@ -180,8 +180,8 @@
       </para>
       &syslogtcpserver.hs:all;
       <para>
-        For our <literal>SyslogTypes implementation, see <xref
-        linkend="syslogserver.hs:all"/>.
+        For our <literal>SyslogTypes</literal> implementation, see <xref
+        linkend="sockets.udp.client"/>.
       </para>
       <para>
         Let's look at this code.  Our main loop is in
