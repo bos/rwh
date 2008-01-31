@@ -1,38 +1,39 @@
 Shared     1. Why functional programming? Why Haskell?
 Shared     2. Getting started: compiler, interpreter, values, simple 
               functions, and types (DONE)
-Shared     3. Syntax, type system basics, type class basics (DONE)
-BOS        4. FP (DONE)
-BOS/DONS   5. Write a real library: the rope data structure, cabal,
+BOS        3. Syntax, type system basics, type class basics (DONE)
+BOS        4. Even more syntax, type system basics, type class basics (DONE)
+BOS        5. FP (DONE)
+BOS/DONS   6. Write a real library: the rope data structure, cabal,
               building  projects
-JG         6. Typeclasses and their use (DONE)
-JG         7. All about I/O (DONE)
-BOS        8. Bringing it all together: file name matching and 
+JG         7. Typeclasses and their use (DONE)
+JG         8. All about I/O (DONE)
+BOS        9. Bringing it all together: file name matching and 
               regular expressions (DONE)
-BOS        9. I/O case study: a DSL for searching the filesystem (DONE)
-BOS       10. Handling binary files and formats (DONE)
-DONS      11. Testing the Haskell way: QuickCheck
-BOS       12. Code case study: barcode recognition (DONE)
-JG        13. Designing and using data structures (DONE)
-BOS       14. Monads
-BOS       15. Monad case study: refactoring the filesystem seacher
-DONS      16. Monad transformers
-JG        17. Using parsec: (DONE)
+BOS       10. I/O case study: a DSL for searching the filesystem (DONE)
+BOS       11. Handling binary files and formats (DONE)
+DONS      12. Testing the Haskell way: QuickCheck
+BOS       13. Code case study: barcode recognition (DONE)
+JG        14. Designing and using data structures (DONE)
+BOS       15. Monads
+BOS       16. Monad case study: refactoring the filesystem seacher
+DONS      17. Monad transformers
+JG        18. Using parsec: (DONE)
 BOS            parsing a bioinformatics format
-DONS      18. Interfacing with C: the FFI
-DONS      19. Error handling
-JG        20. Haskell for systems programming (DONE)
-JG        21. Talking to databases (DONE)
-JG        22. Web client programming: client/server networking
-BOS       23. GUI programming: gtk2hs
-          24. Data mining and web applications
-JG/DONS   25. Basics of concurrent and parallel Haskell
-DONS      26. Advanced concurrent and parallel programming
-DONS      27. Concurrency case study: a lockless database with STM
-DONS      28. Performance and efficiency: profiling
-DONS      29. Advanced Haskell: MPTCs, TH, strong typing, GADTs
-JG        30. Sockets, Syslog   (agreed to)
-BOS       31. Reverse HTTP Proxy example
+DONS      19. Interfacing with C: the FFI
+DONS      20. Error handling
+JG        21. Haskell for systems programming (DONE)
+JG        22. Talking to databases (DONE)
+JG        23. Web client programming: client/server networking
+BOS       24. GUI programming: gtk2hs
+          25. Data mining and web applications
+JG/DONS   26. Basics of concurrent and parallel Haskell
+DONS      27. Advanced concurrent and parallel programming
+DONS      28. Concurrency case study: a lockless database with STM
+DONS      29. Performance and efficiency: profiling
+DONS      30. Advanced Haskell: MPTCs, TH, strong typing, GADTs
+JG        31. Sockets, Syslog   (agreed to)
+BOS       32. Reverse HTTP Proxy example
 BOS    APP A. Installation of GHC (done)
 BOS    APP B. Escapes (done)
 JG     APP C. Posix (??)
