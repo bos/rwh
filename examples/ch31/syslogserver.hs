@@ -11,7 +11,7 @@ type HandlerFunc = SockAddr -> String -> IO ()
 serveLog :: String              -- ^ Port number or name; 514 is default
          -> HandlerFunc         -- ^ Function to handle incoming messages
          -> IO ()
-serveLog port handlerfunc =
+serveLog port handlerfunc = withSocketsDo $
     do -- Look up the port.  Either raises an exception or returns
        -- a nonempty list.  
        addrinfos <- getAddrInfo 
@@ -38,7 +38,7 @@ serveLog port handlerfunc =
                  procMessages sock
 
 -- A simple handler that prints incoming packets
-plainHAndler :: HandlerFunc
+plainHandler :: HandlerFunc
 plainHandler addr msg = 
     putStrLn $ "From " ++ show addr ++ ": " ++ msg
 {-- /snippet all --}

@@ -102,6 +102,13 @@
         out every incoming UDP packet on that port.  Ctrl-C will
         terminate the program.
       </para>
+      <note>
+        <para>Getting <literal>bind: permission denied</literal> when
+        testing this?  Make sure you use a port number greater than
+        1024.  Some operating systems only allow the
+        <literal>root</literal> user to bind to ports less than 1024.
+        </para>
+      </note>
     </sect2>
 
   </sect1>
@@ -132,12 +139,87 @@
       is not the best choice for real-time protocols that involve
       things such as live audio or video.
     </para>
-    <para id="x_Wd">
+    <sect2 id="sockets.tcp.streams">
+      <title>Handling Multiple TCP Streams</title>
+      <para>
+        With TCP, connections are stateful.  That means that there is
+        a dedicated logical "channel" between a client and server,
+        rather than just one-off packets as with UDP.  This makes
+        things easy for client developers.  Server applications almost
+        always will want to be able to handle more than one TCP
+        connection at once.  How then to do this?
+      </para>
+      <para>
+        On the server side, you will first create a socket and bind to
+        a port, just like UDP.  Instead of repeatedly listening for
+        data from any location, your main loop will be around the
+        <literal>accept</literal> call.  Each time a client connects,
+        the server's operating system allocates a new socket for it.
+        So we have the <emphasis>master</emphasis> socket, used only
+        to listen for incoming connections, and never to transmit
+        data.  We also have the potential for multiple
+        <emphasis>child</emphasis> sockets to be used at once, each
+        corresponding to a logical TCP conversation.
+      </para>
+      <para>
+        In Haskell, you will usually use <literal>forkIO</literal> to
+        create a separate lightweight thread to handle each
+        conversation with a child.  Haskell has an efficient internal
+        implementation of this that performs quite well.
+      </para>
+    </sect2>
+    <sect2 id="hs.sockets.tcp.syslog">
+      <title>TCP Syslog Server</title>
+      <para id="x_Wd">
+        Let's say that we wanted to reimplement syslog using TCP instead
+        of UDP.  We could say that a single message is defined not by
+        being in a single packet, but is ended by a trailing newline
+        character <literal>'\n'</literal>.  Any given client could send
+        0 or more messages to the server using a given TCP connection.
+        Here's how we might write that.
+      </para>
+      &syslogtcpserver.hs:all;
+      <para>
+        For our <literal>SyslogTypes implementation, see <xref
+        linkend="syslogserver.hs:all"/>.
+      </para>
+      <para>
+        Let's look at this code.  Our main loop is in
+        <literal>procRequests</literal>, where we loop forever waiting
+        for new connections from clients.  The
+        <literal>accept</literal> call blocks until a client
+        connects.  When a client connects, we get a new socket and the
+        address of the client.  We pass a message to the handler about
+        that, then use <literal>forkIO</literal> to create a thread to
+        handle the data from that client.  This thread runs
+        <literal>procMessages</literal>.
+      </para>
+      <para>
+        When dealing with TCP data, it's often convenient to convert a
+        socket into a Haskell <literal>Handle</literal>.  We do so
+        here, and explicitly set the buffering -- an important point
+        for TCP communication.  Next, we set up lazy reading from the
+        socket's &Handle;.  For each incoming line, we pass it to
+        <literal>handle</literal>.  After there is no more data --
+        because the remote end has closed the socket -- we output a
+        message about that.
+      </para>
+      <para>
+        Since we may be handling multiple incoming messages at once,
+        we need to ensure that we're not writing out multiple messages
+        at once in the handler.  That could result in garbled output.
+        We use a simple lock to serialize access to the handler, and
+        write a simple <literal>handle</literal> function to handle
+        that.
+      </para>
+      <para>
+        You can test this with the client we'll present next, or you
+        can even use the <literal>telnet</literal> program to connect
+        to this server.  Each line of text you send to it will be
+        printed on the display by the server.
+      </para>
+    </sect2>
       
-    </para>
-    <para id="x_Xd">
-      Multithreading to handle multiple connections
-    </para>
   </sect1>
 
 
