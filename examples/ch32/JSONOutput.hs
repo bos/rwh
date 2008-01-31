@@ -1,21 +1,24 @@
-module JSONRender where
+module JSONOutput
+    (
+     jvalue
+    ) where
 
 import qualified Data.Map as M
 import Text.PrettyPrint.HughesPJ (Doc, Mode(..), TextDetails(..), (<>), (<+>), braces, brackets, char, comma, colon, double, doubleQuotes, fsep, fullRender, hcat, punctuate, render, text)
 import Numeric (showHex)
-import JSON (JSON(..), JValue(..), fromJArray, jarray)
+import JSON (JSON(..), JValue(..), fromJObject, jobject)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.ByteString.Internal (c2w)
 import qualified JSONBuilder as B
 
-value :: JValue -> Doc
-value (JString s) = string s
-value (JNumber n) = double (fromRational n)
-value (JObject o) = series braces field . fromJObject o
-value (JArray a) = series brackets value a
-value (JBool True) = text "true"
-value (JBool False) = text "false"
-value JNull = text "null"
+jvalue :: JValue -> Doc
+jvalue (JString s) = string s
+jvalue (JNumber n) = double (fromRational n)
+jvalue (JObject o) = series braces field (fromJObject o)
+jvalue (JArray a) = series brackets jvalue a
+jvalue (JBool True) = text "true"
+jvalue (JBool False) = text "false"
+jvalue JNull = text "null"
 
 unicode :: Char -> Doc
 unicode c = text "\\u" <> text (replicate (4 - length h) '0') <> text h
@@ -35,7 +38,7 @@ series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
 series open item = open . fsep . punctuate comma . map item
 
 field :: (String, JValue) -> Doc
-field (k,v) = string k <> colon <+> value v
+field (k,v) = string k <> colon <+> jvalue v
 
 renderS :: Doc -> C.ByteString
 renderS = fullRender OneLineMode 0 0 item C.empty

@@ -37,12 +37,12 @@ instance JSON JValue where
 
 rationalToJValue :: (Monad m) => (Rational -> b) -> JValue -> m b
 rationalToJValue f (JNumber v) = return . f $ v
-rationalToJValue _ _ = fail "not a number"
+rationalToJValue _ _ = fail "not a JSON number"
 
 instance JSON String where
     toJValue = JString
     fromJValue (JString s) = return s
-    fromJValue _ = fail "not a string"
+    fromJValue _ = fail "not a JSON string"
 
 instance JSON Int where
     toJValue = JNumber . toRational
@@ -63,18 +63,18 @@ instance JSON Rational where
 instance (JSON a) => JSON [a] where
     toJValue = JArray . map toJValue
     fromJValue (JArray a) = mapM fromJValue a
-    fromJValue _ = fail "not an array"
+    fromJValue _ = fail "not a JSON array"
 
 instance (JSON a) => JSON (JObject a) where
     toJValue = JObject . jobject . map (second toJValue) . fromJObject
     fromJValue (JObject o) = jobject `liftM` mapM unwrap (fromJObject o)
         where unwrap (k, v) = fromJValue v >>= return . (,) k
-    fromJValue _ = fail "not an object"
+    fromJValue _ = fail "not a JSON object"
 
 instance JSON Bool where
     toJValue = JBool
     fromJValue (JBool b) = return b
-    fromJValue _ = fail "not a boolean"
+    fromJValue _ = fail "not a JSON boolean"
 
 instance (JSON a) => JSON (Maybe a) where
     toJValue = maybe JNull toJValue
