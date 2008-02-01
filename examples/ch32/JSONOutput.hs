@@ -8,6 +8,7 @@ import Text.PrettyPrint.HughesPJ (Doc, Mode(..), TextDetails(..), (<>), (<+>), b
 import Numeric (showHex)
 import JSON (JSON(..), JValue(..), fromJObject, jobject)
 import qualified Data.ByteString.Lazy.Char8 as C
+import Data.Bits (shiftR, (.&.))
 import Data.ByteString.Internal (c2w)
 import qualified JSONBuilder as B
 
@@ -21,8 +22,14 @@ jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
 
 unicode :: Char -> Doc
-unicode c = text "\\u" <> text (replicate (4 - length h) '0') <> text h
-    where h = showHex (fromEnum c) ""
+unicode c | d < 0x10000 = ch d
+          | otherwise = astral (d - 0x10000)
+    where d = fromEnum c
+          ch x = text "\\u" <> text (replicate (4 - length h) '0') <> text h
+              where h = showHex x ""
+          astral n = (a + 0xd800) <> ch (b + 0xdc00)
+              where a = (n `shiftR` 10) .&. 0x3ff
+                    b = n .&. 0x3ff
 
 string :: String -> Doc
 string = doubleQuotes . hcat . map one
