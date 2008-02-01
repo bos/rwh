@@ -1,4 +1,4 @@
-module JSONInput
+module JSONParsec
     (
       p_value
     ) where
