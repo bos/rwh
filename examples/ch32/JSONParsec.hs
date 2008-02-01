@@ -1,6 +1,6 @@
 module JSONParsec
     (
-      p_value
+      p_text
     ) where
 
 import Control.Applicative (Applicative(..), (<$>), (<$), (*>), (<*))
@@ -15,21 +15,24 @@ instance Applicative (GenParser s a) where
     pure = return
     (<*>) = ap
 
-p_value :: CharParser () JValue
-p_value =
-     JString <$> p_string
- <|> JNumber <$> p_number
- <|> JObject <$> p_object
- <|> JArray <$> p_series '[' p_value ']'
- <|> JBool <$> tok (True <$ string "true" <|> False <$ string "false")
- <|> JNull <$ tok (string "null")
- <?> "JSON value"
+p_text :: GenParser Char () JValue
+p_text = spaces *> text
+         <?> "JSON text"
+    where text = JObject <$> p_object
+             <|> JArray <$> p_series '[' p_value ']'
 
-tok :: CharParser () a -> CharParser () a
-tok p = spaces *> p
+p_value :: CharParser () JValue
+p_value = value <* spaces
+  where value = JString <$> p_string
+            <|> JNumber <$> p_number
+            <|> JObject <$> p_object
+            <|> JArray <$> p_series '[' p_value ']'
+            <|> JBool <$> (True <$ string "true" <|> False <$ string "false")
+            <|> JNull <$ string "null"
+            <?> "JSON value"
 
 p_string :: CharParser () String
-p_string = between (tok $ char '\"') (char '\"') (many jchar)
+p_string = between (char '\"') (char '\"') (many jchar)
     where jchar = char '\\' *> special <|> satisfy (`notElem` "\"\\")
           ch c = c <$ char c
           special = foldl1 (<|>) (map ch "\b\n\f\r\t\\\"/") <|> unicode
@@ -47,9 +50,9 @@ p_number = do s <- getInput
                 _         -> mzero
 
 p_series :: Char -> GenParser Char () a -> Char -> GenParser Char () [a]
-p_series l p r = between (tok (char l)) (tok (char r)) $
-                 p `sepBy` tok (char ',')
+p_series l p r = between (char l) (char r) $
+                 (p <* spaces) `sepBy` char ',' <* spaces
 
 p_object :: GenParser Char () (JObject JValue)
 p_object = jobject <$> p_series '{' p_field '}'
-    where p_field = (,) <$> (p_string <* tok (char ':')) <*> p_value
+    where p_field = (,) <$> (p_string <* char ':' <* spaces) <*> p_value
