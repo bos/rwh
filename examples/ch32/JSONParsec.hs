@@ -50,8 +50,8 @@ p_number = do s <- getInput
                 _         -> mzero
 
 p_series :: Char -> GenParser Char () a -> Char -> GenParser Char () [a]
-p_series l p r = between (char l) (char r) $
-                 (p <* spaces) `sepBy` char ',' <* spaces
+p_series l p r = between (char l <* spaces) (char r) $
+                 (p <* spaces) `sepBy` (char ',' <* spaces)
 
 p_object :: GenParser Char () (JObject JValue)
 p_object = jobject <$> p_series '{' p_field '}'
