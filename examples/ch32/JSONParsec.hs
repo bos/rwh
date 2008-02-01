@@ -34,9 +34,10 @@ p_value = value <* spaces
 p_string :: CharParser () String
 p_string = between (char '\"') (char '\"') (many jchar)
     where jchar = char '\\' *> special <|> satisfy (`notElem` "\"\\")
-          ch c = c <$ char c
-          special = foldl1 (<|>) (map ch "\b\n\f\r\t\\\"/") <|> unicode
+          special = foldl1 (<|>) escapes <|> unicode
                 <?> "escape character"
+          escapes = zipWith ch "bnfrt\\\"/" "\b\n\f\r\t\\\"/"
+          ch c r = r <$ char c
           unicode = char 'u' *> count 4 (satisfy isHexDigit) >>= check
           check x | code <= maxChar = pure (toEnum code)
                   | otherwise       = mzero
