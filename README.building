@@ -1,7 +1,38 @@
 On Debian:
 
-apt-get install openjade1.3 xmlto sgml2x docbook-xml docbook-dsssl docbook-utils
+    apt-get install openjade1.3 xmlto sgml2x docbook-xml docbook-dsssl docbook-utils
 
 On Fedora:
 
-docbook-style-dsssl docbook-utils
+    docbook-style-dsssl docbook-utils
+
+On OpenBSD:
+
+    docbook-dsssl docbook xmlto openjade
+
+Submitting keysigned patches:
+
+    darcs get http://darcs.realworldhaskell.org/rwh
+
+Hack away.  To apply changes to the repo:
+
+    darcs send --sign
+
+The XML validator will be run on any submission.  If XML validation
+fails, the bundle will be rejected (you will be notified of this).
+
+After your patches are applied, the online HTML and PDF versions of the
+document will be automatically updated.  See
+http://darcs.realworldhaskell.org/ for links to them.
+     
+To make a GPG key, run:
+
+    gpg --gen-key
+
+Then just:
+
+    gpg --export -a user@example.com > /tmp/foo
+
+    where user@example.com is your email address (that you entered during --gen-key)
+
+
