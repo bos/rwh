@@ -1,12 +1,14 @@
 module JSONOutput
     (
-     jvalue
+      jvalue
+    , renderB
+    , renderS
     ) where
 
 import qualified Data.Map as M
-import Text.PrettyPrint.HughesPJ (Doc, Mode(..), TextDetails(..), (<>), (<+>), braces, brackets, char, comma, colon, double, doubleQuotes, fsep, fullRender, hcat, punctuate, render, text)
+import Text.PrettyPrint.HughesPJ (Doc, Mode(..), TextDetails(..), (<>), (<+>), braces, brackets, char, comma, colon, double, doubleQuotes, fsep, fullRender, hcat, punctuate, text)
 import Numeric (showHex)
-import JSON (JSON(..), JValue(..), fromJObject, jobject)
+import JSON (JValue(..), fromJArray, fromJObject)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Bits (shiftR, (.&.))
 import Data.ByteString.Internal (c2w)
@@ -16,7 +18,7 @@ jvalue :: JValue -> Doc
 jvalue (JString s) = string s
 jvalue (JNumber n) = double (fromRational n)
 jvalue (JObject o) = series braces field (fromJObject o)
-jvalue (JArray a) = series brackets jvalue a
+jvalue (JArray a) = series brackets jvalue (fromJArray a)
 jvalue (JBool True) = text "true"
 jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
@@ -27,7 +29,7 @@ unicode c | d < 0x10000 = ch d
     where d = fromEnum c
           ch x = text "\\u" <> text (replicate (4 - length h) '0') <> text h
               where h = showHex x ""
-          astral n = (a + 0xd800) <> ch (b + 0xdc00)
+          astral n = ch (a + 0xd800) <> ch (b + 0xdc00)
               where a = (n `shiftR` 10) .&. 0x3ff
                     b = n .&. 0x3ff
 

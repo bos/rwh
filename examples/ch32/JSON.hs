@@ -4,13 +4,23 @@ module JSON
     (
       JSON(..)
     , JValue(..)
+    , JArray
     , JObject
+    , fromJArray
+    , jarray
     , fromJObject
     , jobject
     ) where
 
 import Control.Arrow (second)
 import Control.Monad (liftM)
+
+newtype JArray a = JAry {
+      fromJArray :: [a]
+    } deriving (Eq, Ord, Show)
+
+jarray :: JSON a => [a] -> JArray a
+jarray = JAry
 
 newtype JObject a = JObj {
       fromJObject :: [(String, a)]
@@ -22,7 +32,7 @@ jobject = JObj
 data JValue = JString String
             | JNumber !Rational
             | JObject (JObject JValue)
-            | JArray [JValue]
+            | JArray (JArray JValue)
             | JBool !Bool
             | JNull
               deriving (Eq, Ord, Show)
@@ -60,9 +70,9 @@ instance JSON Rational where
     toJValue = JNumber
     fromJValue = rationalToJValue id
 
-instance (JSON a) => JSON [a] where
-    toJValue = JArray . map toJValue
-    fromJValue (JArray a) = mapM fromJValue a
+instance (JSON a) => JSON (JArray a) where
+    toJValue = JArray . jarray . map toJValue . fromJArray
+    fromJValue (JArray a) = jarray `liftM` mapM fromJValue (fromJArray a)
     fromJValue _ = fail "not a JSON array"
 
 instance (JSON a) => JSON (JObject a) where
