@@ -10,6 +10,8 @@ On OpenBSD:
 
     docbook-dsssl docbook xmlto openjade
 
+------------------------------------------------------------------------
+
 Submitting keysigned patches:
 
     darcs get http://darcs.realworldhaskell.org/rwh
@@ -36,3 +38,33 @@ Then just:
     where user@example.com is your email address (that you entered during --gen-key)
 
 
+------------------------------------------------------------------------
+
+For source code, just write source files in an examples/ch* directory
+and insert snippets directives.  They'll get turned into XML entities
+that you can refer to.
+
+For example, if you have a file named examples/ch99/Mumble.hs you can
+put a hunk of code in it like this:
+
+{-- snippet fnord --}
+blah = blorg
+{-- /snippet fnord --}
+
+Then, within the docbook, include it as follows:
+
+&Mumble.hs:fnord;
+
+It will be formatted all pretty-like.  If you need to include the same
+snippet a second time for some reason, append ".noid" onto the name:
+
+&Mumble.hs:fnord.noid;
+
+You can use the same scheme to include snippets of C, C++, and Java too,
+with /** snippet flobber */ as the syntax.
+
+For interaction with ghci, put your directives in a .ghci file.  Look at
+an existing ghci file to figure the syntax out.  Inclusion by reference
+as per .hs snippets.
+
+------------------------------------------------------------------------
