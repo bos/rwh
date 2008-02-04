@@ -519,7 +519,7 @@
 	identifying a <emphasis>memory location</emphasis> (or some
 	equivalent) that can hold different values at different times.
 	In an imperative language can change a variable's value at any
-	time, so that examoining the memory location repeatedly can
+	time, so that examining the memory location repeatedly can
 	potentially give different results each time.</para>
 
       <para id="x_rd">The critical difference between these two notions of a
