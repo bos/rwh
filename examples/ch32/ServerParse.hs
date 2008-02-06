@@ -1,6 +1,7 @@
 module ServerParse
     (
       HttpRequest(..)
+    , Method(..)
     , p_query
     , p_request
     , parse
@@ -9,6 +10,7 @@ module ServerParse
 import ApplicativeParsec
 import Numeric (readHex)
 import Control.Monad (liftM4)
+import System.IO (Handle)
 
 urlBaseChars :: [Char]
 urlBaseChars = ['a'..'z']++['A'..'Z']++['0'..'9']++"$-_.!*'(),"
@@ -23,13 +25,13 @@ p_query = pair `sepBy` char '&'
            <?> "safe"
         diddle a b = toEnum . fst . head . readHex $ [a,b]
 
-crlf :: GenParser Char st ()
+crlf :: CharParser st ()
 crlf = (() <$ string "\r\n" <?> "cr-lf") <|> (() <$ newline)
 
 notEOL :: CharParser st Char
 notEOL = noneOf "\r\n"
 
-p_headers :: GenParser Char st [(String, String)]
+p_headers :: CharParser st [(String, String)]
 p_headers = manyTill header crlf
   where header = liftA2 (,) fieldName (char ':' *> spaces *> contents)
         fieldName = liftA2 (:) letter (many fieldChar)
@@ -38,14 +40,19 @@ p_headers = manyTill header crlf
                                (continuation <|> pure [])
         continuation = liftA2 (:) (' ' <$ many1 (oneOf " \t")) contents
 
+data Method = Get | Post
+          deriving (Eq, Ord, Show)
+
 data HttpRequest = HttpRequest {
-      reqType :: String
+      reqMethod :: Method
     , reqURL :: String
     , reqHeaders :: [(String, String)]
     , reqBody :: Maybe String
-    } deriving (Eq, Ord, Show)
+    , reqHandle :: Handle
+    } deriving (Eq, Show)
 
-p_request :: GenParser Char () HttpRequest
-p_request = q "GET" (pure Nothing) <|> q "POST" (Just <$> many anyChar)
-  where q s p = liftM4 HttpRequest (string s) url p_headers p
+p_request :: CharParser () (Handle -> HttpRequest)
+p_request = q "GET" Get (pure Nothing)
+        <|> q "POST" Post (Just <$> many anyChar)
+  where q s c p = liftM4 HttpRequest (c <$ string s <* char ' ') url p_headers p
         url = manyTill notEOL (try $ string " HTTP/1." <* oneOf "01") <* crlf

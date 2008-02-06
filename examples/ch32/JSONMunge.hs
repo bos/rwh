@@ -1,3 +1,6 @@
+-- | Take a JSON-format Django "fixture" file, as output by Django's
+-- dumpdata command, and turn it into two Haskell data files.
+
 module Main where
 
 import Control.Monad
