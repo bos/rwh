@@ -12,7 +12,8 @@ import Control.Applicative ((<$>))
 import Control.Concurrent.STM
 import Control.Concurrent (forkIO)
 import Control.Exception (bracket, finally)
-import Control.Monad (forever, guard, liftM, liftM2, liftM3)
+import Control.Monad (forever, guard, join, liftM, liftM2, liftM3)
+import Data.Function (on)
 import Data.List (foldl')
 import qualified Data.Map as M
 import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
@@ -106,10 +107,10 @@ hPutLine r s = do
 hPut :: Response a => a -> String -> IO ()
 hPut r s = hPutStr (respHandle r) s
 
-ok :: String -> IO HttpResponse
+ok :: Monad m => String -> m HttpResponse
 ok = return . RespSuccess ["Content-Type: application/json"]
 
-clientError :: ClientError -> String -> IO HttpResponse
+clientError :: Monad m => ClientError -> String -> m HttpResponse
 clientError kind = return . RespClientError kind ["Content-Type: text/plain"]
 
 notSep :: CharParser () Char
@@ -167,8 +168,8 @@ query = char '?' *> p_query <|> [] <$ eof
 
 handlers :: [HttpRequest -> Maybe Handler]
 handlers = [
-   url (==Get) (chAll <$> ("/chapter" /> part </ "all"))
- , url (==Get) (chCount <$> ("/chapter" /> part </ "count"))
+   url (==Get) (chCount <$> ("/chapter" /> part </ "count"))
+ , url (==Post) (cmtSubmit . ElementID <$> ("/element" /> part </ "submit"))
  ]
 
 dispatch :: [HttpRequest -> Maybe Handler] -> AppState -> HttpRequest
@@ -178,20 +179,47 @@ dispatch hs st req = do
     (Just f:_) -> f st req
     _ -> clientError NotFound "not found"
 
-chAll :: String -> AppState -> HttpRequest -> IO HttpResponse
-chAll ch st _ = do
+chCount :: String -> AppState -> HttpRequest -> IO HttpResponse
+chCount ch st _ = do
     (cmts, chs) <- atomically $ liftM2 (,) (readTVar . appComments $ st)
                                            (readTVar . appChapters $ st)
-    let go a elt = case M.lookup elt cmts of
-                     Just cs -> a + length cs
-                     Nothing -> a
+    let go a elt = a + maybe 0 length (M.lookup elt cmts)
     case M.lookup ch chs of
-      Nothing -> clientError NotFound "not found"
+      Nothing -> clientError NotFound "chapter not found"
       Just elts -> ok . show $ foldl' go 0 elts
   
+joinLookup k kvs = join (lookup k kvs)
 
-chCount :: String -> AppState -> HttpRequest -> IO HttpResponse
-chCount s st req = undefined
+cmtSubmit :: ElementID -> AppState -> HttpRequest -> IO HttpResponse
+cmtSubmit elt st req = atomically $ do
+  elts <- readTVar . appElements $ st
+  case M.lookup elt elts of
+    Nothing -> clientError NotFound "element not found"
+    Just _ ->
+      case parse p_query "" <$> reqBody req of
+          Nothing -> clientError BadRequest "empty comment"
+          Just (Left err) -> clientError BadRequest "malformed string"
+          Just (Right kvs) -> do
+            let tv = appComments st
+                mcmt = Comment elt <$> joinLookup "body" kvs
+                                   <*> joinLookup "submitter" kvs
+                                   <*> joinLookup "url" kvs
+                                   <*> pure "cmtIP"
+                                   <*> pure "cmtDate"
+                                   <*> pure False
+                                   <*> pure False
+            case mcmt of
+              Nothing -> clientError BadRequest "malformed request"
+              Just cmt -> do
+                m <- readTVar tv
+                case M.lookup elt m of
+                  Nothing -> do writeTVar tv $ M.insert elt [cmt] m
+                                ok "comment added"
+                  Just cmts ->
+                    if any ((cmtComment cmt ==) . cmtComment) cmts
+                    then ok "comment already present"
+                    else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
+                            ok "comment added"
 
 url :: (Method -> Bool) -> CharParser () Handler -> HttpRequest -> Maybe Handler
 url methOK p req = do
