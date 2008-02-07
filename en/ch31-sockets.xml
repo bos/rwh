@@ -239,7 +239,7 @@ Connected to localhost.
 Escape character is '^]'.
 <userinput>Test message</userinput>
 <userinput>^]</userinput>
-<prompt>telnet&gt; <userinput>quit</userinput>
+<prompt>telnet&gt; </prompt><userinput>quit</userinput>
 Connection closed.
       </screen>
       <para>
@@ -294,7 +294,7 @@ Ok, modules loaded: Main, SyslogTypes.
 <prompt>*Main&gt; </prompt><userinput>openlog "localhost" "10514" "tcptest"</userinput>
 Loading package parsec-2.1.0.0 ... linking ... done.
 Loading package network-2.1.0.0 ... linking ... done.
-<prompt>*Main&gt; </prompt><userinput>sl <- openlog "localhost" "10514" "tcptest"</userinput>
+<prompt>*Main&gt; </prompt><userinput>sl &lt;- openlog "localhost" "10514" "tcptest"</userinput>
 <prompt>*Main&gt; </prompt><userinput>syslog sl USER INFO "This is my TCP message"</userinput>
 <prompt>*Main&gt; </prompt><userinput>syslog sl USER INFO "This is my TCP message again"</userinput>
 <prompt>*Main&gt; </prompt><userinput>closelog sl</userinput>
@@ -304,8 +304,8 @@ Loading package network-2.1.0.0 ... linking ... done.
       </para>
       <screen>
 From 127.0.0.1:46319: syslogtcpserver.hs: client connnected
-From 127.0.0.1:46319: <9>tcptest: This is my TCP message
-From 127.0.0.1:46319: <9>tcptest: This is my TCP message again
+From 127.0.0.1:46319: &lt;9&gt;tcptest: This is my TCP message
+From 127.0.0.1:46319: &lt;9&gt;tcptest: This is my TCP message again
 From 127.0.0.1:46319: syslogtcpserver.hs: client disconnected
       </screen>
       <para>
