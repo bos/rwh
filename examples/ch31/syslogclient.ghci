@@ -2,3 +2,4 @@
 :l syslogclient.hs
 h <- openlog "localhost" "514" "testprog"
 syslog h USER INFO "This is my message"
+closelog h

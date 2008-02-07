@@ -260,7 +260,59 @@ From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
         the program.
       </para>
     </sect2>
-      
+
+    <sect2 id="hs.sockets.tcp.syslog.client">
+      <title>TCP Syslog Client</title>
+      <para>
+        Now, let's write a client for our TCP syslog protocol.  This
+        client will be similar to the UDP client, but there are a
+        couple of changes.  First, since TCP is a streaming protocol,
+        we can send data using a &Handle; rather than using the
+        lower-level socket operations.  Secondly, we no longer need to
+        store the destination address in the
+        <literal>SyslogHandle</literal> since we will be using
+        <literal>connect</literal> to establish the TCP connection.
+        Finally, we need a way to know where one message ends and the
+        next begins.  With UDP, that was easy because each message was
+        a discrete logical packet.  With TCP, we'll just use the
+        newline character <literal>'\n'</literal> as the
+        end-of-message marker, though that means that no individual
+        message may contain the newline.  Here's our code:
+      </para>
+      &syslogtcpclient.hs:all;
+      <para>
+        We can try it out under &ghci;.  If you still have the TCP
+        server running from earlier, your session might look something
+        like this:
+      </para>
+      <screen>
+<prompt>Prelude&gt; </prompt><userinput>:l syslogtcpclient.hs</userinput>
+Loading package base ... linking ... done.
+[1 of 2] Compiling SyslogTypes      ( SyslogTypes.hs, interpreted )
+[2 of 2] Compiling Main             ( syslogtcpclient.hs, interpreted )
+Ok, modules loaded: Main, SyslogTypes.
+<prompt>*Main&gt; </prompt><userinput>openlog "localhost" "10514" "tcptest"</userinput>
+Loading package parsec-2.1.0.0 ... linking ... done.
+Loading package network-2.1.0.0 ... linking ... done.
+<prompt>*Main&gt; </prompt><userinput>sl <- openlog "localhost" "10514" "tcptest"</userinput>
+<prompt>*Main&gt; </prompt><userinput>syslog sl USER INFO "This is my TCP message"</userinput>
+<prompt>*Main&gt; </prompt><userinput>syslog sl USER INFO "This is my TCP message again"</userinput>
+<prompt>*Main&gt; </prompt><userinput>closelog sl</userinput>
+      </screen>
+      <para>
+        Over on the server, you'll see something like this:
+      </para>
+      <screen>
+From 127.0.0.1:46319: syslogtcpserver.hs: client connnected
+From 127.0.0.1:46319: <9>tcptest: This is my TCP message
+From 127.0.0.1:46319: <9>tcptest: This is my TCP message again
+From 127.0.0.1:46319: syslogtcpserver.hs: client disconnected
+      </screen>
+      <para>
+        The <literal>&lt;9&gt;</literal> is the priority and facility
+        code being sent along, just as it was with UDP.
+      </para>
+    </sect2>
   </sect1>
 
 
