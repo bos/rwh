@@ -216,7 +216,48 @@
         You can test this with the client we'll present next, or you
         can even use the <literal>telnet</literal> program to connect
         to this server.  Each line of text you send to it will be
-        printed on the display by the server.
+        printed on the display by the server.  Let's try it out:
+      </para>
+      <screen>
+<prompt>Prelude&gt; </prompt><userinput>:l syslogtcpserver.hs</userinput>
+[1 of 1] Compiling Main             ( syslogtcpserver.hs, interpreted )
+Ok, modules loaded: Main.
+<prompt>*Main&gt; </prompt><userinput>serveLog "10514" plainHandler</userinput>
+Loading package parsec-2.1.0.0 ... linking ... done.
+Loading package network-2.1.0.0 ... linking ... done.
+      </screen>
+      <para>
+        At this point, the server will begin listening for connections
+        at port 10514.  It will not appear to be doing anything until
+        a client connects.  We could use telnet to connect to the
+        server:
+      </para>
+      <screen>
+<prompt>~$ </prompt><userinput>telnet localhost 10514</userinput>
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+<userinput>Test message</userinput>
+<userinput>^]</userinput>
+<prompt>telnet&gt; <userinput>quit</userinput>
+Connection closed.
+      </screen>
+      <para>
+        Meanwhile, in our other terminal running the TCP server,
+        you'll see something like this:
+      </para>
+<screen>
+From 127.0.0.1:38790: syslogtcpserver.hs: client connnected
+From 127.0.0.1:38790: Test message
+From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
+      </screen>
+      <para>
+        This shows that a client connected from port 38790 on the
+        local machine (127.0.0.1).  After it connected, it sent one
+        message, and disconnected.  When you are acting as a TCP
+        client, the operating system assigns an unused port for you.
+        This port number will usually be different each time you run
+        the program.
       </para>
     </sect2>
       
