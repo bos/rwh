@@ -96,10 +96,9 @@
       <literal>:t</literal> in &ghci; to inspect types as well.
     </para>
     <para id="x_QJ">
-      The <literal>csvFile</literal> uses a &do; block.  Parsec is a monadic
-      parser combinator, but we are not using the &IO; monad here.
-      As we discussed in <remark>fixme: insert ref</remark>, not all monads
-      are &IO; monads.
+      The <literal>csvFile</literal> uses a &do; block.  As this
+      implies, Parsec is a monadic library: it defines its own special
+      parsing monad, <type>GenParser</type>.
     </para>
     <para id="x_RJ">
       We start by running <literal>many line</literal>.
