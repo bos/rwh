@@ -1,0 +1,79 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="applicative" revision="alpha;beta">
+  <title>Further adventures in parsing</title>
+
+  <para>In this chapter, we're going to spend a little more time on
+    parsing.  Our goal is to develop a few useful parsers.  We'll
+    write one parser for HTTP requests, which will help us to develop
+    a web server in later chapters.  We'll complete our treatment of
+    JSON by writing a parser for JSON data, and again we'll be using
+    this later, too.</para>
+
+  <para>Along the way, we'll dwell on a few easy topics in
+    mathematics.  As usual, we have a practical goal in mind: the
+    concepts we'll introduce will help us to write cleaner, more
+    regular code.</para>
+
+  <sect1 id="applicative.urlencoded">
+    <title>Parsing an URL-encoded query string</title>
+
+    <para>When we introduced
+      <code>application/x-www-form-urlencoded</code> text in <xref
+      linkend="monadcase.urlencoded"/>, we mentioned that we'd write a
+      parser for these strings.  We can quickly and easily do this
+      using Parsec.</para>
+    
+    <para>Each key-value pair is separated by the
+      <literal>&amp;</literal> character.</para>
+
+    &FormParse.hs:p_query;
+
+    <para>Notice that in the type signature, we're using
+      <type>Maybe</type> to represent a value: the HTTP specification
+      is unclear about whether a key <emphasis>must</emphasis> have an
+      associated value, and we'd like to be able to distinguish
+      between <quote>no value</quote> and <quote>empty
+	value</quote>.</para>
+
+    &FormParse.hs:p_pair;
+
+    <para>The <function>many1</function> function is similar to
+      <function>many</function>: it applies its parser repeatedly,
+      returning a list of their results.  While
+      <function>many</function> will succeed and return an empty list
+      if its parser never succeeds, <function>many1</function> will
+      fail if its parser never succeeds, and will otherwise return a
+      list of at least one element.</para>
+
+    <para>The <function>optionMaybe</function> function modifies the
+      behaviour of a parser.  If the parser fails,
+      <function>optionMaybe</function> doesn't fail: it returns
+      <code>Nothing</code>.  Otherwise, it wraps the parser's
+      successful result with <code>Just</code>.  This gives us the
+      ability to distinguish between <quote>no value</quote> and
+      <quote>empty value</quote>, as we mentioned above.</para>
+
+    <para>Individual characters can be encoded in one of several
+      ways.</para>
+
+    &FormParse.hs:p_char;
+
+    <para>Some characters can be represented literally.  Spaces are
+      treated specially, using a <code>+</code> character.  Other
+      characters must be encoded as a <code>%</code> character
+      followed by two hexadecimal digits.  The <code>Numeric</code>
+      module's <function>readHex</function> parses a hex string as
+      a number.</para>
+
+    <para>As appealing and readable as this parser is, we can profit
+      from stepping back and taking another look at some of our
+      building blocks.</para>
+  </sect1>
+</chapter>
+ 
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "book" "chapter")
+end:
+-->

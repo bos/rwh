@@ -1,8 +1,130 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="monadcase" revision="unpublished">
-  <title>FIXME</title>
-  <remark>FIXME.</remark>
+  <title>Some monad examples</title>
+
+  <sect1 id="monadcase.urlencoded">
+    <title>Golfing practice: association lists</title>
+
+    <para>Web clients and servers often pass information around as a
+      simple textual list of key-value pairs.</para>
+
+    <programlisting>name=Attila+%42The+Hun%42&amp;occupation=Khan</programlisting>
+
+    <para>The encoding is named
+      <code>application/x-www-form-urlencoded</code>, and it's easy to
+      understand.  Each key-value pair is separated by an
+      <quote><code>&amp;</code></quote> character.  Within a pair, a
+      key is a series of characters, followed by an
+      <quote><code>=</code></quote>, followed by a value.</para>
+
+    <para>We can obviously represent a key as a <type>String</type>,
+      but the HTTP specification is not clear about whether a key must
+      be followed by a value.  We can capture this ambiguity by
+      representing a value as a <type>Maybe String</type>.  If we use
+      <code>Nothing</code> for a value, then there was no value
+      present.  If we wrap a string in <code>Just</code>, then there
+      was a value.  Using <type>Maybe</type> lets us distinguish
+      between <quote>no value</quote> and <quote>empty
+	value</quote>.</para>
+
+    <para>Haskell programmers use the name <emphasis>association
+	list</emphasis> for the type <type>[(a, b)]</type>, where we
+      can think of each element as an association between a key and a
+      value.  The name originates in the Lisp community, where it's
+      usually abbreviated as an <emphasis>alist</emphasis>.  We could
+      thus represent the above string as the following Haskell
+      value.</para>
+
+    &MovieReview.hs:attila;
+
+    <para>In <xref linkend="applicative.urlencoded"/>, we'll parse an
+      <code>application/x-www-form-urlencoded</code> string, and
+      represent the result as an alist of <type>[(String, Maybe
+	String)]</type>.  Let's say we want to use one of these alists
+      to fill out a data structure.</para>
+
+    &MovieReview.hs:MovieReview;
+
+    <para>We'll begin by belabouring the obvious with a naive
+      function.</para>
+
+    &MovieReview.hs:simpleReview;
+
+    <para>It only returns a <type>MovieReview</type> if the alist
+      contains all of the necessary values, and they're all non-empty
+      strings.  However, the fact that it validates its inputs is its
+      only merit: it suffers badly from the <quote>staircasing</quote>
+      that we've learned to be wary of, and it knows the intimate
+      details of the representation of an alist.</para>
+
+    <para>Since we're now well acquainted with the <type>Maybe</type>
+      monad, we can tidy up the staircasing.</para>
+
+    &MovieReview.hs:maybeReview;
+
+    <para>Although this is much tidier, we're still repeating
+      ourselves.  We can take advantage of the fact that the
+      <code>MovieReview</code> constructor acts as a normal, pure
+      function by <emphasis>lifting</emphasis> it into the monad, as
+      we discussed in <xref linkend="monads.liftM"/>.</para>
+
+    &MovieReview.hs:liftedReview;
+  </sect1>
+
+  <sect1 id="monadcase.ap">
+    <title>Generalised lifting</title>
+
+    <para>Although using <function>liftM3</function> tidies up our
+      code, we can't use a <function>liftM</function>-family function
+      to solve this sort of problem in general, because they're only
+      defined up to <function>liftM5</function>.  If we had a
+      constructor or pure function that took, say, ten parameters, you
+      might think we'd be out of luck.</para>
+
+    <para>Of course, our toolbox isn't yet empty.  In
+      <code>Control.Monad</code>, there's a function named
+      <function>ap</function> with a slightly odd type
+      signature.</para>
+
+    &ap.ghci:ap;
+
+    <para>You might wonder who would put a single-argument pure
+      function inside a monad, and why.  Recall, however, that
+      <emphasis>all</emphasis> Haskell functions really take only one
+      argument, and you'll begin to see how this might relate to the
+      <code>MovieReview</code> constructor.</para>
+
+    &ap.ghci:MovieReview;
+
+    <para>We can just as easily write that type as <type>String -&gt;
+	(String -&gt; (String -&gt; MovieReview))</type>.  If we use
+      plain old <function>liftM</function> to lift
+      <code>MovieReview</code> into the <code>Maybe</code> monad,
+      we'll have a value of type <type>Maybe (String -&gt; (String
+	-&gt; (String -&gt; MovieReview)))</type>.  We can now see
+      that this type is suitable as an argument for
+      <function>ap</function>, in which case the result type will be
+      <type>Maybe (String -&gt; (String -&gt; MovieReview))</type>. We
+      can pass this, in turn, to <function>ap</function>, and continue
+      to chain until we end up with this definition.</para>
+
+    &MovieReview.hs:apReview;
+
+    <para>We can chain applications of <function>ap</function> like
+      this as many times as we need to, and thereby to avoid the hard
+      limit of 5 on the <function>liftM</function> family of
+      functions.</para>
+
+    <para>Another helpful way to look at <function>ap</function> is
+      that it's the monadic equivalent of the familiar
+      <function>($)</function> operator.  We can see this clearly when
+      we compare the type signatures of the two functions.</para>
+
+    &ap.ghci:types;
+
+  </sect1>
+
 </chapter>
 
 <!--

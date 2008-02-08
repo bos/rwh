@@ -22,7 +22,7 @@ src-files := $(src-master) \
 	$(wildcard ch*.xml) \
 	$(wildcard app*.xml)
 
-src-dirs := $(wildcard ../examples/app[A-Z] ../examples/ch[0-9][0-9])
+src-dirs := $(wildcard ../examples/app[A-Z]* ../examples/ch[0-9][0-9]*)
 
 src-examples := $(foreach d,$(src-dirs),$(wildcard $d/*.c $d/*.cpp $d/*.ghci \
 			$d/*.hs $d/*.java $d/*.py))

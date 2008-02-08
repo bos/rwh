@@ -175,7 +175,7 @@
   <sect1 id="parsec.sep">
     <title>The sepBy and endBy Combinators</title>
     <para id="x_ZJ">
-      We promised you earlier that we could simply our CSV parser
+      We promised you earlier that we could simplify our CSV parser
       significantly by using a few Parsec helper functions.  There are two
       that will dramatically simplify this code.  The first is
       <literal>endBy</literal>, which takes two functions.  It applies the
