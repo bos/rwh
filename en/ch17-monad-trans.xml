@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="monadtrans" revision="unpublished">
-  <title>FIXME</title>
+<chapter id="hs.monadtrans" revision="unpublished">
+  <title>FIXME (Monad Transformers / DONS)</title>
   <remark>FIXME.</remark>
 </chapter>
 
