@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="monadcase" revision="unpublished">
-  <title>Some monad examples</title>
+<chapter id="monadcase" revision="alpha;beta">
+  <title>Programming with monads</title>
 
   <sect1 id="monadcase.urlencoded">
     <title>Golfing practice: association lists</title>
@@ -125,6 +125,79 @@
 
   </sect1>
 
+  <sect1>
+    <title>Looking for alternatives</title>
+
+    <para>Here's a simple representation of a person's phone
+      numbers.</para>
+
+    &VCard.hs:numbers;
+
+    <para>Suppose we want to get in touch with someone to make a
+      personal call.  We don't want their business number, and we'd
+      prefer to use their home number (if they have one) instead of
+      their mobile number, because the call will be cheaper.</para>
+
+    &VCard.hs:personalPhone;
+
+    <para>Of course, if we use <type>Maybe</type> as the result type,
+      we can't accommodate the possibility that someone might have
+      more than one number that meet our criteria.  For that, we
+      switch to a list.</para>
+
+    &VCard.hs:businessPhones;
+
+    <para>Notice that these two functions structure their &case;
+      expressions similarly: one alternative handles the case where
+      the first lookup returns an empty result, while the other
+      handles the non-empty case.</para>
+
+    &vcard.ghci:simple;
+    
+    <para>Haskell's <code>Control.Monad</code> module defines a
+      typeclass, <type>MonadPlus</type>, that lets us abstract the
+      common pattern out of our &case; expressions.</para>
+
+    &VCard.hs:MonadPlus;
+
+    <para>The value <code>mzero</code> represents an empty result,
+      while <function>mplus</function> combines two results.  Here are
+      the standard definitions of <code>mzero</code> and
+      <function>mplus</function> for <type>Maybe</type> and
+      lists.</para>
+
+    &VCard.hs:instances;
+
+    <para>We can now use <function>mplus</function> to get rid of our
+      &case; expressions entirely.</para>
+
+    &VCard.hs:caseless;
+
+    <para>In these functions, because we know that
+      <function>lookup</function> returns a value of type
+      <type>Maybe</type>, and <function>filter</function> returns a
+      list, it's obvious which version of <function>mplus</function>
+      is going to be used in each case.</para>
+
+    <para>What's more interesting is that we can use
+      <code>mzero</code> and <function>mplus</function> to write
+      functions that will be useful for <emphasis>any</emphasis>
+      <type>MonadPlus</type> instance.  As an example, here's the
+      standard <function>lookup</function> function, which returns a
+      value of type <type>Maybe</type>.</para>
+
+    &VCard.hs:lookup;
+
+    <para>We can easily generalise the result type to any instance of
+      <type>MonadPlus</type> as follows.</para>
+
+    &VCard.hs:lookupM;
+
+    <para>This lets us get either no result or one, if our result type
+      is <type>Maybe</type>; all results, if our result type is a
+      list; or something of appropriate for some other exotic instance
+      of <type>MonadPlus</type>.</para>
+  </sect1>
 </chapter>
 
 <!--

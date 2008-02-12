@@ -714,11 +714,12 @@
 	empty and non-empty cases separately, is a kind of approach
 	called <emphasis>structural recursion</emphasis>.</para>
 
-      <para id="x_A8">We call the non-recursive case (when the list is empty)
-	the base case.  We'll see people refer to the case where the
-	function calls itself as the recursive case (surprise!), or
-	they might give a nod to mathematical induction and call it
-	the inductive case.</para>
+      <para id="x_A8">We call the non-recursive case (when the list is
+	empty) the <emphasis>base case</emphasis>.  We'll see people
+	refer to the case where the function calls itself as the
+	recursive case (surprise!), or they might give a nod to
+	mathematical induction and call it the <emphasis>inductive
+	  case</emphasis>.</para>
 
       <para id="x_B8">Structural induction isn't confined to lists; we can use
 	it on other algebraic data types, too.  We'll have more to say
