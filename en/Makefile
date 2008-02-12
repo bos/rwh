@@ -155,8 +155,13 @@ alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
 $(obj-alpha)/preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
 
-$(obj-alpha)/index.html: ../web/index.alpha.html.in $(obj-alpha)/preface.html
-	python ../web/texpand.py $< $@
+indices: .stamp-indices
+
+.stamp-indices: ../web/Index.hs
+	$(runhaskell) $<
+
+$(obj-alpha)/index.html: indices $(obj-alpha)/preface.html
+	python ../web/texpand.py index.alpha.html.in $@
 	gzip -c < $@ > $@.gz
 
 alpha.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
@@ -171,8 +176,8 @@ beta: $(obj-beta)/index.html $(obj-beta)/.htaccess
 $(obj-beta)/preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
 
-$(obj-beta)/index.html: ../web/index.beta.html.in $(obj-beta)/preface.html
-	python ../web/texpand.py $< $@
+$(obj-beta)/index.html: indices $(obj-beta)/preface.html
+	python ../web/texpand.py index.beta.html.in $@
 	gzip -c < $@ > $@.gz
 
 beta.xml: .validated-00book.xml ../xsl/system-xsl ../xsl/dtd-profile.xsl
@@ -187,8 +192,8 @@ html: tools $(obj-complete)/index.html $(obj-complete)/.htaccess
 $(obj-complete)/preface.html: .validated-00book.xml ../xsl/system-xsl $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-complete))
 
-$(obj-complete)/index.html: ../web/index.complete.html.in $(obj-complete)/preface.html
-	python ../web/texpand.py $< $@
+$(obj-complete)/index.html: indices $(obj-complete)/preface.html
+	python ../web/texpand.py index.complete.html.in $@
 	gzip -c < $@ > $@.gz
 
 $(obj-complete)/.htaccess: ../web/complete.htaccess
@@ -242,6 +247,7 @@ clean:
 	-rm -rf x html index *.ghci:*.xml
 	-rm -f *.aux *.log *.jtex *.tex *.out jadetex.cfg *.fot *.hs:*.xml
 	-find . -name "*~" -print0 | xargs -0r rm -f
+	-rm -f .stamp-indices index.*.html.in
 
 vpath %.html.in ../web
 vpath %.css ../web

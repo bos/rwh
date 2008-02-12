@@ -13,16 +13,18 @@ MANAGERS = ADMINS
 
 ROOT = os.path.dirname(sys.modules[__name__].__file__)
 
-if True:
+try:
     from secrets import DATABASE_ENGINE, DATABASE_NAME, DATABASE_USER, \
-         DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT
-else:
+         DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, SECRET_KEY
+except ImportError:
+    print >> sys.stderr, 'Faking up some database configuration for you'
     DATABASE_ENGINE = 'sqlite3'
     DATABASE_NAME = os.path.join(ROOT, '.database.sqlite3')
     DATABASE_USER = ''
     DATABASE_PASSWORD = ''
     DATABASE_HOST = ''
     DATABASE_PORT = ''
+    SECRET_KEY = ''
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -54,8 +56,6 @@ MEDIA_URL = ''
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
-
-from secrets import SECRET_KEY
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
