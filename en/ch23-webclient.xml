@@ -93,7 +93,12 @@
   <sect1 id="hs.wc.db">
     <title>The Database</title>
     <para>
-      FIXME
+      Next, we'll write the code to make possible persistent storage
+      in a database.  We'll primarily be interested in moving data
+      between the Haskell structures we defined in
+      <literal>PodTypes.hs</literal> and the database on disk.  Also,
+      the first time the user runs the program, we'll need to create
+      the database tables that we'll use to store our data.
     </para>
   </sect1>
     
