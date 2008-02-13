@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="webclient" revision="unpublished">
+<chapter id="hs.wc" revision="unpublished">
   <title>Extended Example: Web Client Programming</title>
   <para>
     By this point, you've seen how to interact with a database, parse
@@ -60,6 +60,42 @@
     url="http://software.complete.org/hpodder"/>.
     </para>
   </tip>
+
+  <para>
+    We'll write the code for this chapter in pieces.  Each piece will
+    be its own Haskell module.  You'll be able to play with each piece
+    by itself in &ghci;.  At the end, we'll write the final code that
+    ties everything together into a finished application.  We'll start
+    with the basic types we'll need to use.
+  </para>
+
+  <sect1 id="hs.wc.types">
+    <title>Basic Types</title>
+    <para>
+      The first thing to do is have some idea of the basic information
+      that will be important to the application.  This will generally
+      be information about the podcasts the user is interested in,
+      plus information about episodes that we have seen and
+      processed.  It's easy enough to change this later if needed, but
+      since we'll be importing it just about everywhere, we'll define
+      it first.
+    </para>
+    &PodTypes.hs:all;
+    <para>
+      We'll be storing this information in a database.  Having a
+      unique identifier for both a podcast and an episode makes it
+      easy to find which episodes belong to a particular podcast, load
+      information for a particular podcast or episode, or handle
+      future cases such as changing URLs for podcasts.
+    </para>
+  </sect1>
+  
+  <sect1 id="hs.wc.db">
+    <title>The Database</title>
+    <para>
+      FIXME
+    </para>
+  </sect1>
     
 </chapter>
 
