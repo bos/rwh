@@ -100,6 +100,13 @@
       the first time the user runs the program, we'll need to create
       the database tables that we'll use to store our data.
     </para>
+    <para>
+      We'll use HDBC (see <xref linkend="databases"/>) to interact
+      with a Sqlite database.  Sqlite is lightweight and
+      self-contained, which makes is perfect for this project.  For
+      information on installing HDBC and Sqlite, consult <xref
+      linkend="databases.hdbc.install"/>.
+    </para>
   </sect1>
     
 </chapter>
