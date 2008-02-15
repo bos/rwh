@@ -107,7 +107,16 @@
       information on installing HDBC and Sqlite, consult <xref
       linkend="databases.hdbc.install"/>.
     </para>
+    &PodDB.hs:all;
+    <para>  
+      In the <literal>PodDB</literal> module, we have defined
+      functions to connect to the database, create the needed database
+      tables, add data to the database, query the database, and remove
+      data from the database.
+    </para>
   </sect1>
+
+    
     
 </chapter>
 
