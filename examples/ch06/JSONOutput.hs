@@ -1,12 +1,10 @@
 module JSONOutput
     (
       jvalue
-    , renderB
-    , renderS
     ) where
 
 import qualified Data.Map as M
-import Text.PrettyPrint.HughesPJ (Doc, Mode(..), TextDetails(..), (<>), (<+>), braces, brackets, char, comma, colon, double, doubleQuotes, fsep, fullRender, hcat, punctuate, text)
+import Prettify (Doc, (<>), (<+>), char, double, enclose, encloseC, fsep, hcat, punctuate, text)
 import Numeric (showHex)
 import JSON (JValue(..), fromJArray, fromJObject)
 import qualified Data.ByteString.Lazy.Char8 as C
@@ -14,11 +12,14 @@ import Data.Bits (shiftR, (.&.))
 import Data.ByteString.Internal (c2w)
 import qualified JSONBuilder as B
 
+import JSON
+import Prettify
+
 jvalue :: JValue -> Doc
 jvalue (JString s) = string s
 jvalue (JNumber n) = double (fromRational n)
-jvalue (JObject o) = series braces field (fromJObject o)
-jvalue (JArray a) = series brackets jvalue (fromJArray a)
+jvalue (JObject o) = series (encloseC '{' '}') field (fromJObject o)
+jvalue (JArray a) = series (encloseC '(' ')') jvalue (fromJArray a)
 jvalue (JBool True) = text "true"
 jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
@@ -34,7 +35,7 @@ unicode c | d < 0x10000 = ch d
                     b = n .&. 0x3ff
 
 string :: String -> Doc
-string = doubleQuotes . hcat . map one
+string = encloseC '\"' '\"' . hcat . map one
     where one c = case M.lookup c specials of
                     Just r -> text r
                     Nothing | c < ' ' || c > '\xff' -> unicode c
@@ -44,20 +45,7 @@ string = doubleQuotes . hcat . map one
             ('\t', "\\t"), ('\\', "\\\\"), ('\"', "\\\""), ('/', "\\/")]
 
 series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
-series open item = open . fsep . punctuate comma . map item
+series open item = open . fsep . punctuate (char ',') . map item
 
 field :: (String, JValue) -> Doc
-field (k,v) = string k <> colon <+> jvalue v
-
-renderS :: Doc -> C.ByteString
-renderS = fullRender OneLineMode 0 0 item C.empty
-    where item (Chr c) s = C.singleton c `C.append` s
-          item (Str a) b = C.pack a `C.append` b
-          item (PStr a) b = C.pack a `C.append` b
-
-renderB :: Doc -> C.ByteString
-renderB = B.toLazyByteString . fullRender OneLineMode 0 0 item B.empty
-    where item (Chr c) s = B.singleton (c2w c) `B.append` s
-          item (Str a) b = pack a `B.append` b
-          item (PStr a) b = pack a `B.append` b
-          pack = B.fromLazyByteString . C.pack
+field (k,v) = string k <> char ':' <+> jvalue v
