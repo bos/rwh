@@ -483,6 +483,357 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
       <function>mplus</function> combines two alternative parses into
       one, using <function>(&lt;|>)</function>.</para>
   </sect1>
+
+  <sect1 id="applicative.urlencoded">
+    <title>Parsing an URL-encoded query string</title>
+
+    <para>When we introduced
+      <code>application/x-www-form-urlencoded</code> text in <xref
+      linkend="monadcase.urlencoded"/>, we mentioned that we'd write a
+      parser for these strings.  We can quickly and easily do this
+      using Parsec.</para>
+    
+    <para>Each key-value pair is separated by the
+      <literal>&amp;</literal> character.</para>
+
+    &FormParse.hs:p_query;
+
+    <para>Notice that in the type signature, we're using
+      <type>Maybe</type> to represent a value: the HTTP specification
+      is unclear about whether a key <emphasis>must</emphasis> have an
+      associated value, and we'd like to be able to distinguish
+      between <quote>no value</quote> and <quote>empty
+	value</quote>.</para>
+
+    &FormParse.hs:p_pair;
+
+    <para>The <function>many1</function> function is similar to
+      <function>many</function>: it applies its parser repeatedly,
+      returning a list of their results.  While
+      <function>many</function> will succeed and return an empty list
+      if its parser never succeeds, <function>many1</function> will
+      fail if its parser never succeeds, and will otherwise return a
+      list of at least one element.</para>
+
+    <para>The <function>optionMaybe</function> function modifies the
+      behaviour of a parser.  If the parser fails,
+      <function>optionMaybe</function> doesn't fail: it returns
+      <code>Nothing</code>.  Otherwise, it wraps the parser's
+      successful result with <code>Just</code>.  This gives us the
+      ability to distinguish between <quote>no value</quote> and
+      <quote>empty value</quote>, as we mentioned above.</para>
+
+    <para>Individual characters can be encoded in one of several
+      ways.</para>
+
+    &FormParse.hs:p_char;
+
+    <para>Some characters can be represented literally.  Spaces are
+      treated specially, using a <code>+</code> character.  Other
+      characters must be encoded as a <code>%</code> character
+      followed by two hexadecimal digits.  The <code>Numeric</code>
+      module's <function>readHex</function> parses a hex string as
+      a number.</para>
+
+    &formParse.ghci:test;
+
+    <para>As appealing and readable as this parser is, we can profit
+      from stepping back and taking another look at some of our
+      building blocks.</para>
+  </sect1>
+
+  <sect1>
+    <title>Supplanting regular expressions for casual parsing</title>
+    
+    <para>In many popular languages, people tend to put regular
+      expressions to work for <quote>casual</quote> parsing. They're
+      notoriously tricky for this purpose: hard to write, difficult to
+      debug, nearly incomprehensible after a few months of neglect,
+      and no error messages on failure.</para>
+
+    <para>If we can write compact Parsec parsers, we'll gain in
+      readability, expressiveness, and error reporting.  Our parsers
+      won't be as short as regular expressions, but they'll be close
+      enough to negate much of the temptation of regexps.</para>
+  </sect1>
+
+  <sect1>
+    <title>Parsing without variables</title>
+
+    <para>A few of our parsers above use &do; notation and bind the
+      result of an intermediate parse to a variable, for later use.
+      One such function is <function>p_pair</function>.</para>
+
+    &FormParse.hs:p_pair.noid;
+
+    <para>We can get rid of the need for explicit variables by using
+      the <function>liftM2</function> combinator from
+      <code>Control.Monad</code>.</para>
+
+    &FormParse.hs:p_pair_app1;
+
+    <para>This parser has exactly the same type and behaviour as
+      <function>p_pair</function>, but it's one line long.  Instead of
+      writing our parser in a <quote>procedural</quote> style, we've
+      simply switched to a programming style that emphasises that
+      we're <emphasis>applying</emphasis> parsers and
+      <emphasis>combining</emphasis> their results.</para>
+
+    <para>We can take this applicative style of writing a parser much
+      further.  In most cases, the extra compactness that we will gain
+      will <emphasis>not</emphasis> come at any cost in readability,
+      beyond the initial effort of coming to grips with the
+      idea.</para>
+  </sect1>
+
+  <sect1>
+    <title>Applicative functors for parsing</title>
+
+    <para>The standard Haskell libraries include a module named
+      <code>Control.Applicative</code>, which we already encountered
+      in <xref linkend="binary.fmap"/>.  This module defines a
+      typeclass named <type>Applicative</type>, which represents an
+      <emphasis>applicative functor</emphasis>.  This is a little bit
+      more structured than a functor, but a little bit less than a
+      monad.  It also defines <type>Alternative</type>, which is
+      similar to <type>MonadPlus</type></para>
+
+    <para>As usual, we think that the best way to introduce
+      applicative functors is by putting them to work.  In theory,
+      every monad is an applicative functor, but not every applicative
+      functor is a monad.  Because applicative functors were added to
+      the standard Haskell libraries long after monads, we often don't
+      get an <type>Applicative</type> instance for free: frequently,
+      we have to declare the monad we're using to be
+      <type>Applicative</type> or <type>Alternative</type>.</para>
+
+    <para>To do this for <code>Parsec</code>, we'll write a small
+      module that we can import instead of the normal
+      <code>Parsec</code> module.</para>
+
+    &ApplicativeParsec.hs:ApplicativeParsec;
+
+    <para>For convenience, our module's export section exports all the
+      names we imported from both the <code>Applicative</code> and
+      <code>Parsec</code> modules.</para>
+  </sect1>
+
+  <sect1>
+    <title>Applicative parsing by example</title>
+
+    <para>We'll begin by rewriting our existing form parser from the
+      bottom up, beginning with <function>p_hex</function>, which
+      parses a hexadecimal escape sequence.</para>
+
+    &FormApp.hs:p_hex;
+
+    <para>Here's our applicative version.</para>
+
+    &FormApp.hs:a_hex;
+
+    <para>Although the individual parsers are mostly untouched, the
+      combinators that we're gluing them together with have changed.
+      The only familiar one is <function>(&lt;$&gt;)</function>, which
+      we already know is a synonym for
+      <function>fmap</function>.</para>
+
+    <para>From our definition of <type>Applicative</type>, we know
+      that <function>(&lt;*&gt;)</function> is
+      <function>ap</function>.</para>
+
+    <para>The remaining unfamiliar combinator is
+      <function>(*&gt;)</function>, which applies its first argument,
+      throws away its result, then applies the second and returns its
+      result.  In other words, it's similar to
+      <function>(&gt;&gt;)</function>.</para>
+
+    <tip>
+      <title>A handy tip about angle brackets</title>
+
+      <para>Before we continue, here's a useful aid for remembering
+	what all the angle brackets are for in the combinators from
+	<code>Control.Applicative</code>: if there's an angle bracket
+	pointing to some side, the result from that side should be
+	used.</para>
+
+      <para>For example, <function>(*&gt;)</function> returns the
+	result on its right; <function>(&lt;*&gt;)</function> returns
+	results from both sides; and <function>(&lt;*)</function>,
+	which we have not yet seen, returns the result on its
+	left.</para>
+    </tip>
+
+    <para>Although the concepts here should mostly be familiar from
+      our earlier coverage of functors and monads, we'll walk through
+      this function to explain what's happening.  First, to get a grip
+      on our types, we'll hoist <function>hexify</function> to the top
+      level and give it a signature.</para>
+
+    &FormApp.hs:hexify;
+
+    <para>Parsec's <function>hexDigit</function> parser parses a
+      single hexadecimal digit.</para>
+
+    &formApp.ghci:hexDigit;
+
+    <para>Therefore, <code>char '%' *&gt; hexDigit</code> has the same
+      type, since <function>(*&gt;)</function> returns the result on
+      its right.  (Remember that <type>CharParser</type> is nothing
+      more than a synonym for <type>GenParser Char</type>.)</para>
+
+    &formApp.ghci:char;
+
+    <para>The expression <code>hexify &lt;%$&gt; (char '%' *&gt;
+	hexDigit)</code> is a parser that matches a <quote>%</quote>
+      character followed by hex digit, and whose result is a
+      function.</para>
+
+    &formApp.ghci:func;
+
+    <para>Finally, <function>(&lt;*&gt;)</function> applies the parser
+      on its left, then the parser on its right, and applies the
+      function that's the result of the left parse to the value that's
+      the result of the right.</para>
+
+    <para>If you've been able to follow this, then you understand the
+      <function>(&lt;*&gt;)</function> and <function>ap</function>
+      combinators: <function>(&lt;*&gt;)</function> is plain old
+      <function>($)</function> lifted to applicative functors, and
+      <function>ap</function> the same thing lifted to monads.</para>
+
+    &formApp.ghci:ap;
+
+    <para>Next, we'll consider the <function>p_char</function>
+      parser.</para>
+
+    &FormApp.hs:p_char;
+
+    <para>This remains almost the same in an applicative style, save
+      for one piece of convenient notation.</para>
+
+    &FormApp.hs:a_char;
+
+    <para>Here, the <function>(&lt;$)</function> combinator uses the
+      value on the left if the parser on the right succeeds.</para>
+
+    <para>Finally, the equivalent of <function>p_pair_app1</function> is
+      almost identical.</para>
+
+    &FormParse.hs:p_pair_app1.noid;
+
+    <para>All we've changed is the combinator we use for lifting: the
+      <function>liftA</function> functions act in the same ways as
+      their <function>liftM</function> cousins.</para>
+
+    &FormApp.hs:a_pair;
+  </sect1>
+
+  <sect1>
+    <title>Parsing JSON data</title>
+
+    <para>To give ourselves a better feel for parsing with applicative
+      functors, and to explore a few more corners of Parsec, we'll
+      write a JSON parser that follows the definition in RFC
+      4627.</para>
+
+    <remark>Insert a backreference to the introduction to JSON,
+      whenever that shows up.</remark>
+
+    <para>At the top level, a JSON value must be either an object or
+      an array.</para>
+
+    &JSONParsec.hs:p_text;
+
+    <para>These are structurally similar, with an opening character,
+      following by one or more items separated by commas, followed by
+      a closing characters.  We capture this similarity by writing a
+      small helper function.</para>
+
+    &JSONParsec.hs:p_series;
+
+    <para>Here, we finally have a use for the
+      <function>(&lt;*)</function> combinator that we introduced
+      earlier.  We use it to skip over any white space that might
+      follow certain tokens.  With this <function>p_series</function>
+      function, parsing an array is simple.</para>
+
+    &JSONParsec.hs:p_array;
+
+    <para>Dealing with a JSON object is hardly more complicated,
+      requiring just a little more effort to product a name/value pair
+      for each of the object's fields.</para>
+
+    &JSONParsec.hs:p_object;
+
+    <para>Parsing an individual value is a matter of calling an
+      existing parser, then wrapping its result with the appropriate
+      <type>JValue</type> constructor.</para>
+
+    &JSONParsec.hs:p_value;
+
+    <para>This leads us to the two most interesting parsers, for
+      numbers and strings.  We'll deal with numbers first, since
+      they're simpler.</para>
+
+    &JSONParsec.hs:p_number;
+
+    <para>Our trick here is to take advantage of Haskell's standard
+      number parsing library functions, which are defined in the
+      <code>Numeric</code> module.  The <function>readFloat</function>
+      function reads an unsigned floating point number, and
+      <function>readSigned</function> takes a parser for an unsigned
+      number and turns it into a parser for possibly signed
+      numbers.</para>
+
+    <para>Since these functions know nothing about Parsec, we have to
+      work with them specially.  Parsec's
+      <function>getInput</function> function gives us direct access to
+      Parsec's unconsumed input stream.  If <code>readSigned
+	readFloat</code> succeeds, it returns both the parsed number
+      and the rest of the unparsed input.  We then use
+      <function>setInput</function> to give this back to Parsec as its
+      new unconsumed input stream.</para>
+
+    <para>Parsing a string isn't difficult, merely detailed.</para>
+
+    &JSONParsec.hs:p_string;
+
+    <para>We can parse and unescape an escape sequence with the help
+      of a generic function for combining
+      <type>Alternative</type>s.</para>
+
+    &JSONParsec.hs:p_escape;
+
+    <para>(We're basing the name <function>asum</function> on the
+      <function>msum</function> function in
+      <code>Control.Monad</code>, which serves the same purpose for
+      <type>MonadPlus</type> instances.  It's a little surprising that
+      <function>asum</function> isn't already defined for us.)</para>
+
+    <para>Finally, JSON lets us encode a Unicode character in
+      a string as <quote><code>\u</code></quote> followed by four
+      hexadecimal digits.  Because the number of values that can be
+      represented in 32 bits is much larger than the number of valid
+      Unicode code points, we must check to ensure that we're decoding
+      a value within the valid Unicode range, or else we could cause
+      ourselves a runtime error.</para>
+
+    &JSONParsec.hs:p_unicode;
+
+    <para>The only piece of functionality that applicative
+      functors are missing compared to monads is the ability to bind a
+      value to a variable, which we need here in order to be able to
+      validate the value we're trying to decode.</para>
+
+    <para>This is the one place in our parser that we've needed to
+      use a monadic function.  This pattern extends to more
+      complicated parsers, too: only infrequently do we need the extra
+      bit of power that monads offer.</para>
+
+    <para>As we write this book, applicative functors are still quite
+      new to Haskell, and people are only beginning to explore the
+      possible uses for them beyond the realm of parsing.</para>
+  </sect1>
 </chapter>
  
 

@@ -26,7 +26,6 @@
 <!ENTITY ch16     SYSTEM "ch16-monad-case.xml">
 <!ENTITY ch17     SYSTEM "ch17-monad-trans.xml">
 <!ENTITY ch18     SYSTEM "ch18-parsec.xml">
-<!ENTITY ch18a    SYSTEM "ch18a-applicative.xml">
 <!ENTITY ch19     SYSTEM "ch19-ffi.xml">
 <!ENTITY ch20     SYSTEM "ch20-errors.xml">
 <!ENTITY ch21     SYSTEM "ch21-systems.xml">
@@ -134,7 +133,6 @@
   &ch16;
   &ch17;
   &ch18;
-  &ch18a;
   &ch19;
   &ch20;
   &ch21;

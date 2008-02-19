@@ -51,7 +51,6 @@ chapters = [
  , ch "monadcase" "Programming with monads" Unpublished
  , ch "monadtrans" "Monad transformers" Unpublished
  , ch "parsec" "The Parsec parsing library" Unpublished
- , ch "applicative" "Further adventures in parsing" Unpublished
  , ch "ffi" "The foreign function interface" Unpublished
  , ch "errors" "Error handling" Unpublished
  , ch "systems" "Systems programming" Unpublished
