@@ -112,8 +112,12 @@
       In the <literal>PodDB</literal> module, we have defined
       functions to connect to the database, create the needed database
       tables, add data to the database, query the database, and remove
-      data from the database.
+      data from the database.  Here is an example &ghci; session
+      demonstrating interacting with the database.  It will create a
+      database file named <literal>poddbtest.db</literal> in the
+      current working directory and add a podcast and an episode to it.
     </para>
+    &PodDB.ghci:all;
   </sect1>
 
     

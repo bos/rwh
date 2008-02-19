@@ -1,0 +1,11 @@
+--# all
+:l PodDB.hs
+dbh <- connect "poddbtest.db"
+:t dbh
+getTables dbh
+pc <- addPodcast dbh (Podcast {castId=0, castURL="http://www.example.com/foo.xml"})
+getPodcasts dbh
+addEpisode dbh (Episode {epId = 0, epCast = pc, epURL = "http://www.example.com/foo.mp3", epDone = False})
+getPodcastEpisodes dbh pc
+commit dbh
+disconnect dbh
