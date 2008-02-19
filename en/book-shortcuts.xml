@@ -84,6 +84,7 @@
 <!ENTITY do "<literal>do</literal>">
 <!ENTITY elem "<literal>elem</literal>">
 <!ENTITY emdash "&#8212;">
+<!ENTITY error "<function>error</function>">
 <!ENTITY execute "<literal>execute</literal>">
 <!ENTITY executeMany "<literal>executeMany</literal>">
 <!ENTITY fail "<function>fail</function>">

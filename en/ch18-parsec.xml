@@ -472,6 +472,17 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 ["Haskell Caps","15"]
     </screen>
   </sect1>
+
+  <sect1>
+    <title>Parsec and MonadPlus</title>
+
+    <para>Parsec's <type>GenParser</type> monad is an instance of the
+      <type>MonadPlus</type> typeclass that we introduced in
+	<xref linkend="monadcase.monadplus"/>.  The value
+      <code>mzero</code> represents a parse failure, while
+      <function>mplus</function> combines two alternative parses into
+      one, using <function>(&lt;|>)</function>.</para>
+  </sect1>
 </chapter>
  
 

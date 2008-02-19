@@ -185,7 +185,7 @@
       many common programming patterns have a monadic structure.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="monads.class">
     <title>The Monad typeclass</title>
 
     <para id="x_wW">We can capture the notions of chaining and injection, and
@@ -244,7 +244,7 @@
 
     &Maybe.hs:fail;
 
-    <warning>
+    <warning id="monads.monad.fail">
       <title>Beware of fail</title>
 
       <para id="x_FX">Many <code>Monad</code> instances don't override the

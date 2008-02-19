@@ -1,3 +1,4 @@
+import Control.Monad (ap, liftM2)
 import Text.ParserCombinators.Parsec
 import Numeric (readHex)
 
@@ -13,6 +14,16 @@ p_pair = do
   value <- optionMaybe (char '=' >> many p_char)
   return (name, value)
 {-- /snippet p_pair --}
+
+{-- snippet p_pair_app1 --}
+p_pair_app1 =
+    liftM2 (,) (many1 p_char) (optionMaybe (char '=' >> many p_char))
+{-- /snippet p_pair_app1 --}
+
+{-- snippet p_pair_app2 --}
+p_pair_app2 =
+    (,) `fmap` many1 p_char `ap` optionMaybe (char '=' >> many p_char)
+{-- /snippet p_pair_app2 --}
 
 {-- snippet p_char --}
 p_char :: CharParser () Char

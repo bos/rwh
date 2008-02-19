@@ -125,7 +125,7 @@
 
   </sect1>
 
-  <sect1>
+  <sect1 id="monadcase.monadplus">
     <title>Looking for alternatives</title>
 
     <para>Here's a simple representation of a person's phone
@@ -161,8 +161,8 @@
     &VCard.hs:MonadPlus;
 
     <para>The value <code>mzero</code> represents an empty result,
-      while <function>mplus</function> combines two results.  Here are
-      the standard definitions of <code>mzero</code> and
+      while <function>mplus</function> combines two results into one.
+      Here are the standard definitions of <code>mzero</code> and
       <function>mplus</function> for <type>Maybe</type> and
       lists.</para>
 
@@ -197,6 +197,82 @@
       is <type>Maybe</type>; all results, if our result type is a
       list; or something of appropriate for some other exotic instance
       of <type>MonadPlus</type>.</para>
+
+    <sect2>
+      <title>The name mplus does not imply addition</title>
+
+      <para>Even though the <function>mplus</function> function
+	contains the text <quote>plus</quote>, you should not think of
+	it as necessarily implying that we're trying to add two
+	values.</para>
+
+      <para>Depending on the monad we're working in,
+	<function>mplus</function> <quote>may</quote> implement an
+	operation that looks like addition.  For example,
+	<function>mplus</function> in the list monad is implemented as
+	the <function>(++)</function> operator.</para>
+
+      &monadPlus.ghci:list.mplus;
+
+      <para>However, if we switch to another monad, the obvious
+	similarity to addition falls away.</para>
+
+      &monadPlus.ghci:maybe.mplus;
+
+    </sect2>
+
+    <sect2>
+      <title>Rules for working with MonadPlus</title>
+
+      <para>Instances of the <type>MonadPlus</type> typeclass must
+	follow a few  simple rules, in addition to the usual monad
+	rules.</para>
+
+      <para>An instance must <emphasis>short circuit</emphasis> if
+	<code>mzero</code> appears on the left of a bind expression.
+	In other words, an expression <code>mzero &gt;&gt;= f</code>
+	must evaluate to the same result as <code>mzero</code>
+	alone.</para>
+
+      &MonadPlus.hs:shortcircuitLeft;
+
+      <para>An instance must short circuit if <code>mzero</code>
+	appears on the <emphasis>right</emphasis> of a sequence
+	expression.</para>
+
+      &MonadPlus.hs:shortcircuitRight;
+
+    </sect2>
+
+    <sect2>
+      <title>Failing safely with MonadPlus</title>
+
+      <para>When we introduced the &fail; function in <xref
+	  linkend="monads.class"/>, we took pains to warn against its
+	use: in many monads, it's implemented as a call to &error;,
+	which has disastrous consequences.</para>
+
+      <para>The <type>MonadPlus</type> typeclass gives us a gentler
+	way to fail a computation, without &fail; or &error; blowing
+	up in our faces.  The rules that we introduced above allow us
+	to introduce a <code>mzero</code> into our code wherever we
+	need to, and computation will short circuit at that
+	point.</para>
+
+      <para>In the <code>Control.Monad</code> module, the standard
+	function <function>guard</function> packages up this idea in a
+	convenient form.</para>
+
+      &MonadPlus.hs:guard;
+
+      <para>As a simple example, here's a function that takes a number
+	<varname>x</varname> and computes its value modulo some other
+	number <varname>n</varname>.  If the result is zero, it
+	returns <varname>x</varname>, otherwise the current monad's
+	<code>mzero</code>.</para>
+
+      &MonadPlus.hs:zeroMod;
+    </sect2>
   </sect1>
 </chapter>
 

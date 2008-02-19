@@ -547,7 +547,7 @@
 	where ordering isn't used.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="binary.fmap">
       <title>Functors as operators</title>
 
       <para id="x_MS">Quite often, you'll see <function>fmap</function> called
