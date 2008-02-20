@@ -1,28 +1,38 @@
-module JSONOutput
+module SimpleJSON
     (
-      jvalue
+      JValue(..)
+    , jvalue
     ) where
 
-import qualified Data.Map as M
 import Prettify (Doc, (<>), (<+>), char, double, enclose, encloseC, fsep, hcat, punctuate, text)
+-- import Text.PrettyPrint.HughesPJ (Doc, (<>), (<+>), char, double, fsep, hcat, punctuate, text)
 import Numeric (showHex)
-import JSON (JValue(..), fromJArray, fromJObject)
-import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Bits (shiftR, (.&.))
-import Data.ByteString.Internal (c2w)
-import qualified JSONBuilder as B
 
-import JSON
-import Prettify
+{-- snippet JValue --}
+data JValue = JString String
+            | JNumber Double
+            | JBool Bool
+            | JNull
+            | JObject [(String, JValue)]
+            | JArray [JValue]
+              deriving (Eq, Ord, Show)
+{-- /snippet JValue --}
 
 jvalue :: JValue -> Doc
 jvalue (JString s) = string s
-jvalue (JNumber n) = double (fromRational n)
-jvalue (JObject o) = series (encloseC '{' '}') field (fromJObject o)
-jvalue (JArray a) = series (encloseC '(' ')') jvalue (fromJArray a)
+jvalue (JNumber n) = double n
+jvalue (JObject o) = series (encloseC '{' '}') field o
+jvalue (JArray a) = series (encloseC '(' ')') jvalue a
 jvalue (JBool True) = text "true"
 jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
+
+{-- snippet getString --}
+getString :: JValue -> Maybe String
+getString (JString s) = Just s
+getString _ = Nothing
+{-- /snippet getString --}
 
 unicode :: Char -> Doc
 unicode c | d < 0x10000 = ch d
@@ -36,16 +46,23 @@ unicode c | d < 0x10000 = ch d
 
 string :: String -> Doc
 string = encloseC '\"' '\"' . hcat . map one
-    where one c = case M.lookup c specials of
+    where one c = case lookup c specials of
                     Just r -> text r
                     Nothing | c < ' ' || c > '\xff' -> unicode c
                             | otherwise             -> char c
-          specials = M.fromList [
-            ('\b', "\\b"), ('\n', "\\n"), ('\f', "\\f"), ('\r', "\\r"),
-            ('\t', "\\t"), ('\\', "\\\\"), ('\"', "\\\""), ('/', "\\/")]
+          specials = zipWith ch "\b\n\f\r\t\\\"/" "bnrt\\\"/"
+          ch a b = (a, '\\':[b])
 
 series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
 series open item = open . fsep . punctuate (char ',') . map item
 
 field :: (String, JValue) -> Doc
 field (k,v) = string k <> char ':' <+> jvalue v
+
+-- Not present in Text.PrettyPrint.HughesPJ.
+
+--enclose :: Doc -> Doc -> Doc -> Doc
+--enclose left right x = left <> x <> right
+
+--encloseC :: Char -> Char -> Doc -> Doc
+--encloseC left right x = char left <> x <> char right

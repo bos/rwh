@@ -1,0 +1,10 @@
+--# load
+:load SimpleJSON
+JString "foo"
+JNumber 2.7
+:type JBool True
+
+--# reload
+:reload SimpleJSON
+getString (JString "hello")
+getString (JNumber 3)

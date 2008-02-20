@@ -21,8 +21,7 @@ module Prettify
     , pretty
     ) where
 
-import Data.Monoid
-import Debug.Trace
+import Data.Monoid (Monoid(..))
 
 data Doc = Empty
          | Char Char

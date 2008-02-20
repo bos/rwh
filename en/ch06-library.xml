@@ -3,7 +3,74 @@
 <chapter id="library" revision="unpublished">
   <title>Writing a Library</title>
 
-  <remark>FIXME</remark>
+  <para>In this chapter, we'll take a look at developing a small, but
+    complete, Haskell library.</para>
+
+  <sect1>
+    <title>A whirlwind tour of the JSON language</title>
+
+    <para>The JSON (JavaScript Object Notation) language is a small,
+      simple representation for structured data.  Its most common use
+      is to transfer data from a web service to a browser-based
+      JavaScript application.</para>
+
+    <para>JSON supports four basic types of value: strings, numbers,
+      booleans, and a special value named <code>null</code>.</para>
+
+    <programlisting>"a string"
+12345
+true
+null</programlisting>
+
+    <para>The language also allows for the construction of compound
+      values.  Its compound types are the array, an ordered sequence
+      of values; and the struct, an unordered collection of name/value
+      pairs.  The values in a struct or array can be of any
+      type.</para>
+
+    <programlisting>[-3.14, true, null, "a string"]
+{"numbers": [1,2,3,4,5], "useful": false}</programlisting>
+  </sect1>
+
+  <sect1>
+    <title>Representing JSON data in Haskell</title>
+
+    <para>To work with JSON data in Haskell, we use an algebraic data
+      type to represent the range of possible JSON types.  In a text
+      editor, create a file named <code>SimpleJSON.hs</code>, and
+      insert the following contents.</para>
+
+    &SimpleJSON.hs:JValue;
+
+    <para>Here, we associate each JSON type with a distinct
+      constructor. Some of these constructors have parameters: if we
+      want to construct a JSON string, we must provide a
+      <type>String</type> value as an argument to the
+      <code>JString</code> constructor.</para>
+
+    <para>To start experimenting with this code, save the file
+      <code>SimpleJSON.hs</code> in your editor, switch to a &ghci;
+      window, and load the file into &ghci;.</para>
+
+    &simplejson.ghci:load;
+
+    <para>We can see how to use a constructor to take a normal Haskell
+      value and turn it into a JSON value.  To do the reverse, we use
+      pattern matching.  Here's a function that we can add to
+      <code>SimpleJSON.hs</code> that will extract a string from a
+      JSON value for us.  If the JSON value actually contains a
+      string, our function will wrap the string with the
+      <code>Just</code> constructor, otherwise it will return
+      <code>Nothing</code>.</para>
+
+    &SimpleJSON.hs:getString;
+
+    <para>If we save the source file again, we can reload it in
+      &ghci; and try the new definition.</para>
+
+    &simplejson.ghci:reload;
+
+  </sect1>
 </chapter>
 
 <!--
