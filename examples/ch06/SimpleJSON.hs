@@ -1,13 +1,16 @@
+{-- snippet module --}
 module SimpleJSON
     (
       JValue(..)
-    , jvalue
+    , getString
+    , getInt
+    , getDouble
+    , getBool
+    , getObject
+    , getArray
+    , isNull
     ) where
-
-import Prettify (Doc, (<>), (<+>), char, double, enclose, encloseC, fsep, hcat, punctuate, text)
--- import Text.PrettyPrint.HughesPJ (Doc, (<>), (<+>), char, double, fsep, hcat, punctuate, text)
-import Numeric (showHex)
-import Data.Bits (shiftR, (.&.))
+{-- /snippet module --}
 
 {-- snippet JValue --}
 data JValue = JString String
@@ -19,50 +22,27 @@ data JValue = JString String
               deriving (Eq, Ord, Show)
 {-- /snippet JValue --}
 
-jvalue :: JValue -> Doc
-jvalue (JString s) = string s
-jvalue (JNumber n) = double n
-jvalue (JObject o) = series (encloseC '{' '}') field o
-jvalue (JArray a) = series (encloseC '(' ')') jvalue a
-jvalue (JBool True) = text "true"
-jvalue (JBool False) = text "false"
-jvalue JNull = text "null"
-
 {-- snippet getString --}
 getString :: JValue -> Maybe String
 getString (JString s) = Just s
 getString _ = Nothing
 {-- /snippet getString --}
 
-unicode :: Char -> Doc
-unicode c | d < 0x10000 = ch d
-          | otherwise = astral (d - 0x10000)
-    where d = fromEnum c
-          ch x = text "\\u" <> text (replicate (4 - length h) '0') <> text h
-              where h = showHex x ""
-          astral n = ch (a + 0xd800) <> ch (b + 0xdc00)
-              where a = (n `shiftR` 10) .&. 0x3ff
-                    b = n .&. 0x3ff
+{-- snippet getters --}
+getInt (JNumber n) = Just (truncate n)
+getInt _ = Nothing
 
-string :: String -> Doc
-string = encloseC '\"' '\"' . hcat . map one
-    where one c = case lookup c specials of
-                    Just r -> text r
-                    Nothing | c < ' ' || c > '\xff' -> unicode c
-                            | otherwise             -> char c
-          specials = zipWith ch "\b\n\f\r\t\\\"/" "bnrt\\\"/"
-          ch a b = (a, '\\':[b])
+getDouble (JNumber n) = Just n
+getDouble _ = Nothing
 
-series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
-series open item = open . fsep . punctuate (char ',') . map item
+getBool (JBool b) = Just b
+getBool _ = Nothing
 
-field :: (String, JValue) -> Doc
-field (k,v) = string k <> char ':' <+> jvalue v
+getObject (JObject o) = Just o
+getObject _ = Nothing
 
--- Not present in Text.PrettyPrint.HughesPJ.
+getArray (JArray a) = Just a
+getArray _ = Nothing
 
---enclose :: Doc -> Doc -> Doc -> Doc
---enclose left right x = left <> x <> right
-
---encloseC :: Char -> Char -> Doc -> Doc
---encloseC left right x = char left <> x <> char right
+isNull v = v == JNull
+{-- /snippet getters --}

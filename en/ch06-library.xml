@@ -65,11 +65,63 @@ null</programlisting>
 
     &SimpleJSON.hs:getString;
 
-    <para>If we save the source file again, we can reload it in
+    <para>If we save the modified source file, we can reload it in
       &ghci; and try the new definition.</para>
 
     &simplejson.ghci:reload;
 
+    <para>A few more accessor functions, and we've got a small body of
+      code to work with.</para>
+
+    &SimpleJSON.hs:getters;
+
+  </sect1>
+
+  <sect1>
+    <title>The anatomy of a Haskell module</title>
+
+    <para>A Haskell source file contains a single
+      <emphasis>module</emphasis>.  A module lets us determine which
+      namesinside the module are accessible from other modules.</para>
+
+    <para>Normally, a source file begins with a module
+      declaration.</para>
+
+    &SimpleJSON.hs:module;
+
+    <para>The word <code>module</code> is reserved.  It is followed by
+      the name of the module.  By convention, the source file has the
+      same <quote>base name</quote> as the module, which is why our
+      file <code>SimpleJSON.hs</code> contains the module
+      <code>SimpleJSON</code>.</para>
+
+    <para>Following the module name is a list of
+      <emphasis>exports</emphasis>, enclosed in parentheses.  The
+      <code>where</code> keyword indicates that the body of the module
+      follows.</para>
+
+    <para>The list of exports indicates which names in this module are
+      visible from other modules.  This lets us keep private code
+      hidden from the outside world. The special notation
+      <code>(..)</code> that follows the name <code>JValue</code>
+      indicates that we are exporting both the type and all of its
+      constructors.</para>
+
+    <para>It might seem strange that we can export a type's name, but
+      not its constructors.  The ability to do this is important: it
+      lets us hide the details of a type from its users, making the
+      type <emphasis>abstract</emphasis>.  If we can't see a type's
+      constructors, we can't pattern match against a value of that
+      type, nor can we construct a new value of that type.  Later in
+      this chapter, we'll discuss some situations in which we might
+      want to make a type abstract.</para>
+
+    <para>If we omit the list of exports (including the parentheses)
+      from a module declaration, every name in the module will be
+      exported: <code>module SimpleJSON where ...</code>.  To export
+      no names at all (only infrequently useful), we write an empty
+      list using a pair of parentheses: <code>module SimpleJSON ()
+	where ...</code>.</para>
   </sect1>
 </chapter>
 
