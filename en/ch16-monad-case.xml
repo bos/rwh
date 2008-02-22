@@ -6,19 +6,19 @@
   <sect1 id="monadcase.urlencoded">
     <title>Golfing practice: association lists</title>
 
-    <para>Web clients and servers often pass information around as a
+    <para id="x_ki">Web clients and servers often pass information around as a
       simple textual list of key-value pairs.</para>
 
     <programlisting>name=Attila+%42The+Hun%42&amp;occupation=Khan</programlisting>
 
-    <para>The encoding is named
+    <para id="x_li">The encoding is named
       <code>application/x-www-form-urlencoded</code>, and it's easy to
       understand.  Each key-value pair is separated by an
       <quote><code>&amp;</code></quote> character.  Within a pair, a
       key is a series of characters, followed by an
       <quote><code>=</code></quote>, followed by a value.</para>
 
-    <para>We can obviously represent a key as a <type>String</type>,
+    <para id="x_mi">We can obviously represent a key as a <type>String</type>,
       but the HTTP specification is not clear about whether a key must
       be followed by a value.  We can capture this ambiguity by
       representing a value as a <type>Maybe String</type>.  If we use
@@ -28,7 +28,7 @@
       between <quote>no value</quote> and <quote>empty
 	value</quote>.</para>
 
-    <para>Haskell programmers use the name <emphasis>association
+    <para id="x_ni">Haskell programmers use the name <emphasis>association
 	list</emphasis> for the type <type>[(a, b)]</type>, where we
       can think of each element as an association between a key and a
       value.  The name originates in the Lisp community, where it's
@@ -38,7 +38,7 @@
 
     &MovieReview.hs:attila;
 
-    <para>In <xref linkend="applicative.urlencoded"/>, we'll parse an
+    <para id="x_oi">In <xref linkend="applicative.urlencoded"/>, we'll parse an
       <code>application/x-www-form-urlencoded</code> string, and
       represent the result as an alist of <type>[(String, Maybe
 	String)]</type>.  Let's say we want to use one of these alists
@@ -46,24 +46,24 @@
 
     &MovieReview.hs:MovieReview;
 
-    <para>We'll begin by belabouring the obvious with a naive
+    <para id="x_pi">We'll begin by belabouring the obvious with a naive
       function.</para>
 
     &MovieReview.hs:simpleReview;
 
-    <para>It only returns a <type>MovieReview</type> if the alist
+    <para id="x_qi">It only returns a <type>MovieReview</type> if the alist
       contains all of the necessary values, and they're all non-empty
       strings.  However, the fact that it validates its inputs is its
       only merit: it suffers badly from the <quote>staircasing</quote>
       that we've learned to be wary of, and it knows the intimate
       details of the representation of an alist.</para>
 
-    <para>Since we're now well acquainted with the <type>Maybe</type>
+    <para id="x_ri">Since we're now well acquainted with the <type>Maybe</type>
       monad, we can tidy up the staircasing.</para>
 
     &MovieReview.hs:maybeReview;
 
-    <para>Although this is much tidier, we're still repeating
+    <para id="x_si">Although this is much tidier, we're still repeating
       ourselves.  We can take advantage of the fact that the
       <code>MovieReview</code> constructor acts as a normal, pure
       function by <emphasis>lifting</emphasis> it into the monad, as
@@ -75,21 +75,21 @@
   <sect1 id="monadcase.ap">
     <title>Generalised lifting</title>
 
-    <para>Although using <function>liftM3</function> tidies up our
+    <para id="x_ti">Although using <function>liftM3</function> tidies up our
       code, we can't use a <function>liftM</function>-family function
       to solve this sort of problem in general, because they're only
       defined up to <function>liftM5</function>.  If we had a
       constructor or pure function that took, say, ten parameters, you
       might think we'd be out of luck.</para>
 
-    <para>Of course, our toolbox isn't yet empty.  In
+    <para id="x_ui">Of course, our toolbox isn't yet empty.  In
       <code>Control.Monad</code>, there's a function named
       <function>ap</function> with a slightly odd type
       signature.</para>
 
     &ap.ghci:ap;
 
-    <para>You might wonder who would put a single-argument pure
+    <para id="x_vi">You might wonder who would put a single-argument pure
       function inside a monad, and why.  Recall, however, that
       <emphasis>all</emphasis> Haskell functions really take only one
       argument, and you'll begin to see how this might relate to the
@@ -97,7 +97,7 @@
 
     &ap.ghci:MovieReview;
 
-    <para>We can just as easily write that type as <type>String -&gt;
+    <para id="x_wi">We can just as easily write that type as <type>String -&gt;
 	(String -&gt; (String -&gt; MovieReview))</type>.  If we use
       plain old <function>liftM</function> to lift
       <code>MovieReview</code> into the <code>Maybe</code> monad,
@@ -111,12 +111,12 @@
 
     &MovieReview.hs:apReview;
 
-    <para>We can chain applications of <function>ap</function> like
+    <para id="x_xi">We can chain applications of <function>ap</function> like
       this as many times as we need to, and thereby to avoid the hard
       limit of 5 on the <function>liftM</function> family of
       functions.</para>
 
-    <para>Another helpful way to look at <function>ap</function> is
+    <para id="x_yi">Another helpful way to look at <function>ap</function> is
       that it's the monadic equivalent of the familiar
       <function>($)</function> operator.  We can see this clearly when
       we compare the type signatures of the two functions.</para>
@@ -128,39 +128,39 @@
   <sect1 id="monadcase.monadplus">
     <title>Looking for alternatives</title>
 
-    <para>Here's a simple representation of a person's phone
+    <para id="x_zi">Here's a simple representation of a person's phone
       numbers.</para>
 
     &VCard.hs:numbers;
 
-    <para>Suppose we want to get in touch with someone to make a
+    <para id="x_Aj">Suppose we want to get in touch with someone to make a
       personal call.  We don't want their business number, and we'd
       prefer to use their home number (if they have one) instead of
       their mobile number, because the call will be cheaper.</para>
 
     &VCard.hs:personalPhone;
 
-    <para>Of course, if we use <type>Maybe</type> as the result type,
+    <para id="x_Bj">Of course, if we use <type>Maybe</type> as the result type,
       we can't accommodate the possibility that someone might have
       more than one number that meet our criteria.  For that, we
       switch to a list.</para>
 
     &VCard.hs:businessPhones;
 
-    <para>Notice that these two functions structure their &case;
+    <para id="x_Cj">Notice that these two functions structure their &case;
       expressions similarly: one alternative handles the case where
       the first lookup returns an empty result, while the other
       handles the non-empty case.</para>
 
     &vcard.ghci:simple;
     
-    <para>Haskell's <code>Control.Monad</code> module defines a
+    <para id="x_Dj">Haskell's <code>Control.Monad</code> module defines a
       typeclass, <type>MonadPlus</type>, that lets us abstract the
       common pattern out of our &case; expressions.</para>
 
     &VCard.hs:MonadPlus;
 
-    <para>The value <code>mzero</code> represents an empty result,
+    <para id="x_Ej">The value <code>mzero</code> represents an empty result,
       while <function>mplus</function> combines two results into one.
       Here are the standard definitions of <code>mzero</code> and
       <function>mplus</function> for <type>Maybe</type> and
@@ -168,18 +168,18 @@
 
     &VCard.hs:instances;
 
-    <para>We can now use <function>mplus</function> to get rid of our
+    <para id="x_Fj">We can now use <function>mplus</function> to get rid of our
       &case; expressions entirely.</para>
 
     &VCard.hs:caseless;
 
-    <para>In these functions, because we know that
+    <para id="x_Gj">In these functions, because we know that
       <function>lookup</function> returns a value of type
       <type>Maybe</type>, and <function>filter</function> returns a
       list, it's obvious which version of <function>mplus</function>
       is going to be used in each case.</para>
 
-    <para>What's more interesting is that we can use
+    <para id="x_Hj">What's more interesting is that we can use
       <code>mzero</code> and <function>mplus</function> to write
       functions that will be useful for <emphasis>any</emphasis>
       <type>MonadPlus</type> instance.  As an example, here's the
@@ -188,12 +188,12 @@
 
     &VCard.hs:lookup;
 
-    <para>We can easily generalise the result type to any instance of
+    <para id="x_Ij">We can easily generalise the result type to any instance of
       <type>MonadPlus</type> as follows.</para>
 
     &VCard.hs:lookupM;
 
-    <para>This lets us get either no result or one, if our result type
+    <para id="x_Jj">This lets us get either no result or one, if our result type
       is <type>Maybe</type>; all results, if our result type is a
       list; or something of appropriate for some other exotic instance
       of <type>MonadPlus</type>.</para>
@@ -201,12 +201,12 @@
     <sect2>
       <title>The name mplus does not imply addition</title>
 
-      <para>Even though the <function>mplus</function> function
+      <para id="x_Kj">Even though the <function>mplus</function> function
 	contains the text <quote>plus</quote>, you should not think of
 	it as necessarily implying that we're trying to add two
 	values.</para>
 
-      <para>Depending on the monad we're working in,
+      <para id="x_Lj">Depending on the monad we're working in,
 	<function>mplus</function> <quote>may</quote> implement an
 	operation that looks like addition.  For example,
 	<function>mplus</function> in the list monad is implemented as
@@ -214,7 +214,7 @@
 
       &monadPlus.ghci:list.mplus;
 
-      <para>However, if we switch to another monad, the obvious
+      <para id="x_Mj">However, if we switch to another monad, the obvious
 	similarity to addition falls away.</para>
 
       &monadPlus.ghci:maybe.mplus;
@@ -224,11 +224,11 @@
     <sect2>
       <title>Rules for working with MonadPlus</title>
 
-      <para>Instances of the <type>MonadPlus</type> typeclass must
+      <para id="x_Nj">Instances of the <type>MonadPlus</type> typeclass must
 	follow a few  simple rules, in addition to the usual monad
 	rules.</para>
 
-      <para>An instance must <emphasis>short circuit</emphasis> if
+      <para id="x_Oj">An instance must <emphasis>short circuit</emphasis> if
 	<code>mzero</code> appears on the left of a bind expression.
 	In other words, an expression <code>mzero &gt;&gt;= f</code>
 	must evaluate to the same result as <code>mzero</code>
@@ -236,7 +236,7 @@
 
       &MonadPlus.hs:shortcircuitLeft;
 
-      <para>An instance must short circuit if <code>mzero</code>
+      <para id="x_Pj">An instance must short circuit if <code>mzero</code>
 	appears on the <emphasis>right</emphasis> of a sequence
 	expression.</para>
 
@@ -247,25 +247,25 @@
     <sect2>
       <title>Failing safely with MonadPlus</title>
 
-      <para>When we introduced the &fail; function in <xref
+      <para id="x_Qj">When we introduced the &fail; function in <xref
 	  linkend="monads.class"/>, we took pains to warn against its
 	use: in many monads, it's implemented as a call to &error;,
 	which has disastrous consequences.</para>
 
-      <para>The <type>MonadPlus</type> typeclass gives us a gentler
+      <para id="x_Rj">The <type>MonadPlus</type> typeclass gives us a gentler
 	way to fail a computation, without &fail; or &error; blowing
 	up in our faces.  The rules that we introduced above allow us
 	to introduce a <code>mzero</code> into our code wherever we
 	need to, and computation will short circuit at that
 	point.</para>
 
-      <para>In the <code>Control.Monad</code> module, the standard
+      <para id="x_Sj">In the <code>Control.Monad</code> module, the standard
 	function <function>guard</function> packages up this idea in a
 	convenient form.</para>
 
       &MonadPlus.hs:guard;
 
-      <para>As a simple example, here's a function that takes a number
+      <para id="x_Tj">As a simple example, here's a function that takes a number
 	<varname>x</varname> and computes its value modulo some other
 	number <varname>n</varname>.  If the result is zero, it
 	returns <varname>x</varname>, otherwise the current monad's

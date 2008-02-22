@@ -2,19 +2,19 @@
 
 <chapter id="hs.wc" revision="unpublished">
   <title>Extended Example: Web Client Programming</title>
-  <para>
+  <para id="x_Xk">
     By this point, you've seen how to interact with a database, parse
     things, and handle errors.  Let's now take this a step farther and
     introduce a web client library to the mix.
   </para>
-  <para>
+  <para id="x_Yk">
     We'll develop a real application in this chapter: a podcast
     downloader, or "podcatcher".  The idea of a podcatcher is simple.
     It is given a list of URLs to process.  Each URL provides an XML
     file in the RSS format.  Inside this XML file, we'll find
     references to URLs for audio files to download.
   </para>
-  <para>
+  <para id="x_Zk">
     Podcatchers usually let the user subscribe to podcasts by adding
     RSS URLs to their configuration.  Then, the user can periodically
     run an update operation.  The podcatcher will download the RSS
@@ -23,35 +23,35 @@
     this user.
   </para>
   <tip>
-    <para>Users often call the RSS document a podcast or the
+    <para id="x_ak">Users often call the RSS document a podcast or the
     podcast feed, and each individual audio file an episode.
     </para>
   </tip>
-  <para>
+  <para id="x_bk">
     To make this happen, we need to have several things:
   </para>
   <itemizedlist>
-    <listitem><para>An HTTP client library to download files</para>
+    <listitem><para id="x_ck">An HTTP client library to download files</para>
     </listitem>
-    <listitem><para>An XML parser</para>
+    <listitem><para id="x_dk">An XML parser</para>
     </listitem>
-    <listitem><para>A way to specify and persistently store 
+    <listitem><para id="x_ek">A way to specify and persistently store 
         which podcasts we're interested in</para>
     </listitem>
-    <listitem><para>A way to persistently store which podcast episodes
+    <listitem><para id="x_fk">A way to persistently store which podcast episodes
     we've already downloaded
       </para>
     </listitem>
   </itemizedlist>
 
-  <para>
+  <para id="x_gk">
     The last two items can be accomodated via a database we'll set up
     using HDBC.  The first two can be accomodated via other library
     modules we'll introduce in this chapter.
   </para>
 
   <tip>
-    <para>The code in this chapter was written specifically for this
+    <para id="x_hk">The code in this chapter was written specifically for this
     book, but is based off code written for hpodder, an existing
     podcatcher written in Haskell.  hpodder has many more features
     than the examples presented here, which make it too long and
@@ -61,7 +61,7 @@
     </para>
   </tip>
 
-  <para>
+  <para id="x_ik">
     We'll write the code for this chapter in pieces.  Each piece will
     be its own Haskell module.  You'll be able to play with each piece
     by itself in &ghci;.  At the end, we'll write the final code that
@@ -71,7 +71,7 @@
 
   <sect1 id="hs.wc.types">
     <title>Basic Types</title>
-    <para>
+    <para id="x_jk">
       The first thing to do is have some idea of the basic information
       that will be important to the application.  This will generally
       be information about the podcasts the user is interested in,
@@ -81,7 +81,7 @@
       it first.
     </para>
     &PodTypes.hs:all;
-    <para>
+    <para id="x_kk">
       We'll be storing this information in a database.  Having a
       unique identifier for both a podcast and an episode makes it
       easy to find which episodes belong to a particular podcast, load
@@ -92,7 +92,7 @@
   
   <sect1 id="hs.wc.db">
     <title>The Database</title>
-    <para>
+    <para id="x_lk">
       Next, we'll write the code to make possible persistent storage
       in a database.  We'll primarily be interested in moving data
       between the Haskell structures we defined in
@@ -100,7 +100,7 @@
       the first time the user runs the program, we'll need to create
       the database tables that we'll use to store our data.
     </para>
-    <para>
+    <para id="x_mk">
       We'll use HDBC (see <xref linkend="databases"/>) to interact
       with a Sqlite database.  Sqlite is lightweight and
       self-contained, which makes is perfect for this project.  For

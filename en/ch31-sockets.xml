@@ -61,12 +61,12 @@
         we present a Haskell implementation of a client here.
       </para>
       &syslogclient.hs:all;
-      <para>
+      <para id="x_nk">
         This also requires <literal>SyslogTypes.hs</literal>, shown
         here:
       </para>
       &SyslogTypes.hs:all;
-      <para>
+      <para id="x_ok">
         With &ghci;, you can send a message to a local syslog server.
         You can use either the example syslog server presented in this
         chapter, or an existing syslog server like you would typically
@@ -75,7 +75,7 @@
         before your vendor-supplied syslog daemon will display
         received messages.
       </para>
-      <para>
+      <para id="x_pk">
         If you were sending a message to a syslog server on the local
         system, you might use a command such as this:
       </para>
@@ -95,7 +95,7 @@
         sending back a response.
       </para>
       &syslogserver.hs:all;
-      <para>
+      <para id="x_qk">
         You can run this in &ghci;.  A call to <literal>serveLog
         "1514" plainHandler</literal> will set up a UDP server on port
         1514 that will use <literal>plainHandler</literal> to print
@@ -103,7 +103,7 @@
         terminate the program.
       </para>
       <note>
-        <para>Getting <literal>bind: permission denied</literal> when
+        <para id="x_rk">Getting <literal>bind: permission denied</literal> when
         testing this?  Make sure you use a port number greater than
         1024.  Some operating systems only allow the
         <literal>root</literal> user to bind to ports less than 1024.
@@ -141,7 +141,7 @@
     </para>
     <sect2 id="sockets.tcp.streams">
       <title>Handling Multiple TCP Streams</title>
-      <para>
+      <para id="x_sk">
         With TCP, connections are stateful.  That means that there is
         a dedicated logical "channel" between a client and server,
         rather than just one-off packets as with UDP.  This makes
@@ -149,7 +149,7 @@
         always will want to be able to handle more than one TCP
         connection at once.  How then to do this?
       </para>
-      <para>
+      <para id="x_tk">
         On the server side, you will first create a socket and bind to
         a port, just like UDP.  Instead of repeatedly listening for
         data from any location, your main loop will be around the
@@ -161,7 +161,7 @@
         <emphasis>child</emphasis> sockets to be used at once, each
         corresponding to a logical TCP conversation.
       </para>
-      <para>
+      <para id="x_uk">
         In Haskell, you will usually use <literal>forkIO</literal> to
         create a separate lightweight thread to handle each
         conversation with a child.  Haskell has an efficient internal
@@ -179,11 +179,11 @@
         Here's how we might write that.
       </para>
       &syslogtcpserver.hs:all;
-      <para>
+      <para id="x_vk">
         For our <literal>SyslogTypes</literal> implementation, see <xref
         linkend="sockets.udp.client"/>.
       </para>
-      <para>
+      <para id="x_wk">
         Let's look at this code.  Our main loop is in
         <literal>procRequests</literal>, where we loop forever waiting
         for new connections from clients.  The
@@ -194,7 +194,7 @@
         handle the data from that client.  This thread runs
         <literal>procMessages</literal>.
       </para>
-      <para>
+      <para id="x_xk">
         When dealing with TCP data, it's often convenient to convert a
         socket into a Haskell <literal>Handle</literal>.  We do so
         here, and explicitly set the buffering -- an important point
@@ -204,7 +204,7 @@
         because the remote end has closed the socket -- we output a
         message about that.
       </para>
-      <para>
+      <para id="x_yk">
         Since we may be handling multiple incoming messages at once,
         we need to ensure that we're not writing out multiple messages
         at once in the handler.  That could result in garbled output.
@@ -212,7 +212,7 @@
         write a simple <literal>handle</literal> function to handle
         that.
       </para>
-      <para>
+      <para id="x_zk">
         You can test this with the client we'll present next, or you
         can even use the <literal>telnet</literal> program to connect
         to this server.  Each line of text you send to it will be
@@ -226,7 +226,7 @@ Ok, modules loaded: Main.
 Loading package parsec-2.1.0.0 ... linking ... done.
 Loading package network-2.1.0.0 ... linking ... done.
       </screen>
-      <para>
+      <para id="x_Al">
         At this point, the server will begin listening for connections
         at port 10514.  It will not appear to be doing anything until
         a client connects.  We could use telnet to connect to the
@@ -242,7 +242,7 @@ Escape character is '^]'.
 <prompt>telnet&gt; </prompt><userinput>quit</userinput>
 Connection closed.
       </screen>
-      <para>
+      <para id="x_Bl">
         Meanwhile, in our other terminal running the TCP server,
         you'll see something like this:
       </para>
@@ -251,7 +251,7 @@ From 127.0.0.1:38790: syslogtcpserver.hs: client connnected
 From 127.0.0.1:38790: Test message
 From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
       </screen>
-      <para>
+      <para id="x_Cl">
         This shows that a client connected from port 38790 on the
         local machine (127.0.0.1).  After it connected, it sent one
         message, and disconnected.  When you are acting as a TCP
@@ -263,7 +263,7 @@ From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
 
     <sect2 id="hs.sockets.tcp.syslog.client">
       <title>TCP Syslog Client</title>
-      <para>
+      <para id="x_Dl">
         Now, let's write a client for our TCP syslog protocol.  This
         client will be similar to the UDP client, but there are a
         couple of changes.  First, since TCP is a streaming protocol,
@@ -280,7 +280,7 @@ From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
         message may contain the newline.  Here's our code:
       </para>
       &syslogtcpclient.hs:all;
-      <para>
+      <para id="x_El">
         We can try it out under &ghci;.  If you still have the TCP
         server running from earlier, your session might look something
         like this:
@@ -299,7 +299,7 @@ Loading package network-2.1.0.0 ... linking ... done.
 <prompt>ghci&gt; </prompt><userinput>syslog sl USER INFO "This is my TCP message again"</userinput>
 <prompt>ghci&gt; </prompt><userinput>closelog sl</userinput>
       </screen>
-      <para>
+      <para id="x_Fl">
         Over on the server, you'll see something like this:
       </para>
       <screen>
@@ -308,7 +308,7 @@ From 127.0.0.1:46319: &lt;9&gt;tcptest: This is my TCP message
 From 127.0.0.1:46319: &lt;9&gt;tcptest: This is my TCP message again
 From 127.0.0.1:46319: syslogtcpserver.hs: client disconnected
       </screen>
-      <para>
+      <para id="x_Gl">
         The <literal>&lt;9&gt;</literal> is the priority and facility
         code being sent along, just as it was with UDP.
       </para>

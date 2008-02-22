@@ -3,18 +3,18 @@
 <chapter id="library" revision="unpublished">
   <title>Writing a Library</title>
 
-  <para>In this chapter, we'll take a look at developing a small, but
+  <para id="x_Fi">In this chapter, we'll take a look at developing a small, but
     complete, Haskell library.</para>
 
   <sect1>
     <title>A whirlwind tour of the JSON language</title>
 
-    <para>The JSON (JavaScript Object Notation) language is a small,
+    <para id="x_Gi">The JSON (JavaScript Object Notation) language is a small,
       simple representation for structured data.  Its most common use
       is to transfer data from a web service to a browser-based
       JavaScript application.</para>
 
-    <para>JSON supports four basic types of value: strings, numbers,
+    <para id="x_Hi">JSON supports four basic types of value: strings, numbers,
       booleans, and a special value named <code>null</code>.</para>
 
     <programlisting>"a string"
@@ -22,7 +22,7 @@
 true
 null</programlisting>
 
-    <para>The language also allows for the construction of compound
+    <para id="x_Ii">The language also allows for the construction of compound
       values.  Its compound types are the array, an ordered sequence
       of values; and the struct, an unordered collection of name/value
       pairs.  The values in a struct or array can be of any
@@ -35,26 +35,26 @@ null</programlisting>
   <sect1>
     <title>Representing JSON data in Haskell</title>
 
-    <para>To work with JSON data in Haskell, we use an algebraic data
+    <para id="x_Ji">To work with JSON data in Haskell, we use an algebraic data
       type to represent the range of possible JSON types.  In a text
       editor, create a file named <filename>SimpleJSON.hs</filename>,
       and insert the following contents.</para>
 
     &SimpleJSON.hs:JValue;
 
-    <para>Here, we associate each JSON type with a distinct
+    <para id="x_Ki">Here, we associate each JSON type with a distinct
       constructor. Some of these constructors have parameters: if we
       want to construct a JSON string, we must provide a
       <type>String</type> value as an argument to the
       <code>JString</code> constructor.</para>
 
-    <para>To start experimenting with this code, save the file
+    <para id="x_Li">To start experimenting with this code, save the file
       <filename>SimpleJSON.hs</filename> in your editor, switch to a
       &ghci; window, and load the file into &ghci;.</para>
 
     &simplejson.ghci:load;
 
-    <para>We can see how to use a constructor to take a normal Haskell
+    <para id="x_Mi">We can see how to use a constructor to take a normal Haskell
       value and turn it into a JSON value.  To do the reverse, we use
       pattern matching.  Here's a function that we can add to
       <filename>SimpleJSON.hs</filename> that will extract a string
@@ -65,12 +65,12 @@ null</programlisting>
 
     &SimpleJSON.hs:getString;
 
-    <para>If we save the modified source file, we can reload it in
+    <para id="x_Ni">If we save the modified source file, we can reload it in
       &ghci; and try the new definition.</para>
 
     &simplejson.ghci:reload;
 
-    <para>A few more accessor functions, and we've got a small body of
+    <para id="x_Oi">A few more accessor functions, and we've got a small body of
       code to work with.</para>
 
     &SimpleJSON.hs:getters;
@@ -80,16 +80,16 @@ null</programlisting>
   <sect1>
     <title>The anatomy of a Haskell module</title>
 
-    <para>A Haskell source file contains a single
+    <para id="x_Pi">A Haskell source file contains a single
       <emphasis>module</emphasis>.  A module lets us determine which
       namesinside the module are accessible from other modules.</para>
 
-    <para>Normally, a source file begins with a module
+    <para id="x_Qi">Normally, a source file begins with a module
       declaration.</para>
 
     &SimpleJSON.hs:module;
 
-    <para>The word <code>module</code> is reserved.  It is followed by
+    <para id="x_Ri">The word <code>module</code> is reserved.  It is followed by
       the name of the module, which must begin with a capital letter.
       By convention, a source file has the same <emphasis>base
 	name</emphasis> (the component before the suffix) as the
@@ -97,19 +97,19 @@ null</programlisting>
       <filename>SimpleJSON.hs</filename> contains the module
       <code>SimpleJSON</code>.</para>
 
-    <para>Following the module name is a list of
+    <para id="x_Si">Following the module name is a list of
       <emphasis>exports</emphasis>, enclosed in parentheses.  The
       <code>where</code> keyword indicates that the body of the module
       follows.</para>
 
-    <para>The list of exports indicates which names in this module are
+    <para id="x_Ti">The list of exports indicates which names in this module are
       visible from other modules.  This lets us keep private code
       hidden from the outside world. The special notation
       <code>(..)</code> that follows the name <code>JValue</code>
       indicates that we are exporting both the type and all of its
       constructors.</para>
 
-    <para>It might seem strange that we can export a type's name, but
+    <para id="x_Ui">It might seem strange that we can export a type's name, but
       not its constructors.  The ability to do this is important: it
       lets us hide the details of a type from its users, making the
       type <emphasis>abstract</emphasis>.  If we can't see a type's
@@ -118,7 +118,7 @@ null</programlisting>
       this chapter, we'll discuss some situations in which we might
       want to make a type abstract.</para>
 
-    <para>If we omit the list of exports (including the parentheses)
+    <para id="x_Vi">If we omit the list of exports (including the parentheses)
       from a module declaration, every name in the module will be
       exported: <code>module SimpleJSON where ...</code>.  To export
       no names at all (only infrequently useful), we write an empty
@@ -129,27 +129,27 @@ null</programlisting>
   <sect1>
     <title>Compiling Haskell source</title>
 
-    <para>In addition to the &ghci; interpreter; the &GHC;
+    <para id="x_Wi">In addition to the &ghci; interpreter; the &GHC;
       distribution includes an optimising Haskell compiler, named
       &ghc;.  If you're already familiar with a command line compiler
       such as <command>gcc</command> or <command>cl</command> (the
       compiler component of Microsoft's Visual Studio), you'll
       immediately be at home with &ghc;.</para>
 
-    <para>To compile a source file, we first open a terminal or
+    <para id="x_Xi">To compile a source file, we first open a terminal or
       command prompt window, then invoke &ghc; with the name of the
       source file to compile.</para>
 
     <programlisting><userinput>ghc -c SimpleJSON.hs</userinput></programlisting>
 
-    <para>The <option>-c</option> option tells &ghc; to only generate
+    <para id="x_Yi">The <option>-c</option> option tells &ghc; to only generate
       object code.  If we were to omit the <option>-c</option> option,
       the compiler would attempt
       to generate a complete executable.  That would in turn fail,
       because we haven't written a <function>main</function> function
       yet.</para>
 
-    <para>After &ghc; completes, if we list the contents of the
+    <para id="x_Zi">After &ghc; completes, if we list the contents of the
       directory, it should contain two new files:
       <filename>SimpleJSON.hi</filename> and
       <filename>SimpleJSON.o</filename>
@@ -163,14 +163,14 @@ null</programlisting>
   <sect1>
     <title>Generating a Haskell program, and importing modules</title>
 
-    <para>Now that we've successfully compiled our minimal library,
+    <para id="x_ai">Now that we've successfully compiled our minimal library,
       we'll write a tiny program to exercise it.  Create the following
       file in your text editor, and save it as
       <filename>Main.hs</filename>.</para>
 
     &Main.hs:module;
 
-    <para>Notice the <code>import</code> directive that follows the
+    <para id="x_bi">Notice the <code>import</code> directive that follows the
       module declaration.  This indicates that we want to take all of
       the names that are exported from the <code>SimpleJSON</code>
       module, and make them available in our module.  Any
@@ -178,7 +178,7 @@ null</programlisting>
       beginning of a module.  We cannot scatter them throughout a
       source file.</para>
 
-    <para>Our choice of naming for the source file and function is
+    <para id="x_ci">Our choice of naming for the source file and function is
       deliberate.  In order to create an executable, &ghc; needs a
       module named <code>Main</code>, and it must contain a function
       named <function>main</function>.  The <function>main</function>
@@ -188,34 +188,34 @@ null</programlisting>
     <programlisting><userinput>ghc -o simple Main.hs
 	SimpleJSON.o</userinput></programlisting>
 
-    <para>This time around, we're omitting the <option>-c</option>
+    <para id="x_di">This time around, we're omitting the <option>-c</option>
       option when we invoke &ghc;, so it will attempt to generate an
       executable.  The process of generating an executable is called
       <emphasis>linking</emphasis>.  As our command line suggests,
       &ghc; is perfectly able to both compile source files and link
       an executable in a single invocation.</para>
 
-    <para>We're passing &ghc; a new option, <option>-o</option>,
+    <para id="x_ei">We're passing &ghc; a new option, <option>-o</option>,
       which takes one argument: this is the name of the executable
       that &ghc; should create.  Here, we've decided to name the
       program <filename>simple</filename>.  On Windows, the program
       will have the suffix <filename>.exe</filename>, but on Unix
       variants there will not be a suffix.</para>
 
-    <para>Finally, we're passing the name of our new source file,
+    <para id="x_fi">Finally, we're passing the name of our new source file,
       <filename>Main.hs</filename>, and the object file we already
       compiled, <filename>SimpleJSON.o</filename>.  We must explicitly
       list every one of our files that contains code that should end
       up in the executable.  If we forget a source or object file,
       &ghc; will complain about <quote>undefined symbols</quote>.</para>
 
-    <para>When compiling, we can pass &ghc; any mixture of source and
+    <para id="x_gi">When compiling, we can pass &ghc; any mixture of source and
       object files.  If &ghc; notices that it has already compiled a
       source file into an object once, and we invoke it a second time,
       it will only recompile the source file if we've modified
       it.</para>
 
-    <para>Once &ghc; has finished compiling and linking our
+    <para id="x_hi">Once &ghc; has finished compiling and linking our
       <filename>simple</filename> program, we can run it from the
       command line.</para>
   </sect1>
@@ -223,11 +223,11 @@ null</programlisting>
   <sect1>
     <title>Turning Haskell values into JSON data</title>
 
-    <para>Now that we have a Haskell representation for JSON's types,
+    <para id="x_ii">Now that we have a Haskell representation for JSON's types,
       we'd like to be able to take Haskell values and render them
       as JSON data.</para>
 
-    <para>There are a few ways we could go about this.  Perhaps the
+    <para id="x_ji">There are a few ways we could go about this.  Perhaps the
       most direct would be to write a rendering function that
       prints a value in JSON form.</para>
   </sect1>
