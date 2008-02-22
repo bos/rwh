@@ -119,7 +119,7 @@ footer = text "{% endblock %}"
 
 entry :: (PubStatus -> Bool) -> [String] -> Kind -> [Entry] -> Int -> Doc
 entry p zs@(z:zs') oldKind es@(e@(Entry kind _ _ _):es') n
-      | oldKind /= kind = entry p zs kind es 0
+      | oldKind /= kind = entry p zs kind es 1
       | otherwise = single p z e n $+$ entry p zs' kind es' (n+1)
 entry _ _ _ _ _ = empty
 
@@ -128,8 +128,8 @@ single p z (Entry kind name title when) n
   | p when =
     inside "li" ("class" &= z) $
      inside "span" ("class" &= "chapinfo") $
-      inside "a" ("href" &= "/feeds/comments/" ++ name ++ "/") $
-       inside "img" ("src" &= "/support/figs/rss.png") empty <>
+      (inside "a" ("href" &= "/feeds/comments/" ++ name ++ "/") $
+       inside "img" ("src" &= "/support/figs/rss.png") empty) <>
         seqId kind n <> inside "a" ("href" &= name ++ ".html") (text title)
   | otherwise =
     inside "li" ("class" &= z) $
