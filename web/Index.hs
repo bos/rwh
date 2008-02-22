@@ -13,7 +13,7 @@ data PubStatus = Alpha Date
                
 date (Alpha d) = d
 date (Beta d) = d
-date _ = error "no date"
+date _ = "Unpublished"
 
 data Kind = Preface | Chapter | Appendix
           deriving (Eq, Ord, Show)
@@ -89,9 +89,9 @@ inside tag kvs doc
 stripes = cycle ["zebra_a", "zebra_b"]
 
 alpha (Alpha _) = True
+alpha (Beta _) = True
 alpha _ = False
 
-beta (Alpha _) = True
 beta (Beta _) = True
 beta _ = False
 
@@ -124,12 +124,13 @@ entry p zs@(z:zs') oldKind es@(e@(Entry kind _ _ _):es') n
 entry _ _ _ _ _ = empty
 
 single :: (PubStatus -> Bool) -> String -> Entry -> Int -> Doc
-single p z (Entry kind name title when) n
+single p z e@(Entry kind name title when) n
   | p when =
     inside "li" ("class" &= z) $
-     inside "span" ("class" &= "chapinfo") $
+     (inside "span" ("class" &= "chapinfo") $
+      text (date when) <>
       (inside "a" ("href" &= "/feeds/comments/" ++ name ++ "/") $
-       inside "img" ("src" &= "/support/figs/rss.png") empty) <>
+       inside "img" ("src" &= "/support/figs/rss.png") empty)) <>
         seqId kind n <> inside "a" ("href" &= name ++ ".html") (text title)
   | otherwise =
     inside "li" ("class" &= z) $
