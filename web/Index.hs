@@ -40,9 +40,9 @@ chapters = [
  , ch "typeclasses" "Using typeclasses" $ Alpha "2007-09-21"
  , ch "io" "Input and output" $ Alpha "2007-09-21"
  , ch "glob" "Case study: regular expressions and file name matching"
-   $ Alpha "2008-01-21"
+   $ Beta "2008-01-21"
  , ch "find" "I/O case study: a library for searching the filesystem"
-   Unpublished
+   $ Alpha "2008-02-21"
  , ch "binary" "Code case study: parsing a binary data format" Unpublished
  , ch "testing" "Testing your code" Unpublished
  , ch "barcode" "Barcode recognition" Unpublished

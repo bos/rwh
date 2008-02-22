@@ -219,6 +219,18 @@ null</programlisting>
       <filename>simple</filename> program, we can run it from the
       command line.</para>
   </sect1>
+
+  <sect1>
+    <title>Turning Haskell values into JSON data</title>
+
+    <para>Now that we have a Haskell representation for JSON's types,
+      we'd like to be able to take Haskell values and render them
+      as JSON data.</para>
+
+    <para>There are a few ways we could go about this.  Perhaps the
+      most direct would be to write a rendering function that
+      prints a value in JSON form.</para>
+  </sect1>
 </chapter>
 
 <!--
