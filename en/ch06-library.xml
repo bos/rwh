@@ -37,8 +37,8 @@ null</programlisting>
 
     <para>To work with JSON data in Haskell, we use an algebraic data
       type to represent the range of possible JSON types.  In a text
-      editor, create a file named <code>SimpleJSON.hs</code>, and
-      insert the following contents.</para>
+      editor, create a file named <filename>SimpleJSON.hs</filename>,
+      and insert the following contents.</para>
 
     &SimpleJSON.hs:JValue;
 
@@ -49,16 +49,16 @@ null</programlisting>
       <code>JString</code> constructor.</para>
 
     <para>To start experimenting with this code, save the file
-      <code>SimpleJSON.hs</code> in your editor, switch to a &ghci;
-      window, and load the file into &ghci;.</para>
+      <filename>SimpleJSON.hs</filename> in your editor, switch to a
+      &ghci; window, and load the file into &ghci;.</para>
 
     &simplejson.ghci:load;
 
     <para>We can see how to use a constructor to take a normal Haskell
       value and turn it into a JSON value.  To do the reverse, we use
       pattern matching.  Here's a function that we can add to
-      <code>SimpleJSON.hs</code> that will extract a string from a
-      JSON value for us.  If the JSON value actually contains a
+      <filename>SimpleJSON.hs</filename> that will extract a string
+      from a JSON value for us.  If the JSON value actually contains a
       string, our function will wrap the string with the
       <code>Just</code> constructor, otherwise it will return
       <code>Nothing</code>.</para>
@@ -90,9 +90,11 @@ null</programlisting>
     &SimpleJSON.hs:module;
 
     <para>The word <code>module</code> is reserved.  It is followed by
-      the name of the module.  By convention, the source file has the
-      same <quote>base name</quote> as the module, which is why our
-      file <code>SimpleJSON.hs</code> contains the module
+      the name of the module, which must begin with a capital letter.
+      By convention, a source file has the same <emphasis>base
+	name</emphasis> (the component before the suffix) as the
+      module it contains, which is why our file
+      <filename>SimpleJSON.hs</filename> contains the module
       <code>SimpleJSON</code>.</para>
 
     <para>Following the module name is a list of
@@ -122,6 +124,100 @@ null</programlisting>
       no names at all (only infrequently useful), we write an empty
       list using a pair of parentheses: <code>module SimpleJSON ()
 	where ...</code>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Compiling Haskell source</title>
+
+    <para>In addition to the &ghci; interpreter; the &GHC;
+      distribution includes an optimising Haskell compiler, named
+      &ghc;.  If you're already familiar with a command line compiler
+      such as <command>gcc</command> or <command>cl</command> (the
+      compiler component of Microsoft's Visual Studio), you'll
+      immediately be at home with &ghc;.</para>
+
+    <para>To compile a source file, we first open a terminal or
+      command prompt window, then invoke &ghc; with the name of the
+      source file to compile.</para>
+
+    <programlisting><userinput>ghc -c SimpleJSON.hs</userinput></programlisting>
+
+    <para>The <option>-c</option> option tells &ghc; to only generate
+      object code.  If we were to omit the <option>-c</option> option,
+      the compiler would attempt
+      to generate a complete executable.  That would in turn fail,
+      because we haven't written a <function>main</function> function
+      yet.</para>
+
+    <para>After &ghc; completes, if we list the contents of the
+      directory, it should contain two new files:
+      <filename>SimpleJSON.hi</filename> and
+      <filename>SimpleJSON.o</filename>
+      (<filename>SimpleJSON.obj</filename> on Windows).  The former is
+      an <emphasis>interface file</emphasis>, in which &ghc; stores
+      information about the names exported from our module in
+      machine-readable form.  The latter is an <emphasis>object
+	file</emphasis>, which contains the generated code.</para>
+  </sect1>
+
+  <sect1>
+    <title>Generating a Haskell program, and importing modules</title>
+
+    <para>Now that we've successfully compiled our minimal library,
+      we'll write a tiny program to exercise it.  Create the following
+      file in your text editor, and save it as
+      <filename>Main.hs</filename>.</para>
+
+    &Main.hs:module;
+
+    <para>Notice the <code>import</code> directive that follows the
+      module declaration.  This indicates that we want to take all of
+      the names that are exported from the <code>SimpleJSON</code>
+      module, and make them available in our module.  Any
+      <code>import</code> directives must appear together at the
+      beginning of a module.  We cannot scatter them throughout a
+      source file.</para>
+
+    <para>Our choice of naming for the source file and function is
+      deliberate.  In order to create an executable, &ghc; needs a
+      module named <code>Main</code>, and it must contain a function
+      named <function>main</function>.  The <function>main</function>
+      function is the one that will be called when we run the program
+      once we've built it.</para>
+
+    <programlisting><userinput>ghc -o simple Main.hs
+	SimpleJSON.o</userinput></programlisting>
+
+    <para>This time around, we're omitting the <option>-c</option>
+      option when we invoke &ghc;, so it will attempt to generate an
+      executable.  The process of generating an executable is called
+      <emphasis>linking</emphasis>.  As our command line suggests,
+      &ghc; is perfectly able to both compile source files and link
+      an executable in a single invocation.</para>
+
+    <para>We're passing &ghc; a new option, <option>-o</option>,
+      which takes one argument: this is the name of the executable
+      that &ghc; should create.  Here, we've decided to name the
+      program <filename>simple</filename>.  On Windows, the program
+      will have the suffix <filename>.exe</filename>, but on Unix
+      variants there will not be a suffix.</para>
+
+    <para>Finally, we're passing the name of our new source file,
+      <filename>Main.hs</filename>, and the object file we already
+      compiled, <filename>SimpleJSON.o</filename>.  We must explicitly
+      list every one of our files that contains code that should end
+      up in the executable.  If we forget a source or object file,
+      &ghc; will complain about <quote>undefined symbols</quote>.</para>
+
+    <para>When compiling, we can pass &ghc; any mixture of source and
+      object files.  If &ghc; notices that it has already compiled a
+      source file into an object once, and we invoke it a second time,
+      it will only recompile the source file if we've modified
+      it.</para>
+
+    <para>Once &ghc; has finished compiling and linking our
+      <filename>simple</filename> program, we can run it from the
+      command line.</para>
   </sect1>
 </chapter>
 
