@@ -37,16 +37,17 @@ chapters = [
  , ch "deftypes" "Defining types, streamlining functions" $ Beta "2008-01-21"
  , ch "fp" "Functional programming" Unpublished
  , ch "library" "Writing a library" Unpublished
- , ch "typeclasses" "Using typeclasses" $ Alpha "2007-09-21"
- , ch "io" "Input and output" $ Alpha "2007-09-21"
+ , ch "typeclasses" "Using typeclasses" $ Beta "2008-02-21"
+ , ch "io" "Input and output" $ Beta "2008-02-21"
  , ch "glob" "Case study: regular expressions and file name matching"
    $ Beta "2008-01-21"
  , ch "find" "I/O case study: a library for searching the filesystem"
    $ Alpha "2008-02-21"
- , ch "binary" "Code case study: parsing a binary data format" Unpublished
+ , ch "binary" "Code case study: parsing a binary data format"
+   $ Alpha "2008-02-21"
  , ch "testing" "Testing your code" Unpublished
  , ch "barcode" "Barcode recognition" Unpublished
- , ch "data" "Data structures" Unpublished
+ , ch "data" "Data structures" $ Alpha "2008-02-21"
  , ch "monads" "Monads" Unpublished
  , ch "monadcase" "Programming with monads" Unpublished
  , ch "monadtrans" "Monad transformers" Unpublished
