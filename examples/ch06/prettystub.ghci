@@ -1,0 +1,5 @@
+:load PrettyStub
+
+--# crash
+:type double
+double 3.14

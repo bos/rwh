@@ -8,14 +8,16 @@ import Prettify (Doc, (<>), (<+>), char, double, enclose, encloseC, fsep, hcat, 
 import Numeric (showHex)
 import Data.Bits (shiftR, (.&.))
 
+{-- snippet jvalue --}
 jvalue :: JValue -> Doc
-jvalue (JString s) = string s
-jvalue (JNumber n) = double n
-jvalue (JObject o) = series (encloseC '{' '}') field o
-jvalue (JArray a) = series (encloseC '(' ')') jvalue a
 jvalue (JBool True) = text "true"
 jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
+jvalue (JNumber num) = double num
+jvalue (JString str) = string str
+{-- /snippet jvalue --}
+jvalue (JObject obj) = series (encloseC '{' '}') field obj
+jvalue (JArray ary) = series (encloseC '(' ')') jvalue ary
 
 unicode :: Char -> Doc
 unicode c | d < 0x10000 = ch d
@@ -37,7 +39,7 @@ string = encloseC '\"' '\"' . hcat . map oneChar
           ch a b = (a, '\\':[b])
 
 series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
-series open item = open . fsep . punctuate (char ',') . map item
+series wrap item = wrap . fsep . punctuate (char ',') . map item
 
 field :: (String, JValue) -> Doc
 field (k,v) = string k <> char ':' <+> jvalue v
