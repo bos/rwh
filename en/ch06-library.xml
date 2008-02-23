@@ -221,15 +221,186 @@ null</programlisting>
   </sect1>
 
   <sect1>
-    <title>Turning Haskell values into JSON data</title>
+    <title>Printing JSON data</title>
 
-    <para id="x_ii">Now that we have a Haskell representation for JSON's types,
-      we'd like to be able to take Haskell values and render them
-      as JSON data.</para>
+    <para id="x_ii">Now that we have a Haskell representation for
+      JSON's types, we'd like to be able to take Haskell values and
+      render them as JSON data.</para>
 
-    <para id="x_ji">There are a few ways we could go about this.  Perhaps the
-      most direct would be to write a rendering function that
-      prints a value in JSON form.</para>
+    <para id="x_ji">There are a few ways we could go about this.
+      Perhaps the most direct would be to write a rendering function
+      that prints a value in JSON form.  We'll quickly show how to do
+      this, because it's about time we started interacting with the
+      outside world.  Once we're done, we'll explore some more
+      interesting approaches.</para>
+
+    <para>Since this will be our first example of printing data, we'll
+      be introducing some new functions and notation below.  Rather
+      than cover these in depth, we'll skim over them, and defer a
+      more extended treatment until <xref
+	linkend="io"/>.</para>
+
+    &PutJSON.hs:module;
+
+    <para>The result type of <function>putJValue</function> is
+      <type>IO ()</type>, where <type>IO</type> indicates that the
+      function performs I/O.  The <function>putStr</function> function
+      prints a string, and <function>show</function> returns a string
+      representation of a Haskell value.</para>
+
+    <para>Clearly, printing a simple JSON value is easy.</para>
+
+    &putjson.ghci:simple;
+
+    <para>A compound value requires a little more work, so we can
+      ensure that it's formatted correctly.</para>
+    
+    &PutJSON.hs:putJValue;
+
+    <para>We've introduced one unfamiliar piece of notation here, the
+      &do; keyword.  In this context, it lets us perform a series of
+      actions in sequence.</para>
+
+    <para>To print a <code>JObject</code> value, we begin by printing
+      an opening brace.  We must then determine whether we have zero
+      or more than zero key/value pairs to print, in order to get the
+      formatting right.  If we have no pairs to print, we print
+      nothing<footnote>
+	<para>If you're already somewhat familiar with Haskell, you'll
+	  know that this is not an idiomatic way to do nothing. We'll
+	  introduce <code>return ()</code> in <xref
+	    linkend="io"/>.</para>
+      </footnote>.  Otherwise, we print the first pair, then we loop
+      over all the pairs that follow, and print each one preceded by a
+      comma.  (The <function>forM_</function> function takes a list
+      and a function that can perform I/O, and applies the function to
+      every element of the list.)</para>
+  </sect1>
+
+  <sect1>
+    <title>Another look at rendering JSON</title>
+
+    <para>If simply printing JSON data is both obvious and easy, why
+      might we want to consider doing something else?  For example, we
+      could easily to modify our printing code above to output to an
+      arbitrary file handle.  However, if we wanted to compress the
+      data somehow before writing it out, we could not as easily adapt
+      the code to do this.</para>
+
+    <para>If we separate the rendering from what we do with the
+      rendered data, we grant ourselves more flexibility.  There are
+      several Haskell libraries that handle data compression, but they
+      all do so by providing very simple compression and decompression
+      functions: a compression function takes an uncompressed string
+      and returns a compressed string.  If we write a function that
+      takes JSON data and produces a rendered string, we can build a
+      pipeline: we pass the rendered JSON into our desired compression
+      function, and get compressed, rendered JSON back.
+    </para>
+
+    <para>To render JSON data, we'll begin by assuming that we already
+      have a generic rendering library: we'll develop its skeleton as
+      we go.  After we're done writing our client code, we'll go back
+      and fill in the details of the rendering library.</para>
+
+    <para>Instead of rendering straight to a string, we'll make our
+      JSON renderer work with values of a type that we'll call
+      <type>Doc</type>.  The renderer won't be able to see any of the
+      internals of the <type>Doc</type> type: instead, it will call
+      functions from our rendering library, which will hide the
+      details from the client.</para>
+
+    <para>By basing our generic rendering library on this abstract
+      <type>Doc</type> type, we can choose an implementation that is
+      flexible and efficient.</para>
+
+    <para>We'll name our JSON rendering function
+      <function>jvalue</function>.  Rendering one of the basic JSON
+      values is a straightforward business.</para>
+
+    &PrettyJSON.hs:jvalue;
+
+    <para>We'll write the <function>text</function> and
+      <function>double</function> functions as part of our generic
+      rendering library.</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Developing Haskell code without going nuts</title>
+
+    <para>During the early stages of our Haskell development
+      adventure, we have so many new, unfamiliar concepts to keep
+      track of at one time that it can be a challenge to write code
+      that compiles at all.</para>
+
+    <para>As we write our first substantial body of code, it's a
+      <emphasis>huge</emphasis> help to pause every few minutes and
+      try to compile what we've produced so far.  Because Haskell is
+      so strongly typed, if our code compiles cleanly, we're assuring
+      ourselves that we're not wandering too far off into the
+      programming weeds.</para>
+
+    <para>One useful technique for quickly developing the skeleton of
+      a program is to write <emphasis>stub</emphasis> versions of
+      functions.  For example, we mentioned above that our
+      <function>text</function> and <function>double</function>
+      functions would be part of our generic library.  If we don't
+      provide definitions for those functions, our attempts to
+      <quote>compile early, compile often</quote> with our JSON
+      renderer will fail, as the compiler won't know anything about
+      those functions.  To avoid this problem, we write stub functions
+      that don't do anything.</para>
+
+    &PrettyStub.hs:stubs;
+
+    <para>The special value <code>undefined</code> always typechecks,
+      no matter where we use it, but it will cause our program to
+      crash if we attempt to evaluate it.</para>
+
+    &prettystub.ghci:crash;
+
+    <para>By providing stub definitions for these functions, we allow
+      ourselves to compile our code, letting the compiler's type
+      checker ensure that our program is correctly typed.</para>
+
+    <sect2>
+      <title>Beware of type inference</title>
+
+      <para>A Haskell compiler's ability to infer types is both
+	powerful and valuable.  Early on, the temptation to omit as
+	many type declarations as possible can be strong: let's simply
+	make the compiler figure the whole lot out!</para>
+
+      <para>There is, however, plenty of risk to omitting type
+	information: until we gain some experience, we're extremely
+	likely to write code that will fail to compile due to simple
+	type errors.  When we omit type information, we give the
+	compiler more room to infer types that are logical, but
+	possibly not at all the types we thought we were using.  The
+	error messages that result can be very difficult to
+	interpret.</para>
+
+      <para>Every time we add a type signature, we remove a degree of
+	freedom from the type inference engine.  This reduces the
+	likelihood of divergence between our understanding of our code
+	and the compiler's.  Type declarations also act as shorthand
+	for us as readers, making it easier for us to do our own
+	mental inference of what must be going on in a body of
+	code.</para>
+
+      <para>This is not to say that you need to pepper every tiny
+	fragment of code with a type declaration.  It is, however,
+	generally a good idea to add a signature to every top-level
+	function and variable in your code.</para>
+
+      <para>Because <code>undefined</code> will happily typecheck no
+	matter where we use it, it's especially important to write
+	type signatures when we use <code>undefined</code> to write
+	temporary stub definitions for functions whose bodies we don't
+	want to fill in yet.</para>
+    </sect2>
+
   </sect1>
 </chapter>
 

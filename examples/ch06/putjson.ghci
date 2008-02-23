@@ -1,0 +1,4 @@
+--# simple
+:load PutJSON
+putJValue (JBool True)
+putJValue (JString "foo")
