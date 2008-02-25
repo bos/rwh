@@ -11,8 +11,6 @@ module Prettify
     -- * Derived combinators
     , (<+>)
     , double
-    , enclose
-    , encloseC
     , fsep
     , hcat
     , punctuate
@@ -49,12 +47,6 @@ line = Line False
 text :: String -> Doc
 text "" = Empty
 text s  = Text s
-
-enclose :: Doc -> Doc -> Doc -> Doc
-enclose left right x = left <> x <> right
-
-encloseC :: Char -> Char -> Doc -> Doc
-encloseC left right x = char left <> x <> char right
 
 hcat :: [Doc] -> Doc
 hcat = fold (<>)

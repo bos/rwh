@@ -4,7 +4,7 @@ module PrettyJSON
     ) where
 
 import SimpleJSON (JValue(..))
-import Prettify (Doc, (<>), (<+>), char, double, enclose, encloseC, fsep, hcat, punctuate, text)
+import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text)
 import Numeric (showHex)
 import Data.Bits (shiftR, (.&.))
 
@@ -16,38 +16,59 @@ jvalue JNull = text "null"
 jvalue (JNumber num) = double num
 jvalue (JString str) = string str
 {-- /snippet jvalue --}
-jvalue (JObject obj) = series (encloseC '{' '}') field obj
-jvalue (JArray ary) = series (encloseC '(' ')') jvalue ary
+{-- snippet jvalue.array --}
+jvalue (JArray ary) = series '[' ']' jvalue ary
+{-- /snippet jvalue.array --}
+{-- snippet jvalue.object --}
+jvalue (JObject obj) = series '{' '}' field obj
+    where field (name,val) = string name <> text ": " <> jvalue val
+{-- /snippet jvalue.object --}
 
-unicode :: Char -> Doc
-unicode c | d < 0x10000 = ch d
-          | otherwise = astral (d - 0x10000)
+{-- snippet enclose --}
+enclose :: Char -> Char -> Doc -> Doc
+enclose left right x = char left <> x <> char right
+{-- /snippet enclose --}
+
+{-- snippet hexEscape --}
+hexEscape :: Char -> Doc
+hexEscape c | d < 0x10000 = smallHex d
+            | otherwise = astral (d - 0x10000)
   where d = fromEnum c
-        ch x = text "\\u" <> text (replicate (4 - length h) '0') <> text h
-            where h = showHex x ""
-        astral n = ch (a + 0xd800) <> ch (b + 0xdc00)
-            where a = (n `shiftR` 10) .&. 0x3ff
-                  b = n .&. 0x3ff
+{-- /snippet hexEscape --}
 
+{-- snippet smallHex --}
+smallHex :: Int -> Doc
+smallHex x = text "\\u" <> text (replicate (4 - length h) '0') <> text h
+    where h = showHex x ""
+{-- /snippet smallHex --}
+
+{-- snippet astral --}
+astral :: Int -> Doc
+astral n = smallHex (a + 0xd800) <> smallHex (b + 0xdc00)
+    where a = (n `shiftR` 10) .&. 0x3ff
+          b = n .&. 0x3ff
+{-- /snippet astral --}
+
+{-- snippet string --}
 string :: String -> Doc
-string = encloseC '\"' '\"' . hcat . map oneChar
-    where oneChar c = case lookup c specials of
-                        Just r -> text r
-                        Nothing | c < ' ' || c > '\xff' -> unicode c
-                                | otherwise             -> char c
-          specials = zipWith ch "\b\n\f\r\t\\\"/" "bnrt\\\"/"
-          ch a b = (a, '\\':[b])
+string = enclose '\"' '\"' . hcat . map oneChar
+{-- /snippet string --}
 
-series :: (Doc -> Doc) -> (a -> Doc) -> [a] -> Doc
-series wrap item = wrap . fsep . punctuate (char ',') . map item
+{-- snippet oneChar --}
+oneChar :: Char -> Doc
+oneChar c = case lookup c simpleEscapes of
+              Just r -> text r
+              Nothing | mustEscape c -> hexEscape c
+                      | otherwise    -> char c
+    where mustEscape c = c < ' ' || c == '\x7f' || c > '\xff'
 
-field :: (String, JValue) -> Doc
-field (k,v) = string k <> char ':' <+> jvalue v
+simpleEscapes :: [(Char, String)]
+simpleEscapes = zipWith ch "\b\n\f\r\t\\\"/" "bnfrt\\\"/"
+    where ch a b = (a, '\\':[b])
+{-- /snippet oneChar --}
 
--- Not present in Text.PrettyPrint.HughesPJ.
-
---enclose :: Doc -> Doc -> Doc -> Doc
---enclose left right x = left <> x <> right
-
---encloseC :: Char -> Char -> Doc -> Doc
---encloseC left right x = char left <> x <> char right
+{-- snippet series --}
+series :: Char -> Char -> (a -> Doc) -> [a] -> Doc
+series open close item = enclose open close
+                       . fsep . punctuate (char ',') . map item
+{-- /snippet series --}

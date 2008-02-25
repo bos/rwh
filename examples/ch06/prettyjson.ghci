@@ -1,0 +1,15 @@
+:load PrettyJSON
+
+--# specialEscapes
+take 4 specialEscapes
+
+--# showHex
+showHex 114111 ""
+
+--# replicate
+
+replicate 5 "foo"
+
+--# bits
+0x10000 `shiftR` 4   :: Int
+7 .&. 2   :: Int

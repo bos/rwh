@@ -361,46 +361,239 @@ null</programlisting>
     &prettystub.ghci:crash;
 
     <para>By providing stub definitions for these functions, we allow
-      ourselves to compile our code, letting the compiler's type
-      checker ensure that our program is correctly typed.</para>
+      ourselves to compile our code early on, even though we won't yet
+      be able to run it.   By doing this, we can take advantage of the
+      compiler's type checker to ensure that our program is sensibly
+      typed.</para>
 
     <sect2>
       <title>Beware of type inference</title>
 
       <para>A Haskell compiler's ability to infer types is both
-	powerful and valuable.  Early on, the temptation to omit as
-	many type declarations as possible can be strong: let's simply
+	powerful and valuable.  Early on, you'll probably be faced by
+	a strong temptation to take advantage of type inference by
+	omitting as many type declarations as possible: let's simply
 	make the compiler figure the whole lot out!</para>
 
-      <para>There is, however, plenty of risk to omitting type
-	information: until we gain some experience, we're extremely
-	likely to write code that will fail to compile due to simple
-	type errors.  When we omit type information, we give the
-	compiler more room to infer types that are logical, but
-	possibly not at all the types we thought we were using.  The
-	error messages that result can be very difficult to
-	interpret.</para>
+      <para>There is, however, a downside to skimping on explicit type
+	information, and it has a disproportionate effect on the new
+	Haskell programmer.  While we work to gain some experience,
+	we're initially extremely likely to write code that will fail
+	to compile due to straightforward type errors.  When we leave
+	out type information, we give the compiler more leeway.  It
+	will infer types that are logical and consistent, but quite
+	possibly not at all what we thought we were actually using.
+	When what we think we're doing diverges from what the compiler
+	infers, the error messages that result can be very difficult
+	to interpret: not only are we doing something wrong, but the
+	compiler's attempt to make sense of what we've tried can
+	sometimes briefly lead us astray.</para>
 
-      <para>Every time we add a type signature, we remove a degree of
-	freedom from the type inference engine.  This reduces the
+      <para>Consider an example: let's say we write a function that we
+	think returns a <type>String</type>, but we don't write a type
+	signature for it.</para>
+
+      &Trouble.hs:upcaseFirst;
+
+      <para>Here, we want to upper-case the first character of a word,
+	but we've forgotten to append the rest of the word onto the
+	result.  We think our function's type is <type>String -&gt;
+	  String</type>, but the compiler will correctly infer its
+	type as <type>String -> Char</type>.  Let's say we then try to
+	use this function somewhere else.</para>
+
+      &Trouble.hs:camelCase;
+      
+      <para>When we try to compile this code or load it into &ghci;,
+	we won't necessarily get an obvious error message.</para>
+
+      &trouble.ghci:load;
+
+      <para>Notice that the error is reported where we
+	<emphasis>use</emphasis> the <function>upcaseFirst</function>
+	function.  If we're erroneously convinced that our definition
+	and type for <function>upcaseFirst</function> are correct, we
+	may end up staring at the wrong piece of code for quite a
+	while, until enlightenment strikes.</para>
+
+      <para>Every time we write a type signature, we remove a degree
+	of freedom from the type inference engine.  This reduces the
 	likelihood of divergence between our understanding of our code
 	and the compiler's.  Type declarations also act as shorthand
-	for us as readers, making it easier for us to do our own
-	mental inference of what must be going on in a body of
-	code.</para>
+	for ourselves as readers of our own code, making it easier for
+	us to do our own mental inference of what must be going
+	on.</para>
 
-      <para>This is not to say that you need to pepper every tiny
+      <para>This is not to say that we need to pepper every tiny
 	fragment of code with a type declaration.  It is, however,
 	generally a good idea to add a signature to every top-level
-	function and variable in your code.</para>
+	function and variable in our code.  It's best to start out
+	fairly aggressive with explicit type signatures, and slowly
+	ease back as your mental model of how type checking works
+	becomes more accurate.</para>
 
-      <para>Because <code>undefined</code> will happily typecheck no
-	matter where we use it, it's especially important to write
-	type signatures when we use <code>undefined</code> to write
-	temporary stub definitions for functions whose bodies we don't
-	want to fill in yet.</para>
+      <tip>
+	<title>Explicit types and undefined values</title>
+
+	<para>Because the special value <code>undefined</code> will
+	  happily typecheck no matter where we use it, it's especially
+	  important to write type signatures when we start slinging it
+	  around. If we use <code>undefined</code> to stub in a
+	  temporary definition for a function, and we don't write a
+	  type signature for the function, we'll potentially be able
+	  to use that stubbed definition in completely nonsensical
+	  contexts, thus planting the seed of later confusion.</para>
+      </tip>
     </sect2>
 
+    <sect2>
+      <title>Pretty printing a string</title>
+
+      <para>Once we want to pretty print a string value, our code gets
+	a little complicated, because JSON strings have some escaping
+	rules that we must follow.</para>
+
+      <para>At the highest level, a string is just a series of
+	characters wrapped in quotes.</para>
+
+      &PrettyJSON.hs:string;
+
+      <para>The <function>enclose</function> function simply wraps a
+	<type>Doc</type> value with an opening and closing
+	character.</para>
+
+      &PrettyJSON.hs:enclose;
+
+      <para>To do this, it uses the <function>(&lt;&gt;)</function>
+	function, which is a function from our pretty printing library
+	that appends two <type>Doc</type> values: it's the
+	<type>Doc</type> equivalent of
+	<function>(++)</function>.</para>
+
+      &PrettyStub.hs:append;
+
+      <para>Our pretty printing library also provides
+	<function>hcat</function>, which concatenates multiple
+	<type>Doc</type> values into one: it's the analogue of
+	<function>concat</function> for lists.</para>
+
+      &PrettyStub.hs:hcat;
+
+      <para>Our <function>string</function> function thus applies the
+	as yet unseen <function>oneChar</function> function to every
+	character in a string, concatenates the lot, and encloses the
+	result in quotes.  What does <function>oneChar</function> look
+	like?</para>
+
+      &PrettyJSON.hs:oneChar;
+
+      <para>The <function>specialEscapes</function> value is a list of
+	pairs that we call an <emphasis>association list</emphasis>,
+	or <emphasis>alist</emphasis> for short: it maps a few
+	characters to simple escaped representations.</para>
+
+      &prettyjson.ghci:simpleEscapes;
+
+      <para>Our &case; expression attempts to see if our character has
+	a match in this alist.  If we find the match, we emit it,
+	otherwise we might need to escape the character in a more
+	complicated way. If so, we perform this more complicated
+	escaping.  Only if neither kind of escaping is required do we
+	emit the plain character.</para>
+
+      <para>The more complicated escaping involves turning a character
+	into the string <quote><code>\u</code></quote> followed by a
+	four-character sequence of hexadecimal digits representing the
+	numeric value of the Unicode code point.</para>
+
+      &PrettyJSON.hs:smallHex;
+
+      <para>The <function>showHex</function> function comes from the
+	<code>Numeric</code> library, and returns a hexadecimal
+	representation of a number.</para>
+
+      &prettyjson.ghci:showHex;
+
+      <para>The <function>replicate</function> function is provided by
+	the Prelude, and builds a fixed-length repeating list of its
+	argument.</para>
+
+      &prettyjson.ghci:replicate;
+
+      <para>There's a wrinkle: the four-digit encoding that
+	<function>smallHex</function> provides can only represent
+	Unicode code points up to <code>0xffff</code>.  This portion
+	of the Unicode code space is called the <emphasis>basic
+	  multilingual plane</emphasis>: it contains most of the
+	world's common characters and glyphs. However, the Unicode
+	code space extends up to <code>0x10ffff</code>: values between
+	<code>0x10000</code> and <code>0x10ffff</code> are said to
+	inhabit one of the <emphasis>astral planes</emphasis>.</para>
+
+      <para>To properly represent an astral plane code point in a JSON
+	string, we must decompose it into two <emphasis>surrogate
+	  characters</emphasis>.  For our purposes, we don't need to
+	care what a surrogate character is: we'll look at it instead
+	as an opportunity to perform some bit-level manipulation of
+	Haskell numbers.</para>
+
+      &PrettyJSON.hs:astral;
+
+      <para>The <function>shiftR</function> function comes from the
+	<code>Data.Bits</code> module, and shifts a number to the
+	right.  The <function>(.&amp;.)</function> function, also from
+	<code>Data.Bits</code>, performs a bit-level
+	<emphasis>and</emphasis> of two values.</para>
+
+      &prettyjson.ghci:bits;
+
+      <para>Now that we've written <function>smallHex</function> and
+	<function>astral</function>, we can provide a definition for
+	<function>hexEscape</function>.</para>
+
+      &PrettyJSON.hs:hexEscape;
+    </sect2>
+
+    <sect2>
+      <title>Arrays and objects</title>
+
+      <para>Compared to strings, pretty printing arrays and objects is
+	a snap.  We already know that the two are visually similar:
+	each starts with an opening character, followed by a series of
+	values separated with commas, followed by a closing character.
+	Let's write a function that captures the common structure of
+	arrays and objects.</para>
+
+      &PrettyJSON.hs:series;
+
+      <para>We'll start by interpreting this function's type.  It
+	takes an opening and closing character, then a function that
+	knows how to pretty print a value of some unknown type
+	<varname role="type">a</varname>, followed by a list of values
+	of type  <varname role="type">a</varname>, and it returns a
+	value of type <type>Doc</type>.</para>
+
+      <para>We have already written <function>enclose</function>, a
+	which wraps a <type>Doc</type> value in opening and closing
+	characters.  The <function>fsep</function> function will live
+	in our generic pretty printing library.  It will combine a
+	series of <type>Doc</type> values into one, possibly wrapping
+	lines if the output will not fit on a single line.</para>
+
+      <para>With this definition of <function>series</function>,
+	pretty printing an array is entirely straightforward.  We add
+	this equation  to the end of the block we've already written
+	for our <function>jvalue</function> function.</para>
+
+      &PrettyJSON.hs:jvalue.array;
+
+      <para>To pretty print an object, we need to do only a little
+	more work: for each element, we have both a name and a value
+	to print.</para>
+
+      &PrettyJSON.hs:jvalue.object;
+
+    </sect2>
   </sect1>
 </chapter>
 
