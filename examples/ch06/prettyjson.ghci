@@ -1,7 +1,7 @@
 :load PrettyJSON
 
---# specialEscapes
-take 4 specialEscapes
+--# simpleEscapes
+take 4 simpleEscapes
 
 --# showHex
 showHex 114111 ""
