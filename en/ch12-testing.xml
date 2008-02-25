@@ -1,9 +1,45 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="hs.quickcheck" revision="unpublished">
-  <title>FIXME (QuickCheck / DONS)</title>
-  <remark>FIXME.</remark>
+  <title>Testing and Quality Assurance</title>
+
+  <remark>
+  todo
+  </remark>
+
 </chapter>
+
+<!--
+
+* Motivate testing 
+    - purity, types good (make some tests meaningless),
+    - but still have runtime invariants that must hold
+    - but we can use types to make testing easier.
+
+* HUnit
+    - familiar comfortable
+    - simple example
+    - not very powerful
+
+* QuickCheck
+    - simple properties
+    - predicates
+    - writing Arbitrary instances
+    - advice on properties to look for
+        - identity
+        - idempotence
+        - locality
+
+* Cautions:
+    - getting arbitraries right ( '\n' example)
+    - can't do IO easily
+    - ensuring coverage: hpc
+
+* Summary:
+    - testing is straightforward
+    - can leverage types for powerful property-based testing
+
+  -->
 
 <!--
 local variables: 
