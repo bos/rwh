@@ -9,7 +9,6 @@ module Prettify
     , text
     , line
     -- * Derived combinators
-    , (<+>)
     , double
     , fsep
     , hcat
@@ -21,32 +20,45 @@ module Prettify
 
 import Data.Monoid (Monoid(..))
 
+{-- snippet Doc --}
 data Doc = Empty
          | Char Char
          | Text String
          | Line Bool
          | Concat Doc Doc
          | Union Doc Doc
+{-- /snippet Doc --}
 
 instance Monoid Doc where
     mempty = empty
     mappend = (<>)
 
+{-- snippet append --}
 (<>) :: Doc -> Doc -> Doc
+Empty <> y = y
+x <> Empty = x
 x <> y = x `Concat` y
+{-- /snippet append --}
 
+{-- snippet basic --}
 empty :: Doc
 empty = Empty
 
 char :: Char -> Doc
 char c = Char c
 
-line :: Doc
-line = Line False
-
 text :: String -> Doc
 text "" = Empty
 text s  = Text s
+
+double :: Double -> Doc
+double d = text (show d)
+{-- /snippet basic --}
+
+{-- snippet line --}
+line :: Doc
+line = Line False
+{-- /snippet line --}
 
 hcat :: [Doc] -> Doc
 hcat = fold (<>)
@@ -70,16 +82,12 @@ group x = Union (flatten x) x
           flatten (Union x y)  = flatten x
           flatten other        = other
 
+{-- snippet punctuate --}
 punctuate :: Doc -> [Doc] -> [Doc]
 punctuate p [d]    = [d]
 punctuate p (d:ds) = (d <> p) : punctuate p ds
 punctuate p _      = []
-
-(<+>) :: Doc -> Doc -> Doc
-x <+> y = x <> char ' ' <> y
-
-double :: Double -> Doc
-double d = text (show d)
+{-- /snippet punctuate --}
 
 compact :: Int -> Doc -> String
 compact _ x = transform [x]

@@ -350,12 +350,12 @@
       a program is to write <emphasis>stub</emphasis> versions of
       functions.  For example, we mentioned above that our
       <function>text</function> and <function>double</function>
-      functions would be part of our generic library.  If we don't
-      provide definitions for those functions, our attempts to
-      <quote>compile early, compile often</quote> with our JSON
-      renderer will fail, as the compiler won't know anything about
-      those functions.  To avoid this problem, we write stub functions
-      that don't do anything.</para>
+      functions would be provided by our <code>Prettify</code> module.
+      If we don't provide definitions for those functions, our
+      attempts to <quote>compile early, compile often</quote> with our
+      JSON renderer will fail, as the compiler won't know anything
+      about those functions.  To avoid this problem, we write stub
+      functions that don't do anything.</para>
 
     &PrettyStub.hs:stubs;
 
@@ -581,9 +581,14 @@
     <para>We have already written <function>enclose</function>, a
       which wraps a <type>Doc</type> value in opening and closing
       characters.  The <function>fsep</function> function will live in
-      our generic pretty printing library.  It combines a series of
+      our <code>Prettify</code> module.  It combines a series of
       <type>Doc</type> values into one, possibly wrapping lines if the
-      output will not fit on a single line.</para>
+      output will not fit on a single line.  The
+      <function>punctuate</function> function will also live in our
+      <code>Prettify</code> module, and we can define it in terms of
+      functions for which we've already written stubs.</para>
+
+    &Prettify.hs:punctuate;
 
     <para>With this definition of <function>series</function>, pretty
       printing an array is entirely straightforward.  We add this
@@ -662,6 +667,54 @@
       becomes messy.  In other cases, a module might be so widely used
       that that a moderately experienced Haskell programmer will
       probably know which names come from that module.</para>
+  </sect1>
+
+  <sect1>
+    <title>Fleshing out the pretty printing library</title>
+
+    <para>In our <code>Prettify</code> module, we represent our
+      <type>Doc</type> type as an algebraic data type.</para>
+
+    &Prettify.hs:Doc;
+
+    <para>In the header of our module, we will export the name of the
+      type, but not any of its constructors: this will prevent modules
+      that use the <type>Doc</type> type from creating and pattern
+      matching against <type>Doc</type> values.</para>
+
+    <para>Instead, to create a <type>Doc</type>, a user of the
+      <code>Prettify</code> module will call a function that we
+      provide.  Here are the simple construction functions.</para>
+
+    &Prettify.hs:basic;
+
+    <para>The <code>Line</code> constructor represents a line break.
+      It takes a parameter of type <type>Bool</type>, to indicate
+      whether a line break is mandatory (a <quote>hard</quote> break),
+      or only needed if a line might otherwise become too wide (a
+      <quote>soft</quote> break).  The <function>line</function>
+      function only creates hard line breaks; we'll introduce a
+      <function>softline</function> function shortly.</para>
+
+    &Prettify.hs:line;
+
+    <para>Almost as simple as the basic constructors is the
+      <function>(&lt;&gt;)</function> function, which concatenates two
+      <type>Doc</type> values.</para>
+
+    &Prettify.hs:append;
+    
+    <para>Notice that we pattern match against <code>Empty</code>:
+      concatenating a <type>Doc</type> value with <code>Empty</code>
+      on the left or right has no effect.  If we briefly put on our
+      mathematical hats, we can say that <code>Empty</code> is the
+      identity under concatenation.  Taking the mathematical
+      perspective has useful practical consequences, and we'll explain
+      why later.</para>
+
+    <remark>Add a reference to wherever we introduce monoids.</remark>
+
+    
   </sect1>
 </chapter>
 
