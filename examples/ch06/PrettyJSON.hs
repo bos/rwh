@@ -4,10 +4,11 @@ module PrettyJSON
       jvalue
     ) where
 
-import SimpleJSON (JValue(..))
-import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text)
 import Numeric (showHex)
 import Data.Bits (shiftR, (.&.))
+
+import SimpleJSON (JValue(..))
+import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text)
 {-- /snippet module --}
 
 {-- snippet jvalue --}
