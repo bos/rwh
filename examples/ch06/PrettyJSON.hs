@@ -1,3 +1,4 @@
+{-- snippet module --}
 module PrettyJSON
     (
       jvalue
@@ -7,6 +8,7 @@ import SimpleJSON (JValue(..))
 import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text)
 import Numeric (showHex)
 import Data.Bits (shiftR, (.&.))
+{-- /snippet module --}
 
 {-- snippet jvalue --}
 jvalue :: JValue -> Doc
