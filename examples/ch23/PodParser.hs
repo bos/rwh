@@ -48,16 +48,23 @@ parse content name =
 
 unesc = xmlUnEscape stdXmlEscaper
 
-item = channel /> tag "item"
+{- | Pull out the channel part of the document.
 
+Note that HaXml defines CFilter as:
+
+> type CFilter = Content -> [Content]
+-}
+channel :: CFilter
 channel = tag "rss" /> tag "channel"
 
+getTitle :: Content -> String
 getTitle doc =
     case channel /> tag "title" /> txt $ doc of
       [] -> "Untitled"          -- No title tag present
       (x:_) -> -- Found 1 (or more) title tags.  Take the first.
           show . content $ x 
 
+getEnclosures :: Content -> [Item]
 getEnclosures doc =
     concat . map procitem $ item doc
     where procitem i = map (procenclosure title) enclosure
@@ -65,12 +72,15 @@ getEnclosures doc =
                               Left x -> "Untitled"
                               Right x -> x
                     enclosure = tag "enclosure" `o` children $ i
+
           procenclosure title e =
               Item {itemtitle = title,
                     enclosureurl = head0 $ forceMaybe $ stratt "url" e
                    }
           head0 [] = ""
           head0 (x:xs) = x
+          item = channel /> tag "item"
+       
               
 
 --------------------------------------------------
