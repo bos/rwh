@@ -3,7 +3,6 @@ module PodParser where
 import PodTypes
 import Text.XML.HaXml
 import Text.XML.HaXml.Parse
-import Text.XML.HaXml.Pretty(content)
 import Text.XML.HaXml.Html.Generate(showattr)
 import Data.Char
 import Data.List
