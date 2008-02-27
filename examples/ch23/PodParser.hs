@@ -65,10 +65,10 @@ getEnclosures :: Content -> [Item]
 getEnclosures doc =
     concatMap procItem $ getItems doc
     where procItem :: Content -> [Item]
-          procItem i = concatMap (procEnclosure title) enclosure
+          procItem item = concatMap (procEnclosure title) enclosure
               where title = contentToStringDefault "Untitled Episode"
-                               (keep /> tag "title" /> txt $ i)
-                    enclosure = (keep /> tag "enclosure") i
+                               (keep /> tag "title" /> txt $ item)
+                    enclosure = (keep /> tag "enclosure") item
 
           getItems :: CFilter
           getItems = channel /> tag "item"
