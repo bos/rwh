@@ -66,16 +66,16 @@ getTitle doc =
 
 getEnclosures :: Content -> [Item]
 getEnclosures doc =
-    concat . map procitem $ item doc
-    where procitem :: Content -> [Item]
-          procitem i = map (procenclosure title) enclosure
+    concat . map procItem $ getItems doc
+    where procItem :: Content -> [Item]
+          procItem i = map (procEnclosure title) enclosure
               where title = case strofm "title" [i] of
                               Left x -> "Untitled"
                               Right x -> x
                     enclosure = tag "enclosure" `o` children $ i
 
-          procenclosure :: String -> Content -> Item
-          procenclosure title e =
+          procEnclosure :: String -> Content -> Item
+          procEnclosure title e =
               Item {itemtitle = title,
                     enclosureurl = head0 $ forceMaybe $ stratt "url" e
                    }
@@ -84,8 +84,8 @@ getEnclosures doc =
           head0 [] = ""
           head0 (x:xs) = x
 
-          item :: CFilter
-          item = channel /> tag "item"
+          getItems :: CFilter
+          getItems = channel /> tag "item"
        
               
 
