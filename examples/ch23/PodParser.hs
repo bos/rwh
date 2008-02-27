@@ -70,7 +70,7 @@ getTitle doc =
 
 getEnclosures :: Content -> [Item]
 getEnclosures doc =
-    concat . map procItem $ getItems doc
+    concatMap procItem $ getItems doc
     where procItem :: Content -> [Item]
           procItem i = concatMap (procEnclosure title) enclosure
               where title = case (keep /> tag "title" /> txt) i of
