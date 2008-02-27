@@ -58,15 +58,14 @@ Note that HaXml defines CFilter as:
 channel :: CFilter
 channel = tag "rss" /> tag "channel"
 
-contentToString :: Content -> String
-contentToString = show . content
+contentToString :: [Content] -> String
+contentToString = concatMap (show . content)
 
 getTitle :: Content -> String
 getTitle doc =
     case channel /> tag "title" /> txt $ doc of
       [] -> "Untitled"          -- No title tag present
-      (x:_) -> -- Found 1 (or more) title tags.  Take the first.
-          contentToString x
+      x -> contentToString x
 
 getEnclosures :: Content -> [Item]
 getEnclosures doc =
@@ -75,7 +74,7 @@ getEnclosures doc =
           procItem i = concatMap (procEnclosure title) enclosure
               where title = case (keep /> tag "title" /> txt) i of
                               [] -> "Untitled"
-                              (x:_) -> contentToString x
+                              x -> contentToString x
                     enclosure = (keep /> tag "enclosure") i
 
           getItems :: CFilter
@@ -86,5 +85,5 @@ getEnclosures doc =
               map makeItem (showattr "url" enclosure)
               where makeItem :: Content -> Item
                     makeItem x = Item {itemtitle = title,
-                                       enclosureurl = contentToString x}
+                                       enclosureurl = contentToString [x]}
 
