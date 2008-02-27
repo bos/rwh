@@ -47,9 +47,9 @@ parse content name =
 
 unesc = xmlUnEscape stdXmlEscaper
 
-item = tag "item" `o` children `o` channel
+item = channel /> tag "item"
 
-channel = tag "channel" `o` children `o` tag "rss"
+channel = tag "rss" /> tag "channel"
 
 getTitle doc = forceEither $ strofm "title" (channel doc)
 
