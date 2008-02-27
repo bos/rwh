@@ -1,3 +1,6 @@
+{-- snippet all --}
+-- ch23/PodParser.hs
+
 module PodParser where
 
 import PodTypes
@@ -102,3 +105,4 @@ contentToString =
 
           unesc :: Element -> Element
           unesc = xmlUnEscape stdXmlEscaper
+{-- /snippet all --}
