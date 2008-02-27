@@ -8,9 +8,6 @@ import Text.XML.HaXml.Html.Generate(showattr)
 import Data.Char
 import Data.List
 
-import Data.Maybe.Utils
-import Data.Either.Utils
-
 data Item = Item {itemtitle :: String,
                   enclosureurl :: String
                   }
@@ -106,4 +103,3 @@ contentToString =
 
           unesc :: Element -> Element
           unesc = xmlUnEscape stdXmlEscaper
-
