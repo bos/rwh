@@ -107,35 +107,4 @@ stratt attrname content =
     where mapfunc (Left x) = [x]
           mapfunc (Right _) = []
 
--- Finds the literal children of the named tag, and returns it/them
-tagof :: String -> CFilter
-tagof x = keep /> tag x -- /> txt
-
--- Retruns the literal string that tagof would find
-strof :: String -> Content -> String
-strof x y = forceEither $ strof_either x y
-
-strof_either :: String -> Content -> Either String String
-strof_either x y =
-    case tagof x $ y of
-      [CElem elem] -> Right $ verbatim $ tag x /> txt $ CElem (unesc elem)
-      z -> Left $ "strof: expecting CElem in " ++ x ++ ", got "
-           ++ verbatim z ++ " at " ++ verbatim y
-
-strofm x y = 
-    if length errors /= 0
-       then Left errors
-       else Right (concat plainlist)
-    where mapped = map (strof_either x) $ y
-          (errors, plainlist) = conveithers mapped
-          isright (Left _) = False
-          isright (Right _) = True
-
-conveithers :: [Either a b] -> ([a], [b])
-conveithers inp =  worker inp ([], [])
-    where worker [] y = y
-          worker (Left x:xs) (lefts, rights) =
-              worker xs (x:lefts, rights)
-          worker (Right x:xs) (lefts, rights) =
-              worker xs (lefts, x:rights)
 
