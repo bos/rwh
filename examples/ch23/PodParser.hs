@@ -1,12 +1,9 @@
 module PodParser where
 
-import Types
+import PodTypes
 import Text.XML.HaXml
 import Text.XML.HaXml.Parse
-import Utils
-import Data.Maybe.Utils
 import Data.Char
-import Data.Either.Utils
 import Data.List
 
 data Item = Item {itemtitle :: String,
@@ -18,12 +15,12 @@ data Feed = Feed {channeltitle :: String,
                   items :: [Item]}
             deriving (Eq, Show, Read)
 
+item2ep :: Podcast -> Item -> Episode
 item2ep pc item =
-    Episode {podcast = pc, epid = 0,
-             eptitle = itemtitle item, 
-             epurl = enclosureurl item,
-             epguid = itemguid item,
-             eptype = enclosuretype item, epstatus = Pending}
+    Episode {epId = 0,
+             epCast = pc,
+             epURL = enclosureurl item,
+             epDone = False}
 
 parse :: FilePath -> String -> IO (Either String Feed)
 parse fp name = 
