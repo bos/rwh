@@ -75,7 +75,7 @@ getEnclosures doc =
               where title = case (keep /> tag "title" /> txt) i of
                               [] -> "Untitled"
                               (x:_) -> contentToString x
-                    enclosure = tag "enclosure" `o` children $ i
+                    enclosure = (keep /> tag "enclosure") i
 
           procEnclosure :: String -> Content -> Item
           procEnclosure title e =
