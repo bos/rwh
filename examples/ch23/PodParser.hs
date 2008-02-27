@@ -69,9 +69,9 @@ getEnclosures doc =
     concat . map procItem $ getItems doc
     where procItem :: Content -> [Item]
           procItem i = map (procEnclosure title) enclosure
-              where title = case strofm "title" [i] of
-                              Left x -> "Untitled"
-                              Right x -> x
+              where title = case (keep /> tag "title" /> txt) i of
+                              [] -> "Untitled"
+                              (x:_) -> show . content $ x
                     enclosure = tag "enclosure" `o` children $ i
 
           procEnclosure :: String -> Content -> Item
