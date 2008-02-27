@@ -4,6 +4,7 @@ import PodTypes
 import Text.XML.HaXml
 import Text.XML.HaXml.Parse
 import Text.XML.HaXml.Pretty(content)
+import Text.XML.HaXml.Html.Generate(showattr)
 import Data.Char
 import Data.List
 
@@ -80,7 +81,8 @@ getEnclosures doc =
           procEnclosure :: String -> Content -> Item
           procEnclosure title e =
               Item {itemtitle = title,
-                    enclosureurl = head0 $ forceMaybe $ stratt "url" e
+                    enclosureurl = contentToString $ head $
+                                   showattr "url" $ e
                    }
 
           head0 :: [String] -> String
