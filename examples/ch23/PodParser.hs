@@ -15,6 +15,7 @@ data Feed = Feed {channeltitle :: String,
                   items :: [Item]}
             deriving (Eq, Show, Read)
 
+{- | Given a podcast and an Item, produce an Episode -}
 item2ep :: Podcast -> Item -> Episode
 item2ep pc item =
     Episode {epId = 0,
@@ -22,21 +23,25 @@ item2ep pc item =
              epURL = enclosureurl item,
              epDone = False}
 
-parse :: FilePath -> String -> IO (Either String Feed)
+{- | Parse the data from a given file. -}
+parse :: FilePath -> String -> IO Feed
 parse fp name = 
-    do c <- readFile fp
-       case xmlParse' name (unifrob c) of
-         Left x -> return (Left x)
-         Right y ->
-             do let doc = getContent y
-                let title = getTitle doc
-                let feeditems = getEnclosures doc
-                return $ Right $
-                           (Feed {channeltitle = title, items = feeditems})
-       where getContent (Document _ _ e _) = CElem e
+    do -- Read the file lazily
+       c <- readFile fp
 
-unifrob ('\xef':'\xbb':'\xbf':x) = x -- Strip off unicode BOM
-unifrob x = x
+       let parseResult = xmlParse name (stripUnicodeBOM c)
+       let doc = getContent parseResult
+       let title = getTitle doc
+       let feeditems = getEnclosures doc
+       return (Feed {channeltitle = title, items = feeditems})
+    where getContent :: Document -> Content
+          getContent (Document _ _ e _) = CElem e
+          
+          {- | Some Unicode documents begin with a binary sequence;
+             strip it off before processing. -}
+          stripUnicodeBOM :: String -> String
+          stripUnicodeBOM ('\xef':'\xbb':'\xbf':x) = x
+          stripUnicodeBOM x = x
 
 unesc = xmlUnEscape stdXmlEscaper
 
