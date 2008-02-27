@@ -91,25 +91,3 @@ getEnclosures doc =
 
           getItems :: CFilter
           getItems = channel /> tag "item"
-       
-              
-
---------------------------------------------------
--- Utilities
---------------------------------------------------
-
-attrofelem :: String -> Content -> Maybe AttValue
-attrofelem attrname (CElem inelem) =
-    case unesc inelem of
-      Elem name al _ -> lookup attrname al
-attrofelem _ _ =
-    error "attrofelem: called on something other than a CElem"
-stratt :: String -> Content -> Maybe [String]
-stratt attrname content =
-    case attrofelem attrname content of
-      Just (AttValue x) -> Just (concat . map mapfunc $ x)
-      Nothing -> Nothing
-    where mapfunc (Left x) = [x]
-          mapfunc (Right _) = []
-
-
