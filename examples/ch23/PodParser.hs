@@ -47,6 +47,10 @@ parse content name =
 
 unesc = xmlUnEscape stdXmlEscaper
 
+item = tag "item" `o` children `o` channel
+
+channel = tag "channel" `o` children `o` tag "rss"
+
 getTitle doc = forceEither $ strofm "title" (channel doc)
 
 getEnclosures doc =
@@ -63,12 +67,6 @@ getEnclosures doc =
           head0 [] = ""
           head0 (x:xs) = x
               
-
-item = tag "item" `o` children `o` channel
-
-channel =
-    tag "channel" `o` children `o` tag "rss"
-
 
 --------------------------------------------------
 -- Utilities
