@@ -56,39 +56,18 @@ Note that HaXml defines CFilter as:
 channel :: CFilter
 channel = tag "rss" /> tag "channel"
 
-{- | Convert [Content] to a printable string, taking care to unescape it.
-
-An implementation without unescaping would simply be:
-
-> contentToString = concatMap (show . content)
-
-Because HaXml's unescaping only works on Elements, we must make sure that
-whatever Content we have is wrapped in an Element, then use txt to
-pull the insides back out. -}
-contentToString :: [Content] -> String
-contentToString = concatMap procContent
-    where procContent x = verbatim $ keep /> txt $ CElem (unesc (fakeElem x))
-
-          fakeElem :: Content -> Element
-          fakeElem x = Elem "fake" [] [x]
-
-          unesc :: Element -> Element
-          unesc = xmlUnEscape stdXmlEscaper
-
 getTitle :: Content -> String
 getTitle doc =
-    case channel /> tag "title" /> txt $ doc of
-      [] -> "Untitled"          -- No title tag present
-      x -> contentToString x
+    contentToStringDefault "Untitled Podcast" 
+        (channel /> tag "title" /> txt $ doc)
 
 getEnclosures :: Content -> [Item]
 getEnclosures doc =
     concatMap procItem $ getItems doc
     where procItem :: Content -> [Item]
           procItem i = concatMap (procEnclosure title) enclosure
-              where title = case (keep /> tag "title" /> txt) i of
-                              [] -> "Untitled"
-                              x -> contentToString x
+              where title = contentToStringDefault "Untitled Episode"
+                               (keep /> tag "title" /> txt $ i)
                     enclosure = (keep /> tag "enclosure") i
 
           getItems :: CFilter
@@ -100,4 +79,31 @@ getEnclosures doc =
               where makeItem :: Content -> Item
                     makeItem x = Item {itemtitle = title,
                                        enclosureurl = contentToString [x]}
+
+{- | Convert [Content] to a printable String, with a default if the 
+passed-in [Content] is [], signifying a lack of a match. -}
+contentToStringDefault :: String -> [Content] -> String
+contentToStringDefault msg [] = msg
+contentToStringDefault _ x = contentToString x
+
+{- | Convert [Content] to a printable string, taking care to unescape it.
+
+An implementation without unescaping would simply be:
+
+> contentToString = concatMap (show . content)
+
+Because HaXml's unescaping only works on Elements, we must make sure that
+whatever Content we have is wrapped in an Element, then use txt to
+pull the insides back out. -}
+contentToString :: [Content] -> String
+contentToString = 
+    concatMap procContent
+    where procContent x = 
+              verbatim $ keep /> txt $ CElem (unesc (fakeElem x))
+
+          fakeElem :: Content -> Element
+          fakeElem x = Elem "fake" [] [x]
+
+          unesc :: Element -> Element
+          unesc = xmlUnEscape stdXmlEscaper
 
