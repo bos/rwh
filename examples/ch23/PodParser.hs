@@ -53,22 +53,11 @@ getEnclosures doc =
               where title = case strofm "title" [i] of
                               Left x -> "Untitled"
                               Right x -> x
-                    guid = case strofm "guid" [i] of
-                              Left _ -> Nothing
-                              Right x -> Just x
                     enclosure = tag "enclosure" `o` children $ i
           procenclosure title guid e =
               Item {itemtitle = title,
-                    itemguid = guid,
-                    enclosureurl = head0 $ forceMaybe $ stratt "url" e,
-                    enclosuretype = head0 $ case stratt "type" e of
-                                              Nothing -> ["application/octet-stream"]
-                                              Just x -> x,
-                    enclosurelength = head $ case stratt "length" e of
-                                                Nothing -> ["0"]
-                                                Just [] -> ["0"]
-                                                Just x -> x
-                                                }
+                    enclosureurl = head0 $ forceMaybe $ stratt "url" e
+                   }
           head0 [] = ""
           head0 (x:xs) = x
               
