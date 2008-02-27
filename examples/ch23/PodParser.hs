@@ -26,18 +26,17 @@ item2ep pc item =
              epURL = enclosureurl item,
              epDone = False}
 
-{- | Parse the data from a given file. -}
-parse :: FilePath -> String -> IO Feed
-parse fp name = 
-    do -- Read the file lazily
-       c <- readFile fp
+{- | Parse the data from a given string, with the given name to use
+in error messages. -}
+parse :: String -> String -> Feed
+parse content name = 
+    Feed {channeltitle = getTitle doc,
+          items = getEnclosures doc}
 
-       let parseResult = xmlParse name (stripUnicodeBOM c)
-       let doc = getContent parseResult
-       let title = getTitle doc
-       let feeditems = getEnclosures doc
-       return (Feed {channeltitle = title, items = feeditems})
-    where getContent :: Document -> Content
+    where parseResult = xmlParse name (stripUnicodeBOM content)
+          doc = getContent parseResult
+
+          getContent :: Document -> Content
           getContent (Document _ _ e _) = CElem e
           
           {- | Some Unicode documents begin with a binary sequence;
