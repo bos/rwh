@@ -81,7 +81,8 @@ getEnclosures doc =
           procEnclosure :: String -> Content -> [Item]
           procEnclosure title enclosure =
               map makeItem (showattr "url" enclosure)
-              where makeItem x = Item {itemtitle = title,
+              where makeItem :: Content -> Item
+                    makeItem x = Item {itemtitle = title,
                                        enclosureurl = contentToString x}
 
           getItems :: CFilter
