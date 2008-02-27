@@ -6,6 +6,9 @@ import Text.XML.HaXml.Parse
 import Data.Char
 import Data.List
 
+import Data.Maybe.Utils
+import Data.Either.Utils
+
 data Item = Item {itemtitle :: String,
                   enclosureurl :: String
                   }
@@ -49,12 +52,12 @@ getTitle doc = forceEither $ strofm "title" (channel doc)
 
 getEnclosures doc =
     concat . map procitem $ item doc
-    where procitem i = map (procenclosure title guid) enclosure
+    where procitem i = map (procenclosure title) enclosure
               where title = case strofm "title" [i] of
                               Left x -> "Untitled"
                               Right x -> x
                     enclosure = tag "enclosure" `o` children $ i
-          procenclosure title guid e =
+          procenclosure title e =
               Item {itemtitle = title,
                     enclosureurl = head0 $ forceMaybe $ stratt "url" e
                    }
