@@ -10,10 +10,7 @@ import Data.Either.Utils
 import Data.List
 
 data Item = Item {itemtitle :: String,
-                  itemguid :: Maybe String,
-                  enclosureurl :: String,
-                  enclosuretype :: String,
-                  enclosurelength :: String
+                  enclosureurl :: String
                   }
           deriving (Eq, Show, Read)
 
@@ -23,17 +20,10 @@ data Feed = Feed {channeltitle :: String,
 
 item2ep pc item =
     Episode {podcast = pc, epid = 0,
-             eptitle = sanitize_basic (itemtitle item), 
-             epurl = sanitize_basic (enclosureurl item),
-             epguid = fmap sanitize_basic (itemguid item),
-             eptype = sanitize_basic (enclosuretype item), epstatus = Pending,
-             eplength = case reads . sanitize_basic . enclosurelength $ item of
-                          [] -> 0
-                          [(x, [])] -> x
-                          _ -> 0,
-             epfirstattempt = Nothing,
-             eplastattempt = Nothing,
-             epfailedattempts = 0}
+             eptitle = itemtitle item, 
+             epurl = enclosureurl item,
+             epguid = itemguid item,
+             eptype = enclosuretype item, epstatus = Pending}
 
 parse :: FilePath -> String -> IO (Either String Feed)
 parse fp name = 
