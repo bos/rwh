@@ -52,7 +52,11 @@ item = channel /> tag "item"
 
 channel = tag "rss" /> tag "channel"
 
-getTitle doc = show . content . head $ channel /> tag "title" /> txt $ doc
+getTitle doc =
+    case channel /> tag "title" /> txt $ doc of
+      [] -> "Untitled"          -- No title tag present
+      (x:_) -> -- Found 1 (or more) title tags.  Take the first.
+          show . content $ x 
 
 getEnclosures doc =
     concat . map procitem $ item doc
