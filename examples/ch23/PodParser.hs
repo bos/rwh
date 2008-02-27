@@ -72,22 +72,17 @@ getEnclosures :: Content -> [Item]
 getEnclosures doc =
     concat . map procItem $ getItems doc
     where procItem :: Content -> [Item]
-          procItem i = map (procEnclosure title) enclosure
+          procItem i = concatMap (procEnclosure title) enclosure
               where title = case (keep /> tag "title" /> txt) i of
                               [] -> "Untitled"
                               (x:_) -> contentToString x
                     enclosure = (keep /> tag "enclosure") i
 
-          procEnclosure :: String -> Content -> Item
-          procEnclosure title e =
-              Item {itemtitle = title,
-                    enclosureurl = contentToString $ head $
-                                   showattr "url" $ e
-                   }
-
-          head0 :: [String] -> String
-          head0 [] = ""
-          head0 (x:xs) = x
+          procEnclosure :: String -> Content -> [Item]
+          procEnclosure title enclosure =
+              map makeItem (showattr "url" enclosure)
+              where makeItem x = Item {itemtitle = title,
+                                       enclosureurl = contentToString x}
 
           getItems :: CFilter
           getItems = channel /> tag "item"
