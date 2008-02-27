@@ -47,6 +47,7 @@ parse content name =
           stripUnicodeBOM ('\xef':'\xbb':'\xbf':x) = x
           stripUnicodeBOM x = x
 
+unesc :: Element -> Element
 unesc = xmlUnEscape stdXmlEscaper
 
 {- | Pull out the channel part of the document.
@@ -61,15 +62,13 @@ channel = tag "rss" /> tag "channel"
 contentToString :: [Content] -> String
 -- concatMap (show . content)
 contentToString = concatMap procContent
-    where procContent (CElem elem) = verbatim $ keep /> txt $ CElem (unesc elem)
-          procContent x = error $ "strof: expecting CElem in " ++ verbatim x
+    where procContent x = verbatim $ keep /> txt $ CElem (unesc (fakeElem x))
 
-                      
-                    
+          fakeElem x = Elem "fake" [] [x]
 
 getTitle :: Content -> String
 getTitle doc =
-    case channel /> tag "title"  $ doc of
+    case channel /> tag "title" /> txt $ doc of
       [] -> "Untitled"          -- No title tag present
       x -> contentToString x
 
@@ -78,7 +77,7 @@ getEnclosures doc =
     concatMap procItem $ getItems doc
     where procItem :: Content -> [Item]
           procItem i = concatMap (procEnclosure title) enclosure
-              where title = case (keep /> tag "title") i of
+              where title = case (keep /> tag "title" /> txt) i of
                               [] -> "Untitled"
                               x -> contentToString x
                     enclosure = (keep /> tag "enclosure") i
