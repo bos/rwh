@@ -47,9 +47,6 @@ parse content name =
           stripUnicodeBOM ('\xef':'\xbb':'\xbf':x) = x
           stripUnicodeBOM x = x
 
-unesc :: Element -> Element
-unesc = xmlUnEscape stdXmlEscaper
-
 {- | Pull out the channel part of the document.
 
 Note that HaXml defines CFilter as:
@@ -59,12 +56,24 @@ Note that HaXml defines CFilter as:
 channel :: CFilter
 channel = tag "rss" /> tag "channel"
 
+{- | Convert [Content] to a printable string, taking care to unescape it.
+
+An implementation without unescaping would simply be:
+
+> contentToString = concatMap (show . content)
+
+Because HaXml's unescaping only works on Elements, we must make sure that
+whatever Content we have is wrapped in an Element, then use txt to
+pull the insides back out. -}
 contentToString :: [Content] -> String
--- concatMap (show . content)
 contentToString = concatMap procContent
     where procContent x = verbatim $ keep /> txt $ CElem (unesc (fakeElem x))
 
+          fakeElem :: Content -> Element
           fakeElem x = Elem "fake" [] [x]
+
+          unesc :: Element -> Element
+          unesc = xmlUnEscape stdXmlEscaper
 
 getTitle :: Content -> String
 getTitle doc =
