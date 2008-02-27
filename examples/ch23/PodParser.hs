@@ -3,6 +3,7 @@ module PodParser where
 import PodTypes
 import Text.XML.HaXml
 import Text.XML.HaXml.Parse
+import Text.XML.HaXml.Pretty(content)
 import Data.Char
 import Data.List
 
@@ -51,7 +52,7 @@ item = channel /> tag "item"
 
 channel = tag "rss" /> tag "channel"
 
-getTitle doc = forceEither $ strofm "title" (channel doc)
+getTitle doc = show . content . head $ channel /> tag "title" /> txt $ doc
 
 getEnclosures doc =
     concat . map procitem $ item doc
