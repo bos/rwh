@@ -59,11 +59,17 @@ channel :: CFilter
 channel = tag "rss" /> tag "channel"
 
 contentToString :: [Content] -> String
-contentToString = concatMap (show . content)
+-- concatMap (show . content)
+contentToString = concatMap procContent
+    where procContent (CElem elem) = verbatim $ keep /> txt $ CElem (unesc elem)
+          procContent x = error $ "strof: expecting CElem in " ++ verbatim x
+
+                      
+                    
 
 getTitle :: Content -> String
 getTitle doc =
-    case channel /> tag "title" /> txt $ doc of
+    case channel /> tag "title"  $ doc of
       [] -> "Untitled"          -- No title tag present
       x -> contentToString x
 
@@ -72,7 +78,7 @@ getEnclosures doc =
     concatMap procItem $ getItems doc
     where procItem :: Content -> [Item]
           procItem i = concatMap (procEnclosure title) enclosure
-              where title = case (keep /> tag "title" /> txt) i of
+              where title = case (keep /> tag "title") i of
                               [] -> "Untitled"
                               x -> contentToString x
                     enclosure = (keep /> tag "enclosure") i
