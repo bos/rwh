@@ -78,6 +78,9 @@ getEnclosures doc =
                               (x:_) -> contentToString x
                     enclosure = (keep /> tag "enclosure") i
 
+          getItems :: CFilter
+          getItems = channel /> tag "item"
+
           procEnclosure :: String -> Content -> [Item]
           procEnclosure title enclosure =
               map makeItem (showattr "url" enclosure)
@@ -85,5 +88,3 @@ getEnclosures doc =
                     makeItem x = Item {itemtitle = title,
                                        enclosureurl = contentToString x}
 
-          getItems :: CFilter
-          getItems = channel /> tag "item"
