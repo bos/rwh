@@ -18,16 +18,19 @@
       numbers, booleans, and a special value named
       <code>null</code>.</para>
 
-    <programlisting>"a string" 12345 true null</programlisting>
+    <programlisting><![CDATA["a string"
+12345
+true
+null]]></programlisting>
 
-    <para id="x_Ii">The language also allows for the construction of
-      compound values.  Its compound types are the array, an ordered
-      sequence of values; and the struct, an unordered collection of
+    <para id="x_Ii">The language also supports compound values.  Its
+      compound types are the array&emdash;an ordered sequence of
+      values&emdash;and the struct&emdash;an unordered collection of
       name/value pairs.  The values in a struct or array can be of any
       type.</para>
 
-    <programlisting>[-3.14, true, null, "a string"] {"numbers":
-      [1,2,3,4,5], "useful": false}</programlisting>
+    <programlisting><![CDATA[[-3.14, true, null, "a string"]
+{"numbers": [1,2,3,4,5], "useful": false}]]></programlisting>
   </sect1>
 
   <sect1>
@@ -139,8 +142,7 @@
       or command prompt window, then invoke &ghc; with the name of the
       source file to compile.</para>
 
-    <programlisting><userinput>ghc -c
-	SimpleJSON.hs</userinput></programlisting>
+    <programlisting><userinput>ghc -c SimpleJSON.hs</userinput></programlisting>
 
     <para id="x_Yi">The <option>-c</option> option tells &ghc; to only
       generate object code.  If we were to omit the
@@ -185,8 +187,7 @@
       <function>main</function> function is the one that will be
       called when we run the program once we've built it.</para>
 
-    <programlisting><userinput>ghc -o simple Main.hs
-	SimpleJSON.o</userinput></programlisting>
+    <programlisting><userinput>ghc -o simple Main.hs SimpleJSON.o</userinput></programlisting>
 
     <para id="x_di">This time around, we're omitting the
       <option>-c</option> option when we invoke &ghc;, so it will
@@ -334,10 +335,10 @@
   <sect1>
     <title>Developing Haskell code without going nuts</title>
 
-    <para>During the early stages of our Haskell development
-      adventure, we have so many new, unfamiliar concepts to keep
-      track of at one time that it can be a challenge to write code
-      that compiles at all.</para>
+    <para>Early on, as we come to grips with Haskell development, we
+      have so many new, unfamiliar concepts to keep track of at one
+      time that it can be a challenge to write code that compiles at
+      all.</para>
 
     <para>As we write our first substantial body of code, it's a
       <emphasis>huge</emphasis> help to pause every few minutes and
@@ -677,6 +678,12 @@
 
     &Prettify.hs:Doc;
 
+    <para>Notice that the <type>Doc</type> type describes a tree: the
+      <code>Concat</code> and <code>Union</code> constructor create an
+      internal node from two other <type>Doc</type> values, while the
+      <code>Empty</code> and other simple constructors build
+      leaves.</para>
+    
     <para>In the header of our module, we will export the name of the
       type, but not any of its constructors: this will prevent modules
       that use the <type>Doc</type> type from creating and pattern
@@ -706,15 +713,89 @@
     
     <para>Notice that we pattern match against <code>Empty</code>:
       concatenating a <type>Doc</type> value with <code>Empty</code>
-      on the left or right has no effect.  If we briefly put on our
-      mathematical hats, we can say that <code>Empty</code> is the
-      identity under concatenation.  Taking the mathematical
-      perspective has useful practical consequences, and we'll explain
-      why later.</para>
+      on the left or right has no effect.  This keeps us from bloating
+      the tree with useless values.</para>
 
-    <remark>Add a reference to wherever we introduce monoids.</remark>
+    <tip>
+      <title>A mathematical moment</title>
 
-    
+      <para>If we briefly put on our mathematical hats, we can say
+	that <code>Empty</code> is the identity under concatenation.
+	Taking the mathematical perspective has useful practical
+	consequences, and we'll explain why later.</para>
+
+      <remark>Add a reference to wherever we introduce
+	monoids.</remark>
+    </tip>
+
+    <para>Our <function>hcat</function> and <function>fsep</function>
+      functions concatenate a list of <type>Doc</type> values into
+      one.  In <xref
+	linkend="fp.fold.exercises"/>, we mentioned that we could
+      define concatenation for lists using
+      <function>foldr</function>.</para>
+
+    &Concat.hs:concat;
+
+    <para>Since <function>(&lt;&gt;)</function> is analogous to
+      <function>(:)</function>, and <function>empty</function> to
+      <function>[]</function>, we can write <function>hcat</function>
+      and <function>fsep</function> as folds, too.</para>
+      
+    &Prettify.hs:hcat;
+
+    <para>The definition of <function>fsep</function> depends on
+      several other functions.</para>
+
+    &Prettify.hs:fsep;
+
+    <para>These take a little explaining.  The
+      <function>softline</function> function should insert a newline
+      if the current line has become too wide, or a space otherwise.
+      How can we do this if our <type>Doc</type> type doesn't contain
+      any information about rendering?  Our answer is that every time
+      we encounter a soft newline, we maintain
+      <emphasis>two</emphasis> representations of the document, using
+      the <code>Union</code> constructor.</para>
+     
+    &Prettify.hs:group;
+
+    <para>Our <function>flatten</function> function replaces a
+      <code>Line</code> with a space, turning two lines into one
+      longer line.</para>
+
+    &Prettify.hs:flatten;
+
+    <para>Notice that we always call <function>flatten</function> on
+      the left element of a <code>Union</code>.  We'll be making use
+      of this in our rendering functions below.</para>
+
+    <sect2>
+      <title>Compact rendering</title>
+
+      <para>Quite often, we want to use a representation for a piece
+	of data that contains as few characters as possible.  For
+	example, if we're sending JSON data over a network connection,
+	there's no sense in laying it out nicely: the software on the
+	far end won't care whether the data is pretty or not, and the
+	layout will add a lot of overhead.</para>
+
+      <para>For these cases, and because it's a simple piece of code
+	to start with, we provide a bare-bones compact rendering
+	function.</para>
+
+      &Prettify.hs:compact;
+
+      <para>In our &case; expression, the branch that matches the
+	<code>Union</code> constructor ignores the left element, on
+	which we called <function>flatten</function>.</para>
+
+      <para>We now have enough definitions fleshed out that we ought
+	to be able to use our <function>compact</function> function in
+	&ghci;.</para>
+
+      &prettyjson.ghci:compact;
+    </sect2>
   </sect1>
 </chapter>
 

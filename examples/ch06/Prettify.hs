@@ -24,7 +24,7 @@ import Data.Monoid (Monoid(..))
 data Doc = Empty
          | Char Char
          | Text String
-         | Line Bool
+         | Line
          | Concat Doc Doc
          | Union Doc Doc
 {-- /snippet Doc --}
@@ -57,15 +57,18 @@ double d = text (show d)
 
 {-- snippet line --}
 line :: Doc
-line = Line False
+line = Line
 {-- /snippet line --}
 
+{-- snippet hcat --}
 hcat :: [Doc] -> Doc
 hcat = fold (<>)
 
 fold :: (Doc -> Doc -> Doc) -> [Doc] -> Doc
 fold f = foldr f empty
+{-- /snippet hcat --}
 
+{-- snippet fsep --}
 fsep :: [Doc] -> Doc
 fsep = fold (</>)
 
@@ -74,13 +77,20 @@ x </> y = x <> softline <> y
 
 softline :: Doc
 softline = group line
+{-- /snippet fsep --}
 
+{-- snippet group --}
 group :: Doc -> Doc
-group x = Union (flatten x) x
-    where flatten (Concat x y) = Concat (flatten x) (flatten y)
-          flatten (Line break) = if break then Empty else Text " "
-          flatten (Union x y)  = flatten x
-          flatten other        = other
+group x = flatten x `Union` x
+{-- /snippet group --}
+
+{-- snippet flatten --}
+flatten :: Doc -> Doc
+flatten (x `Concat` y) = flatten x `Concat` flatten y
+flatten Line           = Text " "
+flatten (x `Union` _)  = flatten x
+flatten other          = other
+{-- /snippet flatten --}
 
 {-- snippet punctuate --}
 punctuate :: Doc -> [Doc] -> [Doc]
@@ -89,36 +99,38 @@ punctuate p (d:ds) = (d <> p) : punctuate p ds
 punctuate p _      = []
 {-- /snippet punctuate --}
 
-compact :: Int -> Doc -> String
-compact _ x = transform [x]
+{-- snippet compact --}
+compact :: Doc -> String
+compact x = transform [x]
     where transform [] = ""
           transform (d:ds) =
               case d of
-                Empty -> transform ds
-                Char c -> c : transform ds
-                Text s -> s ++ transform ds
-                Line _ -> transform ds
-                Concat a b -> transform (a:b:ds)
-                Union _ b -> transform (b:ds)
+                Empty        -> transform ds
+                Char c       -> c : transform ds
+                Text s       -> s ++ transform ds
+                Line         -> '\n' : transform ds
+                a `Concat` b -> transform (a:b:ds)
+                _ `Union` b  -> transform (b:ds)
+{-- /snippet compact --}
 
 pretty :: Int -> Doc -> String
-pretty w x = best 0 [x]
-    where best n (d:ds) =
+pretty width x = best 0 [x]
+    where best col (d:ds) =
               case d of
-                Empty -> best n ds
-                Char c -> c :  best (n + 1) ds
-                Text s -> s ++ best (n + length s) ds
-                Line _ -> '\n' : best n ds
-                Concat a b -> best n (a:b:ds)
-                Union a b -> nicest n (best n (a:ds))
-                                      (best n (b:ds))
+                Empty        -> best col ds
+                Char c       -> c :  best (col + 1) ds
+                Text s       -> s ++ best (col + length s) ds
+                Line         -> '\n' : best col ds
+                a `Concat` b -> best col (a:b:ds)
+                a `Union` b  -> nicest col (best col (a:ds))
+                                           (best col (b:ds))
           best _ _ = ""
-          nicest n a b | min w n `fits` a = a
-                       | otherwise = b
+          nicest col a b | min width col `fits` a = a
+                         | otherwise              = b
           w `fits` x | w < 0 = False
-          w `fits` "" = True
-          w `fits` ('\n':_) = True
-          w `fits` (c:cs) = (w - 1) `fits` cs
+          w `fits` ""        = True
+          w `fits` ('\n':_)  = True
+          w `fits` (c:cs)    = (w - 1) `fits` cs
 
 instance Show Doc where
     show doc = pretty 80 doc

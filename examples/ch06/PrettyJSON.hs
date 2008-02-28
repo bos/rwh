@@ -8,7 +8,8 @@ import Numeric (showHex)
 import Data.Bits (shiftR, (.&.))
 
 import SimpleJSON (JValue(..))
-import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text)
+import Prettify (Doc, (<>), char, double, fsep, hcat, punctuate, text,
+                 compact, pretty)
 {-- /snippet module --}
 
 {-- snippet jvalue --}

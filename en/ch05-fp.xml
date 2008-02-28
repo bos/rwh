@@ -1310,7 +1310,7 @@
 	in normal use in section XXX.</para>
     </sect2>
 
-    <sect2>
+    <sect2 id="fp.fold.exercises">
       <title>Exercises</title>
 
       <qandaset defaultlabel="number">

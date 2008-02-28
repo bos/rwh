@@ -13,3 +13,8 @@ replicate 5 "foo"
 --# bits
 0x10000 `shiftR` 4   :: Int
 7 .&. 2   :: Int
+
+--# compact
+let value = jvalue . JObject $ [("f", JNumber 1), ("q", JBool True)]
+:type value
+putStrLn (compact value)
