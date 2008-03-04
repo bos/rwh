@@ -120,7 +120,98 @@
     &PodDB.ghci:all;
   </sect1>
 
-    
+  <sect1 id="hs.wc.parser">
+    <title>The Parser</title>
+    <para>
+      Now that we have the database component, we need to have code to
+      parse the podcast feeds.  These are XML files that contain
+      various information.  Here's an example XML file to show you
+      what they look like:
+
+    </para>
+    <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd" version="2.0">
+  <channel>
+    <title>Haskell Radio</title>
+    <link>http://www.example.com/radio/</link>
+    <description>Description of this podcast</description>
+    <item>
+      <title>Episode 2: Lambdas</title>
+      <link>http://www.example.com/radio/lambdas</link>
+      <enclosure url="http://www.example.com/radio/lambdas.mp3"
+       type="audio/mpeg" length="10485760"/>
+    </item>
+    <item>
+      <title>Episode 1: Parsec</title>
+      <link>http://www.example.com/radio/parsec</link>
+      <enclosure url="http://www.example.com/radio/parsec.mp3"
+       type="audio/mpeg" length="10485150"/>
+    </item>
+  </channel>
+</rss>
+]]></programlisting>
+
+    <para>
+      Out of these files, we are mainly interested in two things: the
+      podcast title and the enclosure URLs.   We use the <ulink
+      url="http://www.cs.york.ac.uk/fp/HaXml/">HaXml toolkit</ulink>
+      to parse the XML file.  Here's the source code for this component:
+    </para>
+    &PodParser.hs:all;
+    <para>
+      Let's look at this code.  First, we declare two types:
+      <literal>Item</literal> and <literal>Feed</literal>.  We will be
+      transforming the XML document into a <literal>Feed</literal>,
+      which then contains items.  We also provide a function to
+      convert an <literal>Item</literal> into an
+      <literal>Episode</literal> as defined in
+      <literal>PodTypes.hs</literal>.
+    </para>
+    <para>
+      Next, it os on to parsing.  The <literal>parse</literal>
+      function takes a &String; represeting the XML content as well as
+      a name, and returns a <literal>Feed</literal>.
+    </para>
+    <para>
+      HaXml is designed as a "filter" converting data of one type to
+      another.  It can be a simple straightforward conversion of XML
+      to XML, or of XML to Haskell data, or of Haskell data to XML.
+      HaXml has a data type called <literal>CFilter</literal>, which
+      is defined like this:
+    </para>
+    <programlisting>
+type CFilter = Content -> [Content]
+    </programlisting>
+    <para>
+      That is, a <literal>CFilter</literal> takes a fragment of an XML
+      document and returns 0 or more fragments.  A
+      <literal>CFilter</literal> might be asked to file all children
+      of a specified tag, all tags with a certain name, the literal
+      text contained within a part of an XML document, or any of a
+      number of other things.  There is also an operator
+      <literal>(/>)</literal> that chains <literal>CFilter</literal>
+      functions together.  All of the data that we're interested in
+      occurs within the <literal>&lt;channel&gt;</literal> tag, so
+      first we want to get at that.  We define a simple
+      <literal>CFilter</literal>:
+    </para>
+    <programlisting>
+channel = tag "rss" /> tag "channel"
+    </programlisting>
+    <para>
+      When we pass a document to <literal>channel</literal>, it will
+      search the top level for the tag named <literal>rss</literal>.
+      Then, within that, it will look for the
+      <literal>channel</literal> tag.
+    </para>
+    <para>
+      The rest of the program follows this basic approach.
+      <literal>txt</literal> extracts the literal text from a tag, and
+      by using <literal>CFilter</literal> functions, we can get at any
+      part of the document.
+    </para>
+  </sect1>
     
 </chapter>
 
