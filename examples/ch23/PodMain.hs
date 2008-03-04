@@ -40,7 +40,7 @@ download dbh =
     where procPodcast pc =
               do putStrLn $ "Considering " ++ (castURL pc)
                  episodelist <- getPodcastEpisodes dbh pc
-                 let dleps = filter (\ep -> epDone ep == True)
+                 let dleps = filter (\ep -> epDone ep == False)
                              episodelist
                  mapM_ procEpisode dleps
           procEpisode ep =

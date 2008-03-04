@@ -22,6 +22,10 @@ downloadURL url =
          Right r -> 
              case rspCode r of
                (2,_,_) -> return $ Right (rspBody r)
+               (3,_,_) -> -- A HTTP redirect
+                 case findHeader HdrLocation r of
+                   Nothing -> return $ Left (show r)
+                   Just url -> downloadURL url
                _ -> return $ Left (show r)
     where request = Request {rqURI = uri,
                              rqMethod = GET,
