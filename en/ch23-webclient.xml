@@ -212,6 +212,26 @@ channel = tag "rss" /> tag "channel"
       part of the document.
     </para>
   </sect1>
+
+  <sect1 id="hs.wc.download">
+    <title>Downloading</title>
+    <para>
+      The next part of our program is a module to download data.
+      We'll need to download two different types of data: the content
+      of a podcast, and the audio for each episode.  In the former
+      case, we'll parse the data and update our database.  For the
+      latter, we'll write the data out to a file on disk.
+    </para>
+    <para>
+      We'll be downloading from HTTP servers, so we'll use a Haskell
+      <ulink url="http://www.haskell.org/http/">HTTP library</ulink>.
+      For downloading podcast feeds, we'll download the document,
+      parse it, and update the database.  For episode audio, we'll
+      download the file, write it to disk, and mark it downloaded in
+      the database.  Here's the code:
+    </para>
+    &PodDownload.hs:all;
+  </sect1>
     
 </chapter>
 
