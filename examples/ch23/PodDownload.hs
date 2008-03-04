@@ -7,6 +7,10 @@ import PodDB
 import PodParser
 import Network.HTTP
 import System.IO
+import Database.HDBC
+import Database.HDBC.Sqlite3
+import Data.Maybe
+import Network.URI
 
 {- | Download a URL.  (Left errorMessage) if an error,
 (Right doc) if success. -}
