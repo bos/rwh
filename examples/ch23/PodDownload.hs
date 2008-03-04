@@ -17,16 +17,17 @@ import Network.URI
 downloadURL :: String -> Either String String
 downloadURL url =
     do resp <- simpleHTTP request
-       case rep of
+       case resp of
          Left x -> Left $ "Error connecting: " ++ show x
          Right r -> 
              case rspCode r of
                (2,_,_) -> Right (rspBody r)
                _ -> Left (show r)
-    where request = Request {rqURI = url,
+    where request = Request {rqURI = uri,
                              rqMethod = GET,
                              rqHeaders = [],
                              rqBody = ""}
+          uri = fromJust $ parseURI url
 
 {- | Update the podcast in the database. -}
 updatePodcast :: Connection -> Podcast -> IO ()
@@ -36,11 +37,7 @@ updatePodcast dbh pc =
          Left x -> putStrLn x
          Right doc -> updateDB doc
 
-    where request = Request {rqURI = castURL,
-                             rqMethod = GET,
-                             rqHeaders = [],
-                             rqBody = ""}
-          updateDB doc = 
+    where updateDB doc = 
               do mapM_ (addEpisode dbh) episodes
                  commit dbh
               where feed = parse doc (castURL pc)
