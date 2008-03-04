@@ -18,11 +18,11 @@ downloadURL :: String -> IO (Either String String)
 downloadURL url =
     do resp <- simpleHTTP request
        case resp of
-         Left x -> Left $ "Error connecting: " ++ show x
-         Right (Response code reason _ body) -> 
-             case code of
-               (2,_,_) -> Right body
-               _ -> Left (show code ++ ": " ++ reason)
+         Left x -> return $ Left ("Error connecting: " ++ show x)
+         Right r -> 
+             case rspCode r of
+               (2,_,_) -> return $ Right (rspBody r)
+               _ -> return $ Left (show r)
     where request = Request {rqURI = uri,
                              rqMethod = GET,
                              rqHeaders = [],
@@ -57,7 +57,7 @@ getEpisode dbh ep =
                 hClose file
                 updateEpisode dbh (ep {epDone = True})
                 commit dbh
-                return (Right filename)
+                return (Just filename)
           -- This function ought to apply an extension based on the filetype
     where filename = "pod." ++ (show . castId . epCast $ ep) ++ "." ++ 
                      (show (epId ep)) ++ ".mp3"
