@@ -7,12 +7,14 @@ import PodDownload
 import PodDB
 import PodTypes
 import System.Environment
+import Database.HDBC
+import Network.Socket(withSocketsDo)
 
-main = 
+main = withSocketsDo $ handleSqlError $
     do args <- getArgs
        dbh <- connect "pod.db"
        case args of
-         ["add", url] -> addPodcast dbh url
+         ["add", url] -> add dbh url
          ["update"] -> update dbh
          ["download"] -> download dbh
          ["fetch"] -> do update dbh
@@ -20,7 +22,7 @@ main =
          _ -> syntaxError
        disconnect dbh
 
-addPodcast dbh url = 
+add dbh url = 
     do addPodcast dbh pc
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
@@ -30,7 +32,7 @@ update dbh =
        mapM_ procPodcast pclist
     where procPodcast pc =
               do putStrLn $ "Updating from " ++ (castURL pc)
-                 updatePodcast dbh pc
+                 updatePodcastFromFeed dbh pc
 
 download dbh =
     do pclist <- getPodcasts dbh

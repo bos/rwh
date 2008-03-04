@@ -30,8 +30,8 @@ downloadURL url =
           uri = fromJust $ parseURI url
 
 {- | Update the podcast in the database. -}
-updatePodcast :: Connection -> Podcast -> IO ()
-updatePodcast dbh pc =
+updatePodcastFromFeed :: Connection -> Podcast -> IO ()
+updatePodcastFromFeed dbh pc =
     do resp <- downloadURL (castURL pc)
        case resp of
          Left x -> putStrLn x

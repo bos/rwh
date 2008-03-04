@@ -29,18 +29,21 @@ of data consistency for us:
 prepDB :: Connection -> IO ()
 prepDB dbh =
     do tables <- getTables dbh
-       when ((sort tables) /= ["podcasts", "episodes"]) $
+       when (not ("podcasts" `elem` tables)) $
            do run dbh "CREATE TABLE podcasts (\
                        \castid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                        \castURL TEXT NOT NULL UNIQUE)" []
-              run dbh "CREATE TABLE episodes (\
+              return ()
+       when (not ("episodes" `elem` tables)) $
+           do run dbh "CREATE TABLE episodes (\
                        \epid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                        \epcastid INTEGER NOT NULL,\
                        \epurl TEXT NOT NULL,\
                        \epdone INTEGER NOT NULL,\
                        \UNIQUE(epcastid, epurl),\
                        \UNIQUE(epcastid, epid))" []
-              commit dbh
+              return ()
+       commit dbh
 
 {- | Adds a new podcast to the database.  Ignores the castid on the
 incoming podcast, and returns a new object with the castid populated.
@@ -60,7 +63,7 @@ addPodcast dbh podcast =
            [[x]] -> return $ podcast {castId = fromSql x}
            y -> fail $ "addPodcast: unexpected result: " ++ show y
     where errorHandler e = 
-              fail $ "Error adding podcast; does this URL already exist?\n"
+              do fail $ "Error adding podcast; does this URL already exist?\n"
                      ++ show e
 
 {- | Adds a new episode to the database. 
