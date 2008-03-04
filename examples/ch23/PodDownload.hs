@@ -6,6 +6,7 @@ import PodTypes
 import PodDB
 import PodParser
 import Network.HTTP
+import System.IO
 
 {- | Download a URL.  (Left errorMessage) if an error,
 (Right doc) if success. -}

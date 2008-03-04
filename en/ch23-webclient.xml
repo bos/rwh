@@ -232,6 +232,13 @@ channel = tag "rss" /> tag "channel"
     </para>
     &PodDownload.hs:all;
   </sect1>
+
+  <sect1 id="hs.wc.main">
+    <title>Main Program</title>
+    <para>
+      Finally, 
+
+  
     
 </chapter>
 

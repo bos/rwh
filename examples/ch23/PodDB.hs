@@ -1,7 +1,7 @@
 {-- snippet all --}
 -- ch23/PodDB.hs
 
-module PodDb where
+module PodDB where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
