@@ -15,11 +15,11 @@ BOS       11. Handling binary files and formats (DONE)
 DONS      12. Testing the Haskell way: QuickCheck
 BOS       13. Code case study: barcode recognition (DONE)
 JG        14. Designing and using data structures (DONE)
-BOS       15. Monads
+BOS       15. Monads (DONE)
 BOS       16. Monad case study: refactoring the filesystem seacher
 DONS      17. Monad transformers
 JG        18. Using parsec: (DONE)
-BOS            parsing a bioinformatics format
+BOS            parsing JSON (DONE)
 DONS      19. Interfacing with C: the FFI
 DONS      20. Error handling
 JG        21. Haskell for systems programming (DONE)
