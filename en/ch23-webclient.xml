@@ -231,16 +231,79 @@ channel = tag "rss" /> tag "channel"
       the database.  Here's the code:
     </para>
     &PodDownload.hs:all;
+    <para>
+      This module defines three functions:
+      <literal>downloadURL</literal>, which simply downloads a URL and
+      returns it as a &String;;
+      <literal>updatePodcastFromFeed</literal>, which downloads an XML
+      feed file, parses it, and updates the database; and
+      <literal>getEpisode</literal>, which downloads a given episode
+      and marks it done in the database.
+    </para>
+    <warning>
+      <para>
+        The HTTP library used here does not read the HTTP result
+        lazily.  As a result, it can result in the consumption of a
+        large amount of RAM when downloading large files such as
+        podcasts.  Other libraries are available that do not have this
+        limitation.  We used this one because it is stable, easy to
+        install, and reasonably easy to use.
+      </para>
+    </warning>
   </sect1>
 
   <sect1 id="hs.wc.main">
     <title>Main Program</title>
     <para>
-      Finally, 
+      Finally, we need a main program to tie it all together.  Here's
+      our main module:
+    </para>
+    &PodMain.hs:all;
+    <para>
+      We have a very simple command-line parser with a function to
+      indicate a command-line syntax error, plus small functions to
+      handle the different command-line arguments.
+    </para>
+    <para>
+      You can compile this program with a command like this:
+    </para>
+    <programlisting>
+ghc --make -O2 -o pod -package HTTP -package HaXml -package network \
+    -package HDBC -package HDBC-sqlite3 PodMain.hs
+    </programlisting>
+    <para>
+      Alternatively, you could use a Cabal file as documented in
+      <remark>FIXME: insert ref</remark> to build this project:
+    </para>
+    <programlisting>
+Name: pod
+Version: 1.0.0
+Build-type: Simple
+Build-Depends: HTTP, HaXml, network, HDBC, HDBC-sqlite3, base
+
+Executable: pod
+Main-Is: PodMain.hs
+GHC-Options: -O2
+    </programlisting>
+    <para>
+      Also, you'll want a simple <literal>Setup.hs</literal> file:
+    </para>
+    <programlisting>
+import Distribution.Simple
+main = defaultMain
+    </programlisting>
+    <para>
+      Now, to build with Cabal, you just run:
+    </para>
+    <programlisting>
+runghc Setup.hs configure
+runghc Setup.hs build
+    </programlisting>
+    <para>
+      And you'll find a <literal>dist</literal> directory containing
+      your output.
     </para>
   </sect1>
-
-  
     
 </chapter>
 
