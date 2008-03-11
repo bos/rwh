@@ -32,7 +32,6 @@
 <!ENTITY ch22     SYSTEM "ch22-databases.xml">
 <!ENTITY ch23     SYSTEM "ch23-webclient.xml">
 <!ENTITY ch24     SYSTEM "ch24-gui.xml">
-<!ENTITY ch25     SYSTEM "ch25-datamining.xml">
 <!ENTITY ch26     SYSTEM "ch26-concurrent.xml">
 <!ENTITY ch27     SYSTEM "ch27-advanced-concurrent.xml">
 <!ENTITY ch28     SYSTEM "ch28-stm.xml">
