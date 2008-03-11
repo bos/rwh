@@ -929,7 +929,7 @@
     <sect2>
       <title>Exercises</title>
 
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para id="x_cg">Write the converse of <function>fromList</function>

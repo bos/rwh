@@ -251,7 +251,7 @@
       <para id="x_nT">Let's briefly explore the suitability of tuples as
 	stand-ins for arrays.</para>
 
-      <qandaset>
+      <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
 	    <para id="x_oT">Write a function that takes two arguments: a

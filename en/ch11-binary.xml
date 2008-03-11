@@ -846,7 +846,7 @@
   <sect1>
     <title>Exercises</title>
 
-    <qandaset>
+    <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
 	  <para id="x_AT">Write a parser for <quote>plain</quote> PGM
