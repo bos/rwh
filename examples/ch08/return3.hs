@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch07/return3.hs
+-- ch08/return3.hs
 
 returnTest :: IO ()
 returnTest =

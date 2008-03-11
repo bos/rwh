@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch07/actions2.hs
+-- ch08/actions2.hs
 
 str2message :: String -> String
 str2message input = "Data: " ++ input

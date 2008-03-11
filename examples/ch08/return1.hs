@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch07/return1.hs
+-- ch08/return1.hs
 
 import Data.Char(toUpper)
 

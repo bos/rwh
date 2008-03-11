@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch07/toupper-lazy5.hs
+-- ch08/toupper-lazy5.hs
 
 import Data.Char(toUpper)
 

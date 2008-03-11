@@ -1,4 +1,4 @@
-This is ch07/input.txt
+This is ch08/input.txt
 
 Test Input
 I like Haskell

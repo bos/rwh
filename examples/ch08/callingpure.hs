@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch07/callingpure.hs
+-- ch08/callingpure.hs
 
 name2reply :: String -> String
 name2reply name =
