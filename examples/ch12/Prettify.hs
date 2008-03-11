@@ -1,7 +1,7 @@
 module Prettify
     (
     -- * Constructors
-      Doc
+      Doc(..)
     -- * Basic combinators
     , (<>)
     , empty
@@ -21,12 +21,15 @@ module Prettify
 import Data.Monoid (Monoid(..))
 
 {-- snippet Doc --}
+
 data Doc = Empty
          | Char Char
          | Text String
          | Line
          | Concat Doc Doc
          | Union Doc Doc
+           deriving (Show,Eq) -- for QC
+
 {-- /snippet Doc --}
 
 instance Monoid Doc where
@@ -88,6 +91,7 @@ group x = flatten x `Union` x
 flatten :: Doc -> Doc
 flatten (x `Concat` y) = flatten x `Concat` flatten y
 flatten Line           = Text " "
+-- flatten Line           = Char ' '
 flatten (x `Union` _)  = flatten x
 flatten other          = other
 {-- /snippet flatten --}
@@ -121,10 +125,13 @@ pretty width x = best 0 [x]
                 Char c       -> c :  best (col + 1) ds
                 Text s       -> s ++ best (col + length s) ds
                 Line         -> '\n' : best col ds
+          --    Line         -> '\n' : best 0 ds
                 a `Concat` b -> best col (a:b:ds)
                 a `Union` b  -> nicest col (best col (a:ds))
                                            (best col (b:ds))
           best _ _ = ""
+
+--        nicest col a b | (width - least) `fits` a = a
           nicest col a b | min width col `fits` a = a
                          | otherwise              = b
           w `fits` x | w < 0 = False
@@ -132,5 +139,3 @@ pretty width x = best 0 [x]
           w `fits` ('\n':_)  = True
           w `fits` (c:cs)    = (w - 1) `fits` cs
 
-instance Show Doc where
-    show doc = pretty 80 doc
