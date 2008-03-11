@@ -1085,6 +1085,12 @@ class  Eq a  where
         Almost all Haskell types are instances of &Eq;, and nearly as many
         are instances of &Ord;.
       </para>
+      <tip>
+        <para>Sometimes, the ordering in &Ord; is arbitrary.  For
+        instance, for &Maybe;, &Nothing; sorts before <literal>Just
+        x</literal>, but this was an arbitrary decision.
+        </para>
+      </tip>
 
     </sect2>
   </sect1>
@@ -1095,7 +1101,7 @@ class  Eq a  where
       For many simple data types, the Haskell compiler can automatically
       derive instances of &Read;, &Show;, &Bounded;, &Enum;, &Eq;, and &Ord;
       for you.<footnote><para id="x_HN">While these are defined as regular Haskell
-          typeclasses without anything special magic, automatic derivation is a special
+          typeclasses without any special magic, automatic derivation is a special
           feature of the compiler only supported with these particular
           typeclasses.</para></footnote>
       This saves you the effort of having to manually write code to compare
@@ -1113,7 +1119,7 @@ class  Eq a  where
     </para>
     <para id="x_uB">
       Automatic derivation is not always possible.  For instance, if you
-      defined a type <literal>Data MyType = MyType (Int -> Bool)</literal>,
+      defined a type <literal>data MyType = MyType (Int -> Bool)</literal>,
       the compiler will not be able to derive an instance of &Show; because
       it doesn't know how to render a function.  You will get a compilation
       error in such a situation.
