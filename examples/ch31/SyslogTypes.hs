@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch31/SyslogTypes.hs
+-- ch30/SyslogTypes.hs
 
 module SyslogTypes where
 {- | Priorities define how important a log message is. -}
