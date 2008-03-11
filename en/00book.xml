@@ -32,13 +32,13 @@
 <!ENTITY ch22     SYSTEM "ch22-databases.xml">
 <!ENTITY ch23     SYSTEM "ch23-webclient.xml">
 <!ENTITY ch24     SYSTEM "ch24-gui.xml">
-<!ENTITY ch26     SYSTEM "ch26-concurrent.xml">
-<!ENTITY ch27     SYSTEM "ch27-advanced-concurrent.xml">
-<!ENTITY ch28     SYSTEM "ch28-stm.xml">
-<!ENTITY ch29     SYSTEM "ch29-profiling.xml">
-<!ENTITY ch30     SYSTEM "ch30-advanced-haskell.xml">
-<!ENTITY ch31     SYSTEM "ch31-sockets.xml">
-<!ENTITY ch32     SYSTEM "ch32-http-proxy.xml">
+<!ENTITY ch25     SYSTEM "ch25-concurrent.xml">
+<!ENTITY ch26     SYSTEM "ch26-advanced-concurrent.xml">
+<!ENTITY ch27     SYSTEM "ch27-stm.xml">
+<!ENTITY ch28     SYSTEM "ch28-profiling.xml">
+<!ENTITY ch29     SYSTEM "ch29-advanced-haskell.xml">
+<!ENTITY ch30     SYSTEM "ch30-sockets.xml">
+<!ENTITY ch31     SYSTEM "ch31-http-proxy.xml">
 
 <!-- Appendices. -->
 
