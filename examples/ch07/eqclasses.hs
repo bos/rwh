@@ -58,9 +58,9 @@ instance BasicEq3 Color where
 
 {-- snippet show --}
 instance Show Color where
-    show Red = "Red"
+    show Red   = "Red"
     show Green = "Green"
-    show Blue = "Blue"
+    show Blue  = "Blue"
 {-- /snippet show --}
 {-- snippet read --}
 instance Read Color where

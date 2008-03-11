@@ -221,10 +221,10 @@ class  Eq a  where
       implementation is identical.  However, in this case, we can use
       <literal>isEqual3</literal> on <emphasis>any</emphasis> type that
       we declare is an instance of <literal>BasicEq3</literal>, not just
-      this one color type.  We could define equality tests for any anything
+      this one color type.  We could define equality tests for anything
       from numbers to graphics using the same basic pattern.  In fact, as you
       will see in <xref linkend="typeclasses.wellknown.equality"/>, this
-      works the same as making Haskell's <literal>==</literal> operator
+      is exactly how you can make Haskell's <literal>==</literal> operator
       work for your own custom types.
     </para>
     <para id="x_JB">
@@ -241,7 +241,7 @@ class  Eq a  where
   </sect1>
 
   <sect1 id="typeclasses.wellknown">
-    <title>Well-known typeclasses</title>
+    <title>Important Built-In Typeclasses</title>
 
     <para id="x_KB">
       Now that we've discussed defining your own typeclasses and making
@@ -252,7 +252,7 @@ class  Eq a  where
       here.  For more details, the Haskell library reference is a good
       resource.  It will give you a description of the typeclasses, and
       usually also will tell you which functions you must implement to have a
-      complete definition.
+      complete definition.  <remark>FIXME: add link to lib ref</remark>
     </para>
 
     <sect2 id="typeclasses.wellknown.show">
@@ -268,8 +268,8 @@ class  Eq a  where
       </para>
       <para id="x_MB">
         The most important function of <literal>Show</literal> is
-        <literal>show</literal>.  It takes one argument: the type to convert.
-        It returns a &String; representing that type.
+        <literal>show</literal>.  It takes one argument: the data to convert.
+        It returns a &String; representing that data.
         &ghci; reports the type of <literal>show</literal> like this:
       </para>
 
@@ -285,7 +285,7 @@ class  Eq a  where
         returns a single-character string containing the digit
         <literal>1</literal>.  That is, the quotes are not part of the string
         itself.  We can make that clear by using
-        <literal>printStrLn</literal>:
+        <literal>putStrLn</literal>:
       </para>
       &show.ghci:printshowex;
       <para id="x_PB">
@@ -318,6 +318,15 @@ class  Eq a  where
         simple: we define a function <literal>show</literal> and that's all
         that's needed.
       </para>
+      <note>
+        <para>&Show; is usually used to define a &String;
+        representation for data that is useful for a machine to parse
+        back with &Read;.  Haskell programmers generally write custom
+        functions to format data in pretty ways for displaying to end
+        users, if this representation would be different than expected
+        via &Show;.
+        </para>
+      </note>
 
     </sect2>
 
@@ -355,11 +364,21 @@ class  Eq a  where
         we wanted to accept floating-point input, this wouldn't work, so we
         provided an explicit type.
       </para>
+      <tip>
+        <para>In most cases, if the explicit &Double; type annotation
+        were omitted, the compiler would refuse to guess a
+        common type and simply give an error.  The fact that it could
+        default to &Integer; here is a special case arising from the
+        fact that the literal <literal>2</literal> is treated as an
+        &Integer; unless a different type of expected for it.
+        </para>
+      </tip>
       <para id="x_WB">
         You can see the same effect at work if you try to use &read; on the
         &ghci; command line.  &ghci; internally uses &show; to display
         results, meaning that you can hit this ambiguous typing problem there
-        as well.  You'll need to explicitly cast your &read; results in
+        as well.  You'll need to explicitly give types for
+        your &read; results in
         &ghci; as shown here:
       </para>
       &read.ghci:readerrors;
@@ -375,15 +394,13 @@ class  Eq a  where
       <para id="x_YB">
         Notice the error when trying to parse <literal>5.0</literal> as an
         &Integer;.  The interpreter selected a different instance of &Read;
-        when the return value was expected to be &Integer; then it did when a
+        when the return value was expected to be &Integer; than it did when a
         &Double; was expected.  The &Integer; parser doesn't accept decimal
         points, and caused an exception to be raised.
       </para>
       <para id="x_ZB">
-        The &Read; class provides for some fairly complicated parsers.  Most
-        people, however, choose to use Parsec for complicated parsers these
-        days.  <remark>FIXME: insert xref to parsec</remark>  You can 
-        define a simple parser by providing an implementation for the
+        The &Read; class provides for some fairly complicated parsers.
+        You can define a simple parser by providing an implementation for the
         <literal>readsPrec</literal> function.  Your implementation can
         return a list containing exactly one tuple on a successful parse, or
         an empty list on an unsuccessful parse.  Here's an example
@@ -402,8 +419,18 @@ class  Eq a  where
       <para id="x_bB">
         Notice the error on the final attempt.  That's because our parser is
         not smart enough to handle leading spaces yet.  If we modified it to
-        accept leading spaces, that attempt would work.
+        accept leading spaces, that attempt would work.  You could
+        rectify this by modifying your &Read; instance to discard any
+        leading spaces, which is common practice in Haskell programs.
       </para>
+      <tip>
+        <para>
+          While it is possible to build sophisticated parsers using
+          the &Read; typeclass, many people find it easier to do so using
+          Parsec, and rely on &Read; only for simpler tasks.  Parsec
+          is covered in detail in <xref linkend="parsec"/>.
+        </para>
+      </tip>
     </sect2>
 
     <sect2 id="typeclasses.wellknown.serialization">
