@@ -379,15 +379,16 @@ Welcome to Haskell, John!
       <literal>mainloop</literal> to process the file.
     </para>
     <para id="x_ZC">
-      <literal>mainloop</literal> begins by checking to see if we're at the
-      end of file (EOF) for the input.  If not, we read a line from the input.  We write out the
-      same line to the output, after first converting it to uppercase.  Then
-      we recursively call <literal>mainloop</literal> again to continue
-      processing the file.<footnote><para id="x_ZN">Imperative programmers might
-      be concerned that such a recursive call would consume large
-      amounts of stack space.  In Haskell, recursion is a common
-      idiom, and the compiler is smart enough to avoid consuming much
-      stack by optimizing tail-recursive functions.</para>
+      <literal>mainloop</literal> begins by checking to see if we're
+      at the end of file (EOF) for the input.  If not, we read a line
+      from the input.  We write out the same line to the output, after
+      first converting it to uppercase.  Then we recursively call
+      <literal>mainloop</literal> again to continue processing the
+      file.<footnote><para id="x_ZN">Imperative programmers might be
+      concerned that such a recursive call would consume large amounts
+      of stack space.  In Haskell, recursion is a common idiom, and
+      the compiler is smart enough to avoid consuming much stack by
+      optimizing tail-recursive functions.</para>
       </footnote>
     </para>
     <para id="x_aC">
@@ -528,13 +529,14 @@ I/O IS FUN
         internal buffers for files.  This provides an important performance
         boost.  However, it means that until you call &hClose; on a
         file that is open for writing, your data may not be flushed
-        out to disk.  
+        out the operating system.  
       </para>
       <para id="x_jC">
         Another reason to make sure to &hClose; files is that open files take
         up resources on the system.  If your program runs for a long time, and
         opens many files but fails to close them, it is conceivable that your
-        program could even crash due to resource exhaustion.
+        program could even crash due to resource exhaustion.  All of
+        this is no different in Haskell than in other languages.
       </para>
       <para id="x_kC">
         When a program exits, Haskell will normally take care of closing any
@@ -555,7 +557,8 @@ I/O IS FUN
     <sect2 id="io.files.seeking">
       <title>Seek and Tell</title>
       <para id="x_mC">
-        When reading and writing from a file, the operating system maintains
+        When reading and writing from a &Handle; that corresponds to
+        a file on disk, the operating system maintains
         an internal idea of the current position.  Each time you do another
         read, the operating system returns the next chunk of data that begins
         at the current position, and increments the position to reflect the
@@ -597,7 +600,7 @@ I/O IS FUN
     <sect2 id="io.files.stdin">
       <title>Standard Input, Output, and Error</title>
       <para id="x_rC">
-        Earlier, I pointed out that for each non-"h" function, there is
+        Earlier, we pointed out that for each non-"h" function, there is
         usually also a corresponding "h" function that works on any &Handle;.
         In fact, the non-"h" functions are nothing more than shortcuts for
         their "h" counterparts.
@@ -606,8 +609,6 @@ I/O IS FUN
         There are three pre-defined &Handle;s in
         <literal>System.IO</literal>.  These &Handle;s are always available
         for your use.
-      </para>
-      <para id="x_tC">
         They are &stdin;, which corresponds to standard input; &stdout; for
         standard output; and &stderr; for standard error.  Standard input
         normally refers to the keyboard, standard output to the monitor, and
@@ -683,6 +684,12 @@ Your name contains 4 characters.
         The old filename must exist prior to the call to &renameFile;.  If
         the new file already exists, it is removed before the rename takes
         place.
+      </para>
+      <para>
+        Like many other functions that take a filename, if the "old"
+        name doesn't exist, &renameFile; will raise an exception.
+        More information on exception handling can be found in <xref
+        linkend="error"/>.
       </para>
       <para id="x_CD">
         There are many other functions in &System.Directory; for doing things
@@ -851,7 +858,7 @@ Which could be expressed as this Haskell literal:
             also a shortcut function &getContents; that operates on standard
             input.</para></footnote>  &hGetContents; has the type
         <literal>Handle -> IO String</literal>.  The &String; it returns
-        represents the entire data in the file given by the
+        represents all of the data in the file given by the
         &Handle;.<footnote><para id="x_aD">More precisely, it is the entire data from the
             current position of the file pointer to the end of the
             file.</para></footnote>
@@ -897,6 +904,19 @@ Which could be expressed as this Haskell literal:
         You can even verify that with &ghci;:
       </para>
       &toupper-lazy1.ghci:all;
+      <warning>
+        <para>
+          If we had tried to hang on to <literal>inpStr</literal> in
+          the above example, past the one place where it was used (the
+          call to <literal>processData</literal>), the program would
+          have lost its memory efficiency.  That's because the
+          compiler would have been forced to keep
+          <literal>inpStr</literal>'s value in memory for future use.
+          Here it knows that <literal>inpStr</literal> will never be
+          reused, and frees the memory as soon as it is done with it.
+          Just remember: memory is only freed after its last use.
+        </para>
+      </warning>
       <para id="x_gD">
         This program was a bit verbose to make it clear that there was pure
         code in use.  Here's a bit more concise version, which we will build
@@ -923,7 +943,9 @@ Which could be expressed as this Haskell literal:
         directly in the rest of the program, you must not close the
         &Handle; until you have finished consuming its results via
         &hGetContents;.  Doing so would cause you to miss on some or
-        all of the file's data.
+        all of the file's data.  Since Haskell is lazy, you generally
+        can assume that you have consumed input only after you have
+        output the result of the computations involving the input.
       </para>
     </sect2>
     <sect2 id="io.lazy.readFile">
@@ -940,6 +962,11 @@ Which could be expressed as this Haskell literal:
       <para id="x_jD">
         Can you guess the Haskell types of these functions?  Let's check with
         &ghci;:
+      </para>
+      &readfile.ghci:all;
+      <para>
+        Now, here's about an example program that uses &readFile; and
+        &writeFile;:
       </para>
       &toupper-lazy3.hs:all;
       <para id="x_kD">
@@ -1013,7 +1040,7 @@ Which could be expressed as this Haskell literal:
       </para>
       <para id="x_sD">
         We can convert our example program to operate on standard input
-        and standard input by using <literal>interact</literal>.  Here's one
+        and standard output by using <literal>interact</literal>.  Here's one
         way to do that:
       </para>
       &toupper-lazy4.hs:all;
@@ -1048,6 +1075,11 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
         uppercase output.
       </para>
       &toupper-lazy5.hs:all;
+        <tip><para id="x_gN">If the use of the <literal>.</literal> operator is
+        confusing, you might wish to refer to <xref
+        linkend="fp.aspattern.codereuse"/>.
+          </para>
+        </tip>
       <para id="x_xD">
         Here we add a string at the beginning of the output.  Can you spot
         the problem, though?
@@ -1070,11 +1102,6 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           &interact;:
         </para>
         &filter.hs:all;
-        <tip><para id="x_gN">If the use of the <literal>.</literal> operator is
-        confusing, you might wish to refer to <xref
-        linkend="fp.aspattern.codereuse"/>.
-          </para>
-        </tip>
         <para id="x_BE">
           This may have introduced three functions that you aren't familiar
           with yet.  Let's inspect their types with &ghci;:
@@ -1228,7 +1255,7 @@ Data: Done!
           These functions actually work for more than just I/O; they work for any
           &Monad;.  For now, wherever you see "m", just think "IO".
           Also, functions that end with an underscore typically
-          discard their output.
+          discard their result.
         </para>
       </tip>
       <para id="x_UE">
