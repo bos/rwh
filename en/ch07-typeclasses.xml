@@ -437,7 +437,7 @@ class  Eq a  where
       <title>Serialization with Read and Show</title>
       <para id="x_cB">
         You may often have a data structure in memory that you need to
-        store on disk for later retrieval or send across the network.  The
+        store on disk for later retrieval or to send across the network.  The
         process of converting data in memory to a flat series of bits for
         storage is called <emphasis>serialization</emphasis>.
       </para>
@@ -448,6 +448,16 @@ class  Eq a  where
         Haskell, though it is up to people that write &Show; instances to
         make it so.
       </para>
+      <tip>
+        <para>
+          String handling in Haskell is normally lazy, so &read; and
+          &show; can be used on quite large data structures without
+          incident.  The built-in &read; and &show; instances in
+          Haskell are efficient and implemented in pure Haskell.  For
+          information on how to handle parsing exceptions, refer to
+          <xref linkend="errors"/>.
+        </para>
+      </tip>
       <para id="x_eB">
         Let's try it out in &ghci;:
       </para>
@@ -465,7 +475,7 @@ class  Eq a  where
       &serialization.ghci:ex2;
       <para id="x_hB">
         First, we ask Haskell to read the file back.<footnote><para id="x_iB">As you will see
-          in <remark>FIXME: insert ref</remark>, Haskell doesn't actually
+          in <xref linkend="io.lazy"/>, Haskell doesn't actually
           read the entire file at this point.  But for the purposes of this
           example, we can ignore that distinction.</para></footnote>  Then,
         we try to assign the result of <literal>read input</literal> to
@@ -494,7 +504,7 @@ class  Eq a  where
       <para id="x_kB">
         Haskell has a powerful set of numeric types.  You can use everything
         from fast 32-bit or 64-bit integers to arbitrary-precision rational
-        numbers.  Yet you probably know that operators such as
+        numbers.   You probably know that operators such as
         <literal>+</literal> can work with just about all of these.  This
         feature is implemented using typeclasses.  As a side benefit, it
         allows you to define your own numeric types and make them first-class
@@ -522,12 +532,13 @@ class  Eq a  where
           <tbody>
             <row>
               <entry>&Double;</entry>
-              <entry>Double-precision floating point</entry>
+              <entry>Double-precision floating point.  A common choice
+              for floating-point data.</entry>
             </row>
             <row>
               <entry>&Float;</entry>
-              <entry>Single-precision floating point.  Often used for
-                floating-point data.</entry>
+              <entry>Single-precision floating point.  Often used when
+              interfacing with C.</entry>
             </row>
             <row>
               <entry>&Int;</entry>
@@ -600,10 +611,6 @@ class  Eq a  where
         it is written in parenthesis as seen in this table.
       </para>
 
-      <remark>FIXME: class hierarchy diagram?</remark>
-      <remark>FIXME: how to sort the operators?</remark>
-      <remark>FIXME: start here with Calvin Smith's comment</remark>
-
       <table id="numerictypes.funcs" tocentry="1">
         <title>Selected Numeric Functions and Constants</title>
         <tgroup cols='4' align='left'>
@@ -650,6 +657,22 @@ class  Eq a  where
               <entry><literal>Prelude</literal></entry>
               <entry>Raise to the power of</entry>
             </row>
+            <row>
+              <entry><literal>(^)</literal></entry>
+              <entry><literal>(Num a, Integral b) => a -> b -> a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
+              <entry>Raise a number to a non-negative,
+                  integral power</entry>
+            </row>
+            <row>
+              <entry><literal>(^^)</literal></entry>
+              <entry><literal>(Fractional a, Integral b) => a -> b ->
+              a</literal></entry>
+              <entry><literal>Prelude</literal></entry>
+              <entry>Raise a fractional number to any integral
+              power</entry>
+            </row>
+                
             <row>
               <entry><literal>(%)</literal></entry>
               <entry><literal>Integral a => a -> a -> Ratio a</literal></entry>
@@ -704,6 +727,13 @@ class  Eq a  where
               <entry><literal>Num a => Integer -> a</literal></entry>
               <entry><literal>Prelude</literal></entry>
               <entry>Conversion from an &Integer; to any numeric type</entry>
+            </row>
+            <row>
+              <entry><literal>fromIntegral</literal></entry>
+              <entry><literal>(Integral a, Num b) => a -> b</literal></entry>
+              <entry><literal>Prelude</literal></entry>
+              <entry>More general conversion from any &Integral; to
+              any numeric type</entry>
             </row>
             <row>
               <entry><literal>fromRational</literal></entry>
@@ -980,7 +1010,7 @@ class  Eq a  where
             </row>
             <row>
               <entry colname='float'>&Double;, &Float;</entry>
-              <entry colname='int'>&Int;s, &Word;s</entry>
+              <entry colname='int'>&Int;, &Word;</entry>
               <entry colname="integer">&Integer;</entry>
               <entry colname="rational">&Rational;</entry>
             </row>
@@ -989,16 +1019,15 @@ class  Eq a  where
             <row>
               <entry>&Double;, &Float;</entry>
               <entry colname='float'><literal>fromRational . toRational</literal></entry>
-              <entry colname='int'><literal>truncate</literal></entry>
-              <entry colname='integer'><literal>truncate</literal></entry>
+              <entry colname='int'><literal>truncate</literal> *</entry>
+              <entry colname='integer'><literal>truncate</literal> *</entry>
               <entry colname='rational'><literal>toRational</literal></entry>
             </row>
             <row>
-              <entry>&Int;s, &Word;s</entry>
+              <entry>&Int;, &Word;</entry>
               <entry colname='float'><literal>fromIntegral</literal></entry>
               <entry colname='int'><literal>fromIntegral</literal></entry>
-              <entry colname='integer'><literal>fromIntegral</literal> or
-                <literal>toInteger</literal></entry>
+              <entry colname='integer'><literal>fromIntegral</literal></entry>
               <entry colname='rational'><literal>fromIntegral</literal></entry>
             </row>
             <row>
@@ -1011,13 +1040,20 @@ class  Eq a  where
             <row>
               <entry>&Rational;</entry>
               <entry colname='float'><literal>fromRational</literal></entry>
-              <entry colname='int'><literal>truncate</literal></entry>
-              <entry colname='integer'><literal>truncate</literal></entry>
+              <entry colname='int'><literal>truncate</literal> *</entry>
+              <entry colname='integer'><literal>truncate</literal> *</entry>
               <entry colname='rational'>N/A</entry>
             </row>
           </tbody>
         </tgroup>
       </table>
+
+      <para>
+        * Instead of <literal>truncate</literal>, you could also use
+          <literal>round</literal>, <literal>ceiling</literal>, or
+          <literal>floor</literal>.
+      </para>
+
 
       <para id="x_oL">
         For an extended example demonstrating the use of these numeric
