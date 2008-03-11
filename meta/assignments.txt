@@ -26,16 +26,13 @@ JG        21. Haskell for systems programming (DONE)
 JG        22. Talking to databases (DONE)
 JG        23. Web client programming: client/server networking
 BOS       24. GUI programming: gtk2hs
-          25. Data mining and web applications
-JG/DONS   26. Basics of concurrent and parallel Haskell
-DONS      27. Advanced concurrent and parallel programming
-DONS      28. Concurrency case study: a lockless database with STM
-DONS      29. Performance and efficiency: profiling
-DONS      30. Advanced Haskell: MPTCs, TH, strong typing, GADTs
-JG        31. Sockets, Syslog   (agreed to)
-BOS       32. Reverse HTTP Proxy example
+JG/DONS   25. Basics of concurrent and parallel Haskell
+DONS      26. Advanced concurrent and parallel programming
+DONS      27. Concurrency case study: a lockless database with STM
+DONS      28. Performance and efficiency: profiling
+DONS      29. Advanced Haskell: MPTCs, TH, strong typing, GADTs
+JG        30. Sockets, Syslog   (agreed to)
+BOS       31. Reverse HTTP Proxy example
 BOS    APP A. Installation of GHC (done)
 BOS    APP B. Escapes (done)
 JG     APP C. Posix (??)
-JG     APP D. HUGS  (??)
-JG     APP E. Data.Typeable (??)
