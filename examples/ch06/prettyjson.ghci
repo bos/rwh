@@ -22,3 +22,8 @@ putStrLn (compact value)
 --# foo
 char 'f' <> text "oo"
 compact (char 'f' <> text "oo")
+
+--# pretty
+putStrLn (pretty 10 value)
+putStrLn (pretty 20 value)
+putStrLn (pretty 30 value)

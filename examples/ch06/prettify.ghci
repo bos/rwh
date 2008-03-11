@@ -4,3 +4,13 @@
 text "foo" <> text "bar"
 text "foo" <> empty
 empty <> text "bar"
+
+--# simple
+empty </> char 'a'
+
+--# fits
+2 `fits` " a"
+
+--# pretty
+pretty 2 (empty </> char 'a')
+pretty 1 (empty </> char 'a')

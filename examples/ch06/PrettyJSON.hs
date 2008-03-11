@@ -55,7 +55,7 @@ astral n = smallHex (a + 0xd800) <> smallHex (b + 0xdc00)
 
 {-- snippet string --}
 string :: String -> Doc
-string = enclose '\"' '\"' . hcat . map oneChar
+string = enclose '"' '"' . hcat . map oneChar
 {-- /snippet string --}
 
 {-- snippet oneChar --}

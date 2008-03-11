@@ -775,6 +775,17 @@ null]]></programlisting>
       the right.  We'll be making use of this property in our rendering
       functions below.</para>
 
+      <note>
+	<title>Infix use of constructors</title>
+
+	<para>We've used infix notation to represent the
+	<code>Concat</code> and <code>Union</code> constructors in the
+	final two patterns of our &case; expression.  This has no
+	effect on the meaning of our code.  Just like using a
+	constructor or function infix in an application, it's merely a
+	small change for readability.</para>
+      </note>
+
     <sect2>
       <title>Compact rendering</title>
 
@@ -897,7 +908,139 @@ null]]></programlisting>
     <sect2>
       <title>True pretty printing</title>
 
-      <para>Foo.</para>
+      <para>While our <function>compact</function> function is useful
+	for machine-to-machine communication, its result is not always
+	easy for a human to follow: there's very little information on
+	each line. To generate more readable output, we'll write
+	another function, <function>pretty</function>. Compared to
+	<function>compact</function>, <function>pretty</function>
+	takes one extra argument: the maximum width of a line, in
+	columns.  (We're assuming that our typeface is of fixed
+	width.)</para>
+
+      &Prettify.hs:pretty.type;
+
+      <para>To be more precise, this <type>Int</type> parameter
+	controls the behaviour of <function>pretty</function> when it
+	encounters a <function>softline</function>.  Only at a
+	<function>softline</function> does <function>pretty</function>
+	have the option of either continuing the current line or
+	beginning a new line.  Elsewhere, we must strictly follow the
+	directives set out by the person using our pretty printing
+	combinators.</para>
+
+      <para>Here's the core of our implementation</para>
+
+      &Prettify.hs:pretty;
+
+      <para>Our <function>best</function> helper function takes two
+	arguments: the number of columns emitted so far on the current
+	line, and the list of remaining <type>Doc</type> values to
+	process.</para>
+
+      <para>In the simple cases, <function>best</function> updates the
+	<varname>col</varname> variable in straightforward ways as it
+	consumes the input.  Even the <code>Concat</code> case is
+	obvious: we push the two concatenated components onto our
+	stack/list, and don't touch <varname>col</varname>.</para>
+
+      <para>The interesting case is concerned with the
+	<code>Union</code> constructor.  Recall that we applied
+	<function>flatten</function> to the left element, and did
+	nothing to the right.  Also, remember that
+	<function>flatten</function> replaces newlines with spaces.
+	Therefore, our job is to see which (ir either) of the two
+	layouts, the <function>flatten</function>ed one or the
+	original, will fit into our <varname>width</varname>
+	restriction.</para>
+
+      &Prettify.hs:nicest;
+
+      <para>To do this, we write a small helper that determines
+	whether a single line of a rendered <type>Doc</type> value
+	will fit into a given number of columns.</para>
+
+      &Prettify.hs:fits;
+
+    </sect2>
+
+    <sect2>
+      <title>Following the pretty printer</title>
+
+      <para>In order to understand how this code works, let's first
+	consider a very simple <type>Doc</type> value.</para>
+
+      &prettify.ghci:simple;
+
+      <para>We'll call <function>pretty 2</function> on this value.
+	When we first apply <function>best</function>, the value of
+	<code>col</code> is zero.  It matches the <code>Concat</code>
+	case, pushes the values <code>Union (Char ' ') Line</code> and
+	<code>Char 'a'</code> onto the stack, and applies itself
+	recursively.  In the recursive application, it matches on
+	<code>Union (Char ' ') Line</code>.</para>
+
+      <para>At this point, we're going to ignore Haskell's usual order
+	of evaluation.  This keeps our explanation of what's going on
+	simple, without changing the end result.  We now have two
+	subexpressions, <code>best 0 [Char ' ', Char 'a']</code> and
+	<code>best 0 [Line, Char 'a']</code>.  The first evaluates to
+	<code>" a"</code>, and the second to <code>"\na"</code>.  We
+	then substitute these into the outer expression to give
+	<code>nicest 0 " a" "\na"</code>.</para>
+	
+      <para>To figure out what the result of
+	<function>nicest</function> is here, we do a little
+	substitution.  The values of <varname>width</varname> and
+	<varname>col</varname> are 0 and 2, respectively, so
+	<varname>least</varname> is 0, and <code>width - least</code>
+	is 2.  We quickly evaluate <code>2 `fits` " a"</code> in
+	&ghci;.</para>
+
+      &prettify.ghci:fits;
+
+      <para>Since this evaluates to <code>True</code>, the result of
+	<function>nicest</function> here is <code>" a"</code>.</para>
+
+      <para>If we apply our <function>pretty</function> function to
+	the same JSON data as earlier, we can see that it produces
+	different output depending on the width that we give
+	it.</para>
+
+      &prettyjson.ghci:pretty;
+
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <para>We can make a number of interesting improvements to our
+	pretty printer.</para>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>Our pretty printer does not take
+	      <emphasis>nesting</emphasis> into account. Whenever we
+	      open parentheses, braces, or brackets, any lines that
+	      follow should be indented so that they are aligned with
+	      the opening character until a matching closing character
+	      is encountered.</para>
+
+	    <para>Add support for nesting, with a controllable amount
+	      of indentation.</para>
+
+	    &Prettify.hs:nest;
+
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+
+    <sect2>
+      <title>Practical pointers, and further reading</title>
+
+      <para>Blah.</para>
     </sect2>
   </sect1>
 </chapter>
