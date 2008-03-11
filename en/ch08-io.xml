@@ -689,7 +689,7 @@ Your name contains 4 characters.
         Like many other functions that take a filename, if the "old"
         name doesn't exist, &renameFile; will raise an exception.
         More information on exception handling can be found in <xref
-        linkend="error"/>.
+        linkend="errors"/>.
       </para>
       <para id="x_CD">
         There are many other functions in &System.Directory; for doing things
