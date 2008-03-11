@@ -25,8 +25,7 @@
     </para>
     &naiveeq.hs:color;
     <para id="x_kA">
-      You can test this with &ghci; or
-      <application>hugs</application>:
+      You can test this with &ghci;:
     </para>
     &naiveeq.ghci:all;
     <para id="x_lA">
@@ -35,8 +34,8 @@
       Since a Haskell &String; is a list of characters, we can
       write a simple function to perform that test.
         For simplicity, we
-      cheat a bit and use the <literal>==</literal> operator a couple
-      of times.
+      cheat a bit and use the <literal>==</literal> operator here to
+      illustrate.
     </para>
     &naiveeq.hs:string;
     <para id="x_mA">
@@ -46,8 +45,15 @@
       to just use <literal>==</literal> to compare anything.  It may also
       be useful to write generic functions such as <literal>/=</literal>
       that could be implemented in terms of <literal>==</literal>, and
-      valid for almost anything.
-      This is exactly what Haskell's typeclasses are for.  
+      valid for almost anything.  By having a generic function that
+      can compare anything, we can also make our code generic: if a
+      piece of code only needs to compare things, then it ought to be
+      able to accept any data type that the compiler knows how to
+      compare.  And, what's more, if new data types are added later,
+      the existing code shouldn't have to be modified.
+    </para>
+    <para>
+      Haskell's typeclasses are designed to address all of these things.
     </para>
   </sect1>
   <sect1 id="typeclasses.whatarethey">
@@ -57,45 +63,11 @@
       implementations depending on the type of data they are given.
       Typeclasses may look like objects, but they are truly quite different.  
     </para>
-    <para id="x_qA">
-      <remark>FIXME: remove or fix this? see comments</remark>
-      Let's consider an example.  Imagine you have a
-      basket of fruit.  There are things that you might want to do 
-      with just about all
-      fruit: eat it, peel it, or maybe remove the seeds.  If you were to
-      model these actions in a Haskell library, you'd set up a <literal>Fruit</literal>
-      typeclass.  You might define functions such as <literal>eat</literal>,
-      <literal>peel</literal>, and <literal>removeSeeds</literal> in that
-      typeclass.
-    </para>
-    <para id="x_rA">
-      Now, your <literal>Apple</literal> type could be an instance of
-      <literal>Fruit</literal>, implementing the three functions.  It could
-      describe removing the core of the apple to get rid of the seeds.  You
-      might also define a <literal>Peach</literal> instance that describes
-      removing the one big seed at the center.  Now, you can release Fruit
-      v1.0.  Yum!
-    </para>
-    <para id="x_sA">
-      Now, some of your friends download your library.  They think that
-      apples and peaches are fine, but maybe they'd also like to be able to
-      eat oranges.  No problem; they define an <literal>Orange</literal> type
-      and make it an instance of <literal>Fruit</literal>.  It's not
-      necessary to modify your code to do this; anything that can operate on
-      a <literal>Fruit</literal> can now automatically operate an an
-      <literal>Orange</literal> as well.  Thanks to typeclasses, you'll have
-      the best fruit salad out there.
-    </para>
-  </sect1>
 
-
-  <sect1 id="typeclasses.defining">
-    <title>Defining new typeclasses</title>
     <para id="x_tA">
-      <remark>FIXME: use Eq instead?  (see comments)</remark>
       Let's use typeclasses to solve our equality dilemma from earlier in the
-      chapter.  The first thing that we need to do is define the typeclass
-      itself.  What want a function that takes two parameters, both the
+      chapter.  To begin with, we must define the typeclass
+      itself.  We want a function that takes two parameters, both the
       same type, and returns a <literal>Bool</literal> indicating whether or not
       they are equal.  We don't care what that type is, but we just want two
       items of that type.  Here's our first definition of a typeclass:
@@ -104,7 +76,9 @@
     <para id="x_uA">
       This says that we are declaring a typeclass named
       <literal>BasicEq</literal>, and we'll refer to instance types with the
-      letter <literal>a</literal>.  This typeclass defines one function.
+      letter <literal>a</literal>.  An instance type of this typeeclass
+      is any type that implements the functions defined in the typeclass.
+      This typeclass defines one function.
       That function takes two parameters&emdash;both corresponding to instance
       types&emdash;and returns a <literal>Bool</literal>.
     </para>
