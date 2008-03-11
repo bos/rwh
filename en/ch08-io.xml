@@ -4,19 +4,18 @@
   <title>I/O</title>
 
   <para id="x_xB">
-    Just about any program of any consequence is going to have to deal with
-    input and output at some point.  Many programs, in fact, are devoted to
-    reading data, processing it, and writing it back out.
+    Most, if not all, programs are devoted to gathering data from
+    outside, processing it, and providing results back to the outside
+    world.  That is, input and output are key.
   </para>
 
   <para id="x_yB">
     Haskell's I/O system is powerful and expressive.  It is easy to work
-    with and important to understand.  Normally, Haskell has no side
-    effects.  I/O is the one exception to that rule, and it's
-    important to understand how it fits in.
-    Haskell provides helpful
-    tools for separating I/O from computation, which helps isolate code
-    that could introduce side effects.  It also permits compilers to
+    with and important to understand.  Haskell strictly separates pure
+    code from code that could cause things to occur in the world.
+    That is, it provides a complete isolation from side-effects in
+    pure code.  Besides helping programmers to reason about the
+    correctness of their code, it also permits compilers to
     automatically 
     introduce optimizations and parallelism.
   </para>
