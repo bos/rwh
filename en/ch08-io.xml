@@ -40,7 +40,7 @@
     program?</remark>
     <para id="x_BC">
       You can compile this program to a standalone executable, run it with
-      &runghc;, run it with &hugs;, or invoke &main; from within &ghci;.
+      &runghc;, or invoke &main; from within &ghci;.
       Here's a sample session using &runghc;:
     </para>
     <screen>
@@ -53,7 +53,7 @@ Welcome to Haskell, John!
       That's a fairly simple, obvious result.  You can see that &putStrLn;
       writes out a &String;, followed by an end-of-line character.  &getLine;
       reads a line from standard input.  The &larrow; operator may be new to
-      you.  Put simply, that operator assigns the result from executing an
+      you.  Put simply, that operator binds the result from executing an
       I/O action to a name. 
       <footnote><para id="x_DC">You will later see that it has a more
         broad application, but it is sufficient to think of it in these terms
@@ -88,9 +88,17 @@ Welcome to Haskell, John!
         parent action is executed. The
       <literal>()</literal> is an empty tuple (pronounced <quote>unit</quote>), indicating that there is
       no return value from &putStrLn;.  This is similar to
-        <literal>void</literal> in Java or C.<footnote><para id="x_KN">.</para>
+        <literal>void</literal> in Java or C.<footnote><para
+        id="x_KN">The type of the value <literal>()</literal> is also <literal>()</literal>.</para>
       </footnote>
     </para>
+    <tip>
+      <para>
+        Actions can be created, assigned, and passed anywhere.
+        However, they may only be performed (executed) from within
+        another I/O action.  
+      </para>
+    </tip>
     <para id="x_LN">Let's look at this with
       &ghci;:
     </para>
@@ -114,6 +122,7 @@ Welcome to Haskell, John!
         <listitem><para id="x_ON">Have the type <literal>IO <replaceable>t</replaceable></literal></para>
         </listitem>
         <listitem><para id="x_PN">Are first-class values in Haskell
+        and fit seamlessly with Haskell's type system
           </para>
         </listitem>
         <listitem><para id="x_QN">Produce an effect when
