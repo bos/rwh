@@ -396,7 +396,7 @@ Welcome to Haskell, John!
       <literal>input.txt</literal> that looks like this:
     </para>
     <programlisting>
-This is ch07/input.txt
+This is ch08/input.txt
 
 Test Input
 I like Haskell
@@ -411,7 +411,7 @@ I/O is fun
       like this:
     </para>
     <programlisting>
-THIS IS CH07/INPUT.TXT
+THIS IS CH08/INPUT.TXT
 
 TEST INPUT
 I LIKE HASKELL
