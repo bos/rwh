@@ -28,14 +28,14 @@ class BasicEq a where
 
 {-- snippet basicinstance --}
 instance BasicEq Bool where
-    isEqual True True = True
+    isEqual True  True  = True
     isEqual False False = True
-    isEqual _ _ = False
+    isEqual _     _     = False
 {-- /snippet basicinstance--}
 
 {-- snippet basiceq2 --}
 class BasicEq2 a where
-    isEqual2 :: a -> a -> Bool
+    isEqual2    :: a -> a -> Bool
     isNotEqual2 :: a -> a -> Bool
 {-- /snippet basiceq2 --}
 

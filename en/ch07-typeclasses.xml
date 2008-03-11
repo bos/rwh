@@ -166,22 +166,24 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     </para>
     &eqclasses.hs:basiceq3;
     <para id="x_EB">
-      People implementing this class must provide an implementation of at
-      least one function.  They can implement both if they wish, but they
-      will not be required to.  While we did provide defaults for both
-      functions, each function depends on the presence of the other to
-      calculate an answer.  Therefore, at least one function must always be
-      implemented.
+      People implementing this class must provide an implementation of
+      at least one function.  They can implement both if they wish,
+      but they will not be required to.  While we did provide defaults
+      for both functions, each function depends on the presence of the
+      other to calculate an answer.  If we don't specify at least one,
+      the resulting code would be an endless loop.  Therefore, at
+      least one function must always be implemented.
     </para>
     <para id="x_FB">
       With <literal>BasicEq3</literal>, we have provided a class that does
       very much the same thing as Haskell's built-in <literal>==</literal>
       and <literal>/=</literal> operators.  In fact, these operators are
       defined by a typeclass that looks almost identical to
-      <literal>BasicEq3</literal>.  The Haskell 98 Report <remark>FIXME: add
-        reference? --jg</remark> defines a typeclass that implements equality
-      comparison.  See the below example for the built-in
-        <literal>Eq</literal> typeclass, and note how similar it is to our
+      <literal>BasicEq3</literal>.  The Haskell 98 Report
+      defines a typeclass that implements equality
+      comparison.  Here is the code for the built-in
+      <literal>Eq</literal> typeclass.
+        <literal>Eq</literal> typeclass  Note how similar it is to our
         <literal>BasicEq3</literal> typeclass.
     </para>
     <programlisting>
@@ -200,8 +202,8 @@ class  Eq a  where
     <title>Declaring typeclass instances</title>
     <para id="x_GB">
       Now that you know how to define typeclasses, it's time to learn how to
-      define instances of typeclasses.  An instance is just a type.  Making
-      it an instance of a particular typeclass means implementing the
+      define instances of typeclasses.  Recall that types are made
+      instances of a particular typeclass by implementing the
       functions necessary for that typeclass.
     </para>
     <para id="x_HB">
