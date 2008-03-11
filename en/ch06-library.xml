@@ -696,11 +696,11 @@ null]]></programlisting>
     &Prettify.hs:basic;
 
     <para>The <code>Line</code> constructor represents a line break.
-      It takes a parameter of type <type>Bool</type>, to indicate
-      whether a line break is mandatory (a <quote>hard</quote> break),
-      or only needed if a line might otherwise become too wide (a
-      <quote>soft</quote> break).  The <function>line</function>
-      function only creates hard line breaks; we'll introduce a
+      The <function>line</function> function creates
+      <emphasis>hard</emphasis> line breaks, which always appear in
+      the pretty printer's output.  Sometimes we'll want a
+      <emphasis>soft</emphasis> line break, which is only used if a
+      line is too wide.  We'll introduce a
       <function>softline</function> function shortly.</para>
 
     &Prettify.hs:line;
@@ -715,6 +715,8 @@ null]]></programlisting>
       concatenating a <type>Doc</type> value with <code>Empty</code>
       on the left or right has no effect.  This keeps us from bloating
       the tree with useless values.</para>
+
+    &prettify.ghci:append;
 
     <tip>
       <title>A mathematical moment</title>
@@ -739,8 +741,9 @@ null]]></programlisting>
 
     <para>Since <function>(&lt;&gt;)</function> is analogous to
       <function>(:)</function>, and <function>empty</function> to
-      <function>[]</function>, we can write <function>hcat</function>
-      and <function>fsep</function> as folds, too.</para>
+      <function>[]</function>, we can see how we might write
+      <function>hcat</function> and <function>fsep</function> as
+      folds, too.</para>
       
     &Prettify.hs:hcat;
 
@@ -755,8 +758,8 @@ null]]></programlisting>
       How can we do this if our <type>Doc</type> type doesn't contain
       any information about rendering?  Our answer is that every time
       we encounter a soft newline, we maintain
-      <emphasis>two</emphasis> representations of the document, using
-      the <code>Union</code> constructor.</para>
+      <emphasis>two</emphasis> alternative representations of the
+      document, using the <code>Union</code> constructor.</para>
      
     &Prettify.hs:group;
 
@@ -767,18 +770,21 @@ null]]></programlisting>
     &Prettify.hs:flatten;
 
     <para>Notice that we always call <function>flatten</function> on
-      the left element of a <code>Union</code>.  We'll be making use
-      of this in our rendering functions below.</para>
+      the left element of a <code>Union</code>: the left of each
+      <code>Union</code> is always the same width as, or wider than,
+      the right.  We'll be making use of this property in our rendering
+      functions below.</para>
 
     <sect2>
       <title>Compact rendering</title>
 
-      <para>Quite often, we want to use a representation for a piece
-	of data that contains as few characters as possible.  For
+      <para>We frequently need to use a representation for a piece of
+	data that contains as few characters as possible.  For
 	example, if we're sending JSON data over a network connection,
 	there's no sense in laying it out nicely: the software on the
 	far end won't care whether the data is pretty or not, and the
-	layout will add a lot of overhead.</para>
+	added white space needed to make the layout look good would
+	add a lot of overhead.</para>
 
       <para>For these cases, and because it's a simple piece of code
 	to start with, we provide a bare-bones compact rendering
@@ -786,15 +792,112 @@ null]]></programlisting>
 
       &Prettify.hs:compact;
 
-      <para>In our &case; expression, the branch that matches the
-	<code>Union</code> constructor ignores the left element, on
-	which we called <function>flatten</function>.</para>
+      <para>The <function>compact</function> function wraps its
+	argument in a list, and applies the
+	<function>transform</function> helper function to it.  The
+	<function>transform</function> function treats its argument as
+	a stack of items to process, where the first element of the
+	list is the top of the stack.</para>
 
-      <para>We now have enough definitions fleshed out that we ought
-	to be able to use our <function>compact</function> function in
-	&ghci;.</para>
+      <para>The <function>transform</function> function's
+	<code>(d:ds)</code> pattern breaks the stack into its head,
+	<varname>d</varname>, and the remainder,
+	<varname>ds</varname>. In our &case; expression, the first
+	several branches recurse on <varname>ds</varname>, consuming
+	one item from the stack for each recursive application.  The
+	last two branches add items in front of <varname>ds</varname>:
+	the <code>Concat</code> branch adds both elements to the
+	stack, while the <code>Union</code> branch ignores its left
+	element, on which we called <function>flatten</function>, and
+	adds its right element to the stack.</para>
+
+      <para>We have now fleshed out enough of our original skeletal
+	definitions that we can try out our
+	<function>compact</function> function in &ghci;.</para>
 
       &prettyjson.ghci:compact;
+
+      <para>To better understand how the code works, let's look at a
+	simpler example in more detail.</para>
+      
+      &prettyjson.ghci:foo;
+
+      <para>When we apply <function>compact</function>, it turns its
+	argument into a list and applies
+	<function>transform</function>.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>The <function>transform</function> function receives a
+	    one-item list, which matches the <code>(d:ds)</code>
+	    pattern. Thus <varname>d</varname> is the value
+	    <code>Concat (Char 'f') (Text "oo")</code>, and
+	    <varname>ds</varname> is the empty list,
+	    <code>[]</code>.</para>
+	  <para>Since <varname>d</varname>'s constructor is
+	    <code>Concat</code>, the <code>Concat</code> pattern
+	    matches in the &case; expression.  On the right hand side,
+	    we add <code>Char 'f'</code> and <code>Text "oo"</code> to
+	    the stack, and call
+	    <function>transform</function>recursively.</para>
+	</listitem>
+	<listitem>
+	  <itemizedlist>
+	    <listitem>
+	      <para>The <function>transform</function> function
+		receives a two-item list, again matching the
+		<code>(d:ds)</code> pattern.  The variable
+		<varname>d</varname> is bound to <code>Char
+		  'f'</code>, and <varname>ds</varname> to <code>[Text
+		  "oo"]</code>.</para>
+	      <para>The &case; expression matches in the
+		<code>Char</code> branch.  On the right hand side, we
+		use <function>(:)</function> to construct a list whose
+		head is <code>'f'</code>, and whose body is the result
+		of a recursive application of
+		<function>transform</function>.</para>
+	    </listitem>
+	    <listitem>
+	      <itemizedlist>
+		<listitem>
+		  <para>The recursive invocation receives a one-item
+		    list. The variable <varname>d</varname> is bound
+		    to <code>Text "oo"</code>, and
+		    <varname>ds</varname> to <code>[]</code>.</para>
+		  <para>The &case; expression matches in the
+		    <code>Text</code> branch.  On the right hand side,
+		    we use <function>(++)</function> to concatenate
+		    <code>"oo"</code> with the result of a recursive
+		    application of
+		    <function>transform</function>.</para>
+		</listitem>
+		<listitem>
+		  <itemizedlist>
+		    <listitem>
+		      <para>In the final invocation,
+			<function>transform</function> is invoked with
+			an empty list, and returns an empty
+			string.</para>
+		    </listitem>
+		  </itemizedlist>
+		</listitem>
+		<listitem>
+		  <para>The result is <code>"oo" ++ ""</code>.</para>
+		</listitem>
+	      </itemizedlist>
+	    </listitem>
+	    <listitem>
+	      <para>The result is <code>'f' : "oo" ++ ""</code>.</para>
+	    </listitem>
+	  </itemizedlist>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>True pretty printing</title>
+
+      <para>Foo.</para>
     </sect2>
   </sect1>
 </chapter>

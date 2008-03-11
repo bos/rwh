@@ -18,3 +18,7 @@ replicate 5 "foo"
 let value = jvalue . JObject $ [("f", JNumber 1), ("q", JBool True)]
 :type value
 putStrLn (compact value)
+
+--# foo
+char 'f' <> text "oo"
+compact (char 'f' <> text "oo")

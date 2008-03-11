@@ -1,0 +1,6 @@
+:load Prettify
+
+--# append
+text "foo" <> text "bar"
+text "foo" <> empty
+empty <> text "bar"

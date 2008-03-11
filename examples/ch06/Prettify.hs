@@ -27,6 +27,7 @@ data Doc = Empty
          | Line
          | Concat Doc Doc
          | Union Doc Doc
+           deriving (Show)
 {-- /snippet Doc --}
 
 instance Monoid Doc where
@@ -113,6 +114,7 @@ compact x = transform [x]
                 _ `Union` b  -> transform (b:ds)
 {-- /snippet compact --}
 
+{-- snippet pretty --}
 pretty :: Int -> Doc -> String
 pretty width x = best 0 [x]
     where best col (d:ds) =
@@ -125,12 +127,17 @@ pretty width x = best 0 [x]
                 a `Union` b  -> nicest col (best col (a:ds))
                                            (best col (b:ds))
           best _ _ = ""
+{-- /snippet pretty --}
+
+{-- snippet nicest --}
           nicest col a b | min width col `fits` a = a
                          | otherwise              = b
-          w `fits` x | w < 0 = False
-          w `fits` ""        = True
-          w `fits` ('\n':_)  = True
-          w `fits` (c:cs)    = (w - 1) `fits` cs
+{-- /snippet nicest --}
 
-instance Show Doc where
-    show doc = pretty 80 doc
+w `fits` x | w < 0 = False
+w `fits` ""        = True
+w `fits` ('\n':_)  = True
+w `fits` (c:cs)    = (w - 1) `fits` cs
+
+--instance Show Doc where
+--    show doc = pretty 80 doc
