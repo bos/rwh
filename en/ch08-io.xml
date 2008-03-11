@@ -1270,7 +1270,7 @@ Data: Done!
       </para>
       <para id="x_VE">
         Going back to &main;, &mapM_; applies 
-        <literal>(straction . show)</literal> to every element in
+        <literal>(str2action . show)</literal> to every element in
         <literal>numbers</literal>.  &show; converts each number to a &String;
         and <literal>str2action</literal> converts each &String; to an action.
         &mapM_; then takes care of executing each action, which results
@@ -1341,7 +1341,7 @@ Data: Done!
         result depends on I/O must be within the IO monad.  So if we are
         writing a function that performs I/O, then a pure computation, we
         will need to use &return; to make this pure computation the proper
-        return value of the the function.  Otherwise, a type error would
+        return value of the function.  Otherwise, a type error would
         occur.  Here's an example:
       </para>
       &return1.hs:all;
@@ -1486,7 +1486,7 @@ Data: Done!
         input, it will usually attempt to read whatever data is available in
         chunks until it first sees the newline character.  When reading from
         the terminal, it should return data immediately after each press of
-        Enter.  It is often a reasonable default.v
+        Enter.  It is often a reasonable default.
       </para>
       <para id="x_rE">
         &BlockBuffering; causes Haskell to read or write data in fixed-size
@@ -1494,16 +1494,16 @@ Data: Done!
         large amounts of data in batch, even if that data is line-oriented.
         However, it is unusable for interactive programs because it will
         block input until a full block is read.  &BlockBuffering; accepts one
-        parameter: if &Nothing;, it will use an implementation-defined buffer
+        parameter of type <literal>Maybe</literal>: if &Nothing;, it will use an implementation-defined buffer
         size.  Or, you can use a setting such as <literal>Just 4096</literal> to 
         set the buffer to 4096 bytes.
       </para>
       <para id="x_sE">
         The default buffering mode is dependent upon the operating system and
-        Haskell implementation.  The current mode can be set with
-        &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  You can
+        Haskell implementation.    You can
         ask the system for the current buffering mode by calling
-        &hGetBuffering;.  As an example, you can say 
+        &hGetBuffering;.  The current mode can be set with
+        &hSetBuffering;, which accepts a &Handle; and &BufferMode;.  As an example, you can say 
         <literal>hSetBuffering stdin (BlockBuffering Nothing)</literal>.
       </para>
     </sect2>
