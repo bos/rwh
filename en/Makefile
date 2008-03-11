@@ -108,7 +108,7 @@ endif
 all: valid
 
 .PHONY: all
-pdf: $(obj-pdf)
+pdf: tools $(obj-pdf)
 
 xpdf: $(obj-pdf)
 	xpdf $(obj-pdf)
