@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch30/syslogtcpclient.hs
+-- ch28/syslogtcpclient.hs
 
 import Data.Bits
 import Network.Socket

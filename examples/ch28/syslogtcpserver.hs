@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch30/syslogtcpserver.hs
+-- ch28/syslogtcpserver.hs
 
 import Data.Bits
 import Network.Socket
