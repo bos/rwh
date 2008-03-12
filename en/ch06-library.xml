@@ -432,7 +432,7 @@ null]]></programlisting>
 
       <para>This is not to say that we need to pepper every tiny
 	fragment of code with a type declaration.  It is, however,
-	generally a good idea to add a signature to every top-level
+	usually good form to add a signature to every top-level
 	function and variable in our code.  It's best to start out
 	fairly aggressive with explicit type signatures, and slowly
 	ease back as your mental model of how type checking works
@@ -1049,6 +1049,205 @@ null]]></programlisting>
 	  </question>
 	</qandaentry>
       </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Creating a package</title>
+
+    <para>The Haskell community has built a standard set of tools,
+      named Cabal, that help with building, installing, and
+      distributing software. Cabal organises software as a
+      <emphasis>package</emphasis>, which consists of one or more
+      libraries or executable programs.</para>
+
+    <sect2>
+      <title>Writing a package description</title>
+
+      <para>To do anything with a package, Cabal needs a description
+	of it.  This is contained in a text file whose name ends with
+	the suffix <filename>.cabal</filename>.  This file belongs in
+	the top-level directory of your project.  It has a simple
+	format, which we'll describe below.</para>
+
+      <para>A Cabal package must have a name.  Usually, the name of
+	the package matches the name of the
+	<filename>.cabal</filename> file.  We'll call our package
+	<code>mypretty</code>, so our file is
+	<filename>mypretty.cabal</filename>.  (Quite often, the
+	directory that contains the
+	<filename>mypretty.cabal</filename> file is also called
+	<code>mypretty</code>.)</para>
+
+      <para>A package description begins with a series of global
+	properties, which apply to every library and executable in the
+	package.</para>
+
+      &mypretty.cabal:begin;
+
+      <para>Package names must be unique.  If you create and install a
+	package that has the same name as a package already present on
+	your system, &GHC; will become very confused.</para>
+
+      <para>The global properties include a substantial amount of
+	information that intended for human readers, not Cabal
+	itself.</para>
+
+      &mypretty.cabal:human;
+
+      <para>As the <code>Description</code> field indicates, a field
+	can span multiple lines, provided they're indented.</para>
+
+      <para>Also included in the global properties is license
+	information.  Most Haskell packages are licensed under the BSD
+	license, which Cabal calls <code>BSD3</code><footnote>
+	  <para>The <quote>3</quote> in <code>BSD3</code> refers to
+	    the number of clauses in the license.  An older version of
+	    the BSD license contained 4 clauses, but it is no longer
+	    used.</para>
+	</footnote>.  (Obviously, you're free to choose whatever
+	license you think is appropriate.)  The optional
+	<code>License-File</code> field lets us specify the name of a
+	file that contains the exact text of our package's licensing
+	terms.</para>
+
+      <para>The features supported by successive versions of Cabal
+	evolve over time, so it's wise to indicate what
+	versions of Cabal we expect to be compatible with.  The
+	features we are describing are supported by versions 1.2 and
+	higher of Cabal.</para>
+
+      &mypretty.cabal:version;
+
+      <para>To describe an individual library within a package, we
+	write a <emphasis>library section</emphasis>.</para>
+
+      &mypretty.cabal:library;
+
+      <para>The <code>Exposed-Modules</code> field contains a list of
+	modules that should be available to users of this package. An
+	optional field, <code>Other-Modules</code>, contains a list of
+	<emphasis>internal</emphasis> modules, which are required for
+	this library to function, but shouldn't be visible to
+	users.</para>
+
+      <para>The <code>Build-Depends</code> field contains a
+	comma-separated list of packages that our library requires to
+	build.  For each package, we can optionally specify the range
+	of versions with which this library is known to work.  The
+	<code>base</code> package contains many of the core Haskell
+	modules, such as the Prelude, so it's effectively always
+	required.</para>
+
+      <tip>
+	<title>Figuring out build dependencies</title>
+
+	<para>We don't have to guess or do any research to establish
+	  which packages we depend on.  If we try to build our
+	  package without a <code>Build-Depends</code> field,
+	  compilation will fail with a useful error message.  Here's
+	  an example where we commented out the dependency on the
+	  <code>base</code> package.</para>
+
+	<screen><prompt>$</prompt> <userinput>runghc Setup build</userinput>
+Preprocessing library mypretty-0.1-alpha...
+Building mypretty-0.1-alpha...
+
+PrettyJSON.hs:8:7:
+    Could not find module `Data.Bits':
+      it is a member of package base, which is hidden</screen>
+
+	<para>The error message makes it clear that we need to add the
+	  <code>base</code> package, even though <code>base</code> is
+	  already installed.  Forcing us to be explicit about every
+	  package we need has a practical benefit: a Cabal tool named
+	  <filename>cabal-install</filename> can automatically
+	  download, build, and install a package and all of the
+	  packages it depends on.</para>
+      </tip>
+    </sect2>
+
+    <sect2>
+      <title>GHC's package manager</title>
+
+      <para>&GHC; includes a simple package manager.  It knows which
+	packages are installed, and what versions of those packages
+	are installed.  A command line tool named &ghc_pkg; lets us
+	work with its package databases.</para>
+
+      <para>We say <emphasis>databases</emphasis> because &GHC;
+	distinguishes between <emphasis>system-wide</emphasis>
+	packages, which are available to every user, and
+	<emphasis>per-user</emphasis>packages, which are only visible
+	to the current user.</para>
+
+      <para>In practice, since most computers are single-user, the
+	per-user database is mostly useful as a sandbox for testing,
+	and to avoid the hassle of using administrative privileges to
+	install packages.</para>
+
+      <para>The &ghc_pkg; command provides subcommands to address
+	different tasks. Most of the time, we'll only need two of
+	them.  The <code>ghc-pkg list</code> command lets us see what
+	packages are installed.  When we want to uninstall a package,
+	<code>ghc-pkg unregister</code> tells &GHC; that we won't be
+	using a particular package any longer.</para>
+    </sect2>
+
+    <sect2>
+      <title>Setting up, building, and installing</title>
+
+      <para>In addition to a <filename>.cabal</filename> file, a
+	package must contain a <emphasis>setup</emphasis> file.  This
+	allows Cabal's build process to be heavily customised, if a
+	package needs it.  The simplest setup file looks like
+	this.</para>
+
+      &Setup.lhs:setup;
+
+      <para>We save this file under the name
+	<filename>Setup.lhs</filename>, to indicate that it is a
+	literate Haskell file<footnote>
+	  <para>We use literate Haskell notation so that on a Linux or
+	    Unix system, if we make the file executable, it will be
+	    treated as a script, and we can run it directly.  This is
+	    probably the only time you'll see literate Haskell in this
+	    book.</para>
+	</footnote>.</para>
+
+      <para>Once we have the <filename>.cabal</filename> and
+	<filename>Setup.lhs</filename> files written, we have three
+	steps left.</para>
+
+      <para>To instruct Cabal how to build and where to install a
+	package, we run a simple command.</para>
+
+<screen><prompt>$</prompt> <userinput>runghc Setup configure</userinput></screen>
+
+      <para>This ensures that the packages we need are available, and
+	stores settings to be used later by other Cabal
+	commands.</para>
+
+      <para>If we do not provide any arguments to
+	<code>configure</code>, Cabal will install our package in the
+	system-wide package database.  To install it into our home
+	directory and our personal package database, we must provide a
+	little more information.</para>
+
+<screen><prompt>$</prompt> <userinput>runghc Setup configure --prefix=$HOME --user</userinput></screen>
+
+      <para>Following the <code>configure</code> step, we build the
+	package.</para>
+
+<screen><prompt>$</prompt> <userinput>runghc Setup build</userinput></screen>
+
+      <para>If this succeeds, we can install the package.  We don't
+	need to indicate where to install to: Cabal will use the
+	settings we provided in the <code>configure</code>
+	step.</para>
+
+<screen><prompt>$</prompt> <userinput>runghc Setup install</userinput></screen>
+
     </sect2>
   </sect1>
 

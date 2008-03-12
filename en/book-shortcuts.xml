@@ -96,6 +96,7 @@
 <!ENTITY getEnvironment "<literal>getEnvironment</literal>">
 <!ENTITY getLine "<literal>getLine</literal>">
 <!ENTITY ghc "<command>ghc</command>">
+<!ENTITY ghc_pkg "<command>ghc-pkg</command>">
 <!ENTITY ghci "<command>ghci</command>">
 <!ENTITY hClose "<literal>hClose</literal>">
 <!ENTITY hFlush "<literal>hFlush</literal>">

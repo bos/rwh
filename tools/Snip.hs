@@ -34,7 +34,9 @@ markers :: FilePath -> (B.ByteString, B.ByteString)
 markers path =
     case suffix path of
       "hs" -> (startHs, endHs)
+      "lhs" -> (startHs, endHs)
       "c"  -> (startC, endC)
+      "cabal"  -> (startCabal, endCabal)
       "cpp"  -> (startC, endC)
       "java"  -> (startC, endC)
       "py"  -> (startPy, endPy)
@@ -43,6 +45,8 @@ markers path =
         endHs = B.pack "{-- /snippet "
         startC = B.pack "/** snippet "
         endC = B.pack "/** /snippet "
+        startCabal = B.pack "-- snippet "
+        endCabal = B.pack "-- /snippet "
         startPy = B.pack "## snippet "
         endPy = B.pack "## /snippet "
 

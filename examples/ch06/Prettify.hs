@@ -18,7 +18,13 @@ module Prettify
     , pretty
     ) where
 
+{--
 import Data.Monoid (Monoid(..))
+
+instance Monoid Doc where
+    mempty = empty
+    mappend = (<>)
+--}
 
 {-- snippet Doc --}
 data Doc = Empty
@@ -29,10 +35,6 @@ data Doc = Empty
          | Union Doc Doc
            deriving (Show)
 {-- /snippet Doc --}
-
-instance Monoid Doc where
-    mempty = empty
-    mappend = (<>)
 
 {-- snippet append --}
 (<>) :: Doc -> Doc -> Doc
