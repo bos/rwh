@@ -2,10 +2,11 @@ import Prettify -- needs to export constructors to be testable
 import Test.QuickCheck
 
 instance Arbitrary Char where
-    arbitrary = oneof (map return " abcdefghiklmnopqrstuvwxyz")
+    arbitrary = oneof $ map return $ ['A'..'Z'] ++ ['a' .. 'z'] ++ " ~!@#$%^&*()"
   --  arbitrary = chr `fmap` choose (0,255)
     coarbitrary = undefined
 
+-- TODO, probabilities for Empty.
 instance Arbitrary Doc where
     arbitrary = oneof [ return Empty
                       , do x <- arbitrary
@@ -16,9 +17,9 @@ instance Arbitrary Doc where
                       , do x <- arbitrary
                            y <- arbitrary
                            return (Concat x y)
-                      , do x <- arbitrary
-                           y <- arbitrary
-                           return (Union x y)
+               --     , do x <- arbitrary
+               --          y <- arbitrary
+               --          return (Union x y)
                       ]
 
     coarbitrary = undefined
@@ -29,9 +30,38 @@ prop_empty_id x =
   &&
     x <> Empty == x
 
--- connect to a model
+prop_text_id x =
+    pretty 100 (Text x) == x
+
+prop_append x y =
+    pretty n (Text x <> Text y) == x ++ y
+  where
+    n = 100
+
+-- test monoid laws.
+
+--
+-- False, due to Union case.
+--
 prop_concat_append x y =
-    pretty 100 (x <> y) == pretty 100 x ++ pretty 100 y
+    pretty n (x <> y) == pretty n x ++ pretty n y
+  where
+    n = 100
+
+{-
+
+    the left of each Union is always the same width as, or wider than, the right.
+
+-}
+
+{-
+
+Falsifiable, after 25 tests:
+Concat (Char 'p') (Union Empty (Text "r"))
+Union (Text "huM") (Text "H~mHrCX")
+
+-}
+
 
 {-
 *Main Test.QuickCheck> quickCheck prop_concat_append
