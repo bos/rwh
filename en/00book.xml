@@ -33,10 +33,10 @@
 <!ENTITY ch23     SYSTEM "ch23-webclient.xml">
 <!ENTITY ch24     SYSTEM "ch24-gui.xml">
 <!ENTITY ch25     SYSTEM "ch25-concurrent.xml">
-<!ENTITY ch28     SYSTEM "ch28-profiling.xml">
-<!ENTITY ch29     SYSTEM "ch29-advanced-haskell.xml">
-<!ENTITY ch30     SYSTEM "ch30-sockets.xml">
-<!ENTITY ch31     SYSTEM "ch31-http-proxy.xml">
+<!ENTITY ch26     SYSTEM "ch26-profiling.xml">
+<!ENTITY ch27     SYSTEM "ch27-advanced-haskell.xml">
+<!ENTITY ch28     SYSTEM "ch28-sockets.xml">
+<!ENTITY ch29     SYSTEM "ch29-http-proxy.xml">
 
 <!-- Appendices. -->
 
