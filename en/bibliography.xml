@@ -1,5 +1,21 @@
 <bibliography id="hs.bib">
   <title>Bibliography</title>
+  
+  <biblioentry id="bib.hughes95">
+    <abbrev>Hughes95</abbrev>
+    <biblioset relation="article">
+      <author><firstname>John</firstname><surname>Hughes</surname></author>
+      <title><ulink
+	  url="http://citeseer.ist.psu.edu/hughes95design.html">The
+	  design of a pretty-printing library</ulink></title>
+    </biblioset>
+    <confgroup>
+      <confdates>May, 1995</confdates>
+      <conftitle>First International Spring School on Advanced
+	Functional Programming Techniques</conftitle>
+      <address>Bastad, Sweden</address>
+    </confgroup>
+  </biblioentry>
 
   <biblioentry id="bib.hutton99">
     <abbrev>Hutton99</abbrev>
@@ -69,6 +85,17 @@
       <confnum>4</confnum>
       <address>London, England</address>
     </confgroup>
+  </biblioentry>
+
+  <biblioentry id="bib.wadler98">
+    <abbrev>Wadler98</abbrev>
+    <biblioset relation="article">
+      <author><firstname>Philip</firstname><surname>Wadler</surname></author>
+      <title><ulink
+	  url="http://citeseer.ist.psu.edu/wadler98prettier.html">A
+	  prettier printer</ulink></title>
+      <pubdate>March 1998</pubdate>
+    </biblioset>
   </biblioentry>
 </bibliography>
 <!--

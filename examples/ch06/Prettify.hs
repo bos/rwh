@@ -151,5 +151,10 @@ nest :: Int -> Doc -> Doc
 {-- /snippet nest --}
 nest = undefined
 
+{-- snippet fill --}
+fill :: Int -> Doc -> Doc
+{-- /snippet fill --}
+fill = undefined
+
 --instance Show Doc where
 --    show doc = pretty 80 doc

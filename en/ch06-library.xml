@@ -1014,10 +1014,24 @@ null]]></programlisting>
     <sect2>
       <title>Exercises</title>
 
-      <para>We can make a number of interesting improvements to our
-	pretty printer.</para>
+      <para>Our current pretty printer is spartan to fit within our
+	space constraints, but there are a number of useful
+	improvements we can make.</para>
 
       <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>Write a function, <function>fill</function>:</para>
+
+	    &Prettify.hs:fill;
+
+	    <para>It should render the document, then add spaces so
+	      that the rendered text is the given number of columns
+	      wide.  If the text is already wider than this value, it
+	      should add no spaces.</para>
+	  </question>
+	</qandaentry>
+
 	<qandaentry>
 	  <question>
 	    <para>Our pretty printer does not take
@@ -1036,12 +1050,29 @@ null]]></programlisting>
 	</qandaentry>
       </qandaset>
     </sect2>
+  </sect1>
 
-    <sect2>
-      <title>Practical pointers, and further reading</title>
+  <sect1>
+    <title>Practical pointers, and further reading</title>
 
-      <para>Blah.</para>
-    </sect2>
+    <para>&GHC; already bundles a pretty printing library,
+      <code>Text.PrettyPrint.HughesPJ</code>.  It provides the same
+      basic API as our example, but a much richer and more useful set
+      of pretty printing functions.  We recommend using it, rather
+      than writing your own.</para>
+
+    <para>The design of the <code>HughesPJ</code> pretty printer was
+      introduced by John Hughes in <citation><biblioref
+	  linkend="bib.hughes95"/></citation>. The library was
+      subsequently improved by Simon Peyton Jones, hence the name.
+      Hughes's paper is long, but well worth reading for his
+      discussion of how to design a library in Haskell.</para>
+
+    <para>In this chapter, our pretty printing library is based on a
+      simpler model described in <citation><biblioref
+	  linkend="bib.wadler98"/></citation>.  His library was
+      extended by Daan Leijen; this version is available for download
+      from Hackage.</para>
   </sect1>
 </chapter>
 
