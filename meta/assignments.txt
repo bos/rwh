@@ -4,8 +4,7 @@ Shared     2. Getting started: compiler, interpreter, values, simple
 BOS        3. Syntax, type system basics, type class basics (DONE)
 BOS        4. Even more syntax, type system basics, type class basics (DONE)
 BOS        5. FP (DONE)
-BOS/DONS   6. Write a real library: the rope data structure, cabal,
-              building  projects
+BOS/DONS   6. Write a real library: pretty printing JSON, Cabal (DONE)
 JG         7. Typeclasses and their use (DONE)
 JG         8. All about I/O (DONE)
 BOS        9. Bringing it all together: file name matching and 
@@ -27,12 +26,10 @@ JG        22. Talking to databases (DONE)
 JG        23. Web client programming: client/server networking
 BOS       24. GUI programming: gtk2hs
 JG/DONS   25. Basics of concurrent and parallel Haskell
-DONS      26. Advanced concurrent and parallel programming
-DONS      27. Concurrency case study: a lockless database with STM
-DONS      28. Performance and efficiency: profiling
-DONS      29. Advanced Haskell: MPTCs, TH, strong typing, GADTs
-JG        30. Sockets, Syslog   (agreed to)
-BOS       31. Reverse HTTP Proxy example
-BOS    APP A. Installation of GHC (done)
-BOS    APP B. Escapes (done)
+DONS      26. Performance and efficiency: profiling
+DONS      27. Advanced Haskell: MPTCs, TH, strong typing, GADTs
+JG        28. Sockets, Syslog   (agreed to)
+BOS       29. STM / JSON / server example
+BOS    APP A. Installation of GHC (DONE)
+BOS    APP B. Escapes (DONE)
 JG     APP C. Posix (??)
