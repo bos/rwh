@@ -17,39 +17,53 @@
       which two are in wide use.  Hugs is an interpreter that is
       primarily used for teaching.  For real applications, the Glasgow
       Haskell Compiler (&GHC;) is much more popular.  Compared to
-      Hugs, &GHC; is much more complete: it compiles to native code,
-      supports parallel execution, and provides useful performance
-      analysis and debugging tools.  For these reasons, &GHC; is the
-      Haskell implementation that we'll be using throughout this
-      book.</para>
+      Hugs, &GHC; is more suited to <quote>real work</quote>: it
+      compiles to native code, supports parallel execution, and
+      provides useful performance analysis and debugging tools.  For
+      these reasons, &GHC; is the Haskell implementation that we will
+      be using throughout this book.</para>
 
-    <para id="x_h">&GHC; has three complementary components: &ghc;, a
-      compiler that generates native code; &ghci;, an interpreter that
-      we can run interactively; and &runghc;, an interpreter for
-      running Haskell programs as fast-turnaround scripts after the
-      manner of Perl or Ruby.</para>
+    <para id="x_h">&GHC; has three main components.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>&ghc; is an optimizing compiler that generates fast
+	  native code.</para>
+      </listitem>
+      <listitem>
+	<para>&ghci; is an interactive interpreter and
+	  debugger.</para>
+      </listitem>
+      <listitem>
+	<para>&runghc; is a program for running Haskell programs as
+	  scripts, without needing to compile them first.</para>
+      </listitem>
+    </itemizedlist>
 
     <note>
       <title>How we refer to the components of GHC</title>
 
-      <para id="x_i">When we discuss the &GHC; system as a whole,
-	we'll refer to it as &GHC;.  If we're talking about one or
-	another command, we'll mention &ghc;, &ghci;, or &runghc; by
+      <para id="x_i">When we discuss the &GHC; system as a whole, we
+	will refer to it as &GHC;.  If we are talking about a specific
+	command, we will mention &ghc;, &ghci;, or &runghc; by
 	name.</para>
     </note>
 
     <para id="x_j">In this book, we assume that you're using at least
-      version 6.6.1 of &GHC;.  If you're using Windows or Mac OS X,
-      you can get started easily and quickly using a prebuilt
-      installer.  To obtain a copy of &GHC; for these platforms,
-      visit <ulink url="http://www.haskell.org/ghc/download.html">the
-	&GHC; download page</ulink>, and look for the list of binary
+      version 6.6.1 of &GHC;, which was released in 2007.  However, we
+      <emphasis>recommend</emphasis> using whatever is the newest
+      version available for your platform.  If you're using Windows or
+      Mac OS X, you can get started easily and quickly using a
+      prebuilt installer.  To obtain a copy of &GHC; for these
+      platforms, visit <ulink
+	url="http://www.haskell.org/ghc/download.html">the &GHC;
+	download page</ulink>, and look for the list of binary
       packages and installers.</para>
 
-    <remark>With 6.8.1 due out long before the book, should we make
-      that the <quote>baseline</quote> version?  We're likely to hold
-      off on a decision until much closer to publication.  For now,
-      we'll stick with 6.6.1.</remark>
+    <remark>With 6.8.3 due out some time before the book, should we
+      make that the <quote>baseline</quote> version?  We're likely to
+      hold off on a decision until much closer to publication.  For
+      now, we'll stick with 6.6.1.</remark>
 
     <para id="x_k">Many Linux distributors, and providers of BSD and
       other Unix variants, make custom binary packages of &GHC;
@@ -71,32 +85,31 @@
     <title>Getting started with ghci, the interpreter</title>
 
     <para id="x_L1">The interactive interpreter for &GHC; is a program named
-      &ghci;.  It lets you enter and evaluate Haskell expressions, and
-      explore modules and type information.  If you're familiar with
-      Python, it's somewhat similar to the interactive Python
-      interpreter.</para>
+      &ghci;.  It lets us enter and evaluate Haskell expressions,
+      explore modules, and debug our code.  If you're familiar with
+      Python or Ruby, &ghci; is somewhat similar to
+      <filename>python</filename> and <filename>irb</filename>, the
+      interactive Python and Ruby interpreters.</para>
 
-      <para id="x_UM">The &ghci; command is a tool for evaluating Haskell
-      expressions, using existing code from libraries or source files
-      that we've written.  It also provides commands that let us
-      inspect some details of modules and expressions.  It is not a
-      complete interpreter for all of Haskell.  We typically cannot
-      copy some code out of a Haskell source file and paste it into
-      &ghci;.  In this respect, it's more restrictive than, say, the
-      interactive Python interpreter, which can accept all Python
-      code.</para>
+      <para id="x_UM">The &ghci; command is not a complete interpreter
+      for all of Haskell.  We typically cannot copy some code out of a
+      Haskell source file and paste it into &ghci;: it only accepts
+      expressions and some other directives.  In this respect, it's
+      more restrictive than, say, the interactive Python interpreter,
+      which can accept all Python code.</para>
 
     <para id="x_VM">On Unix-like systems, we run &ghci; as a command in a shell
       window.  On Windows, it's available as a menu item accessible
-      off the Start Menu.  For example, if you installed using the
+      from the Start Menu.  For example, if you installed using the
       &GHC; installer on Windows XP, you should go to <quote>All
 	Programs</quote>, then <quote>GHC</quote>; you'll then see
       &ghci; in the list.  (See <xref linkend="install.win"/> for a
       screenshot.)</para>
 
     <para id="x_M1">When we run &ghci;, it displays a startup banner, followed
-      by a <prompt>Prelude&gt;</prompt> prompt.  (Here, we're showing
-      it run on a Linux box.)</para>
+      by a <prompt>Prelude&gt;</prompt> prompt.  Here, we're showing
+      version 6.6.1 run on a Linux box.  More recent versions print a
+      shorter banner.</para>
 
     <screen>
 <prompt>$</prompt> <userinput>ghci</userinput>
@@ -111,10 +124,17 @@ Loading package base ... linking ... done.
 </screen>
 
     <para id="x_uK">The word <code>Prelude</code> in the prompt
-      indicates that the <quote>standard prelude</quote>, a standard
-      library of useful functions, is loaded and ready to use. When we
-      load other modules or source files, they'll show up in the
-      prompt, too.</para>
+      indicates that <classname role="module">Prelude</classname>, a
+      standard library of useful functions, is loaded and ready to
+      use. When we load other modules or source files, they will show
+      up in the prompt, too.</para>
+
+    <tip>
+      <title>Getting help</title>
+
+      <para>If you enter <code>:?</code> at the &ghci; prompt, it will
+	print a long help message.</para>
+    </tip>
 
     <para id="x_o1">The <classname role="module">Prelude</classname>
       module is sometimes referred to as <quote>the standard
@@ -133,6 +153,13 @@ Loading package base ... linking ... done.
       <para id="x_WM">For brevity and consistency, we have replaced &ghci;'s
 	default prompts throughout this book with the prompt string
 	<prompt>ghci&gt;</prompt>.</para>
+
+      <para>If you want to do this youself, use &ghci;'s <code>:set
+	  prompt</code> directive, as follows.</para>
+
+      <screen>
+<prompt>Prelude&gt;</prompt> <userinput>:set prompt "ghci> "</userinput>
+<prompt>ghci&gt;</prompt></screen>
     </note>
 
     <para id="x_p1">The prelude is always implicitly available; we
@@ -142,42 +169,6 @@ Loading package base ... linking ... done.
       command.</para>
 
     &basics.ghci:module;
-
-    <sect2 id="starting.ghci.edit">
-      <title>Command line editing</title>
-
-      <para id="x_O1">On most systems, &ghci; has some amount of
-	command line editing ability. If you're not familiar with
-	command line editing, it's a huge time saver.  The basics are
-	common to both Unix-like and Windows systems.  Pressing the
-	<keycap function="up">up</keycap> arrow key on your keyboard
-	recalls the last line of input you entered; pressing <keycap
-	  function="up">up</keycap> repeatedly cycles through earlier
-	lines of input. You can use the <keycap
-	  function="left">left</keycap> and <keycap
-	  function="right">right</keycap> arrow keys to move around
-	inside a line of input.  On Unix (but not Windows,
-	unfortunately), the <keycap function="tab">tab</keycap> key
-	completes partially typed identifiers.</para>
-
-      <tip>
-	<title>Where to look for more information</title>
-
-	<para id="x_XM">We've barely scratched the surface of command line
-	  editing here.  Since you can work more effectively if you're
-	  more familiar with the capabilities of your command line
-	  editing system, you might find it useful to do some further
-	  reading.</para>
-
-	<para id="x_YM">On Unix-like systems, &ghci; uses the <ulink
-	    url="http://tiswww.case.edu/php/chet/readline/rltop.html#Documentation">GNU 
-	    readline library</ulink>, which is powerful and
-	  customisable.  On Windows, &ghci;'s command line editing
-	  capabilities are provided by the <ulink
-	    url="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/doskey.mspx"><command>doskey</command> 
-	    command</ulink>.</para>
-      </tip>
-    </sect2>
   </sect1>
 
   <sect1 id="starting.calc">
@@ -196,31 +187,26 @@ Loading package base ... linking ... done.
 
       <para id="x_S1">We can immediately start entering expressions,
 	to see what &ghci; will do with them.  Basic arithmetic works
-	similarly to familiar languages like C and Python: we write
-	expression in <emphasis>infix</emphasis> form, where an
+	similarly to languages like C and Python: we write
+	expressions in <emphasis>infix</emphasis> form, where an
 	operator appears between its operands.</para>
     
       &basics.ghci:arithmetic;
 
-      <para id="x_ZM">Operators are normal Haskell functions; the infix style of
-	writing an expression is just a convenience.</para>
+      <para id="x_ZM">The infix style of
+	writing an expression is just a convenience: we can also write
+	an expression in <emphasis>prefix</emphasis> form, where the
+	operator precedes its arguments.  To do this, we must enclose
+	the operator in parentheses.</para>
 
-      <para id="x_T1">As the expressions above imply, Haskell has a notion of
-	integers and floating point numbers.  In fact, it allows us to
-	use arbitrarily large integers.  Here, the
-	<function>(^)</function> is the integer exponentiation
-	operator.</para>
+      &basics.ghci:prefix;
+
+      <para id="x_T1">As the expressions above imply, Haskell has a
+	notion of integers and floating point numbers.  Integers can
+	be arbitrarily large.  Here, <function>(^)</function>
+	provides integer exponentiation.</para>
 
       &basics.ghci:bignum;
-
-      <note>
-	<title>Why are there parentheses around operators?</title>
-
-	<para id="x_aM">When we write an operator by itself, we'll usually
-	  write it surrounded by parentheses, for example
-	  <function>(+)</function>.  This is a standard Haskell way of
-	  writing an operator as an ordinary function.</para>
-      </note>
     </sect2>
 
     <sect2 id="starting.calc.neg">
@@ -482,6 +468,42 @@ Loading package base ... linking ... done.
     </sect2>
 
   </sect1>
+
+  <sect1 id="starting.ghci.edit">
+    <title>Command line editing in ghci</title>
+
+    <para id="x_O1">On most systems, &ghci; has some amount of command
+      line editing ability. In case you are not familiar with command
+      line editing, it's a huge time saver.  The basics are common to
+      both Unix-like and Windows systems.  Pressing the <keycap
+	function="up">up</keycap> arrow key on your keyboard recalls
+      the last line of input you entered; pressing <keycap
+	function="up">up</keycap> repeatedly cycles through earlier
+      lines of input. You can use the <keycap
+	function="left">left</keycap> and <keycap
+	function="right">right</keycap> arrow keys to move around
+      inside a line of input.  On Unix (but not Windows,
+      unfortunately), the <keycap function="tab">tab</keycap> key
+      completes partially entered identifiers.</para>
+
+    <tip>
+      <title>Where to look for more information</title>
+
+      <para id="x_XM">We've barely scratched the surface of command
+	line editing here.  Since you can work more effectively if
+	you're more familiar with the capabilities of your command
+	line editing system, you might find it useful to do some
+	further reading.</para>
+
+      <para id="x_YM">On Unix-like systems, &ghci; uses the <ulink
+	  url="http://tiswww.case.edu/php/chet/readline/rltop.html#Documentation">GNU 
+	  readline library</ulink>, which is powerful and
+	customisable.  On Windows, &ghci;'s command line editing
+	capabilities are provided by the <ulink
+	  url="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/doskey.mspx"><command>doskey</command> 
+	  command</ulink>.</para>
+    </tip>
+    </sect1>
 
   <sect1 id="starting.list">
     <title>Lists</title>

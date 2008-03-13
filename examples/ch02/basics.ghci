@@ -6,7 +6,7 @@
 
 --# bignum
 
-31337 ^ 15
+313 ^ 15
 
 --# neg.simple
 
@@ -88,7 +88,7 @@ not True
 
 --# module
 
-:module Data.Ratio
+:module + Data.Ratio
 
 --# denom.bad
 
@@ -179,3 +179,7 @@ a == "lots of work"
 --# range.double
 
 [1.0..1.8]
+
+--# prefix
+2 + 2
+(+) 2 2
