@@ -46,22 +46,19 @@ chapters = [
  , ch "binary" "Code case study: parsing a binary data format"
    $ Alpha "2008-02-21"
  , ch "testing" "Testing your code" Unpublished
- , ch "barcode" "Barcode recognition" Unpublished
+ , ch "barcode" "Barcode recognition" $ Unpublished
  , ch "data" "Data structures" $ Alpha "2008-02-21"
- , ch "monads" "Monads" Unpublished
+ , ch "monads" "Monads" $ Alpha "2008-03-12"
  , ch "monadcase" "Programming with monads" Unpublished
  , ch "monadtrans" "Monad transformers" Unpublished
  , ch "parsec" "The Parsec parsing library" Unpublished
  , ch "ffi" "The foreign function interface" Unpublished
  , ch "errors" "Error handling" Unpublished
  , ch "systems" "Systems programming" Unpublished
- , ch "databases" "Working with databases" Unpublished
+ , ch "databases" "Working with databases" $ Alpha "2008-03-12"
  , ch "webclient" "Web client programming" Unpublished
  , ch "gui" "GUI programming" Unpublished
- , ch "datamining" "Data mining and web applications" Unpublished
  , ch "concurrent" "Basic concurrent and parallel programming" Unpublished
- , ch "advconcurrent" "Advanced concurrent and parallel programming" Unpublished
- , ch "stm" "Building a database with software transactional memory" Unpublished
  , ch "profiling" "Profiling and tuning for performance" Unpublished
  , ch "advhs" "Advanced language features" Unpublished
  , ch "sockets" "Network programming" Unpublished
