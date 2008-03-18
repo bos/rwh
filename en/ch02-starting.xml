@@ -692,7 +692,9 @@ Loading package base ... linking ... done.
       </listitem>
       <listitem>
 	<para id="x_X2">Here, the expression <quote>it</quote> has the
-	  type <type>[Char]</type>.</para>
+	  type <type>[Char]</type>.  (The name <type>String</type>
+	  is often used instead of <type>[Char]</type>.  It is simply
+	  a synonym for <type>[Char]</type>.)</para>
       </listitem>
     </itemizedlist>
 

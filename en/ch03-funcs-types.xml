@@ -5,16 +5,8 @@
 
   <para id="x_n2">Topics: built-in types.  Writing functions.</para>
 
-  <sect1 id="funcstypes.types">
-    <title>Haskell's type system</title>
-    
-    <para id="x_o2">There are three interesting aspects to types in
-      Haskell: they are <emphasis>strong</emphasis>, they are
-      <emphasis>static</emphasis>, and they can be automatically
-      <emphasis>inferred</emphasis>.  Let's talk in more detail about
-      each of these ideas.  When possible, we'll present similarities
-      between concepts from Haskell's type system and related ideas in
-      other languages.</para>
+  <sect1>
+    <title>Why care about types?</title>
 
     <para id="x_p2">Every expression and function in Haskell has a
       <emphasis>type</emphasis>.  For example, the value
@@ -26,111 +18,243 @@
       these are properties of those types. We say an expression
       <quote>has type <code>X</code></quote>, or <quote>is of type
 	<code>X</code></quote>.</para>
+    
+    <para>Before we launch into a deeper discussion of Haskell's type
+      system, let's talk about why we should care about types at all:
+      what are they even <emphasis>for</emphasis>?  At the lowest
+      level, a computer is concerned with bytes, with barely any
+      additional structure.  What a type system gives us is
+      <emphasis>abstraction</emphasis>. A type adds meaning to plain
+      bytes: it lets us say <quote>these bytes are text</quote>,
+      <quote>those bytes are an airline reservation</quote>, and so
+      on.  Usually, a type system goes beyond this to prevent us from
+      accidentally mixing types up: for example, a type system usually
+      won't let us treat a hotel reservation as a car rental
+      receipt.</para>
 
-    <para id="x_AN">Here are a few more examples of values and
-      expressions, and their types: the value <literal>'a'</literal>
-      has type <type>Char</type>; the expression <literal>"a" ++
-	"b"</literal> has type <type>String</type> (the
-      <function>(++)</function> is the concatenation operator).</para>
+    <para>The benefit of introducing abstraction is that it lets us
+      forget or ignore low-level details.  If I know that a value in
+      my program is a string, I don't have to know the intimate
+      details of how strings are implemented: I can just assume that
+      my string is going to behave like all the other strings I've
+      worked with.</para>
 
-    <para id="x_Yd">We call an expression that obeys the language's type rules
-      <emphasis>well typed</emphasis>.  An expression that disobeys
-      the type rules, such as <code>10 + "hello"</code>, is
-      <emphasis>ill typed</emphasis>, and will be rejected by a
-      Haskell implementation.  Our example <code>10 + "hello"</code>
-      is ill typed because the <function>(+)</function> operator is
-      only defined to work with numbers.</para>
+    <para>What makes type systems interesting is that they're not all
+      equal.  In fact, different type systems are often not even
+      concerned with the same kinds of problems.  A programming
+      language's type system deeply colours the way we think, and
+      write code, in that language.</para>
 
-    <para id="x_q2">When we say that Haskell has a
-      <emphasis>strong</emphasis> type system, we mean that every
-      expression has exactly one <emphasis>most general
-	type</emphasis>.  This is a notion we can most easily explain
-      by example. The expression <literal>x - 1</literal> doesn't
-      represent a specific type of number: it will work equally well
-      if <varname>x</varname> is an <type>Integer</type> or a
-      <type>Double</type> (a floating point number). As a result, the
-      most general type for which the expression is valid is any
-      numeric type.  The expression <type>1 &lt; 2</type> is a
-      comparison that can only evaluate to <literal>True</literal> or
-      <literal>False</literal>, so its most general type is
-      <type>Bool</type>.</para>
+    <para>Haskell's type system allows us to think at a very abstract
+      level: this is what permits us to write concise, powerful
+      programs.  However, we don't give up the ability to <quote>get
+	close to the metal</quote> when low-level performance is
+      important.</para>
+  </sect1>
 
-    <para id="x_BN">Strong typing means that any attempt to apply a
-      function to a value of a different type causes an error. Another
-      aspect of Haskell's view of strong typing is that it will not
-      automatically coerce values from one type to another.  (Coercion
-      is also known as casting or conversion.)  For example, a C
-      compiler will automatically and silently coerce a value of type
-      <type>int</type> into a <type>float</type> on our behalf if a
-      function expects a parameter of type <type>float</type>, but a
-      Haskell compiler will raise a compilation error in a similar
-      situation.  We must explicitly coerce types ourselves.</para>
+  <sect1 id="funcstypes.types">
+    <title>Haskell's type system</title>
 
-    <note>
-      <title>Weaker and stronger types</title>
+    <para id="x_o2">There are three interesting aspects to types in
+      Haskell: they are <emphasis>strong</emphasis>, they are
+      <emphasis>static</emphasis>, and they can be automatically
+      <emphasis>inferred</emphasis>.  Let's talk in more detail about
+      each of these ideas.  When possible, we'll present similarities
+      between concepts from Haskell's type system and related ideas in
+      other languages.  We'll also touch on the respective strengths
+      and weaknesses of each of these properties.</para>
 
-      <para id="x_r2">It's useful to be aware that many language
-	communities have their own definitions of a <quote>strong
-	  type</quote>.  We won't get into the details here, but it's
-	still useful to speak broadly about the notion of strength in
-	type systems.</para>
+    <sect2>
+      <title>Strong types</title>
 
-      <para id="x_Zd">A hypothetical weak type system will accept as valid an
-	expression like <code>10 + "foo"</code>.  A stronger type
-	system will be less permissive in how it allows expressions of
-	different types to be mixed.  Under some strong type systems,
-	this expression is not valid.</para>
+      <para id="x_q2">When we say that Haskell has a
+	<emphasis>strong</emphasis> type system, we mean that the type
+	system guarantees that a program cannot contain certain kinds
+	of errors.  These errors come from trying to write expressions
+	that don't make sense, such as using an integer as a function.
+	Similarly, if a function expects to work with integers, and we
+	pass it a string, a Haskell compiler will reject this.</para>
 
-      <para id="x_ad">Our example expression is valid in C, but not in Haskell,
-	so we say that Haskell has a stronger type system.</para>
-    </note>
+      <para id="x_Yd">We call an expression that obeys a language's type
+	rules <emphasis>well typed</emphasis>.  An expression that
+	disobeys the type rules is <emphasis>ill typed</emphasis>, and
+	will cause a <emphasis>type error</emphasis>.</para>
 
-    <para id="x_t2">Having a <emphasis>static</emphasis> type system
-      means that the compiler knows the type of every value and
-      expression at compile time, before any code is executed.  A
-      Haskell compiler or interpreter will detect when we try to use
-      expressions whose types don't match, and reject our code with an
-      error message.</para>
+      <para id="x_BN">Another aspect of Haskell's view of strong
+	typing is that it will not automatically coerce values from
+	one type to another.  (Coercion is also known as casting or
+	conversion.) For example, a C compiler will automatically and
+	silently coerce a value of type <type>int</type> into a
+	<type>float</type> on our behalf if a function expects a
+	parameter of type <type>float</type>, but a Haskell compiler
+	will raise a compilation error in a similar situation.  We
+	must explicitly coerce types by calling functions .</para>
 
-    &ch03.basics.ghci:error;
+      <para>Strong typing does occasionally make it more difficult to
+	write certain kinds of code.  For example, a classic way to
+	write low-level code in the C language is to be given a byte
+	array, and cast it to treat the bytes as if they're really a
+	complicated data structure.  This is very efficient, since it
+	doesn't require us to copy the bytes around.  Haskell's type
+	system does not allow this sort of coercion.  In order to get
+	the same structured view of the data, we would need to do some
+	copying, which would cost a little in performance.</para>
 
-    <para id="x_CN">This error message is of a kind we've seen before.
-      The compiler has inferred that the most general type of the
-      expression <literal>"false"</literal> is <type>[Char]</type>,
-      which is a synonym for <type>String</type>.  The
-      <function>(&amp;&amp;)</function> operator requires each of its
-      operands to be of type <type>Bool</type>, and its left operand
-      indeed has this type.  Since the actual type of
-      <literal>"false"</literal> does not match the required type, the
-      compiler rejects this expression as ill typed.</para>
+      <para>The huge benefit of strong typing is that it catches real
+	bugs in our code before they can cause problems.  For example,
+	in a strongly typed language, we can't accidentally use a
+	string where an integer is expected.</para>
 
-    <para id="x_u2">Haskell's combination of strong and static typing
-      makes it impossible for type errors to occur at runtime.  While
-      this means that we need to do a little more thinking <quote>up
-	front</quote>, it also eliminates many simple errors that can
-      otherwise be devilishly hard to find.  It's a truism within the
-      Haskell community that once code compiles, it's more likely to
-      work correctly than in other languages. (Perhaps a more
-      realistic way of putting this is that Haskell code often has
-      fewer trivial bugs.)</para>
+      <note>
+	<title>Weaker and stronger types</title>
 
-    <para id="x_v2">Finally, a Haskell compiler can automatically
-      deduce the types of (almost) all values in a program. This
-      process is known as type inference. Haskell allows us to
-      explicitly declare the type of any value, but the presence of
-      type inference means that this is almost always optional, not
-      something we must do.</para>
+	<para id="x_r2">It is useful to be aware that many language
+	  communities have their own definitions of a <quote>strong
+	    type</quote>.  Nevertheless, we will speak briefly and in
+	  broad terms about the notion of strength in type
+	  systems.</para>
 
-    <para id="x_DN">While strong, static typing makes Haskell safe, type
-      inference makes it concise.  The result is potent: we end up
-      with a language that's both safer than popular statically typed
-      languages, and often more expressive than dynamically typed
-      languages.</para>
+	<para>In academic computer science, the meanings of
+	  <quote>strong</quote> and <quote>weak</quote> have a
+	  narrowly technical meaning: strength refers to <emphasis>how
+	    permissive</emphasis> a type system is. A weaker type
+	  system treats more expressions as valid than a stronger type
+	  system.</para>
 
-    <para id="x_w2">We've already briefly seen Haskell's notation for types in
-      <xref linkend="starting.types"/>.  We write <code>expression
-	:: <type>MyType</type></code> to say that
-      <code>expression</code> has the type <type>MyType</type>.</para>
+	<para>For example, in Perl, the expression <code>"foo" +
+	    2</code> evaluates to the number 2, but the expression
+	  <code>"13foo" + 2</code> evaluates to the number 15. Haskell
+	  rejects both expressions as invalid, because the
+	  <function>(+)</function> operator requires both of its
+	  operands to be numeric. Because Perl's type system is more
+	  permissive than Haskell's, we say that it is weaker under
+	  this narrow technical interpretation.</para>
+	
+	<para>The fireworks around type systems have their roots in
+	  ordinary English, where people attach notions of
+	  <emphasis>value</emphasis> to the words <quote>weak</quote>
+	  and <quote>strong</quote>: we usually think of strength as
+	  better than weakness. Many more programmers speak plain
+	  English than academic jargon, and quite often academics
+	  <emphasis>really are</emphasis> throwing brickbats at
+	  whatever type system doesn't suit their fancy. The result is
+	  often that popular Internet pastime, a flame war.</para>
+      </note>
+    </sect2>
+
+    <sect2>
+      <title>Static types</title>
+
+      <para id="x_t2">Having a <emphasis>static</emphasis> type system
+	means that the compiler knows the type of every value and
+	expression at compile time, before any code is executed.  A
+	Haskell compiler or interpreter will detect when we try to use
+	expressions whose types don't match, and reject our code with
+	an error message before we run it.</para>
+
+      &ch03.basics.ghci:error;
+
+      <para id="x_CN">This error message is of a kind we've seen
+	before. The compiler has inferred that the most general type
+	of the expression <literal>"false"</literal> is
+	<type>[Char]</type>, which is a synonym for
+	<type>String</type>.  The <function>(&amp;&amp;)</function>
+	operator requires each of its operands to be of type
+	<type>Bool</type>, and its left operand indeed has this type.
+	Since the actual type of <literal>"false"</literal> does not
+	match the required type, the compiler rejects this expression
+	as ill typed.</para>
+      
+      <para>Static typing does make writing some useful programs
+	difficult, or sometimes impossible.  In languages like Python,
+	<quote>duck typing</quote> is common, where an object acts
+	enough like another to be used as a substitute for it. While
+	Haskell has some support for programming with dynamic types,
+	it's not nearly as easy or expressive as in a language that
+	wholeheartedly embraces the notion.</para>
+
+      <para id="x_u2">Haskell's combination of strong and static
+	typing makes it impossible for type errors to occur at
+	runtime. While this means that we need to do a little more
+	thinking <quote>up front</quote>, it also eliminates many
+	simple errors that can otherwise be devilishly hard to find.
+	It's a truism within the Haskell community that once code
+	compiles, it's more likely to work correctly than in other
+	languages. (Perhaps a more realistic way of putting this is
+	that Haskell code often has fewer trivial bugs.)</para>
+
+      <para>Programs written in dynamically typed languages require
+	large suites of tests to give some assurance that simple type
+	errors cannot occur.  Test suites cannot offer complete
+	coverage: some common tasks, such as refactoring a program to
+	make it more modular, can introduce new type errors that a
+	test suite may not expose.</para>
+
+      <para>In Haskell, the compiler proves the absence of type errors
+	for us: a Haskell program that compiles will not suffer from
+	type errors when it runs. Refactoring is usually a matter of
+	moving code around, then recompiling and tidying up a few
+	times until the compiler gives us the <quote>all
+	  clear</quote>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Type inference</title>
+
+      <para id="x_v2">Finally, a Haskell compiler can automatically
+	deduce the types of almost<footnote>
+	  <para>Occasionally, we need to give the compiler a little
+	    information to help it to make a choice in understanding
+	    our code.  <emphasis>XXX Insert link to wherever we talk
+	      about this.</emphasis></para>
+	</footnote> all expressions in a program. This process is
+	known as <emphasis>type inference</emphasis>. Haskell allows
+	us to explicitly declare the type of any value, but the
+	presence of type inference means that this is almost always
+	optional, not something we must do.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>What to expect from the type system</title>
+
+    <para>Our exploration of the major capabilities and benefits of
+      Haskell's type system will span a number of chapters.  Early on,
+      you may find Haskell's types to be a chore to deal with.</para>
+
+    <para>For example, instead of simply writing some code and running
+      it to see if it works as you might in Python or Ruby, you'll
+      first need to make sure that your program passes the scrutiny of
+      the type checker.  Why stick with the learning curve?</para>
+
+    <para id="x_DN">While strong, static typing makes Haskell safe,
+      type inference makes it concise.  The result is potent: we end
+      up with a language that's both safer than popular statically
+      typed languages, and often more expressive than dynamically
+      typed languages.</para>
+
+    <para>Fixing type errors may initially feel like more work than if
+      you were using a dynamic language.  It might help to look at
+      this as moving much of your debugging <emphasis>up
+	front</emphasis>.  The compiler shows you many of the logical
+      flaws in your code, instead of leaving you to stumble across
+      problems at runtime.</para>
+
+    <para>Furthermore, because Haskell can infer the types of your
+      expressions and functions, you gain the benefits of static
+      typing <emphasis>without</emphasis> the added burden of
+      <quote>finger typing</quote> imposed by less powerful statically
+      typed languages.  In other languages, the type system serves the
+      needs of the compiler.  In Haskell, it serves
+      <emphasis>you</emphasis>.  The tradeoff is that you have to
+      learn to work within the framework it provides.</para>
+
+    <para>We will introduce new uses of Haskell's types throughout
+      this book, to help us to write and test practical code.  As a
+      result, the complete picture of why the type system is
+      worthwhile will emerge gradually.  While each step should
+      justify itself, the whole will end up greater than the sum of
+      its parts.</para>
   </sect1>
 
   <sect1 id="funcstypes.basic">
@@ -138,15 +262,12 @@
     
     <para id="x_x2">In <xref
 	linkend="starting.types"/>, we introduced a few types. Here
-      are some more of the most common base types, i.e. types that
-      aren't composed of other types.</para>
+      are several more of the most common base types.</para>
 
     <itemizedlist>
       <listitem>
-	<para id="x_y2">A <type>Char</type> value represents a
-	  character. The values of <type>Char</type> are drawn from
-	  the Unicode character set, which covers most of the world's
-	  written languages.</para>
+	<para id="x_y2">A <type>Char</type> value represents a Unicode
+	  character.</para>
       </listitem>
       <listitem>
 	<para id="x_z2">A <type>Bool</type> value represents a value
@@ -160,13 +281,15 @@
 	  representable as <type>Int</type> depends on the system's
 	  longest <quote>native</quote> integer: on a 32-bit machine,
 	  an <type>Int</type> is usually 32 bits wide, while on a
-	  64-bit machine, it is usually 64 bits wide.  (There are also
-	  numeric types that are exactly 8, 16, and so on bits wide;
+	  64-bit machine, it is usually 64 bits wide.  The Haskell
+	  standard only guarantees that an <type>Int</type> is wider
+	  than 28 bits.  (There exist numeric types that are exactly
+	  8, 16, and so on bits wide, in signed and unsigned flavours;
 	  we'll get to those later.)</para>
       </listitem>
       <listitem>
 	<para id="x_B3">An <type>Integer</type> value is a signed
-	  integer of arbitrary size.  <type>Integer</type>s are not
+	  integer of unbounded size.  <type>Integer</type>s are not
 	  used as often as <type>Int</type>s, because they're more
 	  expensive in terms of both performance and space
 	  consumption.</para>
@@ -182,6 +305,59 @@
 	  slower.)</para>
       </listitem>
     </itemizedlist>
+
+    <para id="x_w2">We have already briefly seen Haskell's notation
+      for types in <xref linkend="starting.types"/>.  When we write a
+      type explicitly, we use the notation <code>expression ::
+	<type>MyType</type></code> to say that <code>expression</code>
+      has the type <type>MyType</type>.  If we omit the
+      <code>::</code> and the type that follows, a Haskell compiler
+      will infer the type of the expression.</para>
+
+    &ch03.basics.ghci:types;
+
+  </sect1>
+
+  <sect1 id="funcstypes.calling">
+    <title>Function application</title>
+
+    <para>Now that we've had our fill of data types for a while, let's
+      turn our attention to <emphasis>working</emphasis> with some of
+      the types we've seen, using functions.</para>
+
+    <para id="x_R3">To apply a function in Haskell, we write the name
+      of the function followed by its arguments.</para>
+
+    &func.ghci:odd;
+
+    <para id="x_kd">We don't use parentheses or commas to group or
+      separate the arguments to a function; merely writing the name of
+      the function, followed by each argument in turn, is enough. As
+      an example, let's apply the <function>compare</function>
+      function, which takes two arguments.</para>
+    
+    &func.ghci:compare;
+
+    <para id="x_U3">If you're used to function call syntax in other
+      languages, this notation can take a little getting used to, but
+      it's simple and uniform.</para>
+
+    <para>Function application has higher precedence than using
+      operators, so the following two expressions have the same
+      meaning.</para>
+
+    &func.ghci:precedence;
+
+    <para>The parentheses don't do any harm, but they add some visual
+      noise.  Sometimes parentheses are necessary, for example to
+      indicate how we want a complicated expression to be
+      parsed.</para>
+
+    &func.ghci:precedence2;
+
+    <para>This applies <function>compare</function> to the results of
+      applying <code>odd 3</code> and <code>odd 6</code>,
+      respectively.</para>
   </sect1>
 
   <sect1 id="funcstypes.composite">
@@ -195,52 +371,91 @@
 	linkend="starting.string"/>, where we found that Haskell
       represents a text string as a list of <type>Char</type> values,
       and that the type <quote>list of <type>Char</type></quote> is
-      written <type>[Char]</type>.  (The type <type>String</type> is
-      simply an alias for <type>[Char]</type>.  We can use the two
-      interchangeably.)</para>
+      written <type>[Char]</type>.</para>
 
-    <para id="x_F3">We call the list type
-      <emphasis>polymorphic</emphasis> because it can contain any type
-      of value (see <xref linkend="funcstypes.polymorphism"/> for
-      more details).  We can write the type <quote>list of <varname
-	  role="type">a</varname></quote> for any type <varname
-	role="type">a</varname> by enclosing the type in square
-      brackets: <type>[a]</type>.  The lowercase <varname
-	role="type">a</varname> is called a <emphasis>type
-	variable</emphasis>; it's a placeholder for some other type
-      whose details do not matter.</para>
+    <para>The <function>head</function> function returns the first
+      element of a list.</para>
 
-    <para id="x_bd">So, for example, the type <type>[Int]</type> is a list of
-      values of type <type>Int</type> (and <emphasis>only</emphasis>
-      of type <type>Int</type>!), the type
-      <type>[MyPersonalType]</type> is a list of values of type
-      <type>MyPersonalType</type>, and <type>[[Int]]</type> is a list
-      of values of type <type>[Int]</type>, i.e. a list of lists of
+    &func.ghci:head;
+
+    <para id="x_S3">Its counterpart, <function>tail</function>, returns all
+      <emphasis>but</emphasis> the head of a list.</para>
+
+    &func.ghci:tail;
+
+    <para id="x_F3">As you can see, we can apply
+      <function>head</function> and <function>tail</function> to lists
+      of different types.  Applying <function>head</function> to a
+      <type>[Char]</type> value returns a <type>Char</type> value,
+      while applying it to a <type>[Bool]</type> value
+      returns a <type>Bool</type> value.  The
+      <function>head</function> function doesn't care what type of
+      list it deals with.</para>
+
+    <para>Because a list can contain any type of value, we call it
+      <emphasis>polymorphic</emphasis><footnote>
+	<para>We'll talk more about polymorphism in <xref
+	    linkend="funcstypes.polymorphism"/>.</para>
+      </footnote>.  When we want to write a polymorphic type, we use a
+      <emphasis>type variable</emphasis>, which must begin with a
+      lowercase letter.  A type variable is a placeholder, where
+      eventually we'll substitute a real type.</para>
+
+    <para>If we have a type variable <varname role="type">a</varname>,
+      we can write the type <quote>list of <varname
+	  role="type">a</varname></quote> by enclosing the type
+      variable in square brackets: <type>[a]</type>.  This amounts to
+      saying <quote>I don't care what type I have; I can make a list
+	with it</quote>.</para>
+
+    <note>
+      <title>Distinguishing type names and type variables</title>
+
+      <para>We can now see why a type name must start with an
+	uppercase letter: this makes it distinct from a type variable,
+	which must start with a lowercase letter.</para>
+    </note>
+
+    <para id="x_bd">When we want to talk about a list containing
+      values of a specific type, we substitute that type for our type
+      variable.  So, for example, the type <type>[Int]</type> is a
+      list of values of type <type>Int</type>, because we substituted
+      <type>Int</type> for <varname role="type">a</varname>.
+      Similarly, the type <type>[MyPersonalType]</type> is a list of
+      values of type <type>MyPersonalType</type>.  We can perform this
+      substitution recursively, too: <type>[[Int]]</type> is a list of
+      values of type <type>[Int]</type>, i.e. a list of lists of
       <type>Int</type>.</para>
 
-    <para id="x_G3">Lists are the <quote>bread and butter</quote> of
-      Haskell collections.  However, their utility goes beyond merely
-      gathering values together.</para>
+    &usingtypes.ghci:listlist;
 
-    <para id="x_cd">In an imperative language, we might repeat a task over many
-      items by iterating through a loop.  This is something that we
-      often do in Haskell with operations over a list, either by
-      recursing or using a function that recurses for us.  Lists are
-      the easiest stepping stone into the idea that we can use data to
-      structure our program and its control flow. We'll be spending a
-      lot more time discussing lists in <xref
-	linkend="fp"/>.</para>
+    <note>
+      <title>Lists are special</title>
 
-    <para id="x_H3">A tuple is a fixed-size collection of values, each
-      of which can be of any type.  Whereas the elements of a list
-      must all have the same type, there's no need for the elements of
-      a tuple to have related types.  In fact, tuples are important
-      precisely because they're often the most convenient way to group
-      several values of different types.</para>
+      <para id="x_G3">Lists are the <quote>bread and butter</quote> of
+	Haskell collections. In an imperative language, we might
+	perform a task many items by iterating through a loop.  This
+	is something that we often do in Haskell by traversing a list,
+	either by recursing or using a function that recurses for us.
+	Lists are the easiest stepping stone into the idea that we can
+	use data to structure our program and its control flow. We'll
+	be spending a lot more time discussing lists in
+	<xref linkend="fp"/>.</para>
+    </note>
 
-    <para id="x_xK">A handy rule of thumb for remembering which is
-      which is that a list has varying size and uniform type, while a
-      tuple has a uniform size and varying type.</para>
+    <para id="x_H3">A tuple is a fixed-size collection of values,
+      where each value can have a different type.  This distinguishes
+      them from a list, whose elements must all have the same
+      type.</para>
+
+    <para>To help to understand the difference, let's say we want to
+      track two pieces of information about a book.  It has a year of
+      publication, which is a number, and a title, which is a string.
+      We can't keep both of these pieces of information in a list,
+      because they have different types.  Instead, we use a
+      tuple.</para>
+
+    &tuple.ghci:book;
 
     <para id="x_dd">We write a tuple by enclosing its elements in parentheses
       and separating them with commas.  We use the same notation for
@@ -253,43 +468,33 @@
       written <code>()</code>.  Both the type and the value are
       usually pronounced <quote>unit</quote>.</para>
     
-    <para id="x_fd">Haskell doesn't have a notion of a one-element tuple. Tuples
-      are often referred to using the number of elements as a prefix,
-      hence <quote>3-tuple</quote> for a tuple of three elements,
-      <quote>5-tuple</quote> for five, and so on.</para>
-
-    <para id="x_I3">In practice, working with tuples that contain more
-      than a handful of elements quickly leads to unwieldy code, so
-      tuples of more than half a dozen elements are not often
-      seen.</para>
+    <para id="x_fd">Haskell doesn't have a notion of a one-element
+      tuple. Tuples are often referred to using the number of elements
+      as a prefix. A 2-tuple has two elements, and is usually called a
+      pair.  A <quote>3-tuple</quote> (sometimes called a triple) has
+      three elements; a 5-tuple has five; and so on. In practice,
+      working with tuples that contain more than a handful of elements
+      makes code unwieldy, so tuples of more than half a dozen
+      elements are rarely used.</para>
 
     <para id="x_gd">A tuple's type represents the number, positions, and types
       of its elements.  This means that tuples containing different
-      numbers or types of elements have distinct types of their
-      own.</para>
+      numbers or types of elements have distinct types.</para>
 
     &tuple.ghci:type1;
 
-    <para id="x_hd">In this example, the expression <code>(False, 'a')</code>
-      has the type <type>(Bool, Char)</type>.  If we swapped the two
-      elements, we'd get a tuple of type <type>(Char, Bool)</type>.
-      Even though the number of elements and their types are the same,
-      these two types are distinct because the positions of the
-      element types are different.</para>
+    <para id="x_hd">In this example, the expression <code>(False,
+	'a')</code> has the type <type>(Bool, Char)</type>, which is
+      distinct from the type of <code>('a', False)</code>. Even though
+      the number of elements and their types are the same, these two
+      types are distinct because the positions of the element types
+      are different.</para>
 
     &tuple.ghci:type2;
 
-    <para id="x_id">This type, <type>(Bool, Char, Char)</type>, is distinct from
-      <type>(Bool, Char)</type> because it contains an added
-      element.</para>
-
-    <tip>
-      <title>Jargon watch</title>
-
-      <para id="x_J3">2-tuples are often referred to as
-	<emphasis>pairs</emphasis>, and 3-tuples are sometimes (though
-	less frequently) called <emphasis>triples</emphasis>.</para>
-    </tip>
+    <para id="x_id">This type, <type>(Bool, Char, Char)</type>, is
+      distinct from <type>(Bool, Char)</type> because it contains
+      three elements, not two.</para>
 
     <para id="x_K3">We often use tuples to return multiple values from
       a function.  We can also use them any time we need a fixed-size
@@ -323,46 +528,13 @@
     </sect2>
   </sect1>
 
-  <sect1 id="funcstypes.calling">
-    <title>Function application</title>
-
-    <para id="x_P3">Now that we've had our fill of data types for a while, let's
-      turn our attention to <emphasis>working</emphasis> with some of
-      the types we've seen.  We've already seen how to perform
-      arithmetic in <xref linkend="starting.calc.arithmetic"/>, and it
-      looks quite similar to arithmetic in other languages.</para>
+  <sect1>
+    <title>Functions over lists and tuples</title>
 
     <para id="x_Q3">Our discussion of lists and tuples mentioned how
-      we can construct them, but not how we do anything with them
-      afterwards.  Haskell defines a large library of functions, the
-      Prelude, for working with lists and (to a lesser extent) tuples,
-      so let's find out how to use a few of those functions.</para>
-
-    <para id="x_R3">To apply a function in Haskell, we write the name
-      of the function followed by its arguments.</para>
-
-    <note>
-      <title>Jargon watch</title>
-
-      <para id="x_jd">When talking about functions, we'll use the terms
-	<emphasis>application</emphasis> and
-	<emphasis>calling</emphasis> interchangeably.  We'll do the
-	same with <emphasis>parameter</emphasis> and
-	<emphasis>argument</emphasis>.</para>
-    </note>
-
-    <para id="x_kd">We don't use parentheses or commas to group or separate the
-      arguments to a function; merely writing the name of the
-      function, followed by each argument in turn, is enough. As an
-      example, let's apply the <function>head</function> function,
-      which returns the first element of a list.</para>
-
-    &func.ghci:head;
-
-    <para id="x_S3">Its counterpart, <function>tail</function>, returns all
-      <emphasis>but</emphasis> the head of a list.</para>
-
-    &func.ghci:tail;
+      we can construct them, but little about how we do anything with
+      them afterwards.  We have only been introduced to
+      <function>head</function> and <function>tail</function>.</para>
 
     <para id="x_T3">A related pair of functions,
       <function>take</function> and <function>drop</function>, take
@@ -376,52 +548,47 @@
 
     &func.ghci:takeDrop;
 
-    <para id="x_U3">If you're used to function call syntax in other
-      languages, this notation can take a little getting used to, but
-      it's simple and uniform.</para>
+    <para id="x_ld">Here's something to watch out for, until you gain
+      a little more familiarity with the language.  For tuples, the
+      <function>fst</function> and <function>snd</function> functions
+      return the first and second element of a pair,
+      respectively.</para>
 
-    <para id="x_ld">Here's something to watch out for, until you gain a little
-      more familiarity with the language. Under Haskell's convention
-      for function application, the following expression is an
-      application of <function>snd</function> to a single argument,
-      which is a pair.</para>
+    &tuple.ghci:fst;
 
-    &func.ghci:snd;
-
-    <para id="x_V3">In a popular imperative language, this would
-      probably instead mean <quote>call <function>snd</function> with
-	two arguments, <literal>1</literal> and
-	<literal>2</literal></quote>, which is quite different.</para>
-
-    <para id="x_W3">By the way, <function>snd</function> has a
-      companion function, <function>fst</function>, which returns the
-      first element of a pair.</para>
-
-    &func.ghci:fst;
+    <para>If your background is in any of a number of other languages,
+      each of these may look like an application of a function to two
+      arguments. Under Haskell's convention for function application,
+      each one is an application of a single pair.</para>
 
     <note>
       <title>Haskell tuples aren't immutable lists</title>
 
-      <para id="x_md">If your background is in Python, you'll probably be used
-	to lists and tuples being almost interchangeable.  This isn't
-	the case in Haskell, so don't try to carry that idea with
-	you into unfamiliar linguistic territory.</para>
+      <para id="x_md">If your background is in Python, you'll probably
+	be used to lists and tuples being almost interchangeable.
+	Although the elements of a Python tuple are immutable, it can
+	be indexed and iterated over using the same methods as a list.
+	This isn't the case in Haskell, so don't try to carry that
+	idea with you into unfamiliar linguistic territory.</para>
 
-      <para id="x_nd">As an illustration, take a look at the type signatures of
-	<function>fst</function> and <function>snd</function>: they're
-	defined <emphasis>only</emphasis> for pairs, and can't be used
-	with tuples of other sizes.  Haskell's type system makes it
-	tricky to write a generalised <quote>get the second element
-	  from any tuple, no matter how wide</quote> function.</para>
+      <para id="x_nd">As an illustration, take a look at the type
+	signatures of <function>fst</function> and
+	<function>snd</function>: they're defined
+	<emphasis>only</emphasis> for pairs, and can't be used with
+	tuples of other sizes.  Haskell's type system makes it tricky
+	to write a generalised <quote>get the second element from any
+	  tuple, no matter how wide</quote> function.</para>
     </note>
 
     <sect2 id="funcstypes.calling.expr">
       <title>Passing an expression to a function</title>
 
-      <para id="x_X3">Haskell parses an expression from left to right.
-	If we want to use the one expression as an argument to
-	another, we have to keep this in mind and use parentheses to
-	tell the parser what we really mean.  Here's an
+      <para id="x_X3">In Haskell, function application is left
+	associative.  This mouthful is easier to understand visually,
+	by adding parentheses: the expression <code>a b c d</code> is
+	equivalent to <code>(((a b) c) d)</code>. If we want to use one
+	expression as an argument to another, we have to use explicit
+	parentheses to tell the parser what we really mean.  Here's an
 	example.</para>
 
       &func.ghci:headDrop;
@@ -429,15 +596,11 @@
       <para id="x_Y3">We can read this as <quote>pass the expression
 	  <code>drop 4 "azerty"</code> as the argument to
 	  <function>head</function></quote>.  If we were to leave out
-	the parentheses, Haskell would instead interpret the
-	expression as <quote>pass <function>drop</function> as the
-	  argument to <function>head</function></quote>.  The
-	offending expression would actually be parsed as <code>(((head
-	  drop) 4) "azerty")</code>, where we've introduced lots of
-	extra parentheses to eliminate any ambiguity.    Compilation
-	would fail with a type error, as <function>head</function>
-	requires its argument to be a list, and
-	<function>drop</function> is a function.  </para>
+	the parentheses, the offending expression would be similar to
+	passing three arguments to <function>head</function>.
+	Compilation would fail with a type error, as
+	<function>head</function> requires a single argument, a
+	list.</para>
     </sect2>
   </sect1>
 
@@ -494,32 +657,32 @@
 	2</code>.</para>
 
     <para id="x_l3">Haskell doesn't have a <command>return</command>
-      statement, as a function is a single expression, not a sequence
-      of statements.</para>
+      keyword, as a function is a single expression, not a sequence of
+      statements.  The value of the expression is the result of the
+      function.  (Haskell does have a function called
+      <function>return</function>, but we won't discuss it for a
+      while.)</para>
 
     <para id="x_qd">When you see an <literal>=</literal> symbol in Haskell code,
-      it represents <quote>equivalence</quote>: the name on the left
-      is equivalent to the expression on the right. It does
-      <emphasis>not</emphasis> represent <quote>assignment</quote> of
-      a value to a memory location.  This distinction is very
-      important.</para>
+      it represents <quote>meaning</quote>: the name on the left
+      is equivalent to the expression on the right.</para>
 
     <sect2 id="funcstypes.variable">
       <title>Just what is a variable, anyway?</title>
 
-      <para id="x_sK">In Haskell, a variable is a way of giving a name
-	to an expression.  Once a variable is <emphasis>bound
-	  to</emphasis> (i.e. associated with) a particular
-	expression, its value does not change: we can always use the
-	name of the variable instead of writing out the expression,
-	and get the same result either way.</para>
+      <para id="x_sK">In Haskell, a variable provides a way to
+	give a name to an expression.  Once a variable is
+	<emphasis>bound to</emphasis> (i.e. associated with) a
+	particular expression, its value does not change: we can
+	always use the name of the variable instead of writing out the
+	expression, and get the same result either way.</para>
 
       <para id="x_rK">If you're used to imperative programming
 	languages, you're likely to think of a variable as a way of
 	identifying a <emphasis>memory location</emphasis> (or some
 	equivalent) that can hold different values at different times.
-	In an imperative language can change a variable's value at any
-	time, so that examining the memory location repeatedly can
+	In an imperative language we can change a variable's value at
+	any time, so that examining the memory location repeatedly can
 	potentially give different results each time.</para>
 
       <para id="x_rd">The critical difference between these two notions of a
@@ -528,6 +691,21 @@
 	expression, because it will not change.  In an imperative
 	language, this notion of substitutability does not
 	hold.</para>
+
+      <para>For example, if we run the following tiny Python script,
+	it will print the number 11.</para>
+
+      &assign.py:assign;
+
+      <para>In contrast, trying the equivalent in Haskell results in
+	an error.</para>
+
+      &Assign.hs:assign;
+
+      <para>We cannot assign a value to <varname>x</varname>
+	twice.</para>
+
+      &assign.ghci:load;
 
       <sect3>
 	<title>Shadowing</title>
@@ -543,7 +721,7 @@
 	  value!</para>
 
 	<para id="x_ud">However, what we've done with the second &let; is
-	  introduce a new variable, <emphasis>also</emphasis> named
+	  introduce a completely new variable, which happens to be named
 	  <varname>x</varname>.  The older <varname>x</varname> is
 	  still present, and still has the value <literal>1</literal>.
 	  The new <varname>x</varname> hides the older
@@ -552,18 +730,24 @@
 
 	<para id="x_vd">While there's really nothing untoward going on here, we
 	  won't be fully describing the rules for this particular case
-	  until <xref linkend="monads.do"/>.  We'll see another
-	  case of shadowing later in this chapter.</para>
+	  until <xref linkend="monads.do"/>.  Our function
+	  <function>f</function> still has access to the shadowed
+	  definition of <varname>x</varname>.</para>
+
+	&shadowing.ghci:f;
+
+	<para>We'll see another case of shadowing later in this
+	  chapter.</para>
       </sect3>
     </sect2>
 
     <sect2 id="funcstypes.if">
       <title>Conditional evaluation</title>
 
-      <para id="x_m3">Like other languages, Haskell has an
+      <para id="x_m3">Like many other languages, Haskell has an
 	<code>if</code> expression.  Let's see it in action, then
 	we'll explain what's going on.  As an example, we'll write our
-	own version of the standard <function>take</function>
+	own version of the standard <function>drop</function>
 	function. Before we begin, let's probe a little into how
 	<function>drop</function> behaves, so we can replicate its
 	behaviour.</para>
@@ -579,6 +763,10 @@
 	expression to decide what to do.</para>
 
       &myDrop.hs:myDrop;
+
+      <para>In Haskell, indentation is important: it
+	<emphasis>continues</emphasis> an existing definition, instead
+	of starting a new one.  Don't omit the indentation!</para>
 
       <para id="x_o3">Let's save it in a file named
 	<filename>myDrop.hs</filename>, then load it into
@@ -626,15 +814,19 @@
 	it is ill typed and will be rejected by a compiler or
 	interpreter.</para>
 
-      <para id="x_s3">While it can make sense in an imperative
-	language to omit the <code>else</code> branch from an
-	<code>if</code>, this would be nonsensical in Haskell.  An
-	<code>if</code> expression that was missing an
-	<code>else</code> wouldn't have a type if the predicate
-	evaluated to <function>False</function>, so it would be ill
-	typed.</para>
+      <para></para>
 
-      <para id="x_t3">The predicate contains a few more novelties. The
+      <para id="x_s3">Recall that Haskell is an expression-oriented
+	language.  In an imperative language, it can make sense to
+	omit the <code>else</code> branch from an <code>if</code>,
+	because we're working with <emphasis>statements</emphasis>,
+	not expressions.  However, when we're working with
+	expressions, an <code>if</code> that was missing an
+	<code>else</code> wouldn't have a result or type if the
+	predicate evaluated to <function>False</function>, so it would
+	be nonsensical.</para>
+
+      <para id="x_t3">Our predicate contains a few more novelties. The
 	<function>null</function> function indicates whether a list is
 	empty, while the <function>(||)</function> operator performs a
 	logical <quote>or</quote> of its <type>Bool</type>-typed

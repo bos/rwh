@@ -1,3 +1,9 @@
 --# error
 
 True && "false"
+
+--# types
+
+:type 'a'
+'a' :: Char
+[1,2,3] :: Int
