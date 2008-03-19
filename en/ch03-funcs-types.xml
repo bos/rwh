@@ -88,7 +88,8 @@
 	<type>float</type> on our behalf if a function expects a
 	parameter of type <type>float</type>, but a Haskell compiler
 	will raise a compilation error in a similar situation.  We
-	must explicitly coerce types by calling functions .</para>
+	must explicitly coerce types by applying coercion
+	functions.</para>
 
       <para>Strong typing does occasionally make it more difficult to
 	write certain kinds of code.  For example, a classic way to
@@ -604,6 +605,58 @@
     </sect2>
   </sect1>
 
+  <sect1 id="funcstypes.sigs">
+    <title>Understanding a function's type signature</title>
+
+    <para id="x_Z3">Let's take a look at a function's type.</para>
+
+    &func.ghci:lines.type;
+
+    <para id="x_a3">We can read the <literal>-&gt;</literal> above as
+      <quote>to</quote>, which loosely translates to
+      <quote>returns</quote>.  The signature as a whole thus reads as
+      <quote><function>lines</function> has the type
+	<type>String</type> to list-of-<type>String</type></quote>.
+      Let's try applying the function.</para>
+
+    &func.ghci:lines;
+
+    <para id="x_b3">The <code>\n</code> in the input string is an
+      escaped newline (line ending) character:
+      <function>lines</function> splits a string on line boundaries.
+      Notice that its type signature gave us a strong hint as to what
+      the function might actually do.  This is an incredibly valuable
+      property of types in a functional language.</para>
+
+    <para id="x_ce">A <emphasis>side effect</emphasis> modifies the state of the
+      system, for example by reading or writing a file.  Most Haskell
+      functions can't cause side effects, so we refer to them as
+      <emphasis>pure</emphasis>.  The result of applying a pure
+      function can only depend on its arguments.  We can often get a
+      strong hint of what a pure function does by simply reading its
+      name and understanding its type signature.  As an example, let's
+      look at <function>not</function>.</para>
+
+    &func.ghci:not.type;
+
+    <para id="x_de">Even if we didn't know the name of this function, its
+      signature alone limits the possible valid behaviours it could
+      have.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para id="x_ee">Ignore its argument, and always return either
+	  <code>True</code> or <code>False</code>.</para>
+      </listitem>
+      <listitem>
+	<para id="x_fe">Return its argument unmodified.</para>
+      </listitem>
+      <listitem>
+	<para id="x_ge">Negate its argument.</para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+
   <sect1 id="funcstypes.srcfile">
     <title>Haskell source files, and writing simple functions</title>
 
@@ -840,19 +893,27 @@
 	<para id="x_Be">Notice that we were able to find the type of
 	  <function>(||)</function> by wrapping it in parentheses. The
 	  <function>(||)</function> operator isn't <quote>built
-	    into</quote> the language: it's a normal function!</para>
+	    into</quote> the language: it's an ordinary
+	  function.</para>
+
+	<para>The <function>(||)</function> operator <quote>short
+	    circuits</quote>: if its left operand evaluates to
+	  <code>True</code>, it doesn't evaluate its right operand. In
+	  most languages, short-circuit evaluation requires special
+	  support, but not in Haskell.  We'll see why shortly.</para>
       </tip>
 
-      <para id="x_u3">Next, our function calls itself recursively.
+      <para id="x_u3">Next, our function applies itself recursively.
 	This is our first example of recursion, which we'll talk about
 	in some detail shortly.</para>
 
       <para id="x_v3">Finally, our <code>if</code> expression spans
-	several lines.  We line the <code>then</code> and
-	<code>else</code> branches up under the <code>if</code> for
-	neatness, but this is not mandatory.  If we wanted, we could
-	put all of them on a single line, but we'd end up with a long,
-	unreadable line.</para>
+	several lines.  We align the <code>then</code> and
+	<code>else</code> branches under the <code>if</code> for
+	neatness.  This is not mandatory, provided we remember to use
+	some indentation.  If we wanted, we could write the entire
+	expression on a single line, but it would be unreadably
+	long.</para>
 
       &myDrop.hs:myDrop2;
 
@@ -862,71 +923,182 @@
   <sect1>
     <title>Understanding evaluation by example</title>
 
-    <para id="x_Ce">In our description of <function>myDrop</function>, we have
-      so far focused on surface features.  We need to go deeper, and
-      develop a useful mental model of how function application works.
-      To do this, we'll walk through the evaluation of the expression
-      <code>myDrop 2 "abcd"</code>.</para>
+    <para id="x_Ce">In our description of <function>myDrop</function>,
+      we have so far focused on surface features.  We need to go
+      deeper, and develop a useful mental model of how function
+      application works. To do this, we'll first work through a few
+      simple examples, until we can walk through the evaluation of the
+      expression <code>myDrop 2 "abcd"</code>.</para>
 
-    <para id="x_De">We've talked several times about substituting an expression
-      for a variable, and we'll make use of this capability here. Our
-      procedure will involve rewriting expressions over and over,
-      substituting expressions for variables until we reach a final
-      result. It's a good idea to transcribe this description using a
-      paper and pencil, to be sure that you can follow it.</para>
+    <para id="x_De">We've talked several times about substituting an
+      expression for a variable, and we'll make use of this capability
+      here. Our procedure will involve rewriting expressions over and
+      over, substituting expressions for variables until we reach a
+      final result. This would be a good time to fetch a pencil and
+      paper, so that you can follow our descriptions by trying them
+      yourself.</para>
 
-    <para id="x_Ee">When we start, our first step is to apply the function
-      <function>myTake</function>.  We do this by giving the variable
-      <varname>n</varname> the value <literal>2</literal>, and
-      <varname>xs</varname> the value <literal>"abcd"</literal>.  If
-      we substitute these values into the predicate, we get the
-      following expression.</para>
+    <sect2>
+      <title>Lazy evaluation</title>
 
-    &myDrop.ghci:myDrop1;
+      <para>We will begin by looking at the definition of a simple,
+	nonrecursive function.</para>
 
-    <para id="x_Fe">We then evaluate enough of the predicate to find out what
-      its value is.  We start by evaluating the
-      <function>(||)</function> expression.  To determine its value,
-      the <function>(||)</function> operator needs to examine the
-      value of its left operand first.</para>
+      &RoundToEven.hs:odd;
 
-    &myDrop.ghci:myDrop2;
+      <para>Here, <function>mod</function> is the standard modulo
+	function.  The first big step to understanding how evaluation
+	works in Haskell is figuring out what the result of evaluating
+	the expression <code>odd (1 + 2)</code> is.</para>
 
-    <para id="x_Ge">Substituting that value into the <function>(||)</function>
-      expression leads to the following expression.</para>
+      <para>Before we explain how evaluation proceeds in Haskell, let
+	us recap the sort of evaluation strategy used by more familiar
+	languages.  First, evaluate the subexpression <code>1 +
+	  2</code>, to give <code>3</code>.  Then apply the
+	<function>odd</function> function with <varname>n</varname>
+	bound to <code>3</code>.  Finally, evaluate <code>3 `mod`
+	  2</code> to give <code>1</code>, and <code>1 == 1</code> to
+	give <code>True</code>.</para>
 
-    &myDrop.ghci:myDrop2a;
+      <para>This way of evaluating an expression is referred to as
+	<emphasis>strict</emphasis>: the arguments to a function are
+	evaluated before the function is applied.  Haskell chooses
+	another path: <emphasis>non-strict</emphasis>
+	evaluation.</para>
 
-    <para id="x_He">If the left operand had evaluated to
-      <literal>True</literal>, <function>(||)</function> would not
-      need to evaluate its right operand, since it could not affect
-      the result of the expression. Since it evaluates to
-      <literal>False</literal>, <function>(||)</function> must
-      evaluate the right operand.</para>
+      <para>In Haskell, the subexpression <code>1 + 2</code> is
+	<emphasis>not</emphasis> reduced to the value <code>3</code>.
+	Instead, we create a <quote>promise</quote> that when the
+	value of the expression <code>odd (1 + 2)</code> is needed,
+	we'll be able to compute it.  This promise is referred to as a
+	<emphasis>thunk</emphasis>.  This is <emphasis>all</emphasis>
+	that happens: we defer the work until it's actually needed. If
+	the result of this expression is never subsequently needed, we
+	will not compute it at all.</para>
 
-    &myDrop.ghci:myDrop3;
+      <para>Non-strict evaluation is often referred to as
+	<emphasis>lazy evaluation</emphasis>.</para>
 
-    <para id="x_Ie">We now substitute this value back into the
-      <function>(||)</function> expression.  Since both operands
-      evaluate to <literal>False</literal>, the
-      <function>(||)</function> expression does, too, thus the
-      predicate evaluates to <literal>False</literal>.</para>
+      <para>This example doesn't give us a very complete picture of
+	how lazy evaluation works.  Let's extend it.</para>
 
-    &myDrop.ghci:myDrop4;
+      &RoundToEven.hs:demo;
 
-    <para id="x_Je">This causes the &if; expression's <code>else</code> branch
-      to be evaluated. This branch contains a recursive application of
-      <function>myDrop</function>.</para>
+      <para>The <function>demo</function> function uses the
+	<function>putStrLn</function> function to print a
+	string.</para>
+
+      &roundToEven.ghci:demo;
+
+      <para>In order to print anything, <function>demo</function>
+	needs the values of <varname>n</varname> and
+	<varname>r</varname>.  How are these computed?  Let's walk
+	through the evaluation of <code>demo (3 + 1)</code>, from the
+	perspective of a Haskell implementation.</para>
+
+      <para>We begin with the variable <code>k</code> bound to a thunk
+	representing <code>3 + 1</code>, and the &let; bindings create
+	two more thunks for <varname>n</varname> and
+	<varname>r</varname>.</para>
+
+      <para>Not until we need to print the value of
+	<varname>n</varname> are any of these expressions evaluated.
+	At this point, to evaluate <varname>n</varname>, we must
+	evaluate <varname>k</varname>.  This takes place with a twist.
+	When <varname>k</varname> is evaluated to the value
+	<code>4</code>, the unevaluated expression in the thunk is
+	<emphasis>replaced</emphasis> with the evaluated result.  This
+	is a form of <emphasis>memoisation</emphasis>: it ensures that
+	<varname>k</varname> is evaluated <emphasis>at most
+	  once</emphasis>.</para>
+
+      <para>Similarly, once we've evaluated <varname>n</varname> to
+	the value <code>9</code>, we replace the unevaluated thunk
+	with the result <code>9</code>.  Once the time comes for us to
+	print the value of <varname>r</varname>, we don't need to
+	recalculate <varname>n</varname>: we just evaluate
+	<code>roundToEven 9</code>.</para>
+
+      <para>By now, we should be able to guess that the result of
+	<code>roundToEven 9</code> is not the value <code>8</code>, it
+	is a thunk: <code>9 - 1</code>.  We have to evaluate this
+	immediately in order to render it as a string, but it still
+	starts life as a thunk.</para>
+    </sect2>
+
+    <sect2>
+      <title>A more involved example</title>
+
+      <para>Let us now look at the evaluation of the expression
+	<code>myDrop 2 "abcd"</code>, again so that we can print its
+	result.</para>
+
+      &myDrop.ghci:print;
+
+      <para>When we start, our first step
+	is to apply the function <function>myDrop</function>. We bind
+	the variable <varname>n</varname> to the value
+	<code>2</code>, and <varname>xs</varname> to
+	<code>"abcd"</code>. If we substitute these values into the
+	predicate, we get the following expression.</para>
+
+      &myDrop.ghci:myDrop1;
+
+      <para id="x_Fe">We then evaluate enough of the predicate to find
+	out what its value is.  This requires that we evaluate the
+	<function>(||)</function> expression.  To determine its value,
+	the <function>(||)</function> operator needs to examine the
+	value of its left operand first.</para>
+
+      &myDrop.ghci:myDrop2;
+
+      <para id="x_Ge">Substituting that value into the
+	<function>(||)</function> expression leads to the following
+	expression.</para>
+
+      &myDrop.ghci:myDrop2a;
+
+      <para id="x_He">If the left operand had evaluated to
+	<literal>True</literal>, <function>(||)</function> would not
+	need to evaluate its right operand, since it could not affect
+	the result of the expression. Since it evaluates to
+	<literal>False</literal>, <function>(||)</function> must
+	evaluate the right operand.</para>
+
+      &myDrop.ghci:myDrop3;
+
+      <para id="x_Ie">We now substitute this value back into the
+	<function>(||)</function> expression.  Since both operands
+	evaluate to <literal>False</literal>, the
+	<function>(||)</function> expression does too, thus the
+	predicate evaluates to <literal>False</literal>.</para>
+
+      &myDrop.ghci:myDrop4;
+
+      <para id="x_Je">This causes the &if; expression's
+	<code>else</code> branch to be evaluated. This branch contains
+	a recursive application of <function>myDrop</function>.</para>
+
+      <note>
+	<title>Short circuiting for free</title>
+
+	<para>Many languages need to treat the logical-or operator
+	  specially so that it short circuits if its left operand
+	  evaluates to <code>True</code>.  We can see from this
+	  example that we don't need any extra support in order for
+	  Haskell's <function>(||)</function> operator to short
+	  circuit: non-strict evaluation builds this capability into
+	  the language.</para>
+      </note>
+    </sect2>
 
     <sect2>
       <title>Recursion</title>
 
-      <para id="x_Ke">When we apply <function>myDrop</function> recursively, we
-	substitute the values in the caller of <varname>n</varname>
-	and <varname>xs</varname> to get the expressions that we
-	should now use: <varname>n</varname> is bound to the
-	expression <code>2 - 1</code>, and <varname>xs</varname> to
-	the expression <code>tail "abcd"</code>.</para>
+      <para id="x_Ke">When we apply <function>myDrop</function>
+	recursively, <varname>n</varname> is bound to the thunk
+	<code>2 - 1</code>, and <varname>xs</varname> to <code>tail
+	  "abcd"</code>.</para>
 
       <para id="x_Le">We're now evaluating <function>myDrop</function> from the
 	beginning again.  We substitute the new values of
@@ -940,11 +1112,10 @@
 
       &myDrop.ghci:myDrop6;
 
-      <para id="x_Ne">Notice that we didn't evaluate the expression <code>2 -
-	  1</code> until we needed its value.  This is our first step
-	towards understanding lazy evaluation!  We also evaluate the
-	right operand lazily, deferring <code>tail "abcd"</code> until
-	we need its value.</para>
+      <para id="x_Ne">As we should now expect, we didn't evaluate the
+	expression <code>2 - 1</code> until we needed its value.  We
+	also evaluate the right operand lazily, deferring <code>tail
+	  "abcd"</code> until we need its value.</para>
 
       &myDrop.ghci:myDrop7;
     
@@ -1002,21 +1173,22 @@
       &myDrop.ghci:myDrop13;
 
       <para id="x_Ve">We then return from the first recursive application,
-	substituting the result of the second recursive call for
+	substituting the result of the second recursive application for
 	<code>myDrop (2 - 1) (tail "abcd")</code>, to become the
 	result of this application.</para>
 
       &myDrop.ghci:myDrop14;
 
-      <para id="x_We">Finally, we return from our original call, substituting
-	the result of the first recursive call.</para>
+      <para id="x_We">Finally, we return from our original
+	application, substituting the result of the first recursive
+	application.</para>
 
       &myDrop.ghci:myDrop15;
 
       <para id="x_Xe">Notice that as we return from each successive recursive
-	call, none of them needs to evaluate the expression <code>tail
-	  "bcd"</code>: the final result of applying this function is
-	an <emphasis>expression</emphasis>.  The expression is only
+	application, none of them needs to evaluate the expression <code>tail
+	  "bcd"</code>: the final result of evaluating the original expression is
+	a <emphasis>thunk</emphasis>.  The thunk is only
 	finally evaluated when &ghci; needs to print it.</para>
 
       &myDrop.ghci:myDrop16;
@@ -1046,58 +1218,6 @@
 	</listitem>
       </itemizedlist>
     </sect2>
-  </sect1>
-
-  <sect1 id="funcstypes.sigs">
-    <title>Understanding a function's type signature</title>
-
-    <para id="x_Z3">Let's take a look at a function's type.</para>
-
-    &func.ghci:lines.type;
-
-    <para id="x_a3">We can read the <literal>-&gt;</literal> above as
-      <quote>to</quote>, which loosely translates to
-      <quote>returns</quote>.  The signature as a whole thus reads as
-      <quote><function>lines</function> has the type
-	<type>String</type> to list-of-<type>String</type></quote>.
-      Let's try applying the function.</para>
-
-    &func.ghci:lines;
-
-    <para id="x_b3">The <code>\n</code> in the input string is an
-      escaped newline (line ending) character:
-      <function>lines</function> splits a string on line boundaries.
-      Notice that its type signature gave us a strong hint as to what
-      the function might actually do.  This is an incredibly valuable
-      property of types in a functional language.</para>
-
-    <para id="x_ce">A <emphasis>side effect</emphasis> modifies the state of the
-      system, for example by reading or writing a file.  Most Haskell
-      functions can't cause side effects, so we refer to them as
-      <emphasis>pure</emphasis>.  The result of applying a pure
-      function can only depend on its arguments.  We can often get a
-      strong hint of what a pure function does by simply reading its
-      name and understanding its type signature.  As an example, let's
-      look at <function>not</function>.</para>
-
-    &func.ghci:not.type;
-
-    <para id="x_de">Even if we didn't know the name of this function, its
-      signature alone limits the possible valid behaviours it could
-      have.</para>
-
-    <itemizedlist>
-      <listitem>
-	<para id="x_ee">Ignore its argument, and always return either
-	  <code>True</code> or <code>False</code>.</para>
-      </listitem>
-      <listitem>
-	<para id="x_fe">Return its argument unmodified.</para>
-      </listitem>
-      <listitem>
-	<para id="x_ge">Negate its argument.</para>
-      </listitem>
-    </itemizedlist>
   </sect1>
 
   <sect1 id="funcstypes.polymorphism">
@@ -1152,7 +1272,7 @@
       signature, indicating that some of its arguments can be of any
       type, we call the function polymorphic.</para>
 
-    <para id="x_ne">When we want to call <function>last</function> on, say, a
+    <para id="x_ne">When we want to apply <function>last</function> to, say, a
       list of <type>Char</type>, we substitute <type>Char</type> for
       each <varname role="type">a</varname> throughout the type
       signature, which gives us the type of

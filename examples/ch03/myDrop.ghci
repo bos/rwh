@@ -80,3 +80,6 @@ tail "bcd"
 
 :type null
 :type (||)
+
+--# print
+print (myDrop2 "abcd")
