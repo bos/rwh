@@ -7,3 +7,7 @@ True && "false"
 :type 'a'
 'a' :: Char
 [1,2,3] :: Int
+
+--# readFile
+
+:type readFile
