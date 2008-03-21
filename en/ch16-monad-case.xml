@@ -381,7 +381,7 @@
     <para>Usually, we can only automatically derive instances of a
       handful of standard type classes, such as <type>Show</type> and
       <type>Eq</type>.  As its name suggests, the
-      <code>GeneralisedNewtypeDeriving</code> extension broadens our
+      <code>GeneralizedNewtypeDeriving</code> extension broadens our
       ability to derive type class instances, and it is specific to
       &newtype; declarations.  If the type we're wrapping is an
       instance of any type class, the extensions lets us can
@@ -403,11 +403,21 @@
       specialised types.</para>
 
     <para>Now that we've seen the
-      <code>GeneralisedNewtypeDeriving</code> technique, all that
+      <code>GeneralizedNewtypeDeriving</code> technique, all that
       remains is to provide definitions of <function>next</function>
       and <function>runSupply</function>.</para>
 
     &Supply.hs:code;
+
+    <para>If we load our module into &ghci;, we can try it out in a few
+      simple ways.</para>
+
+    &supply.ghci:simple;
+
+    <para>We can also verify that the <type>State</type> monad has not
+      somehow leaked out.</para>
+
+    &supply.ghci:browse;
 
   </sect1>
 </chapter>

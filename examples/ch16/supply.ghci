@@ -1,0 +1,9 @@
+--# simple
+:load Supply
+runSupply next [1,2,3]
+runSupply (liftM2 (,) next next) [1,2,3]
+runSupply (liftM2 (,) next next) [1]
+
+--# browse
+:browse Supply
+:info Supply
