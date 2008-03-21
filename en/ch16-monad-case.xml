@@ -274,6 +274,142 @@
       &MonadPlus.hs:zeroMod;
     </sect2>
   </sect1>
+
+  <sect1>
+    <title>Adventures in hiding the plumbing</title>
+
+    <para>In <xref linkend="monads.state.random"/>, we showed how to
+      use the <type>State</type> monad to give ourselves access to
+      random numbers in a way that is easy to use.</para>
+
+    <para>A drawback of the code we developed is that it's
+      <emphasis>leaky</emphasis>: someone who uses it knows that
+      they're executing inside the <type>State</type> monad.  This
+      means that they can inspect and modify the state of the random
+      number generator just as easily as we, the authors, can.</para>
+
+    <para>Human nature dictates that if we leave our internal workings
+      exposed, someone will surely come along and monkey with them.
+      For a sufficiently small program, this may be fine, but in a
+      larger software project, when one consumer of a library modifies
+      its internals in a way that other consumers are not prepared
+      for, the resulting bugs can be among the hardest of all to track
+      down.  These bugs occur at a level where we're unlikely to
+      question our basic assumptions about a library until long after
+      we've exhausted all other avenues of inquiry.</para>
+
+    <para>Even worse, once we leave our implementation exposed for a
+      while, and some well-intentioned person inevitably bypasses our
+      APIs and uses the implementation directly, we create a nasty
+      quandary for ourselves if we need to fix a bug or make an
+      enhancement.  Either we can modify our internals, and break code
+      that depends on them; or we're stuck with our existing
+      internals, and must try to find some other way to make the
+      change we need.</para>
+
+    <para>How can we revise our random number monad so that the fact
+      that we're using the <type>State</type> monad is hidden?  We
+      need to somehow prevent our users from being able to call
+      <code>get</code> or <code>put</code>.  This is not difficult to
+      do, and it introduces some tricks that we'll reuse often in
+      day-to-day Haskell programming.</para>
+
+    <para>To widen our scope, we'll move beyond random numbers, and
+      implement a monad that supplies unique values of
+      <emphasis>any</emphasis> kind.  The name we'll give to our monad
+      is <type>Supply</type>.  We'll provide the execution function,
+      <function>runSupply</function>, with a list of values; it will
+      be up to us to ensure that each one is unique.</para>
+
+    &Supply.hs:runSupply.type;
+
+    <para>The monad won't care what the values are: they might be
+      random numbers, or names for temporary files, or identifiers for
+      HTTP cookies.</para>
+
+    <para>Within the monad, every time a consumer asks for a value,
+      the <function>next</function> action will take the next one from
+      the list and give it to the consumer.  Each value is wrapped in
+      a <type>Maybe</type> constructor in case the list isn't long
+      enough to satisfy the demand.</para>
+
+    &Supply.hs:next.type;
+
+    <para>To hide our plumbing, in our module declaration we only
+      export the type constructor, the execution function, and the
+      <function>next</function> action.</para>
+
+    &Supply.hs:module;
+
+    <para>Since a module that imports the library can't see the
+      internals of the monad, it can't manipulate them.</para>
+
+    <para>Our plumbing is exceedingly simple.  We use a &newtype;
+      declaration to wrap the existing <type>State</type>
+      monad.</para>
+
+    &Supply.hs:Supply;
+
+    <para>The <varname role="type">s</varname> parameter is the type
+      of the unique values we are going to supply, and <varname
+	role="type">a</varname> is the usual free type variable that
+      we must provide in order to make our type a monad.</para>
+
+    <para>Our <type>Supply</type> type and our module header join
+      forces to prevent our clients from using the <type>State</type>
+      monad's <function>get</function> and <function>set</function>
+      actions.  Because our module does not export the <code>S</code>
+      data constructor, clients have no programmatic way to see that
+      we're wrapping the <type>State</type> monad, or to access
+      it.</para>
+
+    <para>At this point, we've got a type, <type>Supply</type>, that
+      we need to make an instance of the <type>Monad</type> type
+      class.  We could follow the usual pattern of defining &bind; and
+      &return;, but this would be pure boilerplate code.  All we'd be
+      doing is wrapping and unwrapping the <type>State</type> monad's
+      versions of &bind; and &return; using our <code>S</code> data
+      constructor.</para>
+
+    <para>Haskell programmers are not fond of boilerplate, and sure
+      enough, &GHC; has a lovely language extension that eliminates
+      the work. To use it, we add the following directive to the top
+      of our source file, before the module header.</para>
+
+    &Supply.hs:LANGUAGE;
+
+    <para>Usually, we can only automatically derive instances of a
+      handful of standard type classes, such as <type>Show</type> and
+      <type>Eq</type>.  As its name suggests, the
+      <code>GeneralisedNewtypeDeriving</code> extension broadens our
+      ability to derive type class instances, and it is specific to
+      &newtype; declarations.  If the type we're wrapping is an
+      instance of any type class, the extensions lets us can
+      automatically make our new type an instance of that type class
+      as follows.</para>
+
+    &Supply.hs:deriving;
+
+    <para>This takes the underlying type's implementations of &bind;
+      and &return;, adds the necessary wrapping and unwrapping with
+      our <code>S</code> data constructor, and uses the new versions
+      of those functions to derive a <type>Monad</type> instance for
+      us.</para>
+
+    <para>What we gain here is very useful beyond just this example.
+      We can use &newtype; to wrap any underlying type; we selectively
+      expose only those type class instances that we want; and we
+      expend almost no effort to create these narrower, more
+      specialised types.</para>
+
+    <para>Now that we've seen the
+      <code>GeneralisedNewtypeDeriving</code> technique, all that
+      remains is to provide definitions of <function>next</function>
+      and <function>runSupply</function>.</para>
+
+    &Supply.hs:code;
+
+  </sect1>
 </chapter>
 
 <!--

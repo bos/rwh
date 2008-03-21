@@ -252,7 +252,9 @@
 	means that &fail; calls <function>error</function>.  Calling
 	<function>error</function> is usually highly undesirable, so
 	don't call &fail; unless you know that you're inside a monad
-	that implements it to do something more sensible.</para>
+	that implements it to do something more sensible.  If you're
+	writing code that doesn't care what monad it is in, don't use
+	&fail; at all.</para>
     </warning>
 
     <para id="x_GX">To revisit the parser that we developed in <xref
@@ -1296,7 +1298,7 @@
 
     </sect2>
 
-    <sect2>
+    <sect2 id="monads.state.random">
       <title>Using the state monad: generating random values</title>
 
       <para id="x_iZ">We've already used <type>Parse</type>, our
