@@ -389,7 +389,7 @@ data  Maybe a  =  Nothing | Just a
   </sect1>
 
   <sect1 id="data.assoc">
-    <title>Association Lists and Maps</title>
+    <title>Association Lists</title>
     <para id="x_NI">
       Often times, we have to deal with data that is unordered but is indexed
       by a key.  For instance, a Unix administrator might have a list of
@@ -463,8 +463,12 @@ mail:x:8:8:mail:/var/mail:/bin/sh
 news:x:9:9:news:/var/spool/news:/bin/sh
 jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </programlisting>
+  </sect1>
+  <sect1 id="data.map">
+    <title>Maps</title>
     <para id="x_wI">
-      The <literal>Data.Map</literal> module has some functions with same
+      The <literal>Data.Map</literal> module is used for working with
+      maps.  This module has some functions with same
       names as those in <literal>Prelude</literal> or other common modules.
       Therefore, when using it, most people import it using
       <literal>import qualified Data.Map as Map</literal> and use
@@ -473,6 +477,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       Let's start our look at <literal>Data.Map</literal> by
       taking a look at some ways to build a map.
     </para>
+    &buildmap.hs:all;
     <para id="x_xI">
       Functions like <literal>Map.insert</literal> work in the usual Haskell
       way: they return a copy of the input data, with the requested change
@@ -483,6 +488,8 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <literal>mapManual</literal> example.  Let's use &ghci; to verify
       that all of these maps are as expected:
     </para>
+    &buildmap.ghci:all;
+    
     <para id="x_yI">
       Notice that the output from <literal>mapManual</literal> doesn't occur
       in the order it was passed in.  Maps do not guarantee that they will
@@ -512,7 +519,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     <para id="x_sL">
       Notice the type of the <literal>colorCalc</literal> field: it's a
       function.  It takes an <literal>Int</literal> and returns a tuple of
-      <literal>(CuscomColor, Int)</literal>.  We create two
+      <literal>(CustomColor, Int)</literal>.  We create two
       <literal>FuncRec</literal> records: <literal>plus5</literal> and
       <literal>always0</literal>.  Notice that the
       <literal>colorCalc</literal> for both of them will always return the
