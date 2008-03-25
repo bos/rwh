@@ -156,7 +156,8 @@
     <sect2 id="data.records">
       <title>Defining Records</title>
       <para id="x_kH">
-        Custom types need not be defined solely in terms of static data.  They
+        Custom types need not be defined solely in terms of static
+        data.  Data constructors
         can also take parameters.  Let's say that we wanted to take our
         color example a new direction and let a user represent arbitrary colors
         in the RGB (red, green, blue) colorspace.  We could use an 
@@ -165,12 +166,12 @@
       </para>
       &color.hs:custom;
       <para id="x_lH">
-        This defines a new type <literal>CustomColor</literal> and one type
+        This defines a new type <literal>CustomColor</literal> and one data
         constructor also named <literal>CustomColor</literal>.  This type
-        constructor, however, requires three parameters, all &Int;s.
+        constructor, however, requires three parameters, all &Int;.
       </para>
       <para id="x_mH">
-        The type constructor here is a unique beast in Haskell.  You can use it
+        The data constructor here is a unique beast in Haskell.  You can use it
         as a function that takes three parameters, and it will return to you
         one value ot type <literal>CustomColor</literal>.  You can also use it
         to perform pattern matching in function or case definitions.
@@ -178,6 +179,8 @@
       <para id="x_nH">
         Let's use &ghci; to inspect this for a bit:
       </para>
+      &color.ghci:custom;
+      
       <para id="x_oH">
         You can see that <literal>CustomColor 100 0 50</literal> returns a
         single value of type <literal>CustomColor</literal>.  Now you're
@@ -188,7 +191,7 @@
       &color.hs:extract;
       <para id="x_pH">
         We used pattern matching to match the <literal>CustomColor</literal>.
-        The three &Int;s were assigned to <literal>red</literal>, 
+        The three &Int; values were assigned to <literal>red</literal>, 
         <literal>green</literal>, and <literal>blue</literal>, and then printed
         out.  The matching is positional; you could just as easily have used
         <literal>(CustomColor x y z)</literal>, and <literal>x</literal>
@@ -205,7 +208,7 @@
        deriving (Eq, Ord)
       </programlisting>
       <para id="x_rH">
-        A <literal>ClockTime</literal> consists of two &Integer;s.  The first
+        A <literal>ClockTime</literal> consists of two &Integer; values.  The first
         is the number of whole seconds since midnight UTC on January 1, 1970.
         The second is an additional number of picoseconds.  Since an &Integer;
         can be negative and is unbounded, a <literal>ClockTime</literal> can
@@ -214,8 +217,7 @@
       <para id="x_sH">
         This is useful as it is, but when you have half a dozen or more
         values to store in your record, it can get annoying to have to match
-        them all.  There's where named fields come in, which we'll discuss
-        next.
+        them all.  There's where named fields come in.
       </para>
     </sect2>
 
