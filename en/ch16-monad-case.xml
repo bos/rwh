@@ -419,6 +419,85 @@
 
     &supply.ghci:browse;
 
+    <sect2>
+      <title>Supplying random numbers</title>
+
+      <para>If we want to use our <type>Supply</type> monad as a
+	source of random numbers, we have a small difficulty to face.
+	Ideally, we'd like to be able to provide it with an infinite
+	stream of random numbers.  We can get a <type>StdGen</type> in
+	the <type>IO</type> monad, but we must <quote>put back</quote>
+	a different <type>StdGen</type> when we're done.  If we don't,
+	the next piece of code to get a <type>StdGen</type> will get
+	the same state as we did.  This means it will generate the
+	same random numbers as we did, which is potentially
+	catastrophic.</para>
+
+      <para>From the parts of the <code>System.Random</code> module
+	we've seen so far, it's difficult to reconcile these demands.
+	We can use <function>getStdRandom</function> to ensure that
+	when we get a <type>StdGen</type>, we put one back.  We can
+	use <function>random</function> to get back a new
+	<type>StdGen</type> when they give us a random number.  And we
+	can use <function>randoms</function> to get an infinite list
+	of random numbers.  But how do we get both an infinite list of
+	random numbers <emphasis>and</emphasis> a new
+	<type>StdGen</type>?</para>
+
+      <para>The answer lies with the <type>RandomGen</type> type
+	class's <function>split</function> function, which takes one
+	random number generator, and turns it into two generators.
+	Splitting a random generator like this is a most unusual thing
+	to be able to do: it's obviously tremendously useful in a pure
+	functional setting, but essentially never either necessary or
+	provided by an impure language.</para>
+
+      <para>Using the <function>split</function> function, we can use
+	one <type>StdGen</type> to generate an infinite list of random
+	numbers to feed to <function>runSupply</function>, while we
+	give the other back to the <type>IO</type> monad.</para>
+
+      &RandomSupply.hs:randomsIO;
+
+      <para>If we save the above definition in a file
+	<filename>RandomSupply.hs</filename> and load it into &ghci;,
+	we can try our <function>randomsIO</function> function out.
+	If we've written it properly, our example ought to print a
+	different random number on each invocation.</para>
+
+      &randomSupply.ghci:random;
+
+      <para>Recall that our <function>runSupply</function> function
+	returns both the result of executing the monadic action and
+	the unconsumed remainder of the list.  Since we passed it an
+	infinite list of random numbers, we compose with
+	<function>fst</function> to ensure that we don't get drowned
+	in random numbers when &ghci; tries to print the
+	result.</para>
+    </sect2>
+
+    <sect2>
+      <title>Another round of golf</title>
+
+      <para>The pattern of applying a function to one element of a
+	pair, and constructing a new pair with the other original
+	element untouched, is common enough in Haskell code that it
+	has been turned into standard code.</para>
+
+      <para>In the <code>Control.Arrow</code> module are two
+	functions, <function>first</function> and
+	<function>second</function>, that perform this
+	operation.</para>
+
+      &randomSupply.ghci:first;
+
+      <para>Now that we know about these functions, we can use one to
+	golf our definition of <function>randomsIO</function>, turning
+	it into a one-liner.</para>
+
+      &RandomGolf.hs:randomsIO_golfed;
+      
+    </sect2>
   </sect1>
 </chapter>
 
