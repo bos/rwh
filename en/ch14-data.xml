@@ -543,6 +543,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       out:
     </para>
     &funcrecs2.ghci:all;
+    <!-- FIXME: START HERE WITH REVIEW -- START HERE WITH REVIEW -->
     <para id="x_vL">
       Notice the creation of <literal>plus5a</literal>.  We changed the
       <literal>name</literal> field, but not the <literal>namedCalc</literal>
