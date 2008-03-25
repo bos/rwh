@@ -1,20 +1,20 @@
 --# custom
 :l colornamed.hs
-:t CustomColor
+:t CustomColor2
 
 --# create
-CustomColor 100 0 50
-CustomColor {red = 100, green = 0, blue = 50}
-CustomColor {blue = 50, green = 0, red = 100}
+CustomColor2 100 0 50
+CustomColor2 {red = 100, green = 0, blue = 50}
+CustomColor2 {blue = 50, green = 0, red = 100}
 
 --# extract
 :t red
-red (CustomColor 100 0 5)
+red (CustomColor2 100 0 5)
 
 --# functions
-color2string (CustomColor 100 0 5)
-color2string2 (CustomColor 100 0 5)
+color2string (CustomColor2 100 0 5)
+color2string2 (CustomColor2 100 0 5)
 
 --# update
-(CustomColor 100 0 5) {green = 200}
-(CustomColor 100 0 5) {red = 50, green = 200}
+(CustomColor2 100 0 5) {green = 200}
+(CustomColor2 100 0 5) {red = 50, green = 200}

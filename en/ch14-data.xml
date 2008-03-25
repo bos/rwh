@@ -251,7 +251,7 @@
       &colornamed.ghci:custom;
       &colornamed.ghci:create;
       <para id="x_xH">
-        First, we inspected the type of the <literal>CustomColor</literal>
+        First, we inspected the type of the <literal>CustomColor2</literal>
         constructor.  Note that it's type is exactly the same as the
         constructor for the type 
         that didn't use named fields.  Then, we created a record
@@ -277,7 +277,7 @@
       &colornamed.hs:extract;
       &colornamed.hs:extract2;
       <para id="x_AI">
-        In the first function, we took a <literal>CustomColor</literal> and
+        In the first function, we took a <literal>CustomColor2</literal> and
         assigned the entire thing to <literal>cc</literal>.  In the second
         function, we used pattern matching to pick it apart up front.
       </para>
@@ -321,7 +321,7 @@ data CalendarTime = CalendarTime {
       <para id="x_EI">
         Sometimes you don't know in advance what the types of the data you
         want to store will be.  For instance, our
-        <literal>CustomColor</literal> type used &Int;s.  But one could
+        <literal>CustomColor2</literal> type used &Int;s.  But one could
         certainly also represent color values as a &Float; or an &Integer;.
         Haskell makes it possible to write generic code that
         could work with any of those.  Why not make the type generic as well?
