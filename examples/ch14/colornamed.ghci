@@ -1,8 +1,6 @@
 --# custom
 :l colornamed.hs
 :t CustomColor2
-
---# create
 CustomColor2 100 0 50
 CustomColor2 {red = 100, green = 0, blue = 50}
 CustomColor2 {blue = 50, green = 0, red = 100}

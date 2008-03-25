@@ -249,7 +249,6 @@
         of named fields.  Let's see how that works with &ghci;:
       </para>
       &colornamed.ghci:custom;
-      &colornamed.ghci:create;
       <para id="x_xH">
         First, we inspected the type of the <literal>CustomColor2</literal>
         constructor.  Note that it's type is exactly the same as the
