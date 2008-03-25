@@ -52,11 +52,16 @@
       &data1.hs:useless;
       <para id="x_VH">
         This defines a new type called <literal>Silly</literal>.  There is one
-        <emphasis>type constructor</emphasis> for <literal>Silly</literal>:
-        <literal>Foo</literal>.  When you write <literal>Foo</literal> in your
+        <emphasis>data constructor</emphasis> for
+        <literal>Silly</literal>, and it is
+        <literal>Foo</literal>.  A data constructor is a value or
+        function that is used to create values of a particular type.
+        When you write <literal>Foo</literal> in your
         program, this <literal>Foo</literal> is a value of type
-        <literal>Silly</literal>.  You can actually use the same word for both,
-        but it must start with an uppercase letter.
+        <literal>Silly</literal>.  You could express this in Haskell
+        as <literal>Foo :: Silly</literal>.  Note that there is no
+        prohibition against using the same word for the type name and
+        its constructor.
       </para>
       <para id="x_WH">
         Looking at it with &ghci;, there's not much you can do with it yet:
@@ -96,7 +101,7 @@
       </para>
       &data1.hs:color;
       <para id="x_cH">
-        This defined one new type named <literal>Color</literal>.  You can
+        This defines one new type named <literal>Color</literal>.  You can
         create a value of type <literal>Color</literal> by using any of the
         three literals <literal>Red</literal>, <literal>Green</literal>, or
         <literal>Blue</literal>.  There are several reasons this might be
@@ -107,12 +112,15 @@
         <listitem><para id="x_dH">You are guaranteed that a <literal>Color</literal>
             always represents one of these three values</para></listitem>
         <listitem><para id="x_eH">When you do pattern matching on a
-            <literal>Color</literal>, the compiler will warn you if you don't
-            consider all three possible values</para></listitem>
-        <listitem><para id="x_fH">It is possible to hide the implemention of
+            <literal>Color</literal>, the compiler can warn you if you don't
+            consider all three possible values if you use <literal>-Wall</literal></para></listitem>
+        <listitem><para id="x_fH">It is possible to hide the implementation of
             <literal>Color</literal> from users when exporting symbols from the
-            module; you can include <literal>Color</literal> in the list but
-            not the three constructors
+            module.  Do do so, you can include
+            <literal>Color</literal> in the export list, but omit the
+            three constructors.  This will let other modules pass
+            around <literal>Color</literal> values, but not create or
+            inspect them.
             <remark>FIXME: need to go into detail about exporting types
             somewhere and add a ref to it from here</remark>
             </para></listitem>
