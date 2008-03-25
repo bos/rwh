@@ -120,9 +120,8 @@
             <literal>Color</literal> in the export list, but omit the
             three constructors.  This will let other modules pass
             around <literal>Color</literal> values, but not create or
-            inspect them.
-            <remark>FIXME: need to go into detail about exporting types
-            somewhere and add a ref to it from here</remark>
+            inspect them.  For more information, consult
+            <xref linkend="library.anatomy"/>.
             </para></listitem>
       </itemizedlist>
       <para id="x_gH">

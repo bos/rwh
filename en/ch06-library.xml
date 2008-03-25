@@ -79,7 +79,7 @@ null]]></programlisting>
 
   </sect1>
 
-  <sect1>
+  <sect1 id="library.anatomy">
     <title>The anatomy of a Haskell module</title>
 
     <para id="x_Pi">A Haskell source file contains a single
