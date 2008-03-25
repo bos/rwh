@@ -509,6 +509,10 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
   <sect1 id="data.funcs">
     <title>Functions Are Data, Too</title>
+    <remark>FIXME: reviewers wanted better examples, perhaps based on
+      CustomColor instead of something returning a tuple.  Think of
+      one.
+    </remark>
     <para id="x_rL">
       Back in the beginning of the chapter, we reminded you that Haskell isn't
       object-oriented.  Part of Haskell's power is the ease with which you
@@ -543,7 +547,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       out:
     </para>
     &funcrecs2.ghci:all;
-    <!-- FIXME: START HERE WITH REVIEW - START HERE WITH REVIEW -->
     <para id="x_vL">
       Notice the creation of <literal>plus5a</literal>.  We changed the
       <literal>name</literal> field, but not the <literal>namedCalc</literal>
@@ -745,7 +748,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </sect2>
 
   </sect1>
-
 </chapter>
  
 
