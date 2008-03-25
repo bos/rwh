@@ -4,5 +4,5 @@ myLookup _ [] = Nothing
 myLookup key ((thiskey,thisval):rest) =
     if key == thiskey
        then Just thisval
-       else myLookup1 key rest
+       else myLookup key rest
 {-- /snippet standalone --}

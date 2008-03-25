@@ -270,21 +270,27 @@
         We can use that to write a modified <literal>color2string</literal>
         function that accesses each named field without having to pattern
         match each individual field.  For reference, the original
-        <literal>color2string</literal> is included here as
+        <literal>color2string</literal> implementation is included here as
         <literal>color2string2</literal>.
       </para>
       &colornamed.hs:extract;
       &colornamed.hs:extract2;
       <para id="x_AI">
         In the first function, we took a <literal>CustomColor2</literal> and
-        assigned the entire thing to <literal>cc</literal>.  In the second
-        function, we used pattern matching to pick it apart up front.
+        assigned the entire thing to <literal>cc</literal>.  In
+        <literal>color2string2</literal>, we used pattern matching to pick it apart up front.
       </para>
       <para id="x_BI">
-        Named fields also make it easy to modify one or more components of a
+        Named fields also make it easy to "modify" one or more components of a
         type.  Here's an example:
       </para>
       &colornamed.ghci:update;
+      <para>
+        Of course, in Haskell, you don't actually modify an existing
+        value.  This syntax creates a copy of your original value,
+        identical to the original in every way except the changes you
+        specify.
+      </para>
       <para id="x_CI">
         With just three fields, the burden of pattern matching isn't all that
         great.  But what if you had a dozen or more?  Named fields really
@@ -294,18 +300,15 @@
       </para>
       <programlisting>
 data CalendarTime = CalendarTime {
-  ctYear :: Int,
-  ctMonth :: Month,
-  ctDay :: Int,
-  ctHour :: Int,
-  ctMin :: Int,
-  ctSec :: Int,
-  ctPicosec :: Integer,
-  ctWDay :: Day,
-  ctYDay :: Int,
-  ctTZName :: String,
-  ctTZ :: Int,
-  ctIsDST :: Bool
+  ctYear                      :: Int,
+  ctMonth                     :: Month,
+  ctDay, ctHour, ctMin, ctSec :: Int,
+  ctPicosec                   :: Integer,
+  ctWDay                      :: Day,
+  ctYDay                      :: Int,
+  ctTZName                    :: String,
+  ctTZ                        :: Int,
+  ctIsDST                     :: Bool
 }
       </programlisting>
       <para id="x_DI">
@@ -320,7 +323,7 @@ data CalendarTime = CalendarTime {
       <para id="x_EI">
         Sometimes you don't know in advance what the types of the data you
         want to store will be.  For instance, our
-        <literal>CustomColor2</literal> type used &Int;s.  But one could
+        <literal>CustomColor2</literal> type used &Int;.  But one could
         certainly also represent color values as a &Float; or an &Integer;.
         Haskell makes it possible to write generic code that
         could work with any of those.  Why not make the type generic as well?
@@ -334,8 +337,8 @@ data  Maybe a  =  Nothing | Just a
   deriving (Eq, Ord)
       </programlisting>
       <para id="x_GI">
-        This type is often used when the result of a function could be an
-        error or some other invalid result (&Nothing;), or else a real value
+        This type is often used when the result of a function could be
+        a failure or some other invalid result (&Nothing;), or else a real value
         (&Just;).  For instance, if you are searching in a list for the first
         result that matches search criteria, you will either find something
         or you won't.  If you do, you could get back the data wrapped in
@@ -353,7 +356,7 @@ data  Maybe a  =  Nothing | Just a
         but the type of <literal>Just "hi"</literal> is <literal>Maybe
           [Char]</literal>.  The reason for this is Haskell's type inference.
         &Nothing; doesn't actually encapsulate any data, so it&emdash;by itself
-       &emdash;is valid with any &Just;.  You can also give it an explicit type
+       &emdash;can be used with any &Just;.  You can also give it an explicit type
         to force it to behave a certain way, as we did with 
         <literal>Nothing :: Maybe [Char]</literal>.
       </para>
@@ -412,7 +415,7 @@ data  Maybe a  =  Nothing | Just a
       type for both the key and the value.
     </para>
     <para id="x_rI">
-      You can built association lists just like you would build any other
+      You can build association lists just like you would build any other
       list.  Haskell comes with one built-in function called 
       <literal>Data.List.lookup</literal> to look up data in an association
       list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.

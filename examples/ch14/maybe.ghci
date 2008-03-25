@@ -7,7 +7,7 @@ Nothing
 :t (Nothing :: Maybe [Char])
 
 --# maybe2
-Nothing == Nothing
+(Nothing::Maybe Int) == Nothing
 Nothing == Just "hi"
 Nothing == Just 123
 Just "hi" == Just "bye"
