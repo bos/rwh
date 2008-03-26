@@ -499,6 +499,166 @@
       
     </sect2>
   </sect1>
+
+  <sect1>
+    <title>Separating interface from implementation</title>
+
+    <para>In the previous section, we saw how to hide the fact that
+      we're using a <type>State</type> monad to hold the state for our
+      <type>Supply</type> monad.</para>
+
+    <para>Another important way to make code more modular involves
+      separating its <emphasis>interface</emphasis>&emdash;what the
+      code can do&emdash;from its
+      <emphasis>implementation</emphasis>&emdash;how it does
+      it.</para>
+
+    <para>The standard random number generator in
+      <code>System.Random</code> is known to be quite slow. If we use
+      our <function>randomsIO</function> function to provide it with
+      random numbers, then our <function>next</function> action will
+      not perform well.</para>
+
+    <para>One simple and effective way that we could deal with this is
+      to provide <type>Supply</type> with a better source of random
+      numbers.  Let's set this idea aside, though, and consider an
+      alternative approach, one that is useful in many settings.  We
+      will separate the actions we can perform with the monad from how
+      it works using a type class.</para>
+
+    &SupplyClass.hs:class;
+
+    <para>This type class bears careful inspection, since it uses
+      several unfamiliar Haskell language extensions.  We will cover
+      each one in the sections that follow.</para>
+
+    <sect2>
+      <title>Multi-parameter type classes</title>
+
+      <para>How should we read the snippet <code>MonadSupply s
+	  m</code> in the type class?  If we add parentheses, an
+	equivalent expression is <code>(MonadSupply s) m</code>, which
+	is a little clearer.  In other words, given some type variable
+	<varname>m</varname> that is a <type>Monad</type>, we can make
+	it an instance of the type class <type>MonadSupply s</type>:
+	unlike a regular type class, this one has a
+	<emphasis>parameter</emphasis>.</para>
+
+      <para>These type classes with parameters are the first of our
+	language extensions.  As the extension allows a type class to
+	have more than one parameter, the name of this extension is
+	<code>MultiParamTypeClasses</code>.  The parameter
+	<varname>s</varname> serves the same purpose as the
+	<type>Supply</type> type's parameter of the same name: it
+	represents the type of the values handed out by the
+	<function>next</function> function.</para>
+
+      <para>Notice that we don't need to mention &bind; or &return; in
+	the definition of <type>MonadSupply s</type>, since the type
+	class's context requires that a <type>MonadSupply s</type>
+	must already be a <type>Monad</type>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Functional dependencies</title>
+
+      <para>To revisit a snippet that we ignored earlier, <code>| m
+	  -&nbsp; s</code> is a <emphasis>functional
+	  dependency</emphasis>, often called a
+	<emphasis>fundep</emphasis>.  We can read the vertical bar
+	<code>|</code> as <quote>such that</quote>, and the arrow
+	<code>-&gt;</code> as <quote>uniquely determines</quote>.  Our
+	functional dependency establishes a
+	<emphasis>relationship</emphasis> between <varname>m</varname>
+	and <varname>s</varname></para>
+
+      <para>The availability of functional dependencies is governed by
+	the <code>FunctionalDependencies</code> language pragma.</para>
+
+      <para>The purpose behind us declaring a relationship is to help
+	the type checker.  Recall that a Haskell type checker is
+	essentially a theorem prover, and that it is convervative in
+	how it operates: it insists that its proofs must terminate. A
+	non-terminating proof results in the compiler either giving up
+	or getting stuck in an infinite loop.</para>
+
+      <para>With our functional dependency, we are telling the type
+	checker that every time it sees some monad
+	<varname>m</varname> being used in the context of a
+	<type>MonadSupply s</type>, the type <varname>s</varname> is
+	the only acceptable type to use with it.  If we were to omit
+	the functional dependency, the type checker would simply give
+	up with an error message.</para>
+
+      <para>It's hard to picture what the relationship between
+	<varname>m</varname> and <varname>s</varname> really means, so
+	let's look at an instance of this type class.</para>
+
+      &SupplyClass.hs:instance;
+
+      <para>Here, the type variable <varname>m</varname> is replaced
+	by the type <type>S.Supply s</type>.  Thanks to our functional
+	dependency, the type checker now knows that when it sees a
+	type <type>S.Supply s</type>, the type can be used as an
+	instance of the type class <type>MonadSupply s</type>.</para>
+
+      <para>If we didn't have a functional dependency, the type
+	checker would not be able to figure out the relationship
+	between the type parameter of the class <type>MonadSupply
+	  s</type> and that of the type <type>Supply s</type>, and it
+	would abort compilation with an error.  The definition itself
+	would compile; the type error would not arise until the first
+	time we tried to use it.</para>
+
+      <para>To strip away one final layer of abstraction, consider the
+	type <type>S.Supply Int</type>.  Without a functional
+	dependency, we could declare this an instance of
+	<type>MonadSupply s</type>.  However, if we tried to write
+	code using this instance, the compiler would not be able to
+	figure out that the type's <type>Int</type> parameter needs to
+	be the same as the type class's <varname>s</varname>
+	parameter, and it would report an error.</para>
+
+      <para>Functional dependencies can be tricky to understand, and
+	once we move beyond simple uses, they often prove difficult to
+	work with in practice.  Fortunately, the most frequent use of
+	functional dependencies is in situations as simple as ours,
+	where they cause little trouble.  We will have more to say
+	about them in XXX.</para>
+      
+      <remark>Insert forward reference to fundep material
+	here.</remark>
+    </sect2>
+
+    <sect2>
+      <title>Rounding out our module</title>
+
+      <para>If we save our type class and instance in a source file
+	named <filename>SupplyClass.hs</filename>, we'll need to add
+	a module header such as the following.</para>
+
+      &SupplyClass.hs:module;
+
+      <para>The <code>FlexibleInstances</code> extension is necessary
+	so that the compiler will accept our instance declaration.
+	This extension relaxes the normal rules for writing instances
+	in some circumstances, in a way that still lets the compiler's
+	type checker guarantee that it will terminate.  Our need for
+	<code>FlexibleInstances</code> here is caused by our use of
+	functional dependencies, but the details are unfortunately
+	beyond the scope of this book.</para>
+
+      <para>Finally, notice that we're re-exporting the
+	<function>runSupply</function> and <type>Supply</type> names
+	from this module. It's perfectly legal to export a name from
+	one module even though it's defined in another.  In our case,
+	it means that client code only needs to import the
+	<code>SupplyClass</code> module, without also importing the
+	<code>Supply</code> module.  This reduces the number of
+	<quote>moving parts</quote> that a user of our code needs to
+	keep in mind.</para>
+    </sect2>
+  </sect1>
 </chapter>
 
 <!--

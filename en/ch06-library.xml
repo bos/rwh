@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="library" revision="unpublished">
+<chapter id="library" revision="alpha;beta">
   <title>Writing a Library</title>
 
   <para id="x_Fi">In this chapter, we'll take a look at developing a
