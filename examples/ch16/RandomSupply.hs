@@ -1,3 +1,5 @@
+module RandomSupply (randomsIO) where
+
 {-- snippet randomsIO --}
 import Supply
 import System.Random hiding (next)

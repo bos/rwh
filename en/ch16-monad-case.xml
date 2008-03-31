@@ -648,6 +648,20 @@
 	functional dependencies, but the details are unfortunately
 	beyond the scope of this book.</para>
 
+      <tip>
+	<title>How to know when a language extension is needed</title>
+
+	<para>If &GHC; cannot compile a piece of code because it would
+	  require some language extension to be enabled, it will tell
+	  us which extension we should use.  For example, if it
+	  decides that our code needs flexible instance support, it
+	  will suggest that we try compiling with the
+	  <option>-XFlexibleInstances</option> option.  A
+	  <option>-X</option> option has the same effect as a
+	  <code>LANGUAGE</code> directive: it enables a particular
+	  extension.</para>
+      </tip>
+
       <para>Finally, notice that we're re-exporting the
 	<function>runSupply</function> and <type>Supply</type> names
 	from this module. It's perfectly legal to export a name from
@@ -657,7 +671,155 @@
 	<code>Supply</code> module.  This reduces the number of
 	<quote>moving parts</quote> that a user of our code needs to
 	keep in mind.</para>
+
+      <para>Before we show how to use our new type class, we'll
+	introduce a monad that we can use it with.</para>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>The reader monad</title>
+
+    <para>The <type>State</type> monad lets us plumb a piece of
+      mutable state through our code.  Sometimes, we would like to be
+      able to pass some <emphasis>immutable</emphasis> state around,
+      such as a program's configuration data.  We could use the
+      <type>State</type> monad for this purpose, but we could then
+      find ourselves accidentally modifying data that should remain
+      unchanged.</para>
+
+    <para>Let's forget about monads for a moment and think about what
+      a <emphasis>function</emphasis> with our desired characteristics
+      ought to do.  it should accept a value of some type <varname
+	role="type">i</varname> that represents the configuration data
+      (or whatever) that we're passing in, and return a value of some
+      other type <varname role="type">a</varname> as its result.  The
+      overall type we want is <type>i -&gt; a</type>.</para>
+
+    <para>To turn this type into a convenient <type>Monad</type>
+      instance, we'll wrap it in a &newtype;.</para>
+
+    &SupplyInstance.hs:Reader;
+
+    <para>Turning this into a <type>Monad</type> instance doesn't take
+      much work.</para>
+
+    &SupplyInstance.hs:Monad;
+
+    <para>We can think of our vaue of type <varname
+	role="type">i</varname> as an <quote>environment</quote> in
+      which we're evaluating some expression.  The &return; action
+      should have the same effect no matter what the environment is,
+      so our version ignores its environment.</para>
+
+    <para>Our definition of &bind; is a little more complicated, but
+      only because we have to make the environment&emdash;here the
+      variable <varname>r</varname>&emdash; available both in the
+      current computation and in the computation we're chaining
+      into.</para>
+
+    <para>How does a piece of code executing in this monad find out
+      what's in its environment?  It simply has to
+      <function>ask</function>.</para>
+
+    &SupplyInstance.hs:ask;
+
+    <para>Within a given chain of actions, every invocation of
+      <function>ask</function>  will return the same value.  Our code
+      is easy to test in &ghci;.</para>
+
+    &supply.ghci:instance;
+
+    <para>The <type>Reader</type> monad is included in the standard
+      <code>mtl</code> library, which is usually bundled with &GHC;.
+      You can find it in the <code>Control.Monad.Reader</code> module.
+      The motivation for this monad may initially seem a little thin,
+      because it is most often useful in complicated code.  We'll
+      quite often need to access a piece of configuration information
+      deep in the bowels of a program; passing that information in as
+      a normal parameter would require a painful restructuring of our
+      code.  By hiding this information in our monad's plumbing,
+      intermediate functions that don't care about the configuration
+      information don't need to see it.</para>
+
+    <para>The clearest motivation for the <type>Reader</type> monad
+      will come in section XXX, when we discuss combining several
+      monads to build a new monad.  There, we'll see how to gain finer
+      control over state, so that our code can modify some values via
+      the <type>State</type> monad, while other values remain
+      immutable courtesy of the <type>Reader</type> monad.</para>
+  </sect1>
+
+  <sect1>
+    <title>A return to automated deriving</title>
+
+    <para>Now that we know about the <type>Reader</type> monad, let's
+      use it to create an instance of our <type>MonadSupply</type>
+      type class.  In the interest of creating a simple example, we'll
+      violate the spirit of <type>MonadSupply</type> here: our
+      <function>next</function> action will always return the same
+      value, instead of always returning a different value.</para>
+
+    <para>It would be a bad idea to directly make the
+      <type>Reader</type> type an instance of the
+      <type>MonadSupply</type> class, because then
+      <emphasis>any</emphasis> <type>Reader</type> could act as a
+      <type>MonadSupply</type>.  This would usually not make any
+      sense.</para>
+
+    <para>Instead, we create a &newtype;, and make it an instance of
+      both of the type classes we care about.  With the
+      <code>GeneralizedNewtypeDeriving</code> extension enabled, &GHC;
+      will do all the hard work for us.</para>
+
+    &SupplyInstance.hs:MySupply;
+
+    <para>Notice that we must make our type an instance of
+      <type>MonadSupply i</type>, not <type>MonadSupply</type>.  If we
+      omit the type variable, the compiler will complain.</para>
+
+    <para>To try out our <type>MySupply</type> type, we'll first
+      contrive a simple function that should work with any
+      <type>MonadSupply</type> instance.</para>
+
+    &SupplyInstance.hs:xy;
+
+    <para>If we use this with our <type>Supply</type> monad and
+      <function>randomsIO</function> function, we get a different
+      answer every time, as we expect.</para>
+
+    &supply.ghci:xy1;
+
+    <para>Because our <type>MySupply</type> monad has two layers of
+      &newtype; wrapping, we can make it easier to use by writing a
+      custom execution function for it.</para>
+
+    &SupplyInstance.hs:runMS;
+
+    <para>When we apply our <function>xy</function> action using this
+      execution function, we get the same answer every time.</para>
+
+    &supply.ghci:xy2;
+
+    <para>Like our <type>MonadSupply</type> type class and
+      <type>Supply</type> monad, almost all of the common Haskell
+      monads are built with a split between interface and
+      implementation.  For example, the <function>get</function> and
+      <function>put</function> functions that we introduced as
+      <quote>belonging to</quote> the <type>State</type> monad are
+      actually methods of the <type>MonadState</type> type class; the
+      <type>State</type> type is an instance of this class.</para>
+
+    <para>Similarly, the standard <type>Reader</type> monad is an
+      instance of the <type>MonadReader</type> type class, which
+      specifies the <function>ask</function> method.</para>
+
+    <para>While the separation of interface and implementation that
+      we've discussed above is appealing for its architectural
+      cleanliness, it has important practical applications that will
+      become clearer later. When we start combining monads in section
+      XXX, we will save a lot of effort through the use of
+      <code>GeneralizedNewtypeDeriving</code> and type classes.</para>
   </sect1>
 </chapter>
 
