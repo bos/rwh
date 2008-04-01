@@ -15,7 +15,7 @@ DONS      12. Testing the Haskell way: QuickCheck
 BOS       13. Code case study: barcode recognition (DONE)
 JG        14. Designing and using data structures (DONE)
 BOS       15. Monads (DONE)
-BOS       16. Monad case study: refactoring the filesystem seacher
+BOS       16. More about monads (DONE)
 DONS      17. Monad transformers
 JG        18. Using parsec: (DONE)
 BOS            parsing JSON (DONE)
