@@ -18,7 +18,7 @@
       as well.  In this chapter, we will introduce you to one of the Haskell
       frameworks for working with databases.  We will also use this framework
       to begin building a podcast downloader, which we will further develop in
-      <remark>FIXME: insert link to ch22</remark>.
+      <xref linkend="hs.wc"/>.
     </para>
 
     <sect1 id="databases.hdbc">
@@ -32,8 +32,13 @@
         Most modern database engines support SQL, the Structured Query
         Language, as a standard way of getting data into and out of relational
         databases.  This book will not provide a tutorial on SQL or relational
-        database management; for background on that, please refer to
-        <remark>FIXME: add reference to an appropriate O'Reilly title</remark>.
+        database management.
+        <footnote><para>
+            The O'Reilly books <emphasis>Learning SQL</emphasis> and
+            <emphasis>SQL in a Nutshell</emphasis> may be useful if
+            you don't have experience wiht SQL.
+          </para>
+        </footnote>
       </para>
       <para id="x_Ic">
         Once you have a database engine that supports SQL, you need a way to
@@ -61,6 +66,8 @@
         programmer from the details of working with SQL.  However, it
         does not have as broad appeal because its design limits it to
         certain -- albeit quite common -- database access patterns.
+        Finally, Takusen is a framework that uses a left fold approach
+        to reading data from the database.
       </para>
 
     </sect1>
@@ -68,7 +75,8 @@
     <sect1 id="databases.hdbc.install">
       <title>Installing HDBC and Drivers</title>
       <para id="x_Mc">
-        To connect to a given database with HDBC, you need at two packages:
+        To connect to a given database with HDBC, you need at least 
+        two packages:
         the generic interface, and a driver for your specific database.  You
         can obtain the generic HDBC package from <ulink
           url="http://software.complete.org/hdbc"/>.  <remark>FIXME: insert
@@ -164,11 +172,11 @@
         uncaught exception will cause a roll back to be issued.
       </para>
       <para id="x_Vc">
-        Note that a rollback operation only rolls back the changes
+        Note that a roll back operation only rolls back the changes
         since the last &commit;, &rollback;, or &withTransaction;.  A
         database does not maintain an extensive history like a
         version-control system, and there are not multiple levels of
-        undo in a database.
+        undo in a database.           You will see examples of &commit; later in this chapter.
       </para>
       <warning>
         <para id="x_Wc">
@@ -184,11 +192,6 @@
           recommended for use with HDBC.
         </para>
       </warning>
-      <para id="x_Xc">
-        You will see examples of &commit; later in this chapter, and
-        examples of &withTransaction; in <remark>FIXME: insert ref to
-        ch22</remark>. 
-      </para>
     </sect1>
 
     <sect1 id="databases.simplequeries">
