@@ -10,9 +10,11 @@ module Comment
 import ApplicativeParsec
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM
-import Control.Concurrent (forkIO)
+import Control.Concurrent (ThreadId, forkIO)
 import Control.Exception (bracket, finally)
 import Control.Monad (forever, guard, join, liftM, liftM2, liftM3)
+import Control.Monad.State
+import Control.Monad.Trans (liftIO)
 import Data.Function (on)
 import Data.List (foldl')
 import qualified Data.Map as M
@@ -81,16 +83,17 @@ main = do
   let e = newTVarIO M.empty
   st <- liftM3 AppState e e e
   atomically =<< updateMaps st
-  serverLoop (serve st) 12345
+  serverLoop st serve 12345
+  return ()
 
-serverLoop :: (Handle -> IO ()) -> Int -> IO ()
-serverLoop serv port = withSocketsDo $
+serverLoop :: AppState -> (Handle -> H ()) -> Int -> IO ()
+serverLoop st serv port = liftIO . withSocketsDo $
   bracket (listenOn . PortNumber . fromIntegral $ port) sClose $ \sock -> do
   putStrLn $ "listening on port " ++ show port
   forever $ do
     (handle, clientHost, clientPort) <- accept sock
     putStrLn $ "connect from " ++ show (clientHost, clientPort)
-    forkIO $ finally (serv handle) (hClose handle)
+    forkIO $ finally (runH st (serv handle) >> return ()) (hClose handle)
 
 class Response a where
     respHandle :: a -> Handle
@@ -116,7 +119,8 @@ clientError kind = return . RespClientError kind ["Content-Type: text/plain"]
 notSep :: CharParser () Char
 notSep = noneOf "/?#\r\n"
 
-type Handler = AppState -> HttpRequest -> IO HttpResponse
+type Handler = HttpRequest -> H HttpResponse
+
 part :: CharParser () String
 part = many1 notSep
 
@@ -143,6 +147,12 @@ infixl 4 </
 data ClientError = BadRequest
                  | NotFound
                    deriving (Eq, Ord, Show)
+
+newtype H a = H (StateT AppState IO a)
+    deriving (Functor, Monad, MonadIO, MonadState AppState)
+
+runH :: AppState -> H a -> IO (a, AppState)
+runH st (H a) = runStateT a st
 
 data HttpResponse =
     RespSuccess {
@@ -172,17 +182,18 @@ handlers = [
  , url (==Post) (cmtSubmit . ElementID <$> ("/element" /> part </ "submit"))
  ]
 
-dispatch :: [HttpRequest -> Maybe Handler] -> AppState -> HttpRequest
-         -> IO HttpResponse
-dispatch hs st req = do
+dispatch :: [HttpRequest -> Maybe Handler] -> HttpRequest
+         -> H HttpResponse
+dispatch hs req = do
   case map ($req) hs of
-    (Just f:_) -> f st req
+    (Just f:_) -> f req
     _ -> clientError NotFound "not found"
 
-chCount :: String -> AppState -> HttpRequest -> IO HttpResponse
-chCount ch st _ = do
-    (cmts, chs) <- atomically $ liftM2 (,) (readTVar . appComments $ st)
-                                           (readTVar . appChapters $ st)
+chCount :: String -> HttpRequest -> H HttpResponse
+chCount ch _ = do
+    st <- get
+    (cmts, chs) <- liftIO . atomically $ liftM2 (,) ((readTVar . appComments) $ st)
+                                           ((readTVar . appChapters) $ st)
     let go a elt = a + maybe 0 length (M.lookup elt cmts)
     case M.lookup ch chs of
       Nothing -> clientError NotFound "chapter not found"
@@ -190,8 +201,10 @@ chCount ch st _ = do
   
 joinLookup k kvs = join (lookup k kvs)
 
-cmtSubmit :: ElementID -> AppState -> HttpRequest -> IO HttpResponse
-cmtSubmit elt st req = atomically $ do
+cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
+cmtSubmit elt req = do
+  st <- get
+  liftIO $ atomically $ do
   elts <- readTVar . appElements $ st
   case M.lookup elt elts of
     Nothing -> clientError NotFound "element not found"
@@ -228,19 +241,21 @@ url methOK p req = do
     Left err -> fail (show err)
     Right h -> return h
 
-serve :: AppState -> Handle -> IO ()
-serve st h = do
-  input <- hGetContents h
+serve :: Handle -> H ()
+serve h = do
+  input <- liftIO $ hGetContents h
   resp <- case parse p_request "" input of
     Left err -> clientError BadRequest ("Bad request " ++ show err)
-    Right preq -> dispatch handlers st (preq h)
-  hPutLine h $ "HTTP/1.1 " ++ respStatus resp
-  mapM_ (hPutLine h) (respHeaders resp)
-  hPutLine h ""
+    Right preq -> dispatch handlers (preq h)
+  let putLine = liftIO . hPutLine h
+      put = liftIO . hPut h
+  putLine $ "HTTP/1.1 " ++ respStatus resp
+  mapM_ putLine (respHeaders resp)
+  putLine ""
   case respBody resp of
     [] -> return ()
     body -> do
-      hPut h body
+      put body
       if last body /= '\n'
-        then hPutLine h ""
+        then putLine ""
         else return ()
