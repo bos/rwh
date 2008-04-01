@@ -11,7 +11,7 @@ query maxId =
     do -- Connect to the database
        conn <- connectSqlite3 "test1.db"
 
-       -- Run the query and store ther esults in r
+       -- Run the query and store the results in r
        r <- quickQuery' conn
             "SELECT id, desc from test where id <= ? ORDER BY id, desc"
             [toSql maxId]

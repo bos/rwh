@@ -249,8 +249,10 @@
       <title>Query Parameters</title>
       <para id="x_ec">
         HDBC, like most databases, supports a notion of replacable
-        paramaters in queries.  There are two primary benefits of
-        using replacable parameters: they improve performance when
+        paramaters in queries.  There are three primary benefits of
+        using replacable parameters: they prevent SQL injection
+        attacks or trouble when the input contains quote characters, 
+        they improve performance when
         executing similar queries repeatedly, and they permit easy and
         portable insertion of data into queries.
       </para>
@@ -267,10 +269,10 @@
       </para>
       <para id="x_gc">
         A second problem involves escaping.  What if you wanted to
-        insert the string <literal>I don't like 1</literal>?  SQL uses
+        insert the string <literal>"I don't like 1"</literal>?  SQL uses
         the single quote character to show the end of the field.  Most
-        SQL databases would require you to write this as <literal>I
-        don''t like 1</literal>.  But rules for other special
+        SQL databases would require you to write this as <literal>'I
+        don''t like 1'</literal>.  But rules for other special
         charcters such as backslashes differ between databases.
         Rather than trying to code this yourself, HDBC can handle it
         all for you.  Let's look at an example.
@@ -371,7 +373,10 @@
       </para>
       &query.ghci:qqp;
       <para id="x_sc">
-        &quickQueryp; returns a list of rows, where each row is itself
+        &quickQueryp; works with replaceable parameters, as we
+        discussed above.  In this case, we aren't using any, so the
+        set of values to replace is the empty list at the end of the
+        &quickQueryp; call.  &quickQueryp; returns a list of rows, where each row is itself
         represented as <literal>[SqlValue]</literal>.  The values in
         the row are listed in the order returned by the database.  You
         can use <literal>fromSql</literal> to convert them into
@@ -455,7 +460,7 @@
           amount of data.  By reading data lazily, you can still use
           convenient functions such as
           <literal>fetchAllRows</literal> instead of having to
-          manually read each row as it comes in.  Yet, if you are
+          manually read each row as it comes in.  If you are
           careful in your use of the data, you can avoid having to
           buffer all of the results in memory.
         </para>
@@ -477,6 +482,15 @@
           wherever possible to minimize complex interactions with lazy
           reading.
         </para>
+        <tip>
+          <para>
+            If you are new to HDBC or the concept of lazy reading, but
+            have lots of data to read, repeated calls to
+            <literal>fetchRow</literal> may be easier to understand.
+            Lazy reading is a powerful and useful tool, but must be used
+            correctly.
+          </para>
+        </tip>
         <para id="x_Cd">
           To read lazily from a database, you use the same functions
           you used before, without the apostrophe.  For instance,
