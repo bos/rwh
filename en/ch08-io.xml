@@ -4,9 +4,10 @@
   <title>I/O</title>
 
   <para id="x_xB">
-    Most, if not all, programs are devoted to gathering data from
-    outside, processing it, and providing results back to the outside
-    world.  That is, input and output are key.
+    It should be obvious that most, if not all, programs are devoted
+    to gathering data from outside, processing it, and providing
+    results back to the outside world.  That is, input and output are
+    key.
   </para>
 
   <para id="x_yB">
