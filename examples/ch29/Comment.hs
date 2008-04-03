@@ -4,7 +4,7 @@ module Comment
       ElementID(..)
     , Element(..)
     , Comment(..)
-    , main
+    , runServer
     ) where
 
 import ApplicativeParsec
@@ -21,7 +21,8 @@ import qualified Data.Map as M
 import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
 import System.IO (Handle, hClose, hGetContents, hPutStr)
 
-import JSON (JSON(..))
+import JSONClass
+import PrettyJSONClass
 import ServerParse
 
 newtype ElementID = ElementID {
@@ -78,8 +79,8 @@ updateMaps st = do
         cmt m (k, v) = M.insertWith' (++) k [v] m
         ch m (k, v) = M.insertWith' (++) (eltChapter v) [k] m
   
-main :: IO ()
-main = do
+runServer :: IO ()
+runServer = do
   let e = newTVarIO M.empty
   st <- liftM3 AppState e e e
   atomically =<< updateMaps st
@@ -191,13 +192,14 @@ dispatch hs req = do
 
 chCount :: String -> HttpRequest -> H HttpResponse
 chCount ch _ = do
-    st <- get
-    (cmts, chs) <- liftIO . atomically $ liftM2 (,) ((readTVar . appComments) $ st)
-                                           ((readTVar . appChapters) $ st)
-    let go a elt = a + maybe 0 length (M.lookup elt cmts)
+    comments <- gets appComments
+    chapters <- gets appChapters
+    (cmts, chs) <- liftIO . atomically $ liftM2 (,) (readTVar comments)
+                                                    (readTVar chapters)
+    let go elt = (fromElementID elt, maybe 0 length (M.lookup elt cmts))
     case M.lookup ch chs of
       Nothing -> clientError NotFound "chapter not found"
-      Just elts -> ok . show $ foldl' go 0 elts
+      Just elts -> ok . jstring . jobject $ map go elts
   
 joinLookup k kvs = join (lookup k kvs)
 

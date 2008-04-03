@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
 
-module JSON
+module JSONClass
     (
       JSON(..)
     , JValue(..)
