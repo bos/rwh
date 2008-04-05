@@ -286,6 +286,31 @@
 	adding &data; declarations will benefit you in both type
 	safety and readability. For smaller, localised uses, a tuple
 	is usually fine.</para>
+
+      <para id="x_qH">
+        There's an example of the good use of distinct data type for
+        storage: the <literal>ClockTime</literal> type in the standard
+        Haskell library module<footnote><para>For more information on
+        modules, see <xref linkend="library"/>.</para>
+        </footnote> <literal>System.Time</literal>:
+      </para>
+      <programlisting>
+  data ClockTime = TOD Integer Integer
+       deriving (Eq, Ord)
+      </programlisting>
+      <para id="x_rH">
+        A <literal>ClockTime</literal> consists of two &Integer; values.  The first
+        is the number of whole seconds since midnight UTC on January 1, 1970.
+        The second is an additional number of picoseconds.  Since an &Integer;
+        can be negative and is unbounded, a <literal>ClockTime</literal> can
+        effectively represent any moment in history down to the picosecond.
+      </para>
+      <para>
+        By using the <literal>ClockTime</literal> type, rather than a
+        tuple, it is completely clear when we are dealing with a time
+        value as opposed to two arbitrary &Integer; values that could
+        have many other meanings.
+      </para>
     </sect2>
 
     <sect2 id="deftypes.adt.comp">
@@ -775,6 +800,7 @@
       functions.</para>
 
     &bookstore.ghci:accessor;
+
   </sect1>
 
   <sect1 id="deftypes.paramtypes">
