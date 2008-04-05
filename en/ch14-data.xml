@@ -32,6 +32,8 @@
     powerful and -- surprise -- even exciting.
   </para>
 
+  <remark>FIXME: need to integrate this elsewhere</remark>
+
       <para id="x_BI">
         Named fields also make it easy to "modify" one or more components of a
         type.  Here's an example:
@@ -43,102 +45,7 @@
         identical to the original in every way except the changes you
         specify.
       </para>
-      <para id="x_CI">
-        With just three fields, the burden of pattern matching isn't all that
-        great.  But what if you had a dozen or more?  Named fields really
-        help out in that case.  The standard Haskell library uses named
-        fields in <literal>System.Time.CalendarTime</literal>.  Here's a
-        excerpt from its definition:
-      </para>
-      <programlisting>
-data CalendarTime = CalendarTime {
-  ctYear                      :: Int,
-  ctMonth                     :: Month,
-  ctDay, ctHour, ctMin, ctSec :: Int,
-  ctPicosec                   :: Integer,
-  ctWDay                      :: Day,
-  ctYDay                      :: Int,
-  ctTZName                    :: String,
-  ctTZ                        :: Int,
-  ctIsDST                     :: Bool
-}
-      </programlisting>
-      <para id="x_DI">
-        Named fields are a tremendous time saver here.  If you have a
-        <literal>CalendarTime</literal> and want to extract just the year,
-        you can simply say <literal>ctYear ct</literal> rather than having to
-        match against 12 different fields in order.
-      </para>
-    </sect2>
-    <sect2 id="data.polymorphic">
-      <title>Polymorphic Types</title>
-      <para id="x_EI">
-        Sometimes you don't know in advance what the types of the data you
-        want to store will be.  For instance, our
-        <literal>CustomColor2</literal> type used &Int;.  But one could
-        certainly also represent color values as a &Float; or an &Integer;.
-        Haskell makes it possible to write generic code that
-        could work with any of those.  Why not make the type generic as well?
-      </para>
-      <para id="x_FI">
-        Haskell has a well-known type that is defined just this way: &Maybe;.
-        It's defined in the prelude like this:
-      </para>
-      <programlisting>
-data  Maybe a  =  Nothing | Just a
-  deriving (Eq, Ord)
-      </programlisting>
-      <para id="x_GI">
-        This type is often used when the result of a function could be
-        a failure or some other invalid result (&Nothing;), or else a real value
-        (&Just;).  For instance, if you are searching in a list for the first
-        result that matches search criteria, you will either find something
-        or you won't.  If you do, you could get back the data wrapped in
-        &Just;, and if you don't, you could get back &Nothing;.
-      </para>
-      <para id="x_HI">
-        &Maybe; is a polymorphic type because its type depends on the type of
-        data that is encapsulated within it.  You can, in fact, encapsulate
-        <emphasis>any</emphasis> type of data within it.  Let's look at this
-        with &ghci;.
-      </para>
-      &maybe.ghci:maybe1;
-      <para id="x_II">
-        Notice here that the type of &Nothing; is <literal>Maybe a</literal>,
-        but the type of <literal>Just "hi"</literal> is <literal>Maybe
-          [Char]</literal>.  The reason for this is Haskell's type inference.
-        &Nothing; doesn't actually encapsulate any data, so it&emdash;by itself
-       &emdash;can be used with any &Just;.  You can also give it an explicit type
-        to force it to behave a certain way, as we did with 
-        <literal>Nothing :: Maybe [Char]</literal>.
-      </para>
-      <para id="x_JI">
-        Let's push the type system and see what it lets us do with &Maybe;.
-      </para>
-      &maybe.ghci:maybe2;
-      <para id="x_KI">
-        You can compare &Nothing; to a &Just; easily enough; that comparison
-        will of course always be false.  The comparison between two &String;s
-        wrapped in &Just; also works.  But the type checker wisely gives an
-        error on the last attempt, because you're trying to compare a
-        &String; to a number.
-      </para>
-      <para id="x_LI">
-        You'll see &Maybe; used quite a bit throughout this book, and in
-        Haskell code in general.
-      </para>
-    </sect2>
-    <sect2 id="data.combining">
-      <title>A Final Word on Types</title>
-      <para id="x_MI">
-        We've shown you a lot of different ways to create your own types.
-        Note that, by using multiple constructors, you can effectively
-        combine various approaches in a single type.  For instance, you could
-        say <literal>data Foo a = Bar | Baz Int | Other a</literal> if you so
-        desire.  This may be useful in certain situations.
-      </para>
-    </sect2>
-  </sect1>
+
 
   <sect1 id="data.assoc">
     <title>Association Lists</title>

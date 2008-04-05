@@ -801,6 +801,28 @@
 
     &bookstore.ghci:accessor;
 
+    <para>
+      The standard <literal>System.Time</literal> module makes good
+      use of record syntax.  Here's a type defined in that module:
+    </para>
+    <programlisting>
+data CalendarTime = CalendarTime {
+  ctYear                      :: Int,
+  ctMonth                     :: Month,
+  ctDay, ctHour, ctMin, ctSec :: Int,
+  ctPicosec                   :: Integer,
+  ctWDay                      :: Day,
+  ctYDay                      :: Int,
+  ctTZName                    :: String,
+  ctTZ                        :: Int,
+  ctIsDST                     :: Bool
+}
+    </programlisting>
+    <para>
+      In the absence of record syntax, it would take quite some effort
+      to extract particular fields from a type like this.  Records
+      make it easy to work with this sort of data.
+    </para>
   </sect1>
 
   <sect1 id="deftypes.paramtypes">
