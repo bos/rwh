@@ -50,6 +50,16 @@ data Comment = Comment {
     , cmtHidden :: Bool
     } deriving (Eq, Ord, Read, Show)
 
+instance JSON Comment where
+    toJValue c = JObject . jobject $ [
+                        ("element", toJValue $ cmtEltID c)
+                      , ("comment", toJValue $ cmtComment c)
+                      , ("submitter", toJValue $ cmtSubmitterName c)
+                      , ("url", toJValue $ cmtSubmitterURL c)
+                      , ("date", toJValue $ cmtDate c)
+                      ]
+    fromJValue _ = fail "not needed"
+
 type ChapterID = String
 
 data AppState = AppState {
@@ -180,6 +190,7 @@ query = char '?' *> p_query <|> [] <$ eof
 handlers :: [HttpRequest -> Maybe Handler]
 handlers = [
    url (==Get) (chCount <$> ("/chapter" /> part </ "count"))
+ , url (==Get) (cmtSingle . ElementID <$> ("/single" /> part))
  , url (==Post) (cmtSubmit . ElementID <$> ("/element" /> part </ "submit"))
  ]
 
@@ -190,23 +201,33 @@ dispatch hs req = do
     (Just f:_) -> f req
     _ -> clientError NotFound "not found"
 
+atomic :: MonadIO m => STM s -> m s
+atomic = liftIO . atomically
+
 chCount :: String -> HttpRequest -> H HttpResponse
 chCount ch _ = do
     comments <- gets appComments
     chapters <- gets appChapters
-    (cmts, chs) <- liftIO . atomically $ liftM2 (,) (readTVar comments)
-                                                    (readTVar chapters)
+    (cmts, chs) <- atomic $ liftM2 (,) (readTVar comments)
+                                       (readTVar chapters)
     let go elt = (fromElementID elt, maybe 0 length (M.lookup elt cmts))
     case M.lookup ch chs of
       Nothing -> clientError NotFound "chapter not found"
       Just elts -> ok . jstring . jobject $ map go elts
+  
+cmtSingle :: ElementID -> HttpRequest -> H HttpResponse
+cmtSingle elt _ = do
+  comments <- (atomic . readTVar) =<< gets appComments
+  case M.lookup elt comments of
+    Nothing -> clientError NotFound "element not found"
+    Just cmts -> ok . jstring . jarray $ cmts
   
 joinLookup k kvs = join (lookup k kvs)
 
 cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
 cmtSubmit elt req = do
   st <- get
-  liftIO $ atomically $ do
+  atomic $ do
   elts <- readTVar . appElements $ st
   case M.lookup elt elts of
     Nothing -> clientError NotFound "element not found"
