@@ -1,8 +1,0 @@
---# custom
-:l color.hs
-:t CustomColor
-:t CustomColor 5
-CustomColor 100 0 50
-
---# extract
-color2string (CustomColor 100 0 50)
