@@ -1,6 +1,6 @@
 module CommentMain (main) where
 
-import Comment (runServer)
+import Comment (runServers)
 
 main :: IO ()
-main = runServer
+main = runServers

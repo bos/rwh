@@ -4,13 +4,12 @@ module Comment
       ElementID(..)
     , Element(..)
     , Comment(..)
-    , runServer
+    , runServers
     ) where
 
-import ApplicativeParsec
-import Control.Applicative ((<$>))
+import Control.Applicative
 import Control.Concurrent.STM
-import Control.Concurrent (ThreadId, forkIO)
+import Control.Concurrent (ThreadId, forkIO, threadDelay)
 import Control.Exception (bracket, finally)
 import Control.Monad (forever, guard, join, liftM, liftM2, liftM3)
 import Control.Monad.State
@@ -21,6 +20,7 @@ import qualified Data.Map as M
 import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
 import System.IO (Handle, hClose, hGetContents, hPutStr)
 
+import URLParser
 import JSONClass
 import PrettyJSONClass
 import ServerParse
@@ -85,17 +85,23 @@ updateMaps st = do
       writeTVar (appElements st) $ M.fromList es
       writeTVar (appChapters st) $ foldl' ch M.empty es
       writeTVar (appComments st) $ foldl' cmt M.empty cs
-  where fetch k n = map ((,) =<< k) . fst . readAll <$> readFile n
+  where fetch k n = do
+                  putStrLn $ "reading " ++ n
+                  map ((,) =<< k) . fst . readAll <$> readFile n
         cmt m (k, v) = M.insertWith' (++) k [v] m
         ch m (k, v) = M.insertWith' (++) (eltChapter v) [k] m
   
-runServer :: IO ()
-runServer = do
+block :: IO ()
+block = forever $ threadDelay maxBound
+
+runServers :: IO ()
+runServers = do
   let e = newTVarIO M.empty
   st <- liftM3 AppState e e e
   atomically =<< updateMaps st
-  serverLoop st serve 12345
-  return ()
+  forkIO $ serverLoop st serve 12345
+  forkIO $ serverLoop st reload 12346
+  block
 
 serverLoop :: AppState -> (Handle -> H ()) -> Int -> IO ()
 serverLoop st serv port = liftIO . withSocketsDo $
@@ -127,33 +133,7 @@ ok = return . RespSuccess ["Content-Type: application/json"]
 clientError :: Monad m => ClientError -> String -> m HttpResponse
 clientError kind = return . RespClientError kind ["Content-Type: text/plain"]
 
-notSep :: CharParser () Char
-notSep = noneOf "/?#\r\n"
-
 type Handler = HttpRequest -> H HttpResponse
-
-part :: CharParser () String
-part = many1 notSep
-
-class URLPart a b | a -> b where
-    urlPart :: a -> CharParser () b
-
-instance URLPart Char Char where
-    urlPart c = char c
-
-instance URLPart String String where
-    urlPart s = string s
-
-instance URLPart (CharParser () a) a where
-    urlPart p = p
-
-(/>) :: (URLPart a _z, URLPart b c) => a -> b -> CharParser () c
-a /> b = urlPart a *> char '/' *> urlPart b
-infixl 4 />
-
-(</) :: (URLPart a c, URLPart b _z) => a -> b -> CharParser () c
-a </ b = urlPart a <* char '/' <* urlPart b
-infixl 4 </
 
 data ClientError = BadRequest
                  | NotFound
@@ -181,17 +161,11 @@ respStatus (RespSuccess _ _) = "200 OK"
 respStatus (RespClientError BadRequest _ _) = "400 Bad Request"
 respStatus (RespClientError NotFound _ _) = "404 Not Found"
 
-q :: CharParser () a -> CharParser () a
-q a = a
-
-query :: CharParser () [(String, Maybe String)]
-query = char '?' *> p_query <|> [] <$ eof 
-
 handlers :: [HttpRequest -> Maybe Handler]
 handlers = [
-   url (==Get) (chCount <$> ("/chapter" /> part </ "count"))
- , url (==Get) (cmtSingle . ElementID <$> ("/single" /> part))
- , url (==Post) (cmtSubmit . ElementID <$> ("/element" /> part </ "submit"))
+   url (==Get) (chCount <$> ("chapter" /> part </ "count" <* end))
+ , url (==Get) (cmtSingle . ElementID <$> ("single" /> part <* end))
+ , url (==Post) (cmtSubmit . ElementID <$> ("element" /> part </ "submit" <* end))
  ]
 
 dispatch :: [HttpRequest -> Maybe Handler] -> HttpRequest
@@ -257,12 +231,15 @@ cmtSubmit elt req = do
                     else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
                             ok "comment added"
 
-url :: (Method -> Bool) -> CharParser () Handler -> HttpRequest -> Maybe Handler
+url :: (Method -> Bool) -> URLParser Handler -> HttpRequest -> Maybe Handler
 url methOK p req = do
   guard . methOK $ reqMethod req
   case parse p "" (reqURL req) of
     Left err -> fail (show err)
     Right h -> return h
+
+reload :: Handle -> H ()
+reload h = liftIO (hClose h) >> get >>= liftIO . updateMaps >>= atomic
 
 serve :: Handle -> H ()
 serve h = do

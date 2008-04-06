@@ -53,5 +53,8 @@ data HttpRequest = HttpRequest {
 p_request :: CharParser () (Handle -> HttpRequest)
 p_request = q "GET" Get (pure Nothing)
         <|> q "POST" Post (Just <$> many anyChar)
-  where q s c p = liftM4 HttpRequest (c <$ string s <* char ' ') url p_headers p
-        url = manyTill notEOL (try $ string " HTTP/1." <* oneOf "01") <* crlf
+  where q s c p = liftM4 HttpRequest (c <$ string s <* char ' ')
+                  url p_headers p
+        url = optional (char '/') *>
+              manyTill notEOL (try $ string " HTTP/1." <* oneOf "01")
+              <* crlf
