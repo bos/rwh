@@ -47,10 +47,9 @@ data HttpRequest = HttpRequest {
     , reqURL :: String
     , reqHeaders :: [(String, String)]
     , reqBody :: Maybe String
-    , reqHandle :: Handle
     } deriving (Eq, Show)
 
-p_request :: CharParser () (Handle -> HttpRequest)
+p_request :: CharParser () HttpRequest
 p_request = q "GET" Get (pure Nothing)
         <|> q "POST" Post (Just <$> many anyChar)
   where q s c p = liftM4 HttpRequest (c <$ string s <* char ' ')

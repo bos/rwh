@@ -12,6 +12,7 @@ import Control.Concurrent.STM
 import Control.Concurrent (ThreadId, forkIO, threadDelay)
 import Control.Exception (bracket, finally)
 import Control.Monad (forever, guard, join, liftM, liftM2, liftM3)
+import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Trans (liftIO)
 import Data.Function (on)
@@ -103,29 +104,21 @@ runServers = do
   forkIO $ serverLoop st reload 12346
   block
 
-serverLoop :: AppState -> (Handle -> H ()) -> Int -> IO ()
+serverLoop :: AppState -> H () -> Int -> IO ()
 serverLoop st serv port = liftIO . withSocketsDo $
   bracket (listenOn . PortNumber . fromIntegral $ port) sClose $ \sock -> do
   putStrLn $ "listening on port " ++ show port
   forever $ do
     (handle, clientHost, clientPort) <- accept sock
     putStrLn $ "connect from " ++ show (clientHost, clientPort)
-    forkIO $ finally (runH st (serv handle) >> return ()) (hClose handle)
+    let req = Request { reqClient = show clientHost
+                      , reqHandle = handle }
+    forkIO $ finally (runH st req serv >> return ()) (hClose handle)
 
-class Response a where
-    respHandle :: a -> Handle
-
-instance Response Handle where respHandle = id
-instance Response HttpRequest where respHandle = reqHandle
-
-hPutLine :: Response a => a -> String -> IO ()
-hPutLine r s = do
-  let h = respHandle r
-  hPutStr h s
-  hPutStr h "\r\n"
-
-hPut :: Response a => a -> String -> IO ()
-hPut r s = hPutStr (respHandle r) s
+data Request = Request {
+      reqClient :: String
+    , reqHandle :: Handle
+    }
 
 ok :: Monad m => String -> m HttpResponse
 ok = return . RespSuccess ["Content-Type: application/json"]
@@ -139,11 +132,12 @@ data ClientError = BadRequest
                  | NotFound
                    deriving (Eq, Ord, Show)
 
-newtype H a = H (StateT AppState IO a)
-    deriving (Functor, Monad, MonadIO, MonadState AppState)
+newtype H a = H (ReaderT Request (StateT AppState IO) a)
+    deriving (Functor, Monad, MonadIO, MonadReader Request,
+              MonadState AppState)
 
-runH :: AppState -> H a -> IO (a, AppState)
-runH st (H a) = runStateT a st
+runH :: AppState -> Request -> H a -> IO (a, AppState)
+runH st req (H a) = runStateT (runReaderT a req) st
 
 data HttpResponse =
     RespSuccess {
@@ -201,35 +195,36 @@ joinLookup k kvs = join (lookup k kvs)
 cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
 cmtSubmit elt req = do
   st <- get
+  client <- asks reqClient
   atomic $ do
   elts <- readTVar . appElements $ st
   case M.lookup elt elts of
     Nothing -> clientError NotFound "element not found"
     Just _ ->
       case parse p_query "" <$> reqBody req of
-          Nothing -> clientError BadRequest "empty comment"
-          Just (Left err) -> clientError BadRequest "malformed string"
-          Just (Right kvs) -> do
-            let tv = appComments st
-                mcmt = Comment elt <$> joinLookup "body" kvs
-                                   <*> joinLookup "submitter" kvs
-                                   <*> joinLookup "url" kvs
-                                   <*> pure "cmtIP"
-                                   <*> pure "cmtDate"
-                                   <*> pure False
-                                   <*> pure False
-            case mcmt of
-              Nothing -> clientError BadRequest "malformed request"
-              Just cmt -> do
-                m <- readTVar tv
-                case M.lookup elt m of
-                  Nothing -> do writeTVar tv $ M.insert elt [cmt] m
-                                ok "comment added"
-                  Just cmts ->
-                    if any ((cmtComment cmt ==) . cmtComment) cmts
-                    then ok "comment already present"
-                    else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
-                            ok "comment added"
+        Nothing -> clientError BadRequest "empty comment"
+        Just (Left err) -> clientError BadRequest "malformed string"
+        Just (Right kvs) -> do
+          let mcmt = Comment elt <$> joinLookup "body" kvs
+                                 <*> joinLookup "submitter" kvs
+                                 <*> joinLookup "url" kvs
+                                 <*> pure client
+                                 <*> pure "cmtDate"
+                                 <*> pure False
+                                 <*> pure False
+          case mcmt of
+            Nothing -> clientError BadRequest "malformed request"
+            Just cmt -> do
+              let tv = appComments st
+              m <- readTVar tv
+              case M.lookup elt m of
+                Nothing -> do writeTVar tv $ M.insert elt [cmt] m
+                              ok "comment added"
+                Just cmts ->
+                  if any ((cmtComment cmt ==) . cmtComment) cmts
+                  then ok "comment already present"
+                  else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
+                          ok "comment added"
 
 url :: (Method -> Bool) -> URLParser Handler -> HttpRequest -> Maybe Handler
 url methOK p req = do
@@ -238,17 +233,23 @@ url methOK p req = do
     Left err -> fail (show err)
     Right h -> return h
 
-reload :: Handle -> H ()
-reload h = liftIO (hClose h) >> get >>= liftIO . updateMaps >>= atomic
+reload :: H ()
+reload = do
+  h <- asks reqHandle
+  st <- get
+  liftIO $ do
+    hClose h
+    updateMaps st >>= atomic
 
-serve :: Handle -> H ()
-serve h = do
+serve :: H ()
+serve = do
+  h <- asks reqHandle
   input <- liftIO $ hGetContents h
   resp <- case parse p_request "" input of
     Left err -> clientError BadRequest ("Bad request " ++ show err)
-    Right preq -> dispatch handlers (preq h)
-  let putLine = liftIO . hPutLine h
-      put = liftIO . hPut h
+    Right preq -> dispatch handlers preq
+  let putLine s = liftIO (hPutStr h s >> hPutStr h "\r\n")
+      put = liftIO . hPutStr h
   putLine $ "HTTP/1.1 " ++ respStatus resp
   mapM_ putLine (respHeaders resp)
   putLine ""
