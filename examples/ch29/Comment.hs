@@ -19,8 +19,10 @@ import Data.Function (on)
 import Data.List (foldl')
 import qualified Data.Map as M
 import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
-import System.IO (Handle, hClose, hGetContents, hPutStr)
+import qualified System.IO
+import System.IO (Handle, hClose)
 
+import HandleT
 import URLParser
 import JSONClass
 import PrettyJSONClass
@@ -92,9 +94,6 @@ updateMaps st = do
         cmt m (k, v) = M.insertWith' (++) k [v] m
         ch m (k, v) = M.insertWith' (++) (eltChapter v) [k] m
   
-block :: IO ()
-block = forever $ threadDelay maxBound
-
 runServers :: IO ()
 runServers = do
   let e = newTVarIO M.empty
@@ -102,7 +101,7 @@ runServers = do
   atomically =<< updateMaps st
   forkIO $ serverLoop st serve 12345
   forkIO $ serverLoop st reload 12346
-  block
+  forever $ threadDelay maxBound
 
 serverLoop :: AppState -> H () -> Int -> IO ()
 serverLoop st serv port = liftIO . withSocketsDo $
@@ -190,6 +189,7 @@ cmtSingle elt _ = do
     Nothing -> clientError NotFound "element not found"
     Just cmts -> ok . jstring . jarray $ cmts
   
+joinLookup :: (Eq a) => a -> [(a, Maybe b)] -> Maybe b
 joinLookup k kvs = join (lookup k kvs)
 
 cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
@@ -221,7 +221,7 @@ cmtSubmit elt req = do
                 Nothing -> do writeTVar tv $ M.insert elt [cmt] m
                               ok "comment added"
                 Just cmts ->
-                  if any ((cmtComment cmt ==) . cmtComment) cmts
+                  if any (on (==) cmtComment cmt) cmts
                   then ok "comment already present"
                   else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
                           ok "comment added"
@@ -241,22 +241,24 @@ reload = do
     hClose h
     updateMaps st >>= atomic
 
+instance MonadHandle H where
+    hPutStrLn h s = liftIO (System.IO.hPutStr h s >>
+                            System.IO.hPutStr h "\r\n")
+
 serve :: H ()
 serve = do
   h <- asks reqHandle
-  input <- liftIO $ hGetContents h
+  input <- hGetContents h
   resp <- case parse p_request "" input of
     Left err -> clientError BadRequest ("Bad request " ++ show err)
     Right preq -> dispatch handlers preq
-  let putLine s = liftIO (hPutStr h s >> hPutStr h "\r\n")
-      put = liftIO . hPutStr h
-  putLine $ "HTTP/1.1 " ++ respStatus resp
-  mapM_ putLine (respHeaders resp)
-  putLine ""
+  hPutStrLn h $ "HTTP/1.1 " ++ respStatus resp
+  mapM_ (hPutStrLn h) (respHeaders resp)
+  hPutStrLn h ""
   case respBody resp of
     [] -> return ()
     body -> do
-      put body
+      hPutStr h body
       if last body /= '\n'
-        then putLine ""
+        then hPutStrLn h ""
         else return ()
