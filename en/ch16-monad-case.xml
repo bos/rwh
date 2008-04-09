@@ -821,6 +821,121 @@
       XXX, we will save a lot of effort through the use of
       <code>GeneralizedNewtypeDeriving</code> and type classes.</para>
   </sect1>
+
+  <sect1>
+    <title>Hiding the IO monad</title>
+
+    <para>The blessing and curse of the <type>IO</type> monad is that
+      it is extremely powerful.  If we believe that careful use of
+      types helps us to avoid programming mistakes, then the
+      <type>IO</type> monad should be a great source of unease.
+      Because the <type>IO</type> monad imposes no restrictions on
+      what we can do, it leaves us vulnerable to all kinds of
+      accidents.</para>
+
+    <para>How can we tame its power?  Let's say that we would like to
+      guarantee to ourselves that a piece of code can read and write
+      files on the local filesystem, but that it will not access the
+      network.  We can't use the plain <type>IO</type> monad, because
+      it won't restrict us.</para>
+
+    <sect2>
+      <title>Using a newtype</title>
+
+      <para>Let's create a module that provides a small set of
+	functionality for reading and writing files.</para>
+
+      &HandleIO.hs:module;
+
+      <para>Our first approach to creating a restricted version of
+	<type>IO</type> is to wrap it with a &newtype;.</para>
+
+      &HandleIO.hs:newtype;
+
+      <para>We do the by-now familiar trick of exporting the type
+	constructor and the <function>runHandleIO</function> execution
+	function from our module, but not the data constructor.  This
+	will prevent code running within the <type>HandleIO</type>
+	monad from getting hold of the <type>IO</type> monad that it
+	wraps.</para>
+
+      <para>All that remains is for us to wrap each of the actions we
+	want our monad to allow.  This is a simple matter of wrapping
+	each <type>IO</type> with a <type>HandleIO</type> data
+	constructor.</para>
+
+      &HandleIO.hs:actions;
+
+      <para>We can now use our restricted <type>HandleIO</type> monad
+	to perform I/O.</para>
+
+      &HandleIO.hs:safeHello;
+
+      <para>To run this action, we use
+	<function>runHandleIO</function>.</para>
+
+      &handleIO.ghci:HandleIO;
+
+      <para>If we try to sequence an action that runs in the
+	<type>HandleIO</type> monad with one that is not permitted,
+	the type system forbids it.</para>
+
+      &handleIO.ghci:bad;
+    </sect2>
+
+    <sect2>
+      <title>Designing for unexpected uses</title>
+
+      <para>There's one small, but significant, problem with our
+	<type>HandleIO</type> monad: it doesn't take into account the
+	possibility that we might occasionally need an escape hatch.
+	If we define a monad like this, it is likely that we will
+	occasionally need to perform an I/O action that isn't allowed
+	for by the design of our monad.</para>
+
+      <para>Our purpose in defining a monad like this is to make it
+	easier for us to write solid code in the common case, not to
+	make corner cases impossible.   Let's thus give ourselves a
+	way out.</para>
+
+      <para>The <code>Control.Monad.Trans</code> module defines a
+	<quote>standard escape hatch</quote>, the <type>MonadIO</type>
+	type class.  This defines a single function,
+	<function>liftIO</function>, which lets us embed an
+	<type>IO</type> action in another monad.</para>
+
+      &monadio.ghci:MonadIO;
+
+      <para>Our implementation of this type class is trivial: we just
+	wrap <type>IO</type> with our data constructor.</para>
+
+      &HandleIO.hs:MonadIO;
+      
+      <para>With judicious use of <function>liftIO</function>, we can
+	escape our shackles and invoke <type>IO</type> actions where
+	necessary.</para>
+
+      &HandleIO.hs:tidyHello;
+
+      <tip>
+	<title>Automatic derivation and MonadIO</title>
+
+	<para>We could have had the compiler automatically derive an
+	  instance of <type>MonadIO</type> for us by adding the type
+	  class to the <code>deriving</code> clause of
+	  <type>HandleIO</type>.  This would be our usual strategy in
+	  production code.  The only reason we didn't do this was to
+	  introduce <type>MonadIO</type> after the initial
+	  concepts.</para>
+      </tip>
+    </sect2>
+
+    <sect2>
+      <title>Using type classes</title>
+
+      <remark>Write me!</remark>
+    </sect2>
+  </sect1>
 </chapter>
 
 <!--

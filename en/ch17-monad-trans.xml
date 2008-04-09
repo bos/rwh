@@ -1,8 +1,46 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.monadtrans" revision="unpublished">
-  <title>FIXME (Monad Transformers / DONS)</title>
-  <remark>FIXME.</remark>
+<chapter id="monadtrans" revision="unpublished">
+  <title>Monad transformers</title>
+
+  <para>Monads provide a powerful way to build computations with
+    effects.  Each of the standard monads is specialised to do exactly
+    one thing.  Quite often, this does not fit our real world
+    needs.</para>
+
+  <para>Recall the <type>Parse</type> type that we developed in
+      <xref linkend="binary"/>.  When we introduced monads, we
+    mentioned that this type was a state monad in disguise. However,
+    it's a little more complex than the standard <type>State</type>
+    monad, because it uses the <type>Either</type> type to allow the
+    possibility of a parsing failure.  If a parse fails early on, we
+    want to stop parsing, not continue in some broken state.</para>
+
+  <para>Even if we were to recast <type>Parse</type> as an instance of
+    the <type>Monad</type> type class, we can't simply drop it and use
+    <type>State</type> instead.  The <type>State</type> monad uses the
+    default implementation of <function>fail</function>: this calls
+    <function>error</function>, which throws an exception that we
+    can't catch in pure code.  The <type>State</type> monad thus
+    <emphasis>appears</emphasis> to allow for failure, without
+    actually being any use.  Once again, we recommend that you almost
+    always avoid using <function>fail</function>.</para>
+
+  <para>There is no joy in the prospect of having to hand-craft a new
+    monad every time we want behaviour that differs slightly from that
+    provided by some standard monad.  Fortunately, we can
+    <emphasis>combine</emphasis> monads by layering them: for example,
+    we can take the standard <type>State</type> monad, and add the
+    possibility of failure to it.</para>
+
+  <para>We call one of these layering monads a <emphasis>monad
+      transfomer</emphasis>, because it modifies the behaviour of an
+    underlying monad.  This finally gives us an explanation of the
+    name of the standard <code>mtl</code> library, where most of the
+    standard monads are defined: it's the monad transformer library.
+    It defines both normal monads and transformer versions of most of
+    them.</para>
+
 </chapter>
 
 <!--
