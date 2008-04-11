@@ -923,17 +923,165 @@
 	<para>We could have had the compiler automatically derive an
 	  instance of <type>MonadIO</type> for us by adding the type
 	  class to the <code>deriving</code> clause of
-	  <type>HandleIO</type>.  This would be our usual strategy in
-	  production code.  The only reason we didn't do this was to
-	  introduce <type>MonadIO</type> after the initial
-	  concepts.</para>
+	  <type>HandleIO</type>.  In fact, in production code, this
+	  would be our usual strategy.  We avoided that here simply to
+	  separate the presentation of the earlier material from that
+	  of <type>MonadIO</type>.</para>
       </tip>
     </sect2>
 
-    <sect2>
+    <sect2 id="monadcase.io.class">
       <title>Using type classes</title>
 
-      <remark>Write me!</remark>
+      <para>The disadvantage of hiding <type>IO</type> in another
+	monad is that we're still tied to a concrete implementation.
+	If we want to swap <type>HandleIO</type> for some other monad,
+	we must change the type of every action that uses
+	<type>HandleIO</type>.</para>
+
+      <para>As an alternative, we can create a type class that
+	specifies the interface we want from a monad that manipulates
+	files.</para>
+
+      &MonadHandle.hs:MonadHandle;
+
+      <para>Here, we've chosen to abstract away both the type of the
+	monad and the type of a file handle.  To satisfy the type
+	checker, we've added a functional dependency: for any instance
+	of <type>MonadHandle</type>, there is exactly one handle type
+	that we can use.  When we make the <type>IO</type> monad an
+	instance of this class, we use a regular
+	<type>Handle</type>.</para>
+
+      &MonadHandle.hs:IO;
+
+      <para>Because any <type>MonadHandle</type> must also be a
+	<type>Monad</type>, we can write code that manipulates files
+	using normal &do; notation, without caring what monad it will
+	finally execute in.</para>
+
+      &MonadHandle.hs:safeHello;
+
+      <para>Because we made <type>IO</type> an instance of this type
+	class, we can execute this action from &ghci;.</para>
+
+      &monadHandle.ghci:IO;
+
+      <para>The beauty of the type class approach is that we can swap
+	one underlying monad for another without touching our code at
+	all, as our code doesn't know or care about the
+	implementation.  For instance, we could replace
+	<type>IO</type> with a monad that compresses files as it
+	writes them out.</para>
+    </sect2>
+
+    <sect2>
+      <title>Isolation and testing</title>
+
+      <para>In fact, because our <function>safeHello</function>
+	function doesn't use the <type>IO</type> type, we can even use
+	a monad that <emphasis>can't</emphasis> perform I/O.  This
+	allows us to test code that would normally have side effects
+	in a completely pure, controlled environment.</para>
+
+      <para>To do this, we will create a monad that doesn't perform
+	I/O, but instead logs every file-related event for later
+	processing.</para>
+
+      &MonadHandle.hs:Event;
+
+      <para>Although we already developed a <type>Logger</type> type
+	in <xref linkend="monads.logger"/>, here we'll use the
+	standard, and more general, <type>Writer</type> monad. Like
+	other <code>mtl</code> monads, the API provided by
+	<type>Writer</type> is defined in a type class, in this case
+	<type>MonadWriter</type>.  Its most useful method is
+	<function>tell</function>, which logs a value.</para>
+
+      &monadwriter.ghci:tell;
+
+      <para>The values we log can be any <type>Monoid</type>.  Since
+	the list type is a <type>Monoid</type>, we'll log to a list of
+	<type>Event</type>.</para>
+
+      <para>We could make <type>Writer [Event]</type> an instance of
+	<type>MonadHandle</type>, but it's cheap, easy, and safer to
+	make a special-purpose monad.</para>
+
+      &MonadHandle.hs:WriterIO;
+
+      <para>Our execution function simply removes the &newtype;
+	wrapper we added, then calls the normal <type>Writer</type>
+	monad's execution function.</para>
+
+      &MonadHandle.hs:runWriterIO;
+
+      <para>When we try this code out in &ghci;, it gives us a log of
+	the function's file activities.</para>
+
+      &monadHandle.ghci:Writer;
+
+    </sect2>
+
+    <sect2>
+      <title>Arbitrary I/O revisited</title>
+
+      <para>If we use the type class approach to restricting
+	<type>IO</type>, we may still want to retain the ability to
+	perform arbitrary I/O actions.  We might try adding
+	<type>MonadIO</type> as a constraint on our type class.</para>
+
+      &MonadHandle.hs:tidierHello;
+
+      <para>This approach has a problem, though: the added
+	<type>MonadIO</type> constraint loses us the ability to test
+	our code in a pure environment, because we can no longer tell
+	whether a test might have damaging side effects.  The
+	alternative is to move this constraint from the type class,
+	where it <quote>infects</quote> all functions, to only those
+	functions that really need to perform I/O.</para>
+
+      &MonadHandle.hs:tidyHello;
+
+      <para>We can use pure property tests on the functions that lack
+	<type>MonadIO</type> constraints, and traditional unit tests
+	on the rest.</para>
+
+      <para>Unfortunately, we've substituted one problem for another:
+	we can't invoke code with both <type>MonadIO</type> and
+	<type>MonadHandle</type> constraints from code that has the
+	<type>MonadHandle</type> constraint alone.  If we find that
+	somewhere deep in our <type>MonadHandle</type>-only code, we
+	really need the <type>MonadIO</type> constraint, we must add
+	it to all the code paths that lead to this point.</para>
+
+      <para>Allowing arbitrary I/O is risky, and has a profound effect
+	on how we develop and test our code.  When we have to choose
+	between being permissive on the one hand, and easier reasoning
+	and testing on the other, we usually opt for the
+	latter.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Using QuickCheck, write a test for an action in the
+	      <type>MonadHandle</type> monad, to see if it tries to
+	      write to a file handle that is not open.  Try it
+	      out on <function>safeHello</function>.</para>
+	  </question>
+	</qandaentry>
+	<qandaentry>
+	  <question>
+	    <para>Write an action that tries to write to a file handle
+	      that it has closed.  Does your test catch this
+	      bug?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
     </sect2>
   </sect1>
 </chapter>

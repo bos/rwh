@@ -307,7 +307,7 @@
     </itemizedlist>
   </sect1>
 
-  <sect1>
+  <sect1 id="monads.logger">
     <title>Using a new monad: show your work!</title>
 
     <para id="x_MX">In our introduction to monads, we showed how some
@@ -690,6 +690,17 @@
 	constant that's shared by all monads.  Indeed, some monads
 	come in multiple flavours, each with different levels of
 	strictness.</para>
+    </sect2>
+
+    <sect2>
+      <title>The writer monad</title>
+
+      <para>Our <type>Logger</type> monad is a specialised version of
+	the standard <type>Writer</type> monad, which can be found in
+	the <type>Control.Monad.Writer</type> module of the
+	<code>mtl</code> package.  We will present a
+	<type>Writer</type> example in <xref
+	  linkend="monadcase.io.class"/>.</para>
     </sect2>
   </sect1>
 
