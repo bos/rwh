@@ -86,6 +86,13 @@
       when processing the content of the directory, perhaps like this:
     </para>
     &dir.ghci:contents2;
+    <tip>
+      <para>
+        For a more detailed discussion of filtering the results of
+        <literal>getDirectoryContents</literal>, refer to <xref
+          linkend="glob"/>.
+      </para>
+    </tip>
     <para id="x_Sa">
       You can also query the system about the location of certain
       directories.   This query will ask the underlying operating system for
