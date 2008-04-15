@@ -3,43 +3,165 @@
 <chapter id="monadtrans" revision="unpublished">
   <title>Monad transformers</title>
 
-  <para>Monads provide a powerful way to build computations with
-    effects.  Each of the standard monads is specialised to do exactly
-    one thing.  Quite often, this does not fit our real world
-    needs.</para>
+  <sect1>
+    <title>Motivation: boilerplate avoidance</title>
 
-  <para>Recall the <type>Parse</type> type that we developed in
+    <para>Monads provide a powerful way to build computations with
+      effects.  Each of the standard monads is specialised to do
+      exactly one thing.  Quite often, this does not fit our real
+      world needs.</para>
+
+    <para>Recall the <type>Parse</type> type that we developed in
       <xref linkend="binary"/>.  When we introduced monads, we
-    mentioned that this type was a state monad in disguise. However,
-    it's a little more complex than the standard <type>State</type>
-    monad, because it uses the <type>Either</type> type to allow the
-    possibility of a parsing failure.  If a parse fails early on, we
-    want to stop parsing, not continue in some broken state.</para>
+      mentioned that this type was a state monad in disguise. In fact,
+      it's a little more complex than the standard <type>State</type>
+      monad, because it uses the <type>Either</type> type to allow the
+      possibility of a parsing failure.  If a parse fails early on, we
+      want to stop parsing, not continue in some broken state.</para>
 
-  <para>Even if we were to recast <type>Parse</type> as an instance of
-    the <type>Monad</type> type class, we can't simply drop it and use
-    <type>State</type> instead.  The <type>State</type> monad uses the
-    default implementation of <function>fail</function>: this calls
-    <function>error</function>, which throws an exception that we
-    can't catch in pure code.  The <type>State</type> monad thus
-    <emphasis>appears</emphasis> to allow for failure, without
-    actually being any use.  Once again, we recommend that you almost
-    always avoid using <function>fail</function>.</para>
+    <para>The normal <type>State</type> monad doesn't let us exit
+      early in this way.  It uses the default implementation of
+      <function>fail</function>: this calls
+      <function>error</function>, which throws an exception that we
+      can't catch in pure code.  The <type>State</type> monad thus
+      <emphasis>appears</emphasis> to allow for failure, without
+      actually being any use.  (Once again, we recommend that you
+      almost always avoid using <function>fail</function>!)</para>
 
-  <para>There is no joy in the prospect of having to hand-craft a new
-    monad every time we want behaviour that differs slightly from that
-    provided by some standard monad.  Fortunately, we can
-    <emphasis>combine</emphasis> monads by layering them: for example,
-    we can take the standard <type>State</type> monad, and add the
-    possibility of failure to it.</para>
+    <para>Obviously, it would be ideal if we could somehow take the
+      standard <type>State</type> monad and add failure handling to
+      it, without resorting to the wholesale construction of custom
+      monads by hand. The standard monads in the <code>mtl</code>
+      library don't allow us to combine them.  Instead, the library
+      provides a set of <emphasis>monad
+	transformers</emphasis><footnote><para>The name
+	  <code>mtl</code> stands for <quote>monad transformer
+	    library</quote>.</para></footnote> to achieve the same
+      result.</para>
 
-  <para>We call one of these layering monads a <emphasis>monad
-      transfomer</emphasis>, because it modifies the behaviour of an
-    underlying monad.  This finally gives us an explanation of the
-    name of the standard <code>mtl</code> library, where most of the
-    standard monads are defined: it's the monad transformer library.
-    It defines both normal monads and transformer versions of most of
-    them.</para>
+    <para>A monad transformer is similar to a regular monad, but it's
+      not a standalone entity: instead, it modifies the behaviour of
+      an underlying monad.  Most of the monads in the <code>mtl</code>
+      library have transformer equivalents.  By convention, the
+      transformer version of a monad has the same name, with a
+      <code>T</code> stuck on the end.  For example, the transformer
+      equivalent of <type>State</type> is <type>StateT</type>; it adds
+      mutable state to an underlying monad.  The <type>WriterT</type>
+      monad transformer makes it possible to write data when stacked
+      on top of another monad.</para>
+  </sect1>
+
+  <sect1>
+    <title>A simple monad transformer example</title>
+
+    <para>This function recurses into a directory tree, and returns a
+      list of the number of entries it finds at each level of the
+      tree.</para>
+
+    &CountEntries.hs:countEntriesTrad;
+
+    <para>Conceptually, we might expect this function to list a
+      directory, add an entry to the result list for that directory,
+      then recurse into subdirectories.  Instead, we have a somewhat
+      awkward structure, because we can only return a result from one
+      place: the function's exit point.</para>
+
+    <para>The <type>Writer</type> monad could solve this structural
+      problem for us.  Since it lets us record a value wherever we
+      need to, we can keep our two logically related activities
+      (listing a directory, recording the data for it) closer
+      together, and worry about recursing deeper into the tree
+      afterwards.</para>
+
+    <para>As our function executes in the <type>IO</type> monad, we
+      can't use the <type>Writer</type> monad directly.  Instead, we
+      use <type>WriterT</type> to add the recording capability to
+      <type>IO</type>.  To do this, we have to understand the types
+      involved.</para>
+
+    <para>The normal <type>Writer</type> monad has two parameters, so
+      it's more properly written <type>Writer w a</type>.  The type
+      parameter <varname role="type">w</varname> is the type of the
+      values to be recorded, while <varname role="type">a</varname> is
+      the usual type that the <type>Monad</type> type class requires.
+      Thus <type>Writer [(FilePath, Int)]</type> is a writer monad
+      that records a list of directory sizes.</para>
+      
+    <para>The <type>WriterT</type> transformer has a similar type, but
+      adds another type parameter, <varname role="type">m</varname>,
+      which is the underlying monad whose behaviour we are augmenting.
+      The full type of <type>WriterT</type> is <type>WriterT w m
+	a</type>.</para>
+
+    <para>Here, we'll need to stack our writer on top of the
+      <type>IO</type> monad to traverse directories.  Our combination
+      of monad transformer and underlying monad will thus have the
+      type <type>WriterT [(FilePath, Int)] IO a</type>.</para>
+
+    &CountEntries.hs:countEntries;
+
+    <para>This code is not terribly different from our earlier
+      version. We use <function>liftIO</function> to expose the
+      <type>IO</type> monad where necessary, and
+      <function>tell</function> to record the visit to the
+      directory.</para>
+
+    <para>To invoke this action, we must use one of
+      <type>WriterT</type>'s execution functions.</para>
+    
+    &countEntries.ghci:runWriterT;
+
+    <para>These functions execute the action, then remove the
+      <type>WriterT</type> wrapper and give a result that is wrapped
+      in the underlying monad.  The <function>runWriterT</function>
+      function gives both the result of the action and whatever was
+      recorded as it ran, while <function>execWriterT</function>
+      throws away the result and just gives us what was
+      recorded.</para>
+
+    &countEntries.ghci:countEntries;
+
+  </sect1>
+
+  <sect1>
+    <title>Common patterns in monads and monad transformers</title>
+
+    <para>Most of the monads and monad transformers in the
+      <code>mtl</code> library follow a few common patterns around
+      naming and type classes.  It's helpful to know these rules of
+      thumb, because they are both useful and few in number.</para>
+
+    <para>Rather than speak in general terms, we'll focus on a single,
+      simple monad: the reader monad.  This provides a piece of
+      immutable, implicit state.  It's often used to carry around
+      static information, where we don't want to be burdened with the
+      bother of passing it around as an explicit parameter.  A common
+      example of this would be the parsed contents of a program's
+      configuration file.</para>
+
+    <para>The reader monad's interface is specified by the
+      <type>MonadReader</type> type class.</para>
+
+    &monadReader.ghci:class;
+
+    <para>The type variable <varname role="type">r</varname>
+      represents the immutable state that the reader monad carries
+      around.  The <type>Reader r</type> monad is an instance of this
+      type class, as is the <type>ReaderT r m</type> monad
+      transformer.</para>
+
+    <para>If the underlying monad <varname role="type">m</varname> is
+      an instance of <type>MonadIO</type>, so is <type>ReaderT r
+	m</type>.  This also holds for several other common type
+      classes, notably <type>MonadPlus</type> and
+      <type>Functor</type>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Stacking multiple monad transformers</title>
+
+    <para>Because a monad transformer stacked ...</para>
+  </sect1>
 
 </chapter>
 
