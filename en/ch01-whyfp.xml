@@ -3,17 +3,130 @@
 <chapter id="whyfp" revision="unpublished">
   <title>Why Functional Programming?  Why Haskell?</title>
 
-  <remark>FIXME</remark>
+  <para>
+    This book, at its heart, is about different ways of solving
+    problems.  Many of us, while working on some piece of code, will
+    occasionally have the thought "there just has to be a better way
+    to do this."  We think that, for many problems, Haskell helps
+    provide this better way.
+  </para>
+  <para>
+    Haskell is most likely quite different from any language you've
+    ever used before.  To become an effective Haskell programmer,
+    you're going to have to question some fundamental assumptions: for
+    instance, the assumption that your system can't do anything with
+    an infinite list.  It turns out that these differences can lead to
+    great productivity solving everyday, real-world problems.  Plus,
+    we think that programming in Haskell is just plain
+    <emphasis>fun</emphasis>.
+  </para>
+  
+  <sect1 id="whyfp.interesting">
+    <title>Why is Haskell Interesting?</title>
+    <para>
+      To whet your appetite for Haskell, here are some things that we
+      think are interesting about the language.  Don't let it scare
+      you off or lead you to believe that Haskell is a toy language.
+      These differences turn out to be powerful concepts.
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Haskell has no loops because it doesn't need them.
+          There is no <literal>for</literal> or
+          <literal>while</literal> in Haskell.
+        </para>
+      </listitem>
+
+      <listitem><para>
+          Modern Haskell compilers can automatically introduce
+          parallelism into your code to take advantage of multi-core
+          processors.
+        </para>
+      </listitem>
+
+      <listtiem><para>
+          Haskell has no variables in the sense you're used to.  It
+          doesn't need them, either.
+        </para>
+      </listtiem>
+
+      <listitem><para>
+          Haskell is a functional language instead of an
+          object-oriented language.  In Haskell, your primary view of
+          the world is the function.  One of us is fond of saying
+          "Haskell manipulates functions with the same ease that Perl
+          manipulates strings."  In Haskell, it's commonplace to pass
+          around bits of code to functions.  Far from leading to
+          unmaintainable code, this is a powerful benefit both for
+          up-front development and long-term maintainability.
+        </para>
+      </listitem>
+
+      <listitem><para>
+          Haskell functions are pure.  Every time they're called with
+          the same arguments, they return the same result.  Haskell
+          functions have no side-effects.  There is no such thing as a
+          global variable in Haskell.  Of course, in Haskell, there is
+          no need for such things.
+        </para>
+      </listitem>
+
+      <listitem><para>
+          Haskell is a lazy language.  It never performs computation
+          unless it must.  This isn't just an optimization; it's a a
+          different world view.  Could that could result in infinite
+          loops or consume vast amounts of memory in other languages
+          may turn out to be a simple, everyday tool in Haskell.
+        </para>
+      </listitem>
+
+    </itemizedlist>
+
+    <para>
+      All of this may leave you wondering things like: "if functions
+      always return the same thing, how can I read a line of text from
+      the keyboard and return it from a function?"  Such things are,
+      of course, possible and easy in Haskell, thanks to a rigorous
+      separation of code that could introduce side-effects from "pure"
+      code.  We will discuss this separation and its benefits
+      throughout the book.
+    </para>
+  </sect1>
 
   <sect1 id="whyfp.goals">
     <title>Goals of Real-World Haskell</title>
-  <remark>FIXME: goals of this book.   The emphasis will be practical: on
-  using FP and Haskell to design, write, and fix real programs.  The
-  audience is people who can already program.  There will be plenty of
-  examples and exercises.
-  </remark>
+    <para>
+      With this book, we want to show you how to use functional
+      programming and Haskell to solve real-world problems.  This will
+      be a hands-on book with plenty of real examples.  We want to
+      show people that already know how to program in another language
+      how to program in Haskell.
+    </para>
+    <para>
+      As you read the book, you'll see a program to extract barcodes
+      from photos taken by low-quality cell phone cameras, a program
+      that downloads podcast episodes from the Internet and stores
+      history in a SQL database, code that parses and generates
+      JavaScript data following the JSON standard, and many more.
+      Each of these examples will be used to illustrate important
+      Haskell concepts and ways to solve problems.  We'll also show
+      you some other fun examples, such as how to extend Haskell's
+      numeric computation system to work with units (things like
+      meters, feet, or seconds) paired with numbers.
+    </para>
 
-    <para id="x_P">As a new Haskell programmer, you'll inevitably end up
+    <para>
+      We started this project because there is a large community of
+      people that are using Haskell to solve everyday problems.  But
+      because Haskell has its roots in academia, many of the books
+      discussing Haskell don't focus on the type of problems that are
+      interesting for us.  In this book, I/O is of central importance,
+      and we draw on our own experiences using Haskell to solve real
+      business, personal, and public problems.
+    </para>
+
+    <para id="x_P">
+      As a new Haskell programmer, you'll inevitably end up
       writing quite a bit of code by hand for which you could have
       used a library function or programming technique, had you but
       known of its existence. You'll also run into instances where a
@@ -24,7 +137,12 @@
       inevitability of the occasional surprise, difficulty, and
       shortcoming, you'll have much more fun learning Haskell than if
       you step in expecting perfection, only to trip up within a few
-      days or weeks of getting started.</para>
+      days or weeks of getting started.  As you become a more seasoned
+      Haskell programmer, you may find the library that has that
+      missing function under a different name, or that a particular
+      feature is missing because there's a better way to do it, or
+      even that it's pretty easy to implement a given feature in Haskell.
+    </para>
   </sect1>
 
   <sect1 id="whyfp.fp">
