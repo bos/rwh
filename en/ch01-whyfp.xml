@@ -330,6 +330,89 @@ void main(void) {
 
   <sect1 id="whyfp.resources">
     <title>Helpful Resources</title>
+    <para>
+      As you work with Haskell, you're sure to have questions and want
+      more information about things.  Here are some Internet resources
+      where you can look up information and interact with other
+      Haskell programmers.
+    </para>    
+
+    <sect2 id="whyfp.resources.reference">
+      <title>Reference Material</title>
+      <itemizedlist>
+        <listitem>
+          <para>
+            The Haskell Hierarchical Libraries reference provides the
+            reference to the standard library that comes with your
+            compiler.  This is probably the top item in the bookmarks
+            for many Haskell programmers.
+            <ulink
+            url="http://www.haskell.org/ghc/docs/latest/html/libraries/index.html"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            For questions about language syntax and features, the
+            Haskell 98 Report describes the Haskell 98 standard.
+            <ulink url="http://haskell.org/onlinereport/"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Various extensions to the language have become commonplace
+            since the Haskell 98 Report was released.  The GHC Users's
+            Guide contains detailed documentation on the extensions
+            supported by GHC, as well as some GHC-specific features.
+            <ulink
+            url="http://www.haskell.org/ghc/docs/latest/html/users_guide/index.html"></ulink>.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Hoogle is the Haskell API search engine.  It can find
+            functions for you by name or by type.  <ulink
+            url="http://haskell.org/hoogle/"></ulink>
+          </para>
+        </listitem>
+
+      </itemizedlist>
+    </sect2>
+
+    <sect2 id="whyfp.resources.apps">
+      <title>Applications and Libraries</title>
+      <para>
+        If you're looking for a Haskell library to use for a
+        particular task, or an application written in Haskell, check
+        out the resources in this section.
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            The Haskell community maintains a central repository for
+            Haskell libraries and applications.  It's called Hackage
+            and lets you search for software, or browse its collection
+            by category.  <ulink
+            url="http://hackage.haskell.org/"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            The Haskell Wiki has a large collection of information
+            about particular Haskell libraries as well.  <ulink
+            url="http://haskell.org/haskellwiki/Applications_and_libraries"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            
+    </sect2>
+
+      
     <remark>FIXME: 
   Provide pointers to long-lived web sites, mailing lists, and IRC
   channels for help and social interaction with other Haskell people.
