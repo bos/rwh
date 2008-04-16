@@ -44,11 +44,11 @@
         </para>
       </listitem>
 
-      <listtiem><para>
+      <listitem><para>
           Haskell has no variables in the sense you're used to.  It
           doesn't need them, either.
         </para>
-      </listtiem>
+      </listitem>
 
       <listitem><para>
           Haskell is a functional language instead of an
@@ -366,7 +366,7 @@ void main(void) {
             Guide contains detailed documentation on the extensions
             supported by GHC, as well as some GHC-specific features.
             <ulink
-            url="http://www.haskell.org/ghc/docs/latest/html/users_guide/index.html"></ulink>.
+            url="http://www.haskell.org/ghc/docs/latest/html/users_guide/index.html"></ulink>
           </para>
         </listitem>
 
@@ -406,17 +406,74 @@ void main(void) {
             url="http://haskell.org/haskellwiki/Applications_and_libraries"></ulink>
           </para>
         </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2 id="whyfp.resources.community">
+      <title>The Haskell Community</title>
+      <para>
+        There are a number of ways you can get in touch with other
+        Haskell programmers.  You can ask questions, learn what
+        Haskellers are talking about, and simply do some social
+        networking with your peers.
+      </para>
+      
+      <itemizedlist>
+        <listitem>
+          <para>The first stop on your search for community resources
+          should be the Haskell homepage, <ulink
+          url="http://www.haskell.org/"></ulink>.  This page contains
+          the most current links to various communities and information.
+          </para>
+        </listitem>
 
         <listitem>
           <para>
-            
-    </sect2>
+            Mailing lists are the most common way for Haskellers to
+            interact.  There are quite a few of them available.
+            <ulink
+            url="http://haskell.org/haskellwiki/Mailing_lists"></ulink>
+          </para>
+        </listitem>
 
-      
-    <remark>FIXME: 
-  Provide pointers to long-lived web sites, mailing lists, and IRC
-  channels for help and social interaction with other Haskell people.
-    </remark>
+        <listitem>
+          <para>
+            For real-time chat, the Haskell IRC channel is also
+            available.  <ulink
+            url="http://haskell.org/haskellwiki/IRC_channel"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            There are a number of Haskell user groups, recurring
+            workshops, and the like in the Haskell community.  There
+            is a list of the known user groups and workshops
+            available.  <ulink
+            url="http://haskell.org/haskellwiki/User_groups"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            The Haskell Weekly News is a frequently-published summary
+            of activities in the Haskell community.  You can find
+            pointers to interesting mailing list discussions, new
+            software releases, and the like.  <ulink
+            url="http://sequence.complete.org/"></ulink>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            The Haskell Communities and Activities Report (HCAR) has
+            been collecting information about people that use Haskell
+            and what they are doing with it.  <ulink
+            url="http://haskell.org/communities/"></ulink>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
   </sect1>
 </chapter>
 
