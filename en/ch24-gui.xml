@@ -1,9 +1,94 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="gui" revision="unpublished">
-  <title>GUI programming: gtk2hs</title>
+  <title>GUI Programming with gtk2hs</title>
+  <para>
+    Thoughout this book, we have been developing simple text-based
+    tools.  While these are often ideal interfaces, sometimes a
+    graphical user interface (GUI) is required.  There are several GUI
+    toolkits available for Haskell.  In this chapter, we will look at
+    the most popular of them, gtk2hs.
+  </para>
+  
+  <sect1 id="gui.install">
+    <title>Installing gtk2hs</title>
+    <para>
+      Before we dive in to working with gtk2hs, you'll need to get it
+      installed.  On most Linux, BSD, or other POSIX platforms, you
+      will find ready-made gtk2hs packages.  You will generally need
+      to install the GTK+ devlopment environment, glade, and gtk2hs.
+      The specifics of doing so vary by distribution.
+    </para>
+    <para>
+      Windows and Mac developers should consult the gtk2hs downloads
+      site at <ulink
+      url="http://www.haskell.org/gtk2hs/download/"></ulink>.  Begin
+      by downloading gtk2hs from there.  Then you will also need glade
+      version 3.  Mac developers can find this at <ulink
+      url="http://www.macports.org/"></ulink>, while Windows
+      developers should consult <ulink
+      url="http://sourceforge.net/projects/gladewin32"></ulink>.
+    </para>
+  </sect1>
 
-  <remark>FIXME</remark>
+  <sect1 id="gui.overview">
+    <title>Overview of the GTK+ Stack</title>
+    <para>
+      Before diving in to the code, let's pause a brief moment and
+      consider the architecture of the system we are going to use.
+      First off, we have GTK+.  GTK+ is a cross-platform GUI-building
+      toolkit, implemented in C.  It runs on Windows, Mac, Linux,
+      BSDs, and more.  It is also the toolkit beneath the Gnome
+      desktop environment.
+    </para>
+    <para>
+      Next, we have Glade.  Glade is a user interface designer, which
+      lets you graphically lay out your application's windows and
+      dialogs.  Glade saves the interface in XML files, which your
+      application will load at runtime.
+    </para>
+    <para>
+      The last piece of this puzzle is gtk2hs.  This is the Haskell
+      binding for GTK+, Glade, and several related libraries.  It is
+      one of many language bindings available for GTK+.
+    </para>
+  </sect1>
+
+  <sect1 id="gui.steps">
+    <title>First Steps</title>
+    <para>
+      In this chapter, we are going to develop a GUI for the podcast
+      downloader we first developed in <xref linkend="wc"/>.  Our
+      first task is to design the user interface in Glade.  Once we
+      have accomplished that, we will write the Haskell code to
+      integrate it with the application.
+    </para>
+    <para>
+      Because this is a Haskell book, rather than a GUI design book,
+      we will move fast through some of these early parts.  For more
+      information on interface design with Glade, you may wish to
+      refer to one of these resources:
+    </para>
+    <itemizedlist>
+      <listitem><para>The Glade homepage, which contains documentation
+      for Glade.  <ulink url="http://glade.gnome.org/"></ulink>
+        </para>
+      </listitem>
+      <listitem><para>The GTK+ homepage contains information about the
+      different widgets.  Refer to the documentation section, then the
+      stable GTK documentation area.  <ulink
+      url="http://www.gtk.org/"></ulink>
+        </para>
+      </listitem>
+      <listitem><para>
+          The gtk2hs homepage also has a useful documentation section,
+          which contains an API reference to gtk2hs as well as a glade
+          tutorial.  <ulink
+          url="http://www.haskell.org/gtk2hs/"></ulink>
+        </para>
+      </listitem>
+    </itemizedlist>
+  </sect1>
 </chapter>
 
 <!--
