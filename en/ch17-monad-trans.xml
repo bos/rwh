@@ -309,8 +309,46 @@
       Indeed, we already know enough about monad transformers to
       simplify many common programming tasks.</para>
 
-    <para>There are a few ways in which we can depart from the comfort
-      of <code>mtl</code>, though, and they're not uncommon.</para>
+    <para>There exist a few common ways in which we can depart from
+      the comfort of <code>mtl</code>.  Most often, a custom monad
+      sits at the bottom of the stack, or a custom monad transformer
+      lies somewhere within the stack.  To understand the potential
+      difficulty, let's look at an example.</para>
+
+    <para>Suppose we have a custom monad transformer,
+      <type>CustomT</type>.</para>
+
+    &CustomT.hs:CustomT;
+
+    <para>In the framework that <code>mtl</code> provides, each monad
+      transformer in the stack makes the API of a lower level
+      available by providing instances of a host of type classes.  We
+      could follow this pattern, and write a number of boilerplate
+      instances.</para>
+
+    &CustomT.hs:mtl;
+
+    <para>If the underlying monad was an instance of
+      <type>MonadReader</type>, we would write a
+      <type>MonadReader</type> instance for <type>CustomT</type> in
+      which each function in the API passes through to the
+      corresponding function in the underlying instance.  This would
+      allow higher level code to only care that the stack as a whole
+      is an instance of <type>MonadReader</type>, without knowing or
+      caring about which layer provides the <emphasis>real</emphasis>
+      implementation.</para>
+
+    <para>Sometimes, it is desirable to access the underlying monad in
+      a generic way: we need a monad, but don't care which kind.  The
+      <type>MonadTrans</type> type class defines a
+      <function>lift</function> function for exactly this
+      situation.</para>
+
+    &monadTrans.ghci:MonadTrans;
+
+    <para>This function takes a monadic action from one layer down the
+      stack, and turns it into an action in the current monad
+      transformer.</para>
   </sect1>
 
 </chapter>
