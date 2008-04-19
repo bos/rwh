@@ -60,54 +60,49 @@
 
     &CountEntries.hs:countEntriesTrad;
 
-    <para>Conceptually, we might expect this function to list a
-      directory, add an entry to the result list for that directory,
-      then recurse into subdirectories.  Instead, we have a somewhat
-      awkward structure, because we can only return a result from one
-      place: the function's exit point.</para>
-
-    <para>The <type>Writer</type> monad could solve this structural
-      problem for us.  Since it lets us record a value wherever we
-      need to, we can keep our two logically related activities
-      (listing a directory, recording the data for it) closer
-      together, and worry about recursing deeper into the tree
-      afterwards.</para>
+    <para>Let's consider a different approach, using the
+      <type>Writer</type> monad.  Since it lets us record a value
+      wherever we want, our code doesn't need to explicitly return a
+      result.</para>
 
     <para>As our function executes in the <type>IO</type> monad, we
       can't use the <type>Writer</type> monad directly.  Instead, we
       use <type>WriterT</type> to add the recording capability to
-      <type>IO</type>.  To do this, we have to understand the types
+      <type>IO</type>.  To do this, it helps to understand the types
       involved.</para>
 
-    <para>The normal <type>Writer</type> monad has two parameters, so
-      it's more properly written <type>Writer w a</type>.  The type
-      parameter <varname role="type">w</varname> is the type of the
-      values to be recorded, while <varname role="type">a</varname> is
-      the usual type that the <type>Monad</type> type class requires.
-      Thus <type>Writer [(FilePath, Int)]</type> is a writer monad
-      that records a list of directory sizes.</para>
+    <para>The normal <type>Writer</type> monad has two type
+      parameters, so it's more properly written <type>Writer w
+	a</type>.  The first parameter <varname
+	role="type">w</varname> is the type of the values to be
+      recorded, while <varname role="type">a</varname> is the usual
+      type that the <type>Monad</type> type class requires. Thus
+      <type>Writer [(FilePath, Int)]</type> is a writer monad that
+      records a list of directory names and sizes.</para>
       
-    <para>The <type>WriterT</type> transformer has a similar type, but
-      adds another type parameter, <varname role="type">m</varname>,
-      which is the underlying monad whose behaviour we are augmenting.
-      The full type of <type>WriterT</type> is <type>WriterT w m
-	a</type>.</para>
+    <para>The <type>WriterT</type> transformer has a similar
+      structure, but it adds another type parameter, <varname
+	role="type">m</varname>: this is the underlying monad whose
+      behaviour we are augmenting. The full signature of
+      <type>WriterT</type> is <type>WriterT w m a</type>.</para>
 
-    <para>Here, we'll need to stack our writer on top of the
-      <type>IO</type> monad to traverse directories.  Our combination
-      of monad transformer and underlying monad will thus have the
-      type <type>WriterT [(FilePath, Int)] IO a</type>.</para>
+    <para>Because we need to traverse directories, which requires
+      access to the <type>IO</type> monad, we'll stack our writer on
+      top of the <type>IO</type> monad.  Our combination of monad
+      transformer and underlying monad will thus have the type
+      <type>WriterT [(FilePath, Int)] IO a</type>.  This stack of
+      monad transformer and monad is itself a monad.</para>
 
     &CountEntries.hs:countEntries;
 
     <para>This code is not terribly different from our earlier
       version. We use <function>liftIO</function> to expose the
       <type>IO</type> monad where necessary, and
-      <function>tell</function> to record the visit to the
+      <function>tell</function> to record a visit to a
       directory.</para>
 
-    <para>To invoke this action, we must use one of
-      <type>WriterT</type>'s execution functions.</para>
+    <para>To run our code, we must use one of <type>WriterT</type>'s
+      execution functions.</para>
     
     &countEntries.ghci:runWriterT;
 
@@ -131,36 +126,191 @@
       naming and type classes.  It's helpful to know these rules of
       thumb, because they are both useful and few in number.</para>
 
-    <para>Rather than speak in general terms, we'll focus on a single,
-      simple monad: the reader monad.  This provides a piece of
-      immutable, implicit state.  It's often used to carry around
-      static information, where we don't want to be burdened with the
-      bother of passing it around as an explicit parameter.  A common
-      example of this would be the parsed contents of a program's
-      configuration file.</para>
+    <para>Rather than speak in general terms, we'll focus on a single
+      straightforward monad: the reader monad. This provides a piece
+      of immutable, implicit state, often called the
+      <emphasis>environment</emphasis>.  The environment is usually
+      used to carry around static information, where we don't want to
+      be burdened with the bother of passing it around as an explicit
+      parameter.  One common use for the reader monad is to store
+      configuration information for a program, so that it's available
+      when needed, without needing to be passed around as an explicit
+      function parameter.</para>
 
-    <para>The reader monad's interface is specified by the
-      <type>MonadReader</type> type class.</para>
+    <para>The reader monad's API is detailed in the
+      <type>MonadReader</type> type class.  Most <code>mtl</code>
+      monads have similarly named type classes:
+      <type>MonadWriter</type> defines the API of the writer monad,
+      and so on.</para>
 
-    &monadReader.ghci:class;
+    &Reader.hs:class;
 
     <para>The type variable <varname role="type">r</varname>
       represents the immutable state that the reader monad carries
-      around.  The <type>Reader r</type> monad is an instance of this
-      type class, as is the <type>ReaderT r m</type> monad
-      transformer.</para>
+      around.  The <type>Reader r</type> monad is an instance of the
+      <type>MonadReader</type> class, as is the <type>ReaderT r
+	m</type> monad transformer.  Again, this pattern is repeated
+      by other <type>mtl</type> monads: there usually exist both a
+      concrete monad and a transformer, each of which are instances of
+      the type class that defines the monad's API.</para>
 
-    <para>If the underlying monad <varname role="type">m</varname> is
-      an instance of <type>MonadIO</type>, so is <type>ReaderT r
-	m</type>.  This also holds for several other common type
-      classes, notably <type>MonadPlus</type> and
-      <type>Functor</type>.</para>
+    <para>Returning to the specifics of the reader monad, we haven't
+      touched upon the <function>local</function> function before.  It
+      temporarily modifies the current environment using the <type>r
+	-&gt; r</type> function, and executes its action in the
+      modified environment.  To make this idea more concrete, here is
+      a simple example.</para>
+
+    &LocalReader.hs:localExample;
+
+    <para>If we execute the <function>localExample</function> action
+      in &ghci;, we can see that the effect of modifying the
+      environment is confined to one place.</para>
+
+    &localReader.ghci:localExample;
+
+    <para>When the underlying monad <varname role="type">m</varname>
+      is an instance of <type>MonadIO</type>, the <code>mtl</code>
+      library provides an instance for <type>ReaderT r m</type>, and
+      also for a number of other type classes.  Here are a few.</para>
+
+    &Reader.hs:instances;
+
+    <para>Once again, most <code>mtl</code> monad transformers define
+      instances like these, to make it easier for us to work with
+      them.</para>
   </sect1>
 
   <sect1>
     <title>Stacking multiple monad transformers</title>
 
-    <para>Because a monad transformer stacked ...</para>
+    <para>As we have already mentioned, when we stack a monad
+      transformer on a normal monad, the result is another monad. This
+      suggests the possobility that we can again stack a monad
+      transformer on top of our combined monad, to give a new monad,
+      and in fact this is a common thing to do.  Under what
+      circumstances might we want to create such a stack?</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Often, we'll have <type>IO</type> at the base of the
+	  stack, because we're interested in programs that need to
+	  talk to the outside world.</para>
+      </listitem>
+      <listitem>
+	<para>If we add a <type>ReaderT</type> layer, we give
+	  ourselves access to read-only configuration
+	  information.</para>
+      </listitem>
+      <listitem>
+	<para>Add a <type>StateT</type> layer, and we gain global
+	  state that we can modify.</para>
+      </listitem>
+      <listitem>
+	<para>Should we need the ability to log events, we can add a
+	  <type>WriterT</type> layer.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The power of this approach is that we can customise the
+      stack to our exact needs, specifying which kinds of effects we
+      want to support.</para>
+
+    <para>As a small example of stacked monad transformers in action,
+      here is a reworking of the <function>countEntries</function>
+      function we developed earlier.  We use <type>ReaderT</type> to
+      store configuration data, in the form of the maximum depth of
+      recursion we will perform.  We also use <type>StateT</type> to
+      record the maximum depth we reach during an actual
+      traversal.</para>
+
+    &UglyStack.hs:App;
+
+    <para>Our transformer stack has <type>IO</type> on the bottom,
+      then <type>StateT</type>, with <type>ReaderT</type> on top. Even
+      a small stack of monad transformers quickly develops an unwieldy
+      type name.  We use a &type; alias to reduce the lengths of the
+      type signatures that we write.</para>
+
+    <para>The execution function for our monad stack is simple.</para>
+
+    &UglyStack.hs:runApp;
+
+    <para>Our application of <function>runReaderT</function> removes
+      the <type>ReaderT</type> transformer wrapper, while
+      <function>runStateT</function> removes the <type>StateT</type>
+      wrapper, leaving us with a result in the <type>IO</type>
+      monad.</para>
+
+    <para>Compared to earlier versions, the only complications we have
+      added to  our traversal function are slight: we track our
+      current depth, and record the maximum depth we reach.</para>
+
+    &UglyStack.hs:constrainedCount;
+
+    <para>Our use of monad transformers here is admittedly a little
+      contrived.  Because we're writing a single straightforward
+      function, we're not really winning anything.  What's useful
+      about this approach, though, is that it
+      <emphasis>scales</emphasis> to bigger programs.</para>
+
+    <para>We can write most of an application's imperative-style code
+      in a monad stack similar to our <type>App</type> monad.  In a
+      real program, we'd carry around more complex configuration data,
+      but we'd still use <type>ReaderT</type> to keep the it read-only
+      and hidden except when needed.  We'd have more mutable state to
+      manage, but we'd still use <type>StateT</type> to encapsulate
+      it.</para>
+
+    <sect2>
+      <title>Hiding our work</title>
+
+      <para>We can use the usual &newtype; technique to erect a solid
+	barrier between the implementation of our custom monad and its
+	interface.</para>
+
+      &UglyStack.hs:MyApp;
+
+      <para>If we export the <type>MyApp</type> type constructor and
+	the <function>runMyApp</function> execution function from a
+	module, client code will not be able to tell that the
+	internals of our monad is a stack of monad
+	transformers.</para>
+
+      <para>The large <code>deriving</code> clause requires the
+	<code>GeneralizedNewtypeDeriving</code> language pragma.  It
+	seems somehow magical that the compiler can derive all of
+	these instances for us.  How does this work?</para>
+
+      <para>Earlier, we mentioned that the <code>mtl</code> library
+	provides instances of a number of type classes for each monad
+	transformer.  For example, the <type>IO</type> monad
+	implements <type>MonadIO</type>.  If the underlying monad is
+	an instance of <type>MonadIO</type>, <code>mtl</code> makes
+	<type>StateT</type> an instance, too, and likewise for
+	<type>ReaderT</type>.</para>
+
+      <para>There is thus no magic going on: the top-level monad
+	transformer in the stack is an instance of all of the type
+	classes that we're rederiving with our <code>deriving</code>
+	clause. This is a consequence of <code>mtl</code> providing a
+	carefully coordinated set of type classes and instances that
+	fit together well.  We can still make progress in the absence
+	of this framework, and we'll shortly see how.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Moving down the stack</title>
+
+    <para>So far, our uses of monad transformers have been simple, and
+      the plumbing of the <code>mtl</code> library has allowed us to
+      avoid the details of how a stack of monads is constructed.
+      Indeed, we already know enough about monad transformers to
+      simplify many common programming tasks.</para>
+
+    <para>There are a few ways in which we can depart from the comfort
+      of <code>mtl</code>, though, and they're not uncommon.</para>
   </sect1>
 
 </chapter>

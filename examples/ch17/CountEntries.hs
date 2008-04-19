@@ -1,6 +1,8 @@
 {-- snippet countEntriesTrad --}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
+module CountEntries (listDirectory, countEntriesTrad) where
+
 import System.Directory (doesDirectoryExist, getDirectoryContents)
 import System.FilePath ((</>))
 import Control.Monad (forM_, liftM)
