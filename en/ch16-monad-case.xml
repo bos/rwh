@@ -532,7 +532,7 @@
       several unfamiliar Haskell language extensions.  We will cover
       each one in the sections that follow.</para>
 
-    <sect2>
+    <sect2 id="monadcase.mptc">
       <title>Multi-parameter type classes</title>
 
       <para>How should we read the snippet <code>MonadSupply s

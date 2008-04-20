@@ -431,13 +431,150 @@
 
     &StackStack.hs:Bar;
 
-    <para>When we use <function>lift</function>, this tends to make
-      our code somewhat ugly.  Fortunately, the need does not often
-      arise in practice.  When we can't avoid
-      <function>lift</function>, it's usually tidiest to write wrapper
-      functions that do the lifting for us, as we have shown above.
-      Our regular code then uses the wrappers, instead of a sprinkling
-      of explicit <function>lift</function>s.</para>
+    <para>When we need <function>lift</function>, it is considered
+      good style to write wrapper functions that do the lifting for
+      us, as above, and to use those.  The alternative of sprinkling
+      explicit uses of <function>lift</function> throughout code tends
+      to look messy.</para>
+  </sect1>
+
+  <sect1>
+    <title>Understanding monad transformers by building one</title>
+
+    <para>To give ourselves some insight into how monad transformers
+      in general work, we will create one and describe its machinery
+      as we go.  Our target is simple and useful, but surprisingly
+      it's missing from the <code>mtl</code> library:
+      <type>MaybeT</type>.</para>
+
+    <para>This monad transformer modifies the behaviour of an
+      underlying monad <type>m a</type> by wrapping its type parameter
+      with <type>Maybe</type>, to give <type>m (Maybe a)</type>.   As
+      with the <type>Maybe</type> monad, if we call
+      <function>fail</function> in the <type>MaybeT</type> monad
+      transformer, execution terminates early.</para>
+
+    <para>In order to turn <type>m (Maybe a)</type> into a
+      <type>Monad</type> instance, we must make it a distinct type,
+      via a &newtype; declaration.</para>
+
+    &MaybeT.hs:newtype;
+
+    <para>We now need to define the three standard monad functions.
+      The most complex is &bind;, and its innards shed the most light
+      on what we are actually doing.  Before we delve into its
+      operation, let us first take a look at its type.</para>
+
+    &MaybeT.hs:bindMT.type;
+
+    <para>To understand this type signature, hark back to our
+      discussion of multi-parameter type classes in <xref
+	linkend="monadcase.mptc"/>.  The thing that we intend to make
+      a <type>Monad</type> instance is the <emphasis>partial
+	type</emphasis> <type>MaybeT m</type>: this has the usual
+      single type parameter, <varname>a</varname>, that satisfies the
+      requirements of the <type>Monad</type> type class.</para>
+
+    <para>The trick to understanding the body of our &bind;
+      implementation is that everything inside the &do; block executes
+      in the <emphasis>underlying</emphasis> monad <type>m</type>,
+      whatever that is.</para>
+
+    &MaybeT.hs:bindMT;
+
+    <para>Our <function>runMaybeT</function> function unwraps the
+      result contained in <varname>x</varname>.  Next, recall that the
+      <code>&lt;-</code> symbol desugars to &bind;: a monad
+      transformer's &bind; must use the underlying monad's &bind;. The
+      final bit of case analysis determines whether we short circuit
+      or chain our computation.  Finally, look back at the top of the
+      body: here, we must wrap the result with the <type>MaybeT</type>
+      constructor, to once again hide the underlying monad.</para>
+
+    <para>The &do; notation above might be pleasant to read, but it
+      hides the fact that we are relying on the underlying monad's
+      &bind; implementation.  Here is a more idiomatic version of
+      &bind; for <type>MaybeT</type> that makes this clearer.</para>
+
+    &MaybeT.hs:altBindMT;
+
+    <para>Now that we understand what &bind; is doing, our
+      implementations of <function>return</function> and
+      <function>fail</function> need no explanation, and neither does
+      our <type>Monad</type> instance.</para>
+
+    &MaybeT.hs:Monad;
+
+    <para>To turn our type into a monad transformer, we must provide
+      an instance of the <type>MonadTrans</type> class, so that a user
+      can access the underlying monad.</para>
+
+    &MaybeT.hs:MonadTrans;
+
+    <para>The underlying monad starts out with a type parameter of
+      <type>a</type>: we <quote>inject</quote> the <code>Just</code>
+      constructor so it will acquire the type that we need,
+      <type>Maybe a</type>.  We then hide the monad with our
+      <type>MaybeT</type> constructor.</para>
+
+    <para>Once we have an instance for <type>MonadTrans</type>
+      defined, we can use it to define instances for the umpteen other
+      <code>mtl</code> type classes.</para>
+
+    &MaybeT.hs:mtl;
+
+    <para>Because several of the <code>mtl</code> type classes use
+      functional dependencies, some of our instance declarations
+      require us to considerably relax &GHC;'s usual strict type
+      checking rules. (If we were to forget any of these directives,
+      the compiler would helpfully advise us which ones we needed in
+      its error messages.)</para>
+
+    &MaybeT.hs:LANGUAGE;
+
+    <sect2>
+      <title>Replacing the Parse type with a monad stack</title>
+
+      <para>Now that we have developed a monad transformer that can
+	exit early, we can use it to bail if, for example, a parse
+	fails partway through. We could thus replace the
+	<type>Parse</type> type that we developed in <xref
+	  linkend="binary.implicit"/> with a monad customised to our
+	needs.</para>
+
+      &MaybeTParse.hs:Parse;
+
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset>
+	<qandaentry>
+	  <question>
+	    <para>Our <type>Parse</type> monad is not a perfect
+	      replacement for its earlier counterpart.  Because we are
+	      using <type>Maybe</type> instead of <type>Either</type>
+	      to represent a result, we can't report any useful
+	      information if a parse fails.</para>
+
+	    <para>Create an <type>EitherT sometype</type> monad
+	      transformer, and use it to implement a more capable
+	      <type>Parse</type> monad that can report an error
+	      message if parsing fails.</para>
+
+	    <tip>
+	      <para>If you like to explore the Haskell libraries for
+		fun, you may have run across an existing
+		<type>Monad</type> instance for the
+		<type>Either</type> type in the
+		<code>Control.Monad.Error</code> module.  Don't use
+		that as a guide; its design is too restrictive.</para>
+	    </tip>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
 </chapter>

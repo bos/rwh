@@ -197,7 +197,7 @@
       a three-tuple around.</para>
   </sect1>
 
-  <sect1>
+  <sect1 id="binary.implicit">
     <title>Implicit state</title>
 
     <para id="x_SR">While we've gotten rid of some boilerplate code, the
