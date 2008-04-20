@@ -4,7 +4,7 @@ module UglyStack (AppConfig, AppState) where
 
 import CountEntries (listDirectory)
 
-{-- snippet App --}
+{-- snippet AppData --}
 import System.Directory
 import System.FilePath
 import Control.Monad.Reader
@@ -17,9 +17,15 @@ data AppConfig = AppConfig {
 data AppState = AppState {
       stDeepestReached :: Int
     } deriving (Show)
+{-- /snippet AppData --}
 
-type App a = ReaderT AppConfig (StateT AppState IO) a
+{-- snippet App --}
+type App = ReaderT AppConfig (StateT AppState IO)
 {-- /snippet App --}
+
+{-- snippet App2 --}
+type App2 a = ReaderT AppConfig (StateT AppState IO) a
+{-- /snippet App2 --}
 
 {-- snippet runApp --}
 runApp :: App a -> Int -> IO (a, AppState)
@@ -60,6 +66,16 @@ runMyApp k maxDepth =
         state = AppState 0
     in runStateT (runReaderT (runA k) config) state
 {-- /snippet MyApp --}
+
+{-- snippet explicitGet --}
+explicitGet :: App AppState
+explicitGet = lift get
+{-- /snippet explicitGet --}
+
+{-- snippet implicitGet --}
+implicitGet :: App AppState
+implicitGet = get
+{-- /snippet implicitGet --}
 
 whatever :: App AppState
 whatever = do

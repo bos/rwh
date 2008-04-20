@@ -218,11 +218,16 @@
 
     <para>As a small example of stacked monad transformers in action,
       here is a reworking of the <function>countEntries</function>
-      function we developed earlier.  We use <type>ReaderT</type> to
-      store configuration data, in the form of the maximum depth of
-      recursion we will perform.  We also use <type>StateT</type> to
-      record the maximum depth we reach during an actual
-      traversal.</para>
+      function we developed earlier.  We will modify it to recurse no
+      deeper into a directory tree than a given amount, and to record
+      the maximum depth it reaches.</para>
+
+    &UglyStack.hs:AppData;
+
+    <para>We use <type>ReaderT</type> to store configuration data, in
+      the form of the maximum depth of recursion we will perform.  We
+      also use <type>StateT</type> to record the maximum depth we
+      reach during an actual traversal.</para>
 
     &UglyStack.hs:App;
 
@@ -231,6 +236,35 @@
       a small stack of monad transformers quickly develops an unwieldy
       type name.  We use a &type; alias to reduce the lengths of the
       type signatures that we write.</para>
+
+    <note>
+      <title>Where's the missing type parameter?</title>
+
+      <para>You might have noticed that our &type; synonym doesn't
+	have the usual type parameter <varname>a</varname> that we
+	associate with a monadic type:</para>
+
+      &UglyStack.hs:App2;
+
+      <para>Both <type>App</type> and <type>App2</type> work fine in
+	normal type signatures.  The difference arises when we try to
+	construct another type from one of these.  Say we want to add
+	another monad transformer to the stack: the compiler will
+	allow <type>WriterT [String] App a</type>, but reject
+	<type>WriterT [String] App2 a</type>.</para>
+
+      <para>The reason for this is that Haskell does not allow us to
+	partially apply a type synonym.  The synonym <type>App</type>
+	doesn't take a type parameter, so it doesn't pose a problem.
+	However, because <type>App2</type> takes a type parameter, we
+	must supply some type for that parameter if we want to use
+	<type>App2</type> to create another type.</para>
+
+      <para>This restriction is limited to type synonyms.  When we
+	create a monad transformer stack, we usually wrap it with a
+	&newtype; (as we will see below).  As a result, we will rarely run into
+	this problem in practice.</para>
+    </note>
 
     <para>The execution function for our monad stack is simple.</para>
 
@@ -338,17 +372,72 @@
       caring about which layer provides the <emphasis>real</emphasis>
       implementation.</para>
 
-    <para>Sometimes, it is desirable to access the underlying monad in
-      a generic way: we need a monad, but don't care which kind.  The
-      <type>MonadTrans</type> type class defines a
-      <function>lift</function> function for exactly this
-      situation.</para>
+    <para>Instead of relying on all of these type class instances to
+      work for us behind the scenes, we can be explicit. The
+      <type>MonadTrans</type> type class defines a useful function
+      named <function>lift</function>.</para>
 
     &monadTrans.ghci:MonadTrans;
 
     <para>This function takes a monadic action from one layer down the
-      stack, and turns it into an action in the current monad
-      transformer.</para>
+      stack, and turns it&emdash;in other words,
+      <emphasis>lifts</emphasis> it&emdash;into an action in the
+      current monad transformer. Every monad transformer is an
+      instance of <type>MonadTrans</type>.</para>
+
+    <para>Let's revisit the <type>App</type> monad stack we defined
+      earlier (before we wrapped it with a &newtype;).</para>
+
+    &UglyStack.hs:App.noid;
+
+    <para>If we want to access the <type>AppState</type> carried by
+      the <type>StateT</type>, we would usually rely on
+      <code>mtl</code>'s type classes and instances to handle the
+      plumbing for us.</para>
+    
+    &UglyStack.hs:implicitGet;
+
+    <para>The <function>lift</function> function lets us achieve the
+      same effect, by lifting <function>get</function> from
+      <type>StateT</type> into <type>ReaderT</type>.</para>
+
+    &UglyStack.hs:explicitGet;
+
+    <para>Obviously, when we can let <code>mtl</code> do this work for
+      us, we end up with cleaner code, but this is not always
+      possible.</para>
+
+    <para>For instance, we can create a monad transformer stack in
+      which instances of the same type class appear at different
+      levels.</para>
+
+    &StackStack.hs:Foo;
+
+    <para>If we try to use <type>MonadState</type>'s
+      <function>put</function> action, <type>StateT Int</type>'s
+      instance of <type>MonadState</type> is the one we get, because
+      it's at the top of the stack.</para>
+
+    &StackStack.hs:outerPut;
+
+    <para>To access <type>State</type>'s <function>put</function>, we
+      must use <function>lift</function>.</para>
+
+    &StackStack.hs:innerPut;
+
+    <para>Sometimes, we need to access a monad more than one level
+      down the stack, in which case we must compose calls to
+      <function>lift</function>.</para>
+
+    &StackStack.hs:Bar;
+
+    <para>When we use <function>lift</function>, this tends to make
+      our code somewhat ugly.  Fortunately, the need does not often
+      arise in practice.  When we can't avoid
+      <function>lift</function>, it's usually tidiest to write wrapper
+      functions that do the lifting for us, as we have shown above.
+      Our regular code then uses the wrappers, instead of a sprinkling
+      of explicit <function>lift</function>s.</para>
   </sect1>
 
 </chapter>
