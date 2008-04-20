@@ -385,6 +385,28 @@
       current monad transformer. Every monad transformer is an
       instance of <type>MonadTrans</type>.</para>
 
+    <para>We use the name <function>lift</function> based on its
+      similarity to <function>fmap</function> and
+      <function>liftM</function>: in each case, we hoist something
+      from a lower level of the type system to the level we're
+      currently working in.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para><function>fmap</function> elevates a pure function to
+	  the level of functors;</para>
+      </listitem>
+      <listitem>
+	<para><function>liftM</function> takes a pure function to the
+	  level of monads;</para>
+      </listitem>
+      <listitem>
+	<para>and <function>lift</function> raises a monadic action
+	  from one level beneath in the transformer stack to the
+	  current one.</para>
+      </listitem>
+    </itemizedlist>
+
     <para>Let's revisit the <type>App</type> monad stack we defined
       earlier (before we wrapped it with a &newtype;).</para>
 
@@ -660,21 +682,161 @@
       perspective</title>
     
     <para>It's useful to step back from details for a few moments, and
-      look at the strengths and weaknesses of programming with monads
+      look at the weaknesses and strengths of programming with monads
       and monad transformers.</para>
 
-    <para>Probably the biggest irritation of working with monads is
-      that a monad's type constructor often prevents us from using
-      pure code.  Many useful pure functions need monadic
-      counterparts.</para>
+    <sect2>
+      <title>Interference with pure code</title>
 
-    &monadProblems.ghci:filter;
+      <para>Probably the biggest practical irritation of working with
+	monads is that a monad's type constructor often gets in our
+	way when we'd like to use pure code.  Many useful pure
+	functions need monadic counterparts, simply to tack on a
+	placeholder parameter <varname>m</varname> for some monadic
+	type constructor.</para>
 
-    <para>However, the standard libraries don't always provide monadic
-      versions of pure functions.</para>
+      &monadProblems.ghci:filter;
 
-    &monadProblems.ghci:zip;
+      <para>However, the coverage is incomplete: the standard
+	libraries don't always provide monadic versions of pure
+	functions.</para>
 
+      &monadProblems.ghci:zip;
+
+      <para>The reason for this lies in history.  Eugenio Moggi
+	introduced the idea of using monads for programming in 1988,
+	around the time the Haskell 1.0 standard was being developed.
+	Many of the functions in today's <code>Prelude</code> date
+	back to Haskell 1.0, which was released in 1990.</para>
+
+      <para>Not until 1996, and the release of Haskell 1.3, did the
+	standard acquire support for monads.  By this time, the
+	language designers were already constrained by backwards
+	compatibility: they couldn't change the signatures of
+	functions in the <code>Prelude</code>, because it would have
+	broken existing code.</para>
+
+      <para>Since then, the Haskell community has learned a lot about
+	creating suitable abstractions, so that we can write code that
+	is less affected by the pure/monadic divide. You can find
+	modern distillations of these ideas in the
+	<code>Data.Traversable</code> and <code>Data.Foldable</code>
+	modules.  As appealing as those modules are, we do not cover
+	them in this book. This is in part for want of space, but also
+	because if you've still following our book at this point, you
+	won't have trouble figuring them out for yourself.</para>
+
+      <para>In an ideal world, would we make a break from the past,
+	and switch over <code>Prelude</code> to use
+	<type>Traversable</type> and <type>Foldtable</type> types?
+	Probably not.  Learning Haskell is already a stimulating
+	enough adventure for newcomers.  The <type>Foldable</type> and
+	<type>Traversable</type> abstractions are easy to pick up when
+	we already understand functors and monads, but they would put
+	early learners on too pure a diet of abstraction.  For
+	teaching the language, it's <emphasis>good</emphasis> that
+	<function>map</function> operates on lists, not on
+	functors.</para>
+    </sect2>
+
+    <sect2>
+      <title>Overdetermined ordering</title>
+
+      <para>One of the principle reasons that we use monads is that
+	they let us specify an ordering for effects.  Look again at a
+	small snippet of code we wrote earlier.</para>
+
+      &MTComposition.hs:problem.noid;
+
+      <para>Because we are executing in a monad, we are guaranteed
+	that the effect of the <function>tell</function> will occur
+	before the effect of <function>fail</function>.  The problem
+	is that we get this guarantee of ordering even when we don't
+	necessarily want it: the compiler is not free to rearrange
+	monadic code, even if doing so would make it more
+	efficient.</para>
+    </sect2>
+
+    <sect2>
+      <title>Runtime overhead</title>
+
+      <para>Finally, when we use, monads and monad transformers, we
+	pay an efficiency tax.  For instance, the <type>State</type>
+	monad carries its state around in a closure.  Closures might
+	be cheap in a Haskell implementation, but they're not
+	free.</para>
+
+      <para>A monad transformer adds its own overhead to that of
+	whatever is underneath.   Our <type>MaybeT</type> transformer
+	has to wrap and unwrap <type>Maybe</type> values every time we
+	use &bind;. A stack of <type>MaybeT</type> on top of
+	<type>StateT</type> over <type>ReaderT</type> thus has a lot
+	of book-keeping to do for each &bind;.</para>
+
+      <para>A sufficiently smart compiler might make some or all of
+	these costs vanish, but that degree of sophistication is not
+	yet widely available.</para>
+    </sect2>
+
+    <sect2>
+      <title>Unwieldy interfaces</title>
+
+      <para>If we use the <code>mtl</code> library as a black box, all
+	of its components mesh quite nicely.  However, once we start
+	developing our own monads and monad transformers, and using
+	them with those provided by <code>mtl</code>, some
+	deficiencies start to show.</para>
+
+      <para>For example, if we create a new monad transformer
+	<type>FooT</type>and want to follow the same pattern as
+	<code>mtl</code>, we'll have it implement a type class
+	<type>MonadFoo</type>.  If we really want to integrate it
+	cleanly into the <code>mtl</code>, we'll have to provide
+	instances for each of the dozen or so <code>mtl</code> type
+	classes.</para>
+
+      <para>On top of that, we'll have to declare instances of
+	<type>MonadFoo</type> for each of the dozen or so
+	<code>mtl</code> transformers.  Most of those instances will
+	be almost identical, and quite dull to write.  Worse, if we
+	want to keep integrating new monad transformers into the
+	<code>mtl</code> framework, the number of moving parts we must
+	deal with increases with the <emphasis>square</emphasis> of
+	the number of new transformers!</para>
+
+      <para>In fairness, this problem only matters to a tiny number of
+	people.  Most users of <code>mtl</code> don't need to develop
+	new transformers at all, so they are not affected.</para>
+
+      <para>This weakness of <code>mtl</code>'s design lies with the
+	fact that it was the first library of monad transformers that
+	was developed.  Given that its designers were plunging into
+	the unknown, they did a remarkable job of producing a powerful
+	library that is easy for most users to understand and work
+	with.</para>
+
+      <para>A newer library of monads and transformers,
+	<code>monadLib</code>, corrects many of the design flaws in
+	<code>mtl</code>.  If at some point you turn into a hard core
+	hacker of monad transformers, it is well worth looking
+	at.</para>
+    </sect2>
+
+    <sect2>
+      <title>Pulling it all together</title>
+
+      <para>Monads are not by any means the end of the road when it
+	comes to working with effects and types.  What they are is the
+	most practical resting point we have reached so far.  Language
+	researchers are always working on systems that try to provide
+	similar advantages, without the same compromises.</para>
+
+      <para>Although we must make compromises when we use them, monads
+	and monad transformers still offer a degree of flexibility and
+	control that has no precedent in an imperative language.  With
+	just a few declarations, we can rewire something as fundamental
+	as the semicolon to give it a new meaning.</para>
+    </sect2>
   </sect1>
 </chapter>
 
