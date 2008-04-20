@@ -5,12 +5,12 @@ import Data.List
 
 -- Simple model testing
 
-{-- snippet model --}
+{-- snippet mysort --}
 qsort []     = []
-qsort (x:xs) = qsort lhs ++ [x] +++ qsort rhs
+qsort (x:xs) = qsort lhs ++ [x] ++ qsort rhs
     where lhs = filter (< x) xs
           rhs = filter (>= x) xs
-{-- /snippet model --}
+{-- /snippet mysort --}
 
 -- Relating functions to other functions
 

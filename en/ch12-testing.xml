@@ -32,14 +32,33 @@ type system to guide the generation of test data.
   </para>
 
   <para>
-In this chapter we'll re-examine the JSON pretty printer developed in
-chapter 6, testing it with QuickCheck, and guiding the testing via GHC's
-test coverage tool: HPC.
+In this chapter we'll look at how to use QuickCheck to establish invariants
+in code, and then re-examine the JSON pretty printer developed in chapter 6,
+testing it with QuickCheck. We'll also see how to guide the testing process
+with GHC's test coverage tool: HPC.
   </para>
+
+  <sect1>
+    <title>QuickCheck: type-based testing</title>
+
+    <para>
+To get an overview of how property-based testing works, we'll begin with a
+simple scenario: you've written a specialised sort function and want to test
+it for desired properties, against a reference implementation, and its
+behaviour on different data types. 
+    </para>
+
+    <para>
+First, we import the QuickCheck library, and the list library:
+    </para>
+
+    &QC-basics.hs:module;
+
+    &QC-basics.hs:mysort;
 
 <!--
   <sect1>
-    <title>Writing QuickCheck properties</title>
+    <title>Generating arbitrary documents</title>
 
   <sect1>
     <title>Running tests</title>
