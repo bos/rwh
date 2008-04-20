@@ -3,31 +3,53 @@
 <chapter id="hs.quickcheck" revision="unpublished">
   <title>Testing and Quality Assurance</title>
 
+  <para>
 Building real systems means caring about quality control, robustness and 
 correctness. With the right quality assurance mechanisms in place, 
 well-written code can feel like a precision machine, with all functions
 performing their tasks precisely and exactly as specified. There is no
 sloppiness around the edges, and the code at the end is self-explanatory,
 obviously correct code -- the kind of code that inspires confidence.
+  </para>
 
+  <para>
 In Haskell, we have several tools at our disposal for building such 
 precise systems. The rich, expressive type-system allows for complicated
 invariants to be enforced statically -- making it impossible to produce
 code violating particular constraints, while purity and polymorphism 
 ensure code is built to be easily decoupled, refactored, and tested. 
 The kind of code that doesn't go wrong.
+  </para>
 
+  <para>
 Testing plays a key role in keeping code on the straight-and-narrow path.
-The main testing mechanisms in Haskell are unit testing (via the HUnit 
-library), and type-based <quote>property</quote> testing, using 
-QuickCheck. QuickCheck, in particular, encourages a high level approach
-to testing in the form of abstract invariants functions should satisfy.
-QuickCheck, in effect, writes specific tests for you, using the type 
-system to guide the generation of test data.
+The main testing mechanisms in Haskell are traditional unit testing (via the HUnit 
+library), and its more powerful sibling, type-based <quote>property</quote>
+testing, using QuickCheck. QuickCheck, in particular, encourages a high level
+approach to testing in the form of abstract invariants functions should
+satisfy.  QuickCheck, in effect, writes specific tests for you, using the
+type system to guide the generation of test data.
+  </para>
 
+  <para>
 In this chapter we'll re-examine the JSON pretty printer developed in
 chapter 6, testing it with QuickCheck, and guiding the testing via GHC's
 test coverage tool: HPC.
+  </para>
+
+<!--
+  <sect1>
+    <title>Writing QuickCheck properties</title>
+
+  <sect1>
+    <title>Running tests</title>
+
+  <sect1>
+    <title>Code coverage information</title>
+
+  <sect1>
+    <title>The awkward testing squad: IO functions and error cases</title>
+  -->
 
 </chapter>
 
