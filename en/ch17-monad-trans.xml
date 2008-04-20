@@ -262,8 +262,8 @@
 
       <para>This restriction is limited to type synonyms.  When we
 	create a monad transformer stack, we usually wrap it with a
-	&newtype; (as we will see below).  As a result, we will rarely run into
-	this problem in practice.</para>
+	&newtype; (as we will see below).  As a result, we will rarely
+	run into this problem in practice.</para>
     </note>
 
     <para>The execution function for our monad stack is simple.</para>
@@ -407,35 +407,44 @@
       us, we end up with cleaner code, but this is not always
       possible.</para>
 
-    <para>For instance, we can create a monad transformer stack in
-      which instances of the same type class appear at different
-      levels.</para>
+    <sect2>
+      <title>When explicit lifting is necessary</title>
 
-    &StackStack.hs:Foo;
+      <para>One case in which we <emphasis>must</emphasis> use
+	<function>lift</function> is when we create a monad
+	transformer stack in which instances of the same type class
+	appear at multiple levels.</para>
 
-    <para>If we try to use <type>MonadState</type>'s
-      <function>put</function> action, <type>StateT Int</type>'s
-      instance of <type>MonadState</type> is the one we get, because
-      it's at the top of the stack.</para>
+      &StackStack.hs:Foo;
 
-    &StackStack.hs:outerPut;
+      <para>If we try to use <type>MonadState</type>'s
+	<function>put</function> action, <type>StateT Int</type>'s
+	instance of <type>MonadState</type> is the one we get, because
+	it's at the top of the stack.</para>
 
-    <para>To access <type>State</type>'s <function>put</function>, we
-      must use <function>lift</function>.</para>
+      &StackStack.hs:outerPut;
 
-    &StackStack.hs:innerPut;
+      <para>The only way we can access the underlying
+	<type>State</type> monad's <function>put</function> is through
+	use of <function>lift</function>.</para>
 
-    <para>Sometimes, we need to access a monad more than one level
-      down the stack, in which case we must compose calls to
-      <function>lift</function>.</para>
+      &StackStack.hs:innerPut;
 
-    &StackStack.hs:Bar;
+      <para>Sometimes, we need to access a monad more than one level
+	down the stack, in which case we must compose calls to
+	<function>lift</function>.  Each composed use of
+	<function>lift</function> gives us access to one deeper
+	level.</para>
 
-    <para>When we need <function>lift</function>, it is considered
-      good style to write wrapper functions that do the lifting for
-      us, as above, and to use those.  The alternative of sprinkling
-      explicit uses of <function>lift</function> throughout code tends
-      to look messy.</para>
+      &StackStack.hs:Bar;
+
+      <para>When we need to use <function>lift</function>, it can be
+	good style to write wrapper functions that do the lifting for
+	us, as above, and to use those.  The alternative of sprinkling
+	explicit uses of <function>lift</function> throughout our code
+	tends to look messy.</para>
+
+    </sect2>
   </sect1>
 
   <sect1>
@@ -505,32 +514,51 @@
 
     &MaybeT.hs:Monad;
 
-    <para>To turn our type into a monad transformer, we must provide
-      an instance of the <type>MonadTrans</type> class, so that a user
-      can access the underlying monad.</para>
+    <sect2>
+      <title>Creating a monad transformer</title>
 
-    &MaybeT.hs:MonadTrans;
+      <para>To turn our type into a monad transformer, we must provide
+	an instance of the <type>MonadTrans</type> class, so that a
+	user can access the underlying monad.</para>
 
-    <para>The underlying monad starts out with a type parameter of
-      <type>a</type>: we <quote>inject</quote> the <code>Just</code>
-      constructor so it will acquire the type that we need,
-      <type>Maybe a</type>.  We then hide the monad with our
-      <type>MaybeT</type> constructor.</para>
+      &MaybeT.hs:MonadTrans;
 
-    <para>Once we have an instance for <type>MonadTrans</type>
-      defined, we can use it to define instances for the umpteen other
-      <code>mtl</code> type classes.</para>
+      <para>The underlying monad starts out with a type parameter of
+	<type>a</type>: we <quote>inject</quote> the <code>Just</code>
+	constructor so it will acquire the type that we need,
+	<type>Maybe a</type>.  We then hide the monad with our
+	<type>MaybeT</type> constructor.</para>
+    </sect2>
 
-    &MaybeT.hs:mtl;
+    <sect2>
+      <title>More type class instances</title>
 
-    <para>Because several of the <code>mtl</code> type classes use
-      functional dependencies, some of our instance declarations
-      require us to considerably relax &GHC;'s usual strict type
-      checking rules. (If we were to forget any of these directives,
-      the compiler would helpfully advise us which ones we needed in
-      its error messages.)</para>
+      <para>Once we have an instance for <type>MonadTrans</type>
+	defined, we can use it to define instances for the umpteen
+	other <code>mtl</code> type classes.</para>
 
-    &MaybeT.hs:LANGUAGE;
+      &MaybeT.hs:mtl;
+
+      <para>Because several of the <code>mtl</code> type classes use
+	functional dependencies, some of our instance declarations
+	require us to considerably relax &GHC;'s usual strict type
+	checking rules. (If we were to forget any of these directives,
+	the compiler would helpfully advise us which ones we needed in
+	its error messages.)</para>
+
+      &MaybeT.hs:LANGUAGE;
+
+      <para>Is it better to use <function>lift</function> explicitly,
+	or to spend time writing these boilerplate instances?  That
+	depends on what we expect to do with our monad transformer.
+	If we're going to use it in just a few restricted situations, we
+	can get away with providing an instance for
+	<type>MonadTrans</type> alone.  A few more instances might
+	make sense, such as <type>MonadIO</type>.  If the transformer
+	is going to pop up in diverse situations throughout a body of
+	code, spending a dull hour to write those instances might be a
+	good investment.</para>
+    </sect2>
 
     <sect2>
       <title>Replacing the Parse type with a monad stack</title>
@@ -577,6 +605,77 @@
     </sect2>
   </sect1>
 
+  <sect1>
+    <title>Transformer stacking order is important</title>
+
+    <para>From our early examples using monad transformers like
+      <type>ReaderT</type> and <type>StateT</type>, it might be easy
+      to conclude that the order in which we stack monad transformers
+      doesn't matter.</para>
+
+    <para>When we stack <type>StateT</type> on top of
+      <type>State</type>, it should be clearer that order can indeed
+      make a difference.  The types <type>StateT Int (State
+	String)</type> and <type>StateT String (State Int)</type>
+      might carry around the same information, but we can't use them
+      interchangeably.  The ordering determines when we need to use
+      <function>lift</function> to get at one or the other piece of
+      state.</para>
+
+    <para>Here's a case that more dramatically demonstrates the
+      importance of ordering.  Suppose we have a computation that
+      might fail, and we want to log the circumstances under which it
+      does so.</para>
+
+    &MTComposition.hs:problem;
+
+    <para>Which of these monad stacks will give us the information we
+      need?</para>
+
+    &MTComposition.hs:types;
+
+    <para>Let's try the alternatives in &ghci;.</para>
+
+    &mtComposition.ghci:problem;
+
+    <para>This difference in results should not come as a surprise:
+      just look at the signatures of the execution functions.</para>
+
+    &mtComposition.ghci:runWriterT;
+
+    <para>Our <type>WriterT</type>-on-<type>Maybe</type> stack has
+      <type>Maybe</type> as the underlying monad, so
+      <function>runWriterT</function> must give us back a result of
+      type <type>Maybe</type>.  In our test case, we only get to see
+      the log of what happened if nothing actually went wrong!</para>
+
+    <para>Stacking monad transformers is analogous to composing
+      functions.  We are not surprised when we change the order in
+      which we apply functions and thus get different results, and so
+      it is with monad transformers, too.</para>
+  </sect1>
+
+  <sect1>
+    <title>Putting monads and monad transformers into
+      perspective</title>
+    
+    <para>It's useful to step back from details for a few moments, and
+      look at the strengths and weaknesses of programming with monads
+      and monad transformers.</para>
+
+    <para>Probably the biggest irritation of working with monads is
+      that a monad's type constructor often prevents us from using
+      pure code.  Many useful pure functions need monadic
+      counterparts.</para>
+
+    &monadProblems.ghci:filter;
+
+    <para>However, the standard libraries don't always provide monadic
+      versions of pure functions.</para>
+
+    &monadProblems.ghci:zip;
+
+  </sect1>
 </chapter>
 
 <!--

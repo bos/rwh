@@ -16,7 +16,7 @@ BOS       13. Code case study: barcode recognition (DONE)
 JG        14. Designing and using data structures (DONE)
 BOS       15. Monads (DONE)
 BOS       16. More about monads (DONE)
-DONS      17. Monad transformers
+BOS       17. Monad transformers (DONE)
 JG        18. Using parsec: (DONE)
 BOS            parsing JSON (DONE)
 DONS      19. Interfacing with C: the FFI
@@ -24,7 +24,7 @@ DONS      20. Error handling
 JG        21. Haskell for systems programming (DONE)
 JG        22. Talking to databases (DONE)
 JG        23. Web client programming: client/server networking
-BOS       24. GUI programming: gtk2hs
+JG        24. GUI programming: gtk2hs
 JG/DONS   25. Basics of concurrent and parallel Haskell
 DONS      26. Performance and efficiency: profiling
 DONS      27. Advanced Haskell: MPTCs, TH, strong typing, GADTs

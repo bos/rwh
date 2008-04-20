@@ -69,3 +69,16 @@ instance (MonadState s m) => MonadState s (MaybeT m) where
 
 -- ... and so on for MonadReader, MonadWriter, etc ...
 {-- /snippet mtl --}
+
+instance (Monoid w, MonadWriter w m) => MonadWriter w (MaybeT m) where
+  tell = lift . tell
+  listen m = MaybeT $ do
+               (result,log) <- listen (runMaybeT m)
+               case result of
+                 Nothing -> return Nothing
+                 Just value -> return (Just (value,log))
+  pass m = MaybeT $ do
+             result <- runMaybeT m
+             case result of
+               Nothing -> return Nothing
+               Just (value,log) -> pass (return (Just value,log))
