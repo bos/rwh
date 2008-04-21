@@ -44,8 +44,7 @@ with GHC's test coverage tool: HPC.
     <para>
 To get an overview of how property-based testing works, we'll begin with a
 simple scenario: you've written a specialised sort function and want to test
-it for desired properties, against a reference implementation, and its
-behaviour on different data types. 
+its behaviour against a reference implementation.
     </para>
 
     <para>
@@ -54,7 +53,39 @@ First, we import the QuickCheck library, and the list library:
 
     &QC-basics.hs:module;
 
+    <para>
+And the function we want to test -- a custom sort routine:
+    </para>
+
     &QC-basics.hs:mysort;
+
+    <para>
+What a lovely sort function! Now, we'd like to check this function obeys some
+basic properties first. One invariant that comes up in a lot of purely
+functional code is <emphasis>idempotency</emphasis> -- applying a function twice
+has the same result as applying it only once. For our sort routine, we can
+state this invariant simply as:
+  </para>
+
+    &QC-basics.hs:idempotent;
+
+    <para>
+We follow the QuickCheck convention of prefixing properties with
+<code>prop_</code>.  So, as a Haskell function, we've stated an invariant
+that should hold for any list that we pass to our sort routine. To actually
+test this invariant, we use the <code>quickCheck</code> function to generate
+test data, applying the property code to that data, checking the result
+holds each time:
+  </para>
+
+    &parse.ghci:parse;
+
+  <para>
+To see the actual data generated for each test, and the result, we can
+use <code>verboseCheck</code> in place of <code>quickCheck</code>.
+  </para>
+
+  </sect1>
 
 <!--
   <sect1>

@@ -13,9 +13,9 @@ qsort (x:xs) = qsort lhs ++ [x] ++ qsort rhs
           rhs = filter (>= x) xs
 {-- /snippet mysort --}
 
-{-- snippet basics --}
+{-- snippet idempotent --}
 prop_sort_idempotent xs = qsort (qsort xs) == qsort xs
-{-- /snippet basics --}
+{-- /snippet idempotent --}
 
 {-- snippet relatives --}
 prop_minimum xs         = not (null xs) ==> head (qsort xs) == minimum xs
