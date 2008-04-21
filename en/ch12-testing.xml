@@ -78,7 +78,7 @@ test data, applying the property code to that data, checking the result
 holds each time:
   </para>
 
-    &parse.ghci:parse;
+    &qc-basics.ghci:basics;
 
   <para>
 To see the actual data generated for each test, and the result, we can
