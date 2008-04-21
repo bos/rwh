@@ -188,8 +188,11 @@ q :: String -> String
 q ('<':cs) = "&lt;" ++ q cs
 q ('>':cs) = "&gt;" ++ q cs
 q ('&':cs) = "&amp;" ++ q cs
+q ('\b':cs) = go 1 cs
+    where go n ('\b':bs) = go (n+1) bs
+          go n bs = q (drop n bs)
 q (c:cs) = c : q cs
-q [] = []
+q _ = []
 
 u :: String -> String
 u cs = "<userinput>" ++ q cs ++ "</userinput>"
