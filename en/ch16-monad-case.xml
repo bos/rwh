@@ -1000,9 +1000,9 @@
 
       &monadwriter.ghci:tell;
 
-      <para>The values we log can be any <type>Monoid</type>.  Since
-	the list type is a <type>Monoid</type>, we'll log to a list of
-	<type>Event</type>.</para>
+      <para>The values we log can be of any <type>Monoid</type> type.
+	Since the list type is a <type>Monoid</type>, we'll log to a
+	list of <type>Event</type>.</para>
 
       <para>We could make <type>Writer [Event]</type> an instance of
 	<type>MonadHandle</type>, but it's cheap, easy, and safer to
@@ -1021,6 +1021,28 @@
 
       &monadHandle.ghci:Writer;
 
+    </sect2>
+
+    <sect2 id="monadcase.writer.dlist">
+      <title>The writer monad and lists</title>
+
+      <para>The writer monad uses the monoid's
+	<function>mappend</function> function every time we use
+	<function>tell</function>.  Because
+	<function>mappend</function> for lists is
+	<function>(++)</function>, lists are not a good practical
+	choice for use with <type>Writer</type>: repeated appends are
+	expensive.  We are using lists above purely for
+	simplicity.</para>
+
+      <para>In production code, if you want to use the
+	<type>Writer</type> monad and you need list-like behaviour,
+	use a type with better  append characteristics. One such type
+	is the difference list, which we introduced in <xref
+	  linkend="data.dlist"/>.  You don't need to roll your own
+	difference list implementation: a well tuned library is
+	available for download from Hackage, the Haskell package
+	database.</para>
     </sect2>
 
     <sect2>

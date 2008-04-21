@@ -1,7 +1,7 @@
 import Prelude hiding ((++))
 
-{-- snippet concat --}
+{-- snippet append --}
 (++) :: [a] -> [a] -> [a]
 (x:xs) ++ ys = x : xs ++ ys
 _ ++ ys = ys
-{-- /snippet concat --}
+{-- /snippet append --}

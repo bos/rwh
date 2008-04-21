@@ -405,7 +405,275 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         first-class features of the system.
       </para>
     </sect2>
+  </sect1>
 
+  <sect1 id="data.dlist">
+    <title>Taking advantage of functions as data</title>
+
+    <para>In an imperative language, appending two lists is cheap and
+      easy.  Here's a simple C implementation in which we maintain a
+      pointer to the head and tail of a list.</para>
+
+    &list.c:list;
+
+    <para>When we want to append another list onto the end, we modify
+      the last node of the existing list to point to its
+      <code>head</code> node, then update its <code>tail</code>
+      pointer to point to its <code>tail</code> node.</para>
+    
+    <para>Obviously, this approach is off limits to us in Haskell if
+      we want to stay pure.  Since pure data is immutable, we can't go
+      around modifying lists in place.  Haskell's
+      <function>(++)</function> operator appends two lists by creating
+      a new one.</para>
+
+    &Append.hs:append;
+
+    <para>From inspecting the code, we can see that the cost of
+      creating a new list depends on the length of the initial
+      list.</para>
+
+    <para>We often need to append lists over and over, to construct
+      one big list.  For instance, we might be generating the contents
+      of a web page as a <type>String</type>, emitting a chunk at a
+      time as we traverse some data structure.  Each time we have a
+      chunk of markup to add to the page, we will naturally want to
+      append it onto the end of our existing
+      <type>String</type>.</para>
+
+    <para>If a single append has a cost proportional to the length of
+      the initial list, and each repeated append makes the initial
+      list longer, we end up in an unhappy situation: the cost of all
+      of the repeated appends is proportional to the
+      <emphasis>square</emphasis> of the length of the final
+      list.</para>
+
+    <para>To understand this, let's dig in a little.  The
+      <function>(++)</function> operator is right associative.</para>
+
+    &append.ghci:info;
+
+    <para>This means that a Haskell implementation will evaluate the
+      expression <code>"a" ++ "b" ++ "c"</code> as if we had put
+      parentheses around it as follows: <code>"a" ++ ("b" ++
+	"c")</code>.  This makes good performance sense, because it
+      keeps the left operand as short as possible.</para>
+
+    <para>When we repeatedly append onto the end of a list, we defeat
+      this associativity.  Let's say we start with the list
+      <code>"a"</code> and append <code>"b"</code>, and save the
+      result as our new list.  If we later append <code>"c"</code>
+      onto this new list, our left operand is now <code>"ab"</code>.
+      In this scheme, every time we append, our left operand gets
+      longer.</para>
+
+    <para>Meanwhile, the imperative programmers are cackling with
+      glee, because the cost of <emphasis>their</emphasis> repeated
+      appends only depends on the number of them that they perform.
+      They have linear performance; ours is quadratic.</para>
+
+    <para>When something as common as repeated appending of lists
+      imposes such a performance penalty, it's time to look at the
+      problem from another angle.</para>
+
+    <para>The expression <code>("a"++)</code> is a section, a
+      partially applied function.  What is its type?</para>
+
+    &append.ghci:section;
+
+    <para>Since this is a function, we can use the
+      <function>(.)</function> operator to compose it with another
+      section, let's say <code>("b"++)</code>.</para>
+
+    &append.ghci:compose;
+
+    <para>Our new function has the same type.  What happens if we stop
+      composing functions, and instead provide a <type>String</type>
+      to the function we've created?</para>
+
+    &append.ghci:apply;
+
+    <para>We've appended the strings!  We're using these partially
+      applied functions to store data, which we can retrieve by
+      providing an empty list.  Each partial application of
+      <function>(++)</function> and <function>(.)</function>
+      <emphasis>represents</emphasis> an append, but it doesn't
+      actually <emphasis>perform</emphasis> the append.</para>
+
+    <para>There are two very interesting things about this approach.
+      The first is that the cost of a partial application is constant,
+      so the cost of many partial applications is linear.  The second
+      is that when we finally provide a <code>[]</code> value to
+      unlock the final list from its chain of partial applications,
+      application proceeds from right to left.  This keeps the left
+      operand of <function>(++)</function> small, and so the overall
+      cost of all of these appends is linear, not quadratic.</para>
+
+    <para>By choosing an unfamiliar data representation, we've avoided
+      a nasty performance quagmire, while gaining a new perspective on
+      the usefulness of treating functions as data.  By the way, this
+      is an old trick, and it's usually called a <emphasis>difference
+	list</emphasis>.</para>
+
+    <para>We're not yet finished, though.  As appealing as difference
+      lists are in theory, ours won't be very pleasant in practice if
+      we leave all the plumbing of <function>(++)</function>,
+      <function>(.)</function>, and partial application exposed.  We
+      need to turn this mess into something pleasant to work
+      with.</para>
+
+    <sect2>
+      <title>Turning difference lists into a proper library</title>
+
+      <para>Our first step is to use a &newtype; declaration to hide
+	the underlying type from our users.  We'll create a new type,
+	and call it <type>DList</type>.  Like a regular list, it will
+	be a parameterised type.</para>
+
+      &DList.hs:newtype;
+
+      <para>The <function>unDL</function> function is our
+	deconstructor, that removes the <code>DL</code> constructor.
+	When we go back and decide what we want to export from our
+	module, we will omit our data constructor and deconstruction
+	function, so the <type>DList</type> type will be completely
+	opaque to our users.  They'll only be able to work with the
+	type using the other functions we export.</para>
+
+      &DList.hs:append;
+
+      <para>Our <function>append</function> function may seem a little
+	complicated, but it's just doing some simple book-keeping
+	around the use of the <function>(.)</function> operator that
+	we demonstrated earlier.  To compose our functions, we must
+	first unwrap them from their <type>DL</type> constructor,
+	hence the uses of <function>unDL</function>.  We then re-wrap
+	the resulting function with the <type>DL</type> constructor so
+	that it will have the right type.</para>
+
+      <para>Here's another way of writing the same function, in which
+	we perform the unwrapping of <varname>xs</varname> and
+	<varname>ys</varname> via pattern matching.</para>
+
+      &DList.hs:appendP;
+
+      <para>Our <type>DList</type> type won't be much use if we can't
+	convert back and forth between the <type>DList</type>
+	representation and a regular list.</para>
+
+      &DList.hs:list;
+
+      <para>Once again, compared to the original versions of these
+	functions that we wrote, all we're doing is a little
+	book-keeping to hide the plumbing.</para>
+
+      <para>If we want to make <type>DList</type> useful as a
+	substitute for regular lists, we need to provide some more of
+	the common list operations.</para>
+
+      &DList.hs:common;
+
+      <para>Although the <type>DList</type> approach makes appends
+	cheap, not all list-like operations are easily available.  The
+	<function>head</function> function has constant cost for
+	lists.  Our equivalent requires that we convert the entire
+	<type>DList</type> to a regular list, so it is much more
+	expensive than its list counterpart: its cost is
+	linear.</para>
+
+      &DList.hs:safeHead;
+
+      <para>To support an equivalent of <function>map</function>, we
+	can make our <type>DList</type> type a functor.</para>
+
+      &DList.hs:Functor;
+
+      <para>Once we decide that we have written enough equivalents of
+	list functions, we go back to the top of our source file, and
+	add a module header.</para>
+
+      &DList.hs:module;
+    </sect2>
+
+    <sect2>
+      <title>Lists, difference lists, and monoids</title>
+
+      <para>In abstract algebra, there exists a simple abstract
+	structure called a <emphasis>monoid</emphasis>.  Many
+	mathematical objects are monoids, because the bar to entry is
+	very low.  In order to be considered a monoid, an object must
+	have two properties.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>An associative binary operator.  Let's call it
+	    <function>(*)</function>: the expression <code>a * (b *
+	      c)</code> must give the same result as <code>(a * b) *
+	      c</code>.</para>
+	</listitem>
+
+	<listitem>
+	  <para>An identity value.  If we call this
+	    <varname>e</varname>, it must obey two rules: <code>a * e
+	      == a</code> and <code>e * a == a</code>.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>The rules for monoids don't say what the binary operator
+	must do, merely that such an operator must exist. Because of
+	this, lots of mathematical objects are monoids. If we take
+	addition as the binary operator and zero as the identity
+	value, integers form a monoid.  With multiplication as the
+	binary operator and one as the identity value, integers form a
+	different monoid.</para>
+
+      <para>Monoids are ubiquitous in Haskell.  The
+	<type>Monoid</type> type class is defined in the
+	<code>Data.Monoid</code>module.</para>
+
+      &Monoid.hs:Monoid;
+
+      <para>If we take <function>(++)</function> as the binary
+	operator and <code>[]</code> as the identity, lists form a
+	monoid.</para>
+
+      &Monoid.hs:list;
+      
+      <para>Since lists and <type>DList</type>s are so closely
+	related, it follows that our <type>DList</type> type must be a
+	monoid, too.</para>
+
+      &DList.hs:Monoid;
+
+      <para>Let's try our the methods of the <type>Monoid</type> type
+	class in &ghci;.</para>
+
+      &monoid.ghci:mappend;
+
+      <tip>
+	<para>Although from a mathematical perspective, integers can
+	  be monoids in two different ways, we can't write two
+	  differing <type>Monoid</type> instances for <type>Int</type>
+	  in Haskell: the compiler would complain about duplicate
+	  instances.</para>
+
+	<para>In those rare cases where we really need several
+	  <type>Monoid</type> instances for the same type, we can use
+	  some &newtype; trickery to create distinct types for the
+	  purpose.</para>
+
+	&Monoid.hs:int;
+
+	<para>We'll then get different behaviour depending on the type
+	  we use.</para>
+
+	&monoid.ghci:int;
+      </tip>
+
+      <para>We will have more to say about difference lists and their
+	monoidal nature in <xref
+	  linkend="monadcase.writer.dlist"/>.</para>
+    </sect2>
   </sect1>
 </chapter>
  
