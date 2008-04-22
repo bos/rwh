@@ -302,7 +302,8 @@ runghc Setup.hs build
     </programlisting>
     <para>
       And you'll find a <literal>dist</literal> directory containing
-      your output.
+      your output.  To install the program system-wide, run
+      <literal>runghc Setup.hs install</literal>.
     </para>
   </sect1>
     

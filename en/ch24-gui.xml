@@ -185,8 +185,8 @@
     <title>Initializing the GUI</title>
     <para>
       Our first steps are going to involve initializing the GUI for
-      our program.  For reasons that we'll explain later,
-      <remark>FIXME: add link</remark> we're going to have a small
+      our program.  For reasons that we'll explain in
+      <xref linkend="gui.cabal"/>, we're going to have a small
       file called <literal>PodLocalMain.hs</literal> that loads
       <literal>PodMain</literal> and passes to it the path to
       <literal>podresources.glade</literal>, the XML file saved by
@@ -459,12 +459,59 @@
     <informalfigure>
       <graphic fileref="figs/gui-update-complete.png"/>
     </informalfigure>
-    
   </sect1>
-    
+  
+  <sect1 id="gui.cabal">
+    <title>Using Cabal</title>
+    <para>
+      We presented a Cabal file to build this project for the
+      command-line version in <xref linkend="wc.main"/>.  We need to
+      make a few tweaks for it to work with our GUI version.  First,
+      there's the obvious need to add the gtk2hs packages to the list
+      of build dependencies.  There is also the matter of the Glade
+      XML file.
+    </para>
+    <para>
+      Earlier, we wrote a <literal>PodLocalMain.hs</literal> that
+      simply assumed this file was named
+      <literal>podresources.glade</literal> and stored in the current
+      working directory.  For a real, system-wide installation, we
+      can't make that assumption.  Moreover, different systems may
+      place the file at different locations.
+    </para>
+    <para>
+      Cabal provides a way around this problem.  It automatically
+      generates a module that exports functions that can interrogate
+      the environment.  We must add a <literal>Data-files</literal>
+      line to our Cabal description file.  This file names all data
+      files that will be part of a system-wide installation.  Then,
+      Cabal will export a <literal>Paths_pod</literal> module (the
+      "pod" part comes from the <literal>Name</literal> line in the
+      Cabal file) that we can interrogate for the location at
+      runtime.  Here's our new Cabal description file:
+    </para>
+    <programlisting>
+-- ch24/pod.cabal
+Name: pod
+Version: 1.0.0
+Build-type: Simple
+Build-Depends: HTTP, HaXml, network, HDBC, HDBC-sqlite3, base, 
+               gtk, glade
+Data-files: podresources.glade
+
+Executable: pod
+Main-Is: PodCabalMain.hs
+GHC-Options: -O2
+    </programlisting>
+    <para>
+      And, to go with it, <literal>PodCabalMain.hs</literal>:
+    </para>
+    &PodCabalMain.hs:all;
+  </sect1>
+
   <sect1 id="gui.exercises">
     <title>Exercises</title>
-
+    
     <orderedlist>
       <listitem><para>
           Present a helpful GUI error message if the call to
