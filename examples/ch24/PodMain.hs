@@ -105,6 +105,13 @@ add dbh url =
 guiUpdate gui dbh = 
     statusWindow gui dbh "Pod: Update" (update dbh)
 
+guiDownload gui dbh =
+    statusWindow gui dbh "Pod: Download" (download dbh)
+
+guiFetch gui dbh =
+    statusWindow gui dbh "Pod: Fetch" 
+                     (\logf -> update dbh logf >> download dbh logf)
+
 statusWindow gui dbh title func =
     do -- Clear the status text
        labelSetText (swLabel gui) ""
@@ -139,8 +146,6 @@ statusWindow gui dbh title func =
                  updateLabel "Action has been cancelled."
                  enableOK
           
-                 
-
 update dbh logf = 
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
@@ -149,28 +154,17 @@ update dbh logf =
               do logf $ "Updating from " ++ (castURL pc)
                  updatePodcastFromFeed dbh pc
 
-guiDownload gui dbh = fail "Not implemented"
-
-guiFetch gui dbh = fail "Not implemented"
-
-download dbh =
+download dbh logf =
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
+       logf "Download complete."
     where procPodcast pc =
-              do putStrLn $ "Considering " ++ (castURL pc)
+              do logf $ "Considering " ++ (castURL pc)
                  episodelist <- getPodcastEpisodes dbh pc
                  let dleps = filter (\ep -> epDone ep == False)
                              episodelist
                  mapM_ procEpisode dleps
           procEpisode ep =
-              do putStrLn $ "Downloading " ++ (epURL ep)
+              do logf $ "Downloading " ++ (epURL ep)
                  getEpisode dbh ep
-
-syntaxError = putStrLn 
-  "Usage: pod command [args]\n\
-  \\n\
-  \pod add url      Adds a new podcast with the given URL\n\
-  \pod download     Downloads all pending episodes\n\
-  \pod fetch        Updates, then downloads\n\
-  \pod update       Downloads podcast feeds, looks for new episodes\n"
 {-- /snippet all --}
