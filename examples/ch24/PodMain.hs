@@ -35,14 +35,6 @@ main = withSocketsDo $ handleSqlError $
        connectGui gui dbh
        mainGUI
        
-       args <- getArgs
-       case args of
-         ["add", url] -> add dbh url
-         ["update"] -> update dbh
-         ["download"] -> download dbh
-         ["fetch"] -> do update dbh
-                         download dbh
-         _ -> syntaxError
        disconnect dbh
 
 loadGlade =
@@ -65,15 +57,16 @@ loadGlade =
               sw swOK swCancel swl
 
 connectGui gui dbh =
-    do -- When the close button is clicked...
-       onDestroy (mainWin gui) podExit
+    do -- When the close button is clicked, terminate GUI loop
+       -- by calling GTK mainQuit function
+       onDestroy (mainWin gui) mainQuit
        
        -- Main window buttons
        onClicked (mwAddBt gui) (add gui dbh)
        onClicked (mwUpdateBt gui) (update gui dbh)
        onClicked (mwDownloadBt gui) (download gui dbh)
        onClicked (mwFetchBt gui) (fetch gui dbh)
-       onClicked (mwExitBt gui) podExit
+       onClicked (mwExitBt gui) mainQuit
 
        -- We leave the status window buttons for later
 
