@@ -288,11 +288,34 @@
       and <literal>mapM</literal> to load up all the buttons.
       Then, we have two dialogs, a label, and an entry to load.
       Finally, we use all of these to build up the GUI type and return
-      it.
+      it.  Next, we need to set our callback functions up as event handlers.
     </para>
-    
-
+    &PodMain.hs:connectGui;
+    <para>
+      We start out the <literal>connectGui</literal> function by
+      calling <literal>onDestroy</literal>.  This means that when
+      somebody clicks on the operating system's close button
+      (typically an X in
+      the titlebar on Windows or Linux, or a red circle on Mac OS X),
+      on the main window, we call the <literal>mainQuit</literal>
+      function.  <literal>mainQuit</literal> closes all GUI windows
+      and terminates the GTK main loop.
+    </para>
+    <para>
+      Next, we call <literal>onClicked</literal> to register event
+      handlers for clicking on our five different buttons.  For
+      buttons, these handlers are also called if the user selects the
+      button via the keyboard.  Clicking on these buttons will call
+      our functions such as <literal>guiAdd</literal>, passing along
+      the GUI record as well as a database handle.
+    </para>
+    <para>
+      At this point, we have completely defined the main window for
+      the GUI podcatcher.  It looks like this:
+    </para>
   </sect1>
+
+  
 
   <sect1 id="gui.exercises">
     <title>Exercises</title>
