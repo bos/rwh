@@ -453,6 +453,13 @@
       status updates.
     </para>
     &PodMainGUI.hs:workerFuncs;
+    <para>
+      Here's what the final result looks like after running an update:
+    </para>
+    <informalfigure>
+      <graphic fileref="figs/gui-update-complete.png"/>
+    </informalfigure>
+    
   </sect1>
     
   <sect1 id="gui.exercises">
