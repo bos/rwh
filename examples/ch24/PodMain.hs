@@ -40,19 +40,32 @@ data GUI = GUI {
       awEntry :: Entry}
 {-- /snippet type --}
 
+{-- snippet main --}
+main :: FilePath -> IO ()
 main gladepath = withSocketsDo $ handleSqlError $
-    do initGUI                  -- Initialize GTK engine
+    do initGUI                  -- Initialize GTK+ engine
+
        -- Every so often, we try to run other threads.
        timeoutAddFull (yield >> return True)
                       priorityDefaultIdle 100
+
+       -- Load the GUI from the Glade file
        gui <- loadGlade gladepath
+
+       -- Connect to the database
        dbh <- connect "pod.db"
 
+       -- Set up our events 
        connectGui gui dbh
-       mainGUI                  -- Main GTK loop; exits when GUI done
-       
-       disconnect dbh
 
+       -- Run the GTK+ main loop; exits after GUI is donw
+       mainGUI
+       
+       -- Disconnect the database at the end
+       disconnect dbh
+{-- /snippet main --}
+
+{-- snippet loadGlade --}
 loadGlade gladepath =
     do Just xml <- xmlNew gladepath
 
@@ -76,6 +89,7 @@ loadGlade gladepath =
 
        return $ GUI mw mwAdd mwUpdate mwDownload mwFetch mwExit
               sw swOK swCancel swl au auOK auCancel aue
+{-- /snippet loadGlade --}
 
 connectGui gui dbh =
     do -- When the close button is clicked, terminate GUI loop

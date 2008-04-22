@@ -215,7 +215,54 @@
     </para>
     <para>
       We also import <literal>Control.Concurrent</literal>, which has
-      the basics needed for multi-threaded programming.  
+      the basics needed for multi-threaded programming.  We'll use a
+      few functions from here as described above once we get into the
+      guts of the program.  Next, let's define a type to store
+      information about our GUI.
+    </para>
+    &PodMain.hs:type;
+    <para>
+      Our new <literal>GUI</literal> type stores all the widgets we
+      will care about in the entire program.  Large programs may not
+      wish to have a monolothinc type like this.  For this small
+      example, it makes sense because it can be easily around to
+      different functions, and we'll know that we always have the
+      information we need available.
+    </para>
+    <para>
+      Within this record, we have fields for a <literal>Window</literal> (a
+      top-level window), <literal>Dialog</literal> (dialog window),
+      <literal>Button</literal> (clicable
+      button), <literal>Label</literal> (piece of text), and
+      <literal>Entry</literal> (place for the user to enter text).
+      Let's now look at our <literal>main</literal> funciton:
+    </para>
+    &PodMain.hs:main;
+    <para>
+      Remember that the type of this <literal>main</literal> function
+      is a little different than usual because it is being called by
+      <literal>main</literal> in <literal>PodLocalMain.hs</literal>.
+      We start by calling <literal>initGUI</literal>, which
+      initializes the GTK+ system.  Next, we have a call to
+      <literal>timeoutAddFull</literal>.  This call is only needed for
+      multithreaded GTK+ programs.  It tells the GTK+ main loop to
+      pause to give other threads a chance to run every so often.
+    </para>
+    <para>
+      After that, we call our <literal>loadGlade</literal> function
+      (see below) to load the widgets from our Glade XML file.  After
+      that, we connect to our database, call our
+      <literal>connectGui</literal> function to set up our callback
+      functions.  Then, we fire up the GTK+ main loop.  We expect it
+      could be minutes, hours, or even days before
+      <literal>mainGUI</literal> returns.  When it does, it means the
+      user has closed the main window or clicked the Exit button.
+      After that, we disconnect from the database and close the
+      program.  Now, let's look at our <literal>loadGlade</literal>
+      function.
+    </para>
+        
+  </sect1>
 
   <sect1 id="gui.exercises">
     <title>Exercises</title>
