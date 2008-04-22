@@ -2,7 +2,7 @@
 -- ch24/PodLocalMain.hs
 module Main where
 
-import qualified PodMain
+import qualified PodMainGUI
 
-main = PodMain.main "podresources.glade"
+main = PodMainGUI.main "podresources.glade"
 {-- /snippet all --}

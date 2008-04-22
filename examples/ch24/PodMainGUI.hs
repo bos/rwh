@@ -1,7 +1,7 @@
 {-- snippet imports --}
--- ch24/PodMain.hs
+-- ch24/PodMainGUI.hs
 
-module PodMain where
+module PodMainGUI where
 
 import PodDownload
 import PodDB
