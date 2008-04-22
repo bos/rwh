@@ -129,6 +129,12 @@ add dbh url =
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
 
+statusWindow :: IConnection conn =>
+                GUI 
+             -> conn 
+             -> String 
+             -> ((String -> IO ()) -> IO ())
+             -> IO ()
 statusWindow gui dbh title func =
     do -- Clear the status text
        labelSetText (swLabel gui) ""
