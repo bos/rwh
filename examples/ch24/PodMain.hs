@@ -129,16 +129,6 @@ add dbh url =
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
 
-guiUpdate gui dbh = 
-    statusWindow gui dbh "Pod: Update" (update dbh)
-
-guiDownload gui dbh =
-    statusWindow gui dbh "Pod: Download" (download dbh)
-
-guiFetch gui dbh =
-    statusWindow gui dbh "Pod: Fetch" 
-                     (\logf -> update dbh logf >> download dbh logf)
-
 statusWindow gui dbh title func =
     do -- Clear the status text
        labelSetText (swLabel gui) ""
@@ -173,6 +163,16 @@ statusWindow gui dbh title func =
                  updateLabel "Action has been cancelled."
                  enableOK
           
+guiUpdate gui dbh = 
+    statusWindow gui dbh "Pod: Update" (update dbh)
+
+guiDownload gui dbh =
+    statusWindow gui dbh "Pod: Download" (download dbh)
+
+guiFetch gui dbh =
+    statusWindow gui dbh "Pod: Fetch" 
+                     (\logf -> update dbh logf >> download dbh logf)
+
 update dbh logf = 
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
