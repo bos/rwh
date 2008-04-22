@@ -26,7 +26,7 @@ of data consistency for us:
 * In the spidoes table, for a given podcast (epcast), there must be only
   one instance of each given URL or episode ID
 -}
-prepDB :: Connection -> IO ()
+prepDB :: IConnection conn => conn -> IO ()
 prepDB dbh =
     do tables <- getTables dbh
        when (not ("podcasts" `elem` tables)) $
@@ -49,7 +49,7 @@ prepDB dbh =
 incoming podcast, and returns a new object with the castid populated.
 
 An attempt to add a podcast that already exists is an error. -}
-addPodcast :: Connection -> Podcast -> IO Podcast
+addPodcast :: IConnection conn => conn -> Podcast -> IO Podcast
 addPodcast dbh podcast = 
     handleSql errorHandler $
       do -- Insert the castURL into the table.  The database
@@ -75,7 +75,7 @@ without having to first look it up in the DB.
 
 Also, we generally won't care about the new ID here, so don't bother
 fetching it. -}
-addEpisode :: Connection -> Episode -> IO ()
+addEpisode :: IConnection conn => conn -> Episode -> IO ()
 addEpisode dbh ep =
     run dbh "INSERT OR IGNORE INTO episodes (epCastId, epURL, epDone) \
                 \VALUES (?, ?, ?)"
@@ -85,7 +85,7 @@ addEpisode dbh ep =
        
 {- | Modifies an existing podcast.  Looks up the given podcast by
 ID and modifies the database record to match the passed Podcast. -}
-updatePodcast :: Connection -> Podcast -> IO ()
+updatePodcast :: IConnection conn => conn -> Podcast -> IO ()
 updatePodcast dbh podcast =
     run dbh "UPDATE podcasts SET castURL = ? WHERE castId = ?" 
             [toSql (castURL podcast), toSql (castId podcast)]
@@ -93,7 +93,7 @@ updatePodcast dbh podcast =
 
 {- | Modifies an existing episode.  Looks it up by ID and modifies the
 database record to match the given episode. -}
-updateEpisode :: Connection -> Episode -> IO ()
+updateEpisode :: IConnection conn => conn -> Episode -> IO ()
 updateEpisode dbh episode =
     run dbh "UPDATE episodes SET epCastId = ?, epURL = ?, epDone = ? \
              \WHERE epId = ?"
@@ -105,7 +105,7 @@ updateEpisode dbh episode =
 
 {- | Remove a podcast.  First removes any episodes that may exist
 for this podcast. -}
-removePodcast :: Connection -> Podcast -> IO ()
+removePodcast :: IConnection conn => conn -> Podcast -> IO ()
 removePodcast dbh podcast =
     do run dbh "DELETE FROM episodes WHERE epcastid = ?" 
          [toSql (castId podcast)]
@@ -114,7 +114,7 @@ removePodcast dbh podcast =
        return ()
 
 {- | Gets a list of all podcasts. -}
-getPodcasts :: Connection -> IO [Podcast]
+getPodcasts :: IConnection conn => conn -> IO [Podcast]
 getPodcasts dbh =
     do res <- quickQuery' dbh 
               "SELECT castid, casturl FROM podcasts ORDER BY castid" []
@@ -122,7 +122,7 @@ getPodcasts dbh =
 
 {- | Get a particular podcast.  Nothing if the ID doesn't match, or
 Just Podcast if it does. -}
-getPodcast :: Connection -> Integer -> IO (Maybe Podcast)
+getPodcast :: IConnection conn => conn -> Integer -> IO (Maybe Podcast)
 getPodcast dbh wantedId =
     do res <- quickQuery' dbh 
               "SELECT castid, caturl FROM podcasts WHERE castid = ?"
@@ -140,7 +140,7 @@ convPodcastRow [svId, svURL] =
 convPodcastRow x = error $ "Can't convert podcast row " ++ show x
 
 {- | Get all episodes for a particular podcast. -}
-getPodcastEpisodes :: Connection -> Podcast -> IO [Episode]
+getPodcastEpisodes :: IConnection conn => conn -> Podcast -> IO [Episode]
 getPodcastEpisodes dbh pc =
     do r <- quickQuery' dbh
             "SELECT epId, epURL, epDone FROM episodes WHERE epCastId = ?"

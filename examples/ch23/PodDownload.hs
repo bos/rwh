@@ -8,7 +8,6 @@ import PodParser
 import Network.HTTP
 import System.IO
 import Database.HDBC
-import Database.HDBC.Sqlite3
 import Data.Maybe
 import Network.URI
 
@@ -34,7 +33,7 @@ downloadURL url =
           uri = fromJust $ parseURI url
 
 {- | Update the podcast in the database. -}
-updatePodcastFromFeed :: Connection -> Podcast -> IO ()
+updatePodcastFromFeed :: IConnection conn => conn -> Podcast -> IO ()
 updatePodcastFromFeed dbh pc =
     do resp <- downloadURL (castURL pc)
        case resp of
@@ -49,7 +48,7 @@ updatePodcastFromFeed dbh pc =
 
 {- | Downloads an episode, returning a String representing
 the filename it was placed into, or Nothing on error. -}
-getEpisode :: Connection -> Episode -> IO (Maybe String)
+getEpisode :: IConnection conn => conn -> Episode -> IO (Maybe String)
 getEpisode dbh ep =
     do resp <- downloadURL (epURL ep)
        case resp of
