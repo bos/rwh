@@ -169,6 +169,7 @@ statusWindow gui dbh title func =
                  updateLabel "Action has been cancelled."
                  enableOK
           
+guiUpdate :: IConnection conn => GUI -> conn -> IO ()
 guiUpdate gui dbh = 
     statusWindow gui dbh "Pod: Update" (update dbh)
 
@@ -179,6 +180,7 @@ guiFetch gui dbh =
     statusWindow gui dbh "Pod: Fetch" 
                      (\logf -> update dbh logf >> download dbh logf)
 
+update :: IConnection conn => conn -> (String -> IO ()) -> IO ()
 update dbh logf = 
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
