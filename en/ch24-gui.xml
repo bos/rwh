@@ -261,13 +261,49 @@
       program.  Now, let's look at our <literal>loadGlade</literal>
       function.
     </para>
-        
+
+    &PodMain.hs:loadGlade;
+
+    <para>
+      This function starts by calling <literal>xmlNew</literal>, which 
+      loads the Glade XML file.  It returns <literal>Nothing</literal>
+      on error.  Here we are using pattern matching to extract the
+      result value on success.  If it fails, there will be a console
+      (not graphical) exception displayed; one of the excercises at
+      the end of this chapter addresses this.
+    </para>
+    <para>
+      Now that we have Glade's XML file loaded, you will see a bunch
+      of calls to <literal>xmlGetWidget</literal>.  This Glade
+      function is used to load the XML definition of a widget, and
+      return a GTK+ widget type for that widget.  We have to pass
+      along to that function a value indicating what GTK+ type we
+      expect -- we'll get a runtime error if these don't match.
+    </para>
+    <para>
+      We start by creating a widget for the main window.  It is loaded
+      from the XML widget defined with name
+      <literal>"mainWindow"</literal> and stored in the
+      <literal>mw</literal> variable.  We then use pattern matching
+      and <literal>mapM</literal> to load up all the buttons.
+      Then, we have two dialogs, a label, and an entry to load.
+      Finally, we use all of these to build up the GUI type and return
+      it.
+    </para>
+    
+
   </sect1>
 
   <sect1 id="gui.exercises">
     <title>Exercises</title>
 
     <orderedlist>
+      <listitem><para>
+          Present a helpful GUI error message if the call to
+          <literal>xmlNew</literal> returns
+          <literal>Nothing</literal>.
+        </para>
+      </listitem>
       <listitem><para>Modify the podcatcher to be able to run with
       either the GUI or the command-line interface from a single code
       base.  Hint: move common code out of

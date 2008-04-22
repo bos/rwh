@@ -67,12 +67,14 @@ main gladepath = withSocketsDo $ handleSqlError $
 
 {-- snippet loadGlade --}
 loadGlade gladepath =
-    do Just xml <- xmlNew gladepath
+    do -- Load XML from glade path.
+       -- Note: crashes with a runtime error on console if fails!
+       Just xml <- xmlNew gladepath
 
        -- Load main window
        mw <- xmlGetWidget xml castToWindow "mainWindow"
 
-       -- Load main window buttons
+       -- Load all buttons
 
        [mwAdd, mwUpdate, mwDownload, mwFetch, mwExit, swOK, swCancel,
         auOK, auCancel] <-
@@ -91,6 +93,7 @@ loadGlade gladepath =
               sw swOK swCancel swl au auOK auCancel aue
 {-- /snippet loadGlade --}
 
+{-- snippet connectGui --}
 connectGui gui dbh =
     do -- When the close button is clicked, terminate GUI loop
        -- by calling GTK mainQuit function
@@ -104,6 +107,7 @@ connectGui gui dbh =
        onClicked (mwExitBt gui) mainQuit
 
        -- We leave the status window buttons for later
+{-- /snippet connectGui --}
 
 guiAdd gui dbh = 
     do -- Initialize the add URL window
