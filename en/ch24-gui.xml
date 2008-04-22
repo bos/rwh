@@ -409,7 +409,49 @@
       ID.  Finally, we call <literal>windowPresent</literal> to show
       the status window.
     </para>
-      
+    <para>
+      In <literal>childTasks</literal>, we display a message saying
+      that we're starting the thread.  Then we call the actual worker
+      function, passing <literal>updateLabel</literal> as the function
+      to use for displaying status messages.  Note that a command-line
+      version of the program could pass <literal>putStrLn</literal>
+      here.
+    </para>
+    <para>
+      Finally, after the worker function exits, we call
+      <literal>enableOK</literal>.  This function disables the cancel
+      button, enables the OK button, and defines that a click on the
+      OK button causes the status window to go away.
+    </para>
+    <para>
+      <literal>updateLabel</literal> simply calls
+      <literal>labelSetText</literal> on the label widget to update it
+      with the displayed text.  Finally,
+      <literal>cancelChild</literal> kills the thread processing the
+      task, updates the label, and enables the OK button.
+    </para>
+    <para>
+      We now have the infrastructure in place to define our three GUI
+      functions.  They look like this:
+    </para>
+    &PodMain.hs:statusWindowFuncs;
+    <para>
+      For brevity, we have given the type for only the first one, but
+      all three have the same type, and Haskell can work them out via
+      type inference.  Notice our implementation of
+      <literal>guiFetch</literal>.  We don't call
+      <literal>statusWindow</literal> twice, but rather combine
+      functions in its action.
+    </para>
+    <para>
+      The final piece of the puzzle consists of the three functions
+      that do our work.  <literal>add</literal> is unmodified from the
+      command-line chapter.  <literal>update</literal> and
+      <literal>download</literal> are modified only to take a logging
+      function instead of calling <literal>putStrLn</literal> for
+      status updates.
+    </para>
+    &PodMain.hs:workerFuncs;
   </sect1>
     
   <sect1 id="gui.exercises">
@@ -428,6 +470,13 @@
       <literal>PodMain.hs</literal>, then have two different
       <literal>Main</literal> modules, one for the GUI, and one for
       the command line.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Why does <literal>guiFetch</literal> combine worker
+          functions instead of calling <literal>statusWindow</literal>
+          twice?
         </para>
       </listitem>
     </orderedlist>

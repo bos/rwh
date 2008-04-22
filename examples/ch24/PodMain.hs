@@ -124,11 +124,6 @@ guiAdd gui dbh =
                  add dbh url             -- Add to the DB
 {-- /snippet guiAdd --}
 
-add dbh url = 
-    do addPodcast dbh pc
-       commit dbh
-    where pc = Podcast {castId = 0, castURL = url}
-
 {-- snippet statusWindow --}
 statusWindow :: IConnection conn =>
                 GUI 
@@ -177,6 +172,7 @@ statusWindow gui dbh title func =
                  enableOK
 {-- /snippet statusWindow --}
 
+{-- snippet statusWindowFuncs --}
 guiUpdate :: IConnection conn => GUI -> conn -> IO ()
 guiUpdate gui dbh = 
     statusWindow gui dbh "Pod: Update" (update dbh)
@@ -187,6 +183,13 @@ guiDownload gui dbh =
 guiFetch gui dbh =
     statusWindow gui dbh "Pod: Fetch" 
                      (\logf -> update dbh logf >> download dbh logf)
+{-- /snippet statusWindowFuncs --}
+
+{-- snippet workerFuncs --}
+add dbh url = 
+    do addPodcast dbh pc
+       commit dbh
+    where pc = Podcast {castId = 0, castURL = url}
 
 update :: IConnection conn => conn -> (String -> IO ()) -> IO ()
 update dbh logf = 
@@ -210,3 +213,4 @@ download dbh logf =
           procEpisode ep =
               do logf $ "Downloading " ++ (epURL ep)
                  getEpisode dbh ep
+{-- /snippet workerFuncs --}
