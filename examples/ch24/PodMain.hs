@@ -35,6 +35,9 @@ data GUI = GUI {
 
 main = withSocketsDo $ handleSqlError $
     do initGUI                  -- Initialize GTK engine
+       -- Every so often, we try to run other threads.
+       timeoutAddFull (yield >> return True)
+                      priorityDefaultIdle 100
        gui <- loadGlade
        dbh <- connect "pod.db"
 
@@ -110,16 +113,13 @@ statusWindow gui dbh title func =
        widgetSetSensitivity (swOKBt gui) False
        widgetSetSensitivity (swCancelBt gui) True
 
-       putStrLn "before forkIO"
        childThread <- forkIO childTasks
-       putStrLn "after forkIO"
        onClicked (swCancelBt gui) (cancelChild childThread)
        
        -- Show the window
        windowPresent (statusWin gui)
     where childTasks =
               do updateLabel "Starting thread..."
-                 putStrLn "Starting thread..."
                  func updateLabel
                  -- After the child task finishes, enable OK
                  -- and disable Cancel
@@ -144,6 +144,7 @@ statusWindow gui dbh title func =
 update dbh logf = 
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
+       logf "Update complete."
     where procPodcast pc =
               do logf $ "Updating from " ++ (castURL pc)
                  updatePodcastFromFeed dbh pc
