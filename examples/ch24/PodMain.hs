@@ -110,13 +110,17 @@ statusWindow gui dbh title func =
        widgetSetSensitivity (swOKBt gui) False
        widgetSetSensitivity (swCancelBt gui) True
 
+       putStrLn "before forkIO"
        childThread <- forkIO childTasks
+       putStrLn "after forkIO"
        onClicked (swCancelBt gui) (cancelChild childThread)
        
        -- Show the window
        windowPresent (statusWin gui)
     where childTasks =
-              do func updateLabel
+              do updateLabel "Starting thread..."
+                 putStrLn "Starting thread..."
+                 func updateLabel
                  -- After the child task finishes, enable OK
                  -- and disable Cancel
                  enableOK
@@ -124,7 +128,7 @@ statusWindow gui dbh title func =
           enableOK = 
               do widgetSetSensitivity (swCancelBt gui) False
                  widgetSetSensitivity (swOKBt gui) True
-                 onClicked (swOKBt gui) (widgetHide (addWin gui))
+                 onClicked (swOKBt gui) (widgetHide (statusWin gui))
                  return ()
 
           updateLabel text =
