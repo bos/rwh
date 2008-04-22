@@ -129,6 +129,7 @@ add dbh url =
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
 
+{-- snippet statusWindow --}
 statusWindow :: IConnection conn =>
                 GUI 
              -> conn 
@@ -143,7 +144,13 @@ statusWindow gui dbh title func =
        widgetSetSensitivity (swOKBt gui) False
        widgetSetSensitivity (swCancelBt gui) True
 
+       -- Set the title
+       windowSetTitle (statusWin gui) title
+
+       -- Start the operation
        childThread <- forkIO childTasks
+
+       -- Define what happens when clicking on Cancel
        onClicked (swCancelBt gui) (cancelChild childThread)
        
        -- Show the window
@@ -168,7 +175,8 @@ statusWindow gui dbh title func =
                  yield
                  updateLabel "Action has been cancelled."
                  enableOK
-          
+{-- /snippet statusWindow --}
+
 guiUpdate :: IConnection conn => GUI -> conn -> IO ()
 guiUpdate gui dbh = 
     statusWindow gui dbh "Pod: Update" (update dbh)

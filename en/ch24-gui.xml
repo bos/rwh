@@ -358,6 +358,35 @@
       <graphic fileref="figs/gui-pod-addwin.png"/>
     </informalfigure>
   </sect1>
+
+  <sect1 id="gui.longrunning">
+    <title>Long-Running Tasks</title>
+    <para>
+      As we think about the buttons available in the main window,
+      three of them correspond to tasks that could take awhile to
+      complete: update, download, and fetch.  While these operations
+      take place, we'd like to do two things with our GUI: provide the
+      user with the status of the operation, and provide the user with
+      the ability to cancel the operation as it is in progress.
+    </para>
+    <para>
+      Since all three of these things are very similar operations, it
+      makes sense to provide a generic way to handle this
+      interaction.  We have defined a single status window widget in
+      the Glade file that will be used by all three of these.  In our
+      Haskell source code, we'll define a generic
+      <literal>statusWindow</literal> function that will be used by
+      all three of these operations as well.
+    </para>
+    <para>
+      <literal>statusWindow</literal> takes four parameters: the GUI
+      information, the database information, a &String; giving the
+      title of the window, and a function that will perform the
+      operation.  This function will itself by passed a function that
+      it can call to report its progress.  Here's the code:
+    </para>
+    &PodMain.hs:statusWindow;
+  </sect1>
     
   <sect1 id="gui.exercises">
     <title>Exercises</title>
