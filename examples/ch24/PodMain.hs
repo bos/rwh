@@ -23,7 +23,11 @@ data GUI = GUI {
       statusWin :: Dialog,
       swOKBt :: Button,
       swCancelBt :: Button,
-      swLabel :: Label}
+      swLabel :: Label,
+      addWin :: DIalog,
+      awOKBt :: Button,
+      awCancelBt :: Button,
+      awEntry :: Entry}
 
 -- import Paths_Pod(getDataFileName)
 
@@ -45,16 +49,21 @@ loadGlade =
 
        -- Load main window buttons
 
-       [mwAdd, mwUpdate, mwDownload, mwFetch, mwExit, swOK, swCancel] <-
+       [mwAdd, mwUpdate, mwDownload, mwFetch, mwExit, swOK, swCancel,
+        auOK, auCancel] <-
            mapM (xmlGetWidget xml castToButton)
            ["addButton", "updateButton", "downloadButton",
-            "fetchButton", "exitButton", "okButton", "cancelButton"]
+            "fetchButton", "exitButton", "okButton", "cancelButton",
+            "auOK", "auCancel"]
        
        sw <- xmlGetWidget xml castToDialog "statusDialog"
        swl <- xmlGetWidget xml castToLabel "statusLabel"
 
+       au <- xmlGetWidget xml castToDialog "addDialog"
+       aue <- xmlGetWidget xml castToEntry "auEntry"
+
        return $ GUI mw mwAdd mwUpdate mwDownload mwFetch mwExit
-              sw swOK swCancel swl
+              sw swOK swCancel swl au auOK auCancel aue
 
 connectGui gui dbh =
     do -- When the close button is clicked, terminate GUI loop
@@ -62,18 +71,35 @@ connectGui gui dbh =
        onDestroy (mainWin gui) mainQuit
        
        -- Main window buttons
-       onClicked (mwAddBt gui) (add gui dbh)
-       onClicked (mwUpdateBt gui) (update gui dbh)
-       onClicked (mwDownloadBt gui) (download gui dbh)
-       onClicked (mwFetchBt gui) (fetch gui dbh)
+       onClicked (mwAddBt gui) (guiAdd gui dbh)
+       onClicked (mwUpdateBt gui) (guiUpdate gui dbh)
+       onClicked (mwDownloadBt gui) (guiDownload gui dbh)
+       onClicked (mwFetchBt gui) (guiFetch gui dbh)
        onClicked (mwExitBt gui) mainQuit
 
        -- We leave the status window buttons for later
+
+guiAdd gui dbh = 
+    do -- Initialize the add URL window
+       entrySetText (awEntry gui) ""
+       onClicked (awCancelBt gui) (widgetHide (addWin gui))
+       onClicked (awOKBt gui) procOK
+       
+       -- Show the add URL window
+       windowPresent (addWin gui)
+    where procOK =
+              do url <- entryGetText (awEntry gui)
+                 widgetHide (addWin gui) -- Remove the dialog
+                 add dbh text            -- Add to the DB
+
+guiAdd gui dbh = fail "Not implemented"
 
 add dbh url = 
     do addPodcast dbh pc
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
+
+guiUpdate gui dbh = fail "Not implemented"
 
 update dbh = 
     do pclist <- getPodcasts dbh
@@ -81,6 +107,10 @@ update dbh =
     where procPodcast pc =
               do putStrLn $ "Updating from " ++ (castURL pc)
                  updatePodcastFromFeed dbh pc
+
+guiDownload gui dbh = fail "Not implemented"
+
+guiFetch gui dbh = fail "Not implemented"
 
 download dbh =
     do pclist <- getPodcasts dbh
