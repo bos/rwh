@@ -276,6 +276,7 @@ ghc --make -O2 -o pod -package HTTP -package HaXml -package network \
       <remark>FIXME: insert ref</remark> to build this project:
     </para>
     <programlisting>
+-- ch23/pod.cabal
 Name: pod
 Version: 1.0.0
 Build-type: Simple
