@@ -30,10 +30,12 @@ data GUI = GUI {
 main = withSocketsDo $ handleSqlError $
     do initGUI                  -- Initialize GTK engine
        gui <- loadGlade
-       connectGui gui
+       dbh <- connect "pod.db"
+
+       connectGui gui dbh
+       mainGUI
        
        args <- getArgs
-       dbh <- connect "pod.db"
        case args of
          ["add", url] -> add dbh url
          ["update"] -> update dbh
@@ -48,10 +50,7 @@ loadGlade =
 
        -- Load main window
        mw <- xmlGetWidget xml castToWindow "mainWindow"
-       -- When the close button is clicked...
-                  
-       onDestroy mainWin exitApp
-       
+
        -- Load main window buttons
 
        [mwAdd, mwUpdate, mwDownload, mwFetch, mwExit, swOK, swCancel] <-
@@ -64,6 +63,19 @@ loadGlade =
 
        return $ GUI mw mwAdd mwUpdate mwDownload mwFetch mwExit
               sw swOK swCancel swl
+
+connectGui gui dbh =
+    do -- When the close button is clicked...
+       onDestroy (mainWin gui) podExit
+       
+       -- Main window buttons
+       onClicked (mwAddBt gui) (add gui dbh)
+       onClicked (mwUpdateBt gui) (update gui dbh)
+       onClicked (mwDownloadBt gui) (download gui dbh)
+       onClicked (mwFetchBt gui) (fetch gui dbh)
+       onClicked (mwExitBt gui) podExit
+
+       -- We leave the status window buttons for later
 
 add dbh url = 
     do addPodcast dbh pc
