@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch23/PodDB.hs
+-- ch24/PodDB.hs
 
 module PodDB where
 

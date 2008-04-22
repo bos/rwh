@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch23/PodParser.hs
+-- ch24/PodParser.hs
 
 module PodParser where
 

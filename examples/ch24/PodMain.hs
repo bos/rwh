@@ -1,7 +1,7 @@
-{-- snippet all --}
--- ch23/PodMain.hs
+{-- snippet imports --}
+-- ch24/PodMain.hs
 
-module Main where
+module PodMain where
 
 import PodDownload
 import PodDB
@@ -19,6 +19,9 @@ import Graphics.UI.Gtk.Glade
 
 import Control.Concurrent
 
+{-- /snippet imports --}
+
+{-- snippet type --}
 -- | Our main GUI type
 data GUI = GUI {
       mainWin :: Window,
@@ -35,24 +38,23 @@ data GUI = GUI {
       awOKBt :: Button,
       awCancelBt :: Button,
       awEntry :: Entry}
+{-- /snippet type --}
 
--- import Paths_Pod(getDataFileName)
-
-main = withSocketsDo $ handleSqlError $
+main gladepath = withSocketsDo $ handleSqlError $
     do initGUI                  -- Initialize GTK engine
        -- Every so often, we try to run other threads.
        timeoutAddFull (yield >> return True)
                       priorityDefaultIdle 100
-       gui <- loadGlade
+       gui <- loadGlade gladepath
        dbh <- connect "pod.db"
 
        connectGui gui dbh
-       mainGUI
+       mainGUI                  -- Main GTK loop; exits when GUI done
        
        disconnect dbh
 
-loadGlade =
-    do Just xml <- xmlNew "podresources.glade"
+loadGlade gladepath =
+    do Just xml <- xmlNew gladepath
 
        -- Load main window
        mw <- xmlGetWidget xml castToWindow "mainWindow"
@@ -172,4 +174,3 @@ download dbh logf =
           procEpisode ep =
               do logf $ "Downloading " ++ (epURL ep)
                  getEpisode dbh ep
-{-- /snippet all --}

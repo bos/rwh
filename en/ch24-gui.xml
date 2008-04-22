@@ -127,6 +127,95 @@
       </para>
     </sect2>
   </sect1>
+  
+  <sect1 id="gui.event">
+    <title>Event-Driven Programming</title>
+    <para>
+      GTK+, like many GUI toolkits, is an
+      <emphasis>event-driven</emphasis> toolkit.  That means that
+      instead of, say, displaying a dialog box and waiting for the
+      user to click on a button, we instead tell gtk2hs what function
+      to call if a certain button is clicked, but don't sit there
+      waiting for a click in the dialog box.
+    </para>
+    <para>
+      This is different from the model traditionally used for console
+      programs.  When you think about it, though, it almost has to
+      be.  A GUI program could have multiple windows open, and writing
+      code to sit there waiting for input in the particular
+      combination of open windows could be a complicated proposition.
+    </para>
+    <para>
+      Event-driven programming compliments Haskell nicely.  As we've
+      discussed over and over in this book, functional languages
+      thrive on passing around functions.  So we'll be passing
+      functions to gtk2hs that get called when certain events occur.
+      These are known as <emphasis>callback functions</emphasis>.
+    </para>
+    <para>
+      At the core of a GTK+ program is the <emphasis>main
+      loop</emphasis>.  This is the part of the program that waits for
+      actions from the user or commands from the program and carries
+      them out.  The GTK+ main loop is handled entirely by GTK+.  To
+      us, it looks like an I/O action that we execute, that doesn't
+      return until the GUI has been disposed of.
+    </para>
+    <para>
+      Since the main loop is responsible for doing everything from
+      handling clicks of a mouse to redrawing a window when it has
+      been uncovered, it must always be available.  We can't just run
+      a long-running task -- such as downloading a podcast episode --
+      from within the main loop.  This would make the GUI
+      unresponsive, and actions such as clicking a Cancel button
+      wouldn't be processed in a timely manner.
+    </para>
+    <para>
+      Therefore, we will be using multithreading to handle these
+      long-running tasks.  More information on multithreading can be
+      found in <xref linkend="concurrent"/>.  For now, just know that
+      we will use <literal>forkIO</literal> to create new threads for
+      long-running tasks such as downloading podcast feeds and
+      episodes.  For very quick tasks, such as adding a new podcast to
+      the database, we will not bother with a separate thread since it
+      will be executed so fast the user will never notice.
+    </para>
+  </sect1>
+
+  <sect1 id="gui.init">
+    <title>Initializing the GUI</title>
+    <para>
+      Our first steps are going to involve initializing the GUI for
+      our program.  For reasons that we'll explain later,
+      <remark>FIXME: add link</remark> we're going to have a small
+      file called <literal>PodLocalMain.hs</literal> that loads
+      <literal>PodMain</literal> and passes to it the path to
+      <literal>podresources.glade</literal>, the XML file saved by
+      Glade that gives the information about our GUI widgets.
+    </para>
+    &PodLocalMain.hs:all;
+    <para>
+      Now, let's consider <literal>PodMain.hs</literal>.  This file is
+      the only Haskell source file that we had to modify from the
+      example in <xref linkend="wc"/> to make it work as a GUI.  Let's
+      start by looking at the start of our new
+      <literal>PodMain.hs</literal> file.
+    </para>
+    &PodMain.hs:imports;
+    <para>
+      This first part of <literal>PodMain.hs</literal> is similar to
+      our non-GUI version.  We import three additional components,
+      however.  First, we have <literal>Graphics.UI.Gtk</literal>,
+      which provides most of the GTK+ functions we will be using.
+      Both this module and <literal>Database.HDBC</literal> provide a
+      function named <literal>disconnect</literal>.  Since we'll be
+      using the HDBC version, but not the GTK+ version, we don't
+      import that function from <literal>Graphics.UI.Gtk</literal>.
+      <literal>Graphics.UI.Gtk.Glade</literal> contains functions
+      needed for loading and working with our Glade file.
+    </para>
+    <para>
+      We also import <literal>Control.Concurrent</literal>, which has
+      the basics needed for multi-threaded programming.  
 
   <sect1 id="gui.exercises">
     <title>Exercises</title>
