@@ -54,8 +54,8 @@
     </para>
   </sect1>
 
-  <sect1 id="gui.steps">
-    <title>First Steps</title>
+  <sect1 id="gui.glade">
+    <title>User Interface Design with Glade</title>
     <para>
       In this chapter, we are going to develop a GUI for the podcast
       downloader we first developed in <xref linkend="wc"/>.  Our
@@ -88,6 +88,44 @@
         </para>
       </listitem>
     </itemizedlist>
+    <sect2 id="gui.glade.concepts">
+      <title>Glade Concepts</title>
+      <para>
+        Glade is a user interface design tool.  It lets us use a
+        graphical interface to design our graphical interface.  We
+        could build up the window components using a bunch of calls to
+        GTK+ functions, but it is usually easier to do this with
+        Glade.
+      </para>
+      <para>
+        The fundamental "thing" we work with in GTK+ is the
+        <emphasis>widget</emphasis>.  A widget represents any part of
+        the GUI, and may contain other widgets.  Some examples of
+        widgets include a window, dialog box, button, and text within the
+        button.
+      </para>
+      <para>
+        Glade, then, is a widget layout tool.  We set up a whole tree
+        of widgets, with top-level windows at the top of the tree.
+        Glade saves this description into an XML file.  Our program
+        loads this XML file at runtime.  We load the widgets by asking
+        the Glade runtime library to load a widget with a specific
+        name.
+      </para>
+      <para>
+        Here's a screenshot of an example working with Glade to design
+        our application's main screen:
+      </para>
+      <informalfigure>
+        <graphic fileref="figs/gui-glade-3.png"/>
+      </informalfigure>
+      <para>
+        In the downloadable material available for this book, you can
+        find the full Glade XML file as
+        <literal>podresources.glade</literal>.  You can load this file
+        in Glade and edit it if you wish.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="gui.exercises">
