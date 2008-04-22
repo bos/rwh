@@ -313,10 +313,52 @@
       At this point, we have completely defined the main window for
       the GUI podcatcher.  It looks like this:
     </para>
+
+    <informalfigure>
+      <graphic fileref="figs/gui-pod-mainwin.png"/>
+    </informalfigure>
   </sect1>
 
-  
-
+  <sect1 id="gui.add">
+    <title>The Add Podcast Window</title>
+    <para>
+      Now that we've covered the main window, let's talk about the
+      other windows that our application presents, starting with the
+      Add Podcast window.  When the user clicks the button to add a
+      new podcast, we need to pop up a dialog box to prompt for the
+      URL of the podcast.  We have defined this dialog box in Glade,
+      so all we need to do is set it up.
+    </para>
+    <para>
+      We start by calling <literal>entrySetText</literal> to set the
+      contents of the entry box (the place where the user types in the
+      URL) to the empty string.  That's because the same widget gets
+      reused over the lifetime of the program, and we don't want the
+      last URL the user entered to remain there.  Next, we set up
+      actions for the two buttons in the dialog.  If the users clicks
+      on the cancel button, we simply remove the dialog box from the
+      screen by calling <literal>widgetHide</literal> on it.  If the
+      user clicks the OK button, we call <literal>procOK</literal>.
+    </para>
+    <para>
+      <literal>procOK</literal> starts by retrieving the supplied URL
+      from the entry widget.  Next, it uses
+      <literal>widgetHide</literal> to get rid of the dialog box.
+      Finally, it calls <literal>add</literal> to add the URL to the
+      database.  This <literal>add</literal> is exactly the same
+      function as we had in the non-GUI version of the program.
+    </para>
+    <para>
+      Note that the <literal>guiAdd</literal> function returns almost
+      immediately.  It just sets up the widgets and causes the box to
+      be displayed; at no point does it block waiting for input.
+      Here's what the dialog box looks like:
+    </para>
+    <informalfigure>
+      <graphic fileref="figs/gui-pod-addwin.png"/>
+    </informalfigure>
+  </sect1>
+    
   <sect1 id="gui.exercises">
     <title>Exercises</title>
 

@@ -109,6 +109,7 @@ connectGui gui dbh =
        -- We leave the status window buttons for later
 {-- /snippet connectGui --}
 
+{-- snippet guiAdd --}
 guiAdd gui dbh = 
     do -- Initialize the add URL window
        entrySetText (awEntry gui) ""
@@ -121,6 +122,7 @@ guiAdd gui dbh =
               do url <- entryGetText (awEntry gui)
                  widgetHide (addWin gui) -- Remove the dialog
                  add dbh url             -- Add to the DB
+{-- /snippet guiAdd --}
 
 add dbh url = 
     do addPodcast dbh pc
