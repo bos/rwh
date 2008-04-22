@@ -349,6 +349,12 @@
       function as we had in the non-GUI version of the program.
     </para>
     <para>
+      The last thing we do in <literal>guiAdd</literal> is actually
+      display the pop-up window.  That's done by calling
+      <literal>windowPresent</literal>, which is the opposite of
+      <literal>widgetHide</literal>.
+    </para>
+    <para>
       Note that the <literal>guiAdd</literal> function returns almost
       immediately.  It just sets up the widgets and causes the box to
       be displayed; at no point does it block waiting for input.
@@ -386,6 +392,24 @@
       it can call to report its progress.  Here's the code:
     </para>
     &PodMain.hs:statusWindow;
+    <para>
+      This function starts by clearing the label text from the last
+      run.  Next, we disable (gray out) the OK button and enable the
+      cancel button.  While the operation is in progress, clicking OK
+      doesn't make much sense.  And when it's done, clicking Cancel
+      doesn't make much sense.
+    </para>
+    <para>
+      Next, we set the title of the window.  The title is the part
+      that is displayed by the system in the title bar of the window.
+      Finally, we start off the new thread (represented by
+      <literal>childTasks</literal>) and save off its thread ID.
+      Then, we define what to do if the user clicks on Cancel -- we
+      call <literal>cancelChild</literal>, passing along the thread
+      ID.  Finally, we call <literal>windowPresent</literal> to show
+      the status window.
+    </para>
+      
   </sect1>
     
   <sect1 id="gui.exercises">
