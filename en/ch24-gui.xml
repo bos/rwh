@@ -89,6 +89,22 @@
       </listitem>
     </itemizedlist>
   </sect1>
+
+  <sect1 id="gui.exercises">
+    <title>Exercises</title>
+
+    <orderedlist>
+      <listitem><para>Modify the podcatcher to be able to run with
+      either the GUI or the command-line interface from a single code
+      base.  Hint: move common code out of
+      <literal>PodMain.hs</literal>, then have two different
+      <literal>Main</literal> modules, one for the GUI, and one for
+      the command line.
+        </para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+
 </chapter>
 
 <!--

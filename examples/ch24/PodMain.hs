@@ -10,11 +10,16 @@ import System.Environment
 import Database.HDBC
 import Network.Socket(withSocketsDo)
 
+-- GUI libraries
+
 import Graphics.UI.Gtk hiding (disconnect)
 import Graphics.UI.Gtk.Glade
 
+-- Threading
+
 import Control.Concurrent
 
+-- | Our main GUI type
 data GUI = GUI {
       mainWin :: Window,
       mwAddBt :: Button,
