@@ -13,6 +13,8 @@ import Network.Socket(withSocketsDo)
 import Graphics.UI.Gtk hiding (disconnect)
 import Graphics.UI.Gtk.Glade
 
+import Control.Concurrent
+
 data GUI = GUI {
       mainWin :: Window,
       mwAddBt :: Button,
@@ -97,13 +99,49 @@ add dbh url =
        commit dbh
     where pc = Podcast {castId = 0, castURL = url}
 
-guiUpdate gui dbh = fail "Not implemented"
+guiUpdate gui dbh = 
+    statusWindow gui dbh "Pod: Update" (update dbh)
 
-update dbh = 
+statusWindow gui dbh title func =
+    do -- Clear the status text
+       labelSetText (swLabel gui) ""
+       
+       -- Disable the OK button, enable Cancel button
+       widgetSetSensitivity (swOKBt gui) False
+       widgetSetSensitivity (swCancelBt gui) True
+
+       childThread <- forkIO childTasks
+       onClicked (swCancelBt gui) (cancelChild childThread)
+       
+       -- Show the window
+       windowPresent (statusWin gui)
+    where childTasks =
+              do func updateLabel
+                 -- After the child task finishes, enable OK
+                 -- and disable Cancel
+                 enableOK
+                 
+          enableOK = 
+              do widgetSetSensitivity (swCancelBt gui) False
+                 widgetSetSensitivity (swOKBt gui) True
+                 onClicked (swOKBt gui) (widgetHide (addWin gui))
+                 return ()
+
+          updateLabel text =
+              labelSetText (swLabel gui) text
+          cancelChild childThread =
+              do killThread childThread
+                 yield
+                 updateLabel "Action has been cancelled."
+                 enableOK
+          
+                 
+
+update dbh logf = 
     do pclist <- getPodcasts dbh
        mapM_ procPodcast pclist
     where procPodcast pc =
-              do putStrLn $ "Updating from " ++ (castURL pc)
+              do logf $ "Updating from " ++ (castURL pc)
                  updatePodcastFromFeed dbh pc
 
 guiDownload gui dbh = fail "Not implemented"
