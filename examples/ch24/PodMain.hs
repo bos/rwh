@@ -10,7 +10,7 @@ import System.Environment
 import Database.HDBC
 import Network.Socket(withSocketsDo)
 
-import Graphics.UI.Gtk
+import Graphics.UI.Gtk hiding (disconnect)
 import Graphics.UI.Gtk.Glade
 
 data GUI = GUI {
@@ -24,7 +24,7 @@ data GUI = GUI {
       swOKBt :: Button,
       swCancelBt :: Button,
       swLabel :: Label,
-      addWin :: DIalog,
+      addWin :: Dialog,
       awOKBt :: Button,
       awCancelBt :: Button,
       awEntry :: Entry}
@@ -90,9 +90,7 @@ guiAdd gui dbh =
     where procOK =
               do url <- entryGetText (awEntry gui)
                  widgetHide (addWin gui) -- Remove the dialog
-                 add dbh text            -- Add to the DB
-
-guiAdd gui dbh = fail "Not implemented"
+                 add dbh url             -- Add to the DB
 
 add dbh url = 
     do addPodcast dbh pc
