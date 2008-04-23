@@ -335,15 +335,15 @@
       too far, which causes adjacent bars to blur together.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-angled.jpg"/>
+      <graphic fileref="figs/ch13-bad-angled.jpg"/>
     </informalfigure>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-too-near.jpg"/>
+      <graphic fileref="figs/ch13-bad-too-near.jpg"/>
     </informalfigure>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-too-far.jpg"/>
+      <graphic fileref="figs/ch13-bad-too-far.jpg"/>
     </informalfigure>
   </sect1>
 
@@ -541,7 +541,7 @@
       is crop it down to the barcode.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-photo.jpg"/>
+      <graphic fileref="figs/ch13-barcode-photo.jpg"/>
     </informalfigure>
 
     <para id="x_ZU">The encoded digit string, 9780132114677, is printed below
@@ -552,7 +552,7 @@
       offer barcode image generation for free.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-generated.png"/>
+      <graphic fileref="figs/ch13-barcode-generated.png"/>
     </informalfigure>
 
     <para id="x_aU">We've chosen a row from the captured image, and stretched it
@@ -561,7 +561,7 @@
       the two are aligned.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-example.png"/>
+      <graphic fileref="figs/ch13-barcode-example.png"/>
     </informalfigure>
 
     <para id="x_bU">The luminance-converted row from the photo is in the dark
@@ -948,7 +948,7 @@
 	  key/value pair, we use <function>empty</function> or
 	  <function>singleton</function>, respectively.</para>
 
-	&ch12-map.ghci:create;
+	&ch13-map.ghci:create;
 
 	<para id="x_YV">Since the implementation is abstract, we can't pattern
 	  match on <type>Map</type> values.  Instead, there are two
@@ -957,7 +957,7 @@
 	  worry; all will become clear shortly, in <xref
 	    linkend="monads"/>.</para>
 
-	&ch12-map.ghci:lookup.type;
+	&ch13-map.ghci:lookup.type;
 
 	<para id="x_ZV">Most often, the type parameter <varname
 	    role="type">m</varname> in the result is
@@ -966,7 +966,7 @@
 	  return the value wrapped in <code>Just</code>.  Otherwise,
 	  it will return <code>Nothing</code>.</para>
 
-	&ch12-map.ghci:lookup;
+	&ch13-map.ghci:lookup;
 
 	<para id="x_aV">The <function>findWithDefault</function> function takes
 	  a value to return if the key isn't in the map.</para>
@@ -993,7 +993,7 @@
 	  any matching value that may already have been
 	  present.</para>
 
-	&ch12-map.ghci:insert;
+	&ch13-map.ghci:insert;
 
 	<para id="x_eV">The <function>insertWith'</function> function takes a
 	  further <emphasis>combining function</emphasis> as its
@@ -1002,7 +1002,7 @@
 	  called on the new and old values, and its result is inserted
 	  into the map.</para>
 
-	&ch12-map.ghci:insertWith;
+	&ch13-map.ghci:insertWith;
 	
 	<para id="x_fV">As the tick at the end of its name suggests,
 	  <function>insertWith'</function> evaluates the combining
@@ -1015,7 +1015,7 @@
 	  given key from the map.  It returns the map unmodified if
 	  the key was not present.</para>
 
-	&ch12-map.ghci:delete;
+	&ch13-map.ghci:delete;
 
 	<para id="x_hV">Finally, there are several efficient functions for
 	  performing set-like operations on maps.  Of these, we'll be
@@ -1024,7 +1024,7 @@
 	  key, the result will contain the value from the left
 	  map.</para>
 
-	&ch12-map.ghci:union;
+	&ch13-map.ghci:union;
 
 	<para id="x_iV">We have barely covered ten per cent of the
 	  <code>Data.Map</code> API.  For further inspiration, we

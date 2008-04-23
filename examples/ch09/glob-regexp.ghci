@@ -1,6 +1,6 @@
 --# tiny
 
-:load glob-to-regexp/GlobRegexTiny.hs
+:load GlobRegexTiny.hs
 
 globToRegex "*"
 
@@ -10,7 +10,7 @@ globToRegex "**"
 
 --# real
 
-:load glob-to-regexp/GlobRegex.hs
+:load GlobRegex.hs
 :module +Text.Regex.Posix
 
 globToRegex "f??.c"

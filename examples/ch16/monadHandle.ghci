@@ -1,3 +1,5 @@
+:load MonadHandle
+
 --# IO
 safeHello "hello to my fans in domestic surveillance"
 removeFile "hello to my fans in domestic surveillance"

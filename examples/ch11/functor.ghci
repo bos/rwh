@@ -16,7 +16,11 @@ treeMap (odd . length) tree
 --# fmap
 
 fmap length ["foo","quux"]
-fmap length (Tree (Leaf "livingstone") (Leaf "i presume"))
+fmap length (Node (Leaf "livingstone") (Leaf "i presume"))
+
+--# id
+
+fmap id (Node (Leaf "a") (Leaf "b"))
 
 --# EitherInt
 
@@ -27,10 +31,6 @@ fmap length (Tree (Leaf "livingstone") (Leaf "i presume"))
 :load EitherIntFlexible
 fmap (== "cheeseburger") (Left 1 :: Either Int String)
 fmap (== "cheeseburger") (Right "fries" :: Either Int String)
-
---# id
-
-fmap id (Tree (Leaf "a") (Leaf "b"))
 
 --# shape
 

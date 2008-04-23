@@ -1,4 +1,4 @@
-:set -i../ch10
+:set -i../ch11
 
 :load PNM
 :m +Control.Monad

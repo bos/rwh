@@ -38,6 +38,7 @@ getModificationTime "."
 
 --# filterM
 
+:m +Control.Monad
 :type filterM
 
 --# handle

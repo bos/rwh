@@ -1,4 +1,4 @@
-:load ch04.exercises
+:load ch05.exercises
 
 --# asInt_fold
 asInt_fold "101"
