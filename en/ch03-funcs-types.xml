@@ -19,7 +19,7 @@
       <quote>has type <code>X</code></quote>, or <quote>is of type
 	<code>X</code></quote>.</para>
     
-    <para>Before we launch into a deeper discussion of Haskell's type
+    <para id="x_ol">Before we launch into a deeper discussion of Haskell's type
       system, let's talk about why we should care about types at all:
       what are they even <emphasis>for</emphasis>?  At the lowest
       level, a computer is concerned with bytes, with barely any
@@ -32,20 +32,20 @@
       won't let us treat a hotel reservation as a car rental
       receipt.</para>
 
-    <para>The benefit of introducing abstraction is that it lets us
+    <para id="x_pl">The benefit of introducing abstraction is that it lets us
       forget or ignore low-level details.  If I know that a value in
       my program is a string, I don't have to know the intimate
       details of how strings are implemented: I can just assume that
       my string is going to behave like all the other strings I've
       worked with.</para>
 
-    <para>What makes type systems interesting is that they're not all
+    <para id="x_ql">What makes type systems interesting is that they're not all
       equal.  In fact, different type systems are often not even
       concerned with the same kinds of problems.  A programming
       language's type system deeply colours the way we think, and
       write code, in that language.</para>
 
-    <para>Haskell's type system allows us to think at a very abstract
+    <para id="x_rl">Haskell's type system allows us to think at a very abstract
       level: this is what permits us to write concise, powerful
       programs.  However, we don't give up the ability to <quote>get
 	close to the metal</quote> when low-level performance is
@@ -91,7 +91,7 @@
 	must explicitly coerce types by applying coercion
 	functions.</para>
 
-      <para>Strong typing does occasionally make it more difficult to
+      <para id="x_sl">Strong typing does occasionally make it more difficult to
 	write certain kinds of code.  For example, a classic way to
 	write low-level code in the C language is to be given a byte
 	array, and cast it to treat the bytes as if they're really a
@@ -101,7 +101,7 @@
 	the same structured view of the data, we would need to do some
 	copying, which would cost a little in performance.</para>
 
-      <para>The huge benefit of strong typing is that it catches real
+      <para id="x_tl">The huge benefit of strong typing is that it catches real
 	bugs in our code before they can cause problems.  For example,
 	in a strongly typed language, we can't accidentally use a
 	string where an integer is expected.</para>
@@ -115,14 +115,14 @@
 	  broad terms about the notion of strength in type
 	  systems.</para>
 
-	<para>In academic computer science, the meanings of
+	<para id="x_ul">In academic computer science, the meanings of
 	  <quote>strong</quote> and <quote>weak</quote> have a
 	  narrowly technical meaning: strength refers to <emphasis>how
 	    permissive</emphasis> a type system is. A weaker type
 	  system treats more expressions as valid than a stronger type
 	  system.</para>
 
-	<para>For example, in Perl, the expression <code>"foo" +
+	<para id="x_vl">For example, in Perl, the expression <code>"foo" +
 	    2</code> evaluates to the number 2, but the expression
 	  <code>"13foo" + 2</code> evaluates to the number 15. Haskell
 	  rejects both expressions as invalid, because the
@@ -131,7 +131,7 @@
 	  permissive than Haskell's, we say that it is weaker under
 	  this narrow technical interpretation.</para>
 	
-	<para>The fireworks around type systems have their roots in
+	<para id="x_wl">The fireworks around type systems have their roots in
 	  ordinary English, where people attach notions of
 	  <emphasis>value</emphasis> to the words <quote>weak</quote>
 	  and <quote>strong</quote>: we usually think of strength as
@@ -166,7 +166,7 @@
 	match the required type, the compiler rejects this expression
 	as ill typed.</para>
       
-      <para>Static typing does make writing some useful programs
+      <para id="x_xl">Static typing does make writing some useful programs
 	difficult, or sometimes impossible.  In languages like Python,
 	<quote>duck typing</quote> is common, where an object acts
 	enough like another to be used as a substitute for it. While
@@ -184,14 +184,14 @@
 	languages. (Perhaps a more realistic way of putting this is
 	that Haskell code often has fewer trivial bugs.)</para>
 
-      <para>Programs written in dynamically typed languages require
+      <para id="x_yl">Programs written in dynamically typed languages require
 	large suites of tests to give some assurance that simple type
 	errors cannot occur.  Test suites cannot offer complete
 	coverage: some common tasks, such as refactoring a program to
 	make it more modular, can introduce new type errors that a
 	test suite may not expose.</para>
 
-      <para>In Haskell, the compiler proves the absence of type errors
+      <para id="x_zl">In Haskell, the compiler proves the absence of type errors
 	for us: a Haskell program that compiles will not suffer from
 	type errors when it runs. Refactoring is usually a matter of
 	moving code around, then recompiling and tidying up a few
@@ -204,7 +204,7 @@
 
       <para id="x_v2">Finally, a Haskell compiler can automatically
 	deduce the types of almost<footnote>
-	  <para>Occasionally, we need to give the compiler a little
+	  <para id="x_Am">Occasionally, we need to give the compiler a little
 	    information to help it to make a choice in understanding
 	    our code.  <emphasis>XXX Insert link to wherever we talk
 	      about this.</emphasis></para>
@@ -219,11 +219,11 @@
   <sect1>
     <title>What to expect from the type system</title>
 
-    <para>Our exploration of the major capabilities and benefits of
+    <para id="x_Bm">Our exploration of the major capabilities and benefits of
       Haskell's type system will span a number of chapters.  Early on,
       you may find Haskell's types to be a chore to deal with.</para>
 
-    <para>For example, instead of simply writing some code and running
+    <para id="x_Cm">For example, instead of simply writing some code and running
       it to see if it works as you might in Python or Ruby, you'll
       first need to make sure that your program passes the scrutiny of
       the type checker.  Why stick with the learning curve?</para>
@@ -234,14 +234,14 @@
       typed languages, and often more expressive than dynamically
       typed languages.</para>
 
-    <para>Fixing type errors may initially feel like more work than if
+    <para id="x_Dm">Fixing type errors may initially feel like more work than if
       you were using a dynamic language.  It might help to look at
       this as moving much of your debugging <emphasis>up
 	front</emphasis>.  The compiler shows you many of the logical
       flaws in your code, instead of leaving you to stumble across
       problems at runtime.</para>
 
-    <para>Furthermore, because Haskell can infer the types of your
+    <para id="x_Em">Furthermore, because Haskell can infer the types of your
       expressions and functions, you gain the benefits of static
       typing <emphasis>without</emphasis> the added burden of
       <quote>finger typing</quote> imposed by less powerful statically
@@ -250,7 +250,7 @@
       <emphasis>you</emphasis>.  The tradeoff is that you have to
       learn to work within the framework it provides.</para>
 
-    <para>We will introduce new uses of Haskell's types throughout
+    <para id="x_Fm">We will introduce new uses of Haskell's types throughout
       this book, to help us to write and test practical code.  As a
       result, the complete picture of why the type system is
       worthwhile will emerge gradually.  While each step should
@@ -322,7 +322,7 @@
   <sect1 id="funcstypes.calling">
     <title>Function application</title>
 
-    <para>Now that we've had our fill of data types for a while, let's
+    <para id="x_Gm">Now that we've had our fill of data types for a while, let's
       turn our attention to <emphasis>working</emphasis> with some of
       the types we've seen, using functions.</para>
 
@@ -343,20 +343,20 @@
       languages, this notation can take a little getting used to, but
       it's simple and uniform.</para>
 
-    <para>Function application has higher precedence than using
+    <para id="x_Hm">Function application has higher precedence than using
       operators, so the following two expressions have the same
       meaning.</para>
 
     &func.ghci:precedence;
 
-    <para>The parentheses don't do any harm, but they add some visual
+    <para id="x_Im">The parentheses don't do any harm, but they add some visual
       noise.  Sometimes parentheses are necessary, for example to
       indicate how we want a complicated expression to be
       parsed.</para>
 
     &func.ghci:precedence2;
 
-    <para>This applies <function>compare</function> to the results of
+    <para id="x_Jm">This applies <function>compare</function> to the results of
       applying <code>odd 3</code> and <code>odd 6</code>,
       respectively.</para>
   </sect1>
@@ -374,7 +374,7 @@
       and that the type <quote>list of <type>Char</type></quote> is
       written <type>[Char]</type>.</para>
 
-    <para>The <function>head</function> function returns the first
+    <para id="x_Km">The <function>head</function> function returns the first
       element of a list.</para>
 
     &func.ghci:head;
@@ -393,16 +393,16 @@
       <function>head</function> function doesn't care what type of
       list it deals with.</para>
 
-    <para>Because a list can contain any type of value, we call it
+    <para id="x_Lm">Because a list can contain any type of value, we call it
       <emphasis>polymorphic</emphasis><footnote>
-	<para>We'll talk more about polymorphism in <xref
+	<para id="x_Mm">We'll talk more about polymorphism in <xref
 	    linkend="funcstypes.polymorphism"/>.</para>
       </footnote>.  When we want to write a polymorphic type, we use a
       <emphasis>type variable</emphasis>, which must begin with a
       lowercase letter.  A type variable is a placeholder, where
       eventually we'll substitute a real type.</para>
 
-    <para>If we have a type variable <varname role="type">a</varname>,
+    <para id="x_Nm">If we have a type variable <varname role="type">a</varname>,
       we can write the type <quote>list of <varname
 	  role="type">a</varname></quote> by enclosing the type
       variable in square brackets: <type>[a]</type>.  This amounts to
@@ -412,7 +412,7 @@
     <note>
       <title>Distinguishing type names and type variables</title>
 
-      <para>We can now see why a type name must start with an
+      <para id="x_Om">We can now see why a type name must start with an
 	uppercase letter: this makes it distinct from a type variable,
 	which must start with a lowercase letter.</para>
     </note>
@@ -449,7 +449,7 @@
       them from a list, whose elements must all have the same
       type.</para>
 
-    <para>To help to understand the difference, let's say we want to
+    <para id="x_Pm">To help to understand the difference, let's say we want to
       track two pieces of information about a book.  It has a year of
       publication, which is a number, and a title, which is a string.
       We can't keep both of these pieces of information in a list,
@@ -557,7 +557,7 @@
 
     &tuple.ghci:fst;
 
-    <para>If your background is in any of a number of other languages,
+    <para id="x_Qm">If your background is in any of a number of other languages,
       each of these may look like an application of a function to two
       arguments. Under Haskell's convention for function application,
       each one is an application of a single pair.</para>
@@ -639,20 +639,20 @@
       The function has a side effect, even though it never modifies
       the variable itself.</para>
 
-    <para>Side effects are essentially invisible inputs to, or outputs
+    <para id="x_Rm">Side effects are essentially invisible inputs to, or outputs
       from, functions.  In Haskell, the default is for functions to
       <emphasis>not</emphasis> have side effects: the result of a
       function depends only on the inputs that we explicitly provide.
       We call these functions <emphasis>pure</emphasis>; functions
       with side effects are <emphasis>impure</emphasis>.</para>
 
-    <para>If a function has side effects, we can tell by reading its
+    <para id="x_Sm">If a function has side effects, we can tell by reading its
       type signature: the type of the function's result will begin
       with <type>IO</type>.</para>
 
     &ch03.basics.ghci:readFile;
 
-    <para>Haskell's type system prevents us from accidentally mixing
+    <para id="x_Tm">Haskell's type system prevents us from accidentally mixing
       pure and impure code.</para>
   </sect1>
 
@@ -744,17 +744,17 @@
 	language, this notion of substitutability does not
 	hold.</para>
 
-      <para>For example, if we run the following tiny Python script,
+      <para id="x_Um">For example, if we run the following tiny Python script,
 	it will print the number 11.</para>
 
       &assign.py:assign;
 
-      <para>In contrast, trying the equivalent in Haskell results in
+      <para id="x_Vm">In contrast, trying the equivalent in Haskell results in
 	an error.</para>
 
       &Assign.hs:assign;
 
-      <para>We cannot assign a value to <varname>x</varname>
+      <para id="x_Wm">We cannot assign a value to <varname>x</varname>
 	twice.</para>
 
       &assign.ghci:load;
@@ -788,7 +788,7 @@
 
 	&shadowing.ghci:f;
 
-	<para>We'll see another case of shadowing later in this
+	<para id="x_Xm">We'll see another case of shadowing later in this
 	  chapter.</para>
       </sect3>
     </sect2>
@@ -816,7 +816,7 @@
 
       &myDrop.hs:myDrop;
 
-      <para>In Haskell, indentation is important: it
+      <para id="x_Ym">In Haskell, indentation is important: it
 	<emphasis>continues</emphasis> an existing definition, instead
 	of starting a new one.  Don't omit the indentation!</para>
 
@@ -866,7 +866,7 @@
 	it is ill typed and will be rejected by a compiler or
 	interpreter.</para>
 
-      <para></para>
+      <para id="x_Zm"></para>
 
       <para id="x_s3">Recall that Haskell is an expression-oriented
 	language.  In an imperative language, it can make sense to
@@ -895,7 +895,7 @@
 	    into</quote> the language: it's an ordinary
 	  function.</para>
 
-	<para>The <function>(||)</function> operator <quote>short
+	<para id="x_am">The <function>(||)</function> operator <quote>short
 	    circuits</quote>: if its left operand evaluates to
 	  <code>True</code>, it doesn't evaluate its right operand. In
 	  most languages, short-circuit evaluation requires special
@@ -940,17 +940,17 @@
     <sect2>
       <title>Lazy evaluation</title>
 
-      <para>We will begin by looking at the definition of a simple,
+      <para id="x_bm">We will begin by looking at the definition of a simple,
 	nonrecursive function.</para>
 
       &RoundToEven.hs:odd;
 
-      <para>Here, <function>mod</function> is the standard modulo
+      <para id="x_cm">Here, <function>mod</function> is the standard modulo
 	function.  The first big step to understanding how evaluation
 	works in Haskell is figuring out what the result of evaluating
 	the expression <code>odd (1 + 2)</code> is.</para>
 
-      <para>Before we explain how evaluation proceeds in Haskell, let
+      <para id="x_dm">Before we explain how evaluation proceeds in Haskell, let
 	us recap the sort of evaluation strategy used by more familiar
 	languages.  First, evaluate the subexpression <code>1 +
 	  2</code>, to give <code>3</code>.  Then apply the
@@ -959,13 +959,13 @@
 	  2</code> to give <code>1</code>, and <code>1 == 1</code> to
 	give <code>True</code>.</para>
 
-      <para>This way of evaluating an expression is referred to as
+      <para id="x_em">This way of evaluating an expression is referred to as
 	<emphasis>strict</emphasis>: the arguments to a function are
 	evaluated before the function is applied.  Haskell chooses
 	another path: <emphasis>non-strict</emphasis>
 	evaluation.</para>
 
-      <para>In Haskell, the subexpression <code>1 + 2</code> is
+      <para id="x_fm">In Haskell, the subexpression <code>1 + 2</code> is
 	<emphasis>not</emphasis> reduced to the value <code>3</code>.
 	Instead, we create a <quote>promise</quote> that when the
 	value of the expression <code>odd (1 + 2)</code> is needed,
@@ -975,32 +975,32 @@
 	the result of this expression is never subsequently needed, we
 	will not compute it at all.</para>
 
-      <para>Non-strict evaluation is often referred to as
+      <para id="x_gm">Non-strict evaluation is often referred to as
 	<emphasis>lazy evaluation</emphasis>.</para>
 
-      <para>This example doesn't give us a very complete picture of
+      <para id="x_hm">This example doesn't give us a very complete picture of
 	how lazy evaluation works.  Let's extend it.</para>
 
       &RoundToEven.hs:demo;
 
-      <para>The <function>demo</function> function uses the
+      <para id="x_im">The <function>demo</function> function uses the
 	<function>putStrLn</function> function to print a
 	string.</para>
 
       &roundToEven.ghci:demo;
 
-      <para>In order to print anything, <function>demo</function>
+      <para id="x_jm">In order to print anything, <function>demo</function>
 	needs the values of <varname>n</varname> and
 	<varname>r</varname>.  How are these computed?  Let's walk
 	through the evaluation of <code>demo (3 + 1)</code>, from the
 	perspective of a Haskell implementation.</para>
 
-      <para>We begin with the variable <code>k</code> bound to a thunk
+      <para id="x_km">We begin with the variable <code>k</code> bound to a thunk
 	representing <code>3 + 1</code>, and the &let; bindings create
 	two more thunks for <varname>n</varname> and
 	<varname>r</varname>.</para>
 
-      <para>Not until we need to print the value of
+      <para id="x_lm">Not until we need to print the value of
 	<varname>n</varname> are any of these expressions evaluated.
 	At this point, to evaluate <varname>n</varname>, we must
 	evaluate <varname>k</varname>.  This takes place with a twist.
@@ -1011,14 +1011,14 @@
 	<varname>k</varname> is evaluated <emphasis>at most
 	  once</emphasis>.</para>
 
-      <para>Similarly, once we've evaluated <varname>n</varname> to
+      <para id="x_mm">Similarly, once we've evaluated <varname>n</varname> to
 	the value <code>9</code>, we replace the unevaluated thunk
 	with the result <code>9</code>.  Once the time comes for us to
 	print the value of <varname>r</varname>, we don't need to
 	recalculate <varname>n</varname>: we just evaluate
 	<code>roundToEven 9</code>.</para>
 
-      <para>By now, we should be able to guess that the result of
+      <para id="x_nm">By now, we should be able to guess that the result of
 	<code>roundToEven 9</code> is not the value <code>8</code>, it
 	is a thunk: <code>9 - 1</code>.  We have to evaluate this
 	immediately in order to render it as a string, but it still
@@ -1028,13 +1028,13 @@
     <sect2>
       <title>A more involved example</title>
 
-      <para>Let us now look at the evaluation of the expression
+      <para id="x_om">Let us now look at the evaluation of the expression
 	<code>myDrop 2 "abcd"</code>, again so that we can print its
 	result.</para>
 
       &myDrop.ghci:print;
 
-      <para>When we start, our first step
+      <para id="x_pm">When we start, our first step
 	is to apply the function <function>myDrop</function>. We bind
 	the variable <varname>n</varname> to the value
 	<code>2</code>, and <varname>xs</varname> to
@@ -1081,7 +1081,7 @@
       <note>
 	<title>Short circuiting for free</title>
 
-	<para>Many languages need to treat the logical-or operator
+	<para id="x_qm">Many languages need to treat the logical-or operator
 	  specially so that it short circuits if its left operand
 	  evaluates to <code>True</code>.  We can see from this
 	  example that we don't need any extra support in order for
@@ -1314,7 +1314,7 @@
       generics.  C++ templates also bear a resemblance to parametric
       polymorphism.</para>
 
-    <para>To make it clearer how Haskell's polymorphism differs from
+    <para id="x_rm">To make it clearer how Haskell's polymorphism differs from
       other languages, here are a few forms of polymorphism that are
       common in other languages, but not present in Haskell.</para>
 
@@ -1442,7 +1442,7 @@
 
       <qandaentry>
 	<question>
-	  <para>Write a function <function>lastButOne</function>, that
+	  <para id="x_sm">Write a function <function>lastButOne</function>, that
 	    returns the element <emphasis>before</emphasis> the
 	    last.</para>
 	</question>
@@ -1462,11 +1462,11 @@
   <sect1>
     <title>Why the fuss over purity?</title>
 
-    <para>Few programming languages go as far as Haskell in insisting
+    <para id="x_tm">Few programming languages go as far as Haskell in insisting
       that purity should be the default.  This choice has profound and
       valuable consequences.</para>
 
-    <para>Because the result of applying a pure function can only
+    <para id="x_um">Because the result of applying a pure function can only
       depend on its arguments, we can often get a strong hint of what
       a pure function does by simply reading its name and
       understanding its type signature.  As an example, let's look at
@@ -1491,18 +1491,18 @@
       </listitem>
     </itemizedlist>
 
-    <para>We also know that this function can <emphasis>not</emphasis>
+    <para id="x_vm">We also know that this function can <emphasis>not</emphasis>
       do some things: it cannot access files; it cannot talk to the
       network; it cannot tell what time it is.</para>
 
-    <para>Purity makes the job of understanding code easier.  The
+    <para id="x_wm">Purity makes the job of understanding code easier.  The
       behaviour of a pure function does not depend on the value of a
       global variable, or the contents of a database, or the state of
       a network connection.  Pure code is inherently modular: every
       function is self-contained, and has a well-defined
       interface.</para>
 
-    <para>A non-obvious consequence of purity being the default is
+    <para id="x_xm">A non-obvious consequence of purity being the default is
       that working with <emphasis>impure</emphasis> code becomes
       easier.  Haskell encourages a style of programming in which we
       separate code that <emphasis>must</emphasis> have side effects
@@ -1510,7 +1510,7 @@
       tends to be simple, with the <quote>heavy lifting</quote>
       performed in pure code.</para>
 
-    <para>Much of the risk in software lies in talking to the outside
+    <para id="x_ym">Much of the risk in software lies in talking to the outside
       world, be it coping with bad or missing data, or handling
       malicious attacks. Because Haskell's type system tells us
       exactly which parts of our code have side effects, we can be

@@ -290,7 +290,7 @@
       <para id="x_qH">
         There's an example of the good use of distinct data type for
         storage: the <literal>ClockTime</literal> type in the standard
-        Haskell library module<footnote><para>For more information on
+        Haskell library module<footnote><para id="x_zm">For more information on
         modules, see <xref linkend="library"/>.</para>
         </footnote> <literal>System.Time</literal>:
       </para>
@@ -305,7 +305,7 @@
         can be negative and is unbounded, a <literal>ClockTime</literal> can
         effectively represent any moment in history down to the picosecond.
       </para>
-      <para>
+      <para id="x_An">
         By using the <literal>ClockTime</literal> type, rather than a
         tuple, it is completely clear when we are dealing with a time
         value as opposed to two arbitrary &Integer; values that could
@@ -801,7 +801,7 @@
 
     &bookstore.ghci:accessor;
 
-    <para>
+    <para id="x_Bn">
       The standard <literal>System.Time</literal> module makes good
       use of record syntax.  Here's a type defined in that module:
     </para>
@@ -818,7 +818,7 @@ data CalendarTime = CalendarTime {
   ctIsDST                     :: Bool
 }
     </programlisting>
-    <para>
+    <para id="x_Cn">
       In the absence of record syntax, it would take quite some effort
       to extract particular fields from a type like this.  Records
       make it easy to work with this sort of data.

@@ -33,7 +33,7 @@
         Language, as a standard way of getting data into and out of relational
         databases.  This book will not provide a tutorial on SQL or relational
         database management.
-        <footnote><para>
+        <footnote><para id="x_fv">
             The O'Reilly books <emphasis>Learning SQL</emphasis> and
             <emphasis>SQL in a Nutshell</emphasis> may be useful if
             you don't have experience wiht SQL.
@@ -486,7 +486,7 @@
           reading.
         </para>
         <tip>
-          <para>
+          <para id="x_gv">
             If you are new to HDBC or the concept of lazy reading, but
             have lots of data to read, repeated calls to
             <literal>fetchRow</literal> may be easier to understand.

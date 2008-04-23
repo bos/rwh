@@ -108,7 +108,7 @@
       linkend="databases.hdbc.install"/>.
     </para>
     &PodDB.hs:all;
-    <para>  
+    <para id="x_hv">  
       In the <literal>PodDB</literal> module, we have defined
       functions to connect to the database, create the needed database
       tables, add data to the database, query the database, and remove
@@ -122,7 +122,7 @@
 
   <sect1 id="webclient.parser">
     <title>The Parser</title>
-    <para>
+    <para id="x_iv">
       Now that we have the database component, we need to have code to
       parse the podcast feeds.  These are XML files that contain
       various information.  Here's an example XML file to show you
@@ -152,14 +152,14 @@
 </rss>
 ]]></programlisting>
 
-    <para>
+    <para id="x_jv">
       Out of these files, we are mainly interested in two things: the
       podcast title and the enclosure URLs.   We use the <ulink
       url="http://www.cs.york.ac.uk/fp/HaXml/">HaXml toolkit</ulink>
       to parse the XML file.  Here's the source code for this component:
     </para>
     &PodParser.hs:all;
-    <para>
+    <para id="x_kv">
       Let's look at this code.  First, we declare two types:
       <literal>Item</literal> and <literal>Feed</literal>.  We will be
       transforming the XML document into a <literal>Feed</literal>,
@@ -168,12 +168,12 @@
       <literal>Episode</literal> as defined in
       <literal>PodTypes.hs</literal>.
     </para>
-    <para>
+    <para id="x_lv">
       Next, it os on to parsing.  The <literal>parse</literal>
       function takes a &String; represeting the XML content as well as
       a name, and returns a <literal>Feed</literal>.
     </para>
-    <para>
+    <para id="x_mv">
       HaXml is designed as a "filter" converting data of one type to
       another.  It can be a simple straightforward conversion of XML
       to XML, or of XML to Haskell data, or of Haskell data to XML.
@@ -183,7 +183,7 @@
     <programlisting>
 type CFilter = Content -> [Content]
     </programlisting>
-    <para>
+    <para id="x_nv">
       That is, a <literal>CFilter</literal> takes a fragment of an XML
       document and returns 0 or more fragments.  A
       <literal>CFilter</literal> might be asked to file all children
@@ -199,13 +199,13 @@ type CFilter = Content -> [Content]
     <programlisting>
 channel = tag "rss" /> tag "channel"
     </programlisting>
-    <para>
+    <para id="x_ov">
       When we pass a document to <literal>channel</literal>, it will
       search the top level for the tag named <literal>rss</literal>.
       Then, within that, it will look for the
       <literal>channel</literal> tag.
     </para>
-    <para>
+    <para id="x_pv">
       The rest of the program follows this basic approach.
       <literal>txt</literal> extracts the literal text from a tag, and
       by using <literal>CFilter</literal> functions, we can get at any
@@ -215,14 +215,14 @@ channel = tag "rss" /> tag "channel"
 
   <sect1 id="webclient.download">
     <title>Downloading</title>
-    <para>
+    <para id="x_qv">
       The next part of our program is a module to download data.
       We'll need to download two different types of data: the content
       of a podcast, and the audio for each episode.  In the former
       case, we'll parse the data and update our database.  For the
       latter, we'll write the data out to a file on disk.
     </para>
-    <para>
+    <para id="x_rv">
       We'll be downloading from HTTP servers, so we'll use a Haskell
       <ulink url="http://www.haskell.org/http/">HTTP library</ulink>.
       For downloading podcast feeds, we'll download the document,
@@ -231,7 +231,7 @@ channel = tag "rss" /> tag "channel"
       the database.  Here's the code:
     </para>
     &PodDownload.hs:all;
-    <para>
+    <para id="x_sv">
       This module defines three functions:
       <literal>downloadURL</literal>, which simply downloads a URL and
       returns it as a &String;;
@@ -241,7 +241,7 @@ channel = tag "rss" /> tag "channel"
       and marks it done in the database.
     </para>
     <warning>
-      <para>
+      <para id="x_tv">
         The HTTP library used here does not read the HTTP result
         lazily.  As a result, it can result in the consumption of a
         large amount of RAM when downloading large files such as
@@ -254,24 +254,24 @@ channel = tag "rss" /> tag "channel"
 
   <sect1 id="webclient.main">
     <title>Main Program</title>
-    <para>
+    <para id="x_uv">
       Finally, we need a main program to tie it all together.  Here's
       our main module:
     </para>
     &PodMain.hs:all;
-    <para>
+    <para id="x_vv">
       We have a very simple command-line parser with a function to
       indicate a command-line syntax error, plus small functions to
       handle the different command-line arguments.
     </para>
-    <para>
+    <para id="x_wv">
       You can compile this program with a command like this:
     </para>
     <programlisting>
 ghc --make -O2 -o pod -package HTTP -package HaXml -package network \
     -package HDBC -package HDBC-sqlite3 PodMain.hs
     </programlisting>
-    <para>
+    <para id="x_xv">
       Alternatively, you could use a Cabal file as documented in
       <remark>FIXME: insert ref</remark> to build this project:
     </para>
@@ -286,21 +286,21 @@ Executable: pod
 Main-Is: PodMain.hs
 GHC-Options: -O2
     </programlisting>
-    <para>
+    <para id="x_yv">
       Also, you'll want a simple <literal>Setup.hs</literal> file:
     </para>
     <programlisting>
 import Distribution.Simple
 main = defaultMain
     </programlisting>
-    <para>
+    <para id="x_zv">
       Now, to build with Cabal, you just run:
     </para>
     <programlisting>
 runghc Setup.hs configure
 runghc Setup.hs build
     </programlisting>
-    <para>
+    <para id="x_Aw">
       And you'll find a <literal>dist</literal> directory containing
       your output.  To install the program system-wide, run
       <literal>runghc Setup.hs install</literal>.

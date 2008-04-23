@@ -838,13 +838,13 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
   <sect1>
     <title>Parsing a HTTP request</title>
 
-    <para>As another example of applicative parsing, we will develop a
+    <para id="x_Kv">As another example of applicative parsing, we will develop a
       basic HTTP request parser.  We'll use this later on to create a
       small web server.</para>
 
     &HttpRequestParser.hs:module;
 
-    <para>An HTTP request consists of a method, an identifier, a
+    <para id="x_Lv">An HTTP request consists of a method, an identifier, a
       series of headers, and an optional body.  For simplicity, we'll
       focus on just two of the six method types specified by the HTTP
       1.1 standard.  A <code>POST</code> method has a body; a
@@ -852,13 +852,13 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     &HttpRequestParser.hs:HttpRequest;
 
-    <para>Because we're writing in an applicative style, our parser
+    <para id="x_Mv">Because we're writing in an applicative style, our parser
       can be both brief and readable.  Readable, that is, if you're
       becoming used to the applicative parsing notation.</para>
 
     &HttpRequestParser.hs:p_request;
 
-    <para>Briefly, the <function>q</function> helper function accepts
+    <para id="x_Nv">Briefly, the <function>q</function> helper function accepts
       a method name, the type constructor to apply to it, and a parser
       for a request's optional body.  The <function>url</function>
       helper does not attempt to validate a URL, because the HTTP
@@ -869,7 +869,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
     <sect2>
       <title>Backtracking and its discontents</title>
 
-      <para>The major point worth calling attention to is our use of
+      <para id="x_Ov">The major point worth calling attention to is our use of
 	the <function>try</function> combinator.  This attempts to
 	execute a parser.  Normally, if a parser fails partway through
 	parsing, whatever input it has consumed stays consumed, and is
@@ -880,42 +880,42 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 	<emphasis>backtrack</emphasis> to an earlier state of the
 	input, and use another parser.</para>
 
-      <para>What does this mean, and why is it important?  Let's
+      <para id="x_Pv">What does this mean, and why is it important?  Let's
 	consider a very simple parser.</para>
 
       &try.ghci:simple;
 
-      <para>As we expect, if the parser fails to match its input, we
+      <para id="x_Qv">As we expect, if the parser fails to match its input, we
 	get an error.  Let's make the parser slightly more
 	complex.</para>
 
       &try.ghci:broken;
 
-      <para>Once again, the parser behaves as we expect in one case.
+      <para id="x_Rv">Once again, the parser behaves as we expect in one case.
 	However, let's see if we can handle the other string we expect
 	to be able to match.</para>
 
       &try.ghci:fail;
 
-      <para>We get the same error message as before!  The reason is
+      <para id="x_Sv">We get the same error message as before!  The reason is
 	that the first parser has already consumed the first two
 	characters of the input when it fails.  The second parser thus
 	doesn't have access to them.</para>
 
-      <para>If we wrap the first parser in a <function>try</function>,
+      <para id="x_Tv">If we wrap the first parser in a <function>try</function>,
 	it will reset the input state if it fails.  We now get
 	sensible results in each case.</para>
 
       &try.ghci:try;
 
-      <para>There is a problem, however: because it has to hold onto
+      <para id="x_Uv">There is a problem, however: because it has to hold onto
 	input in case it needs to restore it, <function>try</function>
 	is expensive to use.  Sprinkling a parser with unnecessary
 	uses of <function>try</function> is a very effective way to
 	slow it down, sometimes to the point of unacceptable
 	performance.</para>
 
-      <para>The standard way to avoid the need for backtracking is to
+      <para id="x_Vv">The standard way to avoid the need for backtracking is to
 	tidy up a parser so that we can decide whether it will succeed
 	or fail using only a single token of input.  In this case, the
 	two parsers consume the same initial tokens, so we turn them
@@ -923,7 +923,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
       &try.ghci:factor;
 
-      <para>Even better, Parsec gives us an improved error message if
+      <para id="x_Wv">Even better, Parsec gives us an improved error message if
 	we feed it non-matching input.</para>
 
       &try.ghci:error;
@@ -933,7 +933,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
     <sect2>
       <title>Parsing headers</title>
 
-      <para>Following the first line of a HTTP request is a series of
+      <para id="x_Xv">Following the first line of a HTTP request is a series of
 	zero or more headers.  A header begins with a field name,
 	followed by a colon, followed by the content.  If the lines
 	that follow begin with spaces, they are treated as
@@ -947,7 +947,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
     <sect2>
       <title>Exercises</title>
 
-      <para>Our HTTP request parser is too simple to be useful in real
+      <para id="x_Yv">Our HTTP request parser is too simple to be useful in real
 	deployments.  It is missing vital functionality, and is not
 	resistant to even the most basic denial of service
 	attacks.</para>
@@ -955,7 +955,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
       <qandaset>
 	<qandaentry>
 	  <question>
-	    <para>Make the parser honour the
+	    <para id="x_Zv">Make the parser honour the
 	      <code>Content-Length</code> field properly, if it is
 	      present.</para>
 	  </question>
@@ -963,13 +963,13 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
 	<qandaentry>
 	  <question>
-	    <para>A popular denial of service attack against naive web
+	    <para id="x_av">A popular denial of service attack against naive web
 	      servers is simply to send unreasonably long headers.  A
 	      single header might contain tens or hundreds of
 	      megabytes of garbage text, causing a server to run out
 	      of memory.</para>
 	    
-	    <para>Restructure the header parser so that it will fail
+	    <para id="x_bv">Restructure the header parser so that it will fail
 	      if any line is longer than 4096 characters.  It must
 	      fail immediately when this occurs; it cannot wait until
 	      the end of a line eventually shows up.</para>
@@ -978,7 +978,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
 	<qandaentry>
 	  <question>
-	    <para>Add the ability to honour the
+	    <para id="x_cv">Add the ability to honour the
 	      <code>Transfer-Encoding: chunked</code> header if it is
 	      present.  See <ulink
 		url="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.6.1">section 
@@ -988,7 +988,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
 	<qandaentry>
 	  <question>
-	    <para>Another popular attack is to open a connection and
+	    <para id="x_dv">Another popular attack is to open a connection and
 	      either leave it idle or send data extremely slowly.  Use
 	      the <code>System.Timeout</code> module to write a
 	      wrapper for the parser that will close the connection if

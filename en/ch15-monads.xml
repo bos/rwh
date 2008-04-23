@@ -695,7 +695,7 @@
     <sect2>
       <title>The writer monad</title>
 
-      <para>Our <type>Logger</type> monad is a specialised version of
+      <para id="x_vq">Our <type>Logger</type> monad is a specialised version of
 	the standard <type>Writer</type> monad, which can be found in
 	the <type>Control.Monad.Writer</type> module of the
 	<code>mtl</code> package.  We will present a

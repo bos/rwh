@@ -3,14 +3,14 @@
 <chapter id="whyfp" revision="unpublished">
   <title>Why Functional Programming?  Why Haskell?</title>
 
-  <para>
+  <para id="x_Hl">
     This book, at its heart, is about different ways of solving
     problems.  Many of us, while working on some piece of code, will
     occasionally have the thought "there just has to be a better way
     to do this."  We think that, for many problems, Haskell helps
     provide this better way.
   </para>
-  <para>
+  <para id="x_Il">
     Haskell is most likely quite different from any language you've
     ever used before.  To become an effective Haskell programmer,
     you're going to have to question some fundamental assumptions: for
@@ -23,7 +23,7 @@
   
   <sect1 id="whyfp.interesting">
     <title>Why is Haskell Interesting?</title>
-    <para>
+    <para id="x_Jl">
       To whet your appetite for Haskell, here are some things that we
       think are interesting about the language.  Don't let it scare
       you off or lead you to believe that Haskell is a toy language.
@@ -31,26 +31,26 @@
     </para>
     <itemizedlist>
       <listitem>
-        <para>Haskell has no loops because it doesn't need them.
+        <para id="x_Kl">Haskell has no loops because it doesn't need them.
           There is no <literal>for</literal> or
           <literal>while</literal> in Haskell.
         </para>
       </listitem>
 
-      <listitem><para>
+      <listitem><para id="x_Ll">
           Modern Haskell compilers can automatically introduce
           parallelism into your code to take advantage of multi-core
           processors.
         </para>
       </listitem>
 
-      <listitem><para>
+      <listitem><para id="x_Ml">
           Haskell has no variables in the sense you're used to.  It
           doesn't need them, either.
         </para>
       </listitem>
 
-      <listitem><para>
+      <listitem><para id="x_Nl">
           Haskell is a functional language instead of an
           object-oriented language.  In Haskell, your primary view of
           the world is the function.  One of us is fond of saying
@@ -62,7 +62,7 @@
         </para>
       </listitem>
 
-      <listitem><para>
+      <listitem><para id="x_Ol">
           Haskell functions are pure.  Every time they're called with
           the same arguments, they return the same result.  Haskell
           functions have no side-effects.  There is no such thing as a
@@ -71,7 +71,7 @@
         </para>
       </listitem>
 
-      <listitem><para>
+      <listitem><para id="x_Pl">
           Haskell is a lazy language.  It never performs computation
           unless it must.  This isn't just an optimization; it's a a
           different world view.  Could that could result in infinite
@@ -82,7 +82,7 @@
 
     </itemizedlist>
 
-    <para>
+    <para id="x_Ql">
       All of this may leave you wondering things like: "if functions
       always return the same thing, how can I read a line of text from
       the keyboard and return it from a function?"  Such things are,
@@ -95,14 +95,14 @@
 
   <sect1 id="whyfp.goals">
     <title>Goals of Real-World Haskell</title>
-    <para>
+    <para id="x_Rl">
       With this book, we want to show you how to use functional
       programming and Haskell to solve real-world problems.  This will
       be a hands-on book with plenty of real examples.  We want to
       show people that already know how to program in another language
       how to program in Haskell.
     </para>
-    <para>
+    <para id="x_Sl">
       As you read the book, you'll see a program to extract barcodes
       from photos taken by low-quality cell phone cameras, a program
       that downloads podcast episodes from the Internet and stores
@@ -115,7 +115,7 @@
       meters, feet, or seconds) paired with numbers.
     </para>
 
-    <para>
+    <para id="x_Tl">
       We started this project because there is a large community of
       people that are using Haskell to solve everyday problems.  But
       because Haskell has its roots in academia, many of the books
@@ -330,7 +330,7 @@ void main(void) {
 
   <sect1 id="whyfp.resources">
     <title>Helpful Resources</title>
-    <para>
+    <para id="x_Ul">
       As you work with Haskell, you're sure to have questions and want
       more information about things.  Here are some Internet resources
       where you can look up information and interact with other
@@ -341,7 +341,7 @@ void main(void) {
       <title>Reference Material</title>
       <itemizedlist>
         <listitem>
-          <para>
+          <para id="x_Vl">
             The Haskell Hierarchical Libraries reference provides the
             reference to the standard library that comes with your
             compiler.  This is probably the top item in the bookmarks
@@ -352,7 +352,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_Wl">
             For questions about language syntax and features, the
             Haskell 98 Report describes the Haskell 98 standard.
             <ulink url="http://haskell.org/onlinereport/"></ulink>
@@ -360,7 +360,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_Xl">
             Various extensions to the language have become commonplace
             since the Haskell 98 Report was released.  The GHC Users's
             Guide contains detailed documentation on the extensions
@@ -371,7 +371,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_Yl">
             Hoogle is the Haskell API search engine.  It can find
             functions for you by name or by type.  <ulink
             url="http://haskell.org/hoogle/"></ulink>
@@ -383,14 +383,14 @@ void main(void) {
 
     <sect2 id="whyfp.resources.apps">
       <title>Applications and Libraries</title>
-      <para>
+      <para id="x_Zl">
         If you're looking for a Haskell library to use for a
         particular task, or an application written in Haskell, check
         out the resources in this section.
       </para>
       <itemizedlist>
         <listitem>
-          <para>
+          <para id="x_al">
             The Haskell community maintains a central repository for
             Haskell libraries and applications.  It's called Hackage
             and lets you search for software, or browse its collection
@@ -400,7 +400,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_bl">
             The Haskell Wiki has a large collection of information
             about particular Haskell libraries as well.  <ulink
             url="http://haskell.org/haskellwiki/Applications_and_libraries"></ulink>
@@ -411,7 +411,7 @@ void main(void) {
 
     <sect2 id="whyfp.resources.community">
       <title>The Haskell Community</title>
-      <para>
+      <para id="x_cl">
         There are a number of ways you can get in touch with other
         Haskell programmers.  You can ask questions, learn what
         Haskellers are talking about, and simply do some social
@@ -420,7 +420,7 @@ void main(void) {
       
       <itemizedlist>
         <listitem>
-          <para>The first stop on your search for community resources
+          <para id="x_dl">The first stop on your search for community resources
           should be the Haskell homepage, <ulink
           url="http://www.haskell.org/"></ulink>.  This page contains
           the most current links to various communities and information.
@@ -428,7 +428,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_el">
             Mailing lists are the most common way for Haskellers to
             interact.  There are quite a few of them available.
             <ulink
@@ -437,7 +437,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_fl">
             For real-time chat, the Haskell IRC channel is also
             available.  <ulink
             url="http://haskell.org/haskellwiki/IRC_channel"></ulink>
@@ -445,7 +445,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_gl">
             There are a number of Haskell user groups, recurring
             workshops, and the like in the Haskell community.  There
             is a list of the known user groups and workshops
@@ -455,7 +455,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_hl">
             The Haskell Weekly News is a frequently-published summary
             of activities in the Haskell community.  You can find
             pointers to interesting mailing list discussions, new
@@ -465,7 +465,7 @@ void main(void) {
         </listitem>
 
         <listitem>
-          <para>
+          <para id="x_il">
             The Haskell Communities and Activities Report (HCAR) has
             been collecting information about people that use Haskell
             and what they are doing with it.  <ulink

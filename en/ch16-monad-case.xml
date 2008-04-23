@@ -278,17 +278,17 @@
   <sect1>
     <title>Adventures in hiding the plumbing</title>
 
-    <para>In <xref linkend="monads.state.random"/>, we showed how to
+    <para id="x_wq">In <xref linkend="monads.state.random"/>, we showed how to
       use the <type>State</type> monad to give ourselves access to
       random numbers in a way that is easy to use.</para>
 
-    <para>A drawback of the code we developed is that it's
+    <para id="x_xq">A drawback of the code we developed is that it's
       <emphasis>leaky</emphasis>: someone who uses it knows that
       they're executing inside the <type>State</type> monad.  This
       means that they can inspect and modify the state of the random
       number generator just as easily as we, the authors, can.</para>
 
-    <para>Human nature dictates that if we leave our internal workings
+    <para id="x_yq">Human nature dictates that if we leave our internal workings
       exposed, someone will surely come along and monkey with them.
       For a sufficiently small program, this may be fine, but in a
       larger software project, when one consumer of a library modifies
@@ -298,7 +298,7 @@
       question our basic assumptions about a library until long after
       we've exhausted all other avenues of inquiry.</para>
 
-    <para>Even worse, once we leave our implementation exposed for a
+    <para id="x_zq">Even worse, once we leave our implementation exposed for a
       while, and some well-intentioned person inevitably bypasses our
       APIs and uses the implementation directly, we create a nasty
       quandary for ourselves if we need to fix a bug or make an
@@ -307,14 +307,14 @@
       internals, and must try to find some other way to make the
       change we need.</para>
 
-    <para>How can we revise our random number monad so that the fact
+    <para id="x_Ar">How can we revise our random number monad so that the fact
       that we're using the <type>State</type> monad is hidden?  We
       need to somehow prevent our users from being able to call
       <code>get</code> or <code>put</code>.  This is not difficult to
       do, and it introduces some tricks that we'll reuse often in
       day-to-day Haskell programming.</para>
 
-    <para>To widen our scope, we'll move beyond random numbers, and
+    <para id="x_Br">To widen our scope, we'll move beyond random numbers, and
       implement a monad that supplies unique values of
       <emphasis>any</emphasis> kind.  The name we'll give to our monad
       is <type>Supply</type>.  We'll provide the execution function,
@@ -323,11 +323,11 @@
 
     &Supply.hs:runSupply.type;
 
-    <para>The monad won't care what the values are: they might be
+    <para id="x_Cr">The monad won't care what the values are: they might be
       random numbers, or names for temporary files, or identifiers for
       HTTP cookies.</para>
 
-    <para>Within the monad, every time a consumer asks for a value,
+    <para id="x_Dr">Within the monad, every time a consumer asks for a value,
       the <function>next</function> action will take the next one from
       the list and give it to the consumer.  Each value is wrapped in
       a <type>Maybe</type> constructor in case the list isn't long
@@ -335,27 +335,27 @@
 
     &Supply.hs:next.type;
 
-    <para>To hide our plumbing, in our module declaration we only
+    <para id="x_Er">To hide our plumbing, in our module declaration we only
       export the type constructor, the execution function, and the
       <function>next</function> action.</para>
 
     &Supply.hs:module;
 
-    <para>Since a module that imports the library can't see the
+    <para id="x_Fr">Since a module that imports the library can't see the
       internals of the monad, it can't manipulate them.</para>
 
-    <para>Our plumbing is exceedingly simple.  We use a &newtype;
+    <para id="x_Gr">Our plumbing is exceedingly simple.  We use a &newtype;
       declaration to wrap the existing <type>State</type>
       monad.</para>
 
     &Supply.hs:Supply;
 
-    <para>The <varname role="type">s</varname> parameter is the type
+    <para id="x_Hr">The <varname role="type">s</varname> parameter is the type
       of the unique values we are going to supply, and <varname
 	role="type">a</varname> is the usual free type variable that
       we must provide in order to make our type a monad.</para>
 
-    <para>Our <type>Supply</type> type and our module header join
+    <para id="x_Ir">Our <type>Supply</type> type and our module header join
       forces to prevent our clients from using the <type>State</type>
       monad's <function>get</function> and <function>set</function>
       actions.  Because our module does not export the <code>S</code>
@@ -363,7 +363,7 @@
       we're wrapping the <type>State</type> monad, or to access
       it.</para>
 
-    <para>At this point, we've got a type, <type>Supply</type>, that
+    <para id="x_Jr">At this point, we've got a type, <type>Supply</type>, that
       we need to make an instance of the <type>Monad</type> type
       class.  We could follow the usual pattern of defining &bind; and
       &return;, but this would be pure boilerplate code.  All we'd be
@@ -371,14 +371,14 @@
       versions of &bind; and &return; using our <code>S</code> data
       constructor.</para>
 
-    <para>Haskell programmers are not fond of boilerplate, and sure
+    <para id="x_Kr">Haskell programmers are not fond of boilerplate, and sure
       enough, &GHC; has a lovely language extension that eliminates
       the work. To use it, we add the following directive to the top
       of our source file, before the module header.</para>
 
     &Supply.hs:LANGUAGE;
 
-    <para>Usually, we can only automatically derive instances of a
+    <para id="x_Lr">Usually, we can only automatically derive instances of a
       handful of standard type classes, such as <type>Show</type> and
       <type>Eq</type>.  As its name suggests, the
       <code>GeneralizedNewtypeDeriving</code> extension broadens our
@@ -390,31 +390,31 @@
 
     &Supply.hs:deriving;
 
-    <para>This takes the underlying type's implementations of &bind;
+    <para id="x_Mr">This takes the underlying type's implementations of &bind;
       and &return;, adds the necessary wrapping and unwrapping with
       our <code>S</code> data constructor, and uses the new versions
       of those functions to derive a <type>Monad</type> instance for
       us.</para>
 
-    <para>What we gain here is very useful beyond just this example.
+    <para id="x_Nr">What we gain here is very useful beyond just this example.
       We can use &newtype; to wrap any underlying type; we selectively
       expose only those type class instances that we want; and we
       expend almost no effort to create these narrower, more
       specialised types.</para>
 
-    <para>Now that we've seen the
+    <para id="x_Or">Now that we've seen the
       <code>GeneralizedNewtypeDeriving</code> technique, all that
       remains is to provide definitions of <function>next</function>
       and <function>runSupply</function>.</para>
 
     &Supply.hs:code;
 
-    <para>If we load our module into &ghci;, we can try it out in a few
+    <para id="x_Pr">If we load our module into &ghci;, we can try it out in a few
       simple ways.</para>
 
     &supply.ghci:simple;
 
-    <para>We can also verify that the <type>State</type> monad has not
+    <para id="x_Qr">We can also verify that the <type>State</type> monad has not
       somehow leaked out.</para>
 
     &supply.ghci:browse;
@@ -422,7 +422,7 @@
     <sect2>
       <title>Supplying random numbers</title>
 
-      <para>If we want to use our <type>Supply</type> monad as a
+      <para id="x_Rr">If we want to use our <type>Supply</type> monad as a
 	source of random numbers, we have a small difficulty to face.
 	Ideally, we'd like to be able to provide it with an infinite
 	stream of random numbers.  We can get a <type>StdGen</type> in
@@ -433,7 +433,7 @@
 	same random numbers as we did, which is potentially
 	catastrophic.</para>
 
-      <para>From the parts of the <code>System.Random</code> module
+      <para id="x_Sr">From the parts of the <code>System.Random</code> module
 	we've seen so far, it's difficult to reconcile these demands.
 	We can use <function>getStdRandom</function> to ensure that
 	when we get a <type>StdGen</type>, we put one back.  We can
@@ -444,7 +444,7 @@
 	random numbers <emphasis>and</emphasis> a new
 	<type>StdGen</type>?</para>
 
-      <para>The answer lies with the <type>RandomGen</type> type
+      <para id="x_Tr">The answer lies with the <type>RandomGen</type> type
 	class's <function>split</function> function, which takes one
 	random number generator, and turns it into two generators.
 	Splitting a random generator like this is a most unusual thing
@@ -452,14 +452,14 @@
 	functional setting, but essentially never either necessary or
 	provided by an impure language.</para>
 
-      <para>Using the <function>split</function> function, we can use
+      <para id="x_Ur">Using the <function>split</function> function, we can use
 	one <type>StdGen</type> to generate an infinite list of random
 	numbers to feed to <function>runSupply</function>, while we
 	give the other back to the <type>IO</type> monad.</para>
 
       &RandomSupply.hs:randomsIO;
 
-      <para>If we save the above definition in a file
+      <para id="x_Vr">If we save the above definition in a file
 	<filename>RandomSupply.hs</filename> and load it into &ghci;,
 	we can try our <function>randomsIO</function> function out.
 	If we've written it properly, our example ought to print a
@@ -467,7 +467,7 @@
 
       &randomSupply.ghci:random;
 
-      <para>Recall that our <function>runSupply</function> function
+      <para id="x_Wr">Recall that our <function>runSupply</function> function
 	returns both the result of executing the monadic action and
 	the unconsumed remainder of the list.  Since we passed it an
 	infinite list of random numbers, we compose with
@@ -479,19 +479,19 @@
     <sect2>
       <title>Another round of golf</title>
 
-      <para>The pattern of applying a function to one element of a
+      <para id="x_Xr">The pattern of applying a function to one element of a
 	pair, and constructing a new pair with the other original
 	element untouched, is common enough in Haskell code that it
 	has been turned into standard code.</para>
 
-      <para>In the <code>Control.Arrow</code> module are two
+      <para id="x_Yr">In the <code>Control.Arrow</code> module are two
 	functions, <function>first</function> and
 	<function>second</function>, that perform this
 	operation.</para>
 
       &randomSupply.ghci:first;
 
-      <para>Now that we know about these functions, we can use one to
+      <para id="x_Zr">Now that we know about these functions, we can use one to
 	golf our definition of <function>randomsIO</function>, turning
 	it into a one-liner.</para>
 
@@ -503,23 +503,23 @@
   <sect1>
     <title>Separating interface from implementation</title>
 
-    <para>In the previous section, we saw how to hide the fact that
+    <para id="x_ar">In the previous section, we saw how to hide the fact that
       we're using a <type>State</type> monad to hold the state for our
       <type>Supply</type> monad.</para>
 
-    <para>Another important way to make code more modular involves
+    <para id="x_br">Another important way to make code more modular involves
       separating its <emphasis>interface</emphasis>&emdash;what the
       code can do&emdash;from its
       <emphasis>implementation</emphasis>&emdash;how it does
       it.</para>
 
-    <para>The standard random number generator in
+    <para id="x_cr">The standard random number generator in
       <code>System.Random</code> is known to be quite slow. If we use
       our <function>randomsIO</function> function to provide it with
       random numbers, then our <function>next</function> action will
       not perform well.</para>
 
-    <para>One simple and effective way that we could deal with this is
+    <para id="x_dr">One simple and effective way that we could deal with this is
       to provide <type>Supply</type> with a better source of random
       numbers.  Let's set this idea aside, though, and consider an
       alternative approach, one that is useful in many settings.  We
@@ -528,14 +528,14 @@
 
     &SupplyClass.hs:class;
 
-    <para>This type class bears careful inspection, since it uses
+    <para id="x_er">This type class bears careful inspection, since it uses
       several unfamiliar Haskell language extensions.  We will cover
       each one in the sections that follow.</para>
 
     <sect2 id="monadcase.mptc">
       <title>Multi-parameter type classes</title>
 
-      <para>How should we read the snippet <code>MonadSupply s
+      <para id="x_fr">How should we read the snippet <code>MonadSupply s
 	  m</code> in the type class?  If we add parentheses, an
 	equivalent expression is <code>(MonadSupply s) m</code>, which
 	is a little clearer.  In other words, given some type variable
@@ -544,7 +544,7 @@
 	unlike a regular type class, this one has a
 	<emphasis>parameter</emphasis>.</para>
 
-      <para>These type classes with parameters are the first of our
+      <para id="x_gr">These type classes with parameters are the first of our
 	language extensions.  As the extension allows a type class to
 	have more than one parameter, the name of this extension is
 	<code>MultiParamTypeClasses</code>.  The parameter
@@ -553,7 +553,7 @@
 	represents the type of the values handed out by the
 	<function>next</function> function.</para>
 
-      <para>Notice that we don't need to mention &bind; or &return; in
+      <para id="x_hr">Notice that we don't need to mention &bind; or &return; in
 	the definition of <type>MonadSupply s</type>, since the type
 	class's context requires that a <type>MonadSupply s</type>
 	must already be a <type>Monad</type>.</para>
@@ -562,7 +562,7 @@
     <sect2>
       <title>Functional dependencies</title>
 
-      <para>To revisit a snippet that we ignored earlier, <code>| m
+      <para id="x_ir">To revisit a snippet that we ignored earlier, <code>| m
 	  -&nbsp; s</code> is a <emphasis>functional
 	  dependency</emphasis>, often called a
 	<emphasis>fundep</emphasis>.  We can read the vertical bar
@@ -572,17 +572,17 @@
 	<emphasis>relationship</emphasis> between <varname>m</varname>
 	and <varname>s</varname></para>
 
-      <para>The availability of functional dependencies is governed by
+      <para id="x_jr">The availability of functional dependencies is governed by
 	the <code>FunctionalDependencies</code> language pragma.</para>
 
-      <para>The purpose behind us declaring a relationship is to help
+      <para id="x_kr">The purpose behind us declaring a relationship is to help
 	the type checker.  Recall that a Haskell type checker is
 	essentially a theorem prover, and that it is convervative in
 	how it operates: it insists that its proofs must terminate. A
 	non-terminating proof results in the compiler either giving up
 	or getting stuck in an infinite loop.</para>
 
-      <para>With our functional dependency, we are telling the type
+      <para id="x_lr">With our functional dependency, we are telling the type
 	checker that every time it sees some monad
 	<varname>m</varname> being used in the context of a
 	<type>MonadSupply s</type>, the type <varname>s</varname> is
@@ -590,19 +590,19 @@
 	the functional dependency, the type checker would simply give
 	up with an error message.</para>
 
-      <para>It's hard to picture what the relationship between
+      <para id="x_mr">It's hard to picture what the relationship between
 	<varname>m</varname> and <varname>s</varname> really means, so
 	let's look at an instance of this type class.</para>
 
       &SupplyClass.hs:instance;
 
-      <para>Here, the type variable <varname>m</varname> is replaced
+      <para id="x_nr">Here, the type variable <varname>m</varname> is replaced
 	by the type <type>S.Supply s</type>.  Thanks to our functional
 	dependency, the type checker now knows that when it sees a
 	type <type>S.Supply s</type>, the type can be used as an
 	instance of the type class <type>MonadSupply s</type>.</para>
 
-      <para>If we didn't have a functional dependency, the type
+      <para id="x_or">If we didn't have a functional dependency, the type
 	checker would not be able to figure out the relationship
 	between the type parameter of the class <type>MonadSupply
 	  s</type> and that of the type <type>Supply s</type>, and it
@@ -610,7 +610,7 @@
 	would compile; the type error would not arise until the first
 	time we tried to use it.</para>
 
-      <para>To strip away one final layer of abstraction, consider the
+      <para id="x_pr">To strip away one final layer of abstraction, consider the
 	type <type>S.Supply Int</type>.  Without a functional
 	dependency, we could declare this an instance of
 	<type>MonadSupply s</type>.  However, if we tried to write
@@ -619,7 +619,7 @@
 	be the same as the type class's <varname>s</varname>
 	parameter, and it would report an error.</para>
 
-      <para>Functional dependencies can be tricky to understand, and
+      <para id="x_qr">Functional dependencies can be tricky to understand, and
 	once we move beyond simple uses, they often prove difficult to
 	work with in practice.  Fortunately, the most frequent use of
 	functional dependencies is in situations as simple as ours,
@@ -633,13 +633,13 @@
     <sect2>
       <title>Rounding out our module</title>
 
-      <para>If we save our type class and instance in a source file
+      <para id="x_rr">If we save our type class and instance in a source file
 	named <filename>SupplyClass.hs</filename>, we'll need to add
 	a module header such as the following.</para>
 
       &SupplyClass.hs:module;
 
-      <para>The <code>FlexibleInstances</code> extension is necessary
+      <para id="x_sr">The <code>FlexibleInstances</code> extension is necessary
 	so that the compiler will accept our instance declaration.
 	This extension relaxes the normal rules for writing instances
 	in some circumstances, in a way that still lets the compiler's
@@ -651,7 +651,7 @@
       <tip>
 	<title>How to know when a language extension is needed</title>
 
-	<para>If &GHC; cannot compile a piece of code because it would
+	<para id="x_tr">If &GHC; cannot compile a piece of code because it would
 	  require some language extension to be enabled, it will tell
 	  us which extension we should use.  For example, if it
 	  decides that our code needs flexible instance support, it
@@ -662,7 +662,7 @@
 	  extension.</para>
       </tip>
 
-      <para>Finally, notice that we're re-exporting the
+      <para id="x_ur">Finally, notice that we're re-exporting the
 	<function>runSupply</function> and <type>Supply</type> names
 	from this module. It's perfectly legal to export a name from
 	one module even though it's defined in another.  In our case,
@@ -672,7 +672,7 @@
 	<quote>moving parts</quote> that a user of our code needs to
 	keep in mind.</para>
 
-      <para>Before we show how to use our new type class, we'll
+      <para id="x_vr">Before we show how to use our new type class, we'll
 	introduce a monad that we can use it with.</para>
     </sect2>
   </sect1>
@@ -680,7 +680,7 @@
   <sect1>
     <title>The reader monad</title>
 
-    <para>The <type>State</type> monad lets us plumb a piece of
+    <para id="x_wr">The <type>State</type> monad lets us plumb a piece of
       mutable state through our code.  Sometimes, we would like to be
       able to pass some <emphasis>immutable</emphasis> state around,
       such as a program's configuration data.  We could use the
@@ -688,7 +688,7 @@
       find ourselves accidentally modifying data that should remain
       unchanged.</para>
 
-    <para>Let's forget about monads for a moment and think about what
+    <para id="x_xr">Let's forget about monads for a moment and think about what
       a <emphasis>function</emphasis> with our desired characteristics
       ought to do.  it should accept a value of some type <varname
 	role="type">i</varname> that represents the configuration data
@@ -696,41 +696,41 @@
       other type <varname role="type">a</varname> as its result.  The
       overall type we want is <type>i -&gt; a</type>.</para>
 
-    <para>To turn this type into a convenient <type>Monad</type>
+    <para id="x_yr">To turn this type into a convenient <type>Monad</type>
       instance, we'll wrap it in a &newtype;.</para>
 
     &SupplyInstance.hs:Reader;
 
-    <para>Turning this into a <type>Monad</type> instance doesn't take
+    <para id="x_zr">Turning this into a <type>Monad</type> instance doesn't take
       much work.</para>
 
     &SupplyInstance.hs:Monad;
 
-    <para>We can think of our vaue of type <varname
+    <para id="x_As">We can think of our vaue of type <varname
 	role="type">i</varname> as an <quote>environment</quote> in
       which we're evaluating some expression.  The &return; action
       should have the same effect no matter what the environment is,
       so our version ignores its environment.</para>
 
-    <para>Our definition of &bind; is a little more complicated, but
+    <para id="x_Bs">Our definition of &bind; is a little more complicated, but
       only because we have to make the environment&emdash;here the
       variable <varname>r</varname>&emdash; available both in the
       current computation and in the computation we're chaining
       into.</para>
 
-    <para>How does a piece of code executing in this monad find out
+    <para id="x_Cs">How does a piece of code executing in this monad find out
       what's in its environment?  It simply has to
       <function>ask</function>.</para>
 
     &SupplyInstance.hs:ask;
 
-    <para>Within a given chain of actions, every invocation of
+    <para id="x_Ds">Within a given chain of actions, every invocation of
       <function>ask</function>  will return the same value.  Our code
       is easy to test in &ghci;.</para>
 
     &supply.ghci:instance;
 
-    <para>The <type>Reader</type> monad is included in the standard
+    <para id="x_Es">The <type>Reader</type> monad is included in the standard
       <code>mtl</code> library, which is usually bundled with &GHC;.
       You can find it in the <code>Control.Monad.Reader</code> module.
       The motivation for this monad may initially seem a little thin,
@@ -742,7 +742,7 @@
       intermediate functions that don't care about the configuration
       information don't need to see it.</para>
 
-    <para>The clearest motivation for the <type>Reader</type> monad
+    <para id="x_Fs">The clearest motivation for the <type>Reader</type> monad
       will come in section XXX, when we discuss combining several
       monads to build a new monad.  There, we'll see how to gain finer
       control over state, so that our code can modify some values via
@@ -753,55 +753,55 @@
   <sect1>
     <title>A return to automated deriving</title>
 
-    <para>Now that we know about the <type>Reader</type> monad, let's
+    <para id="x_Gs">Now that we know about the <type>Reader</type> monad, let's
       use it to create an instance of our <type>MonadSupply</type>
       type class.  In the interest of creating a simple example, we'll
       violate the spirit of <type>MonadSupply</type> here: our
       <function>next</function> action will always return the same
       value, instead of always returning a different value.</para>
 
-    <para>It would be a bad idea to directly make the
+    <para id="x_Hs">It would be a bad idea to directly make the
       <type>Reader</type> type an instance of the
       <type>MonadSupply</type> class, because then
       <emphasis>any</emphasis> <type>Reader</type> could act as a
       <type>MonadSupply</type>.  This would usually not make any
       sense.</para>
 
-    <para>Instead, we create a &newtype;, and make it an instance of
+    <para id="x_Is">Instead, we create a &newtype;, and make it an instance of
       both of the type classes we care about.  With the
       <code>GeneralizedNewtypeDeriving</code> extension enabled, &GHC;
       will do all the hard work for us.</para>
 
     &SupplyInstance.hs:MySupply;
 
-    <para>Notice that we must make our type an instance of
+    <para id="x_Js">Notice that we must make our type an instance of
       <type>MonadSupply i</type>, not <type>MonadSupply</type>.  If we
       omit the type variable, the compiler will complain.</para>
 
-    <para>To try out our <type>MySupply</type> type, we'll first
+    <para id="x_Ks">To try out our <type>MySupply</type> type, we'll first
       contrive a simple function that should work with any
       <type>MonadSupply</type> instance.</para>
 
     &SupplyInstance.hs:xy;
 
-    <para>If we use this with our <type>Supply</type> monad and
+    <para id="x_Ls">If we use this with our <type>Supply</type> monad and
       <function>randomsIO</function> function, we get a different
       answer every time, as we expect.</para>
 
     &supply.ghci:xy1;
 
-    <para>Because our <type>MySupply</type> monad has two layers of
+    <para id="x_Ms">Because our <type>MySupply</type> monad has two layers of
       &newtype; wrapping, we can make it easier to use by writing a
       custom execution function for it.</para>
 
     &SupplyInstance.hs:runMS;
 
-    <para>When we apply our <function>xy</function> action using this
+    <para id="x_Ns">When we apply our <function>xy</function> action using this
       execution function, we get the same answer every time.</para>
 
     &supply.ghci:xy2;
 
-    <para>Like our <type>MonadSupply</type> type class and
+    <para id="x_Os">Like our <type>MonadSupply</type> type class and
       <type>Supply</type> monad, almost all of the common Haskell
       monads are built with a split between interface and
       implementation.  For example, the <function>get</function> and
@@ -810,11 +810,11 @@
       actually methods of the <type>MonadState</type> type class; the
       <type>State</type> type is an instance of this class.</para>
 
-    <para>Similarly, the standard <type>Reader</type> monad is an
+    <para id="x_Ps">Similarly, the standard <type>Reader</type> monad is an
       instance of the <type>MonadReader</type> type class, which
       specifies the <function>ask</function> method.</para>
 
-    <para>While the separation of interface and implementation that
+    <para id="x_Qs">While the separation of interface and implementation that
       we've discussed above is appealing for its architectural
       cleanliness, it has important practical applications that will
       become clearer later. When we start combining monads in section
@@ -825,7 +825,7 @@
   <sect1>
     <title>Hiding the IO monad</title>
 
-    <para>The blessing and curse of the <type>IO</type> monad is that
+    <para id="x_Rs">The blessing and curse of the <type>IO</type> monad is that
       it is extremely powerful.  If we believe that careful use of
       types helps us to avoid programming mistakes, then the
       <type>IO</type> monad should be a great source of unease.
@@ -833,7 +833,7 @@
       what we can do, it leaves us vulnerable to all kinds of
       accidents.</para>
 
-    <para>How can we tame its power?  Let's say that we would like to
+    <para id="x_Ss">How can we tame its power?  Let's say that we would like to
       guarantee to ourselves that a piece of code can read and write
       files on the local filesystem, but that it will not access the
       network.  We can't use the plain <type>IO</type> monad, because
@@ -842,41 +842,41 @@
     <sect2>
       <title>Using a newtype</title>
 
-      <para>Let's create a module that provides a small set of
+      <para id="x_Ts">Let's create a module that provides a small set of
 	functionality for reading and writing files.</para>
 
       &HandleIO.hs:module;
 
-      <para>Our first approach to creating a restricted version of
+      <para id="x_Us">Our first approach to creating a restricted version of
 	<type>IO</type> is to wrap it with a &newtype;.</para>
 
       &HandleIO.hs:newtype;
 
-      <para>We do the by-now familiar trick of exporting the type
+      <para id="x_Vs">We do the by-now familiar trick of exporting the type
 	constructor and the <function>runHandleIO</function> execution
 	function from our module, but not the data constructor.  This
 	will prevent code running within the <type>HandleIO</type>
 	monad from getting hold of the <type>IO</type> monad that it
 	wraps.</para>
 
-      <para>All that remains is for us to wrap each of the actions we
+      <para id="x_Ws">All that remains is for us to wrap each of the actions we
 	want our monad to allow.  This is a simple matter of wrapping
 	each <type>IO</type> with a <type>HandleIO</type> data
 	constructor.</para>
 
       &HandleIO.hs:actions;
 
-      <para>We can now use our restricted <type>HandleIO</type> monad
+      <para id="x_Xs">We can now use our restricted <type>HandleIO</type> monad
 	to perform I/O.</para>
 
       &HandleIO.hs:safeHello;
 
-      <para>To run this action, we use
+      <para id="x_Ys">To run this action, we use
 	<function>runHandleIO</function>.</para>
 
       &handleIO.ghci:HandleIO;
 
-      <para>If we try to sequence an action that runs in the
+      <para id="x_Zs">If we try to sequence an action that runs in the
 	<type>HandleIO</type> monad with one that is not permitted,
 	the type system forbids it.</para>
 
@@ -886,19 +886,19 @@
     <sect2>
       <title>Designing for unexpected uses</title>
 
-      <para>There's one small, but significant, problem with our
+      <para id="x_as">There's one small, but significant, problem with our
 	<type>HandleIO</type> monad: it doesn't take into account the
 	possibility that we might occasionally need an escape hatch.
 	If we define a monad like this, it is likely that we will
 	occasionally need to perform an I/O action that isn't allowed
 	for by the design of our monad.</para>
 
-      <para>Our purpose in defining a monad like this is to make it
+      <para id="x_bs">Our purpose in defining a monad like this is to make it
 	easier for us to write solid code in the common case, not to
 	make corner cases impossible.   Let's thus give ourselves a
 	way out.</para>
 
-      <para>The <code>Control.Monad.Trans</code> module defines a
+      <para id="x_cs">The <code>Control.Monad.Trans</code> module defines a
 	<quote>standard escape hatch</quote>, the <type>MonadIO</type>
 	type class.  This defines a single function,
 	<function>liftIO</function>, which lets us embed an
@@ -906,12 +906,12 @@
 
       &monadio.ghci:MonadIO;
 
-      <para>Our implementation of this type class is trivial: we just
+      <para id="x_ds">Our implementation of this type class is trivial: we just
 	wrap <type>IO</type> with our data constructor.</para>
 
       &HandleIO.hs:MonadIO;
       
-      <para>With judicious use of <function>liftIO</function>, we can
+      <para id="x_es">With judicious use of <function>liftIO</function>, we can
 	escape our shackles and invoke <type>IO</type> actions where
 	necessary.</para>
 
@@ -920,7 +920,7 @@
       <tip>
 	<title>Automatic derivation and MonadIO</title>
 
-	<para>We could have had the compiler automatically derive an
+	<para id="x_fs">We could have had the compiler automatically derive an
 	  instance of <type>MonadIO</type> for us by adding the type
 	  class to the <code>deriving</code> clause of
 	  <type>HandleIO</type>.  In fact, in production code, this
@@ -933,19 +933,19 @@
     <sect2 id="monadcase.io.class">
       <title>Using type classes</title>
 
-      <para>The disadvantage of hiding <type>IO</type> in another
+      <para id="x_gs">The disadvantage of hiding <type>IO</type> in another
 	monad is that we're still tied to a concrete implementation.
 	If we want to swap <type>HandleIO</type> for some other monad,
 	we must change the type of every action that uses
 	<type>HandleIO</type>.</para>
 
-      <para>As an alternative, we can create a type class that
+      <para id="x_hs">As an alternative, we can create a type class that
 	specifies the interface we want from a monad that manipulates
 	files.</para>
 
       &MonadHandle.hs:MonadHandle;
 
-      <para>Here, we've chosen to abstract away both the type of the
+      <para id="x_is">Here, we've chosen to abstract away both the type of the
 	monad and the type of a file handle.  To satisfy the type
 	checker, we've added a functional dependency: for any instance
 	of <type>MonadHandle</type>, there is exactly one handle type
@@ -955,19 +955,19 @@
 
       &MonadHandle.hs:IO;
 
-      <para>Because any <type>MonadHandle</type> must also be a
+      <para id="x_js">Because any <type>MonadHandle</type> must also be a
 	<type>Monad</type>, we can write code that manipulates files
 	using normal &do; notation, without caring what monad it will
 	finally execute in.</para>
 
       &MonadHandle.hs:safeHello;
 
-      <para>Because we made <type>IO</type> an instance of this type
+      <para id="x_ks">Because we made <type>IO</type> an instance of this type
 	class, we can execute this action from &ghci;.</para>
 
       &monadHandle.ghci:IO;
 
-      <para>The beauty of the type class approach is that we can swap
+      <para id="x_ls">The beauty of the type class approach is that we can swap
 	one underlying monad for another without touching our code at
 	all, as our code doesn't know or care about the
 	implementation.  For instance, we could replace
@@ -978,19 +978,19 @@
     <sect2>
       <title>Isolation and testing</title>
 
-      <para>In fact, because our <function>safeHello</function>
+      <para id="x_ms">In fact, because our <function>safeHello</function>
 	function doesn't use the <type>IO</type> type, we can even use
 	a monad that <emphasis>can't</emphasis> perform I/O.  This
 	allows us to test code that would normally have side effects
 	in a completely pure, controlled environment.</para>
 
-      <para>To do this, we will create a monad that doesn't perform
+      <para id="x_ns">To do this, we will create a monad that doesn't perform
 	I/O, but instead logs every file-related event for later
 	processing.</para>
 
       &MonadHandle.hs:Event;
 
-      <para>Although we already developed a <type>Logger</type> type
+      <para id="x_os">Although we already developed a <type>Logger</type> type
 	in <xref linkend="monads.logger"/>, here we'll use the
 	standard, and more general, <type>Writer</type> monad. Like
 	other <code>mtl</code> monads, the API provided by
@@ -1000,23 +1000,23 @@
 
       &monadwriter.ghci:tell;
 
-      <para>The values we log can be of any <type>Monoid</type> type.
+      <para id="x_ps">The values we log can be of any <type>Monoid</type> type.
 	Since the list type is a <type>Monoid</type>, we'll log to a
 	list of <type>Event</type>.</para>
 
-      <para>We could make <type>Writer [Event]</type> an instance of
+      <para id="x_qs">We could make <type>Writer [Event]</type> an instance of
 	<type>MonadHandle</type>, but it's cheap, easy, and safer to
 	make a special-purpose monad.</para>
 
       &MonadHandle.hs:WriterIO;
 
-      <para>Our execution function simply removes the &newtype;
+      <para id="x_rs">Our execution function simply removes the &newtype;
 	wrapper we added, then calls the normal <type>Writer</type>
 	monad's execution function.</para>
 
       &MonadHandle.hs:runWriterIO;
 
-      <para>When we try this code out in &ghci;, it gives us a log of
+      <para id="x_ss">When we try this code out in &ghci;, it gives us a log of
 	the function's file activities.</para>
 
       &monadHandle.ghci:Writer;
@@ -1026,7 +1026,7 @@
     <sect2 id="monadcase.writer.dlist">
       <title>The writer monad and lists</title>
 
-      <para>The writer monad uses the monoid's
+      <para id="x_ts">The writer monad uses the monoid's
 	<function>mappend</function> function every time we use
 	<function>tell</function>.  Because
 	<function>mappend</function> for lists is
@@ -1035,7 +1035,7 @@
 	expensive.  We are using lists above purely for
 	simplicity.</para>
 
-      <para>In production code, if you want to use the
+      <para id="x_us">In production code, if you want to use the
 	<type>Writer</type> monad and you need list-like behaviour,
 	use a type with better  append characteristics. One such type
 	is the difference list, which we introduced in <xref
@@ -1048,14 +1048,14 @@
     <sect2>
       <title>Arbitrary I/O revisited</title>
 
-      <para>If we use the type class approach to restricting
+      <para id="x_vs">If we use the type class approach to restricting
 	<type>IO</type>, we may still want to retain the ability to
 	perform arbitrary I/O actions.  We might try adding
 	<type>MonadIO</type> as a constraint on our type class.</para>
 
       &MonadHandle.hs:tidierHello;
 
-      <para>This approach has a problem, though: the added
+      <para id="x_ws">This approach has a problem, though: the added
 	<type>MonadIO</type> constraint loses us the ability to test
 	our code in a pure environment, because we can no longer tell
 	whether a test might have damaging side effects.  The
@@ -1065,11 +1065,11 @@
 
       &MonadHandle.hs:tidyHello;
 
-      <para>We can use pure property tests on the functions that lack
+      <para id="x_xs">We can use pure property tests on the functions that lack
 	<type>MonadIO</type> constraints, and traditional unit tests
 	on the rest.</para>
 
-      <para>Unfortunately, we've substituted one problem for another:
+      <para id="x_ys">Unfortunately, we've substituted one problem for another:
 	we can't invoke code with both <type>MonadIO</type> and
 	<type>MonadHandle</type> constraints from code that has the
 	<type>MonadHandle</type> constraint alone.  If we find that
@@ -1077,7 +1077,7 @@
 	really need the <type>MonadIO</type> constraint, we must add
 	it to all the code paths that lead to this point.</para>
 
-      <para>Allowing arbitrary I/O is risky, and has a profound effect
+      <para id="x_zs">Allowing arbitrary I/O is risky, and has a profound effect
 	on how we develop and test our code.  When we have to choose
 	between being permissive on the one hand, and easier reasoning
 	and testing on the other, we usually opt for the
@@ -1090,7 +1090,7 @@
       <qandaset>
 	<qandaentry>
 	  <question>
-	    <para>Using QuickCheck, write a test for an action in the
+	    <para id="x_At">Using QuickCheck, write a test for an action in the
 	      <type>MonadHandle</type> monad, to see if it tries to
 	      write to a file handle that is not open.  Try it
 	      out on <function>safeHello</function>.</para>
@@ -1098,7 +1098,7 @@
 	</qandaentry>
 	<qandaentry>
 	  <question>
-	    <para>Write an action that tries to write to a file handle
+	    <para id="x_Bt">Write an action that tries to write to a file handle
 	      that it has closed.  Does your test catch this
 	      bug?</para>
 	  </question>

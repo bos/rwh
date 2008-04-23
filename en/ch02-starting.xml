@@ -27,15 +27,15 @@
 
     <itemizedlist>
       <listitem>
-	<para>&ghc; is an optimizing compiler that generates fast
+	<para id="x_jl">&ghc; is an optimizing compiler that generates fast
 	  native code.</para>
       </listitem>
       <listitem>
-	<para>&ghci; is an interactive interpreter and
+	<para id="x_kl">&ghci; is an interactive interpreter and
 	  debugger.</para>
       </listitem>
       <listitem>
-	<para>&runghc; is a program for running Haskell programs as
+	<para id="x_ll">&runghc; is a program for running Haskell programs as
 	  scripts, without needing to compile them first.</para>
       </listitem>
     </itemizedlist>
@@ -132,7 +132,7 @@ Loading package base ... linking ... done.
     <tip>
       <title>Getting help</title>
 
-      <para>If you enter <code>:?</code> at the &ghci; prompt, it will
+      <para id="x_ml">If you enter <code>:?</code> at the &ghci; prompt, it will
 	print a long help message.</para>
     </tip>
 
@@ -154,7 +154,7 @@ Loading package base ... linking ... done.
 	default prompts throughout this book with the prompt string
 	<prompt>ghci&gt;</prompt>.</para>
 
-      <para>If you want to do this youself, use &ghci;'s <code>:set
+      <para id="x_nl">If you want to do this youself, use &ghci;'s <code>:set
 	  prompt</code> directive, as follows.</para>
 
       <screen>

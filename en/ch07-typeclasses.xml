@@ -52,7 +52,7 @@
       compare.  And, what's more, if new data types are added later,
       the existing code shouldn't have to be modified.
     </para>
-    <para>
+    <para id="x_jp">
       Haskell's typeclasses are designed to address all of these things.
     </para>
   </sect1>
@@ -319,7 +319,7 @@ class  Eq a  where
         that's needed.
       </para>
       <note>
-        <para>&Show; is usually used to define a &String;
+        <para id="x_kp">&Show; is usually used to define a &String;
         representation for data that is useful for a machine to parse
         back with &Read;.  Haskell programmers generally write custom
         functions to format data in pretty ways for displaying to end
@@ -365,7 +365,7 @@ class  Eq a  where
         provided an explicit type.
       </para>
       <tip>
-        <para>In most cases, if the explicit &Double; type annotation
+        <para id="x_lp">In most cases, if the explicit &Double; type annotation
         were omitted, the compiler would refuse to guess a
         common type and simply give an error.  The fact that it could
         default to &Integer; here is a special case arising from the
@@ -424,7 +424,7 @@ class  Eq a  where
         leading spaces, which is common practice in Haskell programs.
       </para>
       <tip>
-        <para>
+        <para id="x_mp">
           While it is possible to build sophisticated parsers using
           the &Read; typeclass, many people find it easier to do so using
           Parsec, and rely on &Read; only for simpler tasks.  Parsec
@@ -449,7 +449,7 @@ class  Eq a  where
         make it so.
       </para>
       <tip>
-        <para>
+        <para id="x_np">
           String handling in Haskell is normally lazy, so &read; and
           &show; can be used on quite large data structures without
           incident.  The built-in &read; and &show; instances in
@@ -1048,7 +1048,7 @@ class  Eq a  where
         </tgroup>
       </table>
 
-      <para>
+      <para id="x_op">
         * Instead of <literal>truncate</literal>, you could also use
           <literal>round</literal>, <literal>ceiling</literal>, or
           <literal>floor</literal>.
@@ -1086,7 +1086,7 @@ class  Eq a  where
         are instances of &Ord;.
       </para>
       <tip>
-        <para>Sometimes, the ordering in &Ord; is arbitrary.  For
+        <para id="x_pp">Sometimes, the ordering in &Ord; is arbitrary.  For
         instance, for &Maybe;, &Nothing; sorts before <literal>Just
         x</literal>, but this was an arbitrary decision.
         </para>

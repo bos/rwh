@@ -94,7 +94,7 @@ Welcome to Haskell, John!
       </footnote>
     </para>
     <tip>
-      <para>
+      <para id="x_qp">
         Actions can be created, assigned, and passed anywhere.
         However, they may only be performed (executed) from within
         another I/O action.  
@@ -686,7 +686,7 @@ Your name contains 4 characters.
         the new file already exists, it is removed before the rename takes
         place.
       </para>
-      <para>
+      <para id="x_rp">
         Like many other functions that take a filename, if the "old"
         name doesn't exist, &renameFile; will raise an exception.
         More information on exception handling can be found in <xref
@@ -906,7 +906,7 @@ Which could be expressed as this Haskell literal:
       </para>
       &toupper-lazy1.ghci:all;
       <warning>
-        <para>
+        <para id="x_sp">
           If we had tried to hang on to <literal>inpStr</literal> in
           the above example, past the one place where it was used (the
           call to <literal>processData</literal>), the program would
@@ -965,7 +965,7 @@ Which could be expressed as this Haskell literal:
         &ghci;:
       </para>
       &readfile.ghci:all;
-      <para>
+      <para id="x_tp">
         Now, here's about an example program that uses &readFile; and
         &writeFile;:
       </para>

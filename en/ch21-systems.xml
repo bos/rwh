@@ -87,7 +87,7 @@
     </para>
     &dir.ghci:contents2;
     <tip>
-      <para>
+      <para id="x_ev">
         For a more detailed discussion of filtering the results of
         <literal>getDirectoryContents</literal>, refer to <xref
           linkend="glob"/>.

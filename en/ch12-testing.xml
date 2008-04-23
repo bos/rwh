@@ -3,7 +3,7 @@
 <chapter id="hs.quickcheck" revision="unpublished">
   <title>Testing and Quality Assurance</title>
 
-  <para>
+  <para id="x_up">
 Building real systems means caring about quality control, robustness and 
 correctness. With the right quality assurance mechanisms in place, 
 well-written code can feel like a precision machine, with all functions
@@ -11,7 +11,7 @@ performing their tasks precisely as specified. There is no sloppiness around
 the edges, and the final result can be code that is self-explanatory,
 obviously correct -- the kind of code that inspires confidence.  </para>
 
-  <para>
+  <para id="x_vp">
 In Haskell, we have several tools at our disposal for building such 
 precise systems. The rich, expressive type-system allows for complicated
 invariants to be enforced statically -- making it impossible to produce
@@ -20,7 +20,7 @@ ensure code is built to be easily decoupled, refactored, and tested.
 The kind of code that doesn't go wrong.
   </para>
 
-  <para>
+  <para id="x_wp">
 Testing plays a key role in keeping code on the straight-and-narrow path.
 The main testing mechanisms in Haskell are traditional unit testing (via the HUnit 
 library), and its more powerful sibling: type-based <quote>property</quote>
@@ -29,7 +29,7 @@ approach to testing in the form of abstract invariants functions should
 satisfy universally, with test data generated for the programmer by the tool. 
   </para>
 
-  <para>
+  <para id="x_xp">
 In this chapter we'll look at how to use QuickCheck to establish invariants
 in code and then re-examine the JSON pretty printer developed in chapter 6,
 testing it with QuickCheck. We'll also see how to guide the testing process
@@ -39,26 +39,26 @@ with GHC's code coverage tool: HPC.
   <sect1>
     <title>QuickCheck: type-based testing</title>
 
-    <para>
+    <para id="x_yp">
 To get an overview of how property-based testing works, we'll begin with a
 simple scenario: you've written a specialised sort function and want to test
 its behaviour against a reference implementation.
     </para>
 
-    <para>
+    <para id="x_zp">
 First, we import the QuickCheck library, and any other modules we need:
     </para>
 
     &QC-basics.hs:module;
 
-    <para>
+    <para id="x_Aq">
 And the function we want to test -- a custom sort routine (the classic
 Haskell sort implementation):
     </para>
 
     &QC-basics.hs:mysort;
 
-    <para>
+    <para id="x_Bq">
 What a lovely sort function! Now, we'd like to check that this function obeys
 some basic properties first. One useful invariant that comes up in a lot of
 purely functional code is <emphasis>idempotency</emphasis> -- applying a
@@ -68,7 +68,7 @@ routine, we can state this invariant simply as:
 
     &QC-basics.hs:idempotent;
 
-    <para>
+    <para id="x_Cq">
 We follow the QuickCheck convention of prefixing test properties with
 <code>prop_</code>. Our idempotency property is simply a Haskell function
 which exercises the sorting code, describing an invariant that should hold
@@ -79,20 +79,20 @@ time: </para>
 
     &qc-basics.ghci:basics;
 
-  <para>
+  <para id="x_Dq">
 For the 100 different lists generated, our property held -- great!
 To see the actual data generated for each test, and the result, we can
 use <code>verboseCheck</code> in place of <code>quickCheck</code>.
   </para>
 
-    <para>
+    <para id="x_Eq">
 Good libraries consist of a set of orthogonal primitives, which have sensible
 relationships to each other. We can use QuickCheck to specify the
 relationships between functions, helping guide the process of finding a
 suitable API -- one which satisifies many properties.
     </para>
 
-    <para>
+    <para id="x_Fq">
 Our sort function should have a number of interesting relationships: the
 first element in a sorted list should be the smallest element, the last
 element the largest, and if take the smallest element of two lists, that
