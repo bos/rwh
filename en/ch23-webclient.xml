@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="wc" revision="alpha">
+<chapter id="webclient" revision="alpha;beta">
   <title>Extended Example: Web Client Programming</title>
   <para id="x_Xk">
     By this point, you've seen how to interact with a database, parse
@@ -69,7 +69,7 @@
     with the basic types we'll need to use.
   </para>
 
-  <sect1 id="wc.types">
+  <sect1 id="webclient.types">
     <title>Basic Types</title>
     <para id="x_jk">
       The first thing to do is have some idea of the basic information
@@ -90,7 +90,7 @@
     </para>
   </sect1>
   
-  <sect1 id="wc.db">
+  <sect1 id="webclient.db">
     <title>The Database</title>
     <para id="x_lk">
       Next, we'll write the code to make possible persistent storage
@@ -120,7 +120,7 @@
     &PodDB.ghci:all;
   </sect1>
 
-  <sect1 id="wc.parser">
+  <sect1 id="webclient.parser">
     <title>The Parser</title>
     <para>
       Now that we have the database component, we need to have code to
@@ -213,7 +213,7 @@ channel = tag "rss" /> tag "channel"
     </para>
   </sect1>
 
-  <sect1 id="wc.download">
+  <sect1 id="webclient.download">
     <title>Downloading</title>
     <para>
       The next part of our program is a module to download data.
@@ -252,7 +252,7 @@ channel = tag "rss" /> tag "channel"
     </warning>
   </sect1>
 
-  <sect1 id="wc.main">
+  <sect1 id="webclient.main">
     <title>Main Program</title>
     <para>
       Finally, we need a main program to tie it all together.  Here's

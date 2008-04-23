@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="gui" revision="unpublished">
+<chapter id="gui" revision="alpha;beta">
   <title>GUI Programming with gtk2hs</title>
   <para>
     Thoughout this book, we have been developing simple text-based
@@ -58,7 +58,7 @@
     <title>User Interface Design with Glade</title>
     <para>
       In this chapter, we are going to develop a GUI for the podcast
-      downloader we first developed in <xref linkend="wc"/>.  Our
+      downloader we first developed in <xref linkend="webclient"/>.  Our
       first task is to design the user interface in Glade.  Once we
       have accomplished that, we will write the Haskell code to
       integrate it with the application.
@@ -194,10 +194,10 @@
     </para>
     &PodLocalMain.hs:all;
     <para>
-      Now, let's consider <literal>PodMainGUI.hs</literal>.  This file is
-      the only Haskell source file that we had to modify from the
-      example in <xref linkend="wc"/> to make it work as a GUI.  Let's
-      start by looking at the start of our new
+      Now, let's consider <literal>PodMainGUI.hs</literal>.  This file
+      is the only Haskell source file that we had to modify from the
+      example in <xref linkend="webclient"/> to make it work as a GUI.
+      Let's start by looking at the start of our new
       <literal>PodMainGUI.hs</literal> file -- we've renamed it from
       <literal>PodMain.hs</literal> for clarity.
     </para>
@@ -465,11 +465,11 @@
     <title>Using Cabal</title>
     <para>
       We presented a Cabal file to build this project for the
-      command-line version in <xref linkend="wc.main"/>.  We need to
-      make a few tweaks for it to work with our GUI version.  First,
-      there's the obvious need to add the gtk2hs packages to the list
-      of build dependencies.  There is also the matter of the Glade
-      XML file.
+      command-line version in <xref linkend="webclient.main"/>.  We
+      need to make a few tweaks for it to work with our GUI version.
+      First, there's the obvious need to add the gtk2hs packages to
+      the list of build dependencies.  There is also the matter of the
+      Glade XML file.
     </para>
     <para>
       Earlier, we wrote a <literal>PodLocalMain.hs</literal> that

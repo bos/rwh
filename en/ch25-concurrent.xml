@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="concurrent" revision="unpublished">
+<chapter id="concurrent" revision="alpha;beta">
   <title>Basics of Concurrent and Parallel Haskell</title>
 
   <remark>FIXME</remark>

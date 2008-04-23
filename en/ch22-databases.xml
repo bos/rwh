@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-  <chapter id="databases" revision="alpha">
+  <chapter id="databases" revision="alpha;beta">
     <title>Using Databases</title>
 
     <para id="x_Ec">
@@ -18,7 +18,7 @@
       as well.  In this chapter, we will introduce you to one of the Haskell
       frameworks for working with databases.  We will also use this framework
       to begin building a podcast downloader, which we will further develop in
-      <xref linkend="wc"/>.
+      <xref linkend="webclient"/>.
     </para>
 
     <sect1 id="databases.hdbc">

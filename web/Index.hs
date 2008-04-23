@@ -35,33 +35,33 @@ chapters = [
  , ch "starting" "Getting started" $ Beta "2008-01-21"
  , ch "funcstypes" "Types and functions" $ Beta "2008-01-21"
  , ch "deftypes" "Defining types, streamlining functions" $ Beta "2008-01-21"
- , ch "fp" "Functional programming" Unpublished
- , ch "library" "Writing a library" Unpublished
+ , ch "fp" "Functional programming" $ Alpha "2008-04-22"
+ , ch "library" "Writing a library" $ Alpha "2008-04-22"
  , ch "typeclasses" "Using typeclasses" $ Beta "2008-02-21"
  , ch "io" "Input and output" $ Beta "2008-02-21"
  , ch "glob" "Case study: regular expressions and file name matching"
    $ Beta "2008-01-21"
  , ch "find" "I/O case study: a library for searching the filesystem"
-   $ Alpha "2008-02-21"
+   $ Beta "2008-04-22"
  , ch "binary" "Code case study: parsing a binary data format"
-   $ Alpha "2008-02-21"
+   $ Beta "2008-04-22"
  , ch "testing" "Testing your code" Unpublished
- , ch "barcode" "Barcode recognition" $ Unpublished
- , ch "data" "Data structures" $ Alpha "2008-02-21"
- , ch "monads" "Monads" $ Alpha "2008-03-12"
- , ch "monadcase" "Programming with monads" Unpublished
- , ch "monadtrans" "Monad transformers" Unpublished
- , ch "parsec" "The Parsec parsing library" Unpublished
+ , ch "barcode" "Barcode recognition" $ Alpha "2008-04-22"
+ , ch "data" "Data structures" $ Beta "2008-04-22"
+ , ch "monads" "Monads" $ Beta "2008-04-22"
+ , ch "monadcase" "Programming with monads" $ Alpha "2008-04-22"
+ , ch "monadtrans" "Monad transformers" $ Alpha "2008-04-22"
+ , ch "parsec" "The Parsec parsing library" $ Alpha "2008-04-22"
  , ch "ffi" "The foreign function interface" Unpublished
  , ch "errors" "Error handling" Unpublished
- , ch "systems" "Systems programming" Unpublished
- , ch "databases" "Working with databases" $ Alpha "2008-03-12"
- , ch "webclient" "Web client programming" Unpublished
- , ch "gui" "GUI programming" Unpublished
+ , ch "systems" "Systems programming" $ Alpha "2008-04-22"
+ , ch "databases" "Working with databases" $ Beta "2008-04-22"
+ , ch "web-client" "Web client programming" $ Alpha "2008-04-22"
+ , ch "gui" "GUI programming" $ Alpha "2008-04-22"
  , ch "concurrent" "Basic concurrent and parallel programming" Unpublished
  , ch "profiling" "Profiling and tuning for performance" Unpublished
  , ch "advhs" "Advanced language features" Unpublished
- , ch "sockets" "Network programming" Unpublished
+ , ch "sockets" "Network programming" $ Alpha "2008-04-22"
  , ch "webapp" "A concurrent RESTful web application" Unpublished
  , app "install" "Installing GHC" $ Beta "2008-01-21"
  , app "escapes" "Characters, strings, and escaping rules" $ Beta "2008-01-21"
