@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="sockets" revision="unpublished">
+<chapter id="sockets" revision="alpha;beta">
   <title>Sockets and Syslog</title>
 
   <sect1 id="sockets.basics">
