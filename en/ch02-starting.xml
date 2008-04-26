@@ -50,7 +50,8 @@
     </note>
 
     <para id="x_j">In this book, we assume that you're using at least
-      version 6.6.1 of &GHC;, which was released in 2007.  However, we
+      version 6.8.2 of &GHC;, which was released in 2007.  Many of our
+      examples will work unmodified with older versions.  However, we
       <emphasis>recommend</emphasis> using whatever is the newest
       version available for your platform.  If you're using Windows or
       Mac OS X, you can get started easily and quickly using a
@@ -59,11 +60,6 @@
 	url="http://www.haskell.org/ghc/download.html">the &GHC;
 	download page</ulink>, and look for the list of binary
       packages and installers.</para>
-
-    <remark>With 6.8.3 due out some time before the book, should we
-      make that the <quote>baseline</quote> version?  We're likely to
-      hold off on a decision until much closer to publication.  For
-      now, we'll stick with 6.6.1.</remark>
 
     <para id="x_k">Many Linux distributors, and providers of BSD and
       other Unix variants, make custom binary packages of &GHC;
