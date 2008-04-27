@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="whyfp" revision="unpublished">
+<chapter id="whyfp.bis" revision="unpublished">
   <title>Why functional programming?  Why Haskell?</title>
 
   <sect1>
@@ -158,13 +158,13 @@
   <sect1>
     <title>What to expect from this book</title>
 
-    <para id="x_Tl">We started this project because a growing number
+    <para id="bis.x_Tl">We started this project because a growing number
       of people are using Haskell to solve everyday problems. Because
       Haskell has its roots in academia, few of the Haskell books that
       currently exist focus on the problems and techniques of everyday
       programming that we're interested in.</para>
 
-    <para id="x_Rl">With this book, we want to show you how to use
+    <para id="bis.x_Rl">With this book, we want to show you how to use
       functional programming and Haskell to solve realistic problems.
       This is a hands-on book: every chapter contains dozens of code
       samples, and many contain complete applications.  Here are a few
@@ -208,7 +208,7 @@
 	potentially tricky ideas in depth, usually with examples and
 	images to drive our points home.</para>
 
-      <para id="x_P">As a new Haskell programmer, you'll inevitably
+      <para id="bis.x_P">As a new Haskell programmer, you'll inevitably
 	end up writing quite a bit of code by hand for which you could
 	have used a library function or programming technique, had you
 	just known of its existence. You'll also run into instances
@@ -235,86 +235,237 @@
     <title>What to expect from Haskell</title>
 
     <para>Haskell is a general purpose programming language.  It was
-      not designed with a niche application in mind.  Although it
-      takes a strong stand on how programs should be written, it
-      doesn't favour one kind of program over another.  Here are just
-      a few examples of the variety of applications that have been
-      written with Haskell.</para>
+      designed without any application niche in mind.  Although it
+      takes a strong stand on how programs should be written, it does
+      not favour one problem domain over others.</para>
 
-    <itemizedlist>
-      <listitem>
-	<para>Innumerable compilers and compiler-related tools</para>
-      </listitem>
-      <listitem>
-	<para>Chip design software</para>
-      </listitem>
-      <listitem>
-	<para>A toolkit for music composition</para>
-      </listitem>
-      <listitem>
-	<para>Distributed revision control</para>
-      </listitem>
-      <listitem>
-	<para>Secure web middleware</para>
-      </listitem>
-    </itemizedlist>
+    <para>While at its core, the language encourages a pure, lazy
+      style of functional programming, this is the
+      <emphasis>default</emphasis>, not the only option.  Haskell also
+      supports the more traditional models of procedural code and
+      strict evaluation.  Additionally, although the focus of the
+      language is squarely on writing strongly typed programs, it is
+      possible (though rarely seen) to write Haskell code in a
+      dynamically typed manner.</para>
 
-    <para>For practical work, almost as important as a language itself
-      is the ecosystem of libraries and tools around it.  Haskell has
-      a strong showing in this area.</para>
+    <sect2>
+      <title>Compared to traditional static languages</title>
 
-    <para>The most widely used compiler, &GHC;, has been actively
-      developed for over 15 years, and provides a mature and stable
-      set of features.</para>
+      <para>Statically typed languages have been the mainstay of the
+	programming world for decades.  Although Haskell is a
+	statically typed language, its notion of what types are for,
+	and what we can do with them, is much more flexible and
+	powerful than traditional languages.</para>
 
-    <itemizedlist>
-      <listitem>
-	<para>Compilation to efficient native code</para>
-      </listitem>
-      <listitem>
-	<para>Easy deployment of compiled binaries, unencumbered by
-	  licensing restrictions</para>
-      </listitem>
-      <listitem>
-	<para>Interactive interpreter and debugger</para>
-      </listitem>
-      <listitem>
-	<para>Code coverage analysis</para>
-      </listitem>
-      <listitem>
-	<para>Thorough documentation</para>
-      </listitem>
-      <listitem>
-	<para>Massively scalable support for concurrent and multicore
-	  programming</para>
-      </listitem>
-    </itemizedlist>
+      <para>In addition, Haskell's type system is often unobtrusive: a
+	Haskell compiler will automatically infer the type of an
+	expression or function if we don't provide it.  Compared to
+	traditional static languages, to which we must spoon feed
+	large amounts of type information, the combination of power
+	and inference in Haskell's type system significantly reduces
+	the clutter and redundancy of our code.</para>
 
-    <para>The Hackage package database is the Haskell community's
-      collection of open source libraries and applications.  Most
-      libraries published on Hackage are licensed under terms that
-      allow both commercial and open source use.  Some of the areas
-      covered by open source libraries include the following.</para>
+      <para>Several of Haskell's other features combine to further
+	increase the amount of work we can fit into a screenful of
+	text. As a result, it is not unusual for a Haskell program to
+	require one tenth the number of lines of code as an equivalent
+	written in a traditional language.  With this come
+	improvements in development time and agility: we can create
+	reliable code quickly, and easily refactor it in response to
+	changing requirements.</para>
 
-    <itemizedlist>
-      <listitem>
-	<para>Interfaces to all major open source and commercial
-	  databases</para>
-      </listitem>
-      <listitem>
-	<para>XML, HTML, and XQuery processing</para>
-      </listitem>
-      <listitem>
-	<para>Web client and server development</para>
-      </listitem>
-      <listitem>
-	<para>Desktop GUIs, including cross-platform toolkits</para>
-      </listitem>
-      <listitem>
-	<para>Support for Unicode and other text encodings</para>
-      </listitem>
-    </itemizedlist>
-    </para>
+      <para>These productivity improvements are sometimes accompanied
+	by a performance penalty when it comes to running code.  It is
+	not unusual for a Haskell program to run at a half to a
+	quarter the speed of a comparable program written in a
+	traditional language.</para>
+
+      <para>However, a substantial and increasing number of Haskell
+	programs perform as well as (sometimes better than) their
+	traditional counterparts.  In part, this is due to advances in
+	Haskell compilers and libraries, where progress is rapid and
+	improvements benefit the entire community.  Also, Haskell's
+	huge edge in developer productivity gives us more
+	opportunities to focus on algorithmic improvements.</para>
+    </sect2>
+
+    <sect2>
+      <title>Compared to modern dynamic languages</title>
+
+      <para>Over the past decade, dynamically typed and interpreted
+	languages have become increasingly popular.  They offer
+	substantial benefits in developer productivity.  Although this
+	typically comes at the cost of a huge performance hit, for
+	many programming tasks productivity trumps performance, or
+	performance isn't a significant factor in any case.</para>
+
+      <para>Brevity is one area in which Haskell and dynamically typed
+	languages perform similarly: in each case, you write much less
+	code to solve a problem than in a traditional language.
+	Programs are often around the same size in dynamically typed
+	languages and Haskell.</para>
+
+      <para>When we consider runtime performance, Haskell almost
+	always has a huge advantage.  Code compiled by &GHC; is
+	typically between 20 and 60 times faster than code run through
+	a dynamic language's interpreter.  &GHC; also provides an
+	interpreter, so you can run scripts without compiling
+	them.</para>
+
+      <para>Another big differentiator between dynamically typed
+	languages and Haskell lies in the philosophy around types.  A
+	major reason for the popularity of dynamically typed languages
+	is that only rarely do we need to explicitly mention types.
+	Through automatic type inference, Haskell offers the same
+	advantage.</para>
+
+      <para>However, beyond this surface level the differences run
+	deep.  In a dynamically typed language, we can create
+	constructs that are difficult or impossible to express in a
+	statically typed language.  However, the same is true in
+	reverse: with a type system as powerful as Haskell's, we can
+	structure a program in a way that would be unmanageable or
+	infeasible in a dynamically typed language.</para>
+
+      <para>It's important to recognise that each of these approaches
+	involves tradeoffs.  Very briefly put, the Haskell perspective
+	emphasises safety, while the dynamically typed outlook favours
+	flexibility.  If someone had already discovered one way of
+	thinking about types that was always best, we imagine that
+	everyone would know about it by now.</para>
+
+      <para>Of course, we have our own opinions about which tradeoffs
+	are more beneficial.  Two of us have years of experience
+	programming in dynamically typed languages.  We love working
+	with them; we still use them every day; but usually, we prefer
+	Haskell.  In our experience, Haskell starts to outshine a
+	dynamically typed language once a project grows to a handful
+	of thousands of lines of code.</para>
+    </sect2>
+
+    <sect2>
+      <title>Haskell in industry and open source</title>
+
+      <para>Here are just a few examples of large software systems
+	that have been created in Haskell.  Some of these are open
+	source, while others are commercial products.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>Innumerable compilers and compiler-related
+	    tools</para>
+	</listitem>
+	<listitem>
+	  <para>Chip design software</para>
+	</listitem>
+	<listitem>
+	  <para>A toolkit for music composition</para>
+	</listitem>
+	<listitem>
+	  <para>Distributed revision control</para>
+	</listitem>
+	<listitem>
+	  <para>Secure web middleware</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Compilation, debugging, and performance analysis</title>
+
+      <para>For practical work, almost as important as a language
+	itself is the ecosystem of libraries and tools around it.
+	Haskell has a strong showing in this area.</para>
+
+      <para>The most widely used compiler, &GHC;, has been actively
+	developed for over 15 years, and provides a mature and stable
+	set of features.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>It compiles to efficient native code on all major
+	    modern operating systems and CPU architectures</para>
+	</listitem>
+	<listitem>
+	  <para>Easy deployment of compiled binaries, unencumbered by
+	    licensing restrictions</para>
+	</listitem>
+	<listitem>
+	  <para>Interactive interpreter and debugger</para>
+	</listitem>
+	<listitem>
+	  <para>Code coverage analysis</para>
+	</listitem>
+	<listitem>
+	  <para>Detailed profiling of performance and memory
+	    usage</para>
+	</listitem>
+	<listitem>
+	  <para>Thorough documentation</para>
+	</listitem>
+	<listitem>
+	  <para>Massively scalable support for concurrent and
+	    multicore programming</para>
+	</listitem>
+      </itemizedlist>
+
+    </sect2>
+
+    <sect2>
+      <title>Bundled and third party libraries</title>
+
+      <para>The &GHC; compiler ships with a collection of useful
+	libraries.  Here are a few of the common programming needs
+	that these libraries address.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>File I/O, and filesystem traversal and
+	  manipulation</para>
+	</listitem>
+	<listitem>
+	  <para>Network client and server programming</para>
+	</listitem>
+	<listitem>
+	  <para>Regular expressions and parsing</para>
+	</listitem>
+	<listitem>
+	  <para>Concurrent programming</para>
+	</listitem>
+	<listitem>
+	  <para>Automated testing</para>
+	</listitem>
+	<listitem>
+	  <para>Sound and graphics</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>The Hackage package database is the Haskell community's
+	collection of open source libraries and applications.  Most
+	libraries published on Hackage are licensed under liberal
+	terms that permit both commercial and open source use.  Some
+	of the areas covered by open source libraries include the
+	following.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>Interfaces to all major open source and commercial
+	    databases</para>
+	</listitem>
+	<listitem>
+	  <para>XML, HTML, and XQuery processing</para>
+	</listitem>
+	<listitem>
+	  <para>Network and web client and server development</para>
+	</listitem>
+	<listitem>
+	  <para>Desktop GUIs, including cross-platform toolkits</para>
+	</listitem>
+	<listitem>
+	  <para>Support for Unicode and other text encodings</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
   </sect1>
 
   <sect1>
@@ -422,20 +573,20 @@
     </sect2>
   </sect1>
 
-  <sect1 id="whyfp.resources">
+  <sect1 id="whyfp.bis.resources">
     <title>Helpful resources</title>
-    <para id="x_Ul">
+    <para id="bis.x_Ul">
       As you work with Haskell, you're sure to have questions and want
       more information about things.  Here are some Internet resources
       where you can look up information and interact with other
       Haskell programmers.
     </para>    
 
-    <sect2 id="whyfp.resources.reference">
+    <sect2 id="whyfp.bis.resources.reference">
       <title>Reference material</title>
       <itemizedlist>
         <listitem>
-          <para id="x_Vl"><ulink
+          <para id="bis.x_Vl"><ulink
 	      url="http://www.haskell.org/ghc/docs/latest/html/libraries/index.html">The 
 	      Haskell Hierarchical Libraries reference</ulink>
 	    provides the reference to the standard library that comes
@@ -444,7 +595,7 @@
         </listitem>
 
         <listitem>
-          <para id="x_Wl">For questions about language syntax and
+          <para id="bis.x_Wl">For questions about language syntax and
 	    features, the <ulink
 	      url="http://haskell.org/onlinereport/">Haskell 98
 	      Report</ulink> describes the Haskell 98 language
@@ -452,7 +603,7 @@
         </listitem>
 
         <listitem>
-          <para id="x_Xl">Various extensions to the language have
+          <para id="bis.x_Xl">Various extensions to the language have
 	    become commonplace since the Haskell 98 Report was
 	    released.  The <ulink
 	      url="http://www.haskell.org/ghc/docs/latest/html/users_guide/index.html">&GHC; 
@@ -462,7 +613,7 @@
         </listitem>
 
         <listitem>
-          <para id="x_Yl"><ulink
+          <para id="bis.x_Yl"><ulink
 	      url="http://haskell.org/hoogle/">Hoogle</ulink> is the
 	    Haskell API search engine.  It can find functions for you
 	    by name or by type.</para>
@@ -471,16 +622,16 @@
       </itemizedlist>
     </sect2>
 
-    <sect2 id="whyfp.resources.apps">
+    <sect2 id="whyfp.bis.resources.apps">
       <title>Applications and libraries</title>
-      <para id="x_Zl">
+      <para id="bis.x_Zl">
         If you're looking for a Haskell library to use for a
         particular task, or an application written in Haskell, check
         out the resources in this section.
       </para>
       <itemizedlist>
         <listitem>
-          <para id="x_al">The Haskell community maintains a central
+          <para id="bis.x_al">The Haskell community maintains a central
 	    repository of open source Haskell libraries and
 	    applications.  It's called <ulink
 	      url="http://hackage.haskell.org/">Hackage</ulink>, and
@@ -489,27 +640,25 @@
         </listitem>
 
         <listitem>
-          <para id="x_bl">
-            The <ulink
+          <para id="bis.x_bl">The <ulink
 	      url="http://haskell.org/haskellwiki/Applications_and_libraries">Haskell 
 	      Wiki</ulink> contains a section dedicated to information
 	    about particular Haskell libraries.</para>
-          </para>
         </listitem>
       </itemizedlist>
     </sect2>
 
-    <sect2 id="whyfp.resources.community">
+    <sect2 id="whyfp.bis.resources.community">
       <title>The Haskell community</title>
 
-      <para id="x_cl">There are a number of ways you can get in touch
+      <para id="bis.x_cl">There are a number of ways you can get in touch
 	with other Haskell programmers, to ask questions, learn what
 	other people are talking about, and simply do some social
 	networking with your peers.</para>
       
       <itemizedlist>
         <listitem>
-          <para id="x_dl">The first stop on your search for community
+          <para id="bis.x_dl">The first stop on your search for community
 	    resources should be the <ulink
 	      url="http://www.haskell.org/">Haskell web site</ulink>.
 	    This page contains the most current links to various
@@ -518,7 +667,7 @@
         </listitem>
 
         <listitem>
-          <para id="x_el">Haskellers use a number of <ulink
+          <para id="bis.x_el">Haskellers use a number of <ulink
 	      url="http://haskell.org/haskellwiki/Mailing_lists">mailing 
 	      lists</ulink> for topical discussions.  Of these, the
 	    most generally interesting is named
@@ -528,25 +677,23 @@
         </listitem>
 
         <listitem>
-          <para id="x_fl">For real-time chat, the <ulink
+          <para id="bis.x_fl">For real-time chat, the <ulink
 	      url="http://haskell.org/haskellwiki/IRC_channel">Haskell
 	      IRC channel</ulink>, named <code>#haskell</code>, is
 	    large and lively.  Like <code>haskell-cafe</code>, the
 	    atmosphere stays friendly and helpful in spite of the huge
 	    number of concurrent users.</para>
-          </para>
         </listitem>
 
         <listitem>
-          <para id="x_gl">There are many local user groups, meetups,
+          <para id="bis.x_gl">There are many local user groups, meetups,
 	    academic workshops, and the like; here is <ulink
 	      url="http://haskell.org/haskellwiki/User_groups">a list
 	      of the known user groups and workshops</ulink>.</para>
-          </para>
         </listitem>
 
         <listitem>
-          <para id="x_hl">The <ulink
+          <para id="bis.x_hl">The <ulink
 	      url="http://sequence.complete.org/">Haskell Weekly
 	      News</ulink> is a very-nearly-weekly summary of
 	    activities in the Haskell community.  You can find
@@ -555,7 +702,7 @@
         </listitem>
 
         <listitem>
-          <para id="x_il">The <ulink
+          <para id="bis.x_il">The <ulink
 	      url="http://haskell.org/communities/">Haskell
 	      Communities and Activities Report</ulink> collects
 	    information about people that use Haskell, and what they
