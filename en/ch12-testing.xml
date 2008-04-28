@@ -7,26 +7,30 @@
 Building real systems means caring about quality control, robustness and 
 correctness. With the right quality assurance mechanisms in place, 
 well-written code can feel like a precision machine, with all functions
-performing their tasks precisely as specified. There is no sloppiness around
-the edges, and the final result can be code that is self-explanatory,
-obviously correct -- the kind of code that inspires confidence.  </para>
+performing their tasks precisely and exactly as specified. There is no
+sloppiness around the edges, and the final result can be code that is
+self-explanatory, obviously correct -- the kind of code that inspires
+confidence.  </para>
 
   <para id="x_vp">
 In Haskell, we have several tools at our disposal for building such 
 precise systems. The rich, expressive type-system allows for complicated
 invariants to be enforced statically -- making it impossible to produce
-code violating particular constraints, while purity and polymorphism 
-ensure code is built to be easily decoupled, refactored, and tested. 
-The kind of code that doesn't go wrong.
+code violating chosen constraints. Meanwhile, purity and polymorphism ensure
+code is built to be modular, refactorable, and testable. This is the kind of
+code that just doesn't go wrong.
   </para>
 
   <para id="x_wp">
 Testing plays a key role in keeping code on the straight-and-narrow path.
 The main testing mechanisms in Haskell are traditional unit testing (via the HUnit 
-library), and its more powerful sibling: type-based <quote>property</quote>
+library), and its more powerful descendant: type-based <quote>property</quote>
 testing with QuickCheck. Property-based testing encourages a high level
 approach to testing in the form of abstract invariants functions should
-satisfy universally, with test data generated for the programmer by the tool. 
+satisfy universally, with the actual test data generated for the programmer
+by the testing library. In this way code can be hammered with thousands of
+tests that would be infeasible to write by hand, often uncovering subtle
+corner cases that wouldn't be found otherwise.
   </para>
 
   <para id="x_xp">
@@ -59,31 +63,62 @@ Haskell sort implementation):
     &QC-basics.hs:mysort;
 
     <para id="x_Bq">
-What a lovely sort function! Now, we'd like to check that this function obeys
-some basic properties first. One useful invariant that comes up in a lot of
-purely functional code is <emphasis>idempotency</emphasis> -- applying a
-function twice has the same result as applying it only once. For our sort
-routine, we can state this invariant simply as:
+This is the classic "quicksort" implementation: a study in functional
+programming elegance, if not efficiency. Now, we'd like to check that this
+function obeys the basic rules a good sort should follow. One useful
+invariant to start with, and one that comes up in a lot of purely functional
+code, is <emphasis>idempotency</emphasis> -- applying a function twice has
+the same result as applying it only once. For our sort routine, this should
+certainly be true, or things have gone horribly wrong! As a test property,
+this invariant can be stated simply:
   </para>
 
     &QC-basics.hs:idempotent;
 
     <para id="x_Cq">
 We follow the QuickCheck convention of prefixing test properties with
-<code>prop_</code>. Our idempotency property is simply a Haskell function
-which exercises the sorting code, describing an invariant that should hold
-for any data we pass to the function. To actually test this invariant, we
-pass the property function to <code>quickCheck</code>, which generates the
-test data, applys the property to that data and checks the result holds each
-time: </para>
+<code>prop_</code> to separate them from normal code. This idempotency
+property is encoded simply as a Haskell function stating an equality
+that must hold for any data that is sorted. We can check this makes 
+sense for a few simple cases by hand:
+  </para>
+
+    &qc-byhand.ghci:unit;
+
+    <para>
+Looking good. But writing out the input data by hand is silly, and violates
+the oath of the lazy functional programmer: let the machine do the work!
+Thanks to the Haskell type system, QuickCheck, our testing library,
+comes with a set of random data generators for all the basic Haskell data
+types, and uses type classes to dispatch to the appropriate data generator 
+based on the type of the property under testing. We can generate 
+sample random data by hand to see what's going on under the hood,
+using the <code>Arbitrary</code> class. Here, a random list of booleans:
+  </para>
+
+    &qc-arbitrary.ghci:arbitrary;
+
+    <para>
+Wrapping up all the generator details is the <code>quickCheck</code>
+function, which takes care of calling the appropriate data producer, and
+passing that test data to our property, checking the result condition holds.
+As our idempotency test is polymorphic in the list element type, we need to 
+pick a particular type to generate test data for, which we write as a type
+constraint on the property:
+  </para>
 
     &qc-basics.ghci:basics;
 
   <para id="x_Dq">
 For the 100 different lists generated, our property held -- great!
 To see the actual data generated for each test, and the result, we can
-use <code>verboseCheck</code> in place of <code>quickCheck</code>.
+replace <code>quickCheck</code> with <code>verboseCheck</code>, to see
+(verbose) output for each test.
   </para>
+
+<!--
+
+-->
 
     <para id="x_Eq">
 Good libraries consist of a set of orthogonal primitives, which have sensible
