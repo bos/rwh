@@ -18,12 +18,14 @@ prop_idempotent xs = qsort (qsort xs) == qsort xs
 {-- /snippet idempotent --}
 
 {-- snippet relatives_wrong --}
-prop_minimum xs         = not (null xs) ==> head (qsort xs) == minimum xs
+prop_minimum xs         = head (qsort xs) == minimum xs
 {-- /snippet relatives_wrong --}
 
-{-- snippet relatives --}
+{-- snippet relatives_right --}
 prop_minimum' xs         = not (null xs) ==> head (qsort xs) == minimum xs
+{-- /snippet relatives_right --}
 
+{-- snippet relatives --}
 prop_maximum xs         = not (null xs) ==> last (qsort xs) == maximum xs
 
 prop_append xs ys       = not (null xs) ==>

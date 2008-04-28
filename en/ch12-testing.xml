@@ -111,33 +111,91 @@ constraint on the property:
 
   <para id="x_Dq">
 For the 100 different lists generated, our property held -- great!
-To see the actual data generated for each test, and the result, we can
-replace <code>quickCheck</code> with <code>verboseCheck</code>, to see
-(verbose) output for each test.
+As an aside, when developing tests, it is often useful to see the actual data
+generated for each test, and the result, we can replace
+<code>quickCheck</code> with <code>verboseCheck</code>, to see
+(verbose) output for each test. We'll now look at more sophisticated
+properties that our function might be tested for.
   </para>
 
-<!--
-
--->
-
     <para id="x_Eq">
-Good libraries consist of a set of orthogonal primitives, which have sensible
+Good libraries consist of a set of orthogonal primitives having sensible
 relationships to each other. We can use QuickCheck to specify the
-relationships between functions, helping guide the process of finding a
-suitable API -- one which satisifies many properties.
+relationships between functions in our code, helping guide the process of
+finding a suitable API, by developing functions that are interrelated by
+useful invariants. Think of QuickCheck as an API "lint" tool.
     </para>
 
     <para id="x_Fq">
-Our sort function should have a number of interesting relationships: the
-first element in a sorted list should be the smallest element, the last
-element the largest, and if take the smallest element of two lists, that
-should be the first element if we append and sort those lists. These
-properties can be stated as:
+Our sort function should certainly have a number of interesting properties
+tying it to the basic list operations. For example: the first element in a
+sorted list should be the smallest element in the input list, which we 
+might be tempted to write, using the <code>List</code> library's
+<code>minimum</code> function, as:
     </para>
 
     &QC-basics.hs:relatives_wrong;
 
+    <para>
+Testing this, though, reveals an error:
+    </para>
+
+    &qc-wrong1.ghci:relatives_wrong;
+
+    <para>
+The property failed when sorting an empty list, for which
+<code>minimum</code> doesn't make any sense. So in fact, this property only
+holds for non-empty lists. QuickCheck, thankfully, comes with a full property
+writing embedded language, so we can specify more precisely our invariants. 
+For the empty list case, we really want to say: <emphasis>if</emphasis> the
+list is non-empty, <emphasis>then</emphasis> the first element of the sorted
+result is the minimum:
+    </para>
+
+    &QC-basics.hs:relatives_right;
+
+    <para>
+By separating out the empty list case, we can now confirm the test:
+    </para>
+
+    &qc-wrong1.ghci:relatives_wrong;
+
+<para>
+Note that the type of the property has changed from being a simple
+<code>Bool</code> result, to the more general <code>Property</code> type
+(its now a function that filters non-empty lists, before testing them).
+</para>
+
+<para>
+We can now complete out property set for the basic sort function, with
+some other invariants that it should satisfy: the last sorted element should
+be the largest; and if we find the smallest element of two different lists,
+that should be the first element if we append and sort those lists.  These
+properties can be stated as:
+    </para>
+
     &QC-basics.hs:relatives;
+
+<para>
+Finally, we can tie our implementation of list sort to the reference sort
+function in the basic List library. That is, we'll use the
+<code>Prelude</code> sort as a model against which to test our
+implementation. They should sort the same thing:
+    </para>
+
+    &QC-basics.hs:model;
+
+<para>
+This kind of model-based testing is extremely powerful. Often developers will
+have a reference implementation or prototype that, while inefficient, is
+correct. This can then be used to ensure optimised or more complicated
+production code follows the reference. By building a large suite of these
+model based tests, and running them regularly (on every commit, for example),
+we can cheaply ensure code stays under control. Many large Haskell projects
+come bundled with property suites that rival the size of the project
+itself, with thousands of tests running on every change, keeping the code
+tied to the specification, and ensuring it behaves as advertised.
+</para>
 
   </sect1>
 
