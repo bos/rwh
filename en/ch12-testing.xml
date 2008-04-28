@@ -199,6 +199,14 @@ tied to the specification, and ensuring it behaves as advertised.
 
   </sect1>
 
+  <sect1>
+    <title>Testing JSON</title>
+  </sect1>
+
+  <sect1>
+    <title>Code coverage: improving test quality</title>
+  </sect1>
+
 <!--
   <sect1>
     <title>Generating arbitrary documents</title>
