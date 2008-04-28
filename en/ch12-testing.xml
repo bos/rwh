@@ -140,7 +140,7 @@ might be tempted to write, using the <code>List</code> library's
 Testing this, though, reveals an error:
     </para>
 
-    &qc-wrong1.ghci:relatives_wrong;
+    &qc-wrong1.ghci:relatives_wrong1;
 
     <para>
 The property failed when sorting an empty list, for which
