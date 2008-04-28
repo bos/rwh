@@ -158,7 +158,7 @@ result is the minimum:
 By separating out the empty list case, we can now confirm the test:
     </para>
 
-    &qc-wrong1.ghci:relatives_wrong;
+    &qc-right1.ghci:relatives_right1;
 
 <para>
 Note that the type of the property has changed from being a simple
