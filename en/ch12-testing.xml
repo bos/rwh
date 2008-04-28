@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="hs.quickcheck" revision="unpublished">
+<chapter id="quickcheck" revision="unpublished">
   <title>Testing and Quality Assurance</title>
 
   <para id="x_up">
