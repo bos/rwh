@@ -6,15 +6,15 @@ import Data.List
 -- Simple model testing
 
 {-- snippet mysort --}
-qsort :: (Ord a) => [a] -> [a]
+qsort :: Ord a => [a] -> [a]
 qsort []     = []
 qsort (x:xs) = qsort lhs ++ [x] ++ qsort rhs
-    where lhs = filter (< x) xs
+    where lhs = filter  (< x) xs
           rhs = filter (>= x) xs
 {-- /snippet mysort --}
 
 {-- snippet idempotent --}
-prop_sort_idempotent xs = qsort (qsort xs) == qsort xs
+prop_idempotent xs = qsort (qsort xs) == qsort xs
 {-- /snippet idempotent --}
 
 {-- snippet relatives_wrong --}

@@ -2,4 +2,4 @@
 
 --# basics
 :type quickCheck
--- quickCheck (prop_sort_idempotent :: [Integer] -> Bool)
+quickCheck (prop_idempotent :: [Integer] -> Bool)
