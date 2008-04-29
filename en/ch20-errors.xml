@@ -233,6 +233,7 @@
         <para>
           This leads us into our next topic of discussion: using
           &Either; for returning error information.
+        </para>
       </sect3>
     </sect2>
     <sect2 id="errors.either">
@@ -254,7 +255,7 @@
         This code is almost identical to the &Maybe; code; we've
         substituted &Right; for every &Just;.  &Left; compares to
         &Nothing;, but now it can carry a message.  Let's check it out
-        in &ghci:;
+        in &ghci;:
       </para>
       &divby6.ghci:ex1;
       <sect3>
@@ -275,7 +276,7 @@
           printed out with &show;, which will generate a reasonable idea
           of the problem as well.  Here's this function in action:
         </para>
-        &divby7.ghci;
+        &divby7.ghci:ex1;
         <warning>
           <para>
             All of these &Either; examples suffer from the lack of
