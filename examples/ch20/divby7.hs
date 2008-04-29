@@ -1,9 +1,10 @@
 {-- snippet all --}
 -- ch20/divby7.hs
 
-data DivByError a = DivBy0
-                  | ForbiddenDenominator a
-                    deriving (Eq, Read, Show)
+data Show a => 
+    DivByError a = DivBy0
+                 | ForbiddenDenominator a
+                   deriving (Eq, Read, Show)
 
 divBy :: Integral a => a -> [a] -> Either (DivByError a) [a]
 divBy _ [] = Right []

@@ -257,17 +257,87 @@
         in &ghci:;
       </para>
       &divby6.ghci:ex1;
-      <para>
-        While this message
-        may be useful to humans down the road, it's often helpful to
-        define a custom error type that we can use to programmatically
-        decide on a course of action based upon exactly what the
-        problem was.  For instance, let's say that for some reason,
-        besides 0, we also don't want to divide by 10 or 20.  We could
-        define a custom error type like so:
-      </para>
-      &divby7.hs:all;
-        
+      <sect3>
+        <title>Custom Data Types for Errors</title>
+        <para>
+          While a &String; indicating the cause of an error
+          may be useful to humans down the road, it's often helpful to
+          define a custom error type that we can use to programmatically
+          decide on a course of action based upon exactly what the
+          problem was.  For instance, let's say that for some reason,
+          besides 0, we also don't want to divide by 10 or 20.  We could
+          define a custom error type like so:
+        </para>
+        &divby7.hs:all;
+        <para>
+          Now, in the event of an error, the &Left; data could be
+          inspected to find the exact cause.  Or, it could simply be
+          printed out with &show;, which will generate a reasonable idea
+          of the problem as well.  Here's this function in action:
+        </para>
+        &divby7.ghci;
+        <warning>
+          <para>
+            All of these &Either; examples suffer from the lack of
+            laziness that our early &Maybe; examples suffered from.  We
+            address that with an exercise question at the end of this
+            chapter.
+          </para>
+        </warning>
+      </sect3>
+      <sect3>
+        <title>Monadic Use of Either</title>
+        <para>
+          Back in <xref linkend="errors.maybe.monad"/>, we showed you
+          how to use &Maybe; in a monad.  &Either; can be used in a
+          monad too, but can be slightly more complicated.  The reason
+          is that &fail; is hard-coded to accept only a &String; as
+          the failure code, so we have to have a way to map such a
+          string into whatever type we used for &Left;.  As you saw
+          earlier, <literal>Control.Monad.Error</literal> provides
+          built-in support for <literal>Either String a</literal>,
+          which involves no mapping for the argument to &fail;.
+          Here's how we can set up our example to work with &Either;
+          in the monadic style:
+        </para>
+        &divby8.hs:all;
+        <para>
+          Here, we needed to turn on the
+          <literal>FlexibleContexts</literal> language extension in
+          order to provide the type signature for
+          <literal>divByGeneric</literal>.  The
+          <literal>divBy</literal> function works exactly the same as
+          before.  For <literal>divByGeneric</literal>, we make
+          <literal>divByError</literal> a member of the
+          <literal>Error</literal> class, by defining what happens
+          when someone calls <literal>fail</literal> (the
+          <literal>strMsg</literal> function).  We also convert
+          &Right; to &return; and &Left; to
+          <literal>throwError</literal> to enable this to be generic.
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+  <!-- FIXME: ErrorT discussion -->
+
+  <sect1>
+    <title>Exceptions</title>
+    <remark>
+      FIXME: write this
+    </remark>
+  </sect1>
+
+  
+  <sect1 id="errors.exercises">
+    <title>Exercises</title>
+    <orderedlist>
+      <listitem><para>
+          Take the &Either; example and made it work with laziness in
+          the style of the &Maybe; example.
+        </para>
+      </listitem>
+    </orderedlist>
   </sect1>
 </chapter>
 
