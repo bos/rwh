@@ -3,7 +3,162 @@
 <chapter id="errors" revision="alpha;beta">
   <title>Error handling</title>
 
-  <remark>FIXME</remark>
+  <para>
+    Error handling is one of the most important -- and overlooked --
+    topics for programmers, regardless of the language used.  In
+    Haskell, you will find two major types of error handling employed:
+    "pure" error handling and exceptions.
+  </para>
+  <para>
+    When we speak of "pure" error handling, we are referring to
+    algorithms that do not require anything from the &IO; monad.
+    We can often implement error handling for them by simply using
+    Haskell's expressive data type system to our advantage.  Haskell
+    also has an exception system.  Due to the complexities of lazy
+    evaluation, exceptions in Haskell can be raised anywhere, but only
+    caught within the &IO; monad.  In this chapter, we'll consider
+    both.
+  </para>
+  <sect1 id="errors.nonexception">
+    <title>Error Handling with Data Types</title>
+    <para>
+      Let's begin our discussion of error handling with a very simple
+      function.  Let's say that we wish to perform division on a
+      series of numbers.  We have a constant numerator, but wish to
+      vary the denominator.  We might come up with a function like
+      this:
+    </para>
+    &divby1.hs:all;
+    <para>
+      Very simple, right?  We can play around with this a bit in
+      &ghci;:
+    </para>
+    &divby1.ghci:ex1;
+    <para>
+      This behaves as expected: <literal>50 / 1</literal> is
+      <literal>50</literal>, <literal>50 / 2</literal> is
+      <literal>25</literal>, and so forth.
+      <footnote><para>
+          We're using integral division here, so <literal>50 /
+            8</literal> shows as <literal>6</literal> instead of
+      <literal>6.25</literal>.  We're not using floating-point
+      arithmetic in this example because division by zero with a
+          &Double; produces the special value
+      <literal>Infinity</literal> rather than an error.
+        </para>
+      </footnote>  This even worked with the infinite list
+      <literal>[1..]</literal>.
+      What happens if we sneak a
+      <literal>0</literal> into our list somewhere?
+    </para>
+    &divby1.ghci:ex2;
+    <para>
+      Isn't that interesting?  &ghci; started displaying the output,
+      then stopped when an exception when it got to the zero.  That's
+      lazy evaluation at work -- it calculated results as needed.
+    </para>
+    <para>
+      As we will see later in this chapter, in the absence of an
+      explicit exception handler, this exception will crash the
+      program.  That's obviously not desirable, so let's consider
+      better ways we could indicate an error in this pure function.
+    </para>
+    <sect2 id="errors.maybe">
+      <title>Use of Maybe</title>
+      <para>
+        One immediately-recognizable easy way to indicate failure is
+        to use &Maybe;.  Instead of just returning a list and raising
+        an exception on failure, we can return &Nothing; if the input
+        list contained a zero anywhere, or &Just; with the results
+        otherwise.  Here's an implementation of such an algorithm:
+      </para>
+      &divby2.hs:all;
+      <para>
+        If you try it out in &ghci;, you'll see that it works:
+      </para>
+      &divby2.ghci:ex1;
+      <para>
+        The function that calls <literal>divBy</literal> can now use a
+        <literal>case</literal> statement to see if the call was
+        successful, just as <literal>divBy</literal> does when it
+        calls itself.
+      </para>
+      <sect3 id="errors.maybe.laziness">
+        <title>Loss and Preservation of Laziness</title>
+        <para>
+          The use of &Maybe; was convenient, but has come at a cost.
+          <literal>divBy</literal> can no longer handle infinite lists
+          as input.  Since the result is <literal>Maybe [a]</literal>,
+          the entire input list must be examined before we can be sure
+          that we won't be returning <literal>Nothing</literal> due to a
+          zero somewhere in it.  You can verify this is the case by
+          attempting one of our earlier examples:
+        </para>
+        &divby2.ghci:ex2;
+        <para>
+          Note that you don't start seeing partial output here; you get
+          <emphasis>no</emphasis> output.  Notice that at each step in
+          <literal>divBy</literal> (except for the case of an empty
+          input list or a zero at the start of the list), the results
+          from every subsequent element must be known before the results
+          from the current element can be known.  Thus this algorithm
+          can't work on infinite lists, and it is also not very
+          space-efficient for large finite lists.
+        </para>
+        <para>
+          Having said all that, &Maybe; is often a fine choice.  In this
+          particular case, we don't know whether there will be a problem
+          until we get into evaluating the entire input.  Sometimes we
+          know of a problem up front.  For instance, saying
+          <literal>tail []</literal> in &ghci; produces an exception.
+          We could easly write an infinite-capable &tail; that doesn't
+          have this problem:
+        </para>
+        &safetail.hs:all;
+        <para>
+          This simply returns &Nothing; if given an empty input list,
+          or &Just; with the result for anything else.  Since we only
+          have to make sure the list is non-empty before knowing
+          whether or not we have an error, using &Maybe; here doesn't
+          reduce our laziness. We can test this out in &ghci; and see how it compares with
+          regular &tail;:
+        </para>
+        &safetail.ghci:ex1;
+        <para>
+          Here, we can see our <literal>safeTail</literal> performed
+          as expected.  But what about infinite lists?  We don't want
+          to print out an infinite number of results, so we can test
+          with <literal>take 5 (tail [1..])</literal> and a similar
+          construction with <literal>safeTail</literal>:
+        </para>
+        &safetail.ghci:ex2;
+        <para>
+          Here you can see that both &tail; and
+          <literal>safeTail</literal> handled infinite lists just
+          fine.  Note that we were able to deal better with an empty
+          input list; instead of raising an exception, we decided to
+          return &Nothing; in that situation.  We were able to achieve
+          error handling at no expense to laziness.
+        </para>
+        <para>
+          But how to apply this to our <literal>divBy</literal>
+          example?  Let's consider the situation there: failure is a
+          property of an individual bad input, not of the input list
+          itself.  How about making failure a property of an
+          individual output element, rather than the output list
+          itself?  That is, instead of a function of type <literal>a
+          -> [a] -> Maybe [a]</literal>, instead we will have
+          <literal>a -> [a] -> [Maybe a]</literal>.  This will have
+          the benefit of preserving laziness, plus the caller will be
+          able to determine exactly where in the list the problem was
+          -- or even just filter out the problem results if desired.
+          Here's an implementation:
+        </para>
+        &divby3.hs:all;
+        <para>
+          
+    </sect2>
+    
 </chapter>
 
 <!--
