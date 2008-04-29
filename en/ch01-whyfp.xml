@@ -52,15 +52,15 @@
     <sect2>
       <title>Power</title>
 
-      <para>It must seem bizarre that we have introduced so many ideas
-	as things that we can't easily do in Haskell.  If this is a
-	<quote>real world</quote> book, how are we going to get
-	anything useful done with data that we can't modify and
-	functions that can't talk to web sites?</para>
+      <para>Throughout this book, we're going to show you how
+	Haskell's alternatives to the features of traditional
+	languages are more powerful, more flexible, and safer. Haskell
+	is positively crammed full of cutting edge ideas about how to
+	create great software.</para>
 
-      <para>Perhaps surprisingly, when we work with these restrictions
-	in place, we find that it's actually
-	<emphasis>easier</emphasis> to write software.  Every useful
+      <para>Perhaps surprisingly, when we place some restrictions on
+	how we create code, we find that it's actually becomes
+	<emphasis>easier</emphasis> to write and read.  Every useful
 	Haskell program talks to the outside world, and this is easy
 	to do.  But the language rigorously
 	<emphasis>isolates</emphasis> that code: there's a strong
@@ -209,25 +209,23 @@
 	images to drive our points home.</para>
 
       <para id="x_P">As a new Haskell programmer, you'll inevitably
-	end up writing quite a bit of code by hand for which you could
-	have used a library function or programming technique, had you
-	just known of its existence. You'll also run into instances
-	where a cherished feature of another language isn't available;
-	or a library function you just know ought to be there isn't;
-	or occasionally something will be put together in such a way
-	that you know it could have been improved upon.</para>
+	start out writing quite a bit of code by hand for which you
+	could have used a library function or programming technique,
+	had you just known of its existence.  We've packed this book
+	with information to help you to come up to speed as quickly as
+	possible.</para>
 
-      <para>If you accept the inevitability of the occasional
-	surprise, difficulty, and misfeature, you'll have much more
-	fun learning Haskell than if you step in expecting perfection,
-	only to trip up within a few days or weeks of getting
-	started.</para>
+      <para>Of course, there will always be a few bumps along the
+	road.  If you start out anticipating an occasional surprise or
+	difficulty along with the fun stuff, you'll have the best
+	experience.  Any rough patches you might hit won't last
+	long.</para>
 
       <para>As you become a more seasoned Haskell programmer, the way
 	that you write code will change.  Indeed, over the course of
-	this book, the way that we present code will evolve, from
-	simpler and more literal early on to more abstract and
-	powerful towards the end.</para>
+	this book, the way that we present code will evolve, as we
+	move from the basics of the language to increasingly powerful
+	and productive features and techniques.</para>
     </sect2>
   </sect1>
 
@@ -545,31 +543,31 @@
 	Haskell remained firmly an academic affair.  The informal
 	slogan of those inside the community was to <quote>avoid
 	  success at all costs</quote>. Few outsiders had heard of the
-	language (or even functional programming) at all, and of
-	those, many derided Haskell as obtuse and inefficient.</para>
+	language (or even functional programming) at all.</para>
 
       <para>During this time, the mainstream programming world was
 	experimenting with relatively small tweaks: from programming
 	in C, to C++, to Java.  Meanwhile, on the fringes, programmers
-	were beginning to tinker with new, much more expressive
-	languages.  Larry Wall created Perl, and Guido van Rossum
-	designed Python.</para>
+	were beginning to tinker with new, more expressive languages.
+	Guido van Rossum designed Python, and Yukihiro Matsumoto
+	developed Ruby.</para>
 
-      <para>As these languages, and later siblings like Ruby, began to
-	seep into wider use, they spread some crucial ideas. The first
-	was that normal programmers are perfectly capable of working
-	in expressive languages; in fact, they flourish.  The second
-	was in part a byproduct of the rapid growth in raw computing
-	power of that era: it's often smart to sacrifice some
-	execution performance in exchange for a big increase in
-	programmer productivity.</para>
+      <para>As these newer languages began to seep into wider use,
+	they spread some crucial ideas. The first was that programmers
+	are perfectly capable of working in expressive languages; in
+	fact, they flourish.  The second was in part a byproduct of
+	the rapid growth in raw computing power of that era: it's
+	often smart to sacrifice some execution performance in
+	exchange for a big increase in programmer productivity.
+	Finally, the creators of these languages explicitly credited
+	functional programming as a source of inspiration.</para>
       
       <para>Over the past half a decade, Haskell has successfully
-	escaped from academia, buoyed in large part by the rise of
-	Python, Ruby, and even Javascript.  It's not yet in danger of
-	going mainstream, but that old tongue-in-cheek goal of
-	<quote>avoiding success at all costs</quote> is in serious
-	danger.</para>
+	escaped from academia, buoyed in part by the visibility of
+	Python, Ruby, and even Javascript.  The language now has a
+	vibrant and fast-growing culture of open source and commercial
+	users, and researchers continue to use it to push the
+	boundaries of performance and expressiveness.</para>
     </sect2>
   </sect1>
 
