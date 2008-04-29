@@ -67,7 +67,9 @@
       <title>Use of Maybe</title>
       <para>
         One immediately-recognizable easy way to indicate failure is
-        to use &Maybe;.  Instead of just returning a list and raising
+        to use &Maybe;.<footnote><para>For an introduction to &Maybe;,
+        refer to <xref linkend="deftypes.morecontrolled"/>.</para>
+        </footnote>  Instead of just returning a list and raising
         an exception on failure, we can return &Nothing; if the input
         list contained a zero anywhere, or &Just; with the results
         otherwise.  Here's an implementation of such an algorithm:
@@ -210,8 +212,62 @@
         <para>
           Let's try this out in &ghci;.
         </para>
+        &divby5.ghci:ex1;
+        <para>
+          The first two examples both produce the same output we see
+          before.  Since <literal>divByGeneric</literal> doesn't have
+          a specific return type, we must either give one or let the
+          interpreter infer one from the environment.  If we don't
+          give a specific return type, &ghci; infers the &IO; monad.
+          You can see that in the third and fourth examples.  The &IO;
+          monad converts &fail; into an exception, as you can see with
+          the fourth example.
+        </para>
+        <para>
+          The <literal>Control.Monad.Error</literal> module in the
+          <literal>mtl</literal> package makes &Either; into a monad
+          as well.  If you use &Either;, you can get a pure result
+          that preserves the error message, like so:
+        </para>
+        &divby5.ghci:ex2;
+        <para>
+          This leads us into our next topic of discussion: using
+          &Either; for returning error information.
       </sect3>
     </sect2>
+    <sect2 id="errors.either">
+      <title>Use of Either</title>
+      <para>
+        The &Either; type is similar to the &Maybe; type, with one key
+        difference: it can carry attached data both for an error and a
+        success.  <footnote><para>For more information on &Either;,
+        refer to <xref linkend="glob.errapi"/>.</para>
+        </footnote>  Although the language imposes no restrictions, by
+        convention, a function returning an &Either; uses a &Left;
+        return value to indicate an error, and &Right; to indicate
+        success.  We can start with our <literal>divby2.hs</literal>
+        example from the earlier section on &Maybe; and adapt it to
+        work with &Either;:
+      </para>
+      &divby6.hs:all;
+      <para>
+        This code is almost identical to the &Maybe; code; we've
+        substituted &Right; for every &Just;.  &Left; compares to
+        &Nothing;, but now it can carry a message.  Let's check it out
+        in &ghci:;
+      </para>
+      &divby6.ghci:ex1;
+      <para>
+        While this message
+        may be useful to humans down the road, it's often helpful to
+        define a custom error type that we can use to programmatically
+        decide on a course of action based upon exactly what the
+        problem was.  For instance, let's say that for some reason,
+        besides 0, we also don't want to divide by 10 or 20.  We could
+        define a custom error type like so:
+      </para>
+      &divby7.hs:all;
+        
   </sect1>
 </chapter>
 

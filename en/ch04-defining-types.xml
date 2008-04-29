@@ -1039,7 +1039,7 @@ data CalendarTime = CalendarTime {
       distinguish between a recoverable error and a problem so severe
       that it really should terminate our program.</para>
 
-    <sect2>
+    <sect2 id="deftypes.morecontrolled">
       <title>A more controlled approach</title>
 
       <para id="x_fg">Haskell defines a standard type, <type>Maybe</type>, that
