@@ -156,7 +156,62 @@
         </para>
         &divby3.hs:all;
         <para>
-          
+          Take a look at this function.  We're back to using &map;,
+          which is a good thing for both laziness and simplicity.  We
+          can try it out in &ghci; and see that it works for finite
+          and infinite lists just fine:
+        </para>
+        &divby3.ghci:ex1;
+        <para>
+          We hope that you can take from this discussion the point
+          that there is a distinction between the input not being
+          well-formed (as in the case of <literal>safeTail</literal>)
+          and the input potentially containing some bad data, as in
+          the case of <literal>divBy</literal>.  These two cases can
+          often justify different handling of the results.
+        </para>
+      </sect3>
+      <sect3 id="errors.maybe.monad">
+        <title>Usage of the Maybe Monad</title>
+        <para>
+          Back in <xred linkend="errors.maybe"/>, we had an example
+          program named <literal>divby2.hs</literal>.  This example
+          didn't preserve laziness, but returned a value of type
+          <literal>Maybe [a]</literal>.  The exact same algorithm
+          could be expressed using a monadic style.  For more
+          information and important background on monads, please refer
+          to <xref linkend="monads"/>.  Here's our new monadic-style
+          algorithm:
+        </para>
+        &divby4.hs:all;
+        <para>
+          The &Maybe; monad has made the expression of this algorithm
+          look nicer.  For the &Maybe; monad, &return; is the same as
+          &Just;, and <literal>fail _ = Nothing</literal>, so our
+          error explanation string is never actually seen anywhere.
+          We can test this algorithm with the same tests we used
+          against <literal>divby2.hs</literal> if we want:
+        </para>
+        &divby4.ghci:ex1;
+        </para>
+        <para>
+          The code we wrote actually isn't specific to the &Maybe;
+          monad.  By simply changing the type, we can make it work for
+          <emphasis>any</emphasis> monad.  Let's try it:
+        </para>
+        &divby5.ghci:all;
+        <para>
+          The function <literal>divByGeneric</literal> contains the
+          same code as <literal>divBy</literal> did before; we just
+          gave it a more general type.  This is, in fact, the type
+          that &ghci; infers if no type would be given.  We also
+          defined a convenience function <literal>divBy</literal> with
+          a more specific type.
+        </para>
+        <para>
+          Let's try this out in &ghci;.
+        </para>
+      </sect3>
     </sect2>
     
 </chapter>
