@@ -150,6 +150,7 @@
 <!ENTITY stderr "<literal>stderr</literal>">
 <!ENTITY stdin "<literal>stdin</literal>">
 <!ENTITY stdout "<literal>stdout</literal>">
+<!ENTITY tail "<literal>tail</literal>">
 <!ENTITY toSql "<literal>toSql</literal>">
 <!ENTITY try "<literal>try</literal>">
 <!ENTITY type "<literal>type</literal>">
