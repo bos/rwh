@@ -144,7 +144,7 @@ main = do
   writeFile "index.complete.html.in" . toc $ const True
   writeFile ".stamp-indices" ""
   let instruct desc p = do
-         let cs = map ((++".html") . baseName) . filter (not . p . status) $ chapters
+         let cs = map ((++".html*") . baseName) . filter (not . p . status) $ chapters
          unless (null cs) $ do
            putStrLn $ "To delete non-" ++ desc ++ " chapters:"
            putStrLn $ "rm -f " ++ concat (intersperse " " cs)
