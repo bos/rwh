@@ -3,13 +3,13 @@
 <chapter id="errors" revision="alpha;beta">
   <title>Error handling</title>
 
-  <para>
+  <para id="x_xy">
     Error handling is one of the most important -- and overlooked --
     topics for programmers, regardless of the language used.  In
     Haskell, you will find two major types of error handling employed:
     "pure" error handling and exceptions.
   </para>
-  <para>
+  <para id="x_yy">
     When we speak of "pure" error handling, we are referring to
     algorithms that do not require anything from the &IO; monad.
     We can often implement error handling for them by simply using
@@ -21,7 +21,7 @@
   </para>
   <sect1 id="errors.nonexception">
     <title>Error Handling with Data Types</title>
-    <para>
+    <para id="x_zy">
       Let's begin our discussion of error handling with a very simple
       function.  Let's say that we wish to perform division on a
       series of numbers.  We have a constant numerator, but wish to
@@ -29,16 +29,16 @@
       this:
     </para>
     &divby1.hs:all;
-    <para>
+    <para id="x_Az">
       Very simple, right?  We can play around with this a bit in
       &ghci;:
     </para>
     &divby1.ghci:ex1;
-    <para>
+    <para id="x_Bz">
       This behaves as expected: <literal>50 / 1</literal> is
       <literal>50</literal>, <literal>50 / 2</literal> is
       <literal>25</literal>, and so forth.
-      <footnote><para>
+      <footnote><para id="x_Cz">
           We're using integral division here, so <literal>50 /
             8</literal> shows as <literal>6</literal> instead of
       <literal>6.25</literal>.  We're not using floating-point
@@ -52,12 +52,12 @@
       <literal>0</literal> into our list somewhere?
     </para>
     &divby1.ghci:ex2;
-    <para>
+    <para id="x_Dz">
       Isn't that interesting?  &ghci; started displaying the output,
       then stopped when an exception when it got to the zero.  That's
       lazy evaluation at work -- it calculated results as needed.
     </para>
-    <para>
+    <para id="x_Ez">
       As we will see later in this chapter, in the absence of an
       explicit exception handler, this exception will crash the
       program.  That's obviously not desirable, so let's consider
@@ -65,9 +65,9 @@
     </para>
     <sect2 id="errors.maybe">
       <title>Use of Maybe</title>
-      <para>
+      <para id="x_Fz">
         One immediately-recognizable easy way to indicate failure is
-        to use &Maybe;.<footnote><para>For an introduction to &Maybe;,
+        to use &Maybe;.<footnote><para id="x_Gz">For an introduction to &Maybe;,
         refer to <xref linkend="deftypes.morecontrolled"/>.</para>
         </footnote>  Instead of just returning a list and raising
         an exception on failure, we can return &Nothing; if the input
@@ -75,11 +75,11 @@
         otherwise.  Here's an implementation of such an algorithm:
       </para>
       &divby2.hs:all;
-      <para>
+      <para id="x_Hz">
         If you try it out in &ghci;, you'll see that it works:
       </para>
       &divby2.ghci:ex1;
-      <para>
+      <para id="x_Iz">
         The function that calls <literal>divBy</literal> can now use a
         <literal>case</literal> statement to see if the call was
         successful, just as <literal>divBy</literal> does when it
@@ -87,7 +87,7 @@
       </para>
       <sect3 id="errors.maybe.laziness">
         <title>Loss and Preservation of Laziness</title>
-        <para>
+        <para id="x_Jz">
           The use of &Maybe; was convenient, but has come at a cost.
           <literal>divBy</literal> can no longer handle infinite lists
           as input.  Since the result is <literal>Maybe [a]</literal>,
@@ -97,7 +97,7 @@
           attempting one of our earlier examples:
         </para>
         &divby2.ghci:ex2;
-        <para>
+        <para id="x_Kz">
           Note that you don't start seeing partial output here; you get
           <emphasis>no</emphasis> output.  Notice that at each step in
           <literal>divBy</literal> (except for the case of an empty
@@ -107,7 +107,7 @@
           can't work on infinite lists, and it is also not very
           space-efficient for large finite lists.
         </para>
-        <para>
+        <para id="x_Lz">
           Having said all that, &Maybe; is often a fine choice.  In this
           particular case, we don't know whether there will be a problem
           until we get into evaluating the entire input.  Sometimes we
@@ -117,7 +117,7 @@
           have this problem:
         </para>
         &safetail.hs:all;
-        <para>
+        <para id="x_Mz">
           This simply returns &Nothing; if given an empty input list,
           or &Just; with the result for anything else.  Since we only
           have to make sure the list is non-empty before knowing
@@ -126,7 +126,7 @@
           regular &tail;:
         </para>
         &safetail.ghci:ex1;
-        <para>
+        <para id="x_Nz">
           Here, we can see our <literal>safeTail</literal> performed
           as expected.  But what about infinite lists?  We don't want
           to print out an infinite number of results, so we can test
@@ -134,7 +134,7 @@
           construction with <literal>safeTail</literal>:
         </para>
         &safetail.ghci:ex2;
-        <para>
+        <para id="x_Oz">
           Here you can see that both &tail; and
           <literal>safeTail</literal> handled infinite lists just
           fine.  Note that we were able to deal better with an empty
@@ -142,7 +142,7 @@
           return &Nothing; in that situation.  We were able to achieve
           error handling at no expense to laziness.
         </para>
-        <para>
+        <para id="x_Pz">
           But how to apply this to our <literal>divBy</literal>
           example?  Let's consider the situation there: failure is a
           property of an individual bad input, not of the input list
@@ -157,14 +157,14 @@
           Here's an implementation:
         </para>
         &divby3.hs:all;
-        <para>
+        <para id="x_Qz">
           Take a look at this function.  We're back to using &map;,
           which is a good thing for both laziness and simplicity.  We
           can try it out in &ghci; and see that it works for finite
           and infinite lists just fine:
         </para>
         &divby3.ghci:ex1;
-        <para>
+        <para id="x_Rz">
           We hope that you can take from this discussion the point
           that there is a distinction between the input not being
           well-formed (as in the case of <literal>safeTail</literal>)
@@ -175,7 +175,7 @@
       </sect3>
       <sect3 id="errors.maybe.monad">
         <title>Usage of the Maybe Monad</title>
-        <para>
+        <para id="x_Sz">
           Back in <xref linkend="errors.maybe"/>, we had an example
           program named <literal>divby2.hs</literal>.  This example
           didn't preserve laziness, but returned a value of type
@@ -186,7 +186,7 @@
           algorithm:
         </para>
         &divby4.hs:all;
-        <para>
+        <para id="x_Tz">
           The &Maybe; monad has made the expression of this algorithm
           look nicer.  For the &Maybe; monad, &return; is the same as
           &Just;, and <literal>fail _ = Nothing</literal>, so our
@@ -195,13 +195,13 @@
           against <literal>divby2.hs</literal> if we want:
         </para>
         &divby4.ghci:ex1;
-        <para>
+        <para id="x_Uz">
           The code we wrote actually isn't specific to the &Maybe;
           monad.  By simply changing the type, we can make it work for
           <emphasis>any</emphasis> monad.  Let's try it:
         </para>
         &divby5.hs:all;
-        <para>
+        <para id="x_Vz">
           The function <literal>divByGeneric</literal> contains the
           same code as <literal>divBy</literal> did before; we just
           gave it a more general type.  This is, in fact, the type
@@ -209,11 +209,11 @@
           defined a convenience function <literal>divBy</literal> with
           a more specific type.
         </para>
-        <para>
+        <para id="x_Wz">
           Let's try this out in &ghci;.
         </para>
         &divby5.ghci:ex1;
-        <para>
+        <para id="x_Xz">
           The first two examples both produce the same output we see
           before.  Since <literal>divByGeneric</literal> doesn't have
           a specific return type, we must either give one or let the
@@ -223,14 +223,14 @@
           monad converts &fail; into an exception, as you can see with
           the fourth example.
         </para>
-        <para>
+        <para id="x_Yz">
           The <literal>Control.Monad.Error</literal> module in the
           <literal>mtl</literal> package makes &Either; into a monad
           as well.  If you use &Either;, you can get a pure result
           that preserves the error message, like so:
         </para>
         &divby5.ghci:ex2;
-        <para>
+        <para id="x_Zz">
           This leads us into our next topic of discussion: using
           &Either; for returning error information.
         </para>
@@ -238,10 +238,10 @@
     </sect2>
     <sect2 id="errors.either">
       <title>Use of Either</title>
-      <para>
+      <para id="x_az">
         The &Either; type is similar to the &Maybe; type, with one key
         difference: it can carry attached data both for an error and a
-        success.  <footnote><para>For more information on &Either;,
+        success.  <footnote><para id="x_bz">For more information on &Either;,
         refer to <xref linkend="glob.errapi"/>.</para>
         </footnote>  Although the language imposes no restrictions, by
         convention, a function returning an &Either; uses a &Left;
@@ -251,7 +251,7 @@
         work with &Either;:
       </para>
       &divby6.hs:all;
-      <para>
+      <para id="x_cz">
         This code is almost identical to the &Maybe; code; we've
         substituted &Right; for every &Just;.  &Left; compares to
         &Nothing;, but now it can carry a message.  Let's check it out
@@ -260,7 +260,7 @@
       &divby6.ghci:ex1;
       <sect3>
         <title>Custom Data Types for Errors</title>
-        <para>
+        <para id="x_dz">
           While a &String; indicating the cause of an error
           may be useful to humans down the road, it's often helpful to
           define a custom error type that we can use to programmatically
@@ -270,7 +270,7 @@
           define a custom error type like so:
         </para>
         &divby7.hs:all;
-        <para>
+        <para id="x_ez">
           Now, in the event of an error, the &Left; data could be
           inspected to find the exact cause.  Or, it could simply be
           printed out with &show;, which will generate a reasonable idea
@@ -278,7 +278,7 @@
         </para>
         &divby7.ghci:ex1;
         <warning>
-          <para>
+          <para id="x_fz">
             All of these &Either; examples suffer from the lack of
             laziness that our early &Maybe; examples suffered from.  We
             address that with an exercise question at the end of this
@@ -288,7 +288,7 @@
       </sect3>
       <sect3>
         <title>Monadic Use of Either</title>
-        <para>
+        <para id="x_gz">
           Back in <xref linkend="errors.maybe.monad"/>, we showed you
           how to use &Maybe; in a monad.  &Either; can be used in a
           monad too, but can be slightly more complicated.  The reason
@@ -302,7 +302,7 @@
           in the monadic style:
         </para>
         &divby8.hs:all;
-        <para>
+        <para id="x_hz">
           Here, we needed to turn on the
           <literal>FlexibleContexts</literal> language extension in
           order to provide the type signature for
@@ -333,7 +333,7 @@
   <sect1 id="errors.exercises">
     <title>Exercises</title>
     <orderedlist>
-      <listitem><para>
+      <listitem><para id="x_iz">
           Take the &Either; example and made it work with laziness in
           the style of the &Maybe; example.
         </para>

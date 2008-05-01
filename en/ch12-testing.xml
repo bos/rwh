@@ -85,7 +85,7 @@ sense for a few simple cases by hand:
 
     &qc-byhand.ghci:unit;
 
-    <para>
+    <para id="x_oy">
 Looking good. But writing out the input data by hand is silly, and violates
 the oath of the lazy functional programmer: let the machine do the work!
 Thanks to the Haskell type system, QuickCheck, our testing library,
@@ -98,7 +98,7 @@ using the <code>Arbitrary</code> class. Here, a random list of booleans:
 
     &qc-arbitrary.ghci:arbitrary;
 
-    <para>
+    <para id="x_py">
 Wrapping up all the generator details is the <code>quickCheck</code>
 function, which takes care of calling the appropriate data producer, and
 passing that test data to our property, checking the result condition holds.
@@ -136,13 +136,13 @@ might be tempted to write, using the <code>List</code> library's
 
     &QC-basics.hs:relatives_wrong;
 
-    <para>
+    <para id="x_qy">
 Testing this, though, reveals an error:
     </para>
 
     &qc-wrong1.ghci:relatives_wrong1;
 
-    <para>
+    <para id="x_ry">
 The property failed when sorting an empty list, for which
 <code>minimum</code> doesn't make any sense. So in fact, this property only
 holds for non-empty lists. QuickCheck, thankfully, comes with a full property
@@ -154,19 +154,19 @@ result is the minimum:
 
     &QC-basics.hs:relatives_right;
 
-    <para>
+    <para id="x_sy">
 By separating out the empty list case, we can now confirm the test:
     </para>
 
     &qc-right1.ghci:relatives_right1;
 
-<para>
+<para id="x_ty">
 Note that the type of the property has changed from being a simple
 <code>Bool</code> result, to the more general <code>Property</code> type
 (its now a function that filters non-empty lists, before testing them).
 </para>
 
-<para>
+<para id="x_uy">
 We can now complete out property set for the basic sort function, with
 some other invariants that it should satisfy: the last sorted element should
 be the largest; and if we find the smallest element of two different lists,
@@ -176,7 +176,7 @@ properties can be stated as:
 
     &QC-basics.hs:relatives;
 
-<para>
+<para id="x_vy">
 Finally, we can tie our implementation of list sort to the reference sort
 function in the basic List library. That is, we'll use the
 <code>Prelude</code> sort as a model against which to test our
@@ -185,7 +185,7 @@ implementation. They should sort the same thing:
 
     &QC-basics.hs:model;
 
-<para>
+<para id="x_wy">
 This kind of model-based testing is extremely powerful. Often developers will
 have a reference implementation or prototype that, while inefficient, is
 correct. This can then be used to ensure optimised or more complicated
