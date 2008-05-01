@@ -52,8 +52,8 @@ chapters = [
  , ch "barcode" "Barcode recognition" $ Alpha "2008-04-22"
  , ch "data" "Data structures" $ Beta "2008-04-22"
  , ch "monads" "Monads" $ Beta "2008-04-22"
- , ch "monadcase" "Programming with monads" $ Alpha "2008-04-22"
- , ch "monadtrans" "Monad transformers" $ Alpha "2008-04-22"
+ , ch "monadcase" "Programming with monads" $ Beta "2008-04-30"
+ , ch "monadtrans" "Monad transformers" $ Beta "2008-04-30"
  , ch "parsec" "The Parsec parsing library" $ Alpha "2008-04-22"
  , ch "ffi" "The foreign function interface" Unpublished
  , ch "errors" "Error handling" Unpublished
