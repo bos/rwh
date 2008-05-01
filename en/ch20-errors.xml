@@ -322,11 +322,31 @@
 
   <!-- FIXME: ErrorT discussion -->
 
-  <sect1>
+  <sect1 id="errors.exceptions">
     <title>Exceptions</title>
-    <remark>
-      FIXME: write this
-    </remark>
+    <para>
+      Exception handling is found in many programming languages,
+      including Haskell.  It can be useful because, when a problem
+      occurs, it can provide an easy way of handling it, even if it
+      occured several layers down through a chain of function calls.
+      With exceptions, it's not necessary to check the return value of
+      every function call to check for errors, and take care to
+      produce a return value that reflects the error, as C programmers
+      must do.
+      In Haskell, thanks to monads and the &Either; and &Maybe; types,
+      you can often achieve the same effects in pure code without
+      the need to use exceptions and exception handling.  
+    </para>
+    <para>
+      Some problems -- especially those involving I/O -- call for
+      working with exceptions, and we'll show you how in this
+      section.  But before we begin, we need to give you some
+      background on how exceptions fit into the Haskell language.
+    </para>
+    <sect2 id="errors.exceptions.hs">
+      <title>Exceptions in Haskell</title>
+      <para>
+        
   </sect1>
 
   
