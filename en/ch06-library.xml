@@ -33,7 +33,7 @@ null]]></programlisting>
 {"numbers": [1,2,3,4,5], "useful": false}]]></programlisting>
   </sect1>
 
-  <sect1>
+  <sect1 id="library.jvalue">
     <title>Representing JSON data in Haskell</title>
 
     <para id="x_Ji">To work with JSON data in Haskell, we use an
@@ -1267,11 +1267,11 @@ PrettyJSON.hs:8:7:
       Hughes's paper is long, but well worth reading for his
       discussion of how to design a library in Haskell.</para>
 
-    <para id="x_ip">In this chapter, our pretty printing library is based on a
-      simpler model described in <citation><biblioref
-	  linkend="bib.wadler98"/></citation>.  His library was
-      extended by Daan Leijen; this version is available for download
-      from Hackage.</para>
+    <para id="x_ip">In this chapter, our pretty printing library is
+      based on a simpler model described by Philip Wadler in
+      <citation><biblioref linkend="bib.wadler98"/></citation>.  His
+      library was extended by Daan Leijen; this version is available
+      for download from Hackage.</para>
   </sect1>
 </chapter>
 
