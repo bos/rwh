@@ -59,7 +59,7 @@ chapters = [
  , ch "errors" "Error handling" Unpublished
  , ch "systems" "Systems programming" $ Alpha "2008-04-22"
  , ch "databases" "Working with databases" $ Beta "2008-04-22"
- , ch "web-client" "Web client programming" $ Alpha "2008-04-22"
+ , ch "webclient" "Web client programming" $ Alpha "2008-04-22"
  , ch "gui" "GUI programming" $ Alpha "2008-04-22"
  , ch "concurrent" "Basic concurrent and parallel programming" Unpublished
  , ch "profiling" "Profiling and tuning for performance" Unpublished

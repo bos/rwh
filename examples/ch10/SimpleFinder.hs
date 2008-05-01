@@ -1,3 +1,4 @@
+import System.FilePath
 {-- snippet simpleFind --}
 import RecursiveContents (getRecursiveContents)
 
