@@ -2,6 +2,9 @@
 
 -- | This program prints the HTML index for a particular edition
 -- (alpha, beta, or complete) of the book.
+
+import Control.Monad (unless)
+import Data.List (intersperse)
 import Text.PrettyPrint.HughesPJ
 
 type Date = String
@@ -140,3 +143,10 @@ main = do
   writeFile "index.beta.html.in" (toc beta)
   writeFile "index.complete.html.in" . toc $ const True
   writeFile ".stamp-indices" ""
+  let instruct desc p = do
+         let cs = map ((++".html") . baseName) . filter (not . p . status) $ chapters
+         unless (null cs) $ do
+           putStrLn $ "To delete non-" ++ desc ++ " chapters:"
+           putStrLn $ "rm -f " ++ concat (intersperse " " cs)
+  instruct "alpha" alpha
+  instruct "beta" beta
