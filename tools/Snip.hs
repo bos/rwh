@@ -39,6 +39,7 @@ markers path =
       "cabal"  -> (startCabal, endCabal)
       "cpp"  -> (startC, endC)
       "java"  -> (startC, endC)
+      "js"  -> (startC, endC)
       "py"  -> (startPy, endPy)
       s    -> error ("unknown file suffix" ++ show s)
   where startHs = B.pack "{-- snippet "

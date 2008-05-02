@@ -1,0 +1,5 @@
+--# load
+:load BrokenClass
+
+--# use
+toJValue [("foo","bar")]

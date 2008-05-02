@@ -1,4 +1,6 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+{-- snippet LANGUAGE --}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-- /snippet LANGUAGE --}
 
 module JSONClass
     (
@@ -30,13 +32,14 @@ jobject :: JSON a => [(String, a)] -> JObj a
 jobject = JObj
 
 data JValue = JString String
-            | JNumber !Rational
+            | JNumber Double
             | JObject (JObj JValue)
             | JArray (JAry JValue)
             | JBool !Bool
             | JNull
               deriving (Eq, Ord, Show)
 
+{-- snippet class --}
 type JSONError = String
 
 class JSON a where
@@ -46,31 +49,32 @@ class JSON a where
 instance JSON JValue where
     toJValue = id
     fromJValue = Right
+{-- /snippet class --}
 
-rationalToJValue :: (Rational -> a) -> JValue -> Either JSONError a
-rationalToJValue f (JNumber v) = Right (f v)
-rationalToJValue _ _ = Left "not a JSON number"
-
+{-- snippet String --}
 instance JSON String where
     toJValue = JString
     fromJValue (JString s) = Right s
     fromJValue _ = Left "not a JSON string"
+{-- /snippet String --}
+
+{-- snippet doubleToJValue --}
+doubleToJValue :: (Double -> a) -> JValue -> Either JSONError a
+doubleToJValue f (JNumber v) = Right (f v)
+doubleToJValue _ _ = Left "not a JSON number"
 
 instance JSON Int where
-    toJValue = JNumber . toRational
-    fromJValue = rationalToJValue round
+    toJValue = JNumber . realToFrac
+    fromJValue = doubleToJValue round
 
 instance JSON Integer where
-    toJValue = JNumber . toRational
-    fromJValue = rationalToJValue round
+    toJValue = JNumber . realToFrac
+    fromJValue = doubleToJValue round
 
 instance JSON Double where
-    toJValue = JNumber . toRational
-    fromJValue = rationalToJValue fromRational
-
-instance JSON Rational where
     toJValue = JNumber
-    fromJValue = rationalToJValue id
+    fromJValue = doubleToJValue id
+{-- /snippet doubleToJValue --}
 
 mapEithers :: (a -> Either b c) -> [a] -> Either b [c]
 mapEithers f (x:xs) = case mapEithers f xs of
@@ -91,10 +95,12 @@ instance (JSON a) => JSON (JObj a) where
         where unwrap (k, v) = whenRight ((,) k) (fromJValue v)
     fromJValue _ = Left "not a JSON object"
 
+{-- snippet Bool --}
 instance JSON Bool where
     toJValue = JBool
     fromJValue (JBool b) = Right b
     fromJValue _ = Left "not a JSON boolean"
+{-- /snippet Bool --}
 
 whenRight :: (b -> c) -> Either a b -> Either a c
 whenRight _ (Left err) = Left err

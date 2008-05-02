@@ -1,0 +1,201 @@
+<!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
+
+<chapter id="jsonclass" revision="alpha;beta">
+  <title>A typeclass approach to JSON</title>
+
+  <sect1>
+    <title></title>
+    <para>The <type>JValue</type> type that we introduced in <xref
+      linkend="library.jvalue"/> is not especially easy to work with.
+      Here is a truncated and tidied snippet of some real JSON data,
+      produced by a well known search engine.</para>
+
+    &result.js:result;
+
+    <para>And here's a further slimmed down fragment of that data,
+      represented in Haskell.</para>
+
+    &SimpleResult.hs:result;
+
+    <para>Because Haskell doesn't natively support lists that contain
+      types of different value, we can't directly represent a JSON
+      object that contains values of different types. Instead, we must
+      wrap each value with a <type>JValue</type> constructor.  This
+      limits our flexibility: if we want to change the number
+      <code>3920</code> to a string <code>"3,920"</code>, we must
+      change the constructor that we use to wrap it from
+      <code>JNumber</code> to <code>JString</code>.</para>
+
+    <para>Haskell's typeclasses offer a tempting solution to this
+      problem.</para>
+
+    &JSONClass.hs:class;
+
+    <para>Now, instead of applying a constructor like
+      <code>JNumber</code> to a value to wrap it, we apply the
+      <function>toJValue</function> function.  If we change a value's
+      type, the compiler will choose a suitable implementation of
+      <type>toJValue</type> to use with it.</para>
+
+    <para>We also provide a <function>fromJValue</function> function,
+      which attempts to convert a <type>JValue</type> into a value of
+      our desired type.</para>
+
+    <sect2>
+      <title>More helpful errors</title>
+
+      <para>The return type of our <function>fromJValue</function>
+	function uses the predefined <type>Either</type> type.  Like
+	<type>Maybe</type>, this type is predefined for us, and we'll
+	often use it to represent a computation that could
+	fail.</para>
+
+      <para>While <type>Maybe</type> is useful for this purpose, it
+	gives us no information if a failure occurs: we literally have
+	<code>Nothing</code>.  The <type>Either</type> type has a
+	similar structure, but instead of <code>Nothing</code>, the
+	<quote>something bad happened</quote> constructor is named
+	<code>Left</code>, and it takes a parameter.</para>
+
+      &DataEither.hs:Either;
+
+      <para>Quite often, the type we use for the <varname
+	  role="type">a</varname> parameter value is
+	<type>String</type>, which lets us return an error message if
+	something goes wrong.  To see how we use the
+	<type>Either</type> type in practice, let's look at a simple
+	instance of our typeclass.</para>
+
+      &JSONClass.hs:Bool;
+
+    </sect2>
+
+    <sect2>
+      <title>Making an instance with a type synonym</title>
+      
+      <para>The Haskell 98 standard does not allow us to write an
+	instance of the following form, even though it seems perfectly
+	reasonable.</para>
+
+      &JSONClass.hs:String;
+
+      <para>Recall that <type>String</type> is a synonym for
+	<type>[Char]</type>, which in turn is the type
+	<type>[a]</type> where <type>Char</type> is substituted for
+	the type parameter <varname role="type">a</varname>. According
+	to Haskell 98's rules, we are not allowed to supply a type in
+	place of a type parameter when we write an instance.  In other
+	words, it would be legal for us to write an instance for
+	<type>[a]</type>, but not for <type>[Char]</type>.</para>
+
+      <para>While &GHC; follows the Haskell 98 standard by default, we
+	can relax this particular restriction by placing a specially
+	formatted comment at the top of our source file.</para>
+
+      &JSONClass.hs:LANGUAGE;
+
+      <para>This comment is a directive to the compiler, called a
+	<emphasis>pragma</emphasis>, which tells it to enable a
+	language extension.  The <code>TypeSynonymInstances</code>
+	language extension makes the above code legal.  We'll
+	encounter a few other language extensions at various points in
+	this book.</para>
+    </sect2>
+
+    <sect2>
+      <title>Living in an open world</title>
+
+      <para>Haskell's typeclasses are intentionally designed to let us
+	create new instances of a typeclass whenever we like.</para>
+
+      &JSONClass.hs:doubleToJValue;
+
+      <para>We can add new instances anywhere; they are not confined
+	to the module where we define a typeclass.  This feature of
+	the typeclass system is referred to as its <emphasis>open
+	  world assumption</emphasis>.  If we could say <quote>the
+	  following are the only instances of this typeclass that can
+	  exist</quote>, we could have a <emphasis>closed</emphasis>
+	world.</para>
+
+      <para>One useful instance we'd like to be able to write is to
+	turn a list into a JSON array.  We won't worry about
+	implementation details just yet, so let's use
+	<code>undefined</code> as the bodies of the instance's
+	methods.</para>
+
+      &BrokenClass.hs:array;
+
+      <para>It would also be convenient if we could turn a list of
+	name/value pairs into a JSON object.</para>
+
+      &BrokenClass.hs:object;
+
+      <para>If we put these definitions into a source file and load
+	them into &ghci;, everything initially seems fine.</para>
+
+      &brokenClass.ghci:load;
+
+      <para>However, once we try to <emphasis>use</emphasis> the
+	list-of-pairs instance, we run into trouble.</para>
+
+      &brokenClass.ghci:use;
+
+      <para>This problem of <emphasis>overlapping instances</emphasis>
+	is a consequence of Haskell's open world assumption.  Here's a
+	simpler example that makes it clearer what's going on.</para>
+
+      &Overlap.hs:Borked;
+
+      <para>We have two instances of the typeclass
+	<type>Borked</type> for pairs: one for a pair of
+	<type>Int</type>s and another for a pair of anything else
+	that's <type>Borked</type>.</para>
+
+      <para>Suppose that we want to <function>bork</function> a pair
+	of <type>Int</type> values.  To do so, the compiler must
+	choose an instance to use.  Because these instances are right
+	next to each other, it may seem that it could simply choose
+	the more specific instance.</para>
+
+      <para>As we've noted, though, the instances don't
+	<emphasis>have</emphasis> to be next to each other.  They could
+	be in two separate modules, and the code that's trying to use
+	the <type>Borked</type> typeclass in a third. When a module
+	contains an instance, the instance is automatically exported
+	from the module, but not in a way that's easily
+	visible.</para>
+
+      <para>We could thus easily not know that one of those modules
+	contained an instance for <type>Borked</type>.   As a result,
+	we could accidentally and silently change the behaviour of our
+	third module simply by importing the second instance, and we
+	probably wouldn't notice until runtime.  The rule against
+	overlapping instances rule ensures that the compiler issues an
+	error instead.</para>
+    </sect2>
+
+    <sect2>
+      <title>Relaxing the rules for overlapping instances</title>
+
+      <para>&GHC; supports a language extension,
+	<code>OverlappingInstances</code>, that chooses the most
+	specific among a set of overlapping instances when possible.
+	Although it can be convenient, it suffers from the problem we
+	outline above, and the rules that apply to its use are subtle
+	and complicated.</para>
+
+      <para>As with all of &GHC;'s tuning knobs that loosen the
+	restrictions on the type checker, we recommend using this
+	extension only sparingly, and with great care.  In the
+	sections that follow, we'll describe how to modify our code to
+	work without with extension.</para>
+    </sect2>
+  </sect1>
+</chapter>
+
+<!--
+local variables: 
+sgml-parent-document: ("00book.xml" "book" "chapter")
+end:
+-->

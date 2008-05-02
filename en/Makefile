@@ -25,8 +25,8 @@ src-files := $(src-master) \
 src-dirs := $(wildcard ../examples/app[A-Z]* ../examples/ch[0-9][0-9]*)
 
 src-examples := $(foreach d,$(src-dirs),$(wildcard $d/*.c $d/*.cabal $d/*.cpp \
-					$d/*.ghci $d/*.hs $d/*.java $d/*.lhs \
-					$d/*.py))
+					$d/*.ghci $d/*.hs $d/*.java $d/*.js \
+					$d/*.lhs $d/*.py))
 
 src-figs := $(wildcard figs/*.jpg figs/*.png)
 
@@ -259,6 +259,7 @@ vpath %.cabal $(src-dirs)
 vpath %.cpp $(src-dirs)
 vpath %.hs $(src-dirs)
 vpath %.java $(src-dirs)
+vpath %.js $(src-dirs)
 vpath %.lhs $(src-dirs)
 vpath %.py $(src-dirs)
 vpath %.lhs $(src-dirs)
@@ -281,6 +282,10 @@ x/.stamp-%.hs: %.hs
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.java: %.java
+	@mkdir -p x
+	../tools/bin/snippets $(CURDIR)/x $< > $@
+
+x/.stamp-%.js: %.js
 	@mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
