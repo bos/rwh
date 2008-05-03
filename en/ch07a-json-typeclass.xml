@@ -98,98 +98,145 @@
 	<emphasis>pragma</emphasis>, which tells it to enable a
 	language extension.  The <code>TypeSynonymInstances</code>
 	language extension makes the above code legal.  We'll
-	encounter a few other language extensions at various points in
-	this book.</para>
+	encounter a few other language extensions in this chapter, and
+	a handful more later in this book.</para>
     </sect2>
+  </sect1>
 
-    <sect2>
-      <title>Living in an open world</title>
+  <sect1>
+    <title>Living in an open world</title>
 
-      <para>Haskell's typeclasses are intentionally designed to let us
-	create new instances of a typeclass whenever we like.</para>
+    <para>Haskell's typeclasses are intentionally designed to let us
+      create new instances of a typeclass whenever we like.</para>
 
       &JSONClass.hs:doubleToJValue;
 
-      <para>We can add new instances anywhere; they are not confined
-	to the module where we define a typeclass.  This feature of
-	the typeclass system is referred to as its <emphasis>open
-	  world assumption</emphasis>.  If we could say <quote>the
-	  following are the only instances of this typeclass that can
-	  exist</quote>, we could have a <emphasis>closed</emphasis>
-	world.</para>
+    <para>We can add new instances anywhere; they are not confined to
+      the module where we define a typeclass.  This feature of the
+      typeclass system is referred to as its <emphasis>open world
+	assumption</emphasis>.  If we could say <quote>the following
+	are the only instances of this typeclass that can
+	exist</quote>, we could have a <emphasis>closed</emphasis>
+      world.</para>
 
-      <para>One useful instance we'd like to be able to write is to
-	turn a list into a JSON array.  We won't worry about
-	implementation details just yet, so let's use
-	<code>undefined</code> as the bodies of the instance's
-	methods.</para>
+    <para>One useful instance we'd like to be able to write is to turn
+      a list into a JSON array.  We won't worry about implementation
+      details just yet, so let's use <code>undefined</code> as the
+      bodies of the instance's methods.</para>
 
       &BrokenClass.hs:array;
 
-      <para>It would also be convenient if we could turn a list of
-	name/value pairs into a JSON object.</para>
+    <para>It would also be convenient if we could turn a list of
+      name/value pairs into a JSON object.</para>
 
       &BrokenClass.hs:object;
 
-      <para>If we put these definitions into a source file and load
-	them into &ghci;, everything initially seems fine.</para>
+    <para>If we put these definitions into a source file and load them
+      into &ghci;, everything initially seems fine.</para>
 
       &brokenClass.ghci:load;
 
-      <para>However, once we try to <emphasis>use</emphasis> the
-	list-of-pairs instance, we run into trouble.</para>
+    <para>However, once we try to <emphasis>use</emphasis> the
+      list-of-pairs instance, we run into trouble.</para>
 
       &brokenClass.ghci:use;
 
-      <para>This problem of <emphasis>overlapping instances</emphasis>
-	is a consequence of Haskell's open world assumption.  Here's a
-	simpler example that makes it clearer what's going on.</para>
+    <para>This problem of <emphasis>overlapping instances</emphasis>
+      is a consequence of Haskell's open world assumption.  Here's a
+      simpler example that makes it clearer what's going on.</para>
 
       &Overlap.hs:Borked;
 
-      <para>We have two instances of the typeclass
-	<type>Borked</type> for pairs: one for a pair of
-	<type>Int</type>s and another for a pair of anything else
-	that's <type>Borked</type>.</para>
+    <para>We have two instances of the typeclass <type>Borked</type>
+      for pairs: one for a pair of <type>Int</type>s and another for a
+      pair of anything else that's <type>Borked</type>.</para>
 
-      <para>Suppose that we want to <function>bork</function> a pair
-	of <type>Int</type> values.  To do so, the compiler must
-	choose an instance to use.  Because these instances are right
-	next to each other, it may seem that it could simply choose
-	the more specific instance.</para>
+    <para>Suppose that we want to <function>bork</function> a pair of
+      <type>Int</type> values.  To do so, the compiler must choose an
+      instance to use.  Because these instances are right next to each
+      other, it may seem that it could simply choose the more specific
+      instance.</para>
 
-      <para>As we've noted, though, the instances don't
-	<emphasis>have</emphasis> to be next to each other.  They could
-	be in two separate modules, and the code that's trying to use
-	the <type>Borked</type> typeclass in a third. When a module
-	contains an instance, the instance is automatically exported
-	from the module, but not in a way that's easily
-	visible.</para>
+    <para>However, &GHC; is conservative by default, and insists that
+      there must be only one possible instance that it could use.  It
+      will thus report an error if we try to use
+      <code>bork</code>.</para>
 
-      <para>We could thus easily not know that one of those modules
-	contained an instance for <type>Borked</type>.   As a result,
-	we could accidentally and silently change the behaviour of our
-	third module simply by importing the second instance, and we
-	probably wouldn't notice until runtime.  The rule against
-	overlapping instances rule ensures that the compiler issues an
-	error instead.</para>
-    </sect2>
+    <note>
+      <title>When do overlapping instances cause an error?</title>
+
+      <para>As we mentioned earlier, we can scatter instances of a
+	typeclass across several modules.  &GHC; does not complain
+	about the mere existence of overlapping instances.  Instead,
+	it only complains when we try to use a method of the affected
+	typeclass, when it is forced to make a decision about which
+	instance to use.</para>
+    </note>
 
     <sect2>
       <title>Relaxing the rules for overlapping instances</title>
 
-      <para>&GHC; supports a language extension,
-	<code>OverlappingInstances</code>, that chooses the most
-	specific among a set of overlapping instances when possible.
-	Although it can be convenient, it suffers from the problem we
-	outline above, and the rules that apply to its use are subtle
-	and complicated.</para>
+      <para>&GHC; supports a useful language extension,
+	<code>OverlappingInstances</code>: when there are multiple
+	overlapping instances to choose from, this extension causes
+	the compiler to pick the most specific one.</para>
 
-      <para>As with all of &GHC;'s tuning knobs that loosen the
-	restrictions on the type checker, we recommend using this
-	extension only sparingly, and with great care.  In the
-	sections that follow, we'll describe how to modify our code to
-	work without with extension.</para>
+      <para>We frequently use this extension together with
+	<code>TypeSynonymInstances</code>, so that we can provide an
+	instance for <type>String</type> and an instance for other
+	types of list.  Here's an example.</para>
+
+      &SimpleClass.hs:Foo;
+    
+      <para>With the <code>OverlappingInstances</code> extension
+	enabled, &GHC; will still reject code if it finds more than
+	one most specific instance.</para>
+
+      <note>
+	<title>When to use the OverlappingInstances extension</title>
+
+	<para>Here's an important point: &GHC; treats
+	  <code>OverlappingInstances</code> as affecting the
+	  declaration of an instance, <emphasis>not</emphasis> a
+	  location where we use the instance.  In other words, when we
+	  define an instance that we wish to allow to overlap with
+	  another instance, we must enable the extension for the
+	  module that contains the definition.  When it compiles the
+	  module, &GHC; will mark that instance as <quote>can be
+	    overlapped with other instances</quote>.</para>
+
+	<para>Once we import this module and use the instance, we
+	  <emphasis>won't</emphasis> need to enable
+	  <code>OverlappingInstances</code> in the importing module:
+	  &GHC; will already know that the instance was marked as
+	  <quote>okay to overlap</quote> when it was defined.</para>
+
+	<para>This behaviour is useful when we are writing a library:
+	  it lets us choose to create overlappable instances, without
+	  forcing clients of our library to enable language extensions
+	  in order to use it.</para>
+      </note>
+    </sect2>
+
+    <sect2>
+
+      <title>How does show work for strings?</title>
+
+      <para>Since the <code>OverlappingInstances</code> and
+	<code>TypeSynonymInstances</code> language extensions are
+	specific to &GHC;, how does the machinery around the familiar
+	<type>Show</type> typeclass render <type>[Char]</type>
+	differently from <type>[Int]</type>? Via a clever
+	trick.</para>
+
+      <para>The <type>Show</type> class defines both a
+	<function>show</function> method and a
+	<function>showList</function> method.  The default
+	implementation of <function>showList</function> renders using
+	square brackets and commas.  The instance of <type>Show</type>
+	for <type>Char</type> provides a special implementation of
+	<function>showList</function> that uses double quotes and
+	escapes non-ASCII-printable characters.</para>
     </sect2>
   </sect1>
 </chapter>
