@@ -14,6 +14,7 @@
 <!ENTITY Either "<literal>Either</literal>">
 <!ENTITY Enum "<literal>Enum</literal>">
 <!ENTITY Eq "<literal>Eq</literal>">
+<!ENTITY Exception "<literal>Exception</literal>">
 <!ENTITY False "<literal>False</literal>">
 <!ENTITY FilePath "<literal>FilePath</literal>">
 <!ENTITY Float "<literal>Float</literal>">
@@ -86,6 +87,7 @@
 <!ENTITY elem "<literal>elem</literal>">
 <!ENTITY emdash "&#8212;">
 <!ENTITY error "<function>error</function>">
+<!ENTITY evaluate "<function>evaluate</function>">
 <!ENTITY execute "<literal>execute</literal>">
 <!ENTITY executeMany "<literal>executeMany</literal>">
 <!ENTITY fail "<function>fail</function>">

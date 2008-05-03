@@ -430,12 +430,13 @@
       </tip>
     </sect2>
 
+<!--
       </para>
 Let's look at one: &handle;.  The type
         of &handle; is <literal>(Exception -&gt; IO a) -&gt; IO a
         -&gt; IO a</literal>.  That is, &handle; takes two arguments:
         a function that is called if there 
-    
+    -->
     
         
   </sect1>
