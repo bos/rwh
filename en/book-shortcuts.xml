@@ -155,6 +155,7 @@
 <!ENTITY toSql "<literal>toSql</literal>">
 <!ENTITY try "<literal>try</literal>">
 <!ENTITY type "<literal>type</literal>">
+<!ENTITY undefined "<code>undefined</code>">
 <!ENTITY unlines "<literal>unlines</literal>">
 <!ENTITY where "<literal>where</literal>">
 <!ENTITY withTransaction "<literal>withTransaction</literal>">

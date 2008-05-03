@@ -239,6 +239,106 @@
 	escapes non-ASCII-printable characters.</para>
     </sect2>
   </sect1>
+
+  <sect1>
+    <title>How to give a type a secret identity</title>
+
+    <para>In addition to the familiar &data; keyword, Haskell provides
+      us with another way to create a new type, via &newtype;.</para>
+
+    &Newtype.hs:newtype;
+
+    <para>The purpose of a &newtype; declaration is to rename an
+      existing type, giving it a distinct identity.  As we can see, it
+      is similar in appearance to a type declaration using the &data;
+      keyword.</para>
+
+    <para>When we declare a &newtype;, we can choose to make any of
+      the underlying type's typeclass instances available. Here, we've
+      elected to make <type>NewtypeInt</type> provide
+      <type>Int</type>'s instances for <type>Eq</type>,
+      <type>Ord</type> and <type>Show</type>.  As a result, we can
+      compare and print values of type <type>NewtypeInt</type>.</para>
+
+    &newtype.ghci:compare;
+
+    <para>However, since we are <emphasis>not</emphasis> exposing
+      <type>Int</type>'s <type>Num</type> or <type>Integral</type>
+      instances, values of type <type>NewtypeInt</type> are not
+      numbers.  For instance, we can't add them.</para>
+
+    &newtype.ghci:num;
+
+    <para>As with the &data; keyword, we can use a &newtype;'s value
+      constructor to create a new value, or to pattern match on an
+      existing value.</para>
+
+    <sect2>
+      <title>Differences between data and newtype declarations</title>
+
+      <para>The &newtype; keyword exists to give an existing type a
+	new identity, and it is more restricted in how we can use it
+	than the &data; keyword.  Specifically, a &newtype; can only
+	have one value constructor, and that constructor must have
+	exactly one field.</para>
+
+      &NewtypeDiff.hs:newtype;
+
+      <para>Beyond this, there's another important difference between
+	&data; and &newtype;.   A type created with the &data; keyword
+	has some runtime book-keeping overhead, to record which
+	constructor a value was created with.  A &newtype; value, on
+	the other hand, can only have one constructor, and so does not
+	need this overhead.  This makes it more space- and
+	time-efficient at runtime.</para>
+
+      <para>Because a &newtype;'s constructor is used only at compile
+	time and doesn't have a runtime representation, pattern
+	matching on &undefined; behaves differently.</para>
+
+      <para>To understand the difference, let's first review what we
+	might expect with a normal datatype.  We are already familiar
+	with the idea that if &undefined; is evaluated at runtime, it
+	causes a crash.</para>
+      
+      &newtype.ghci:undefined;
+
+      <para>Here is a pattern match where we construct a
+	<type>DataInt</type> using the <code>D</code> constructor, and
+	put &undefined; inside.</para>
+
+      &newtype.ghci:D;
+
+      <para>Since our pattern matches against the constructor but
+	doesn't inspect the payload, the &undefined; remains
+	unevaluated and does not cause a crash.</para>
+
+      <para>In this example, we're not using the <code>D</code>
+	constructor, so the unprotected &undefined; gets evaluated
+	when the pattern match occurs, and we crash.</para>
+
+      &newtype.ghci:data;
+
+      <para>When we use the <code>N</code> constructor, we get the
+	same behaviour as we did with the <code>D</code> constructor:
+	no crash.</para>
+
+      &newtype.ghci:N;
+
+      <para>The crucial difference arises when we get rid of the
+	<code>N</code> constructor, and match against an unprotected
+	&undefined;.</para>
+
+      &newtype.ghci:newtype;
+
+      <para>We didn't crash!  Because there's no constructor present
+	at runtime, matching against <code>N _</code> is actually
+	equivalent to matching against the plain wild card
+	<code>_</code>: since this always matches, the expression
+	doesn't need to be evaluated.</para>
+    </sect2>
+
+  </sect1>
 </chapter>
 
 <!--
