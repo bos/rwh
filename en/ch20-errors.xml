@@ -339,13 +339,104 @@
     </para>
     <para>
       Some problems -- especially those involving I/O -- call for
-      working with exceptions, and we'll show you how in this
-      section.  But before we begin, we need to give you some
-      background on how exceptions fit into the Haskell language.
+      working with exceptions.  In Haskell, exceptions may be raised
+      from any location in the program.  However, due to lazy
+      evaluation, they can only be caught in the &IO; monad.  Haskell
+      exception handling doesn't involve special syntax as it does in
+      Python or Java.  Rather, the mechanisms to catch and handle
+      exceptions are -- surprise -- functions.
     </para>
-    <sect2 id="errors.exceptions.hs">
-      <title>Exceptions in Haskell</title>
+    <sect2 id="errors.exceptions.firststeps">
+      <title>First Steps with Exceptions</title>
       <para>
+        In the <literal>Control.Exception</literal> module, various
+        functions and types relating to exceptions are defined.  There
+        is an &Exception; type defined there; all exceptions are of
+        type &Exception;.  There are also functions for catching and
+        handling exceptions.  Let's start by looking at &try;, which
+        has type <literal>IO a -&gt; IO (Either Exception
+        a)</literal>.  This wraps an &IO; action with exception
+        handling.  If an exception was raised, it will return a &Left;
+        value with the exception; otherwise, a &Right; value with the
+        original result.  Let's try this out in &ghci;.  We'll first
+        trigger an un-handled exception, and then try to catch it.
+      </para>
+      &exc.ghci:try1;
+      <para>
+        Notice that no exception was
+        raised by the &let; statements.  That's to be expected due to
+        lazy evaluation; the division by zero won't be attempted until
+        it is demanded by the attempt to print out
+        <literal>x</literal>.  Also, notice that there were two lines
+        of output from <literal>try (print y)</literal>.  The first
+        line was produced by <literal>print</literal>, which displayed
+        the digit 5 on the terminal.  The second was produced by
+        &ghci;, which is showing you that <literal>print y</literal>
+        returned <literal>()</literal> and didn't raise an exception.
+      </para>
+    </sect2>
+    <sect2 id="errors.exceptions.lazy">
+      <title>Laziness and Exception Handling</title>
+      <para>
+        Now that you know how &try; works, let's try another
+        experiment.  Let's say we want to catch the result of
+        <literal>try</literal> for future evaluation, so we can handle
+        the result of division.  Perhaps we
+        would do it liks this:
+      </para>
+      &exc.ghci:try2;
+      <para>
+        What happened here?  Let's try to piece it together, and
+        illustrate with another attempt:
+      </para>
+      &exc.ghci:try3;
+      <para>
+        As before, assigning &undefined; to <literal>z</literal> was
+        not a problem.  The key to this puzzle, and to the division
+        puzzle, lies with lazy evaluation.  Specifically, it lies with
+        &return;, which does not force the evaluation of its argument;
+        it only wraps it up.  So, the result of <literal>try (return
+        undefined)</literal> would be <literal>Right
+        undefined</literal>.  Now, &ghci; wants to display this result
+        on the terminal.  It gets as far as printint out
+        <literal>"Right "</literal>, but you can't print out
+        &undefined; (or the result of division by zero).  So when you
+        see the exception message, it's coming from &ghci;, not your
+        program.
+      </para>
+      <para>
+        This is a key point.  Let's think about why our earlier
+        example worked and this one didn't.  Earlier, we put
+        <literal>print x</literal> inside &try;.  Printing the value
+        of something, of course, requires it to be evaluated, so the
+        exception was detected at the right place.  But simply using
+        &return; does not force evaluation.  To solve this problem,
+        the <literal>Control.Exception</literal> module defines the
+        &evaluate; function.  It behaves just like &return;, but
+        forces its argument to be evaluated immediately.  Let's try
+        it:
+      </para>
+      &exc.ghci:try4;
+      <para>
+        There, that's what was expected.  This worked for both
+        &undefined; and our division by zero example.
+      </para>
+      <tip>
+        <para>
+          Remember: whenever you are trying to catch exceptions raised
+          by pure code, use &evaluate; instead of &return; inside your
+          exception-catching function.
+        </para>
+      </tip>
+    </sect2>
+
+      </para>
+Let's look at one: &handle;.  The type
+        of &handle; is <literal>(Exception -&gt; IO a) -&gt; IO a
+        -&gt; IO a</literal>.  That is, &handle; takes two arguments:
+        a function that is called if there 
+    
+    
         
   </sect1>
 
