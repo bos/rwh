@@ -491,9 +491,12 @@
 
       &randomSupply.ghci:first;
 
-      <para id="x_Zr">Now that we know about these functions, we can use one to
-	golf our definition of <function>randomsIO</function>, turning
-	it into a one-liner.</para>
+      <para id="x_Zr">(Indeed, we already encountered
+	<function>second</function>, in <xref
+	  linkend="jsonclass.instances"/>.)  We can use
+	<function>first</function> to golf our definition of
+	<function>randomsIO</function>, turning it into a
+	one-liner.</para>
 
       &RandomGolf.hs:randomsIO_golfed;
       

@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances, OverlappingInstances, TypeSynonymInstances #-}
 
 module BrokenClass
     (
@@ -40,6 +40,7 @@ mapEithers f (x:xs) = case mapEithers f xs of
                                       Right y -> Right (y:ys)
 mapEithers _ _ = Right []
 
+{-
 {-- snippet array --}
 instance (JSON a) => JSON [a] where
     toJValue = undefined
@@ -51,12 +52,12 @@ instance (JSON a) => JSON [(String, a)] where
     toJValue = undefined
     fromJValue = undefined
 {-- /snippet object --}
+-}
 
 whenRight :: (b -> c) -> Either a b -> Either a c
 whenRight _ (Left err) = Left err
 whenRight f (Right a) = Right (f a)
 
-{-
 instance (JSON a) => JSON [a] where
     toJValue = JArray . map toJValue
     fromJValue (JArray a) = mapEithers fromJValue a
@@ -67,7 +68,6 @@ instance (JSON a) => JSON [(String, a)] where
     fromJValue (JObject o) = mapEithers unwrap o
         where unwrap (k, v) = whenRight ((,) k) (fromJValue v)
     fromJValue _ = Left "not a JSON object"
--}
 
 {-
 instance (JSON a, JSON b) => JSON (a, b) where

@@ -2,42 +2,53 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-- /snippet LANGUAGE --}
 
+{-- snippet module --}
 module JSONClass
     (
       JSON(..)
     , JValue(..)
-    , JAry
+    , JAry(..)
     , JObj
-    , fromJAry
-    , jarray
     , fromJObj
-    , jobject
     ) where
+{-- /snippet module --}
 
+{-- snippet instance.JObj --}
 import Control.Arrow (second)
-import Control.Monad (liftM)
 
+instance (JSON a) => JSON (JObj a) where
+    toJValue = JObject . JObj . map (second toJValue) . fromJObj
+    fromJValue (JObject (JObj o)) = whenRight JObj (mapEithers unwrap o)
+      where unwrap (k,v) = whenRight ((,) k) (fromJValue v)
+    fromJValue _ = Left "not a JSON object"
+{-- /snippet instance.JObj --}
+
+{-- snippet JAry --}
 newtype JAry a = JAry {
       fromJAry :: [a]
     } deriving (Eq, Ord, Show)
+{-- /snippet JAry --}
 
-jarray :: JSON a => [a] -> JAry a
-jarray = JAry
+{-- snippet jary --}
+jary :: [a] -> JAry a
+jary = JAry
+{-- /snippet jary --}
 
+{-- snippet JObj --}
 newtype JObj a = JObj {
       fromJObj :: [(String, a)]
     } deriving (Eq, Ord, Show)
+{-- /snippet JObj --}
 
-jobject :: JSON a => [(String, a)] -> JObj a
-jobject = JObj
-
+{-- snippet JValue --}
 data JValue = JString String
             | JNumber Double
-            | JObject (JObj JValue)
-            | JArray (JAry JValue)
-            | JBool !Bool
+            | JBool Bool
             | JNull
+            | JObject (JObj JValue)   -- was [(String, JValue)]
+            | JArray (JAry JValue)    -- was [JValue]
               deriving (Eq, Ord, Show)
+{-- /snippet JValue --}
 
 {-- snippet class --}
 type JSONError = String
@@ -76,6 +87,7 @@ instance JSON Double where
     fromJValue = doubleToJValue id
 {-- /snippet doubleToJValue --}
 
+{-- snippet mapEithers --}
 mapEithers :: (a -> Either b c) -> [a] -> Either b [c]
 mapEithers f (x:xs) = case mapEithers f xs of
                         Left err -> Left err
@@ -83,17 +95,42 @@ mapEithers f (x:xs) = case mapEithers f xs of
                                       Left err -> Left err
                                       Right y -> Right (y:ys)
 mapEithers _ _ = Right []
+{-- /snippet mapEithers --}
+
+{-- snippet listToJValues --}
+listToJValues :: (JSON a) => [a] -> [JValue]
+listToJValues = map toJValue
+{-- /snippet listToJValues --}
+
+{-- snippet jvaluesToJAry --}
+jvaluesToJAry :: [JValue] -> JAry JValue
+jvaluesToJAry = JAry
+{-- /snippet jvaluesToJAry --}
+
+{-- snippet jaryOfJValuesToJValue --}
+jaryOfJValuesToJValue :: JAry JValue -> JValue
+jaryOfJValuesToJValue = JArray
+{-- /snippet jaryOfJValuesToJValue --}
+
+{-- snippet jaryToJValue --}
+jaryToJValue = JArray . JAry . map toJValue . fromJAry
+{-- /snippet jaryToJValue --}
+
+{-- snippet jaryFromJValue --}
+jaryFromJValue (JArray (JAry a)) =
+    whenRight JAry (mapEithers fromJValue a)
+jaryFromJValue _ = Left "not a JSON array"
+{-- /snippet jaryFromJValue --}
+
+{-- snippet instance.JAry --}
+jaryFromJValue :: (JSON a) => JValue -> Either JSONError (JAry a)
+
+jaryToJValue :: (JSON a) => JAry a -> JValue
 
 instance (JSON a) => JSON (JAry a) where
-    toJValue = JArray . jarray . map toJValue . fromJAry
-    fromJValue (JArray a) = whenRight jarray (mapEithers fromJValue (fromJAry a))
-    fromJValue _ = Left "not a JSON array"
-
-instance (JSON a) => JSON (JObj a) where
-    toJValue = JObject . jobject . map (second toJValue) . fromJObj
-    fromJValue (JObject o) = whenRight jobject (mapEithers unwrap (fromJObj o))
-        where unwrap (k, v) = whenRight ((,) k) (fromJValue v)
-    fromJValue _ = Left "not a JSON object"
+    toJValue = jaryToJValue
+    fromJValue = jaryFromJValue
+{-- /snippet instance.JAry --}
 
 {-- snippet Bool --}
 instance JSON Bool where
@@ -102,9 +139,11 @@ instance JSON Bool where
     fromJValue _ = Left "not a JSON boolean"
 {-- /snippet Bool --}
 
+{-- snippet whenRight --}
 whenRight :: (b -> c) -> Either a b -> Either a c
 whenRight _ (Left err) = Left err
 whenRight f (Right a) = Right (f a)
+{-- /snippet whenRight --}
 
 instance (JSON a) => JSON (Maybe a) where
     toJValue = maybe JNull toJValue
