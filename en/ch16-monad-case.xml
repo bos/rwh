@@ -991,7 +991,7 @@
 	I/O, but instead logs every file-related event for later
 	processing.</para>
 
-      &MonadHandleIO.hs:Event;
+      &WriterIO.hs:Event;
 
       <para id="x_os">Although we already developed a <type>Logger</type> type
 	in <xref linkend="monads.logger"/>, here we'll use the
