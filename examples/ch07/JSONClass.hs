@@ -8,8 +8,7 @@ module JSONClass
       JSON(..)
     , JValue(..)
     , JAry(..)
-    , JObj
-    , fromJObj
+    , JObj(..)
     ) where
 {-- /snippet module --}
 
@@ -18,6 +17,7 @@ import Control.Arrow (second)
 
 instance (JSON a) => JSON (JObj a) where
     toJValue = JObject . JObj . map (second toJValue) . fromJObj
+
     fromJValue (JObject (JObj o)) = whenRight JObj (mapEithers unwrap o)
       where unwrap (k,v) = whenRight ((,) k) (fromJValue v)
     fromJValue _ = Left "not a JSON object"
@@ -149,3 +149,12 @@ instance (JSON a) => JSON (Maybe a) where
     toJValue = maybe JNull toJValue
     fromJValue JNull = Right Nothing
     fromJValue v = whenRight Just (fromJValue v)
+
+class Wrapper w where
+    rewrap :: (a -> b) -> w a -> w b
+
+instance Wrapper JAry where
+    rewrap f = JAry . map f . fromJAry
+
+instance Wrapper JObj where
+    rewrap f = JObj . map (second f) . fromJObj

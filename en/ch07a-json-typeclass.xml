@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="jsonclass" revision="alpha;beta">
-  <title>A typeclass approach to JSON</title>
+  <title>More work with typeclasses</title>
 
   <sect1>
     <title></title>
@@ -538,6 +538,89 @@
 	</qandaentry>
       </qandaset>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>The dreaded monomorphism restriction</title>
+
+    <para>The Haskell 98 standard has a subtle feature that can
+      sometimes bite us in unexpected circumstances. Here's a simple
+      function definition that illustrates the issue.</para>
+
+    &Monomorphism.hs:myShow;
+
+    <para>If we try to load this definition into &ghci;, it issues a
+      peculiar complaint.</para>
+
+    &monomorphism.ghci:load;
+
+    <para>The <quote>monomorphism restriction</quote> to which the
+      error message refers is a part of the Haskell 98 standard.
+      <emphasis>Monomorphism</emphasis> is simply the opposite of
+      polymorphism: it indicates that an expression has exactly one
+      type.  The <emphasis>restriction</emphasis> lies in the fact
+      that Haskell sometimes forces a declaration to be less
+      polymorphic than we would expect.</para>
+
+    <para>We mention the monomorphism restriction here because
+      although it isn't specifically related to typeclasses, they
+      usually provide the circumstances in which it crops up.</para>
+
+    <tip>
+      <para>It's possible that you will not run into the monomorphism
+	restriction in real code for a long time.  We don't think you
+	need to try to remember the details of this section.  It
+	should suffice to make a mental note of its existence, until
+	eventually &GHC; complains at you with something like the
+	above error message. If that occurs, simply remember that you
+	read about the error here, and come back for guidance.</para>
+    </tip>
+
+    <para>We won't attempt to explain the monomorphism
+      restriction<footnote>
+	<para>If you simply <emphasis>must</emphasis> read the gory
+	  details, see <ulink
+	    url="http://www.haskell.org/onlinereport/decls.html#sect4.5.5">section 
+	    4.5.5</ulink> of the Haskell 98 Report.</para>
+      </footnote>.  The consensus within the Haskell community is that
+      it doesn't arise often; it is tricky to explain; it provides
+      almost no practical benefit; and so it mostly serves to trip
+      people up.  For an example of its trickiness, while the
+      definition above falls afoul of it, the following two compile
+      without problems.</para>
+
+    &Monomorphism.hs:myShow2;
+
+    <para>As these alternative definitions suggest, if &GHC; complains
+      about the monomorphism restriction, we have three easy ways to
+      address the error.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Make the function's arguments explicit, instead of
+	  leaving them implicit.</para>
+      </listitem>
+      <listitem>
+	<para>Give the definition an explicit type signature, instead
+	  of making the compiler infer its type.</para>
+      </listitem>
+      <listitem>
+	<para>Leave the code untouched, and compile the module with
+	  the <code>NoMonomorphismRestriction</code> language
+	  extension enabled.  This disables the monomorphism
+	  restriction.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Because the monomorphism restriction is unwanted and
+      unloved, it will almost certainly be dropped from the next
+      revision of the Haskell standard.  This does not quite mean that
+      compiling with <code>NoMonomorphismRestriction</code> is always
+      the right thing to do: some Haskell compilers (including older
+      versions of &GHC;) do not understand this extension, but they'll
+      accept either of the other approaches to making the error
+      disappear.  If this degree of portability isn't a concern to
+      you, then by all means enable the language extension.</para>
   </sect1>
 </chapter>
 
