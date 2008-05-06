@@ -494,6 +494,90 @@
         it work like so:
       </para>
       &exc.ghci:handleJust2;
+      <para>
+        Of particular interest, you might notice the
+        <literal>ioErrors</literal> test, which corresponds to the
+        large class of I/O-related exceptions.
+      </para>
+    </sect2>
+
+    <sect2 id="errors.exceptions.io">
+      <title>I/O Exceptions</title>
+      <para>
+        Perhaps the largest source of exceptions in any program is
+        I/O.  All sorts of things can go wrong when dealing with the
+        outside world: disks can be full, networks can go down, or
+        files can be empty when you expect them to have data.  In
+        Haskell, an I/O exception is just like any other exception in
+        that can be represented by the &Exception; data type.  On the
+        other hand, because there are so many types of I/O exceptions,
+        a special module -- <literal>System.IO.Error</literal> exists
+        for dealing with them.
+      </para>
+      <para>
+        <literal>System.IO.Error</literal> defines two functions:
+        &catch; and &try; which, like their counterparts in
+        <literal>Control.Exception</literal>, are used to deal with
+        exceptions.  Unlike the <literal>Control.Exception</literal>
+        functions, however, these functions will only trap I/O errors,
+        and will pass all other exceptions through uncaught.  In
+        Haskell, I/O errors all have type <literal>IOError</literal>,
+        which is defined as the same as
+        <literal>IOException</literal>.
+      </para>
+      <warning>
+        <para>
+          Because both <literal>System.IO.Error</literal> and
+          <literal>Control.Exception</literal> define functions with
+          the same names, if you import both in your program, you will
+          get an error message about an ambiguous reference to a
+          function.  You can import one or the other module
+          <literal>qualified</literal>, or hide the symbols from one
+          module or the other.  Also, note that
+          <literal>Prelude</literal> defines the
+          <literal>System.IO.Error</literal> version of &catch;.
+        </para>
+      </warning>
+      <para>
+        Let's take a look at one approach to using exceptions in the
+        I/O system to our benefit.  Back in <xref
+        linkend="io.files"/>, we presented a program that used an
+        imperative style to read lines from a file one by one.
+        Although we subsequently demonstrated more compact, "Haskelly"
+        ways to solve that problem, let's revisit that example here.
+        In the <literal>mainloop</literal> function, we had to
+        explicitly test if we were at the end of the input file before
+        each attempt to read a line from it.  Instead, we could check
+        if the attempt to read a line resulted in an EOF error, like
+        so:
+      </para>
+      &toupper-impch20.hs;
+      <para>
+        Here, we use the <literal>System.IO.Error</literal> version of
+        &try; to check whether <literal>hGetLine</literal> raised an
+        &IOError;.  If it did, we use <literal>isEOFError</literal>
+        (defined in <literal>System.IO.Error</literal>) to see if the
+        raised exception indicated that we reached the end of the
+        file.  If it did, we exit the loop.  If the exception was
+        something else, we call &ioError; to re-raise it.
+      </para>
+      <para>
+        There are many such tests and ways to extract information from
+        &IOError; defined in <literal>System.IO.Error</literal>.  We
+        recommend that you consult that page in the library reference
+        when you need to know about them.
+      </para>
+    </sect2>
+
+    <sect2 id="errors.exceptions.raising">
+      <title>Raising Exceptions</title>
+      <para>
+        Thus far, we have talked in detail about handling exceptions.
+        There is another piece to the puzzle: raising exceptions.  In
+        the examples we have visited so far in this chapter, the
+        Haskell system raises exceptions for you.  However, it is
+        possible to raise any exception yourself.  We'll show you how.
+      </para>
     </sect2>
   </sect1>
 
