@@ -101,6 +101,8 @@
 <!ENTITY ghc "<command>ghc</command>">
 <!ENTITY ghc_pkg "<command>ghc-pkg</command>">
 <!ENTITY ghci "<command>ghci</command>">
+<!ENTITY handle "<literal>handle</literal>">
+<!ENTITY handleJust "<literal>handleJust</literal>">
 <!ENTITY hClose "<literal>hClose</literal>">
 <!ENTITY hFlush "<literal>hFlush</literal>">
 <!ENTITY hGetBuffering "<literal>hGetBuffering</literal>">

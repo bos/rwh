@@ -16,3 +16,21 @@ result <- try (return z)
 let z = undefined
 result <- try (evaluate z)
 result <- try (evaluate x)
+--# handle1
+:m Control.Exception
+let x = 5 `div` 0
+let y = 5 `div` 1
+handle (\_ -> putStrLn "Error calculating result") (print x)
+handle (\_ -> putStrLn "Error calculating result") (print y)
+--# handleJust1
+:l hj1.hs
+let x = 5 `div` 0
+let y = 5 `div` 1
+safePrint x
+safePrint y
+--# handleJust2
+:l hj2.hs
+let x = 5 `div` 0
+let y = 5 `div` 1
+safePrint x
+safePrint y

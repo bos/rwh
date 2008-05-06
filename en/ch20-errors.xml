@@ -430,15 +430,71 @@
       </tip>
     </sect2>
 
-<!--
+    <sect2 id="errors.exceptions.handle">
+      <title>Using handle</title>
+      <para>
+        Often, you may wish to perform one action of a piece of code
+        completes without an exception, and a different action
+        otherwise.  For situations like this, there's a function
+        called &handle;.  This function has type <literal>(Exception
+        -&gt; IO a) -&gt; IO a -&gt; IO a</literal>.  That is, it
+        takes two parameters: the first is a function to call in the
+        event there is an exception while performing the second.
+        Here's one way we could use it:
       </para>
-Let's look at one: &handle;.  The type
-        of &handle; is <literal>(Exception -&gt; IO a) -&gt; IO a
-        -&gt; IO a</literal>.  That is, &handle; takes two arguments:
-        a function that is called if there 
-    -->
-    
+      &exc.ghci:handle1;
+      <para>
+        This way, we can print out a nice message if there is an error
+        in the calculations.  It's nicer that having the program crash
+        with a division by zero error, for sure.
+      </para>
+    </sect2>
         
+
+    <sect2 id="errors.exceptions.selective">
+      <title>Selective Handling of Exceptions</title>
+      <para>
+        One problem with the above example is that it prints
+        <literal>"Error calculating result"</literal> for
+        <emphasis>any</emphasis> exception.  There may have been an
+        exception other than a division by zero exception.  For
+        instance, there may have been an error displaying the output,
+        or some other exception could have been raised by the pure
+        code.
+      </para>
+      <para>
+        There's a function &handleJust; for these situations.  It
+        lets you specify a test to see whether you are interested in a
+        given exception.  Let's take a look:
+      </para>
+      &hj1.hs:all;
+      <para>
+        <literal>catchIt</literal> defines a function that decides
+        whether or not we're interested in a given exception.  It
+        returns &Just; if so, and &Nothing; if not.  Also, the value
+        attached to &Just; will be passed to our handler.  We can now
+        use <literal>safePrint</literal> nicely:
+      </para>
+      &exc.ghci:handleJust1;
+      <para>
+        The <literal>Control.Exception</literal> module also presents
+        a number of functions that we can use as part of the test in 
+        &handleJust; to narrow down the kinds of exceptions we care
+        about.  For instance, there is a function
+        <literal>arithExceptions</literal> of type <literal>Exception
+        -&gt; Maybe ArithException</literal> that will pick out any
+        <literal>ArithException</literal>, but ignore any other one.
+        We could use it like this:
+      </para>
+      &hj2.hs:all;
+      <para>
+        In this way, we can catch all types of
+        <literal>ArithException</literal>, but still let other
+        exceptions pass through unmodified and uncaught.  We can see
+        it work like so:
+      </para>
+      &exc.ghci:handleJust2;
+    </sect2>
   </sect1>
 
   
