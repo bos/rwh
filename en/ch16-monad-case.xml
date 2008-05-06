@@ -956,14 +956,14 @@
 	instance of this class, we use a regular
 	<type>Handle</type>.</para>
 
-      &MonadHandle.hs:IO;
+      &MonadHandleIO.hs:IO;
 
       <para id="x_js">Because any <type>MonadHandle</type> must also be a
 	<type>Monad</type>, we can write code that manipulates files
 	using normal &do; notation, without caring what monad it will
 	finally execute in.</para>
 
-      &MonadHandle.hs:safeHello;
+      &MonadHandleIO.hs:safeHello;
 
       <para id="x_ks">Because we made <type>IO</type> an instance of this type
 	class, we can execute this action from &ghci;.</para>
@@ -991,7 +991,7 @@
 	I/O, but instead logs every file-related event for later
 	processing.</para>
 
-      &MonadHandle.hs:Event;
+      &MonadHandleIO.hs:Event;
 
       <para id="x_os">Although we already developed a <type>Logger</type> type
 	in <xref linkend="monads.logger"/>, here we'll use the
@@ -1011,13 +1011,13 @@
 	<type>MonadHandle</type>, but it's cheap, easy, and safer to
 	make a special-purpose monad.</para>
 
-      &MonadHandle.hs:WriterIO;
+      &WriterIO.hs:WriterIO;
 
       <para id="x_rs">Our execution function simply removes the &newtype;
 	wrapper we added, then calls the normal <type>Writer</type>
 	monad's execution function.</para>
 
-      &MonadHandle.hs:runWriterIO;
+      &WriterIO.hs:runWriterIO;
 
       <para id="x_ss">When we try this code out in &ghci;, it gives us a log of
 	the function's file activities.</para>
@@ -1056,7 +1056,7 @@
 	perform arbitrary I/O actions.  We might try adding
 	<type>MonadIO</type> as a constraint on our type class.</para>
 
-      &MonadHandle.hs:tidierHello;
+      &MonadHandleIO.hs:tidierHello;
 
       <para id="x_ws">This approach has a problem, though: the added
 	<type>MonadIO</type> constraint loses us the ability to test
@@ -1066,7 +1066,7 @@
 	where it <quote>infects</quote> all functions, to only those
 	functions that really need to perform I/O.</para>
 
-      &MonadHandle.hs:tidyHello;
+      &MonadHandleIO.hs:tidyHello;
 
       <para id="x_xs">We can use pure property tests on the functions that lack
 	<type>MonadIO</type> constraints, and traditional unit tests

@@ -20,9 +20,9 @@ import Data.List (foldl')
 import qualified Data.Map as M
 import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
 import qualified System.IO
-import System.IO (Handle, hClose)
+import System.IO (Handle)
 
-import HandleT
+import MonadHandle
 import URLParser
 import JSONClass
 import PrettyJSONClass
@@ -54,7 +54,7 @@ data Comment = Comment {
     } deriving (Eq, Ord, Read, Show)
 
 instance JSON Comment where
-    toJValue c = JObject . jobject $ [
+    toJValue c = JObject . JObj $ [
                         ("element", toJValue $ cmtEltID c)
                       , ("comment", toJValue $ cmtComment c)
                       , ("submitter", toJValue $ cmtSubmitterName c)
@@ -112,7 +112,7 @@ serverLoop st serv port = liftIO . withSocketsDo $
     putStrLn $ "connect from " ++ show (clientHost, clientPort)
     let req = Request { reqClient = show clientHost
                       , reqHandle = handle }
-    forkIO $ finally (runH st req serv >> return ()) (hClose handle)
+    forkIO $ finally (runApp st req serv >> return ()) (hClose handle)
 
 data Request = Request {
       reqClient :: String
@@ -131,12 +131,14 @@ data ClientError = BadRequest
                  | NotFound
                    deriving (Eq, Ord, Show)
 
-newtype H a = H (ReaderT Request (StateT AppState IO) a)
+newtype App s a = App (ReaderT Request (StateT s IO) a)
     deriving (Functor, Monad, MonadIO, MonadReader Request,
-              MonadState AppState)
+              MonadState s)
 
-runH :: AppState -> Request -> H a -> IO (a, AppState)
-runH st req (H a) = runStateT (runReaderT a req) st
+type H a = App AppState a
+
+runApp :: s -> Request -> App s a -> IO (a, s)
+runApp st req (App a) = runStateT (runReaderT a req) st
 
 data HttpResponse =
     RespSuccess {
@@ -180,14 +182,14 @@ chCount ch _ = do
     let go elt = (fromElementID elt, maybe 0 length (M.lookup elt cmts))
     case M.lookup ch chs of
       Nothing -> clientError NotFound "chapter not found"
-      Just elts -> ok . jstring . jobject $ map go elts
+      Just elts -> ok . jstring . JObj $ map go elts
   
 cmtSingle :: ElementID -> HttpRequest -> H HttpResponse
 cmtSingle elt _ = do
   comments <- (atomic . readTVar) =<< gets appComments
   case M.lookup elt comments of
     Nothing -> clientError NotFound "element not found"
-    Just cmts -> ok . jstring . jarray $ cmts
+    Just cmts -> ok . jstring . JAry $ cmts
   
 joinLookup :: (Eq a) => a -> [(a, Maybe b)] -> Maybe b
 joinLookup k kvs = join (lookup k kvs)
@@ -201,7 +203,7 @@ cmtSubmit elt req = do
   case M.lookup elt elts of
     Nothing -> clientError NotFound "element not found"
     Just _ ->
-      case parse p_query "" <$> reqBody req of
+      case parse p_query "" <$> httpBody req of
         Nothing -> clientError BadRequest "empty comment"
         Just (Left err) -> clientError BadRequest "malformed string"
         Just (Right kvs) -> do
@@ -228,8 +230,8 @@ cmtSubmit elt req = do
 
 url :: (Method -> Bool) -> URLParser Handler -> HttpRequest -> Maybe Handler
 url methOK p req = do
-  guard . methOK $ reqMethod req
-  case parse p "" (reqURL req) of
+  guard . methOK $ httpMethod req
+  case parse p "" (httpURL req) of
     Left err -> fail (show err)
     Right h -> return h
 
@@ -241,9 +243,14 @@ reload = do
     hClose h
     updateMaps st >>= atomic
 
-instance MonadHandle H where
-    hPutStrLn h s = liftIO (System.IO.hPutStr h s >>
-                            System.IO.hPutStr h "\r\n")
+instance MonadIO m => MonadHandle System.IO.Handle m where
+    openFile path mode = liftIO $ System.IO.openFile path mode
+    hPutStr h s = liftIO $ System.IO.hPutStr h s
+    hClose = liftIO . System.IO.hClose
+    hGetContents = liftIO . System.IO.hGetContents
+    hPutStrLn h s = liftIO $ do
+                      System.IO.hPutStr h s
+                      System.IO.hPutStr h "\r\n"
 
 serve :: H ()
 serve = do

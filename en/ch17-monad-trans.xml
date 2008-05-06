@@ -620,6 +620,10 @@
 		<type>Either</type> type in the
 		<code>Control.Monad.Error</code> module.  Don't use
 		that as a guide; its design is too restrictive.</para>
+
+	      <para><emphasis>Hint</emphasis>: You'll probably need to
+		use the <code>FlexibleInstances</code> language
+		extension in your definition.</para>
 	    </tip>
 	  </question>
 	</qandaentry>

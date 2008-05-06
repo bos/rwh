@@ -9,7 +9,7 @@ import Numeric (showHex)
 import Data.Ratio
 import Data.Bits (shiftR, (.&.))
 
-import JSONClass (JSON(..), JValue(..), fromJArray, fromJObject)
+import JSONClass (JSON(..), JValue(..), fromJAry, fromJObj)
 import Text.PrettyPrint.HughesPJ (Doc, (<>), char, double, fsep, hcat, integer, punctuate, render, text)
 {-- /snippet module --}
 
@@ -18,16 +18,18 @@ jvalue :: JValue -> Doc
 jvalue (JBool True) = text "true"
 jvalue (JBool False) = text "false"
 jvalue JNull = text "null"
-jvalue (JNumber num)
-    | denominator num == 1 = integer (numerator num)
-    | otherwise            = double (fromRational num)
+jvalue (JNumber num) = 
+    let (int, frac) = properFraction num
+    in case frac of
+         0 -> integer int
+         _ -> double num
 jvalue (JString str) = string str
 {-- /snippet jvalue --}
 {-- snippet jvalue.array --}
-jvalue (JArray ary) = series '[' ']' jvalue (fromJArray ary)
+jvalue (JArray ary) = series '[' ']' jvalue (fromJAry ary)
 {-- /snippet jvalue.array --}
 {-- snippet jvalue.object --}
-jvalue (JObject obj) = series '{' '}' field (fromJObject obj)
+jvalue (JObject obj) = series '{' '}' field (fromJObj obj)
     where field (name,val) = string name <> text ": " <> jvalue val
 {-- /snippet jvalue.object --}
 

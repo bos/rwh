@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-- snippet LANGUAGE --}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-- /snippet LANGUAGE --}
@@ -158,3 +159,8 @@ instance Wrapper JAry where
 
 instance Wrapper JObj where
     rewrap f = JObj . map (second f) . fromJObj
+
+instance Monad (Either JSONError) where
+    return = Right
+    Left err >>= _ = Left err
+    Right k >>= f = f k
