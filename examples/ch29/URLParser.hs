@@ -46,5 +46,3 @@ infixl 4 */
 
 end :: URLParser ()
 end = optional (char '/') *> eof
-
-foo = "foo" /> ((,) <$> part */ part)

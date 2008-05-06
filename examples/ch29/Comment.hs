@@ -9,24 +9,19 @@ module Comment
 
 import Control.Applicative
 import Control.Concurrent.STM
-import Control.Concurrent (ThreadId, forkIO, threadDelay)
-import Control.Exception (bracket, finally)
-import Control.Monad (forever, guard, join, liftM, liftM2, liftM3)
-import Control.Monad.Reader
+import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad.State
-import Control.Monad.Trans (liftIO)
+import Control.Monad.Reader
 import Data.Function (on)
 import Data.List (foldl')
 import qualified Data.Map as M
-import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
-import qualified System.IO
-import System.IO (Handle)
 
 import MonadHandle
-import URLParser
 import JSONClass
-import PrettyJSONClass
 import ServerParse
+import PrettyJSONClass
+import WebApp
+import URLParser
 
 newtype ElementID = ElementID {
       fromElementID :: String
@@ -103,72 +98,14 @@ runServers = do
   forkIO $ serverLoop st reload 12346
   forever $ threadDelay maxBound
 
-serverLoop :: AppState -> H () -> Int -> IO ()
-serverLoop st serv port = liftIO . withSocketsDo $
-  bracket (listenOn . PortNumber . fromIntegral $ port) sClose $ \sock -> do
-  putStrLn $ "listening on port " ++ show port
-  forever $ do
-    (handle, clientHost, clientPort) <- accept sock
-    putStrLn $ "connect from " ++ show (clientHost, clientPort)
-    let req = Request { reqClient = show clientHost
-                      , reqHandle = handle }
-    forkIO $ finally (runApp st req serv >> return ()) (hClose handle)
-
-data Request = Request {
-      reqClient :: String
-    , reqHandle :: Handle
-    }
-
-ok :: Monad m => String -> m HttpResponse
-ok = return . RespSuccess ["Content-Type: application/json"]
-
-clientError :: Monad m => ClientError -> String -> m HttpResponse
-clientError kind = return . RespClientError kind ["Content-Type: text/plain"]
-
-type Handler = HttpRequest -> H HttpResponse
-
-data ClientError = BadRequest
-                 | NotFound
-                   deriving (Eq, Ord, Show)
-
-newtype App s a = App (ReaderT Request (StateT s IO) a)
-    deriving (Functor, Monad, MonadIO, MonadReader Request,
-              MonadState s)
-
 type H a = App AppState a
 
-runApp :: s -> Request -> App s a -> IO (a, s)
-runApp st req (App a) = runStateT (runReaderT a req) st
-
-data HttpResponse =
-    RespSuccess {
-      respHeaders :: [String]
-    , respBody :: String
-    } |
-    RespClientError {
-      respClientError_ :: ClientError
-    , respHeaders :: [String]
-    , respBody :: String
-    } deriving (Eq, Ord, Show)
-
-respStatus :: HttpResponse -> String
-respStatus (RespSuccess _ _) = "200 OK"
-respStatus (RespClientError BadRequest _ _) = "400 Bad Request"
-respStatus (RespClientError NotFound _ _) = "404 Not Found"
-
-handlers :: [HttpRequest -> Maybe Handler]
+handlers :: [HttpRequest -> Maybe (Handler AppState)]
 handlers = [
    url (==Get) (chCount <$> ("chapter" /> part </ "count" <* end))
  , url (==Get) (cmtSingle . ElementID <$> ("single" /> part <* end))
  , url (==Post) (cmtSubmit . ElementID <$> ("element" /> part </ "submit" <* end))
  ]
-
-dispatch :: [HttpRequest -> Maybe Handler] -> HttpRequest
-         -> H HttpResponse
-dispatch hs req = do
-  case map ($req) hs of
-    (Just f:_) -> f req
-    _ -> clientError NotFound "not found"
 
 atomic :: MonadIO m => STM s -> m s
 atomic = liftIO . atomically
@@ -205,7 +142,7 @@ cmtSubmit elt req = do
     Just _ ->
       case parse p_query "" <$> httpBody req of
         Nothing -> clientError BadRequest "empty comment"
-        Just (Left err) -> clientError BadRequest "malformed string"
+        Just (Left _) -> clientError BadRequest "malformed string"
         Just (Right kvs) -> do
           let mcmt = Comment elt <$> joinLookup "body" kvs
                                  <*> joinLookup "submitter" kvs
@@ -228,13 +165,6 @@ cmtSubmit elt req = do
                   else do writeTVar tv $ M.insertWith' (++) elt [cmt] m
                           ok "comment added"
 
-url :: (Method -> Bool) -> URLParser Handler -> HttpRequest -> Maybe Handler
-url methOK p req = do
-  guard . methOK $ httpMethod req
-  case parse p "" (httpURL req) of
-    Left err -> fail (show err)
-    Right h -> return h
-
 reload :: H ()
 reload = do
   h <- asks reqHandle
@@ -242,15 +172,6 @@ reload = do
   liftIO $ do
     hClose h
     updateMaps st >>= atomic
-
-instance MonadIO m => MonadHandle System.IO.Handle m where
-    openFile path mode = liftIO $ System.IO.openFile path mode
-    hPutStr h s = liftIO $ System.IO.hPutStr h s
-    hClose = liftIO . System.IO.hClose
-    hGetContents = liftIO . System.IO.hGetContents
-    hPutStrLn h s = liftIO $ do
-                      System.IO.hPutStr h s
-                      System.IO.hPutStr h "\r\n"
 
 serve :: H ()
 serve = do

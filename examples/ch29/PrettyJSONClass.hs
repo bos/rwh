@@ -6,7 +6,6 @@ module PrettyJSONClass
     ) where
 
 import Numeric (showHex)
-import Data.Ratio
 import Data.Bits (shiftR, (.&.))
 
 import JSONClass (JSON(..), JValue(..), fromJAry, fromJObj)
@@ -69,7 +68,7 @@ oneChar c = case lookup c simpleEscapes of
               Just r -> text r
               Nothing | mustEscape c -> hexEscape c
                       | otherwise    -> char c
-    where mustEscape c = c < ' ' || c == '\x7f' || c > '\xff'
+    where mustEscape d = d < ' ' || d == '\x7f' || d > '\xff'
 
 simpleEscapes :: [(Char, String)]
 simpleEscapes = zipWith ch "\b\n\f\r\t\\\"/" "bnfrt\\\"/"

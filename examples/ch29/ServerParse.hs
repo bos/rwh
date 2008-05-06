@@ -10,7 +10,6 @@ module ServerParse
 import ApplicativeParsec
 import Numeric (readHex)
 import Control.Monad (liftM4)
-import System.IO (Handle)
 
 urlBaseChars :: [Char]
 urlBaseChars = ['a'..'z']++['A'..'Z']++['0'..'9']++"$-_.!*'(),"
