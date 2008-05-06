@@ -551,7 +551,7 @@
         if the attempt to read a line resulted in an EOF error, like
         so:
       </para>
-      &toupper-impch20.hs;
+      &toupper-impch20.hs:all;
       <para>
         Here, we use the <literal>System.IO.Error</literal> version of
         &try; to check whether <literal>hGetLine</literal> raised an

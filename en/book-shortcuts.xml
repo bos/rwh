@@ -121,6 +121,7 @@
 <!ENTITY import "<literal>import</literal>">
 <!ENTITY in "<literal>in</literal>">
 <!ENTITY interact "<literal>interact</literal>">
+<!ENTITY ioError "<literal>ioError</literal>">
 <!ENTITY larrow "<literal>&lt;-</literal>">
 <!ENTITY let "<literal>let</literal>">
 <!ENTITY lines "<literal>lines</literal>">
