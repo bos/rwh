@@ -578,10 +578,153 @@
         Haskell system raises exceptions for you.  However, it is
         possible to raise any exception yourself.  We'll show you how.
       </para>
+      <para>
+        You'll notice that most of these function appear to return a
+        value of type <literal>a</literal> or <literal>IO
+        a</literal>.  This means that the function can appear to
+        return a value of any type.  In fact, because these functions
+        raise exceptions, they never "return" anything in the normal
+        sense.  These return values let you use these functions in
+        various contexts where various different types are expected.
+      </para>
+      <para>
+        Let's start our tour of ways to raise exceptions with the
+        functions in <literal>Control.Exception</literal>.  The
+        most generic function is &throw;, which has type
+        <literal>Exception -&gt; a</literal>.  This function can throw
+        any &Exception;, and can do so in a pure context.  There is a
+        companion function &throwIO; with type <literal>Exception
+        -&gt; IO a</literal> that raises an exception in tne &IO;
+        monad.  Both of these functions require you to craft an
+        &Exception; by hand -- or to have already have one on hand to
+        raise, perhaps from a handler called by &handle;.
+      </para>
+      <para>
+        There is also a function &ioError;, which is defined
+        identically in both <literal>Control.Exception</literal> and
+        <literal>System.IO.Error</literal> with type <literal>IOError
+        -&gt; IO a</literal>.  This is used when you want to generate
+        an arbitrary I/O-related exception.
+      </para>
+      <para>
+        Perhaps most useful are two shortcut functions: &error; and
+        &fail;.  When used in the &IO; monad, &fail; could be thought
+        of like this:
+      </para>
+      <programlisting>
+fail :: String -> IO a
+fail = ioError . userError
+      </programlisting>
+      <para>
+        So, &fail; is useful for generating an exception with an
+        arbitrary error message in the &IO; monad.  For pure code, you
+        can use &error;, which is defined like this:
+      </para>
+      <programlisting>
+error :: String -> a
+error = throw . ErrorCall
+      </programlisting>
+      <remark>FIXME: do we need examples here?</remark>
+    </sect2>
+
+    <sect2 id="errors.exceptions.dynamic">
+      <title>Dynamic Exceptions</title>
+      <para>
+        While &fail; and &error; are often quite useful, you may not
+        want to use them often in reusable code.  Since they take only
+        arbitrary strings as arguments, it can be difficult to
+        represent complex error data.  Sometimes the built-in
+        exception mechanism isn't enough for you, either.  In these
+        cases, you can use Haskell's dynamic exception support.
+      </para>
+      <para>
+        This makes use of two little-used Haskell modules:
+        <literal>Data.Dynamic</literal> and
+        <literal>Data.Typeable</literal>.  We will not go into a great
+        level of detail on those modules here, but will give you the
+        tools you need to craft and use your own dynamic exception
+        type.
+      </para>
+      <para>
+        In <xref linkend="databases"/>, you will see that the HDBC
+        database library uses dynamic exceptions to indicate errors
+        from SQL databases back to applications.  Errors from database
+        engines often have three components: an integer that
+        represents an error code, a state, and a human-readable error
+        message.  We will build up our own implementation of the HDBC
+        <literal>SqlError</literal> type here in this chapter.  Let's
+        start with the data structure representing the error itself:
+      </para>
+      &dynexc.hs:sqlerror;
+      <para>
+        Next, we define a bit of infrastructure to make the error type
+        participate in Haskell's dynamic typing system.  Note that the
+        argument to <literal>mkTyCon</literal> must be unique
+        throughout your entire application.
+      </para>
+      &dynexc.hs:dynamic;
+      <para>
+        Now, let's define a <literal>catchSql</literal> and a
+        <literal>handleSql</literal> that can be used to catch an
+        exception that is an <literal>SqlError</literal>.  Note that
+        the regular &catch; and &handle; functions cannot catch our
+        <literal>SqlError</literal>, because it is not a type of
+        &Exception;.
+      </para>
+      &dynexc.hs:catch;
+      <para>
+        These functions are simply thin wrappers around &catchDyn;,
+        which has type <literal>Typeable exception =&gt; IO a -&gt;
+        (exception -&gt; IO a) -&gt; IO a</literal>.  We here simply
+        restrict the type of this so that it catches only SQL
+        exceptions.
+      </para>
+      <para>
+        Normally, when an exception is raised, but not caught
+        anywhere, the program will crash and will display the
+        exception to standard error.  With a dynamic exception,
+        however, the system will not know how to display this, so you
+        will simply see an unhelpful "unknown exception" message.  We
+        can provide a utility so that application writers can simply
+        say <literal>main = handleSqlError $ do ...</literal>, and
+        have confidence that any exceptions raised (in that thread)
+        will be displayed.  Here's how to write
+        <literal>handleSqlError</literal>:
+      </para>
+      &dynexc.hs:handleSqlError;
+      <para>
+        Finally, let's give you an example of how to raise an
+        <literal>SqlError</literal> as an exception.  Here's a
+        function that will do just that:
+      </para>
+      &dynexc.hs:throwSql;
+      <para>
+        This completes our dynamic exception support.  That was a lot
+        of code, and you may not have needed that much, but we wanted
+        to give you an example of the dynamic exception itself and the
+        utilities that often go with it.  In fact, these examples
+        reflect almost exactly what is present in the HDBC library.
+        Let's play with these in &ghci; for a bit:
+      </para>
+      &dynexc.ghci:e1;
+      <para>
+        From this, you can see that &ghci; doesn't know how to display
+        an SQL error by itself.  Howerver, you can also see that our
+        <literal>handleSqlError</literal> function helped out with
+        that, but also passed through other errors unmodified.  Let's
+        finally try out a custom handler:
+      </para>
+      &dynexc.ghci:e2;
+      <para>
+        Here we defined a custom error handler that raised a new
+        exception consisting of the message in the
+        <literal>seErrorMsg</literal> field of the
+        <literal>SqlError</literal>.  You can see that it worked as
+        intended.
+      </para>
     </sect2>
   </sect1>
 
-  
   <sect1 id="errors.exercises">
     <title>Exercises</title>
     <orderedlist>

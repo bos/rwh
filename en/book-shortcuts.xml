@@ -77,6 +77,7 @@
 <!ENTITY bind_ "<function>(&gt;&gt;)</function>">
 <!ENTITY case "<literal>case</literal>">
 <!ENTITY catch "<literal>catch</literal>">
+<!ENTITY catchDyn "<literal>catchDyn</literal>">
 <!ENTITY commit "<literal>commit</literal>">
 <!ENTITY commit "<literal>commit</literal>">
 <!ENTITY ctTZName "<literal>ctTZName</literal>">
@@ -157,6 +158,8 @@
 <!ENTITY stdin "<literal>stdin</literal>">
 <!ENTITY stdout "<literal>stdout</literal>">
 <!ENTITY tail "<literal>tail</literal>">
+<!ENTITY throw "<literal>throw</literal>">
+<!ENTITY throwIO "<literal>throwIO</literal>">
 <!ENTITY toSql "<literal>toSql</literal>">
 <!ENTITY try "<literal>try</literal>">
 <!ENTITY type "<literal>type</literal>">
