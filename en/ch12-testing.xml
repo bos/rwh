@@ -14,18 +14,18 @@ confidence.  </para>
 
   <para id="x_vp">
 In Haskell, we have several tools at our disposal for building such 
-precise systems. The rich, expressive type-system allows for complicated
-invariants to be enforced statically -- making it impossible to produce
-code violating chosen constraints. Meanwhile, purity and polymorphism ensure
-code is built to be modular, refactorable, and testable. This is the kind of
-code that just doesn't go wrong.
+precise systems. The expressive type-system allows for complicated invariants
+to be enforced statically -- making it impossible to write code violating
+chosen constraints. Meanwhile, purity and polymorphism encourage code that
+is modular, refactorable, and testable. This is the kind of code that just
+doesn't go wrong.
   </para>
 
   <para id="x_wp">
 Testing plays a key role in keeping code on the straight-and-narrow path.
 The main testing mechanisms in Haskell are traditional unit testing (via the HUnit 
 library), and its more powerful descendant: type-based <quote>property</quote>
-testing with QuickCheck. Property-based testing encourages a high level
+testing, with QuickCheck. Property-based testing encourages a high level
 approach to testing in the form of abstract invariants functions should
 satisfy universally, with the actual test data generated for the programmer
 by the testing library. In this way code can be hammered with thousands of
@@ -56,14 +56,13 @@ First, we import the QuickCheck library, and any other modules we need:
     &QC-basics.hs:module;
 
     <para id="x_Aq">
-And the function we want to test -- a custom sort routine (the classic
-Haskell sort implementation):
+And the function we want to test -- a custom sort routine:
     </para>
 
     &QC-basics.hs:mysort;
 
     <para id="x_Bq">
-This is the classic "quicksort" implementation: a study in functional
+This is the classic Haskell sort implementation: a study in functional
 programming elegance, if not efficiency. Now, we'd like to check that this
 function obeys the basic rules a good sort should follow. One useful
 invariant to start with, and one that comes up in a lot of purely functional
@@ -197,14 +196,6 @@ itself, with thousands of tests running on every change, keeping the code
 tied to the specification, and ensuring it behaves as advertised.
 </para>
 
-  </sect1>
-
-  <sect1>
-    <title>Testing JSON</title>
-  </sect1>
-
-  <sect1>
-    <title>Code coverage: improving test quality</title>
   </sect1>
 
 <!--
