@@ -324,7 +324,7 @@
 
   <sect1 id="errors.exceptions">
     <title>Exceptions</title>
-    <para>
+    <para id="x_U11">
       Exception handling is found in many programming languages,
       including Haskell.  It can be useful because, when a problem
       occurs, it can provide an easy way of handling it, even if it
@@ -337,7 +337,7 @@
       you can often achieve the same effects in pure code without
       the need to use exceptions and exception handling.  
     </para>
-    <para>
+    <para id="x_V11">
       Some problems -- especially those involving I/O -- call for
       working with exceptions.  In Haskell, exceptions may be raised
       from any location in the program.  However, due to lazy
@@ -348,7 +348,7 @@
     </para>
     <sect2 id="errors.exceptions.firststeps">
       <title>First Steps with Exceptions</title>
-      <para>
+      <para id="x_W11">
         In the <literal>Control.Exception</literal> module, various
         functions and types relating to exceptions are defined.  There
         is an &Exception; type defined there; all exceptions are of
@@ -362,7 +362,7 @@
         trigger an un-handled exception, and then try to catch it.
       </para>
       &exc.ghci:try1;
-      <para>
+      <para id="x_X11">
         Notice that no exception was
         raised by the &let; statements.  That's to be expected due to
         lazy evaluation; the division by zero won't be attempted until
@@ -377,7 +377,7 @@
     </sect2>
     <sect2 id="errors.exceptions.lazy">
       <title>Laziness and Exception Handling</title>
-      <para>
+      <para id="x_Y11">
         Now that you know how &try; works, let's try another
         experiment.  Let's say we want to catch the result of
         <literal>try</literal> for future evaluation, so we can handle
@@ -385,12 +385,12 @@
         would do it liks this:
       </para>
       &exc.ghci:try2;
-      <para>
+      <para id="x_Z11">
         What happened here?  Let's try to piece it together, and
         illustrate with another attempt:
       </para>
       &exc.ghci:try3;
-      <para>
+      <para id="x_a11">
         As before, assigning &undefined; to <literal>z</literal> was
         not a problem.  The key to this puzzle, and to the division
         puzzle, lies with lazy evaluation.  Specifically, it lies with
@@ -404,7 +404,7 @@
         see the exception message, it's coming from &ghci;, not your
         program.
       </para>
-      <para>
+      <para id="x_b11">
         This is a key point.  Let's think about why our earlier
         example worked and this one didn't.  Earlier, we put
         <literal>print x</literal> inside &try;.  Printing the value
@@ -417,12 +417,12 @@
         it:
       </para>
       &exc.ghci:try4;
-      <para>
+      <para id="x_c11">
         There, that's what was expected.  This worked for both
         &undefined; and our division by zero example.
       </para>
       <tip>
-        <para>
+        <para id="x_d11">
           Remember: whenever you are trying to catch exceptions raised
           by pure code, use &evaluate; instead of &return; inside your
           exception-catching function.
@@ -432,7 +432,7 @@
 
     <sect2 id="errors.exceptions.handle">
       <title>Using handle</title>
-      <para>
+      <para id="x_e11">
         Often, you may wish to perform one action of a piece of code
         completes without an exception, and a different action
         otherwise.  For situations like this, there's a function
@@ -443,7 +443,7 @@
         Here's one way we could use it:
       </para>
       &exc.ghci:handle1;
-      <para>
+      <para id="x_f11">
         This way, we can print out a nice message if there is an error
         in the calculations.  It's nicer that having the program crash
         with a division by zero error, for sure.
@@ -453,7 +453,7 @@
 
     <sect2 id="errors.exceptions.selective">
       <title>Selective Handling of Exceptions</title>
-      <para>
+      <para id="x_g11">
         One problem with the above example is that it prints
         <literal>"Error calculating result"</literal> for
         <emphasis>any</emphasis> exception.  There may have been an
@@ -462,13 +462,13 @@
         or some other exception could have been raised by the pure
         code.
       </para>
-      <para>
+      <para id="x_h11">
         There's a function &handleJust; for these situations.  It
         lets you specify a test to see whether you are interested in a
         given exception.  Let's take a look:
       </para>
       &hj1.hs:all;
-      <para>
+      <para id="x_i11">
         <literal>catchIt</literal> defines a function that decides
         whether or not we're interested in a given exception.  It
         returns &Just; if so, and &Nothing; if not.  Also, the value
@@ -476,7 +476,7 @@
         use <literal>safePrint</literal> nicely:
       </para>
       &exc.ghci:handleJust1;
-      <para>
+      <para id="x_j11">
         The <literal>Control.Exception</literal> module also presents
         a number of functions that we can use as part of the test in 
         &handleJust; to narrow down the kinds of exceptions we care
@@ -487,14 +487,14 @@
         We could use it like this:
       </para>
       &hj2.hs:all;
-      <para>
+      <para id="x_k11">
         In this way, we can catch all types of
         <literal>ArithException</literal>, but still let other
         exceptions pass through unmodified and uncaught.  We can see
         it work like so:
       </para>
       &exc.ghci:handleJust2;
-      <para>
+      <para id="x_l11">
         Of particular interest, you might notice the
         <literal>ioErrors</literal> test, which corresponds to the
         large class of I/O-related exceptions.
@@ -503,7 +503,7 @@
 
     <sect2 id="errors.exceptions.io">
       <title>I/O Exceptions</title>
-      <para>
+      <para id="x_m11">
         Perhaps the largest source of exceptions in any program is
         I/O.  All sorts of things can go wrong when dealing with the
         outside world: disks can be full, networks can go down, or
@@ -514,7 +514,7 @@
         a special module -- <literal>System.IO.Error</literal> exists
         for dealing with them.
       </para>
-      <para>
+      <para id="x_n11">
         <literal>System.IO.Error</literal> defines two functions:
         &catch; and &try; which, like their counterparts in
         <literal>Control.Exception</literal>, are used to deal with
@@ -526,7 +526,7 @@
         <literal>IOException</literal>.
       </para>
       <warning>
-        <para>
+        <para id="x_o11">
           Because both <literal>System.IO.Error</literal> and
           <literal>Control.Exception</literal> define functions with
           the same names, if you import both in your program, you will
@@ -538,7 +538,7 @@
           <literal>System.IO.Error</literal> version of &catch;.
         </para>
       </warning>
-      <para>
+      <para id="x_p11">
         Let's take a look at one approach to using exceptions in the
         I/O system to our benefit.  Back in <xref
         linkend="io.files"/>, we presented a program that used an
@@ -552,7 +552,7 @@
         so:
       </para>
       &toupper-impch20.hs:all;
-      <para>
+      <para id="x_q11">
         Here, we use the <literal>System.IO.Error</literal> version of
         &try; to check whether <literal>hGetLine</literal> raised an
         &IOError;.  If it did, we use <literal>isEOFError</literal>
@@ -561,7 +561,7 @@
         file.  If it did, we exit the loop.  If the exception was
         something else, we call &ioError; to re-raise it.
       </para>
-      <para>
+      <para id="x_r11">
         There are many such tests and ways to extract information from
         &IOError; defined in <literal>System.IO.Error</literal>.  We
         recommend that you consult that page in the library reference
@@ -571,14 +571,14 @@
 
     <sect2 id="errors.exceptions.raising">
       <title>Raising Exceptions</title>
-      <para>
+      <para id="x_s11">
         Thus far, we have talked in detail about handling exceptions.
         There is another piece to the puzzle: raising exceptions.  In
         the examples we have visited so far in this chapter, the
         Haskell system raises exceptions for you.  However, it is
         possible to raise any exception yourself.  We'll show you how.
       </para>
-      <para>
+      <para id="x_t11">
         You'll notice that most of these function appear to return a
         value of type <literal>a</literal> or <literal>IO
         a</literal>.  This means that the function can appear to
@@ -587,7 +587,7 @@
         sense.  These return values let you use these functions in
         various contexts where various different types are expected.
       </para>
-      <para>
+      <para id="x_u11">
         Let's start our tour of ways to raise exceptions with the
         functions in <literal>Control.Exception</literal>.  The
         most generic function is &throw;, which has type
@@ -599,14 +599,14 @@
         &Exception; by hand -- or to have already have one on hand to
         raise, perhaps from a handler called by &handle;.
       </para>
-      <para>
+      <para id="x_v11">
         There is also a function &ioError;, which is defined
         identically in both <literal>Control.Exception</literal> and
         <literal>System.IO.Error</literal> with type <literal>IOError
         -&gt; IO a</literal>.  This is used when you want to generate
         an arbitrary I/O-related exception.
       </para>
-      <para>
+      <para id="x_w11">
         Perhaps most useful are two shortcut functions: &error; and
         &fail;.  When used in the &IO; monad, &fail; could be thought
         of like this:
@@ -615,7 +615,7 @@
 fail :: String -> IO a
 fail = ioError . userError
       </programlisting>
-      <para>
+      <para id="x_x11">
         So, &fail; is useful for generating an exception with an
         arbitrary error message in the &IO; monad.  For pure code, you
         can use &error;, which is defined like this:
@@ -629,7 +629,7 @@ error = throw . ErrorCall
 
     <sect2 id="errors.exceptions.dynamic">
       <title>Dynamic Exceptions</title>
-      <para>
+      <para id="x_y11">
         While &fail; and &error; are often quite useful, you may not
         want to use them often in reusable code.  Since they take only
         arbitrary strings as arguments, it can be difficult to
@@ -637,7 +637,7 @@ error = throw . ErrorCall
         exception mechanism isn't enough for you, either.  In these
         cases, you can use Haskell's dynamic exception support.
       </para>
-      <para>
+      <para id="x_z11">
         This makes use of two little-used Haskell modules:
         <literal>Data.Dynamic</literal> and
         <literal>Data.Typeable</literal>.  We will not go into a great
@@ -645,7 +645,7 @@ error = throw . ErrorCall
         tools you need to craft and use your own dynamic exception
         type.
       </para>
-      <para>
+      <para id="x_A21">
         In <xref linkend="databases"/>, you will see that the HDBC
         database library uses dynamic exceptions to indicate errors
         from SQL databases back to applications.  Errors from database
@@ -656,14 +656,14 @@ error = throw . ErrorCall
         start with the data structure representing the error itself:
       </para>
       &dynexc.hs:sqlerror;
-      <para>
+      <para id="x_B21">
         Next, we define a bit of infrastructure to make the error type
         participate in Haskell's dynamic typing system.  Note that the
         argument to <literal>mkTyCon</literal> must be unique
         throughout your entire application.
       </para>
       &dynexc.hs:dynamic;
-      <para>
+      <para id="x_C21">
         Now, let's define a <literal>catchSql</literal> and a
         <literal>handleSql</literal> that can be used to catch an
         exception that is an <literal>SqlError</literal>.  Note that
@@ -672,14 +672,14 @@ error = throw . ErrorCall
         &Exception;.
       </para>
       &dynexc.hs:catch;
-      <para>
+      <para id="x_D21">
         These functions are simply thin wrappers around &catchDyn;,
         which has type <literal>Typeable exception =&gt; IO a -&gt;
         (exception -&gt; IO a) -&gt; IO a</literal>.  We here simply
         restrict the type of this so that it catches only SQL
         exceptions.
       </para>
-      <para>
+      <para id="x_E21">
         Normally, when an exception is raised, but not caught
         anywhere, the program will crash and will display the
         exception to standard error.  With a dynamic exception,
@@ -692,13 +692,13 @@ error = throw . ErrorCall
         <literal>handleSqlError</literal>:
       </para>
       &dynexc.hs:handleSqlError;
-      <para>
+      <para id="x_F21">
         Finally, let's give you an example of how to raise an
         <literal>SqlError</literal> as an exception.  Here's a
         function that will do just that:
       </para>
       &dynexc.hs:throwSql;
-      <para>
+      <para id="x_G21">
         This completes our dynamic exception support.  That was a lot
         of code, and you may not have needed that much, but we wanted
         to give you an example of the dynamic exception itself and the
@@ -707,7 +707,7 @@ error = throw . ErrorCall
         Let's play with these in &ghci; for a bit:
       </para>
       &dynexc.ghci:e1;
-      <para>
+      <para id="x_H21">
         From this, you can see that &ghci; doesn't know how to display
         an SQL error by itself.  Howerver, you can also see that our
         <literal>handleSqlError</literal> function helped out with
@@ -715,7 +715,7 @@ error = throw . ErrorCall
         finally try out a custom handler:
       </para>
       &dynexc.ghci:e2;
-      <para>
+      <para id="x_I21">
         Here we defined a custom error handler that raised a new
         exception consisting of the message in the
         <literal>seErrorMsg</literal> field of the
