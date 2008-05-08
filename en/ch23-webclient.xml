@@ -10,8 +10,9 @@
   <para id="x_Yk">
     We'll develop a real application in this chapter: a podcast
     downloader, or "podcatcher".  The idea of a podcatcher is simple.
-    It is given a list of URLs to process.  Each URL provides an XML
-    file in the RSS format.  Inside this XML file, we'll find
+    It is given a list of URLs to process.  Downloading each of these
+    URLs results in an XML file in the RSS format.
+    Inside this XML file, we'll find
     references to URLs for audio files to download.
   </para>
   <para id="x_Zk">
@@ -161,10 +162,10 @@
     &PodParser.hs:all;
     <para id="x_kv">
       Let's look at this code.  First, we declare two types:
-      <literal>Item</literal> and <literal>Feed</literal>.  We will be
+      <literal>PodItem</literal> and <literal>Feed</literal>.  We will be
       transforming the XML document into a <literal>Feed</literal>,
       which then contains items.  We also provide a function to
-      convert an <literal>Item</literal> into an
+      convert an <literal>PodItem</literal> into an
       <literal>Episode</literal> as defined in
       <literal>PodTypes.hs</literal>.
     </para>

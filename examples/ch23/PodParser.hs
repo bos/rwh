@@ -10,17 +10,17 @@ import Text.XML.HaXml.Html.Generate(showattr)
 import Data.Char
 import Data.List
 
-data Item = Item {itemtitle :: String,
+data PodItem = PodItem {itemtitle :: String,
                   enclosureurl :: String
                   }
           deriving (Eq, Show, Read)
 
 data Feed = Feed {channeltitle :: String,
-                  items :: [Item]}
+                  items :: [PodItem]}
             deriving (Eq, Show, Read)
 
-{- | Given a podcast and an Item, produce an Episode -}
-item2ep :: Podcast -> Item -> Episode
+{- | Given a podcast and an PodItem, produce an Episode -}
+item2ep :: Podcast -> PodItem -> Episode
 item2ep pc item =
     Episode {epId = 0,
              epCast = pc,
@@ -60,23 +60,23 @@ getTitle doc =
     contentToStringDefault "Untitled Podcast" 
         (channel /> tag "title" /> txt $ doc)
 
-getEnclosures :: Content -> [Item]
+getEnclosures :: Content -> [PodItem]
 getEnclosures doc =
-    concatMap procItem $ getItems doc
-    where procItem :: Content -> [Item]
-          procItem item = concatMap (procEnclosure title) enclosure
+    concatMap procPodItem $ getPodItems doc
+    where procPodItem :: Content -> [PodItem]
+          procPodItem item = concatMap (procEnclosure title) enclosure
               where title = contentToStringDefault "Untitled Episode"
                                (keep /> tag "title" /> txt $ item)
                     enclosure = (keep /> tag "enclosure") item
 
-          getItems :: CFilter
-          getItems = channel /> tag "item"
+          getPodItems :: CFilter
+          getPodItems = channel /> tag "item"
 
-          procEnclosure :: String -> Content -> [Item]
+          procEnclosure :: String -> Content -> [PodItem]
           procEnclosure title enclosure =
-              map makeItem (showattr "url" enclosure)
-              where makeItem :: Content -> Item
-                    makeItem x = Item {itemtitle = title,
+              map makePodItem (showattr "url" enclosure)
+              where makePodItem :: Content -> PodItem
+                    makePodItem x = PodItem {itemtitle = title,
                                        enclosureurl = contentToString [x]}
 
 {- | Convert [Content] to a printable String, with a default if the 
