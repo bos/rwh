@@ -37,7 +37,7 @@
     </para>
     &rawSystem.ghci:s1;
     <para id="x_Ma">
-      Here, we run the equivolent of the shell command <literal>ls -l /usr</literal>.  
+      Here, we run the equivalent of the shell command <literal>ls -l /usr</literal>.  
       <literal>rawSystem</literal> does not parse arguments from a string or
       expand wildcards.<footnote><para id="x_Na">There is also a function
           <literal>system</literal> that takes only a single string and
@@ -68,7 +68,7 @@
         reference for <literal>System.Directory</literal></ulink> provides a
       comprehensive list of the functions available.  Let's use &ghci; to
       demonstrate a few of them.  Most of these functions are straightforward
-      equivolents to C library calls or shell commands.
+      equivalents to C library calls or shell commands.
     </para>
     &dir.ghci:setdir;
     <para id="x_Qa">
@@ -586,7 +586,7 @@ TERMCAP
         <literal>ls</literal> on the command line or used
         <literal>rawSystem</literal> in Haskell, under the hood,
         <literal>forkProcess</literal>, <literal>executeFile</literal>, and
-        <literal>getProcessStatus</literal> (or their C equivolents) are always
+        <literal>getProcessStatus</literal> (or their C equivalents) are always
         being used.  To set up pipes, we are duplicating the process that the
         system uses to start up programs, and adding a few steps involving
         piping and redirection along the way.
