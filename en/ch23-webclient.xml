@@ -248,7 +248,8 @@ channel = tag "rss" /> tag "channel"
         large amount of RAM when downloading large files such as
         podcasts.  Other libraries are available that do not have this
         limitation.  We used this one because it is stable, easy to
-        install, and reasonably easy to use.
+        install, and reasonably easy to use.  We suggest mini-http,
+        available from Hackage, for serious HTTP needs.
       </para>
     </warning>
   </sect1>
