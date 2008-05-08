@@ -16,7 +16,7 @@
       Before we dive in to working with gtk2hs, you'll need to get it
       installed.  On most Linux, BSD, or other POSIX platforms, you
       will find ready-made gtk2hs packages.  You will generally need
-      to install the GTK+ devlopment environment, glade, and gtk2hs.
+      to install the GTK+ development environment, Glade, and gtk2hs.
       The specifics of doing so vary by distribution.
     </para>
     <para id="x_Dw">
@@ -226,17 +226,17 @@
       Our new <literal>GUI</literal> type stores all the widgets we
       will care about in the entire program.  Large programs may not
       wish to have a monolothinc type like this.  For this small
-      example, it makes sense because it can be easily around to
+      example, it makes sense because it can be easily passed around to
       different functions, and we'll know that we always have the
       information we need available.
     </para>
     <para id="x_cw">
       Within this record, we have fields for a <literal>Window</literal> (a
       top-level window), <literal>Dialog</literal> (dialog window),
-      <literal>Button</literal> (clicable
+      <literal>Button</literal> (clickable
       button), <literal>Label</literal> (piece of text), and
       <literal>Entry</literal> (place for the user to enter text).
-      Let's now look at our <literal>main</literal> funciton:
+      Let's now look at our <literal>main</literal> function:
     </para>
     &PodMainGUI.hs:main;
     <para id="x_dw">
@@ -300,7 +300,7 @@
       the titlebar on Windows or Linux, or a red circle on Mac OS X),
       on the main window, we call the <literal>mainQuit</literal>
       function.  <literal>mainQuit</literal> closes all GUI windows
-      and terminates the GTK main loop.
+      and terminates the GTK+ main loop.
     </para>
     <para id="x_jw">
       Next, we call <literal>onClicked</literal> to register event
@@ -389,7 +389,7 @@
       <literal>statusWindow</literal> takes four parameters: the GUI
       information, the database information, a &String; giving the
       title of the window, and a function that will perform the
-      operation.  This function will itself by passed a function that
+      operation.  This function will itself be passed a function that
       it can call to report its progress.  Here's the code:
     </para>
     &PodMainGUI.hs:statusWindow;

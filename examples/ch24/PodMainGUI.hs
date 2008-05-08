@@ -58,10 +58,10 @@ main gladepath = withSocketsDo $ handleSqlError $
        -- Set up our events 
        connectGui gui dbh
 
-       -- Run the GTK+ main loop; exits after GUI is donw
+       -- Run the GTK+ main loop; exits after GUI is done
        mainGUI
        
-       -- Disconnect the database at the end
+       -- Disconnect from the database at the end
        disconnect dbh
 {-- /snippet main --}
 
