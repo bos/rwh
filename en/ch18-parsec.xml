@@ -14,7 +14,7 @@
   </para>
 
   <para id="x_EJ">
-    Haskell has a very useful and unique library called Parsec.  Parsec
+    Haskell has a very useful library called Parsec.  Parsec
     is a parser combinator library.  With Parsec, you will combine small
     parsing functions together to build up more complex parsers.  Parsec
     provides some simple parsing functions, as well as functions to tie them
@@ -26,7 +26,7 @@
     Those of you that are familiar with parser tools in other languages may
     be interested to know that Parsec can take the place of both parser tools
     such as Yacc and lexers such as flex.  Parsec can also be used to
-    implement a single-stange parser.
+    implement a single-stage parser.
   </para>
 
   <para id="x_GJ">
@@ -49,30 +49,8 @@
       parser down to only four lines!
     </para>
     &csv1.hs:all;
-    <para id="x_JJ">
-      Before looking at all this code in detail, 
-      let's play with it a bit and see what
-      it does.
-    </para>
-    &csv1.ghci:s1;
-    <para id="x_KJ">
-      That makes sense: parsing the empty string returns an empty list.
-      Let's try parsing a single cell.
-    </para>
-    &csv1.ghci:s2;
-    <para id="x_LJ">
-      Look at that.  Recall how we defined that each line must end with the
-      end-of-line character, and we didn't give it.  Parsec's error message
-      helpfully indicated the line number and column number of the problem,
-      and even told us what it was expecting!  Let's give it an end-of-line
-      character and continue experimenting.
-    </para>
-    &csv1.ghci:s3;
-    <para id="x_MJ">
-      You can see that <literal>parseCSV</literal> is doing exactly what we
-      wanted it to do.  It's even handling empty cells and empty lines
-      properly.
-    </para>
+
+
     <para id="x_NJ">
       Let's take a look at the code for this example.  We didn't use many
       shortcuts here, so remember that this will get shorter and simpler!
@@ -89,16 +67,19 @@
       of strings.  The <literal>st</literal> can be ignored for now.
     </para>
     <para id="x_PJ">
-      Parsec programmers usually omit type declarations, since we write so
+      Parsec programmers often omit type declarations, since we write so
       many small functions.  Haskell's type inference can figure it out.
       We've listed the types for the first example here so you can get a
       better idea of what's going on.  You can always use
       <literal>:t</literal> in &ghci; to inspect types as well.
     </para>
+    
     <para id="x_QJ">
       The <literal>csvFile</literal> uses a &do; block.  As this
       implies, Parsec is a monadic library: it defines its own special
-      parsing monad, <type>GenParser</type>.
+      parsing monad<footnote><para>For more on monads, refer to
+          <xref linkend="monads"/></para>
+      </footnote>, <type>GenParser</type>.
     </para>
     <para id="x_RJ">
       We start by running <literal>many line</literal>.
@@ -138,7 +119,10 @@
       Back in <literal>remainingCells</literal>, we have the first example of
       a choice in Parsec.  The choice operator is &PChoice;.  This operator
       behaves like this: it will first try the parser on the left.  If it
-      consumed no input, it will try the parser on the right.
+      consumed no input<footnote><para>For information on dealing with
+      choices that may consume some input before failing, see 
+          <xref linkend="parsec.lookahead"/>.</para>
+      </footnote>, it will try the parser on the right.
     </para>
     <para id="x_WJ">
       So, in <literal>remainingCells</literal>, our task is to come up with
@@ -170,6 +154,33 @@
       return vaule will be &Left; with the error; otherwise, it will be
       &Right; with the result.
     </para>
+
+
+
+    <para id="x_JJ">
+      Now that we understand this code, 
+      let's play with it a bit and see what
+      it does.
+    </para>
+    &csv1.ghci:s1;
+    <para id="x_KJ">
+      That makes sense: parsing the empty string returns an empty list.
+      Let's try parsing a single cell.
+    </para>
+    &csv1.ghci:s2;
+    <para id="x_LJ">
+      Look at that.  Recall how we defined that each line must end with the
+      end-of-line character, and we didn't give it.  Parsec's error message
+      helpfully indicated the line number and column number of the problem,
+      and even told us what it was expecting!  Let's give it an end-of-line
+      character and continue experimenting.
+    </para>
+    &csv1.ghci:s3;
+    <para id="x_MJ">
+      You can see that <literal>parseCSV</literal> is doing exactly what we
+      wanted it to do.  It's even handling empty cells and empty lines
+      properly.
+    </para>
   </sect1>
 
   <sect1 id="parsec.sep">
@@ -177,16 +188,22 @@
     <para id="x_ZJ">
       We promised you earlier that we could simplify our CSV parser
       significantly by using a few Parsec helper functions.  There are two
-      that will dramatically simplify this code.  The first is
-      <literal>endBy</literal>, which takes two functions.  It applies the
-      first function, notes its result, then applies the second.  It will do
-      this over and over, and return a list of the results from the first
-      function.
+      that will dramatically simplify this code.  
     </para>
     <para id="x_aJ">
-      The second tool for us is <literal>sepBy</literal>.  It's like
-      <literal>endBy</literal>, but expects the very last item to not end
-      with the separator.
+      The first tool is the <literal>sepBy</literal> function.  This
+      function takes two functions as arguments: the first function
+      parses some sort of content, while the second function parses a
+      separator.  <literal>sepBy</literal> starts by trying to parse
+      content, then separators, and alternates back and forth until it
+      can't parse a separator.  It returns a list of all the content
+      that it was able to parse.
+    </para>
+    <para>
+      The second tool is <literal>endBy</literal>.  It's similar to
+      <literal>sepBy</literal>, but expects the very last item to be
+      followed by the separator.  That is, it continues parsing until
+      it can't parse any more content.
     </para>
     <para id="x_bJ">
       So, we can use <literal>endBy</literal> to parse lines, since every
@@ -207,7 +224,8 @@
       <listitem><para id="x_dJ">A CSV file contains 0 or more lines, 
           each of which is terminated
           by the end-of-line character.</para></listitem>
-      <listitem><para id="x_eJ">A line contains 0 or more cells, separated by a comma.
+      <listitem><para id="x_eJ">A line contains 1 or more cells,
+          separated by a comma.
         </para>
       </listitem>
       <listitem><para id="x_fJ">A cell contains 0 or more characters, which must be
@@ -227,10 +245,10 @@
       Different operating systems use different characters to mark the
       end-of-line.  Unix/Linux systems, plus Windows in text mode, use
       simply <literal>"\n"</literal>.
-      <remark>FIXME: verify this on Windows</remark>  
-      DOS and Windows systems use <literal>"\n\r"</literal>, and Macs
-      traditionally use <literal>"\r\n"</literal>.  We could also support
-      a bare <literal>"\r"</literal> in case anybody uses that.
+      DOS and Windows systems use <literal>"\r\n"</literal>, and Macs
+      traditionally used <literal>"\r"</literal>.  We could add in
+      support for <literal>"\n\r"</literal> too, just in case anybody
+      uses that.
     </para>
     <para id="x_iJ">
       We could easily adapt our example to be able to handle all these types
@@ -314,9 +332,7 @@
         lift side failed after consuming some input.  &try; only has an
         effect if it is on the left of a &PChoice;.  Keep in mind, though,
         that many functions use
-        &PChoice; interally.  Sometimes you may want
-        to add it to your code just in case it will be used on the left of a
-        &PChoice;, and that works fine.  Here's a way to add
+        &PChoice; interally.  Here's a way to add
         expanded end-of-line support to our CSV parser using &try;:
       </para>
       &csv6.hs:all;
