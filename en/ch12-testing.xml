@@ -257,7 +257,7 @@ behaves as advertised.
     &Arbitrary.hs:IntroductionForms;
 
    <para>
-     The function <code>elements<code>, for example, takes a list of values,
+     The function <code>elements</code>, for example, takes a list of values,
      and returns a generator of random values from that list. With this, we
      can start writing data generators for simple data types. To write 
      an <type>Arbitrary</type> for <type>Bool</type>, for example, is merely:
