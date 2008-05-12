@@ -245,6 +245,7 @@ required.
       The class also defines a method, <code>coarbitrary</code>,
       which given a value of some type, yields a function for new generators.
       We can ignore this for now, as it is rarely needed.
+      </para>
     </footnote>
       
     <para> 
