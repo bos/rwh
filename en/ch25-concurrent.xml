@@ -6,6 +6,27 @@
   <remark>FIXME</remark>
 </chapter>
 
+
+<!--
+
+    Basics:
+        forkIO
+        threadDelay
+        async exceptions
+
+    More precise control:
+        MVar
+        Chan
+            - note strictness issues
+
+    SMP programs
+
+    STM locking.
+
+    Parallel strategies.
+
+-->
+
 <!--
 local variables: 
 sgml-parent-document: ("00book.xml" "book" "chapter")
