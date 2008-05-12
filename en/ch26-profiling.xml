@@ -7,6 +7,21 @@
 </chapter>
 
 <!--
+
+    Profiling:
+
+            - compiling with profiling on
+            - reading profiles
+            - core
+            - strictness
+            - lag/retainers
+
+    Cautions:
+            - inhibits optimisation
+
+  -->
+
+<!--
 local variables: 
 sgml-parent-document: ("00book.xml" "book" "chapter")
 end:
