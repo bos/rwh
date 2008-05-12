@@ -216,8 +216,6 @@ behaves as advertised.
       it. 
     </para>
 
-  </sect1>
-
   <!-- TODO: expand further on the abstraction boundary scenarios -->
 
     <para>An issue that comes up when testing with QuickCheck is where 
@@ -229,6 +227,8 @@ behaves as advertised.
     testing purposes, to expose the constructors of the Doc type, in order
     for us to generate random document values.
     </para>
+
+  </sect1>
 
 <!--
   <sect1>
