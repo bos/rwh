@@ -1,4 +1,4 @@
-module Prettify
+module Prettify2
     (
     -- * Constructors
       Doc(..)

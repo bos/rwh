@@ -223,7 +223,7 @@ behaves as advertised.
       <type>Doc</type>, an algebraic data type for well-formed documents:
     </para>
 
-    &Prettify.hs:Doc;
+    &Prettify2.hs:Doc;
 
     <!-- Talking about data generation -->
 
