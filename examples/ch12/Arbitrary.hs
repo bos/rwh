@@ -3,7 +3,7 @@ module Arbitrary where
 {-- snippet Class --}
 class Arbitrary a where
   arbitrary   :: Gen a
-{-- snippet /Class --}
+{-- /snippet Class --}
 
 --  coarbitrary :: a -> Gen b -> Gen b
 
@@ -11,11 +11,11 @@ class Arbitrary a where
   elements :: [a] -> Gen a
   choose   :: Random a => (a, a) -> Gen a
   oneof    :: [Gen a] -> Gen a
-{-- snippet /IntroductionForms --}
+{-- /snippet IntroductionForms --}
 
 {-- snippet Instance --}
 instance Arbitrary Bool where
   arbitrary     = elements [True, False]
-{-- snippet /Instance --}
+{-- /snippet Instance --}
 
 --  coarbitrary b = if b then variant 0 else variant 1
