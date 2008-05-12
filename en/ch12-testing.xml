@@ -14,11 +14,12 @@ confidence.  </para>
 
   <para id="x_vp">
 In Haskell, we have several tools at our disposal for building such 
-precise systems. The expressive type-system allows for complicated invariants
-to be enforced statically -- making it impossible to write code violating
-chosen constraints. Meanwhile, purity and polymorphism encourage code that
-is modular, refactorable, and testable. This is the kind of code that just
-doesn't go wrong.
+precise systems. The most obvious tool, and one built into the language
+itself, is the expressive type-system, which allows for complicated
+invariants to be enforced statically &emdash; making it impossible to write
+code violating chosen constraints. Meanwhile, purity and polymorphism
+encourage code that is modular, refactorable, and testable. This is the kind
+of code that just doesn't go wrong.
   </para>
 
   <para id="x_wp">
@@ -56,7 +57,7 @@ First, we import the QuickCheck library, and any other modules we need:
     &QC-basics.hs:module;
 
     <para id="x_Aq">
-And the function we want to test -- a custom sort routine:
+And the function we want to test &emdash; a custom sort routine:
     </para>
 
     &QC-basics.hs:mysort;
@@ -66,18 +67,18 @@ This is the classic Haskell sort implementation: a study in functional
 programming elegance, if not efficiency. Now, we'd like to check that this
 function obeys the basic rules a good sort should follow. One useful
 invariant to start with, and one that comes up in a lot of purely functional
-code, is <emphasis>idempotency</emphasis> -- applying a function twice has
+code, is <emphasis>idempotency</emphasis> &emdash; applying a function twice has
 the same result as applying it only once. For our sort routine, this should
-certainly be true, or things have gone horribly wrong! As a test property,
-this invariant can be stated simply:
-  </para>
+certainly be true, or things have gone horribly wrong! This invariant can be
+encoded as a property simply:
+</para>
 
     &QC-basics.hs:idempotent;
 
     <para id="x_Cq">
 We follow the QuickCheck convention of prefixing test properties with
-<code>prop_</code> to separate them from normal code. This idempotency
-property is encoded simply as a Haskell function stating an equality
+<code>prop_</code> to distinguish them from normal code. This idempotency
+property is written simply as a Haskell function stating an equality
 that must hold for any data that is sorted. We can check this makes 
 sense for a few simple cases by hand:
   </para>
@@ -85,36 +86,38 @@ sense for a few simple cases by hand:
     &qc-byhand.ghci:unit;
 
     <para id="x_oy">
-Looking good. But writing out the input data by hand is silly, and violates
+Looking good. But writing out the input data by hand is tedious, and violates
 the oath of the lazy functional programmer: let the machine do the work!
 Thanks to the Haskell type system, QuickCheck, our testing library,
-comes with a set of random data generators for all the basic Haskell data
-types, and uses type classes to dispatch to the appropriate data generator 
-based on the type of the property under testing. We can generate 
-sample random data by hand to see what's going on under the hood,
-using the <code>Arbitrary</code> class. Here, a random list of booleans:
+comes with a set of data generators for all the basic Haskell data
+types. QuickCheck uses the <code>Arbitrary</code> type class to present a
+uniform interface to random data generation, with types used to resolve 
+which generator to use. QuickCheck normally hides the data generation
+plumbing, but we can run the generators by hand to see what the random
+data looks like. For example, a random list of booleans:
   </para>
 
     &qc-arbitrary.ghci:arbitrary;
 
     <para id="x_py">
-Wrapping up all the generator details is the <code>quickCheck</code>
-function, which takes care of calling the appropriate data producer, and
-passing that test data to our property, checking the result condition holds.
-As our idempotency test is polymorphic in the list element type, we need to 
-pick a particular type to generate test data for, which we write as a type
-constraint on the property:
+This test data is automatically generated, and passed to the property of our
+choosing, via the <code>quickCheck</code> function. The type of the property
+is used to select the appropriate test generator.  <code>quickCheck</code>
+then checks that for all the test data produced, the property is satisifed.
+Now, since our idempotency test is polymorphic in the list element type, we
+need to pick a particular type to generate test data for, which we write as a
+type constraint on the property, as follows:
   </para>
 
     &qc-basics.ghci:basics;
 
   <para id="x_Dq">
-For the 100 different lists generated, our property held -- great!
-As an aside, when developing tests, it is often useful to see the actual data
+For the 100 different lists generated, our property held &emdash; great!
+When developing tests, it is often useful to see the actual data
 generated for each test, and the result, we can replace
 <code>quickCheck</code> with <code>verboseCheck</code>, to see
-(verbose) output for each test. We'll now look at more sophisticated
-properties that our function might be tested for.
+(verbose) output for each test.  Let's now look at more sophisticated
+properties that our function might satisfy.
   </para>
 
     <para id="x_Eq">
