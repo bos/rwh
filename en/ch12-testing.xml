@@ -123,9 +123,9 @@ properties that our function might satisfy.
     <para id="x_Eq">
 Good libraries consist of a set of orthogonal primitives having sensible
 relationships to each other. We can use QuickCheck to specify the
-relationships between functions in our code, helping guide the process of
-finding a suitable API by developing functions that are interrelated by
-useful invariants. Think of QuickCheck as an API "lint" tool.
+relationships between functions in our code, helping us find a good API by
+developing functions that are interrelated via strong invariants. Think of
+QuickCheck as an API "lint" tool.
     </para>
 
     <para id="x_Fq">
@@ -194,14 +194,14 @@ implementation. They should sort the same thing:
 <para id="x_wy">
 This kind of model-based testing is extremely powerful. Often developers will
 have a reference implementation or prototype that, while inefficient, is
-correct. This can then be kept around, and used to ensure optimised or more
-complicated production code still conforms to the reference specification. By
-building a large suite of these model based tests, and running them regularly
-(on every commit, for example), we can cheaply ensure code stays under
-control. Many large Haskell projects come bundled with property suites that
-rival the size of the project itself, with thousands of tests running on
-every change, keeping the code tied to the specification, and ensuring it
-behaves as advertised.
+correct. This can then be kept around, and used to ensure optimised, or more
+complicated production code still conforms to the reference. By building a
+large suite of these model-based tests, and running them regularly (on every
+commit, for example), we can cheaply ensure the precision of our code. Large
+Haskell projects often come bundled with property suites comparable in size
+to the project itself, with thousands of invariants tested on every change,
+keeping the code tied to the specification, and ensuring it behaves as
+required.
 </para>
 
 <!-- TODO walk over this once more -->
@@ -214,13 +214,13 @@ behaves as advertised.
     <para>Testing individiual functions for their algebraic properties is one
       of the basic building blocks when developing large systems in Haskell. 
       We'll look now at a more complicated scenario: taking the pretty
-      printing library developed in earlier chapters, and thoroughly testing
-      it.
+      printing library developed in earlier chapters, and building a
+      comprehensive property suite.
     </para>
 
     <para>
       Recall that the pretty printer is built around the
-      <type>Doc</type>, an algebraic data type for well-formed documents:
+      <type>Doc</type>, an algebraic data type that represents well-formed documents:
     </para>
 
     &Prettify2.hs:Doc;
@@ -237,22 +237,27 @@ behaves as advertised.
     <para>
      As we've seen, the approach to testing with QuickCheck encourages the
      developer to describe invariants that should hold across any data we can
-     throw at our code. So, to test the pretty printing library, we'll need
-     to generate random documents. As mentioned earlier, random data
-     generation is handled by the <type>Arbitrary</type> class:
-  </para>
-
-    &Arbitrary.hs:Class;
-
-  <para>The class also defines a method, <code>coarbitrary</code>, for
-    generating random functions which we'll ignore for now. One 
-    thing to notice is that the generators run in a <type>Gen</type>
+     throw at the code. To test the pretty printing library, then, we'll need
+     a source of input documents. As mentioned earlier, random data generation
+     is handled by the <type>Arbitrary</type> class, with a unique
+     <code>arbitrary</code> generator function per type:<footnote>
+    <para>
+      The class also defines a method, <code>coarbitrary</code>,
+      which given a value of some type, yields a function for new generators.
+      We can ignore this for now, as it is rarely needed.
+    </footnote>
+      
+    <para> 
+      One thing to notice is that the generators run in a <type>Gen</type>
     environment, a monad, so we can use <code>do</code> syntax
     to write data generators. In order to actually write the generators
     for our custom type, we can use any of a set of functions defined in the
-    library for introducing new random values, gluing them together to
-    build up the data we'd like.
+    library for introducing new random values, glueing them together to
+    build up data structures of the type we're interested in:
   </para>
+  </para>
+
+    &Arbitrary.hs:Class;
 
     &Arbitrary.hs:IntroductionForms;
 
@@ -268,8 +273,8 @@ behaves as advertised.
    <para>
      Another approach to data generation is to generate values of one 
      of the basic types, and then translate them into the type you're looking
-     for. We could have written the <type>Bool</type> instance by, for
-     example, generating integer values between 0 and 1, using
+     for. We could have written the <type>Bool</type> instance, for
+     example, by generating integer values between 0 and 1, using
      <code>choose</code>, and then mapping them onto the booleans:
   </para>
 
