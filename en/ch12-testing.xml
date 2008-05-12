@@ -256,7 +256,6 @@ required.
     library for introducing new random values, glueing them together to
     build up data structures of the type we're interested in:
   </para>
-  </para>
 
     &Arbitrary.hs:Class;
 
