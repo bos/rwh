@@ -206,6 +206,11 @@ behaves as advertised.
 
   </sect1>
 
+  <sect1 id="quickcheck.indepth">
+    <title>Testing case study: specifying JSON printing</title>
+
+  </sect1>
+
 <!--
   <sect1>
     <title>Generating arbitrary documents</title>
@@ -247,6 +252,7 @@ behaves as advertised.
     - getting arbitraries right ( '\n' example)
     - can't do IO easily
     - ensuring coverage: hpc
+    - testing error conditions
 
 * Summary:
     - testing is straightforward
