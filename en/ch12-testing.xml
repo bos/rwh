@@ -90,7 +90,7 @@ Looking good. But writing out the input data by hand is tedious, and violates
 the oath of the lazy functional programmer: let the machine do the work!
 Thanks to the Haskell type system, QuickCheck, our testing library,
 comes with a set of data generators for all the basic Haskell data
-types. QuickCheck uses the <code>Arbitrary</code> type class to present a
+types. QuickCheck uses the <type>Arbitrary</type> type class to present a
 uniform interface to random data generation, with types used to resolve 
 which generator to use. QuickCheck normally hides the data generation
 plumbing, but we can run the generators by hand to see what the random
@@ -166,9 +166,9 @@ property holds:
 
 <para id="x_ty">
 Note that we changed the type of the property from being a simple
-<code>Bool</code> result, to the more general <code>Property</code> type
+<type>Bool</type> result, to the more general <type>Property</type> type
 (it is now a function that filters non-empty lists, before testing them,
-rather than a simple <code>Bool</code> constant).
+rather than a simple <type>Bool</type> constant).
 </para>
 
 <para id="x_uy">
@@ -204,6 +204,8 @@ every change, keeping the code tied to the specification, and ensuring it
 behaves as advertised.
 </para>
 
+<!-- TODO walk over this once more -->
+
   </sect1>
 
   <sect1 id="quickcheck.indepth">
@@ -211,10 +213,70 @@ behaves as advertised.
 
     <para>Testing individiual functions for their algebraic properties is one
       of the basic building blocks when developing large systems in Haskell. 
-      We'll look at a more complicated scenario now: taking the pretty
+      We'll look now at a more complicated scenario: taking the pretty
       printing library developed in earlier chapters, and thoroughly testing
-      it. 
+      it.
     </para>
+
+    <para>
+      Recall that the pretty printer is built around the
+      <type>Doc</type>, an algebraic data type for well-formed documents:
+    </para>
+
+    &Prettify.hs:Doc;
+
+    <!-- Talking about data generation -->
+
+    <!-- TODO added an Eq type. Do the readers care? -->
+    <para>
+     The library itself is implemented as a set of combinators that build
+     and transform this abstract document structure, before finally rendering
+     it to a string.
+    </para>
+     
+    <para>
+     As we've seen, the approach to testing with QuickCheck encourages the
+     developer to describe invariants that should hold across any data we can
+     throw at our code. So, to test the pretty printing library, we'll need
+     to generate random documents. As mentioned earlier, random data
+     generation is handled by the <type>Arbitrary</type> class:
+  </para>
+
+    &Arbitrary.hs:Class;
+
+  </para>
+  <type>The class also defines a method, <code>coarbitrary</code>, for
+    generating random functions which we'll ignore for now. One 
+    thing to notice is that the generators run in a <type>Gen</type>
+    environment, a monad, so we can use <code>do</code> syntax
+    to write data generators. In order to actually write the generators
+    for our custom type, we can use any of a set of functions defined in the
+    library for introducing new random values, gluing them together to
+    build up the data we'd like.
+  </para>
+
+    &Arbitrary.hs:IntroductionForms;
+
+   <para>
+     The function <code>elements<code>, for example, takes a list of values,
+     and returns a generator of random values from that list. With this, we
+     can start writing data generators for simple data types. To write 
+     an <type>Arbitrary</type> for <type>Bool</type>, for example, is merely:
+  </para>
+
+    &Arbitrary.hs:Instance;
+
+   <para>
+     Another approach to data generation is to generate values of one 
+     of the basic types, and then translate them into the type you're looking
+     for. We could have written the <type>Bool</type> instance by, for
+     example, generating integer values between 0 and 1, using
+     <code>choose</code>, and then mapping them onto the booleans:
+  </para>
+
+    &Arbitrary2.hs:Instance2;
+
+  <!-- TODO: now we show how to build up nested data -->
 
   <!-- TODO: expand further on the abstraction boundary scenarios -->
 
