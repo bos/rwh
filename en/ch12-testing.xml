@@ -38,7 +38,7 @@ corner cases that wouldn't be found otherwise.
 In this chapter we'll look at how to use QuickCheck to establish invariants
 in code and then re-examine the JSON pretty printer developed in chapter 6,
 testing it with QuickCheck. We'll also see how to guide the testing process
-with GHC's code coverage tool: HPC.
+with &GHC;'s code coverage tool: HPC.
   </para>
 
   <sect1>
@@ -207,9 +207,28 @@ behaves as advertised.
   </sect1>
 
   <sect1 id="quickcheck.indepth">
-    <title>Testing case study: specifying JSON printing</title>
+    <title>Testing case study: specifying a pretty printer</title>
+
+    <para>Testing individiual functions for their algebraic properties is one
+      of the basic building blocks when developing large systems in Haskell. 
+      We'll look at a more complicated scenario now: taking the pretty
+      printing library developed in earlier chapters, and thoroughly testing
+      it. 
+    </para>
 
   </sect1>
+
+  <!-- TODO: expand further on the abstraction boundary scenarios -->
+
+    <para>An issue that comes up when testing with QuickCheck is where 
+    to place the properties. Do they live in an external testsuite, or should 
+    they be considered part of the module they test? This becomes more of an
+    issue when the testsuite needs to break the module abstraction boundaries
+    we have in place (for example, we might need access to constructors that
+    are normally hidden). For our pretty printer, this means we'll need, for
+    testing purposes, to expose the constructors of the Doc type, in order
+    for us to generate random document values.
+    </para>
 
 <!--
   <sect1>
