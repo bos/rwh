@@ -244,8 +244,7 @@ behaves as advertised.
 
     &Arbitrary.hs:Class;
 
-  <para>
-  <type>The class also defines a method, <code>coarbitrary</code>, for
+  <para>The class also defines a method, <code>coarbitrary</code>, for
     generating random functions which we'll ignore for now. One 
     thing to notice is that the generators run in a <type>Gen</type>
     environment, a monad, so we can use <code>do</code> syntax
