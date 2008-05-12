@@ -117,10 +117,9 @@ compact x = transform [x]
                 _ `Union` b  -> transform (b:ds)
 {-- /snippet compact --}
 
-pretty :: Int -> Doc -> String
-{-- /snippet pretty.type --}
 
 {-- snippet pretty --}
+-- pretty :: Int -> Doc -> String
 pretty width x = best 0 [x]
     where best col (d:ds) =
               case d of
