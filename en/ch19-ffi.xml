@@ -7,6 +7,27 @@
 </chapter>
 
 <!--
+
+Interfacing to C:
+
+    * foreign import
+            - purity
+            - Int/CInt
+            - allocation
+            - ForeignPtr
+            - newtype wrapping C types
+            - marshalling
+            - Storable
+            - correctness
+   
+    * compiling.
+
+    * foreign export
+            - quick example
+
+  -->
+
+<!--
 local variables: 
 sgml-parent-document: ("00book.xml" "book" "chapter")
 end:
