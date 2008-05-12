@@ -1,10 +1,16 @@
+
 import Prettify -- needs to export constructors to be testable
+import Data.Char
+import Data.Word
 import Test.QuickCheck
 
 instance Arbitrary Char where
     arbitrary = oneof $ map return $ ['A'..'Z'] ++ ['a' .. 'z'] ++ " ~!@#$%^&*()"
-  --  arbitrary = chr `fmap` choose (0,255)
-    coarbitrary = undefined
+
+    coarbitrary c = variant $ if n >= 0 then fromIntegral (2*n)
+                                        else fromIntegral (2*(-n) + 1)
+        where n = fromIntegral (ord c) :: Word8
+
 
 -- TODO, probabilities for Empty.
 instance Arbitrary Doc where
@@ -23,6 +29,7 @@ instance Arbitrary Doc where
                       ]
 
     coarbitrary = undefined
+
 
 -- nice properties
 prop_empty_id x =
