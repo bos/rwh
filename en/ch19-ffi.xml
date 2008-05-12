@@ -12,9 +12,11 @@ Interfacing to C:
 
     * foreign import
             - purity
+                    - unsafePerformIO
             - Int/CInt
             - allocation
             - ForeignPtr
+                    - managing C resources with the Haskell storage manager
             - newtype wrapping C types
             - marshalling
             - Storable
