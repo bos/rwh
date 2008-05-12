@@ -240,14 +240,13 @@ required.
      throw at the code. To test the pretty printing library, then, we'll need
      a source of input documents. As mentioned earlier, random data generation
      is handled by the <type>Arbitrary</type> class, with a unique
-     <code>arbitrary</code> generator function per type:</para>
-   <footnote>
-    <para>
-      The class also defines a method, <code>coarbitrary</code>,
+     <code>arbitrary</code> generator function per type:<footnote>
+    <para>The class also defines a method, <code>coarbitrary</code>,
       which given a value of some type, yields a function for new generators.
       We can ignore this for now, as it is rarely needed.
       </para>
     </footnote>
+  </para>
       
     <para> 
       One thing to notice is that the generators run in a <type>Gen</type>
