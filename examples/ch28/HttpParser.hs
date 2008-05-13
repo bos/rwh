@@ -54,5 +54,5 @@ p_request = q "GET" Get (pure Nothing)
         <|> q "POST" Post (Just <$> many anyChar)
   where q s c p = HttpRequest <$> (c <$ string s <* char ' ')
                               <*> url <*> p_headers <*> p
-        url = manyTill notEOL (try $ string " HTTP/1." <* oneOf "01") <* crlf
-              
+        url = manyTill notEOL (try httpTrailer) <* crlf
+        httpTrailer = string " HTTP/1." <* oneOf "01"
