@@ -1,4 +1,5 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, MultiParamTypeClasses, FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, MultiParamTypeClasses,
+    FlexibleInstances #-}
 module WebApp
     (
       App
@@ -7,7 +8,7 @@ module WebApp
     , Handler
     , HttpRequest(..)
     , HttpResponse(..)
-    , Request(..)
+    , Connection(..)
     , ok
     , clientError
     , dispatch
@@ -25,7 +26,7 @@ import Control.Exception (bracket, finally)
 import System.IO (Handle)
 
 import MonadHandle
-import ServerParse
+import HttpParser
 import URLParser
 
 
@@ -58,27 +59,28 @@ respStatus (RespClientError BadRequest _ _) = "400 Bad Request"
 respStatus (RespClientError NotFound _ _) = "404 Not Found"
 
 
-newtype App s a = App (ReaderT Request (StateT s IO) a)
-    deriving (Functor, Monad, MonadIO, MonadReader Request,
+newtype App s a = App (ReaderT Connection (StateT s IO) a)
+    deriving (Functor, Monad, MonadIO, MonadReader Connection,
               MonadState s)
 
-runApp :: s -> Request -> App s a -> IO (a, s)
+runApp :: s -> Connection -> App s a -> IO (a, s)
 runApp st req (App a) = runStateT (runReaderT a req) st
 
 serverLoop :: s -> App s () -> Int -> IO ()
-serverLoop st serv port = liftIO . withSocketsDo $
-  bracket (listenOn . PortNumber . fromIntegral $ port) sClose $ \sock -> do
-  putStrLn $ "listening on port " ++ show port
-  forever $ do
-    (handle, clientHost, clientPort) <- accept sock
-    putStrLn $ "connect from " ++ show (clientHost, clientPort)
-    let req = Request { reqClient = show clientHost
-                      , reqHandle = handle }
-    forkIO $ finally (runApp st req serv >> return ()) (hClose handle)
+serverLoop st serv port = liftIO . withSocketsDo $ do
+  let port' = PortNumber (fromIntegral port)
+  bracket (listenOn port') sClose $ \sock -> do
+    putStrLn $ "listening on port " ++ show port
+    forever $ do
+      (handle, clientHost, clientPort) <- accept sock
+      putStrLn $ "connect from " ++ show (clientHost, clientPort)
+      let req = Connection { connClient = show clientHost
+                           , connHandle = handle }
+      forkIO $ finally (runApp st req serv >> return ()) (hClose handle)
 
-data Request = Request {
-      reqClient :: String
-    , reqHandle :: Handle
+data Connection = Connection {
+      connClient :: String
+    , connHandle :: Handle
     }
 
 url :: (Method -> Bool) -> URLParser (Handler s) -> HttpRequest

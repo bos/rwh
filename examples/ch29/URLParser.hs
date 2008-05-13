@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleInstances, FunctionalDependencies, MultiParamTypeClasses, TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances, FunctionalDependencies,
+    MultiParamTypeClasses, TypeSynonymInstances #-}
 
 module URLParser
     (

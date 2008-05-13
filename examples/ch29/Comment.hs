@@ -18,7 +18,7 @@ import qualified Data.Map as M
 
 import MonadHandle
 import JSONClass
-import ServerParse
+import HttpParser
 import PrettyJSONClass
 import WebApp
 import URLParser
@@ -134,7 +134,7 @@ joinLookup k kvs = join (lookup k kvs)
 cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
 cmtSubmit elt req = do
   st <- get
-  client <- asks reqClient
+  client <- asks connClient
   atomic $ do
   elts <- readTVar . appElements $ st
   case M.lookup elt elts of
@@ -167,7 +167,7 @@ cmtSubmit elt req = do
 
 reload :: H ()
 reload = do
-  h <- asks reqHandle
+  h <- asks connHandle
   st <- get
   liftIO $ do
     hClose h
@@ -175,7 +175,7 @@ reload = do
 
 serve :: H ()
 serve = do
-  h <- asks reqHandle
+  h <- asks connHandle
   input <- hGetContents h
   resp <- case parse p_request "" input of
     Left err -> clientError BadRequest ("Bad request " ++ show err)
