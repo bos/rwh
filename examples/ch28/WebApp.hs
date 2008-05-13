@@ -4,13 +4,13 @@ module WebApp
     (
       App
     , runApp
-    , ClientError(..)
+    , HttpError(..)
     , Handler
     , HttpRequest(..)
     , HttpResponse(..)
-    , Connection(..)
+    , HttpConnection(..)
     , ok
-    , clientError
+    , httpError
     , dispatch
     , serverLoop
     , url
@@ -33,13 +33,13 @@ import URLParser
 ok :: Monad m => String -> m HttpResponse
 ok = return . RespSuccess ["Content-Type: application/json"]
 
-clientError :: Monad m => ClientError -> String -> m HttpResponse
-clientError kind = return . RespClientError kind ["Content-Type: text/plain"]
+httpError :: Monad m => HttpError -> String -> m HttpResponse
+httpError kind = return . RespError kind ["Content-Type: text/plain"]
 
 type Handler s = HttpRequest -> App s HttpResponse
 
-data ClientError = BadRequest
-                 | NotFound
+data HttpError = BadRequest
+               | NotFound
                    deriving (Eq, Ord, Show)
 
 data HttpResponse =
@@ -47,23 +47,23 @@ data HttpResponse =
       respHeaders :: [String]
     , respBody :: String
     } |
-    RespClientError {
-      respClientError_ :: ClientError
+    RespError {
+      respError_ :: HttpError
     , respHeaders :: [String]
     , respBody :: String
     } deriving (Eq, Ord, Show)
 
 respStatus :: HttpResponse -> String
 respStatus (RespSuccess _ _) = "200 OK"
-respStatus (RespClientError BadRequest _ _) = "400 Bad Request"
-respStatus (RespClientError NotFound _ _) = "404 Not Found"
+respStatus (RespError BadRequest _ _) = "400 Bad Request"
+respStatus (RespError NotFound _ _) = "404 Not Found"
 
 
-newtype App s a = App (ReaderT Connection (StateT s IO) a)
-    deriving (Functor, Monad, MonadIO, MonadReader Connection,
+newtype App s a = App (ReaderT HttpConnection (StateT s IO) a)
+    deriving (Functor, Monad, MonadIO, MonadReader HttpConnection,
               MonadState s)
 
-runApp :: s -> Connection -> App s a -> IO (a, s)
+runApp :: s -> HttpConnection -> App s a -> IO (a, s)
 runApp st req (App a) = runStateT (runReaderT a req) st
 
 serverLoop :: s -> App s () -> Int -> IO ()
@@ -74,11 +74,11 @@ serverLoop st serv port = liftIO . withSocketsDo $ do
     forever $ do
       (handle, clientHost, clientPort) <- accept sock
       putStrLn $ "connect from " ++ show (clientHost, clientPort)
-      let req = Connection { connClient = show clientHost
-                           , connHandle = handle }
+      let req = HttpConnection { connClient = show clientHost
+                               , connHandle = handle }
       forkIO $ finally (runApp st req serv >> return ()) (hClose handle)
 
-data Connection = Connection {
+data HttpConnection = HttpConnection {
       connClient :: String
     , connHandle :: Handle
     }
@@ -94,7 +94,7 @@ dispatch :: [HttpRequest -> Maybe (Handler s)] -> HttpRequest
 dispatch hs req = do
   case map ($req) hs of
     (Just f:_) -> f req
-    _ -> clientError NotFound "not found"
+    _ -> httpError NotFound "not found"
 
 instance MonadIO m => MonadHandle System.IO.Handle m where
     openFile path mode = liftIO $ System.IO.openFile path mode
