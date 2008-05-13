@@ -118,14 +118,14 @@ chCount ch _ = do
                                        (readTVar chapters)
     let go elt = (fromElementID elt, maybe 0 length (M.lookup elt cmts))
     case M.lookup ch chs of
-      Nothing -> clientError NotFound "chapter not found"
+      Nothing -> httpError NotFound "chapter not found"
       Just elts -> ok . jstring . JObj $ map go elts
   
 cmtSingle :: ElementID -> HttpRequest -> H HttpResponse
 cmtSingle elt _ = do
   comments <- (atomic . readTVar) =<< gets appComments
   case M.lookup elt comments of
-    Nothing -> clientError NotFound "element not found"
+    Nothing -> httpError NotFound "element not found"
     Just cmts -> ok . jstring . JAry $ cmts
   
 joinLookup :: (Eq a) => a -> [(a, Maybe b)] -> Maybe b
@@ -138,11 +138,11 @@ cmtSubmit elt req = do
   atomic $ do
   elts <- readTVar . appElements $ st
   case M.lookup elt elts of
-    Nothing -> clientError NotFound "element not found"
+    Nothing -> httpError NotFound "element not found"
     Just _ ->
       case parse p_query "" <$> httpBody req of
-        Nothing -> clientError BadRequest "empty comment"
-        Just (Left _) -> clientError BadRequest "malformed string"
+        Nothing -> httpError BadRequest "empty comment"
+        Just (Left _) -> httpError BadRequest "malformed string"
         Just (Right kvs) -> do
           let mcmt = Comment elt <$> joinLookup "body" kvs
                                  <*> joinLookup "submitter" kvs
@@ -152,7 +152,7 @@ cmtSubmit elt req = do
                                  <*> pure False
                                  <*> pure False
           case mcmt of
-            Nothing -> clientError BadRequest "malformed request"
+            Nothing -> httpError BadRequest "malformed request"
             Just cmt -> do
               let tv = appComments st
               m <- readTVar tv
@@ -178,14 +178,15 @@ serve = do
   h <- asks connHandle
   input <- hGetContents h
   resp <- case parse p_request "" input of
-    Left err -> clientError BadRequest ("Bad request " ++ show err)
+    Left err -> httpError BadRequest ("Bad request " ++ show err)
     Right preq -> dispatch handlers preq
   hPutStrLn h $ "HTTP/1.1 " ++ respStatus resp
   mapM_ (hPutStrLn h) (respHeaders resp)
   hPutStrLn h ""
   case respBody resp of
-    [] -> return ()
-    body -> do
+    JNull -> return ()
+    j -> do
+      let body = jstring j
       hPutStr h body
       if last body /= '\n'
         then hPutStrLn h ""

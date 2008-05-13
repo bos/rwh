@@ -25,16 +25,18 @@ import Network (PortID(..), accept, listenOn, sClose, withSocketsDo)
 import Control.Exception (bracket, finally)
 import System.IO (Handle)
 
+import JSONClass
 import MonadHandle
 import HttpParser
 import URLParser
 
 
-ok :: Monad m => String -> m HttpResponse
-ok = return . RespSuccess ["Content-Type: application/json"]
+ok :: (JSON a, Monad m) => a -> m HttpResponse
+ok = return . RespSuccess ["Content-Type: application/json"] . toJValue
 
-httpError :: Monad m => HttpError -> String -> m HttpResponse
-httpError kind = return . RespError kind ["Content-Type: text/plain"]
+httpError :: (JSON a, Monad m) => HttpError -> a -> m HttpResponse
+httpError kind =
+    return . RespError kind ["Content-Type: text/plain"] . toJValue
 
 type Handler s = HttpRequest -> App s HttpResponse
 
@@ -45,12 +47,12 @@ data HttpError = BadRequest
 data HttpResponse =
     RespSuccess {
       respHeaders :: [String]
-    , respBody :: String
+    , respBody :: JValue
     } |
     RespError {
       respError_ :: HttpError
     , respHeaders :: [String]
-    , respBody :: String
+    , respBody :: JValue
     } deriving (Eq, Ord, Show)
 
 respStatus :: HttpResponse -> String
