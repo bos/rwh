@@ -119,14 +119,14 @@ chCount ch _ = do
     let go elt = (fromElementID elt, maybe 0 length (M.lookup elt cmts))
     case M.lookup ch chs of
       Nothing -> httpError NotFound "chapter not found"
-      Just elts -> ok . jstring . JObj $ map go elts
+      Just elts -> ok . JObj $ map go elts
   
 cmtSingle :: ElementID -> HttpRequest -> H HttpResponse
 cmtSingle elt _ = do
   comments <- (atomic . readTVar) =<< gets appComments
   case M.lookup elt comments of
     Nothing -> httpError NotFound "element not found"
-    Just cmts -> ok . jstring . JAry $ cmts
+    Just cmts -> ok . JAry $ cmts
   
 joinLookup :: (Eq a) => a -> [(a, Maybe b)] -> Maybe b
 joinLookup k kvs = join (lookup k kvs)
