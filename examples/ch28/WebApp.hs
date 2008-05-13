@@ -87,9 +87,7 @@ url :: (Method -> Bool) -> URLParser (Handler s) -> HttpRequest
     -> Maybe (Handler s)
 url methOK p req = do
   guard . methOK $ httpMethod req
-  case parse p "" (httpURL req) of
-    Left err -> fail (show err)
-    Right h -> return h
+  either (const Nothing) Just $ parse p "" (httpURL req)
 
 dispatch :: [HttpRequest -> Maybe (Handler s)] -> HttpRequest
          -> App s HttpResponse
