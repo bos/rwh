@@ -1,11 +1,285 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="concurrent" revision="alpha;beta">
-  <title>Basics of Concurrent and Parallel Haskell</title>
+  <title>Concurrent and multicore programming</title>
 
-  <remark>FIXME</remark>
-</chapter>
+  <para>As we write this book, the landscape of CPU architecture is
+    changing more rapidly than it has in decades.  </para>
 
+  <sect1>
+    <title>Defining concurrency and parallelism</title>
+
+    <para>A <emphasis>concurrent</emphasis> program needs to perform
+      several possibly unrelated tasks at the same time.  Consider the
+      example of a virtual world: a server is typically composed of
+      dozens of components, each of which has complicated interactions
+      with the outside world.  One component might handle multi-user
+      chat; another with evaluating scripts attached to objects; while
+      another processes monetary transactions.</para>
+
+    <para>The correct operation of a concurrent program does not
+      require multiple cores, though they may improve performance and
+      responsiveness.</para>
+
+    <para>In contrast, a <emphasis>parallel</emphasis> program solves
+      a single problem.  Consider a financial model that attempts to
+      predict the next minute of fluctuations in the price of a single
+      stock.  If we want to apply this model to every stock listed on
+      an exchange, to estimate which ones we should buy and sell, we
+      hope to get an answer more quickly if we run the model on five
+      hundred cores than if we use just one. (As this suggests, a
+      parallel program does not usually depend on the presence of
+      multiple cores to work correctly.)</para>
+
+    <para>Another useful distinction between concurrent and parallel
+      programs lies in their interaction with the outside world.  By
+      definition, a concurrent program deals continuously with
+      networking protocols, databases, and the like.  A typical
+      parallel program is likely to be more focused: it streams data
+      in, crunches it for a while (with little further I/O), then
+      streams data back out.</para>
+
+    <para>In this chapter, we will concern ourselves with concurrent
+      and parallel programs that operate within the boundaries of a
+      single operating system process.</para>
+  </sect1>
+
+  <sect1>
+    <title>Concurrent programming with threads</title>
+
+    <para>As a building block for concurrent programs, most
+      programming languages provide a way of creating multiple
+      independent <emphasis>threads of control</emphasis>.  Haskell is
+      no exception, though programming with threads in Haskell looks
+      somewhat different than in other languages.</para>
+
+    <para>In Haskell, a thread is an <type>IO</type> action that
+      executes independently from other threads.  To create a thread,
+      we import the <code>Control.Concurrent</code> module and use the
+      <function>forkIO</function> function.</para>
+
+    &forkIO.ghci:forkIO;
+
+    <para>The new thread starts to execute almost immediately, and the
+      thread that created it continues to execute concurrently.</para>
+
+    <sect2>
+      <title>Threads are nondeterministic</title>
+
+      <para>The runtime component of &GHC; does not specify an order
+	in which it executes threads.  As a result, in our example
+	above, the file <filename>xyzzy</filename> created by the new
+	thread <emphasis>may or may not</emphasis> have been created
+	by the time the original thread checks for its existence. If
+	we try this example once, then remove
+	<filename>xyzzy</filename> and try again, we may get a
+	different result the second time.</para>
+    </sect2>
+
+    <sect2>
+      <title>Hiding latency</title>
+
+      <para>Suppose we have a large file to compress and write to
+	disk, but we want to handle a user's input quickly enough that
+	they will perceive our program as responding immediately.  If
+	we use <function>forkIO</function> to write the file out in a
+	separate thread, we can do both simultaneously.</para>
+
+      &Compressor.hs:module;
+
+      <para>Because we're using lazy <type>ByteString</type> I/O here,
+	all we really do in the main thread is open the file.  The
+	actual reading occurs on demand in the other thread.</para>
+
+      <para>The use of <code>flip catch print</code> gives us a cheap
+	way to print an error message if the user enters the name of a
+	file that does not exist.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Communication between threads</title>
+
+    <para>The simplest way to share information between two threads is
+      to let them both use a variable.  In our file compression
+      example, the <function>main</function> thread shares both the
+      name of a file and its contents with the other thread.  Because
+      Haskell data is immutable by default, this poses no risks:
+      neither thread can modify the other's view of the file's name or
+      contents.</para>
+
+    <para>We often need to have threads actively communicate with each
+      other. For example, &GHC; does not provide a way for one thread
+      to find out whether another is still executing, has completed,
+      or has crashed<footnote>
+	<para>As we will show later, &GHC; threads are extraordinarily
+	  lightweight.  If the runtime were to provide a way to check
+	  the status of every thread, the overhead of every thread
+	  would increase, even if this information were never
+	  used.</para>
+      </footnote>.  However, it provides a <emphasis>synchronizing
+	variable</emphasis> type, the <type>MVar</type>, which we can
+      use for this purpose.</para>
+
+    <para>An <type>MVar</type> acts like a single-element box: it can
+      be either full or empty.  We can put something into the box,
+      making it full, or take something out, making it empty.</para>
+
+    &mvar.ghci:MVar;
+
+    <para>If we try to put a value into an <type>MVar</type> that is
+      already full, our thread is put to sleep until another thread
+      takes the value out.  Similarly, if we try to take a value from
+      an empty <type>MVar</type>, our thread is put to sleep until
+      some other thread puts a value in.</para>
+
+    &MVarExample.hs:communicate;
+
+    <para>The <function>newEmptyMVar</function> function has a
+      descriptive name.  To create an <type>MVar</type> that starts
+      out non-empty, we'd use <function>newMVar</function>.</para>
+
+    &mvar.ghci:new;
+
+    <para>Let's run our example in &ghci;.</para>
+
+    &mvar.ghci:communicate;
+  </sect1>
+
+  <sect1>
+    <title>The main thread and waiting for other threads</title>
+
+    <para>&GHC;'s runtime system treats the program's original thread
+      of control differently from other threads.  When this thread
+      finishes executing, the runtime system considers the program as
+      a whole to have completed.  If any other threads are executing
+      at the time, they are terminated.</para>
+
+    <para>As a result, when we have long-running threads that must not
+      be killed, we must make special arrangements to ensure that the
+      main thread doesn't complete until the others do.  Let's develop
+      a small library that makes this easy to do.</para>
+
+    &NiceFork.hs:header;
+
+    <para>We keep our <type>ThreadManager</type> type abstract using
+      the usual recipe: we wrapping it in a &newtype; and retain
+      control over the means for creating a value of this type. Among
+      our module's exports, we list the type constructor and the
+      <type>IO</type> action that constructs a manager, but we do not
+      export the data constructor.</para>
+
+    &NiceFork.hs:module;
+
+    <para>For the implementation of <type>ThreadManager</type>, we
+      maintain a map from thread ID to thread state.  We'll refer to
+      this as the <emphasis>thread map</emphasis>.</para>
+
+    &NiceFork.hs:ThreadManager;
+
+    <para>We have two levels of <type>MVar</type> use here.  We keep
+      the <type>Map</type> in an <type>MVar</type>.  This lets us
+      <quote>modify</quote> the map by replacing it with a new
+      version.  We also ensure that any thread that uses the
+      <type>Map</type> will see a consistent view of it.</para>
+
+    <para>For each thread that we manage, we maintain an
+      <type>MVar</type>.  A per-thread <type>MVar</type> starts off
+      empty, which indicates that the thread is executing.  When the
+      thread finishes or is killed by an uncaught exception, we put
+      this information into the <type>MVar</type>.</para>
+
+    <para>To create a thread and watch its status, we must perform a
+      little bit of book-keeping.</para>
+
+    &NiceFork.hs:forkManaged;
+
+    <sect2>
+      <title>Safely modifying an MVar</title>
+
+      <para>The <function>modifyMVar</function> function that we use
+	in this example is very useful: it's a
+	<emphasis>safe</emphasis> combination of
+	<function>takeMVar</function> and
+	<function>putMVar</function>.</para>
+
+      &mvar.ghci:modifyMVar;
+
+      <para>It takes the value from an <type>MVar</type>, and passes
+	it to a function.  This function can both modify the value and
+	return a result.  If the function throws an exception,
+	<function>modifyMVar</function> puts the original value back
+	into the <type>MVar</type>, otherwise it puts the new value
+	in. It returns the other element of the function as its own
+	result.</para>
+
+      <para>When we use <function>modifyMVar</function> instead of
+	manually managing an <type>MVar</type> with
+	<function>takeMVar</function> and
+	<function>putMVar</function>, we avoid two common kinds of
+	concurrency bug.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>Forgetting to put a value back into an
+	    <type>MVar</type>.  This can result in
+	    <emphasis>deadlock</emphasis>, in which some thread waits
+	    forever on an <type>MVar</type> that will never have a
+	    value put into it.</para>
+	</listitem>
+	<listitem>
+	  <para>Failure to account for the possibility that an
+	    exception might be thrown, disrupting the flow of a piece
+	    of code. This can result in a call to
+	    <function>putMVar</function> that
+	    <emphasis>should</emphasis> occur not actually happening,
+	    again leading to deadlock.</para>
+	</listitem>
+      </itemizedlist>
+    
+      <para>Because of these nice safety properties, it's wise to use
+	<function>modifyMVar</function> whenever possible.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Safe resource management: not just a good idea</title>
+
+      <para>We can the take the pattern that
+	<function>modifyMVar</function> follows, and apply it to many
+	other resource management situations.</para>
+
+      <orderedlist>
+	<listitem>
+	  <para>Acquire a resource.</para>
+	</listitem>
+	<listitem>
+	  <para>Pass the resource to a function that will do something
+	    with it.</para>
+	</listitem>
+	<listitem>
+	  <para>Always release the resource, even if an exception
+	    occurs. If the function threw an exception, rethrow
+	    it.</para>
+	</listitem>
+      </orderedlist>
+
+      <para>Safety aside, this approach has another benefit: it can
+	make our code shorter and easier to follow.  As we can see
+	from looking at <function>forkManaged</function> above,
+	Haskell's lightweight syntax for anonymous functions makes
+	this pattern visually unobtrusive.</para>
+
+      <para>Here's the definition of <function>modifyMVar</function>,
+	so that you can see the general form of this pattern.</para>
+
+      &ModifyMVar.hs:modifyMVar;
+
+      <para>It should be easy to adapt this code to your specific
+	needs, whether you're working with network connections,
+	database handles, or data managed by a C library.</para>
+    </sect2>
+  </sect1>
 
 <!--
 
@@ -26,6 +300,7 @@
     Parallel strategies.
 
 -->
+</chapter>
 
 <!--
 local variables: 

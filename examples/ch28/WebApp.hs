@@ -1,5 +1,5 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving, MultiParamTypeClasses,
-    FlexibleInstances #-}
+    FlexibleContexts, FlexibleInstances, OverlappingInstances #-}
 module WebApp
     (
       App
@@ -17,6 +17,7 @@ module WebApp
     , respStatus
     ) where
 
+import Control.Monad.Error
 import Control.Monad.Reader
 import Control.Concurrent (forkIO)
 import Control.Monad.State
@@ -31,18 +32,21 @@ import HttpParser
 import URLParser
 
 
-ok :: (JSON a, Monad m) => a -> m HttpResponse
-ok = return . RespSuccess ["Content-Type: application/json"] . toJValue
+ok :: (JSON a, Monad m) => a -> m JValue
+ok = return . toJValue
 
-httpError :: (JSON a, Monad m) => HttpError -> a -> m HttpResponse
-httpError kind =
-    return . RespError kind ["Content-Type: text/plain"] . toJValue
+httpError :: (JSON a, MonadError HttpResponse m) => HttpError -> a -> m b
+httpError err = throwError . RespError err [] . toJValue
 
-type Handler s = HttpRequest -> App s HttpResponse
+type Handler s a = HttpRequest -> App s a
 
 data HttpError = BadRequest
                | NotFound
-                   deriving (Eq, Ord, Show)
+               | InternalServerError
+                 deriving (Show)
+
+instance Error HttpResponse where
+    strMsg = RespError InternalServerError [] . JString
 
 data HttpResponse =
     RespSuccess {
@@ -53,20 +57,20 @@ data HttpResponse =
       respError_ :: HttpError
     , respHeaders :: [String]
     , respBody :: JValue
-    } deriving (Eq, Ord, Show)
+    } deriving (Show)
 
 respStatus :: HttpResponse -> String
 respStatus (RespSuccess _ _) = "200 OK"
 respStatus (RespError BadRequest _ _) = "400 Bad Request"
 respStatus (RespError NotFound _ _) = "404 Not Found"
+respStatus (RespError InternalServerError _ _) = "500 Internal Server Error"
 
+newtype App s a = App (ErrorT HttpResponse (ReaderT HttpConnection (StateT s IO)) a)
+    deriving (Functor, Monad, MonadIO, MonadError HttpResponse,
+              MonadReader HttpConnection, MonadState s)
 
-newtype App s a = App (ReaderT HttpConnection (StateT s IO) a)
-    deriving (Functor, Monad, MonadIO, MonadReader HttpConnection,
-              MonadState s)
-
-runApp :: s -> HttpConnection -> App s a -> IO (a, s)
-runApp st req (App a) = runStateT (runReaderT a req) st
+runApp :: s -> HttpConnection -> App s a -> IO (Either HttpResponse a, s)
+runApp st req (App a) = runStateT (runReaderT (runErrorT a) req) st
 
 serverLoop :: s -> App s () -> Int -> IO ()
 serverLoop st serv port = liftIO . withSocketsDo $ do
@@ -85,14 +89,14 @@ data HttpConnection = HttpConnection {
     , connHandle :: Handle
     }
 
-url :: (Method -> Bool) -> URLParser (Handler s) -> HttpRequest
-    -> Maybe (Handler s)
+url :: (Method -> Bool) -> URLParser (Handler s JValue) -> HttpRequest
+    -> Maybe (Handler s JValue)
 url methOK p req = do
   guard . methOK $ httpMethod req
   either (const Nothing) Just $ parse p "" (httpURL req)
 
-dispatch :: [HttpRequest -> Maybe (Handler s)] -> HttpRequest
-         -> App s HttpResponse
+dispatch :: [HttpRequest -> Maybe (Handler s JValue)] -> HttpRequest
+         -> App s JValue
 dispatch hs req = do
   case map ($req) hs of
     (Just f:_) -> f req

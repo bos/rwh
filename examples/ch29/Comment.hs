@@ -100,7 +100,7 @@ runServers = do
 
 type H a = App AppState a
 
-handlers :: [HttpRequest -> Maybe (Handler AppState)]
+handlers :: [HttpRequest -> Maybe (Handler AppState JValue)]
 handlers = [
    url (==Get) (chCount <$> ("chapter" /> part </ "count" <* end))
  , url (==Get) (cmtSingle . ElementID <$> ("single" /> part <* end))
@@ -110,7 +110,7 @@ handlers = [
 atomic :: MonadIO m => STM s -> m s
 atomic = liftIO . atomically
 
-chCount :: String -> HttpRequest -> H HttpResponse
+chCount :: String -> HttpRequest -> H JValue
 chCount ch _ = do
     comments <- gets appComments
     chapters <- gets appChapters
@@ -121,7 +121,7 @@ chCount ch _ = do
       Nothing -> httpError NotFound "chapter not found"
       Just elts -> ok . JObj $ map go elts
   
-cmtSingle :: ElementID -> HttpRequest -> H HttpResponse
+cmtSingle :: ElementID -> HttpRequest -> H JValue
 cmtSingle elt _ = do
   comments <- (atomic . readTVar) =<< gets appComments
   case M.lookup elt comments of
@@ -131,7 +131,7 @@ cmtSingle elt _ = do
 joinLookup :: (Eq a) => a -> [(a, Maybe b)] -> Maybe b
 joinLookup k kvs = join (lookup k kvs)
 
-cmtSubmit :: ElementID -> HttpRequest -> H HttpResponse
+cmtSubmit :: ElementID -> HttpRequest -> H JValue
 cmtSubmit elt req = do
   st <- get
   client <- asks connClient

@@ -1,9 +1,9 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="httpproxy" revision="unpublished">
-  <title>Reverse HTTP Proxy Example</title>
+<chapter id="stm" revision="unpublished">
+  <title>Software transactional memory</title>
 
-  <remark>FIXME</remark>
+  <para>Concurrent software is notoriously difficult to write.  In a single-thread</para>
 </chapter>
 
 <!--
