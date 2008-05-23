@@ -10,6 +10,7 @@ module NiceFork
     ) where
 {-- /snippet module --}
 
+import Control.Monad (join)
 {-- snippet header --}
 import Control.Concurrent
 import Control.Exception (Exception, try)
@@ -84,15 +85,21 @@ waitFor (Mgr mgr) tid = do
   maybeDone <- modifyMVar mgr $ \m ->
     return $ case M.updateLookupWithKey (\_ _ -> Nothing) tid m of
       (Nothing, _) -> (m, Nothing)
-      (Just done, m') -> (m', Just done)
+      (done, m') -> (m', done)
   case maybeDone of
     Nothing -> return Nothing
     Just st -> Just `fmap` takeMVar st
 {-- /snippet waitFor --}
 
+{-- snippet waitFor2 --}
+waitFor2 (Mgr mgr) tid =
+  join . modifyMVar mgr $ \m ->
+    return $ case M.updateLookupWithKey (\_ _ -> Nothing) tid m of
+      (Nothing, _) -> (m, return Nothing)
+      (Just st, m') -> (m', Just `fmap` takeMVar st)
+{-- /snippet waitFor2 --}
+
 {-- snippet waitAll --}
-waitAll (Mgr mgr) = do
-  m <- takeMVar mgr
-  putMVar mgr M.empty
-  mapM_ takeMVar (M.elems m)
+waitAll (Mgr mgr) = modifyMVar mgr elems >>= mapM_ takeMVar
+    where elems m = return (M.empty, M.elems m)
 {-- /snippet waitAll --}

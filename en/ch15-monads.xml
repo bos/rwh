@@ -1584,7 +1584,7 @@
     <para id="x_fh">Sure enough, <function>fmap</function> lifts a pure function
       into the monad, just as <function>liftM</function> does.</para>
 
-    <sect2>
+    <sect2 id="monads.join">
       <title>Another way of looking at monads</title>
 
       <para id="x_gh">Now that we know about the relationship between functors

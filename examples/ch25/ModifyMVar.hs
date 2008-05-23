@@ -7,8 +7,8 @@ modifyMVar :: MVar a -> (a -> IO (a,b)) -> IO b
 modifyMVar m io = 
   block $ do
     a <- takeMVar m
-    (a',b) <- unblock (io a) `catch` \e ->
-              putMVar m a >> throw e
-    putMVar m a'
-    return b
+    (b,r) <- unblock (io a) `catch` \e ->
+             putMVar m a >> throw e
+    putMVar m b
+    return r
 {-- /snippet modifyMVar --}

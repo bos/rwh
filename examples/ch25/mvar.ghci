@@ -14,3 +14,6 @@ communicate
 
 --# modifyMVar
 :t modifyMVar
+
+--# tryTakeMVar
+:t tryTakeMVar

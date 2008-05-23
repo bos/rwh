@@ -98,7 +98,7 @@
   </sect1>
 
   <sect1>
-    <title>Communication between threads</title>
+    <title>Simple communication between threads</title>
 
     <para>The simplest way to share information between two threads is
       to let them both use a variable.  In our file compression
@@ -144,6 +144,25 @@
     <para>Let's run our example in &ghci;.</para>
 
     &mvar.ghci:communicate;
+
+    <para>If you're coming from a background of concurrent programming
+      in a traditional language, you can think of an <type>MVar</type>
+      as being useful for two familiar purposes.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Sending a message from one thread to another, e.g. a
+	  notification.</para>
+      </listitem>
+      <listitem>
+	<para>Providing <emphasis>mutual exclusion</emphasis> for a
+	  piece of mutable data that is shared among threads.  We put
+	  the data into the <type>MVar</type> when it is not being
+	  used by any thread, and one thread takes it out temporarily
+	  to read or modify it.</para>
+      </listitem>
+    </itemizedlist>
+
   </sect1>
 
   <sect1>
@@ -163,11 +182,11 @@
     &NiceFork.hs:header;
 
     <para>We keep our <type>ThreadManager</type> type abstract using
-      the usual recipe: we wrapping it in a &newtype; and retain
-      control over the means for creating a value of this type. Among
-      our module's exports, we list the type constructor and the
-      <type>IO</type> action that constructs a manager, but we do not
-      export the data constructor.</para>
+      the usual recipe: we wrap it in a &newtype;, and prevent clients
+      from creating values of this type.  Among our module's exports,
+      we list the type constructor and the <type>IO</type> action that
+      constructs a manager, but we do not export the data
+      constructor.</para>
 
     &NiceFork.hs:module;
 
@@ -197,17 +216,16 @@
     <sect2>
       <title>Safely modifying an MVar</title>
 
-      <para>The <function>modifyMVar</function> function that we use
-	in this example is very useful: it's a
-	<emphasis>safe</emphasis> combination of
-	<function>takeMVar</function> and
+      <para>The <function>modifyMVar</function> function that we used
+	in <function>forkManaged</function> above is very useful: it's
+	a safe combination of <function>takeMVar</function> and
 	<function>putMVar</function>.</para>
 
       &mvar.ghci:modifyMVar;
 
       <para>It takes the value from an <type>MVar</type>, and passes
-	it to a function.  This function can both modify the value and
-	return a result.  If the function throws an exception,
+	it to a function.  This function can both generate a new value
+	and return a result.  If the function throws an exception,
 	<function>modifyMVar</function> puts the original value back
 	into the <type>MVar</type>, otherwise it puts the new value
 	in. It returns the other element of the function as its own
@@ -243,11 +261,12 @@
     </sect2>
 
     <sect2>
-      <title>Safe resource management: not just a good idea</title>
+      <title>Safe resource management: a good idea, and easy besides</title>
 
       <para>We can the take the pattern that
 	<function>modifyMVar</function> follows, and apply it to many
-	other resource management situations.</para>
+	other resource management situations.  Here are the steps of
+	the pattern.</para>
 
       <orderedlist>
 	<listitem>
@@ -258,9 +277,9 @@
 	    with it.</para>
 	</listitem>
 	<listitem>
-	  <para>Always release the resource, even if an exception
-	    occurs. If the function threw an exception, rethrow
-	    it.</para>
+	  <para>Always release the resource, even if the function
+	    throws an exception. If that occurs, rethrow the exception
+	    so it can be caught by application code.</para>
 	</listitem>
       </orderedlist>
 
@@ -268,19 +287,169 @@
 	make our code shorter and easier to follow.  As we can see
 	from looking at <function>forkManaged</function> above,
 	Haskell's lightweight syntax for anonymous functions makes
-	this pattern visually unobtrusive.</para>
+	this style of coding visually unobtrusive.</para>
 
       <para>Here's the definition of <function>modifyMVar</function>,
-	so that you can see the general form of this pattern.</para>
+	so that you can see a specific form of this pattern.</para>
 
       &ModifyMVar.hs:modifyMVar;
 
-      <para>It should be easy to adapt this code to your specific
+      <para>You should easily be able to adapt this to your particular
 	needs, whether you're working with network connections,
 	database handles, or data managed by a C library.</para>
     </sect2>
+
+    <sect2>
+      <title>Finding the status of a thread</title>
+
+      <para>Our <function>getStatus</function> function tells us the
+	current state of a thread.  If the thread is no longer managed
+	(or was never managed in the first place), it returns
+	<code>Nothing</code>.</para>
+
+      &NiceFork.hs:getStatus;
+
+      <para>If the thread is still running, it returns <code>Just
+	  Running</code>. Otherwise, it indicates why the thread
+	terminated, <emphasis>and</emphasis> stops managing the
+	thread.</para>
+
+      <para>If the <function>tryTakeMVar</function> function finds
+	that the <type>MVar</type> is empty, it returns
+	<code>Nothing</code> immediately instead of blocking.</para>
+
+      &mvar.ghci:tryTakeMVar;
+
+      <para>Otherwise, it extracts the value from the
+	<type>MVar</type> as usual.</para>
+
+      <para>The <function>waitFor</function> function behaves
+	similarly, but instead of returning immediately, it blocks
+	until the given thread terminates before returning.</para>
+
+      &NiceFork.hs:waitFor;
+
+      <para>It first extracts the <type>MVar</type> that holds the
+	thread's state, if it exists.  The <type>Map</type> type's
+	<function>updateLookupWithKey</function> function is useful:
+	it combines looking up a key with modifying or removing the
+	value.</para>
+
+      &niceFork.ghci:updateLookupWithKey;
+
+      <para>In this case, we want to always remove the
+	<type>MVar</type> holding the thread's state if it is present,
+	so that our thread manager will no longer be managing the
+	thread.  If there was a value to extract, we take the thread's
+	exit status from the <type>MVar</type> and return it.</para>
+
+      <para>Our final useful function simply waits for all currently
+	managed threads to complete, and ignores their exit
+	statuses.</para>
+
+      &NiceFork.hs:waitAll;
+    </sect2>
+
+    <sect2>
+      <title>Writing tighter code</title>
+
+      <para>Our definition of <function>waitFor</function> above is a
+	little unsatisfactory, because we're performing more or less
+	the same case analysis in two places: inside the function
+	called by <function>modifyMVar</function>, and again on its
+	return value.</para>
+
+      <para>Sure enough, we can apply a function that we came across
+	earlier to eliminate this duplication.  The function in
+	question is <function>join</function>, from the
+	<code>Control.Monad</code> module.</para>
+
+      &niceFork.ghci:join;
+
+      <para>The trick here is to see that we can get rid of the second
+	&case; expression by having the first one return the
+	<type>IO</type> action that we should perform once we return
+	from <function>modifyMVar</function>.  We'll use
+	<function>join</function> to execute the action.</para>
+
+      &NiceFork.hs:waitFor2;
+
+      <para>This is an interesting idea: we can create a monadic
+	function or action in pure code, then pass it around until we
+	end up in a monad where we can use it.  This can be a nimble
+	way to write code, once we develop an eye for when it makes
+	sense.</para>
+    </sect2>
   </sect1>
 
+  <sect1>
+    <title>Communicating over channels</title>
+
+    <para>For one-shot communications between threads, an
+      <type>MVar</type> is perfectly good.  Another type,
+      <type>Chan</type>, provides a one-way communication channel.
+      Here is a simple example of its use.</para>
+
+    &Chan.hs:chanExample;
+
+    <para>If a <type>Chan</type> is empty,
+      <function>readChan</function> blocks until there is a value to
+      read.  The <function>writeChan</function> function never blocks:
+      it writes a new value into a <type>Chan</type>
+      immediately.</para>
+
+    <note>
+      <title>Chan is unbounded</title>
+
+      <para>Because <function>writeChan</function> always succeeds
+	immediately, there is a potential risk to using a
+	<type>Chan</type>.  If one thread continually writes to the
+	<type>Chan</type> more often than another thread reads from
+	it, the <type>Chan</type> will grow in an unchecked
+	manner.</para>
+    </note>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>The <type>Chan</type> type is implemented using
+	      <type>MVar</type>s.  Use <type>MVar</type>s to develop a
+	      <type>BoundedChan</type> library.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Your <function>newBoundedChan</function> function
+	      should accept an <type>Int</type> parameter, limiting
+	      the number of unread items that can be present in a
+	      <type>BoundedChan</type> at once.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>If this limit is hit, a call to your
+	      <function>writeBoundedChan</function> function must
+	      block until a reader uses
+	      <function>readBoundedChan</function> to consume a
+	      value.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>MVar and Chan are non-strict</title>
+
+    <para>Like most Haskell container types, both <type>MVar</type>
+      and <type>Chan</type> are non-strict: neither one evaluates its
+      contents.</para>
+  </sect1>
 <!--
 
     Basics:
