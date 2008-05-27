@@ -26,11 +26,14 @@ prop_minimum' xs         = not (null xs) ==> head (qsort xs) == minimum xs
 {-- /snippet relatives_right --}
 
 {-- snippet relatives --}
-prop_maximum xs         = not (null xs) ==> last (qsort xs) == maximum xs
+prop_maximum xs         =
+    not (null xs) ==>
+        last (qsort xs) == maximum xs
 
-prop_append xs ys       = not (null xs) ==>
-                          not (null ys) ==>
-                          head (qsort (xs ++ ys)) == min (minimum xs) (minimum ys)
+prop_append xs ys       =
+    not (null xs) ==>
+    not (null ys) ==>
+        head (qsort (xs ++ ys)) == min (minimum xs) (minimum ys)
 {-- /snippet relatives --}
 
 {-- snippet model --}

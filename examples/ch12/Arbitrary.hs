@@ -18,4 +18,23 @@ instance Arbitrary Bool where
   arbitrary     = elements [True, False]
 {-- /snippet Instance --}
 
+{-- snippet InstanceProduct --}
+instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where
+  arbitrary = do
+      x <- arbitrary
+      y <- arbitrary
+      return (x,y)
+{-- /snippet InstanceProduct --}
+
+{-- snippet InstanceRec --}
+instance Arbitrary a => Arbitrary [a] where
+  arbitrary =
+      n <- choose (0, 1) :: Gen Int
+      if n == 0
+         then []
+         else do x  <- arbitrary :: a
+                 xs <- arbitrary :: Gen [a]
+                 return (x : xs)
+{-- /snippet InstanceRec --}
+
 --  coarbitrary b = if b then variant 0 else variant 1

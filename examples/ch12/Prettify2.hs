@@ -28,24 +28,24 @@ data Doc = Empty
          | Line
          | Concat Doc Doc
          | Union Doc Doc
-           deriving (Show,Eq) -- for QC
+         deriving (Show,Eq)
 
 {-- /snippet Doc --}
 
 instance Monoid Doc where
-    mempty = empty
+    mempty  = empty
     mappend = (<>)
 
 {-- snippet append --}
-(<>) :: Doc -> Doc -> Doc
+empty :: Doc
+(<>)  :: Doc -> Doc -> Doc
+{-- /snippet append --}
+
+empty = Empty
+
 Empty <> y = y
 x <> Empty = x
 x <> y = x `Concat` y
-{-- /snippet append --}
-
-{-- snippet basic --}
-empty :: Doc
-empty = Empty
 
 char :: Char -> Doc
 char c = Char c
@@ -56,7 +56,6 @@ text s  = Text s
 
 double :: Double -> Doc
 double d = text (show d)
-{-- /snippet basic --}
 
 {-- snippet line --}
 line :: Doc
@@ -66,10 +65,12 @@ line = Line
 {-- snippet hcat --}
 hcat :: [Doc] -> Doc
 hcat = fold (<>)
+{-- /snippet hcat --}
 
+{-- snippet fold --}
 fold :: (Doc -> Doc -> Doc) -> [Doc] -> Doc
 fold f = foldr f empty
-{-- /snippet hcat --}
+{-- /snippet fold --}
 
 {-- snippet fsep --}
 fsep :: [Doc] -> Doc
