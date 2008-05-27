@@ -200,12 +200,12 @@ properties can be stated as:
     <title>Testing against a model</title> 
 
 <para id="x_vy">
-Another cheap technique for gaining confidence in some code is to test it
+Another technique for gaining confidence in some code is to test it
 against a model implementation. We can tie our implementation of list
-sort to the reference sort function in the basic List library. That is, we'll
-use the <code>Prelude</code> sort as a model against which to test our
-implementation. They should sort the same thing:
-    </para>
+sort to the reference sort function in the standard list library, and,
+if they behave the same, we gain confidence that our sort does the right
+thing.
+</para>
 
     &QC-basics.hs:model;
 
@@ -234,7 +234,7 @@ the specification, and ensuring it behaves as required.
       of the basic building blocks that guides development of large systems
       in Haskell.  We'll look now at a more complicated scenario: taking the
       pretty printing library developed in earlier chapters, and building a
-      more comprehensive property suite for it.
+      comprehensive property suite for it.
     </para>
 
     <sect2> 
@@ -253,21 +253,23 @@ the specification, and ensuring it behaves as required.
     <!-- TODO added an Eq type. Do the readers care? -->
     <para>
      The library itself is implemented as a set of functions that build and
-     transform values of this abstract document type, before finally
-     rendering it to a string.
+     transform values of this document type, before finally rendering it the
+     finished document to a string.
     </para>
      
     <para>
-     As we've seen, the approach to testing with QuickCheck encourages the
-     developer to describe invariants that should hold across any data we can
-     throw at the code. To test the pretty printing library, then, we'll need
-     a source of input data. Random data generation for QuickCheck is handled
-     by the <type>Arbitrary</type> class, with a unique
-     <code>arbitrary</code> generator function per type:
+     QuickCheck encourages an approach to testing where the developer
+     specifies invariants that should hold for any data we can throw at the
+     code. To test the pretty printing library, then, we'll need a source of
+     input data. QuickCheck provides a small combinator suite for building
+     random data generation, via the <type>Arbitrary</type> class, which
+     provides a function, <code>arbitrary</code>, to generate data of each
+     type.
    <footnote><para>
     The class also defines a method, <code>coarbitrary</code>,
     which given a value of some type, yields a function for new generators.
-    We can ignore this for now, as it is rarely needed.
+    We can ignore this for now, as it is only needed for generating random
+    values of function type.
   </para></footnote>
   </para>
       
@@ -276,12 +278,12 @@ the specification, and ensuring it behaves as required.
     <para> 
     One thing to notice is that the generators run in a <type>Gen</type>
     environment: a simple state-passing monad used to hide the random number
-    generator plumbing. As it is monadic, we are able to use <code>do</code>
-    syntax to write data generators that access the implicit random number
-    source. To actually write generators for our custom type, the programmer
-    can use any of a set of functions defined in the library for introducing
-    new random values and gluing them together to build up data structures of
-    the type we're interested in:
+    generator plumbing. As it is monadic, we can use <code>do</code> syntax
+    to write new generators that access the implicit random number source.
+    To actually write generators for our custom type, we use any of a set of
+    functions defined in the library for introducing new random values and
+    gluing them together to build up data structures of the type we're
+    interested in:
   </para>
 
     &Arbitrary.hs:IntroductionForms;
@@ -299,9 +301,9 @@ the specification, and ensuring it behaves as required.
 
    <para>
      Another approach to data generation is to generate values for one 
-     of the basic Haskell types, and then translate those values into the
+     of the basic Haskell types and then translate those values into the
      type you're actually interested in. We could have written the
-     <type>Bool</type> instance, for example, by generating integer values
+     <type>Bool</type> instance by generating integer values
      between 0 and 1, using <code>choose</code>, and then mapping them onto
      the booleans:
   </para>
@@ -309,10 +311,11 @@ the specification, and ensuring it behaves as required.
     &Arbitrary2.hs:Instance2;
 
     <para>For simple <emphasis>sum</emphasis> types, this approach works
-      nicely, as the integers map onto the constructor tags of the data type.
+      nicely, as the integers map onto the constructors of the data type.
       For <emphasis>product</emphasis> types, we simply generate each
-      component of the product first (same goes for any nested type), then
-      combine them. For example:
+      component of the product separately (and recursively for nested types),
+      and then combine the components. For example, to generate random pairs
+      of random values:
     </para>
 
     &Arbitrary.hs:InstanceProduct;
@@ -320,16 +323,16 @@ the specification, and ensuring it behaves as required.
     <!-- approach one, enumerate the constructors -->
     <para>
       To generate all the different variants of the <type>Doc</type> type,
-      we can break down the problem by first generating random constructors
+      we break the problem down by first generating random constructors
       for each type, then depending on the result, the components of each
       field. The most complicated case are the union and concatentation
       variants. But first we need to write an instance for generating
       random characters &emdash; QuickCheck doesn't have a default instance
-      for characters, as required generators for text depend on encodings
-      assumed in the program. We'll write our own, and, as we don't care
+      for characters, due to the abundance of text encodings we might want
+      to generate individually. We'll write our own, and, as we don't care
       about the actual text content of the document, a simple generator of
-      alphabetic characters and punctuation will suffice (richer
-      generators are simple extensions of this basic approach):
+      alphabetic characters and punctuation will suffice (richer generators
+      are simple extensions of this basic approach):
     </para>
 
     &QC.hs:ArbitraryChar;
@@ -388,6 +391,8 @@ the specification, and ensuring it behaves as required.
       a good mix of simple cases, and more nested, complicated forms.
     </para>
 
+    <!-- do we want to show an example here? -->
+
     <para>
       Other functions in the API are also simple enough to have their
       behaviour fully described via properties. By doing so we can maintain
@@ -412,7 +417,7 @@ the specification, and ensuring it behaves as required.
       our pretty printer library is no exception to this rule &emdash; a
       custom fold function is used internally to implement both document
       concatentation, and interleaving separators through between document
-      chunks. It takes a  list of document pieces, and glues them all
+      chunks. It takes a list of document pieces, and glues them all
       together with a combining function:
     </para>
 
@@ -421,9 +426,9 @@ the specification, and ensuring it behaves as required.
     <!-- do we want to get into random function over Doc generation -->
 
     <para>
-      We can write tests in isolation for specific instances of fold at work.
-      For example, concatenation is easy to specify, by writing a reference
-      implementation:
+      We can write tests in isolation for specific instances of fold.
+      Horizontal concatenation of documents, for example, is easy to specify,
+      by writing a reference implementation:
     </para>
 
     &QC.hs:hcat;
