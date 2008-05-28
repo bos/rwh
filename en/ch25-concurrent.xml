@@ -471,13 +471,15 @@
       between threads than other languages, it still suffers from the
       same fundamental problem: writing correct concurrent programs is
       fiendishly difficult.  Indeed, several pitfalls of concurrent
-      programming in other languages apply equally to Haskell.</para>
+      programming in other languages apply equally to Haskell.  Two of
+      the better known problems are <emphasis>deadlock</emphasis> and
+      <emphasis>starvation</emphasis>.</para>
 
     <sect2>
       <title>Deadlock</title>
-      <para>A common problem with concurrent code is
-	<emphasis>deadlock</emphasis>, in which two or more threads
-	get stuck forever due to a clash over access to shared
+
+      <para>In a <emphasis>deadlock</emphasis> situation, two or more
+	threads get stuck forever in a clash over access to shared
 	resources. One classic way to make a multithreaded program
 	deadlock is to forget the order in which we must acquire
 	locks.  This kind of bug is so common, it has a name:
@@ -502,12 +504,19 @@
 	take an <type>MVar</type> that the other has already emptied,
 	so neither can make progress.</para>
 
-      <para>In real code, these kinds of inversion problems are much
-	more difficult to spot.  The taking of <type>MVar</type>s is
-	often spread across several functions in different files,
-	making visual inspection more tricky. Worse, these problems
-	are often <emphasis>intermittent</emphasis>, which makes them
-	tricky to even reproduce, never mind isolate and fix.</para>
+      <para>Across languages, the usual way to solve an order
+	inversion problem is to always follow a consistent order when
+	acquiring resources. Since this approach requires manual
+	adherence to a coding convention, it is easy to miss in
+	practice.</para>
+
+      <para>To make matters more complicated, these kinds of inversion
+	problems can be difficult to spot in real code.  The taking of
+	<type>MVar</type>s is often spread across several functions in
+	different files, making visual inspection more tricky. Worse,
+	these problems are often <emphasis>intermittent</emphasis>,
+	which makes them tricky to even reproduce, never mind isolate
+	and fix.</para>
     </sect2>
 
     <sect2>
@@ -590,6 +599,129 @@
     </qandaset>
   </sect1>
 
+  <sect1>
+    <title>Using multiple cores with GHC</title>
+
+    <para>By default, &GHC; generates programs that use just one core,
+      even when we write explicitly concurrent code.  To use multiple
+      cores, we must explicitly choose to do so.  We make this choice
+      at <emphasis>link time</emphasis>, when we are generating an
+      executable program.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>The <quote>non-threaded</quote> runtime library runs all
+	  Haskell threads in a single operating system thread.  This
+	  runtime is highly efficient for creating threads and passing
+	  data around in <type>MVar</type>s.</para>
+      </listitem>
+      <listitem>
+	<para>The <quote>threaded</quote> runtime library uses
+	  multiple operating system threads to run Haskell threads.
+	  It has somewhat more overhead for creating threads and using
+	  <type>MVar</type>s.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If we pass the <option>-threaded</option> option to the
+      compiler, it will link our program against the threaded runtime
+      library.  We do not need to use <option>-threaded</option> when
+      we are compiling libraries or source files, only when we are
+      finally generating an executable.</para>
+
+    <para>Even when we select the threaded runtime for our program,
+      it will still default to using only one core when we run it.  We
+      must explicitly tell the runtime how many cores to use.</para>
+
+    <sect2>
+      <title>Runtime options</title>
+
+      <para>We can pass options to &GHC;'s runtime system on the
+	command line of our program.  Before handing control to our
+	code, the runtime scans the program's arguments for the
+	special command line option <option>+RTS</option>.  It
+	interprets everything that follows, until the special option
+	<option>-RTS</option>, as an option for the runtime system,
+	not our program.  It hides all of these options from our code.
+	When we use the <code>System.Environment</code> module's
+	<function>getArgs</function>  function to obtain our command
+	line arguments, we will not find any runtime options in the
+	list.</para>
+
+      <para>The threaded runtime accepts an option
+	<option>-N</option><footnote>
+	  <para>The non-threaded runtime does not understand this
+	    option, and will reject it with an error message.</para>
+	</footnote>.  This takes one argument, which specifies the
+	number of cores that &GHC;'s runtime system should use.  The
+	option parser is picky: there must be no spaces between
+	<option>-N</option> and the number that follows it.  The option
+	<option>-N4</option> is acceptable, but <option>-N 4</option>
+	is not.</para>
+    </sect2>
+
+    <sect2>
+      <title>Finding the number of available cores from Haskell</title>
+
+      <para>The module <code>GHC.Conc</code> exports a variable,
+	<varname>numCapabilities</varname>, that tells us how many
+	cores the runtime system can use.</para>
+
+      &NumCapabilities.hs:main;
+
+      <para>If we compile and run the above program, we can see that
+	the options to the runtime system are not visible to the
+	program, but that it can see how many cores it can run
+	on.</para>
+
+      <screen><prompt>$</prompt> <userinput>ghc -c NumCapabilities.hs</userinput>
+<prompt>$</prompt> <userinput>ghc -threaded -o NumCapabilities NumCapabilities.o</userinput>
+<prompt>$</prompt> <userinput>./NumCapabilities +RTS -N4 -RTS foo</userinput>
+command line arguments: ["foo"]
+number of cores: 4</screen>
+    </sect2>
+
+    <sect2>
+      <title>Choosing the right runtime</title>
+
+      <para>The decision of which runtime to use is not completely
+	clear cut.  While the threaded runtime can use multiple cores,
+	it has a cost: threads and sharing data between them are more
+	expensive than with the non-threaded runtime.</para>
+
+      <para>Furthermore, the garbage collector used by &GHC; as of
+	version 6.8.2 is single threaded: it pauses all other threads
+	while it runs, and executes on one core.  This limits the
+	performance improvement we can hope to see from using multiple
+	cores.  (As we write this book, the garbage collector is being
+	retooled to use multiple cores, but we cannot yet predict its
+	future effect.)</para>
+
+      <para>In many real world concurrent programs, an individual
+	thread will spend most of its time waiting for a network
+	request or response. In these cases, if a single Haskell
+	program serves tens of thousands of concurrent clients, the
+	lower overhead of the non-threaded runtime may be helpful. For
+	example, instead of having a single server program use the
+	threaded runtime on four cores, we might see better
+	performance if we design our server so that we can run four
+	copies of it simultaneously, and use the non-threaded
+	runtime.</para>
+
+      <para>Our purpose here is not to dissuade you from using the
+	threaded runtime.  It is not much more expensive than the
+	non-threaded runtime: threads remain amazingly cheap compared
+	to most other programming languages.  We merely want to make
+	it clear that switching to the threaded runtime will not
+	necessarily result in an automatic win.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Parallel programming in Haskell</title>
+
+    <para>Foo.</para>
+  </sect1>
 <!--
 
     Basics:
