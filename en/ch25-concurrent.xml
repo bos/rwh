@@ -471,66 +471,79 @@
       between threads than other languages, it still suffers from the
       same fundamental problem: writing correct concurrent programs is
       fiendishly difficult.  Indeed, several pitfalls of concurrent
-      programming in other languages apply to Haskell.</para>
+      programming in other languages apply equally to Haskell.</para>
 
-    <para>The first of these is <emphasis>deadlock</emphasis>, in
-      which two or more threads get stuck forever due to a clash over
-      access to shared resources.  One classic way to make a
-      multithreaded program deadlock is to forget the order in which
-      we must acquire locks.  This kind of bug is so common, it has a
-      name: <emphasis>lock order inversion</emphasis>. While Haskell
-      doesn't provide locks, the <type>MVar</type> type is prone to
-      the order inversion problem. Here's a simple example.</para>
+    <sect2>
+      <title>Deadlock</title>
+      <para>A common problem with concurrent code is
+	<emphasis>deadlock</emphasis>, in which two or more threads
+	get stuck forever due to a clash over access to shared
+	resources. One classic way to make a multithreaded program
+	deadlock is to forget the order in which we must acquire
+	locks.  This kind of bug is so common, it has a name:
+	<emphasis>lock order inversion</emphasis>. While Haskell
+	doesn't provide locks, the <type>MVar</type> type is prone to
+	the order inversion problem. Here's a simple example.</para>
 
       &LockHierarchy.hs:nestedModification;
 
-    <para>If we run this in &ghci;, it will usually&emdash;but not
-      always&emdash;print nothing, indicating that both threads have
-      gotten stuck.</para>
+      <para>If we run this in &ghci;, it will usually&emdash;but not
+	always&emdash;print nothing, indicating that both threads have
+	gotten stuck.</para>
 
-    <para>The problem with the <function>nestedModification</function>
-      function is easy to spot.  In the first thread, we take the
-      <type>MVar</type> <varname>a</varname>, then
-      <varname>b</varname>.  In the second, we take
-      <varname>b</varname>, then <varname>a</varname>.  If the first
-      thread succeeds in taking <varname>a</varname> and the second
-      takes <varname>b</varname>, both threads will block: each tries
-      to take an <type>MVar</type> that the other has already emptied,
-      so neither can make progress.</para>
+      <para>The problem with the
+	<function>nestedModification</function> function is easy to
+	spot.  In the first thread, we take the <type>MVar</type>
+	<varname>a</varname>, then <varname>b</varname>.  In the
+	second, we take <varname>b</varname>, then
+	<varname>a</varname>.  If the first thread succeeds in taking
+	<varname>a</varname> and the second takes
+	<varname>b</varname>, both threads will block: each tries to
+	take an <type>MVar</type> that the other has already emptied,
+	so neither can make progress.</para>
 
-    <para>In real code, these kinds of inversion problems are much
-      more difficult to spot.  The taking of <type>MVar</type>s is
-      often spread across several functions in different files, making
-      visual inspection more tricky. Worse, these problems are often
-      <emphasis>intermittent</emphasis>, which makes them tricky to
-      even reproduce, never mind isolate and fix.</para>
+      <para>In real code, these kinds of inversion problems are much
+	more difficult to spot.  The taking of <type>MVar</type>s is
+	often spread across several functions in different files,
+	making visual inspection more tricky. Worse, these problems
+	are often <emphasis>intermittent</emphasis>, which makes them
+	tricky to even reproduce, never mind isolate and fix.</para>
+    </sect2>
 
-    <para>Concurrent software is also prone to
-      <emphasis>starvation</emphasis>, in which one thread
-      <quote>hogs</quote> a shared resource, preventing another from
-      using it.  It's easy to imagine how this might occur: one thread
-      calls <function>modifyMVar</function> with a body that executes
-      for 100 milliseconds, while another calls
-      <function>modifyMVar</function> on the same <type>MVar</type>
-      with a body that executes for 1 millisecond.  The second thread
-      cannot make progress until the first puts a value back into the
-      <type>MVar</type>.</para>
+    <sect2>
+      <title>Starvation</title>
 
-    <para>The non-strict nature of the <type>MVar</type> type can
-      either exacerbate or cause a starvation problem.  If we put a
-      thunk into an <type>MVar</type> that will be expensive to
-      evaluate, and take it out of the <type>MVar</type> in a thread
-      that otherwise looks like it <emphasis>ought</emphasis> to be
-      cheap, that thread could suddenly become computationally
-      expensive if it has to evaluate the thunk.  This makes the
-      advice we gave in <xref linkend="concurrent.useful.nonstrict"/>
-      particularly relevant.</para>
+      <para>Concurrent software is also prone to
+	<emphasis>starvation</emphasis>, in which one thread
+	<quote>hogs</quote> a shared resource, preventing another from
+	using it.  It's easy to imagine how this might occur: one
+	thread calls <function>modifyMVar</function> with a body that
+	executes for 100 milliseconds, while another calls
+	<function>modifyMVar</function> on the same <type>MVar</type>
+	with a body that executes for 1 millisecond.  The second
+	thread cannot make progress until the first puts a value back
+	into the <type>MVar</type>.</para>
 
-    <para>Fortunately, the APIs for concurrency that we have covered
-      here are by no means the end of the story.  A more recent
-      addition to Haskell, Software Transactional Memory, is both
-      easier and safer to work with.  We will discuss it in chapter
-      XXX.</para>
+      <para>The non-strict nature of the <type>MVar</type> type can
+	either exacerbate or cause a starvation problem.  If we put a
+	thunk into an <type>MVar</type> that will be expensive to
+	evaluate, and take it out of the <type>MVar</type> in a thread
+	that otherwise looks like it <emphasis>ought</emphasis> to be
+	cheap, that thread could suddenly become computationally
+	expensive if it has to evaluate the thunk.  This makes the
+	advice we gave in <xref linkend="concurrent.useful.nonstrict"/>
+	particularly relevant.</para>
+    </sect2>
+
+    <sect2>
+      <title>Is there any hope?</title>
+
+      <para>Fortunately, the APIs for concurrency that we have covered
+	here are by no means the end of the story.  A more recent
+	addition to Haskell, Software Transactional Memory, is both
+	easier and safer to work with.  We will discuss it in chapter
+	XXX.</para>
+    </sect2>
   </sect1>
 
   <sect1>
