@@ -515,7 +515,7 @@
 	<type>MVar</type>s is often spread across several functions in
 	different files, making visual inspection more tricky. Worse,
 	these problems are often <emphasis>intermittent</emphasis>,
-	which makes them tricky to even reproduce, never mind isolate
+	which makes them tough to even reproduce, never mind isolate
 	and fix.</para>
     </sect2>
 
@@ -720,7 +720,266 @@ number of cores: 4</screen>
   <sect1>
     <title>Parallel programming in Haskell</title>
 
-    <para>Foo.</para>
+    <para>We will now switch our focus to parallel programming. For
+      many computationally expensive problems, we could calculate a
+      result more quickly if we could divide up the solution, and
+      evaluate it on many cores at once. Computers with multiple cores
+      are already ubiquitous, but few programs can take advantage of
+      the computing power of even a modern laptop.</para>
+
+    <para>In large part, this is because parallel programming is
+      traditionally seen as very difficult.  In a typical programming
+      language, we would use the same libraries and constructs that we
+      apply to concurrent programs to develop a parallel program. This
+      forces us to contend with the familiar problems of deadlocks,
+      race conditions, starvation, and sheer complexity.</para>
+
+    <para>While we could certainly use Haskell's concurrency features
+      to develop parallel code, there is a much simpler approach
+      available to us.  We can take a normal Haskell function, apply a
+      few simple transformations to it, and have it evaluated in
+      parallel.</para>
+
+    <sect2>
+      <title>Sequential sorting</title>
+
+      <para>Here is a normal Haskell function that sorts a list using
+	a divide-and-conquer approach.</para>
+
+    &Sorting.hs:sort;
+
+      <para>This function is inspired by the well-known Quicksort
+	algorithm, and it is a classic among Haskell programmers: it
+	is often presented as a one-liner early in a Haskell tutorial,
+	to tease the reader with an example of Haskell's
+	expressiveness. Here, we've split the code over a few lines,
+	to make it easier to compare the serial and parallel
+	versions.</para>
+
+      <para>Here is a very brief description of how
+	<function>sort</function> operates.</para>
+
+      <orderedlist>
+	<listitem>
+	  <para>It chooses an element from the list.  This is called
+	    the <emphasis>pivot</emphasis>.  Any element would do as
+	    the pivot; the first is merely the easiest to pattern
+	    match on.</para>
+	</listitem>
+	<listitem>
+	  <para>It creates a sublist of all elements less than the
+	    pivot, and recursively sorts them.</para>
+	</listitem>
+	<listitem>
+	  <para>It creates a sublist of all elements greater than or
+	    equal to the pivot, and recursively sorts them.</para>
+	</listitem>
+	<listitem>
+	  <para>It appends the two sorted sublists.</para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+
+    <sect2>
+      <title>Transforming our code into parallel code</title>
+
+      <para>The parallel version of the function is only a little more
+	complicated than the initial version.</para>
+
+      &Sorting.hs:parSort;
+
+      <para>We have barely perturbed the code: all we have added are
+	two functions, <function>par</function> and
+	<function>force</function>.</para>
+
+      <para>The <function>par</function> function is provided by the
+	<code>Control.Parallel</code> module.  It serves a similar
+	purpose to <function>seq</function>: it evaluates its left
+	argument to weak head normal form (WHNF), and returns its
+	right. As its name suggests, it can evaluate its left argument
+	in parallel with whatever other evaluations are
+	occurring.</para>
+
+      <para>When we chain the uses of <function>par</function>
+	together as above, we are effectively saying <quote>evaluate
+	  the first two expressions in parallel with the
+	  third</quote>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Knowing what to evaluate in parallel</title>
+
+      <para>The key to getting decent performance out of parallel
+	Haskell code is to do meaningful work in parallel.  Non-strict
+	evaluation can get in the way of this, which is why we use the
+	<function>force</function> function in our parallel sort.  To
+	best explain what the <function>force</function> function is
+	for, we will first look at a mistaken example.</para>
+
+      &Sorting.hs:badSort;
+
+      <para>We direct your attention to the small changes to each use
+	of <function>par</function>.  Instead of <code>force
+	  lesser</code> and <code>force greater</code>, in this
+	example we evaluate <code>lesser</code> and
+	<code>greater</code>.</para>
+
+      <para>Remember that evaluation to WHNF only computes enough of
+	an expression to see its <emphasis>outermost</emphasis>
+	constructor.  In this mistaken example, we evaluate each
+	sorted sublist to WHNF.  Since the outermost
+	constructor in each case is just a single list constructor, we
+	are in fact only forcing the evaluation of the first element
+	of each sorted sublist!  Every other element of each list
+	remains unevaluated.  In other words, we do almost no useful
+	work in parallel: our <function>uselessSort</function> is
+	nearly completely sequential.</para>
+
+      <para>We avoid this in our <function>force</function> function
+	by forcing the entire spine of a list to be evaluated before
+	we give back a constructor.</para>
+
+      &Sorting.hs:force;
+
+      <para>Notice that we don't care what's in the list; we just hand
+	each element off to <function>seq</function>.  There is
+	clearly no magic involved here: we are just using our usual
+	understanding of Haskell's evaluation model.</para>
+    </sect2>
+
+    <sect2>
+      <title>What promises does par make?</title>
+
+      <para>The <function>par</function> function does not actually
+	promise to evaluate an expression in parallel with another.
+	Instead, it will do so if it <quote>makes sense</quote>.  This
+	wishy-washy non-promise is actually more useful than a
+	guarantee to always evaluate an expression in parallel.  It
+	gives the runtime system the freedom to do something
+	intelligent when it encounters a use of
+	<function>par</function>.</para>
+
+      <para>For instance, the runtime could decide that an expression
+	is too cheap to be worth evaluating in parallel.  Or it might
+	notice that all cores are currently busy, so that
+	<quote>sparking</quote> a new parallel evaluation will lead to
+	there being more runnable threads than there are cores to
+	execute them.</para>
+
+      <para>This in turn affects how we write parallel code.  Since
+	<function>par</function> is going to be somewhat intelligent
+	at runtime, we can use it almost wherever we like, in the
+	knowledge that the system will not become overloaded with
+	threads contending for busy cores.</para>
+    </sect2>
+
+    <sect2>
+      <title>Running our code, and measuring performance</title>
+
+      <para>To try our code out, let's save <function>sort</function>,
+	<function>parSort</function>, and
+	<function>parSort2</function> to a module named
+	<filename>Sorting.hs</filename>.  We create a small driver
+	program that we can use to time the performance of one of
+	those sorting function.</para>
+
+      &SortMain.hs:main;
+
+      <para>Our program accepts a single command line argument, the
+	length of the random list to generate.  When we compile the
+	program, we enable optimization and the threaded
+	runtime.</para>
+
+      <screen><prompt>$</prompt> <userinput>ghc -o Sorting -O2 --make Sorting</userinput>
+[1 of 2] Compiling Sorting          ( Sorting.hs, Sorting.o )
+[2 of 2] Compiling Main             ( SortMain.hs, SortMain.o )
+Linking SortMain ...
+</screen>
+
+      <para>Once we have the program built, non-strict evaluation can
+	turn performance measurement and analysis into something of a
+	minefield.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>Haskell's default pseudorandom number generator (PRNG)
+	    is slow.  Before we record our starting time, we print the
+	    length of the list: this ensures that we create all of the
+	    random numbers that we will need in advance. We thus avoid
+	    accidentally, and invisibly, adding the cost of the PRNG
+	    to our performance measurements.</para>
+	</listitem>
+	<listitem>
+	  <para>To force the entire sort to occur, we print the length
+	    of the result list before we record the ending time.
+	    Without <function>putStrLn</function> demanding the length
+	    of the list in order to print it, the sort would not occur
+	    at all.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>These are the most common problems with measuring the
+	performance of a Haskell program: measuring several things
+	when we think we are looking at just one, and creating a thunk
+	when we believe that we are measuring some meaningful
+	work.</para>
+    </sect2>
+
+    <sect2>
+      <title>Tuning for performance</title>
+
+      <para>We rely on the cheapness and good behavior of
+	<function>par</function> in our <function>parSort</function>
+	function: it performs twice as many applications of
+	<function>par</function> as there are elements to sort.</para>
+
+      <para>Nevertheless, while <function>par</function> is
+	<emphasis>cheap</emphasis>, it is not
+	<emphasis>free</emphasis>.  When we recurse deep into an
+	application of <function>parSort</function>, we are faced with
+	tiny lists, for which the cost of using
+	<function>par</function> outweighs its benefits.  To reduce
+	this effect, we can switch to our non-parallel
+	<function>sort</function> for short lists.</para>
+
+      &Sorting.hs:parSort2;
+      
+      <para>Instead of using <function>length</function>, we gain some
+	efficiency with a function that stops counting once it decides
+	that a list is long enough.  This allows us to only examine a
+	small portion of what could be a long list.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>It can be difficult to determine when to switch from
+	      <function>parSort2</function> to
+	      <function>sort</function>.  An alternative approach to
+	      the one we outline above would be to decide based on the
+	      depth of recursion.  Rewrite
+	      <function>parList2</function> so that it computes the
+	      square root of the length of its inital list, and
+	      switches to <function>sort</function> if its recursion
+	      depth reaches this number.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Measure the performance of the length-based
+	      approach, and compare with the square root approach. Try
+	      replacing the square root of the list's length with the
+	      logarithm of its length.  Which switchover points gives
+	      the best performance for a list of random
+	      integers?</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 <!--
 
