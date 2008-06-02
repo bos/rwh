@@ -1,7 +1,18 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, FlexibleInstances #-}
 
-module SlopeTwo where
+module SlopeTwo
+    (
+      SlopeOne
+    , Count
+    , RatingValue
+    , Rating
+    , empty
+    , size
+    , update
+    , predict
+    ) where
 
+import Control.Parallel.Strategies
 import qualified Data.Map as M
 
 type Count = Int
@@ -15,22 +26,40 @@ type Rating item = M.Map item RatingValue
 -- 'predict' functions do not need the inner type to actually be a
 -- map, so the list saves space and complexity.
 newtype SlopeOne item = SlopeOne (M.Map item [Tup item])
-  deriving (Show)
+  deriving (Eq, Show)
  
 -- Strict triple tuple type for SlopeOne internals
 data Tup item = Tup {
       itemT :: !item
     , countT :: !Count
     , ratingT :: !RatingValue
-    } deriving (Show)
+    } deriving (Eq, Show)
  
 empty :: SlopeOne item
 empty = SlopeOne M.empty
  
-update :: Ord item => SlopeOne item -> [Rating item] -> SlopeOne item
+size :: SlopeOne item -> Int
+size (SlopeOne m) = M.size m
+
+chunksOf :: Int -> [a] -> [[a]]
+chunksOf _ [] = []
+chunksOf n xs = let (y,ys) = splitAt n xs
+                in y:chunksOf n ys
+
+instance NFData (Tup item)
+
+newtype Fap k a = Fap {unfap :: M.Map k a}
+
+instance NFData (Fap k a) where
+    rnf (Fap m) = rnf (M.size m)
+
+unionsWith :: (Ord k, NFData k, NFData a) => (a->a->a) -> [M.Map k a] -> M.Map k a
+unionsWith f = M.unionsWith f . parMap (rnf . Fap) (M.unionsWith f) . chunksOf 100
+
+update :: (NFData item, Ord item) => SlopeOne item -> [Rating item] -> SlopeOne item
 update s@(SlopeOne matrixIn) usersRatingsIn | null usersRatings = s
                                             | otherwise =
-    SlopeOne . M.unionsWith mergeAdd . (matrixIn:) . map fromRating $ usersRatings
+    SlopeOne . unionsWith mergeAdd . (matrixIn:) . map fromRating $ usersRatings
   where usersRatings = filter ((1<) . M.size) usersRatingsIn
         -- fromRating converts a Rating into a Map of Lists, a singleton SlopeOne.
         fromRating userRatings = M.mapWithKey expand userRatings
