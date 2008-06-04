@@ -469,7 +469,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="monadtrans.maybet">
     <title>Understanding monad transformers by building one</title>
 
     <para id="x_Qu">To give ourselves some insight into how monad transformers

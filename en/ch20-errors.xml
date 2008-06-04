@@ -4,8 +4,7 @@
   <title>Error handling</title>
 
   <para id="x_xy">
-    Error handling is one of the most important -- and overlooked --
-    topics for programmers, regardless of the language used.  In
+    Error handling is one of the most important&emdash;and overlooked&emdash;topics for programmers, regardless of the language used.  In
     Haskell, you will find two major types of error handling employed:
     "pure" error handling and exceptions.
   </para>
@@ -55,7 +54,7 @@
     <para id="x_Dz">
       Isn't that interesting?  &ghci; started displaying the output,
       then stopped when an exception when it got to the zero.  That's
-      lazy evaluation at work -- it calculated results as needed.
+      lazy evaluation at work&emdash;it calculated results as needed.
     </para>
     <para id="x_Ez">
       As we will see later in this chapter, in the absence of an
@@ -153,7 +152,7 @@
           <literal>a -> [a] -> [Maybe a]</literal>.  This will have
           the benefit of preserving laziness, plus the caller will be
           able to determine exactly where in the list the problem was
-          -- or even just filter out the problem results if desired.
+         &emdash;or even just filter out the problem results if desired.
           Here's an implementation:
         </para>
         &divby3.hs:all;
@@ -320,8 +319,6 @@
     </sect2>
   </sect1>
 
-  <!-- FIXME: ErrorT discussion -->
-
   <sect1 id="errors.exceptions">
     <title>Exceptions</title>
     <para id="x_U11">
@@ -338,13 +335,13 @@
       the need to use exceptions and exception handling.  
     </para>
     <para id="x_V11">
-      Some problems -- especially those involving I/O -- call for
+      Some problems&emdash;especially those involving I/O&emdash;call for
       working with exceptions.  In Haskell, exceptions may be raised
       from any location in the program.  However, due to lazy
       evaluation, they can only be caught in the &IO; monad.  Haskell
       exception handling doesn't involve special syntax as it does in
       Python or Java.  Rather, the mechanisms to catch and handle
-      exceptions are -- surprise -- functions.
+      exceptions are&emdash;surprise&emdash;functions.
     </para>
     <sect2 id="errors.exceptions.firststeps">
       <title>First Steps with Exceptions</title>
@@ -511,7 +508,7 @@
         Haskell, an I/O exception is just like any other exception in
         that can be represented by the &Exception; data type.  On the
         other hand, because there are so many types of I/O exceptions,
-        a special module -- <literal>System.IO.Error</literal> exists
+        a special module&emdash;<literal>System.IO.Error</literal> exists
         for dealing with them.
       </para>
       <para id="x_n11">
@@ -526,6 +523,7 @@
         <literal>IOException</literal>.
       </para>
       <warning>
+	<title>Be careful which names you use</title>
         <para id="x_o11">
           Because both <literal>System.IO.Error</literal> and
           <literal>Control.Exception</literal> define functions with
@@ -533,9 +531,17 @@
           get an error message about an ambiguous reference to a
           function.  You can import one or the other module
           <literal>qualified</literal>, or hide the symbols from one
-          module or the other.  Also, note that
-          <literal>Prelude</literal> defines the
-          <literal>System.IO.Error</literal> version of &catch;.
+          module or the other.</para>
+
+	<para>Note that <literal>Prelude</literal> exports
+          <literal>System.IO.Error</literal>'s version of &catch;,
+          <emphasis>not</emphasis> the version provided by
+          <code>Control.Exception</code>.  Remember that the former
+          can only catch I/O errors, while the latter can catch all
+          exceptions.  In other words, the &catch; in
+          <code>Control.Exception</code> is almost always the one you
+          will want, but it is <emphasis>not</emphasis> the one you
+          will get by default.
         </para>
       </warning>
       <para id="x_p11">
@@ -596,7 +602,7 @@
         companion function &throwIO; with type <literal>Exception
         -&gt; IO a</literal> that raises an exception in tne &IO;
         monad.  Both of these functions require you to craft an
-        &Exception; by hand -- or to have already have one on hand to
+        &Exception; by hand&emdash;or to have already have one on hand to
         raise, perhaps from a handler called by &handle;.
       </para>
       <para id="x_v11">

@@ -21,7 +21,7 @@
 <!ENTITY GHC "<application>GHC</application>">
 <!ENTITY Handle "<literal>Handle</literal>">
 <!ENTITY IConnection "<literal>IConnection</literal>">
-<!ENTITY IO "<literal>IO</literal>">
+<!ENTITY IO "<type>IO</type>">
 <!ENTITY IOError "<literal>IOError</literal>">
 <!ENTITY IOMode "<literal>IOMode</literal>">
 <!ENTITY Int "<literal>Int</literal>">
