@@ -794,6 +794,13 @@ error = throw . ErrorCall
       it is used to provide an <function>mzero</function>
       implementation for the <type>MonadPlus</type> typeclass.</para>
 
+    <para>To support the <function>strMsg</function> and
+      <function>noMsg</function> functions, our
+      <type>ParseError</type> type has a <code>Chatty</code>
+      constructor. This will be used as the constructor if, for
+      example, someone calls <function>fail</function> in our
+      monad.</para>
+
     <para>One last piece of plumbing that we need to know about is the
       type of the execution function <type>runErrorT</type>.</para>
 
