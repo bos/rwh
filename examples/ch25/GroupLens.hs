@@ -26,5 +26,5 @@ main = do
   let rating = {-# SCC "rating" #-} groupBy compareUser . map readRating . B.lines $ contents
       compareUser (a,_,_) (b,_,_) = a == b
       asRating (_,b,c) = (b, fromIntegral c)
-      foo = S.update S.empty . parMap (rnf . Fap) ( {-# SCC "fl" #-} M.fromList . map asRating) $ rating
+      foo = S.update S.empty . parMap rwhnf ( {-# SCC "fl" #-} M.fromList . map asRating) $ rating
   print (S.size foo)

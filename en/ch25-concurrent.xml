@@ -804,17 +804,41 @@ number of cores: 4</screen>
 	together as above, we are effectively saying <quote>evaluate
 	  the first two expressions in parallel with the
 	  third</quote>.</para>
+
+      <para>These changes to our code are remarkable for all the
+	things we have <emphasis>not</emphasis> needed to say.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>How many cores to use.</para>
+	</listitem>
+	<listitem>
+	  <para>What threads do to communicate with each other.</para>
+	</listitem>
+	<listitem>
+	  <para>How to divide up work among the available cores.</para>
+	</listitem>
+	<listitem>
+	  <para>Which data are shared between threads, and which are
+	    private.</para>
+	</listitem>
+	<listitem>
+	  <para>How to determine when all the participants are
+	    finished.</para>
+	</listitem>
+      </itemizedlist>
     </sect2>
 
     <sect2>
       <title>Knowing what to evaluate in parallel</title>
 
       <para>The key to getting decent performance out of parallel
-	Haskell code is to do meaningful work in parallel.  Non-strict
-	evaluation can get in the way of this, which is why we use the
-	<function>force</function> function in our parallel sort.  To
-	best explain what the <function>force</function> function is
-	for, we will first look at a mistaken example.</para>
+	Haskell code is to find meaningful chunks of work to perform
+	in parallel.  Non-strict evaluation can get in the way of
+	this, which is why we use the <function>force</function>
+	function in our parallel sort.  To best explain what the
+	<function>force</function> function is for, we will first look
+	at a mistaken example.</para>
 
       &Sorting.hs:badSort;
 
@@ -885,44 +909,61 @@ number of cores: 4</screen>
 
       &SortMain.hs:main;
 
-      <para>Our program accepts a single command line argument, the
-	length of the random list to generate.  When we compile the
-	program, we enable optimization and the threaded
+      <para>Our program accepts a single optional command line
+	argument, the length of the random list to generate.  When we
+	build the program, we enable optimization and &GHC;'s threaded
 	runtime.</para>
 
-      <screen><prompt>$</prompt> <userinput>ghc -o Sorting -O2 --make Sorting</userinput>
+      <screen><prompt>$</prompt> <userinput>ghc -o Sorting -O2 --make SortMain</userinput>
 [1 of 2] Compiling Sorting          ( Sorting.hs, Sorting.o )
 [2 of 2] Compiling Main             ( SortMain.hs, SortMain.o )
 Linking SortMain ...
 </screen>
 
-      <para>Once we have the program built, non-strict evaluation can
-	turn performance measurement and analysis into something of a
-	minefield.</para>
+      <para>When we want to run the program, we must tell &GHC;'s
+	runtime how many cores to use.</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N2 -RTS 100000</userinput>
+We have 100000 elements to sort.
+Sorted all 100000 elements.
+0.716134s elapsed.
+<prompt>$</prompt> <userinput>./Sorting +RTS -N8 -RTS 100000</userinput>
+We have 100000 elements to sort.
+Sorted all 100000 elements.
+0.272436s elapsed.
+</screen>
+
+      <para>Non-strict evaluation can turn performance measurement and
+	analysis into something of a minefield.  Here are some
+	potential problems that we specifically work to avoid in our
+	driver program.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para>Haskell's default pseudorandom number generator (PRNG)
-	    is slow.  Before we record our starting time, we print the
-	    length of the list: this ensures that we create all of the
-	    random numbers that we will need in advance. We thus avoid
-	    accidentally, and invisibly, adding the cost of the PRNG
-	    to our performance measurements.</para>
+	  <para><emphasis>Measuring several things, when we think we
+	      are looking at just one.</emphasis>  Haskell's default
+	    pseudorandom number generator (PRNG) is slow, and the
+	    <function>randoms</function> function generates random
+	    numbers on demand.</para>
+
+	  <para>Before we record our starting time, we print the
+	    length of the input list: this ensures that we create all
+	    of the random numbers that we will need in advance. If we
+	    were to omit this step, we could accidentally, and
+	    invisibly, add the overhead of the PRNG to the numbers we
+	    measure.</para>
 	</listitem>
+
 	<listitem>
-	  <para>To force the entire sort to occur, we print the length
-	    of the result list before we record the ending time.
-	    Without <function>putStrLn</function> demanding the length
-	    of the list in order to print it, the sort would not occur
-	    at all.</para>
+	  <para><emphasis>Benchmarking a thunk, when we believe that
+	      the code is performing meaningful work.</emphasis>  To
+	    force the sort to take place, we print the length of the
+	    result list before we record the ending time. Without
+	    <function>putStrLn</function> demanding the length of the
+	    list in order to print it, the sort would not occur at
+	    all.</para>
 	</listitem>
       </itemizedlist>
-
-      <para>These are the most common problems with measuring the
-	performance of a Haskell program: measuring several things
-	when we think we are looking at just one, and creating a thunk
-	when we believe that we are measuring some meaningful
-	work.</para>
     </sect2>
 
     <sect2>

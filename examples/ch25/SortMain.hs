@@ -9,17 +9,17 @@ import System.Random (getStdGen, randoms)
 
 import Sorting
 
-testFunction = parSort2   -- substitute parSort or sort here
+testFunction = parSort2 1   -- substitute parSort or sort here
 
 main = do
   args <- getArgs
-  let count | null args = 100000
+  let count | null args = 8192
             | otherwise = read (head args)
   input :: [Int] <- (take count . randoms) `fmap` getStdGen
-  putStrLn $ "we have " ++ show (length input) ++ " elements to sort"
+  putStrLn $ "We have " ++ show (length input) ++ " elements to sort."
   start <- getCurrentTime
   let sorted = testFunction input
-  putStrLn $ "sorted all " ++ show (length sorted) ++ " elements"
+  putStrLn $ "Sorted all " ++ show (length sorted) ++ " elements."
   end <- getCurrentTime
-  putStrLn $ show (end `diffUTCTime` start) ++ " seconds elapsed"
+  putStrLn $ show (end `diffUTCTime` start) ++ " elapsed."
 {-- /snippet main --}

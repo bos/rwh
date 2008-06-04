@@ -1,7 +1,7 @@
 module Sorting where
 
 {-- snippet parSort --}
-import Control.Parallel (par)
+import Control.Parallel (par, pseq)
 
 parSort :: (Ord a) => [a] -> [a]
 
@@ -31,19 +31,20 @@ sort _ = []
 
 {-- snippet force --}
 force :: [a] -> ()
-force (x:xs) = x `seq` force xs
+force (x:xs) = x `pseq` force xs
 force _ = ()
 {-- /snippet force --}
 
 {-- snippet parSort2 --}
-parSort2 :: (Ord a) => [a] -> [a]
-parSort2 list@(x:xs)
-  | lengthAtLeast 32 xs = force lesser `par` force greater `par`
-                          lesser ++ x:greater
-  | otherwise           = sort list
-      where lesser      = parSort2 [y | y <- xs, y <  x]
-            greater     = parSort2 [y | y <- xs, y >= x]
-parSort2 _              = []
+parSort2 :: (Ord a) => Int -> [a] -> [a]
+parSort2 d list@(x:xs)
+  | d <= 0     = sort list
+  | otherwise = force lesser `par` force greater `par`
+                lesser ++ x:greater
+      where lesser      = parSort2 d' [y | y <- xs, y <  x]
+            greater     = parSort2 d' [y | y <- xs, y >= x]
+            d' = d - 1
+parSort2 _ _              = []
 
 lengthAtLeast :: Int -> [t] -> Bool
 lengthAtLeast k = go 0

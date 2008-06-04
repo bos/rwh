@@ -14,6 +14,8 @@ module SlopeTwo
 
 import Control.Parallel.Strategies
 import qualified Data.Map as M
+import Debug.Trace
+
 
 type Count = Int
 type RatingValue = Double
@@ -48,18 +50,14 @@ chunksOf n xs = let (y,ys) = splitAt n xs
 
 instance NFData (Tup item)
 
-newtype Fap k a = Fap {unfap :: M.Map k a}
-
-instance NFData (Fap k a) where
-    rnf (Fap m) = rnf (M.size m)
-
 unionsWith :: (Ord k, NFData k, NFData a) => (a->a->a) -> [M.Map k a] -> M.Map k a
-unionsWith f = M.unionsWith f . parMap (rnf . Fap) (M.unionsWith f) . chunksOf 100
+unionsWith f ms = M.unionsWith f . parMap rwhnf (M.unionsWith f) $
+                  trace ("l " ++ show (length ms)) $ chunksOf 100 ms
 
 update :: (NFData item, Ord item) => SlopeOne item -> [Rating item] -> SlopeOne item
 update s@(SlopeOne matrixIn) usersRatingsIn | null usersRatings = s
                                             | otherwise =
-    SlopeOne . unionsWith mergeAdd . (matrixIn:) . map fromRating $ usersRatings
+    SlopeOne . unionsWith mergeAdd . (matrixIn:) . parMap rwhnf fromRating $ usersRatings
   where usersRatings = filter ((1<) . M.size) usersRatingsIn
         -- fromRating converts a Rating into a Map of Lists, a singleton SlopeOne.
         fromRating userRatings = M.mapWithKey expand userRatings
