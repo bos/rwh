@@ -1100,6 +1100,16 @@ Sorted all 700000 elements.
 	parallel garbage collector is under development for &GHC;,
 	which should help considerably with the performance of
 	allocation-heavy code on multicore systems.</para>
+
+      <warning>
+	<title>Beware a GC bug in GHC 6.8.2</title>
+
+	<para>The garbage collector in release 6.8.2 of &GHC; has a
+	  bug that can cause programs using <function>par</function>
+	  to crash.  If you want to use <function>par</function> and
+	  you are using 6.8.2, we suggest upgrading to a newer
+	  release.</para>
+      </warning>
     </sect2>
 
     <sect2>
