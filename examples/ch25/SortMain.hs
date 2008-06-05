@@ -11,7 +11,7 @@ import Sorting
 -- testFunction = sort
 -- testFunction = seqSort
 -- testFunction = parSort
-testFunction = parSort2 4
+testFunction = parSort2 2
 
 randomInts :: Int -> StdGen -> [Int]
 randomInts k g = let result = take k (randoms g)

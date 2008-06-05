@@ -14,7 +14,7 @@ parSort _         = []
 
 {-- snippet badSort --}
 sillySort (x:xs) = lesser `par` greater `par`
-                   lesser ++ x:greater
+                   (lesser ++ x:greater)
     where lesser   = sillySort [y | y <- xs, y <  x]
           greater  = sillySort [y | y <- xs, y >= x]
 sillySort _        = []
@@ -32,7 +32,8 @@ sort _ = []
 {-- snippet seqSort --}
 seqSort :: (Ord a) => [a] -> [a]
 
-seqSort (x:xs) = greater `pseq` (lesser ++ x:greater)
+seqSort (x:xs) = lesser `pseq` (greater `pseq`
+                                (lesser ++ x:greater))
     where lesser  = seqSort [y | y <- xs, y <  x]
           greater = seqSort [y | y <- xs, y >= x]
 seqSort _ = []
@@ -48,7 +49,8 @@ force _ = ()
 parSort2 :: (Ord a) => Int -> [a] -> [a]
 parSort2 d list@(x:xs)
   | d <= 0     = sort list
-  | otherwise = force greater `par` (lesser ++ x:greater)
+  | otherwise = force greater `par` (force lesser `pseq`
+                                     (lesser ++ x:greater))
       where lesser      = parSort2 d' [y | y <- xs, y <  x]
             greater     = parSort2 d' [y | y <- xs, y >= x]
             d' = d - 1

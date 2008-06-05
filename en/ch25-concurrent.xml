@@ -909,29 +909,12 @@ number of cores: 4</screen>
 
       &SortMain.hs:main;
 
+      <para>For simplicity, we choose the sorting function to
+	benchmark at compilation time, via the
+	<varname>testFunction</varname> variable.</para>
+
       <para>Our program accepts a single optional command line
-	argument, the length of the random list to generate.  When we
-	build the program, we enable optimization and &GHC;'s threaded
-	runtime.</para>
-
-      <screen><prompt>$</prompt> <userinput>ghc -o Sorting -O2 --make SortMain</userinput>
-[1 of 2] Compiling Sorting          ( Sorting.hs, Sorting.o )
-[2 of 2] Compiling Main             ( SortMain.hs, SortMain.o )
-Linking SortMain ...
-</screen>
-
-      <para>When we want to run the program, we must tell &GHC;'s
-	runtime how many cores to use.</para>
-
-      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N2 -RTS 100000</userinput>
-We have 100000 elements to sort.
-Sorted all 100000 elements.
-0.716134s elapsed.
-<prompt>$</prompt> <userinput>./Sorting +RTS -N8 -RTS 100000</userinput>
-We have 100000 elements to sort.
-Sorted all 100000 elements.
-0.272436s elapsed.
-</screen>
+	argument, the length of the random list to generate.</para>
 
       <para>Non-strict evaluation can turn performance measurement and
 	analysis into something of a minefield.  Here are some
@@ -946,12 +929,42 @@ Sorted all 100000 elements.
 	    <function>randoms</function> function generates random
 	    numbers on demand.</para>
 
-	  <para>Before we record our starting time, we print the
-	    length of the input list: this ensures that we create all
-	    of the random numbers that we will need in advance. If we
-	    were to omit this step, we could accidentally, and
-	    invisibly, add the overhead of the PRNG to the numbers we
-	    measure.</para>
+	  <para>Before we record our starting time, we force every
+	    element of the input list to be evaluated, and we print
+	    the length of the list: this ensures that we create all of
+	    the random numbers that we will need in advance.</para>
+
+	  <para>If we were to omit this step, we would interleave the
+	    generation of random numbers with attempts to work with
+	    them in parallel.  We would thus be measuring both the
+	    cost of sorting the numbers and, less obviously, the cost
+	    of generating them.</para>
+	</listitem>
+
+	<listitem>
+	  <para><emphasis>Invisible data dependencies.</emphasis> When
+	    we generate the list of random numbers, simply printing
+	    the length of the list would not perform enough
+	    evaluation. This woul evaluate the
+	    <emphasis>spine</emphasis> of the list, but not its
+	    elements.  The actual random numbers would not be
+	    evaluated until the sort compares them.</para>
+
+	  <para>This can have serious consequences for performance.
+	    The value of a random number depends on the value of the
+	    preceding random number in the list, but we have scattered
+	    the list elements randomly among our processor cores.  If
+	    we did not evaluate the list elements prior to sorting, we
+	    would suffer a terrible <quote>ping pong</quote> effect:
+	    not only would evaluation bounce from one core to another,
+	    performance would suffer.</para>
+
+	  <para>Try snipping out the application of
+	    <function>force</function> from the body of
+	    <function>main</function>above: you should find that the
+	    parallel code can easily end up three times
+	    <emphasis>slower</emphasis> than the non-parallel
+	    code.</para>
 	</listitem>
 
 	<listitem>
@@ -964,31 +977,129 @@ Sorted all 100000 elements.
 	    all.</para>
 	</listitem>
       </itemizedlist>
+
+      <para>When we build the program, we enable optimization and
+	&GHC;'s threaded runtime.</para>
+
+      <screen><prompt>$</prompt> <userinput>ghc -threaded -O2 --make SortMain</userinput>
+[1 of 2] Compiling Sorting          ( Sorting.hs, Sorting.o )
+[2 of 2] Compiling Main             ( SortMain.hs, SortMain.o )
+Linking SortMain ...
+</screen>
+
+      <para>When we run the program, we must tell &GHC;'s
+	runtime how many cores to use.  Initially, we try the original
+	<function>sort</function>, to establish a performance
+	baseline.</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N1 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+3.178941s elapsed.
+</screen>
+
+      <para>Enabling a second core ought to have no effect on
+	performance.</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N2 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+3.259869s elapsed.
+</screen>
+
+      <para>If we recompile and test the performance of
+	<function>parSort</function>, the results are less than
+	stellar.</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N1 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+3.915818s elapsed.
+<prompt>$</prompt> <userinput>./Sorting +RTS -N2 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+4.029781s elapsed.
+</screen>
+
+      <para>We have gained nothing in performance.  It seems that this
+	could be due to one of two factors: either
+	<function>par</function> is intrinsically expensive, or we are
+	using it too much. To help us to distinguish between the two
+	possibilities, here is a sort is identical to
+	<function>parSort</function>, but it uses
+	<function>pseq</function> instead of <function>par</function>.</para>
+      
+      &Sorting.hs:seqSort;
+
+      <para>We also drop the use of <function>force</function>, so
+	compared to our original <function>sort</function>, we should
+	only be measuring the cost of using <function>pseq</function>.
+	What effect does <function>pseq</function> alone have on
+	performance?</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N1 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+3.848295s elapsed.
+</screen>
+
+      <para>This suggests that <function>par</function> and
+	<function>pseq</function> have similar costs.  What can we do
+	to improve performance?</para>
     </sect2>
 
     <sect2>
       <title>Tuning for performance</title>
 
-      <para>We rely on the cheapness and good behavior of
-	<function>par</function> in our <function>parSort</function>
-	function: it performs twice as many applications of
-	<function>par</function> as there are elements to sort.</para>
-
-      <para>Nevertheless, while <function>par</function> is
-	<emphasis>cheap</emphasis>, it is not
-	<emphasis>free</emphasis>.  When we recurse deep into an
-	application of <function>parSort</function>, we are faced with
-	tiny lists, for which the cost of using
-	<function>par</function> outweighs its benefits.  To reduce
-	this effect, we can switch to our non-parallel
-	<function>sort</function> for short lists.</para>
+      <para>In our <function>parSort</function>, we perform twice as
+	many applications of <function>par</function> as there are
+	elements to sort. While <function>par</function> is
+	<emphasis>cheap</emphasis>, as we have seen, it is not
+	<emphasis>free</emphasis>.  When we recursively apply
+	<function>parSort</function>, we eventually apply
+	<function>par</function> to individual list elements.  At this
+	fine granularity, the cost of using <function>par</function>
+	outweighs any possible usefulness.  To reduce this effect, we
+	switch to our non-parallel <function>sort</function> after
+	passing some threshold.</para>
 
       &Sorting.hs:parSort2;
       
-      <para>Instead of using <function>length</function>, we gain some
-	efficiency with a function that stops counting once it decides
-	that a list is long enough.  This allows us to only examine a
-	small portion of what could be a long list.</para>
+      <para>Here, we stop recursing and sparking new parallel
+	evaluations at a controllable depth.  If we knew the size of
+	the data we were dealing with, we could stop subdividing and
+	switch to the non-parallel code once we reached a sufficiently
+	small amount of remaining work.</para>
+
+      <screen><prompt>$</prompt> <userinput>./Sorting +RTS -N2 -RTS 700000</userinput>
+We have 700000 elements to sort.
+Sorted all 700000 elements.
+2.947872s elapsed.
+</screen>
+
+      <para>On a dual core system, this gives us roughly a 25%
+	speedup.  This is not a huge number, but consider the number
+	of changes we had to make in return for this performance
+	improvement: just a few annotations.</para>
+
+      <para>This sorting function is particularly resistant to good
+	parallel performance.  The amount of memory allocation it
+	performs forces the garbage collector to run frequently.  We
+	can see the effect by running our program with the
+	<option>-sstderr</option> RTS option, which prints garbage
+	collection statistics to the screen.  This indicates that our
+	program spends roughly 40% of its time collecting garbage.
+	Since the garbage collector in &GHC; 6.8 stops all threads and
+	runs on a single core, it acts as a bottleneck.</para>
+
+      <para>You can expect more impressive performance improvements
+	from less allocation-heavy code when you use
+	<function>par</function> annotations.  We have seen some
+	simple numerical benchmarks run 1.8 times faster on a dual
+	core system than with a single core.  As we write this book, a
+	parallel garbage collector is under development for &GHC;,
+	which should help considerably with the performance of
+	allocation-heavy code on multicore systems.</para>
     </sect2>
 
     <sect2>
@@ -1001,22 +1112,18 @@ Sorted all 100000 elements.
 	      <function>parSort2</function> to
 	      <function>sort</function>.  An alternative approach to
 	      the one we outline above would be to decide based on the
-	      depth of recursion.  Rewrite
-	      <function>parList2</function> so that it computes the
-	      square root of the length of its inital list, and
-	      switches to <function>sort</function> if its recursion
-	      depth reaches this number.</para>
+	      length of a sublist.  Rewrite
+	      <function>parList2</function> so that it
+	      switches to <function>sort</function> if the list
+	      contains more than some number of elements.</para>
 	  </question>
 	</qandaentry>
 
 	<qandaentry>
 	  <question>
 	    <para>Measure the performance of the length-based
-	      approach, and compare with the square root approach. Try
-	      replacing the square root of the list's length with the
-	      logarithm of its length.  Which switchover points gives
-	      the best performance for a list of random
-	      integers?</para>
+	      approach, and compare with the depth approach.  Which
+	      gives better performance results?</para>
 	  </question>
 	</qandaentry>
       </qandaset>
