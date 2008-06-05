@@ -5,8 +5,8 @@ import Control.Parallel (par, pseq)
 
 parSort :: (Ord a) => [a] -> [a]
 
-parSort (x:xs)    = force lesser `par` force greater `par`
-                    lesser ++ x:greater
+parSort (x:xs)    = force greater `par` (force lesser `pseq`
+                                         (lesser ++ x:greater))
     where lesser  = parSort [y | y <- xs, y <  x]
           greater = parSort [y | y <- xs, y >= x]
 parSort _         = []
@@ -29,6 +29,15 @@ sort (x:xs) = lesser ++ x:greater
 sort _ = []
 {-- /snippet sort --}
 
+{-- snippet seqSort --}
+seqSort :: (Ord a) => [a] -> [a]
+
+seqSort (x:xs) = greater `pseq` (lesser ++ x:greater)
+    where lesser  = seqSort [y | y <- xs, y <  x]
+          greater = seqSort [y | y <- xs, y >= x]
+seqSort _ = []
+{-- /snippet seqSort --}
+
 {-- snippet force --}
 force :: [a] -> ()
 force (x:xs) = x `pseq` force xs
@@ -39,16 +48,9 @@ force _ = ()
 parSort2 :: (Ord a) => Int -> [a] -> [a]
 parSort2 d list@(x:xs)
   | d <= 0     = sort list
-  | otherwise = force lesser `par` force greater `par`
-                lesser ++ x:greater
+  | otherwise = force greater `par` (lesser ++ x:greater)
       where lesser      = parSort2 d' [y | y <- xs, y <  x]
             greater     = parSort2 d' [y | y <- xs, y >= x]
             d' = d - 1
 parSort2 _ _              = []
-
-lengthAtLeast :: Int -> [t] -> Bool
-lengthAtLeast k = go 0
-    where go n _ | n >= k = True
-          go n (x:xs)     = go (n+1) xs
-          go n _          = False
 {-- /snippet parSort2 --}
