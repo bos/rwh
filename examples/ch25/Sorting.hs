@@ -1,6 +1,6 @@
+{-- snippet parSort --}
 module Sorting where
 
-{-- snippet parSort --}
 import Control.Parallel (par, pseq)
 
 parSort :: (Ord a) => [a] -> [a]
