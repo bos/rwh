@@ -5,6 +5,7 @@ import Data.Char
 import Data.List
 import Data.Word
 import Control.Monad
+import Data.Monoid
 import Test.QuickCheck
 
 {-- snippet ArbitraryChar --}
@@ -127,6 +128,16 @@ prop_append x y =
     n = 100
 
 -- test monoid laws.
+    --
+
+
+{-- snippet monoid_prop --}
+prop_mempty_id x =
+    mempty `mappend` x == x
+  &&
+    x `mappend` mempty == (x :: Doc)
+
+{-- /snippet monoid_prop --}
 
 --
 -- False, due to Union case.

@@ -26,7 +26,7 @@ the kind of code that just doesn't go wrong.
 Testing plays a key role in keeping code on the straight-and-narrow path.
 The main testing mechanisms in Haskell are traditional unit testing (via the HUnit 
 library), and its more powerful descendant: type-based <quote>property</quote>
-testing, with QuickCheck, a testing framework for Haskell. Property-based
+testing, with QuickCheck, an open source testing framework for Haskell. Property-based
 testing encourages a high level approach to testing in the form of abstract
 invariants functions should satisfy universally, with the actual test data
 generated for the programmer by the testing library. In this way code can be
@@ -87,14 +87,14 @@ for a few simple cases by hand:
 
     <para id="x_oy">
 Looking good. However, writing out the input data by hand is tedious, and
-violates the more code of the lazy functional programmer: let the machine do the
+violates the moral code of the lazy functional programmer: let the machine do the
 work! To automate this the QuickCheck library comes with a set of data
 generators for all the basic Haskell data types.  QuickCheck uses the
 <type>Arbitrary</type> type class to present a uniform interface to random
 data generation with the type system used to resolve which generator to use.
 QuickCheck normally hides the data generation plumbing, however, we can also
 run the generators by hand to get a sense for the random data QuickCheck
-produces. For example, to generate a random list of booleans:
+produces. For example, to generate a random list of boolean values:
   </para>
 
     &qc-arbitrary.ghci:arbitrary;
@@ -118,7 +118,7 @@ For the 100 different lists generated, our property held &emdash; great!
 When developing tests, it is often useful to see the actual data
 generated for each test. To do this, we replace
 <code>quickCheck</code> with its sibling, <code>verboseCheck</code>, to see
-(noisy) output for each test. Let's now look at more sophisticated
+(noisy) output for each test. Now, let's look at more sophisticated
 properties that our function might satisfy.
   </para>
 
@@ -152,17 +152,17 @@ Testing this, though, reveals an error:
 
     <para id="x_ry">
 The property failed when sorting an empty list &emdash; for which
-<code>minimum</code> isn't defined:
+<code>minimum</code> isn't defined, as we can see from its definition:
     </para>
 
     &minimum.hs:minimum;
 
     <para>
-We see that this property will only hold for non-empty lists. QuickCheck,
-thankfully, comes with a full property writing embedded language, so we can
-specify more precisely our invariants, filtering out values we don't want to
-consider.  For the empty list case, we really want to say:
-<emphasis>if</emphasis> the list is non-empty, <emphasis>then</emphasis> the
+So this property will only hold for non-empty lists. QuickCheck, thankfully,
+comes with a full property writing embedded language, so we can specify more
+precisely our invariants, filtering out values we don't want to consider.
+For the empty list case, we really want to say: <emphasis>if</emphasis> the
+list is non-empty, <emphasis>then</emphasis> the
 first element of the sorted result is the minimum. This is done by using the
 <code>(==>)</code> implication function, which filters out invalid data
 before running the property:
@@ -171,7 +171,7 @@ before running the property:
     &QC-basics.hs:relatives_right;
 
     <para id="x_sy">
-The result is quite clean! By separating out the empty list case, we can now
+The result is quite clean. By separating out the empty list case, we can now
 confirm the property does in fact hold:
     </para>
 
@@ -212,8 +212,8 @@ thing.
 <para id="x_wy">
 This kind of model-based testing is extremely powerful. Often developers will
 have a reference implementation or prototype that, while inefficient, is
-correct. This can then be kept around and used to ensure optimised
-production code conforms to the reference. By building a large suite of these
+correct. This can then be kept around and used to ensure optimised production
+code conforms to the reference. By building a large suite of these
 model-based tests, and running them regularly (on every commit, for example),
 we can cheaply ensure the precision of our code. Large Haskell projects often
 come bundled with property suites comparable in size to the project itself,
@@ -221,9 +221,9 @@ with thousands of invariants tested on every change, keeping the code tied to
 the specification, and ensuring it behaves as required.
 </para>
 
-  </sect2>
+<!-- Say more about model based testing? -->
 
-<!-- TODO walk over this once more -->
+  </sect2>
 
   </sect1>
 
@@ -234,7 +234,7 @@ the specification, and ensuring it behaves as required.
       of the basic building blocks that guides development of large systems
       in Haskell.  We'll look now at a more complicated scenario: taking the
       pretty printing library developed in earlier chapters, and building a
-      comprehensive property suite for it.
+      testsuite for it.
     </para>
 
     <sect2> 
@@ -261,10 +261,11 @@ the specification, and ensuring it behaves as required.
      QuickCheck encourages an approach to testing where the developer
      specifies invariants that should hold for any data we can throw at the
      code. To test the pretty printing library, then, we'll need a source of
-     input data. QuickCheck provides a small combinator suite for building
-     random data generation, via the <type>Arbitrary</type> class, which
-     provides a function, <code>arbitrary</code>, to generate data of each
-     type.
+     input data. To do tihs, we take advantage of the small combinator suite for building
+     random data generation QuickCheck provides, via the
+     <type>Arbitrary</type> class. The class provides a function,
+     <code>arbitrary</code>, to generate data of each type, and with this we
+     can define our data generator for our custom data types.
    <footnote><para>
     The class also defines a method, <code>coarbitrary</code>,
     which given a value of some type, yields a function for new generators.
@@ -277,13 +278,13 @@ the specification, and ensuring it behaves as required.
 
     <para> 
     One thing to notice is that the generators run in a <type>Gen</type>
-    environment: a simple state-passing monad used to hide the random number
-    generator plumbing. As it is monadic, we can use <code>do</code> syntax
-    to write new generators that access the implicit random number source.
-    To actually write generators for our custom type, we use any of a set of
-    functions defined in the library for introducing new random values and
-    gluing them together to build up data structures of the type we're
-    interested in:
+    environment: a simple state-passing container used to hide the random
+    number generator plumbing happening underneath. As <type>Gen</type>
+    is defined as a monad, we can use <code>do</code> syntax to write new
+    generators that access the implicit random number source.  To actually
+    write generators for our custom type we use any of a set of functions
+    defined in the library for introducing new random values and gluing them
+    together to build up data structures of the type we're interested in:
   </para>
 
     &Arbitrary.hs:IntroductionForms;
@@ -291,10 +292,10 @@ the specification, and ensuring it behaves as required.
    <para>
      The function <code>elements</code>, for example, takes a list of values,
      and returns a generator of random values from that list. With this, we
-     can start writing generators for simple data types. To write an
-     <type>Arbitrary</type> for <type>Bool</type> , for example, is just a
-     function that picks elements from a list of all known <type>Bool</type>
-     values:
+     can start writing generators for simple data types. For example, to write an
+     <type>Arbitrary</type> for <type>Bool</type> is just a function that
+     picks elements from a list of all the values in the <type>Bool</type>
+     type:
   </para>
 
     &Arbitrary.hs:Instance;
@@ -304,42 +305,46 @@ the specification, and ensuring it behaves as required.
      of the basic Haskell types and then translate those values into the
      type you're actually interested in. We could have written the
      <type>Bool</type> instance by generating integer values
-     between 0 and 1, using <code>choose</code>, and then mapping them onto
-     the booleans:
+     between 0 and 1 instead, using <code>choose</code>, and then mapping
+     them onto the booleans:
   </para>
 
     &Arbitrary2.hs:Instance2;
 
     <para>For simple <emphasis>sum</emphasis> types, this approach works
-      nicely, as the integers map onto the constructors of the data type.
-      For <emphasis>product</emphasis> types, we simply generate each
-      component of the product separately (and recursively for nested types),
-      and then combine the components. For example, to generate random pairs
-      of random values:
+      nicely, as the integers map nicely onto the constructors of the data
+      type.  For <emphasis>product</emphasis> types (such as structures and
+      tuples), we need to instead generate each component of the product
+      separately (and recursively for nested types), and then combine the
+      components. For example, to generate random pairs of random values:
     </para>
 
     &Arbitrary.hs:InstanceProduct;
 
     <!-- approach one, enumerate the constructors -->
     <para>
-      To generate all the different variants of the <type>Doc</type> type,
-      we break the problem down by first generating random constructors
-      for each type, then depending on the result, the components of each
-      field. The most complicated case are the union and concatentation
-      variants. But first we need to write an instance for generating
-      random characters &emdash; QuickCheck doesn't have a default instance
-      for characters, due to the abundance of text encodings we might want
-      to generate individually. We'll write our own, and, as we don't care
-      about the actual text content of the document, a simple generator of
-      alphabetic characters and punctuation will suffice (richer generators
-      are simple extensions of this basic approach):
+      So let's now write a generator for  all the different variants of the
+      <type>Doc</type> type. We'll start by breaking the problem down, first
+      generating random constructors for each type, then, depending on the
+      result, the components of each field. The most complicated case are the
+      union and concatentation variants. But first we need to write an
+      instance for generating random characters &emdash; QuickCheck doesn't
+      have a default instance for characters, due to the abundance of
+      different text encodings we might want to use for character tests, so
+      we'll write our own, and, as we don't care about the actual text
+      content of the document, a simple generator of alphabetic characters
+      and punctuation will suffice (richer generators are simple extensions
+      of this basic approach):
     </para>
 
     &QC.hs:ArbitraryChar;
 
     <para>
       With this in place, we can now write an instance for documents, by
-      enumating the constructors, and filling the fields in:
+      enumating the constructors, and filling the fields in. We choose a 
+      random integer to represent which document variant to generate, and
+      then dispatch based on the result. To generate concat or union document
+      nodes, we just recurse:
     </para>
 
     &QC.hs:ArbitraryDoc;
@@ -347,17 +352,28 @@ the specification, and ensuring it behaves as required.
     <!-- approach two, use 'oneof' -->
 
     <para>
-      That was fairly straightforward, and we can clean it up somewhat by 
+      That was fairly straightforward, and we can clean it up some more by
       using the <code>oneof</code> function, to pick between different
-      generators in a list (and we can use the monadic combinator,
-      <code>liftM</code> to avoid naming intermediate results:
+      generators in a list (and we can also use the monadic combinator,
+      <code>liftM</code> to avoid naming intermediate results from each
+      generator):
     </para>
 
     &QC.hs:ArbitraryDocConcise;
 
     <para>
-      The latter is more concise, but they describe the same generator either
-      way. We can now write some properties for our document functions.
+      The latter is more concise, just picking between a list of generators,
+      but they describe the same data either way. We can check the ouput
+      makes sense, by generating a list of random documents:
+    </para>
+
+    &arbitrary-doc.ghci:arbitrarydoc;
+      
+      <para>
+        Looking at the output we see a good mix of simple, base cases, and
+        some more complicated nested documents. We'll be generating hundreds
+        of these each test run, so that should do a pretty good job.  We can
+        now write some generic properties for our document functions.
     </para>
   </sect2>
 
@@ -374,21 +390,22 @@ the specification, and ensuring it behaves as required.
     <para>
       Together, these should have a nice property: appending or prepending
       the empty list onto a second list, should leave the second list
-      unchanged. Stated as a QuickCheck property:
+      unchanged. We can state this invariant as a property:
     </para>
 
     &QC.hs:prop_empty;
 
     <para>
-      Confirming this is indeed true:
+      Confirming this is indeed true, and we're underway with our testing:
     </para>
 
     &qc-test1.ghci:run_prop_empty;
 
     <para>
-      Looking at what actual test documents were generated, by substituting
-      <code>quickCheck</code> for <code>verboseCheck</code>, we see there's
-      a good mix of simple cases, and more nested, complicated forms.
+      To look at what actual test documents were generated (by substituting
+      <code>quickCheck</code> for <code>verboseCheck</code>) it's possible to
+      see that there's a good mix of simple cases, and more nested,
+      complicated forms being tested.
     </para>
 
     <!-- do we want to show an example here? -->
@@ -410,25 +427,25 @@ the specification, and ensuring it behaves as required.
   </sect2>
 
   <sect2>
-    <title>Testing against a model</title>
+    <title>Using lists as a model</title>
 
     <para>
       Higher order functions are the basic glue of reusable programming, and
-      our pretty printer library is no exception to this rule &emdash; a
-      custom fold function is used internally to implement both document
-      concatentation, and interleaving separators through between document
-      chunks. It takes a list of document pieces, and glues them all
-      together with a combining function:
+      our pretty printer library is no exception &emdash; a custom fold
+      function is used internally to implement both document concatentation
+      and interleaving separators between document chunks. The document
+      <code>fold</code> takes a list of document pieces, and glues them all
+      together with a supplied combining function:
     </para>
 
     &Prettify2.hs:fold;
 
-    <!-- do we want to get into random function over Doc generation -->
+    <!-- do we want to get into random function generation with Doc? -->
 
     <para>
-      We can write tests in isolation for specific instances of fold.
-      Horizontal concatenation of documents, for example, is easy to specify,
-      by writing a reference implementation:
+      We can write tests in isolation for specific instances of fold easily.
+      Horizontal concatenation of documents, for example, is easy to specify
+      by writing a reference implementation on lists:
     </para>
 
     &QC.hs:hcat;
@@ -453,17 +470,18 @@ Empty
     </screen>
 
     <para>
-     The library optimises away redundant empty documents, so we'll need to
-     hand that in our model implementation. First, we can intersperse the
-     punctuation text through the document list, then a little loop to clean
-     up the <code>Empty</code> documents scattered through.
+     The pretty printing  library optimises away redundant empty documents,
+     something the model implementation doesn't, so we'll need to augment our
+     model to match reality.  First, we can intersperse the punctuation text
+     through the document list, then a little loop to clean up the
+     <code>Empty</code> documents scattered through, like so:
     </para>
 
     &QC.hs:punctuate;
 
     <para>
     Running this in GHCi, we can confirm the result. It is reassuring to have
-    the test framework start to spot flaws in our understanding of the code
+    the test framework spot the flaws in our reasoning about the code
     &emdash; exactly what we're looking for:
     </para>
 
@@ -479,15 +497,15 @@ Empty
    <para>
      We can put all these tests together in a single file, and run them
      simply by using one of QuickCheck's driver functions. Several exist,
-     including fancy parallel ones, but the basic batch driver is often
-     good enough. All we need do is set up some default test parameters, 
+     including fancy parallel ones. the basic batch driver is often good
+     enough, however. All we need do is set up some default test parameters,
      and then list the functions we want to test:
    </para>
 
     &Run.hs:testscript;
 
    <para>
-The test script can then be compiled, and executed:
+The test script can then be compiled and executed:
    </para>
 
    <screen>
@@ -496,6 +514,13 @@ The test script can then be compiled, and executed:
                  simple : .....                            (1000)
                 complex : ..                               (400)
    </screen>
+
+   <para>
+     A total of 1400 individual tests were created, which is comforting. We
+     can increase the depth easily enough, but to find out exactly how well
+     the code is being tested we should turn to the built in code coverage
+     tool, HPC, which can state precisely what is going on.
+   </para>
 
    <!-- sort a decent model for the handling of Union -->
 
@@ -508,18 +533,49 @@ The test script can then be compiled, and executed:
      <!-- TODO talk about the kind of problems HPC helps us avoid -->
 
    <para>
-     So how well are we doing testing the code?
-     To find out we can have the compiler annotate those functions that were
-     entered, while executing the testsuite. The output is available via 
-     nice marked up graphs.
+    HPC (Haskell Program Coverage) is an extension to the compiler to
+    observe what parts of the code were actually executed during a given
+    program run. This is useful in the context of testing, as it lets us
+    observe precisely which functions, branches and expressions were
+    evaluated. The result is precise knowledge about the percent of code
+    tested, that's easy to obtain. HPC comes with a simple utility to
+    generate useful graphs of program coverage, making it easy to zoom in 
+    on weak spots in the testsuite.
+   </para>
+
+   <para>
+     To obtain test coverage data, all we need to do is add the
+     <code>-fhpc</code> flag to the command line, when compiling the tests:
    </para>
 
    <screen>
     $ ghc -fhpc Run.hs --make -no-recomp
+  </screen>
+
+  <para>
+    Then run the tests as normal;
+  </para>
+
+   <screen>
     $ ./Run
                  simple : .....                            (1000)
                 complex : ..                               (400)
-    $ hpc markup Run --exclude=Main --exclude=QC
+
+   </screen>
+
+  <para>
+    During the test run the trace of the program is written to .tix and .mix
+    files in the current directory. Afterwards, these files are used by the
+    command line tool, <code>hpc</code>, to display various statistics about
+    what happened. The basic interface is textual.
+    To begin, we can get a summary of the code tested during the run using
+    the <code>report</code> flag to <code>hpc</code>. We'll exclude the test
+    programs themselves, (using the <code>--exclude</code> flag), so as to
+    concentrate only on code in the pretty printer library. 
+    Entering the following into the console:
+  </para>
+
+   <screen>
     $ hpc report Run --exclude=Main --exclude=QC
      18% expressions used (30/158)
       0% boolean coverage (0/3)
@@ -532,8 +588,22 @@ The test script can then be compiled, and executed:
     </screen>
 
     <para>
-We can then ask use the <code>hpc</code> tool to generate pretty graphs of our coverage 
-results, leading to:
+      we see that, on the last line, 42% of top level definitions were
+      evaluated during the test run. Not too bad for a first attempt.
+      As we test more and more functions from the library, this figure will 
+      rise. The textual version is useful for a quick summary, but to really 
+      see what's going on it is best to look at the marked up output. 
+      To generate this, use the <code>markup</code> flag instead:
+    </para>
+
+    <screen>
+    $ hpc markup Run --exclude=Main --exclude=QC
+  </screen>
+
+    <para>
+      This will generate one html file for each Haskell source file, and some
+      index files. Loading the file <code>hpc_index.html</code> into a 
+      browser, we can see some pretty graphs of the code coverage:
     </para>
 
   <informalfigure>
@@ -541,10 +611,62 @@ results, leading to:
   </informalfigure>
 
 <para>
-Not too bad, but we forgot to test the <type>Monoid</type> instance, and some of the more 
-complicated functions. HPC helps keep our testsuite honest.
+  Not too bad. Clicking through to the pretty module itself, we see the
+  actual source of the program, marked up in yellow for code that wasn't
+  tested, and in a bold font for code that was:
+  </para>
+
+  <informalfigure>
+  <graphic fileref="figs/ch12-coverage-screen.png"/>
+  </informalfigure>
+  
+<para>
+we forgot to test the <type>Monoid</type> instance, for example, and some of
+the more complicated functions. HPC helps keep our testsuite honest.
+Let's add a test for the type class instance of <type>Monoid</type>, the
+class of types that support appending and empty elements:
 </para>
 
+    &QC.hs:monoid_prop;
+
+<para>
+Running this property in ghci, to check it is correct:
+</para>
+
+    &qc-monoid.ghci:monoid_prop;
+
+<para>
+  We can now recompile and run the test driver. It is important to remove
+  the old .tix file first though, or an error will occur as HPC tries to
+  combine the statistics from separate runs:
+</para>
+
+<screen>
+  $ ghc -fhpc Run.hs --make -no-recomp
+  $ ./Run 
+  Hpc failure: inconsistent number of tick boxes
+  (perhaps remove Run.tix file?)
+  $ rm *.tix
+  $ ./Run   
+                     simple : .....                            (1000)
+                    complex : ...                              (600)
+</screen>
+
+<para>
+Another two hundred tests were added to the suite, and our coverage 
+statistics improves to 52 percent of the code base:
+</para>
+
+  <informalfigure>
+  <graphic fileref="figs/ch12-hpc-round2.png"/>
+  </informalfigure>
+
+<para>
+HPC ensures that we're honest in our testing, as anything less than 100% coverage 
+will be pointed out in glaring color. In particular, it ensures the programmer
+has to think about error cases, and complicated branches with obscure conditions.
+That is, it identifies "code smell".
+</para>
 
    <!-- what kind of things can we do with HPC -->
 
@@ -564,33 +686,7 @@ complicated functions. HPC helps keep our testsuite honest.
 
     -->
 
-
-      <!--
-
-      * some more properties
-            - local changes
-            - invertable
-
-      * Union type
-
-      * putting it all together
-      * hpc coverage
-      * fixing error cases.
-      
-      
-        -->
-
-
-
-  <!-- TODO: expand further on the abstraction boundary scenarios -->
-
-<!--
-
-  <sect1>
-    <title>Running tests</title>
-
-  <sect1>
-    <title>Code coverage information</title>
+  <!--
 
   <sect1>
     <title>The awkward testing squad: IO functions and error cases</title>

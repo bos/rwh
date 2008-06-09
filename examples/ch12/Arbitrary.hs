@@ -23,7 +23,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (a, b) where
   arbitrary = do
       x <- arbitrary
       y <- arbitrary
-      return (x,y)
+      return (x, y)
 {-- /snippet InstanceProduct --}
 
 {-- snippet InstanceRec --}

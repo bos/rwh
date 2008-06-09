@@ -20,5 +20,6 @@ main = do
     runTests "complex" options
         [ run prop_hcat
         , run prop_puncutate'
+        , run prop_mempty_id
         ]
 {-- /snippet testscript --}
