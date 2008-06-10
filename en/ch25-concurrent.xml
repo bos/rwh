@@ -1139,6 +1139,224 @@ Sorted all 700000 elements.
       </qandaset>
     </sect2>
   </sect1>
+
+  <sect1>
+    <title>Parallel strategies and MapReduce</title>
+
+    <para>Within the programming community, one of the most famous
+      software systems to credit functional programming for
+      inspiration is Google's MapReduce infrastructure for parallel
+      processing of bulk data.</para>
+
+    <para>We can easily construct a greatly simplified, but still
+      useful, Haskell equivalent.  To focus our attention, we will
+      look at the processing of web server log files, which tend to be
+      both huge and plentiful.</para>
+
+    <para>While we could create a straightforward implementation
+      without much effort, we will resist the temptation to dive in.
+      If we think about solving a <emphasis>class</emphasis> of
+      problems instead of a single one, we may end up with more widely
+      applicable code.</para>
+
+    <para>When we develop a parallel program, we are always faced with
+      a few <quote>bad penny</quote> problems, which turn up no matter
+      what the underlying programming language is.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>Our algorithm quickly becomes obscured by the details of
+	  partitioning and communication.  This makes it difficult to
+	  understand code, which in turn makes modifying it
+	  risky.</para>
+      </listitem>
+
+      <listitem>
+	<para>Choosing a <quote>grain size</quote>&emdash;the smallest
+	  unit of work parceled out to a core&emdash; can be
+	  difficult. If the grain size is too small, cores spend so
+	  much of their time on book-keeping that a parallel program
+	  can easily become slower than a serial counterpart.  If the
+	  grain size is too large, some cores may lie idle due to poor
+	  load balancing.</para>
+      </listitem>
+    </itemizedlist>
+    
+    <sect2>
+      <title>Separating algorithm from evaluation</title>
+
+      <para>In parallel Haskell code, the clutter that would arise
+	from communication code in a traditional language is replaced
+	with the clutter of <function>par</function> and
+	<function>pseq</function> annotations.  As an example, this
+	function operates similarly to <function>map</function>, but
+	evaluates each element to weak head normal form (WHNF) in
+	parallel as it goes.</para>
+
+      &ParMap.hs:parallelMap;
+
+      <para>The type <varname role="type">b</varname> might be a list,
+	or some other type for which evaluation to WHNF doesn't do a
+	useful amount of work.  We'd prefer not to have to write a
+	special <function>parallelMap</function> for lists, and for
+	every other type that needs special handling.</para>
+
+      <para>To address this problem, we will begin by considering a
+	simpler problem: how to force a value to be evaluated.  Here
+	is a function that forces every element of a list to be
+	evaluated.</para>
+
+      &ParMap.hs:forceList;
+
+      <para>Our function performs no computation on the list. (In
+	fact, from examining its type signature, we can tell that it
+	<emphasis>cannot</emphasis> perform any computation, since it
+	knows nothing about the elements of the list.)  Its only
+	purpose is to ensure that the spine of the list is evaluated
+	to normal form. The only place that it makes any sense to
+	apply this function is in the first argument of
+	<function>seq</function> or <function>par</function>, for
+	example as follows.</para>
+
+      &ParMap.hs:stricterMap;
+
+      <para>This still leaves us with the elements of the list
+	evaluated only to WHNF.  We address this by adding a function
+	as parameter that can force an element to be evaluated more
+	deeply.</para>
+
+      &ParMap.hs:forceListAndElts;
+
+      <para>The <code>Control.Parallel.Strategies</code> module turns
+	this idea into something we can use as a library.  It
+	introduces the idea of an <emphasis>evaluation
+	  strategy</emphasis>.</para>
+
+      &Strat.hs:Strategy;
+
+      <para>An evaluation strategy performs no computation; it simply
+	ensures that a value is evaluated to some extent.  The
+	simplest strategy is named <function>r0</function>, and does
+	nothing at all.</para>
+
+      &Strat.hs:r0;
+
+      <para>Next is <function>rwhnf</function>, which evaluates a
+	value to weak head normal form.</para>
+
+      &Strat.hs:rwhnf;
+
+      <para>To evaluate a value to normal form, the module provides a
+	typeclass with a method named <function>rnf</function>.</para>
+
+      &Strat.hs:NFData;
+
+      <tip>
+	<title>Remembering those names</title>
+
+	<para>If the names of these functions and types are not
+	  sticking in your head, look at them as acronyms.  The name
+	  <function>rwhnf</function> expands to <quote>reduce to weak
+	    head normal form</quote>; <type>NFData</type> becomes
+	  <quote>normal form data</quote>; and so on.</para>
+      </tip>
+
+      <para>For the basic types, such as <type>Int</type>, weak head
+	normal form and normal form are the same thing, which is why
+	the <type>NFData</type> typeclass uses
+	<function>rwhnf</function> as the default implementation of
+	<function>rnf</function>. For many common types, the
+	<code>Control.Parallel.Strategies</code> module provides
+	instances of <type>NFData</type>.</para>
+
+      &Strat.hs:instances;
+
+      <para>From these examples, it should be clear how you might
+	write an <type>NFData</type> instance for a type of your own.
+	Your implementation of <function>rnf</function> must handle
+	every constructor, and apply <function>rnf</function> to every
+	field of a constructor.</para>
+    </sect2>
+
+    <sect2>
+      <title>Separating algorithm from strategy</title>
+
+      <para>From these strategy building blocks, we can construct more
+	elaborate strategies.  Many are already provided by
+	<code>Control.Parallel.Strategies</code>.  For instance,
+	<function>parList</function> applies an evaluation strategy in
+	parallel to every element of a list.</para>
+
+      &Strat.hs:parList;
+
+      <para>The module uses this to define a parallel
+	<function>map</function> function.</para>
+
+      &Strat.hs:parMap;
+
+      <para>This is where the code becomes interesting.  On the left
+	of <function>using</function>, we have a normal application of
+	<function>map</function>.  On the right, we have an evaluation
+	strategy.  The <function>using</function> combinator tells us
+	how to apply a strategy to a value, allowing us to keep the
+	code separate from how we plan to evaluate it.</para>
+
+      &Strat.hs:using;
+
+      <para>The <code>Control.Parallel.Strategies</code> module
+	provides many other functions that provide fine control over
+	evaluation.  For instance, <function>parZipWith</function>
+	that applies <function>zipWith</function> in parallel, using
+	an evaluation strategy.</para>
+
+      &Strat.hs:vectorSum;
+    </sect2>
+
+    <sect2>
+      <title>Writing a simple MapReduce definition</title>
+
+      <para>We can quickly suggest a type for a
+	<function>mapReduce</function> function by considering what it
+	must do.  We need a <emphasis>map</emphasis> component, to
+	which we will give the usual type <type>a -&gt; b</type>.  And
+	we need a <emphasis>reduce</emphasis>; this term is a synonym
+	for <emphasis>fold</emphasis>.  Rather than commit ourselves
+	to using a specific kind of fold, we'll use a more general
+	type, <type>[b] -&gt; c</type>.  This type lets us use a left
+	or right fold, so we can choose the one that suits our data
+	and processing needs.</para>
+
+      <para>If we plug these types together, the complete type looks
+	like this.</para>
+
+      &MapReduce.hs:simpleMapReduce.type;
+
+      <para>The code that goes with the type is extremely
+	simple.</para>
+
+      &MapReduce.hs:simpleMapReduce;
+    </sect2>
+
+    <sect2>
+      <title>MapReduce and strategies</title>
+
+      <para>Our definition of <function>simpleMapReduce</function> is
+	too simple to really be interesting.  To make it useful, we
+	want to be able to specify that some of the work should occur
+	in parallel.  We'll achieve this using strategies.  Our type
+	becomes a little more complicated, as we need to be able to
+	control both the mapping strategy and the reduction
+	strategy.</para>
+
+      &MapReduce.hs:mapReduce.type;
+
+      <para>The body of the function has also grown, though it is
+	still brief and readable.</para>
+
+      &MapReduce.hs:mapReduce;
+
+    </sect2>
+  </sect1>
 <!--
 
     Basics:
