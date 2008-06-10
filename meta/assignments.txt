@@ -1,4 +1,4 @@
-Shared     1. Why functional programming? Why Haskell?
+Shared     1. Why functional programming? Why Haskell? (DONE)
 Shared     2. Getting started: compiler, interpreter, values, simple 
               functions, and types (DONE)
 BOS        3. Syntax, type system basics, type class basics (DONE)
@@ -11,7 +11,7 @@ BOS        9. Bringing it all together: file name matching and
               regular expressions (DONE)
 BOS       10. I/O case study: a DSL for searching the filesystem (DONE)
 BOS       11. Handling binary files and formats (DONE)
-DONS      12. Testing the Haskell way: QuickCheck
+DONS      12. Testing the Haskell way: QuickCheck (DONE)
 BOS       13. Code case study: barcode recognition (DONE)
 JG        14. Designing and using data structures (DONE)
 BOS       15. Monads (DONE)
@@ -20,15 +20,15 @@ BOS       17. Monad transformers (DONE)
 JG        18. Using parsec: (DONE)
 BOS            parsing JSON (DONE)
 DONS      19. Interfacing with C: the FFI
-DONS      20. Error handling
+DONS      20. Error handling (DONE)
 JG        21. Haskell for systems programming (DONE)
 JG        22. Talking to databases (DONE)
-JG        23. Web client programming: client/server networking
-JG        24. GUI programming: gtk2hs
+JG        23. Web client programming: client/server networking (DONE)
+JG        24. GUI programming: gtk2hs (DONE)
 JG/DONS   25. Basics of concurrent and parallel Haskell
 DONS      26. Performance and efficiency: profiling
 DONS      27. Advanced Haskell: MPTCs, TH, strong typing, GADTs
-JG        28. Sockets, Syslog   (agreed to)
+JG        28. Sockets, Syslog   (DONE)
 BOS       29. STM / JSON / server example
 BOS    APP A. Installation of GHC (DONE)
 BOS    APP B. Escapes (DONE)
