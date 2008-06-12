@@ -4,7 +4,6 @@ module Sorting where
 import Control.Parallel (par, pseq)
 
 parSort :: (Ord a) => [a] -> [a]
-
 parSort (x:xs)    = force greater `par` (force lesser `pseq`
                                          (lesser ++ x:greater))
     where lesser  = parSort [y | y <- xs, y <  x]
@@ -12,17 +11,16 @@ parSort (x:xs)    = force greater `par` (force lesser `pseq`
 parSort _         = []
 {-- /snippet parSort --}
 
-{-- snippet badSort --}
-sillySort (x:xs) = lesser `par` greater `par`
-                   (lesser ++ x:greater)
+{-- snippet sillySort --}
+sillySort (x:xs) = greater `par` (lesser `pseq`
+                                  (lesser ++ x:greater))
     where lesser   = sillySort [y | y <- xs, y <  x]
           greater  = sillySort [y | y <- xs, y >= x]
 sillySort _        = []
-{-- /snippet badSort --}
+{-- /snippet sillySort --}
 
 {-- snippet sort --}
 sort :: (Ord a) => [a] -> [a]
-
 sort (x:xs) = lesser ++ x:greater
     where lesser  = sort [y | y <- xs, y <  x]
           greater = sort [y | y <- xs, y >= x]
@@ -31,7 +29,6 @@ sort _ = []
 
 {-- snippet seqSort --}
 seqSort :: (Ord a) => [a] -> [a]
-
 seqSort (x:xs) = lesser `pseq` (greater `pseq`
                                 (lesser ++ x:greater))
     where lesser  = seqSort [y | y <- xs, y <  x]

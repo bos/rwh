@@ -789,7 +789,8 @@ number of cores: 4</screen>
       &Sorting.hs:parSort;
 
       <para>We have barely perturbed the code: all we have added are
-	two functions, <function>par</function> and
+	three functions, <function>par</function>,
+	<function>pseq</function>, and
 	<function>force</function>.</para>
 
       <para>The <function>par</function> function is provided by the
@@ -800,10 +801,19 @@ number of cores: 4</screen>
 	in parallel with whatever other evaluations are
 	occurring.</para>
 
-      <para>When we chain the uses of <function>par</function>
-	together as above, we are effectively saying <quote>evaluate
-	  the first two expressions in parallel with the
-	  third</quote>.</para>
+      <para>As for <function>pseq</function>, it is similar to
+	<function>seq</function>: it evaluates the expression on the
+	left to WHNF before returning the expression on the right. The
+	difference between the two is subtle, but important for
+	parallel programs: the compiler does not
+	<emphasis>promise</emphasis> to evaluate the left argument of
+	<function>seq</function> if it can see that evaluating the
+	right argument first would improve performance.  This lax
+	guarantee is fine for a program executing on one core, but it
+	is not strong enough for code running on multiple cores.  In
+	contrast, the compiler <emphasis>guarantees</emphasis> that
+	<function>pseq</function> will evaluate its left argument
+	before its right.</para>
 
       <para>These changes to our code are remarkable for all the
 	things we have <emphasis>not</emphasis> needed to say.</para>
@@ -840,26 +850,25 @@ number of cores: 4</screen>
 	<function>force</function> function is for, we will first look
 	at a mistaken example.</para>
 
-      &Sorting.hs:badSort;
+      &Sorting.hs:sillySort;
 
-      <para>We direct your attention to the small changes to each use
-	of <function>par</function>.  Instead of <code>force
-	  lesser</code> and <code>force greater</code>, in this
-	example we evaluate <code>lesser</code> and
-	<code>greater</code>.</para>
+      <para>Take a look at the small changes in each use of
+	<function>par</function>.  Instead of <code>force
+	  lesser</code> and <code>force greater</code>, here we
+	evaluate <code>lesser</code> and <code>greater</code>.</para>
 
       <para>Remember that evaluation to WHNF only computes enough of
 	an expression to see its <emphasis>outermost</emphasis>
 	constructor.  In this mistaken example, we evaluate each
-	sorted sublist to WHNF.  Since the outermost
-	constructor in each case is just a single list constructor, we
-	are in fact only forcing the evaluation of the first element
-	of each sorted sublist!  Every other element of each list
-	remains unevaluated.  In other words, we do almost no useful
-	work in parallel: our <function>uselessSort</function> is
-	nearly completely sequential.</para>
+	sorted sublist to WHNF.  Since the outermost constructor in
+	each case is just a single list constructor, we are in fact
+	only forcing the evaluation of the first element of each
+	sorted sublist!  Every other element of each list remains
+	unevaluated.  In other words, we do almost no useful work in
+	parallel: our <function>sillySort</function> is nearly
+	completely sequential.</para>
 
-      <para>We avoid this in our <function>force</function> function
+      <para>We avoid this with our <function>force</function> function
 	by forcing the entire spine of a list to be evaluated before
 	we give back a constructor.</para>
 
@@ -868,7 +877,10 @@ number of cores: 4</screen>
       <para>Notice that we don't care what's in the list; we just hand
 	each element off to <function>seq</function>.  There is
 	clearly no magic involved here: we are just using our usual
-	understanding of Haskell's evaluation model.</para>
+	understanding of Haskell's evaluation model.  And because we
+	will be using <function>force</function> on the left hand side
+	of <function>par</function> or <function>pseq</function>, we
+	don't need to return a meaningful value.</para>
     </sect2>
 
     <sect2>
@@ -876,24 +888,24 @@ number of cores: 4</screen>
 
       <para>The <function>par</function> function does not actually
 	promise to evaluate an expression in parallel with another.
-	Instead, it will do so if it <quote>makes sense</quote>.  This
-	wishy-washy non-promise is actually more useful than a
-	guarantee to always evaluate an expression in parallel.  It
-	gives the runtime system the freedom to do something
-	intelligent when it encounters a use of
+	Instead, it undertakes to do so if it <quote>makes
+	  sense</quote>.  This wishy-washy non-promise is actually
+	more useful than a guarantee to always evaluate an expression
+	in parallel.  It gives the runtime system the freedom to act
+	intelligently when it encounters a use of
 	<function>par</function>.</para>
 
       <para>For instance, the runtime could decide that an expression
 	is too cheap to be worth evaluating in parallel.  Or it might
 	notice that all cores are currently busy, so that
 	<quote>sparking</quote> a new parallel evaluation will lead to
-	there being more runnable threads than there are cores to
-	execute them.</para>
+	there being more runnable threads than there are cores
+	available to execute them.</para>
 
-      <para>This in turn affects how we write parallel code.  Since
-	<function>par</function> is going to be somewhat intelligent
-	at runtime, we can use it almost wherever we like, in the
-	knowledge that the system will not become overloaded with
+      <para>This lax guarantee in turn affects how we write parallel
+	code.  Since <function>par</function> is going to be somewhat
+	intelligent at runtime, we can use it almost wherever we like,
+	on the assumption that performance will not be bogged down by
 	threads contending for busy cores.</para>
     </sect2>
 
@@ -1027,7 +1039,8 @@ Sorted all 700000 elements.
 	using it too much. To help us to distinguish between the two
 	possibilities, here is a sort is identical to
 	<function>parSort</function>, but it uses
-	<function>pseq</function> instead of <function>par</function>.</para>
+	<function>pseq</function> instead of
+	<function>par</function>.</para>
       
       &Sorting.hs:seqSort;
 
@@ -1152,6 +1165,16 @@ Sorted all 700000 elements.
       useful, Haskell equivalent.  To focus our attention, we will
       look at the processing of web server log files, which tend to be
       both huge and plentiful.</para>
+
+    <para>As an example, here is a log entry for a page visit recorded
+      by the Apache web server.  The entry originally filled one line;
+      we have split it across several lines to fit.</para>
+
+<programlisting>201.49.94.87 - - [08/Jun/2008:07:04:20 -0500] "GET / HTTP/1.1"
+200 2097 "http://en.wikipedia.org/wiki/Mercurial_(software)"
+"Mozilla/5.0 (Windows; U; Windows XP 5.1; en-GB; rv:1.8.1.12)
+Gecko/20080201 Firefox/2.0.0.12" 0 hgbook.red-bean.com</programlisting>
+
 
     <para>While we could create a straightforward implementation
       without much effort, we will resist the temptation to dive in.
@@ -1343,39 +1366,194 @@ Sorted all 700000 elements.
       <para>Our definition of <function>simpleMapReduce</function> is
 	too simple to really be interesting.  To make it useful, we
 	want to be able to specify that some of the work should occur
-	in parallel.  We'll achieve this using strategies.  Our type
-	becomes a little more complicated, as we need to be able to
-	control both the mapping strategy and the reduction
-	strategy.</para>
+	in parallel.  We'll achieve this using strategies, passing in
+	a strategy for the map phase and one for the reduction phase.</para>
 
       &MapReduce.hs:mapReduce.type;
 
-      <para>The body of the function has also grown, though it is
-	still brief and readable.</para>
+      <para>Both the type and the body of the function must grow a
+	little in size to accommodate the strategy parameters.</para>
 
       &MapReduce.hs:mapReduce;
 
     </sect2>
+
+    <sect2>
+      <title>Sizing work appropriately</title>
+
+      <para>To achieve decent performance, we must ensure that the
+	work that we do per application of <function>par</function>
+	substantially outweighs its book-keeping costs.  If we are
+	processing a huge file, splitting it on line boundaries gives
+	us far too little work compared to overhead.</para>
+
+      <para>We will develop a way to process a file in larger chunks
+	in a later section.  What should those chunks consist of?
+	Because a web server log file ought to contain only ASCII
+	text, we will see excellent performance with a lazy
+	<type>ByteString</type>: this type is highly efficient, and
+	consumes little memory when we stream it from a file.</para>
+
+      &LineChunks.hs:withChunks;
+
+      <para>We consume each chunk in parallel, taking careful
+	advantage of lazy I/O to ensure that we can stream these
+	chunks safely.</para>
+
+      <sect3>
+	<title>Mitigating the risks of lazy I/O</title>
+
+	<para>Lazy I/O has a few well known risks that we would like
+	  to avoid.</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>We may invisibly keep a file handle open for longer
+	      than necessary, by not forcing the computation that
+	      pulls data from it to be evaluated.  Since an operating
+	      system will typically place a small, fixed limit on the
+	      number of files we can have open at once, if we do not
+	      address this risk, we can accidentally starve some other
+	      part of our program of file handles.</para>
+	  </listitem>
+	  <listitem>
+	    <para>If we do not explicitly close a file handle, the
+	      garbage collector will automatically close it for us. It
+	      may take a long time to notice that it should close the
+	      file handle.  This poses the same starvation risk as
+	      above.</para>
+	  </listitem>
+	  <listitem>
+	    <para>We can avoid starvation by explicitly closing a file
+	      handle. If we do so too early, though, we can cause a
+	      lazy computation to fail if it expects to be able to
+	      pull more data from a closed file handle.</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>On top of these well-known risks, we cannot use a single
+	  file handle to supply data to multiple threads.  A file
+	  handle has a single <quote>seek pointer</quote> that tracks
+	  the position from which it should be reading, but when we
+	  want to read multiple chunks, each needs to consume data
+	  from a different position in the file.</para>
+
+	<para>With these ideas in mind, let's fill out the lazy I/O
+	  picture.</para>
+
+	&LineChunks.hs:chunkedRead;
+
+	<para>We avoid the starvation problem by explicitly closing
+	  file handles.  We allow multiple threads to read different
+	  chunks at once by supplying each one with a distinct file
+	  handle, all reading the same file.</para>
+
+	<para>The final problem that we try to mitigate is that of a
+	  lazy computation having a file handle closed behind its
+	  back.  We use <function>rnf</function> to force all of our
+	  processing to complete before we return from
+	  <function>withChunks</function>. We can then close our file
+	  handles explicitly, as they should no longer be read from.
+	  If you must use lazy I/O in a program, it is often best to
+	  <quote>firewall</quote> it like this, so that it cannot
+	  cause problems in unexpected parts of your code.</para>
+
+	<tip>
+	  <title>Processing chunks via a fold</title>
+
+	  <para>We can adapt the fold-with-early-termination technique
+	    from <xref linkend="find.fold"/> to stream-based file
+	    processing. While this requires more work than the lazy
+	    I/O approach, it nicely avoids the above problems.</para>
+	</tip>
+
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Efficiently finding line-aligned chunks</title>
+
+      <para>Since a server log file is line-oriented, we need an
+	efficient way to break a file into large chunks, while making
+	sure that each chunk ends on a line boundary.  Since a chunk
+	might be tens of megabytes in size, we don't want to scan all
+	of the data in a chunk to determine where its final boundary
+	should be.</para>
+
+      <para>Our approach works whether we choose a fixed chunk size or
+	a fixed number of chunks.  Here, we opt for the latter.  We
+	begin by seeking to the approximate position of the end of a
+	chunk, then scan forwards until we reach a newline character.
+	We then start the next chunk after the newline, and repeat the
+	procedure.</para>
+
+      &LineChunks.hs:lineChunks;
+
+      <para>The last chunk will end up a little shorter than its
+	predecessors, but this difference will be insignificant in
+	practice.</para>
+    </sect2>
+
+    <sect2>
+      <title>Counting lines</title>
+
+      <para>This simple example illustrates how to use the scaffolding
+	we have built.</para>
+
+      &LineCount.hs:countLines;
+
+      <para>If we compile this program with <option>ghc -O2 --make
+	  -threaded</option>, it should perform well after an initial
+	run to <quote>warm</quote> the filesystem cache. On a dual
+	core laptop, processing a log file 248 megabytes (1.1 million
+	lines) in size, this program runs in 0.576 seconds using a
+	single core, and 0.361 with two (using <option>+RTS
+	  -N2</option>).</para>
+    </sect2>
+
+    <sect2>
+      <title>Finding the most popular URLs</title>
+
+      <para>In this example, we count the number of times each URL is
+	accessed.  This example comes from <biblioref
+	  linkend="bib.google08"/>, Google's original paper discussing
+	MapReduce.  In the <emphasis>map</emphasis> phase, for each
+	chunk, we create a <type>Map</type> from URL to the number of
+	times it was accessed.  In the <emphasis>reduce</emphasis>
+	phase, we union-merge these maps into one.</para>
+
+      &CommonURLs.hs:countURLs;
+
+      <para>To pick a URL out of a line of the log file, we use the
+	bindings to the PCRE regular expression library that we
+	developed in <xref linkend="ffi"/>.</para>
+
+      <para>Our driver function prints the ten most popular URLs.  As
+	with the line counting example, this program runs about 1.8
+	times faster with two cores than with one, taking 1.7 seconds
+	to process the a log file containing 1.1 million
+	entries.</para>
+    </sect2>
+
+    <sect2>
+      <title>Conclusions</title>
+
+      <para>Given a problem that fits its model well, the MapReduce
+	programming model lets us write <quote>casual</quote> parallel
+	programs in Haskell with good performance, and  minimal
+	additional effort.  We can easily extend the idea to use other
+	data sources, such as collections of files, or data sourced
+	over the network.</para>
+
+      <para>In many cases, the performance bottleneck will be
+	streaming data at a rate high enough to keep up with a core's
+	processing capacity. For instance, if we try to use either of
+	the above sample programs on a file that is not cached in
+	memory or streamed from a high-bandwidth storage array, we
+	will spend most of our time waiting for disk I/O, gaining no
+	benefit from multiple cores.</para>
+    </sect2>
   </sect1>
-<!--
-
-    Basics:
-        forkIO
-        threadDelay
-        async exceptions
-
-    More precise control:
-        MVar
-        Chan
-            - note strictness issues
-
-    SMP programs
-
-    STM locking.
-
-    Parallel strategies.
-
--->
 </chapter>
 
 <!--

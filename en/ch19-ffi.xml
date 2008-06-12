@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="ffi" revision="unpublished">
+<chapter id="ffi" revision="alpha;beta">
   <title>Interfacing with C: the FFI</title>
 
   <remark>FIXME</remark>

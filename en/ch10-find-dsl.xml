@@ -1000,7 +1000,7 @@
     &Style.hs:where;
   </sect1>
 
-  <sect1>
+  <sect1 id="find.fold">
     <title>Another way of looking at traversal</title>
     
     <para id="x_QQ">While the <function>traverse</function> function gives us

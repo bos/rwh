@@ -1,6 +1,32 @@
 <bibliography id="hs.bib">
   <title>Bibliography</title>
   
+  <biblioentry id="bib.google08">
+    <abbrev>Google08</abbrev>
+    <biblioset relation="article">
+      <author><firstname>Jeffrey</firstname><surname>Dean</surname></author>
+      <author><firstname>Sanjay</firstname><surname>Ghemawat</surname></author>
+      <title><ulink
+	  url="http://labs.google.com/papers/mapreduce.html">MapReduce:
+	  simplified data processing on large clusters</ulink></title>
+    </biblioset>
+    <biblioset relation="journal">
+      <title><ulink
+	  url="http://cacm.acm.org/">Communications of the
+	  ACM</ulink></title>
+      <volumenum>51</volumenum>
+      <issuenum>1</issuenum>
+      <pubdate>January 2008</pubdate>
+      <pagenums>107-113</pagenums>
+      <publisher>
+	<publishername><ulink
+	    url="http://www.acm.org/">Association for Computing
+	    Machinery</ulink></publishername>
+      </publisher>
+      <issn>0956-7968</issn>
+    </biblioset>
+  </biblioentry>
+
   <biblioentry id="bib.hughes95">
     <abbrev>Hughes95</abbrev>
     <biblioset relation="article">
