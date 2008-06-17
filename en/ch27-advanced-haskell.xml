@@ -1,9 +1,737 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="advhs" revision="unpublished">
-  <title>Advanced Haskell: MPTCs, TH, strong typing, GADTs</title>
+  <title>Advanced library design: building a Bloom filter</title>
 
-  <remark>FIXME</remark>
+  <sect1>
+    <title>Introducing the Bloom filter</title>
+
+    <para>A Bloom filter is set-like data structure that is highly
+      efficient in its use of space.  It only supports two operations:
+      insertion and membership querying.  Unlike a normal set data
+      structure, a Bloom filter can give incorrect answers.  If we
+      query it to see whether an element that we have inserted is
+      present, it will answer affirmatively.  If we query for an
+      element that we have <emphasis>not</emphasis> inserted, it
+      <emphasis>might</emphasis> incorrectly claim that the element is
+      present.</para>
+
+    <para>For many applications, a low rate of false positives is
+      tolerable.  For instance, the job of a network traffic shaper is
+      to throttle bulk transfers (e.g. BitTorrent) so that interactive
+      sessions (such as <command>ssh</command> sessions or games) see
+      good response times.  A traffic shaper might use a Bloom filter
+      to determine whether a particular packet is bulk or interactive.
+      If it misidentifies one in ten thousand bulk packets as
+      interactive and fails to throttle it, nobody will notice.</para>
+
+    <para>The attraction of a Bloom filter is its space efficiency. If
+      we want to build a spell checker, and have a dictionary of half
+      a million words, a set data structure might consume 20 megabytes
+      of space.  A Bloom filter, in contrast, would consume about half
+      a megabyte, at the cost of missing perhaps 1% of misspelled
+      words.</para>
+
+    <para>Behind the scenes, a Bloom filter is remarkably simple.  It
+      consists of a bit array and a handful of hash functions.  We'll
+      use <emphasis>k</emphasis> for the number of hash functions.  If
+      we want to insert a value into the Bloom filter, we compute
+      <emphasis>k</emphasis> hashes of the value, and turn on those
+      bits in the bit array. If we want to see whether a value is
+      present, we compute <emphasis>k</emphasis> hashes, and check all
+      of those bits in the array to see if they are turned on.</para>
+
+    <para>To see how this works, let's say we want to insert the
+      strings <code>"foo"</code> and <code>"bar"</code> into a Bloom
+      filter that is 8 bits wide, and we have two hash
+      functions.</para>
+
+    <orderedlist>
+      <listitem>
+	<para>Compute the two hashes of <code>"foo"</code>, and get
+	  the values <code>1</code> and <code>6</code>.</para>
+      </listitem>
+      <listitem>
+	<para>Set bits <code>1</code> and <code>6</code> in the bit
+	  array.</para>
+      </listitem>
+      <listitem>
+	<para>Compute the two hashes of <code>"bar"</code>, and get
+	  the values <code>6</code> and <code>3</code>.</para>
+      </listitem>
+      <listitem>
+	<para>Set bits <code>6</code> and <code>3</code> in the bit
+	  array.</para>
+      </listitem>
+    </orderedlist>
+
+    <para>This example should make it clear why we cannot remove an
+      element from a Bloom filter: both <code>"foo"</code> and
+      <code>"bar"</code> resulted in bit 6 being set.</para>
+
+    <para>Suppose we now want to query the Bloom filter, to see
+      whether the values <code>"quux"</code> and <code>"baz"</code>
+      are present.</para>
+
+    <orderedlist>
+      <listitem>
+	<para>Compute the two hashes of <code>"quux"</code>, and get
+	  the values <code>4</code> and <code>0</code>.</para>
+      </listitem>
+      <listitem>
+	<para>Check bit <code>4</code> in the bit array.  It is not
+	  set, so <code>"quux"</code> cannot be present.  We do not
+	  need to check bit <code>0</code>.</para>
+      </listitem>
+      <listitem>
+	<para>Compute the two hashes of <code>"baz"</code>, and get
+	  the values <code>1</code> and <code>3</code>.</para>
+      </listitem>
+      <listitem>
+	<para>Check bit <code>1</code> in the bit array.  It is
+	  set, as is bit <code>3</code>, so we say that
+	  <code>"baz"</code> is present even though it is not.  We
+	  have reported a false positive.</para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+
+  <sect1>
+    <title>Use cases and package layout</title>
+
+    <para>Not all users of Bloom filters have the same needs. In some
+      cases, it suffices to create a Bloom filter in one pass, and
+      only query it afterwards.  For other applications, we may need
+      to continue to update the Bloom filter after we create it.  To
+      accommodate these needs, we will design our library with mutable
+      and immutable APIs.</para>
+
+    <para>We will segregate the mutable and immutable APIs that we
+      publish by placing them in different modules:
+      <code>BloomFilter</code> for the immutable code, and
+      <code>BloomFilter.Mutable</code> for the mutable code.</para>
+
+    <para>In addition, we will create several <quote>helper</quote>
+      modules that won't provide parts of the public API, but will keep
+      the internal code cleaner.</para>
+
+    <para>Finally, we will ask the user of our API to provide a
+      function that can generate a number of hashes of an element.
+      This function will have the type <type>a -&gt; [Word32]</type>.
+      We will use all of the hashes that this function returns, so the
+      list must not be infinite!</para>
+  </sect1>
+
+  <sect1>
+    <title>Basic design</title>
+
+    <para>The data structure that we use for our Haskell Bloom filter
+      is a direct translation of the simple description we gave
+      earlier: a bit array and a function that computes hashes.</para>
+
+    &Internal.hs:Bloom;
+
+    <para>When we create our Cabal package, we will not be exporting
+      this <code>BloomFilter.Internal</code> module.  It exists purely
+      to let us control the visibility of names.  We will import
+      <code>BloomFilter.Internal</code> into both the mutable and
+      immutable modules, but we will re-export from each module only
+      the type that is relevant to that module's API.</para>
+
+    <sect2>
+      <title>Unboxing, lifting, and bottom</title>
+
+      <para>Unlike other Haskell arrays, a <type>UArray</type>
+	contains <emphasis>unboxed</emphasis> values.</para>
+
+      <para>For a normal Haskell type, a value can be either fully
+	evaluated, an unevaluated thunk, or the special value
+	&bottom;, pronounced (and sometimes written)
+	<quote>bottom</quote>.  The value &bottom; is a placeholder
+	for a computation that does not succeed.  Such a computation
+	could take any of several forms.  It could be an infinite
+	loop; an application of <function>error</function>; or the
+	special value <function>undefined</function>.</para>
+
+      <para>A type that can contain &bottom; is referred to as
+	<emphasis>lifted</emphasis>.  All normal Haskell types are
+	lifted.  In practice, this means that we can always write
+	<code>error "eek!"</code> or <code>undefined</code> in place
+	of a normal expression.</para>
+
+      <para>This ability to store thunks or &bottom; comes with a
+	performance cost: it adds an extra layer of indirection.  To
+	see why we need this indirection, consider the
+	<type>Word32</type> type.  A value of this type is a full 32
+	bits wide, so on a 32-bit system, there is no way to directly
+	encode the value &bottom; within 32 bits.  The runtime system
+	has to maintain, and check, some extra data to track whether
+	the value is &bottom; or not.</para>
+
+      <para>An unboxed value does away with this indirection.  In
+	doing so, it gains performance, but sacrifices the ability to
+	represent a thunk or &bottom;.  Since it can be denser than a
+	normal Haskell array, an array of unboxed values is an
+	excellent choice for numeric data and bits.</para>
+
+      <note>
+	<title>Boxing and lifting</title>
+
+	<para>The counterpart of an unboxed type is a
+	  <emphasis>boxed</emphasis> type, which uses indirection.
+	  All lifted types are boxed, but a few low-level boxed types
+	  are not lifted. For instance, &GHC;'s runtime system has a
+	  low-level array type for which it uses boxing (i.e. it
+	  maintains a pointer to the array).  If it has a reference to
+	  such an array, it knows that the array must exist, so it
+	  does not need to account for the possibility of &bottom;.
+	  This array type is thus boxed, but not lifted.  Boxed but
+	  unlifted types only show up at the lowest level of runtime
+	  hacking.  We will never encounter them in normal use.</para>
+      </note>
+
+      <para>&GHC; implements a <type>UArray</type> of
+	<type>Bool</type> values by packing eight array elements into
+	each byte, so this type is perfect for our needs.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>The ST monad</title>
+
+    <para>Back in <xref linkend="barcode.array.mutable"/>, we
+      mentioned that modifying an immutable array is prohibitively
+      expensive, as it requires copying the entire array.  Using a
+      <type>UArray</type> does not change this, so what can we do to
+      reduce the cost to bearable levels?</para>
+
+    <para>In an imperative language, we would simply modify the
+      elements of the array in place; this will be our approach in
+      Haskell, too.</para>
+
+    <para>Haskell provides a special monad, named
+      <type>ST</type><footnote>
+	<para>The name <type>ST</type> is an acronym of <quote>state
+	    threads</quote>.</para>
+      </footnote>, which lets us work safely with mutable state.
+      Compared to the <type>State</type> monad, it has some powerful
+      added capabilities.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>We can <emphasis>thaw</emphasis> an immutable array to
+	  give a mutable array; modify the mutable array in place; and
+	  <emphasis>freeze</emphasis> a new immutable array when we
+	  are done.</para>
+      </listitem>
+      <listitem>
+	<para>We have the ability to use <emphasis>mutable
+	    references</emphasis>. This lets us implement data
+	  structures that we can modify after construction, as in an
+	  imperative language.  This ability is vital for some
+	  imperative data structures and algorithms, for which
+	  similarly efficient purely functional alternatives have not
+	  yet been discovered.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The <type>IO</type> monad also provides these capabilities.
+      The major difference between the two is that the <type>ST</type>
+      monad is intentionally designed so that we can
+      <emphasis>escape</emphasis> from it back into pure Haskell code.
+      We enter the <type>ST</type> monad via the execution function
+      <function>runST</function>, in the same way as for most other
+      Haskell monads (except <type>IO</type>, of course), and we
+      escape by returning from <function>runST</function>.</para>
+
+    <para>When we apply a monad's execution function, we expect it to
+      behave repeatably: given the same body and arguments, we must
+      get the same results every time.  This also applies to
+      <function>runST</function>.  To achieve this repeatability, the
+      <type>ST</type> monad is more restrictive than the
+      <type>IO</type> monad.  We cannot read or write files, create
+      global variables, or fork threads.  Indeed, although we can
+      create and work with mutable references and arrays, the type
+      system prevents them from escaping to the caller of
+      <function>runST</function>.  A mutable array must be frozen into
+      an immutable array before we can return it, and a mutable
+      reference cannot escape at all.</para>
+
+  </sect1>
+
+  <sect1>
+    <title>Designing an API for qualified import</title>
+
+    <para>The public interfaces that we provide for working with Bloom
+      filters are worth a little discussion.</para>
+
+    &Mutable.hs:Mutable;
+
+    <para>We export several names that clash with names exported by
+      the Prelude.  This is deliberate: we expect users of our modules
+      to import them with qualified names.  This reduces the burden on
+      the memory of our users, as they should already be familiar with
+      the Prelude's <function>elem</function>,
+      <function>notElem</function>, and <function>length</function>
+      functions.</para>
+
+    <para>When we use a module written in this style, we might often
+      import it with a single-letter prefix, for instance as
+      <code>import qualified BloomFilter.Mutable as M</code>.  This
+      would allow us to write <function>M.length</function>, which
+      stays compact and readable.</para>
+
+    <para>Alternatively, we could import the module unqualified, and
+      import the Prelude while hiding the clashing names with
+      <code>import Prelude hiding (length)</code>.  This is much less
+      useful, as it gives a reader skimming the code no local cue that
+      they are <emphasis>not</emphasis> actually seeing the Prelude's
+      <function>length</function>.</para>
+
+    <para>Of course, we seem to be violating this precept in our own
+      module's header: we import the Prelude, and hide some of the
+      names it exports.  There is a practical reason for this.  We
+      define a function named <function>length</function>.  If we
+      export this from our module without first hiding the Prelude's
+      <function>length</function>, the compiler will complain that it
+      cannot tell whether to export our version of
+      <function>length</function> or the Prelude's.</para>
+
+    <para>While we could export the fully qualified name
+      <function>BloomFilter.Mutable.length</function> to eliminate the
+      ambiguity, that seems uglier in this case.  This decision has no
+      consequences for someone using our module, just for ourselves as
+      the authors of what ought to be a <quote>black box</quote>, so
+      there is little chance of confusion here.</para>
+  </sect1>
+
+  <sect1>
+    <title>Creating a mutable Bloom filter</title>
+
+    <para>We put type declaration for our mutable Bloom filter in the
+      <code>BloomFilter.Internal</code> module, along with the
+      immutable <type>Bloom</type> type.</para>
+
+    &Internal.hs:MutBloom;
+
+    <para>The <type>STUArray</type> type gives us a mutable unboxed
+      array that we can work with in the <type>ST</type> monad. To
+      create an <type>STUArray</type>, we use the
+      <function>newArray</function> function.  The
+      <function>new</function> function belongs in the
+      <code>BloomFilter.Mutable</code> function.</para>
+
+    &Mutable.hs:new;
+
+    <para>Most of the methods of <type>STUArray</type> are actually
+      implementations of the <type>MArray</type> typeclass, which is
+      defined in the <code>Data.Array.MArray</code> module.</para>
+
+    <para>Our <function>length</function> function is slightly
+      complicated by two factors.  We are relying on our bit array's
+      record of its own bounds, and an <type>MArray</type> instance's
+      <function>getBounds</function> function has a monadic type.  We
+      also have to add one to the answer, as the upper bound of the
+      array is one less than its actual length.</para>
+
+    &Mutable.hs:length;
+
+    <para>To add an element to the Bloom filter, we set all of the
+      bits indicated by the hash function.  We use the
+      <function>mod</function> function to ensure that all of the
+      hashes stay within the bounds of our array, and isolate our code
+      that computes offsets into the bit array in one function.</para>
+
+    &Mutable.hs:insert;
+
+    <para>Testing for membership is no more difficult.  If every bit
+      indicated by the hash function is set, we consider an element to
+      be present in the Bloom filter.</para>
+
+    &Mutable.hs:elem;
+
+    <para>We need to write a small supporting function: a monadic
+      version of <function>all</function>, which we will call
+      <function>allM</function>.</para>
+
+    &Mutable.hs:allM;
+  </sect1>
+
+  <sect1>
+    <title>The immutable API</title>
+
+    <para>Our interface to the immutable Bloom filter has the same
+      structure as the mutable API.</para>
+
+    &BloomFilter.hs:module;
+
+    <para>We provide an easy-to-use means to create an immutable Bloom
+      filter, via a <function>fromList</function> function.  This
+      hides the <type>ST</type> monad from our users, so that they
+      only see the immutable type.</para>
+
+    &BloomFilter.hs:fromList;
+
+    <para>The key to this function is
+      <function>runSTUArray</function>.  We mentioned earlier that in
+      order to return an immutable array from the <type>ST</type>
+      monad, we must freeze a mutable array.  The
+      <function>runSTUArray</function> function combines execution
+      with freezing.  Given an action that returns an
+      <type>STUArray</type>, it executes the action using
+      <function>runST</function>; freezes the <type>STUArray</type>
+      that it returns; and returns that as a
+      <type>UArray</type>.</para>
+
+    <para>The <code>MArray</code> typeclass provides a
+      <function>freeze</function> function that we could use instead,
+      but <function>runSTUArray</function> is both more convenient and
+      more efficient.  The efficiency lies in the fact that
+      <function>freeze</function> must copy the underlying data from
+      the <type>STUArray</type> to the new <type>UArray</type>, to
+      ensure that subsequent modifications of the
+      <type>STUArray</type> cannot affect the contents of the
+      <type>UArray</type>.  Thanks to the type system,
+      <function>runSTUArray</function> can guarantee that an
+      <type>STUArray</type> is no longer accessible when it uses it to
+      create a <type>UArray</type>.  It can thus share the underyling
+      contents between the two arrays, avoiding the copy.</para>
+  </sect1>
+
+  <sect1>
+    <title>Creating a friendly interface</title>
+
+    <para>Although our immutable Bloom filter API is straightforward
+      to use once we have created a <type>Bloom</type> value, the
+      <function>fromList</function> function leaves some important
+      decisions unresolved.  We still have to choose a function that
+      can generate many hash values, and determine what the capacity
+      of a Bloom filter should be.</para>
+
+    &Easy.hs:easyList;
+
+    <para>Here is a possible <quote>friendlier</quote> way to create a
+      Bloom filter.  It leaves responsibility for hashing values in
+      the hands of a typeclass, <type>Hashable</type>.  It lets us
+      configure the Bloom filter based on a parameter that is easier
+      to understand, namely the rate of false positives that we are
+      willing to tolerate.  And it chooses the size of the filter for
+      us, based on the desired false positive rate and the number of
+      elements in the input list.</para>
+
+    <para>This function will of course not always be usable, but it
+      complements the other interfaces we provide.  It lets us provide
+      a range of control over creation, from entirely imperative to
+      completely declarative.</para>
+
+    <sect2>
+      <title>Hashing values</title>
+
+      <para>A Bloom filter depends on fast, high-quality hashes for
+	good performance and a low false positive rate.  It is
+	surprisingly difficult to write a general purpose hash
+	function that has both of these properties.</para>
+
+      <para>Luckily for us, a fellow named Bob Jenkins developed some
+	hash functions that have exactly these properties, and he
+	placed the code in the public domain at <ulink
+	  url="http://burtleburtle.net/bob/hash/doobs.html">http://burtleburtle.net/bob/hash/doobs.html</ulink><footnote>
+	  <para>Jenkins's hash functions have
+	    <emphasis>much</emphasis> better mixing properties than
+	    some other popular non-cryptographic hash functions that
+	    you might be familiar with, such as FNV and
+	    <function>hashpjw</function>, so we recommend avoiding
+	    them.</para>
+	</footnote> . He wrote his hash functions in C, so we can
+	easily use the FFI to create bindings to them.  The specific
+	source file that we need from that site is named <ulink
+	  url="http://burtleburtle.net/bob/c/lookup3.c"><filename>lookup3.c</filename></ulink>.</para>
+
+      <para>There remains one hitch: we will frequently need seven or
+	even ten hash functions.  We really don't want to scrape
+	together that many different functions, and fortunately we do
+	not need to: in most cases, we can get away with just two.  We
+	will see how shortly.  The Jenkins hash library includes two
+	functions, <function>hashword2</function> and
+	<function>hashlittle2</function>, that compute two hash
+	values. Here is a C header file that describes the APIs of
+	these two functions.</para>
+
+    &lookup3.h:header;
+
+      <para>A <quote>salt</quote> is a value that perturbs the hash
+	value that the function computes.  If we hash the same value
+	with two different salts, we will get two different hashes.
+	Since these functions compute two hashes, they accept two
+	salts.</para>
+
+      <para>Here are Haskell bindings to these functions.</para>
+
+      &Hash.hs:jenkins;
+
+      <para>For efficiency, we will combine the two 32-bit salts and
+	hashes into a single 64-bit value.</para>
+
+      &Hash.hs:hashIO;
+
+      <para>Without explicit types around to describe what is
+	happening, the above code is not completely obvious.  The
+	<function>with</function> function allocates room for the salt
+	on the C stack, and stores the current salt value in there, so
+	<varname>sp</varname> is a <type>Ptr Word64</type>.  The
+	pointers <varname>p1</varname> and <varname>p2</varname> are
+	<type>Ptr Word32</type>; <varname>p1</varname> points at the
+	low word of <varname>sp</varname>, and <varname>p2</varname>
+	at the high word.  This is how we chop the single
+	<type>Word64</type> salt into two <type>Ptr Word32</type>
+	parameters.</para>
+
+      <para>Because all of our data pointers are coming from the
+	Haskell heap, we know that they will be aligned on an address
+	that is safe to pass to either <function>hashWord2</function>
+	(which only accepts 32-bit-aligned addresses) or
+	<function>hashLittle2</function>.  Since
+	<function>hashWord32</function> is the faster of the two
+	hashing functions, we call it if we our data is a multiple of
+	4 bytes in size, otherwise
+	<function>hashLittle2</function>.</para>
+
+      <para>Since the C hash function will write the computed hashes
+	into <varname>p1</varname> and <varname>p2</varname>, we only
+	need to <function>peek</function> the pointer
+	<varname>sp</varname> to retrieve the computed hash.</para>
+
+      <para>To hash basic types, we write a little bit of boilerplate
+	code.</para>
+
+      &Hash.hs:hashStorable;
+
+      <para>We might prefer to be able to make use of the
+	<type>Storable</type> typeclass to write just one declaration,
+	as follows:</para>
+
+      &Hash.hs:Storable;
+
+      <para>Unfortunately, Haskell does not permit us to write
+	instances of this form, as they make the type system
+	<emphasis>undecidable</emphasis>: they can cause the
+	compiler's type checker to loop infinitely. We are forced to
+	use a little boilerplate instead.  The restriction on
+	undecidable types does not, however, pose a problem for a
+	definition such as this one.</para>
+
+      &Hash.hs:hashList;
+
+      <para>This instance lets us hash values of many list types.
+	Most importantly, since the <type>Char</type> type is an
+	instance of <type>Storable</type>, we have gained the ability
+	to hash values of type <type>String</type>.</para>
+
+      <para>For tuple types, we take advantage of function
+	composition.</para>
+
+      &Hash.hs:hash2;
+
+      <para>And for <type>ByteString</type> types, we write special
+	instances.</para>
+
+      &Hash.hs:hashSB;
+
+    </sect2>
+
+    <sect2>
+      <title>Turning two hashes into many</title>
+
+      <para>As we mentioned earlier, we need many more than two hashes
+	to make effective use of a Bloom filter.  We can use a
+	technique called <emphasis>double hashing</emphasis> to
+	combine the two values computed by the Jenkins hash functions,
+	yielding many more hashes.  The resulting hashes are of good
+	enough quality for our needs, and far cheaper than computing
+	many distinct hashes.</para>
+
+      &Hash.hs:doubleHash;
+    </sect2>
+
+    <sect2>
+      <title>Implementing the easy creation function</title>
+
+      <para>In the <code>BloomFilter.Easy</code> module, we use our
+	new <function>doubleHash</function> function to define the
+	<function>easyList</function> function whose type we defined
+	earier.</para>
+
+      &Easy.hs:easyList;
+
+      <para>This depends on a <function>suggestSizing</function>
+	function that estimates the best combination of filter size
+	and number of hashes to compute, based on our desired false
+	positive rate and the maximum number of elements that we
+	expect the filter to contain.</para>
+
+      &Easy.hs:suggestSizing;
+
+      <para>In this function, we attempt to minimise only the size of
+	the Bloom filter, without regard for the number of hashes.  To
+	see why.  Let us
+	interactively explore the relationship between filter size and
+	number of hashes.</para>
+
+      <para>Suppose we want
+	to insert 10 million elements into the Bloom filter with a
+	false positive rate of 0.1%.</para>
+
+      &sizings.ghci:kbytes;
+
+      <para>We achieve the most compact table (just over 17KB) by
+	computing 10 hashes. If we do not mind spending an extra 5% on
+	storage, we can reduce the number of hashes to 7.  If we were
+	really calculating 10 hashes over each value, that might be an
+	excellent tradeoff, since even cheap hashes are expensive
+	relative to the cost of a few extra kilobytes of storage.
+	Since we are using Jenkins's hash functions which compute two
+	hashes in a single pass, and double hashing the results to
+	produce additional hashes, our cost of computing extra hashes
+	is tiny.  We thus stand to benefit much less benefit by
+	reducing the number of hashes.</para>
+
+      <para>If we increase our tolerance for false positives tenfold,
+	to 1%, the amount of space and the number of hashes we need
+	drop, though not by easily predictable amounts.</para>
+
+      &sizings.ghci:kbytes2;
+
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Creating a Cabal package</title>
+
+    <para>We have created a moderately complicated library, with four
+      public modules and one internal module.  To turn this into a
+      package that we can easily redistribute, we create a
+      <filename>rwh-bloomfilter.cabal</filename> file.</para>
+
+    <para>Cabal allows us to describe several libraries in a single
+      package.  A <filename>.cabal</filename> file begins with
+      information that is common to all of the libraries, which is
+      followed by a distinct section for each library.</para>
+
+    &rwh-bloomfilter.cabal:header;
+
+    <para>As we are bundling some C code with our library, we tell
+      Cabal about our C source files.</para>
+
+    &rwh-bloomfilter.cabal:extraSourceFiles;
+
+    <para>The <code>extra-source-files</code> directive has no effect
+      on a build: it directs Cabal to bundle some extra files if we
+      run <command>runhaskell Setup sdist</command> to create a source
+      tarball for redistribution.</para>
+
+    <tip>
+      <title>Property names are case insensitive</title>
+
+      <para>When reading a property (the text before a
+	<quote><literal>:</literal></quote> character), Cabal ignores
+	case, so it treats <code>extra-source-files</code> and
+	<code>Extra-Source-Files</code> as the same.</para>
+    </tip>
+
+    <sect2>
+      <title>Dealing with different build setups</title>
+
+      <para>Prior to 2007, the standard Haskell libraries were
+	organised in a handful of large packages, of which the biggest
+	was named <filename>base</filename>.  This organisation tied
+	many unrelated libraries together, so the Haskell community
+	split the <filename>base</filename> package up into a number
+	of more modular libraries.  For instance, the array types
+	migrated from <filename>base</filename> into a package named
+	<filename>array</filename>.</para>
+
+      <para>A Cabal package needs to specify the other packages that
+	it needs to have present in order to build.  This makes it
+	possible for Cabal's command line interface automatically
+	download and build a package's dependencies, if necessary. We
+	would like our code to work with as many versions of &GHC; as
+	possible, regardless of whether they have the modern layout of
+	<filename>base</filename> and numerous other packages.  We
+	thus need to be able to specify that we depend on the
+	<filename>array</filename> package if it is present, and
+	<filename>base</filename> alone otherwise.</para>
+
+      <para>Cabal provides a generic
+	<emphasis>configurations</emphasis> feature, which we can use
+	to selectively enable parts of a <filename>.cabal</filename>
+	file.  A build configuration is controlled by a Boolean-valued
+	<emphasis>flag</emphasis>. If it is <code>True</code>, the
+	text following an <code>if flag</code> directive is used,
+	otherwise the text following the associated <code>else</code>
+	is used.</para>
+
+      &rwh-bloomfilter.cabal:splitBase;
+
+      <itemizedlist>
+	<listitem>
+	  <para>The configurations feature was introduced in version
+	    1.2 of Cabal, so we specify that our package cannot be
+	    built with an older version.</para>
+	</listitem>
+	<listitem>
+	  <para>The meaning of the <code>split-base</code> flag should
+	    be self-explanatory.</para>
+	</listitem>
+	<listitem>
+	  <para>The <code>bytestring-in-base</code> flag deals with a
+	    more tortured history.  When the
+	    <filename>bytestring</filename> package was first created,
+	    it was bundled with &GHC; 6.4, and kept separate from the
+	    <filename>base</filename> package. In &GHC; 6.6, it was
+	    incorporated into the <filename>base</filename> package,
+	    but it became independent again when the
+	    <filename>base</filename> package was split before the
+	    release of &GHC; 6.8.1.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>These flags are usually invisible to people building a
+	package, because Cabal handles them automatically.  Before we
+	explain what happens, it will help to see the beginning of the
+	<code>Library</code> section of our <code>.cabal</code>
+	file.</para>
+
+      &rwh-bloomfilter.cabal:library;
+
+      <para>Cabal creates a package description with the default
+	values of the flags (a missing default is assumed to be
+	<code>True</code>).  If that configuration can be built (e.g.
+	because all of the needed package versions are available), it
+	will be used.  Otherwise, Cabal tries different combinations
+	of flags until it either finds a configuration that it can
+	build or exhausts the alternatives.</para>
+
+      <para>For example, if we were to begin with both
+	<code>split-base</code> and <code>bytestring-in-base</code>
+	set to <code>True</code>, Cabal would select the following
+	package dependencies.</para>
+
+      &inconsistent.cabal:bogus;
+
+      <para>The <filename>base</filename> package cannot
+	simultaneously be newer than <code>3.0</code> and older than
+	<code>2.2</code>, so Cabal would reject this configuration as
+	inconsistent.  For a modern version of &GHC;, after a few
+	attempts it would discover this configuration that will indeed
+	build.</para>
+
+      &inconsistent.cabal:modern;
+
+      <para>When we run <command>runhaskell Setup configure</command>,
+	we can manually specify the values of flags, though we will
+	rarely need to do so in practice.</para>
+    </sect2>
+  </sect1>
 </chapter>
 
 <!--

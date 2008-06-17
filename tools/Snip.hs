@@ -36,6 +36,7 @@ markers path =
       "hs" -> (startHs, endHs)
       "lhs" -> (startHs, endHs)
       "c"  -> (startC, endC)
+      "h"  -> (startC, endC)
       "cabal"  -> (startCabal, endCabal)
       "cpp"  -> (startC, endC)
       "java"  -> (startC, endC)

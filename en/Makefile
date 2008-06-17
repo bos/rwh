@@ -22,11 +22,12 @@ src-files := $(src-master) \
 	$(wildcard ch*.xml) \
 	$(wildcard app*.xml)
 
-src-dirs := $(wildcard ../examples/app[A-Z]* ../examples/ch[0-9][0-9]*)
+src-dirs := $(wildcard ../examples/app[A-Z]* ../examples/ch[0-9][0-9]* \
+		       ../examples/ch[0-9]*/*)
 
-src-examples := $(foreach d,$(src-dirs),$(wildcard $d/*.c $d/*.cabal $d/*.cpp \
-					$d/*.ghci $d/*.hs $d/*.java $d/*.js \
-					$d/*.lhs $d/*.py))
+src-patterns := *.[ch] *.cabal *.cpp *.ghci *.hs *.java *.js *.lhs *.py
+src-examples := $(foreach d,$(src-dirs),$(foreach p,$(src-patterns), \
+					  $(wildcard $d/$p $d/*/$p)))
 
 src-figs := $(wildcard figs/*.jpg figs/*.png)
 
@@ -224,10 +225,20 @@ tools: ../tools/.built
 ../tools/.built: ../tools/*.hs ../tools/tools.cabal
 	$(MAKE) -C ../tools
 
+examples: $(stamp-examples)
+
 auto-snippets.xml: $(stamp-examples)
 	@mkdir -p x
 	@echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
 	@cat $(sort $^) | sort >> $@
+
+cabal-packages: ../examples/ch27/dist/setup-config
+
+../examples/ch27/dist/setup-config:
+	cd ../examples/ch27 && \
+	runghc Setup configure --user --prefix=$(HOME) && \
+	runghc Setup build && \
+	runghc Setup install
 
 .validated-%: % $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $<
@@ -257,6 +268,7 @@ vpath %.js ../web/javascript
 vpath %.c $(src-dirs)
 vpath %.cabal $(src-dirs)
 vpath %.cpp $(src-dirs)
+vpath %.h $(src-dirs)
 vpath %.hs $(src-dirs)
 vpath %.java $(src-dirs)
 vpath %.js $(src-dirs)
@@ -274,6 +286,10 @@ x/.stamp-%.cabal: %.cabal
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 
 x/.stamp-%.cpp: %.cpp
+	@mkdir -p x
+	../tools/bin/snippets $(CURDIR)/x $< > $@
+
+x/.stamp-%.h: %.h
 	@mkdir -p x
 	../tools/bin/snippets $(CURDIR)/x $< > $@
 

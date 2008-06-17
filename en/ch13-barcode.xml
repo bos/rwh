@@ -239,9 +239,11 @@
 	practical use.</para>
 
       <note>
-	<para id="x_mT">It is in fact possible to modify arrays efficiently in
-	  Haskell, but this is a subject that we will have to return
-	  to later.</para>
+	<title>Don't lose hope</title>
+
+	<para id="x_mT">It <emphasis>is</emphasis> in fact possible to
+	  modify an array efficiently in Haskell, but this is a
+	  subject that we will have to return to later.</para>
       </note>
     </sect2>
 

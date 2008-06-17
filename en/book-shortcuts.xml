@@ -75,6 +75,7 @@
 <!ENTITY WriteMode "<literal>WriteMode</literal>">
 <!ENTITY bind "<function>(&gt;&gt;=)</function>">
 <!ENTITY bind_ "<function>(&gt;&gt;)</function>">
+<!ENTITY bottom "&#8869;">
 <!ENTITY case "<literal>case</literal>">
 <!ENTITY catch "<literal>catch</literal>">
 <!ENTITY catchDyn "<literal>catchDyn</literal>">
