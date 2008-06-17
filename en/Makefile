@@ -46,10 +46,6 @@ extras-web-base := \
 
 extras-web := $(extras-web-base) $(extras-web-base:%=%.gz)
 
-xml-examples := $(sort $(patsubst %,x/%:*.xml,$(notdir $(src-examples))))
-
-src-ghci := $(filter %.ghci,$(src-examples))
-
 stamp-examples := $(addprefix x/.stamp-,$(notdir $(src-examples)))
 
 # Objects.
@@ -152,7 +148,7 @@ webfigs:
 	done
 
 .PHONY: alpha
-alpha: $(obj-alpha)/index.html $(obj-alpha)/.htaccess
+alpha: tools $(obj-alpha)/index.html $(obj-alpha)/.htaccess
 
 $(obj-alpha)/preface.html: .validated-alpha.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-alpha),alpha.xml)
@@ -173,7 +169,7 @@ $(obj-alpha)/.htaccess: ../web/alpha.htaccess
 	cp $< $@
 
 .PHONY: beta
-beta: $(obj-beta)/index.html $(obj-beta)/.htaccess
+beta: tools $(obj-beta)/index.html $(obj-beta)/.htaccess
 
 $(obj-beta)/preface.html: .validated-beta.xml $(wildcard ../xsl/*.xsl)
 	$(call make-html,$(obj-beta),beta.xml)
@@ -225,6 +221,7 @@ tools: ../tools/.built
 ../tools/.built: ../tools/*.hs ../tools/tools.cabal
 	$(MAKE) -C ../tools
 
+.PHONY: examples
 examples: $(stamp-examples)
 
 auto-snippets.xml: $(stamp-examples)
@@ -236,9 +233,9 @@ cabal-packages: ../examples/ch27/dist/setup-config
 
 ../examples/ch27/dist/setup-config:
 	cd ../examples/ch27 && \
-	runghc Setup configure --user --prefix=$(HOME) && \
-	runghc Setup build && \
-	runghc Setup install
+	$(runhaskell) Setup configure --user --prefix=$(HOME) && \
+	$(runhaskell) Setup build && \
+	$(runhaskell) Setup install
 
 .validated-%: % $(src-files)
 	$(xmllint) --path '$(dtd-dir):$(xml-path)' $(xmllint-opts) $<
