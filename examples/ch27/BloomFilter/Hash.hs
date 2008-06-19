@@ -1,6 +1,11 @@
 {-- snippet jenkins --}
 {-# LANGUAGE ForeignFunctionInterface #-}
-module BloomFilter.Hash where
+module BloomFilter.Hash
+    (
+      Hashable(..)
+    , hash
+    , doubleHash
+    ) where
 
 import Data.Bits ((.&.), shiftR)
 import Foreign.Marshal.Array (withArrayLen)
@@ -21,6 +26,7 @@ foreign import ccall unsafe "lookup3.h hashlittle2" hashLittle2
     :: Ptr a -> CSize -> Ptr Word32 -> Ptr Word32 -> IO ()
 {-- /snippet jenkins --}
 
+{-- snippet Hashable --}
 class Hashable a where
     hashSalt :: Word64        -- ^ salt
              -> a             -- ^ value to hash
@@ -28,6 +34,7 @@ class Hashable a where
 
 hash :: Hashable a => a -> Word64
 hash = hashSalt 0x106fc397cf62f64d3
+{-- /snippet Hashable --}
 
 {-- snippet hashIO --}
 hashIO :: Ptr a    -- value to hash
@@ -85,16 +92,16 @@ instance (Hashable a, Hashable b, Hashable c) => Hashable (a,b,c) where
 {-- /snippet hash2 --}
 
 {-- snippet hashSB --}
-hashSB :: Word64 -> Strict.ByteString -> IO Word64
-hashSB salt bs = Strict.useAsCStringLen bs $ \(ptr, len) ->
-                 hashIO ptr (fromIntegral len) salt
+hashByteString :: Word64 -> Strict.ByteString -> IO Word64
+hashByteString salt bs = Strict.useAsCStringLen bs $ \(ptr, len) ->
+                         hashIO ptr (fromIntegral len) salt
 
 instance Hashable Strict.ByteString where
-    hashSalt salt bs = unsafePerformIO $ hashSB salt bs
+    hashSalt salt bs = unsafePerformIO $ hashByteString salt bs
 
 instance Hashable Lazy.ByteString where
     hashSalt salt bs = unsafePerformIO $
-                       foldM hashSB salt (Lazy.toChunks bs)
+                       foldM hashByteString salt (Lazy.toChunks bs)
 {-- /snippet hashSB --}
 
 {-- snippet doubleHash --}

@@ -1,0 +1,15 @@
+--# monomorphic
+:load BloomCheck
+:t prop_one_present
+:t prop_one_present (undefined :: Int)   
+
+--# one
+handyCheck 5000 $ prop_one_present (undefined :: Int)
+handyCheck 5000 $ prop_one_present (undefined :: Double)
+
+--# all
+handyCheck 2000 $ prop_all_present (undefined :: Int)
+
+--# bs
+handyCheck 1000 $ prop_one_present (undefined :: Lazy.ByteString)
+handyCheck 1000 $ prop_all_present (undefined :: Strict.ByteString)

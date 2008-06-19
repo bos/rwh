@@ -39,11 +39,22 @@ Library
     Build-Depends: base < 3.0
 -- /snippet library
 
+-- snippet modules
   Exposed-Modules: BloomFilter
                    BloomFilter.Easy
                    BloomFilter.Hash
                    BloomFilter.Mutable
   Other-Modules:   BloomFilter.Internal
+  GHC-Options:     -O2 -Wall -fvia-C
+-- /snippet modules
+
+-- snippet modules
+  GHC-Prof-Options: -auto-all
+-- /snippet modules
+
+-- snippet cbits
   C-Sources:       cbits/lookup3.c
-  GHC-Options:     -O2 -Wall -fliberate-case-threshold=1000
   CC-Options:      -O3
+  Include-Dirs:    cbits
+  Includes:        lookup3.h
+-- /snippet cbits

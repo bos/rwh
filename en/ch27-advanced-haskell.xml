@@ -417,12 +417,45 @@
       to understand, namely the rate of false positives that we are
       willing to tolerate.  And it chooses the size of the filter for
       us, based on the desired false positive rate and the number of
-      elements in the input list.</para>
+      elements in the input list.  Notice that we use
+      <function>genericLength</function> to handle lists that are
+      longer than will fit in an <type>Int</type>.</para>
 
-    <para>This function will of course not always be usable, but it
-      complements the other interfaces we provide.  It lets us provide
-      a range of control over creation, from entirely imperative to
-      completely declarative.</para>
+    <para>This function will of course not always be usable: for
+      example, it will fail if the length of the input list is too
+      long. However, its simplicity rounds out the other interfaces we
+      provide.  It lets us provide our users with a range of control
+      over creation, from entirely imperative to completely
+      declarative.</para>
+
+    <sect2>
+      <title>Re-exporting names for convenience</title>
+
+      <para>In the export list for our module, we re-export some names
+	from the base <code>BloomFilter</code> module.  This allows
+	casual users to import only the <code>BloomFilter.Easy</code>
+	module, and have access to all of the types and functions they
+	are likely to need.</para>
+
+      <para>If we import both <code>BloomFilter.Easy</code> and
+	<code>BloomFilter</code>, you might wonder what will happen if
+	we try to use a name exported by both.  We already know that
+	if we import <code>BloomFilter</code> unqualified and try to
+	use <function>length</function>, &GHC; will issue an error
+	about ambiguity, because the Prelude also makes the name
+	<function>length</function> available.</para>
+
+      <para>The Haskell standard requires an implementation to be able
+	to tell when several names refer to the same
+	<quote>thing</quote>.  For instance, the <type>Bloom</type>
+	type is exported by <code>BloomFilter</code> and
+	<code>BloomFilter.Easy</code>.  If we import both modules and
+	try to use <type>Bloom</type>, &GHC; will be able to see that
+	the <type>Bloom</type> re-exported from
+	<code>BloomFilter.Easy</code> is the same as the one exported
+	from <code>BloomFilter</code>, and it will not report an
+	ambiguity.</para>
+    </sect2>
 
     <sect2>
       <title>Hashing values</title>
@@ -445,7 +478,22 @@
 	</footnote> . He wrote his hash functions in C, so we can
 	easily use the FFI to create bindings to them.  The specific
 	source file that we need from that site is named <ulink
-	  url="http://burtleburtle.net/bob/c/lookup3.c"><filename>lookup3.c</filename></ulink>.</para>
+	  url="http://burtleburtle.net/bob/c/lookup3.c"><filename>lookup3.c</filename></ulink>. 
+	We create a <filename>cbits</filename> directory and download
+	it to there.</para>
+
+      <note>
+	<title>A little editing</title>
+
+	<para>On line 36 of the copy of <filename>lookup3.c</filename>
+	  that you just downloaded, there is a macro named
+	  <code>SELF_TEST</code> defined.  To use this source file as
+	  a library, you <emphasis>must</emphasis> delete this line or
+	  comment it out.  If you forget to do so, the
+	  <function>main</function> function defined near the bottom
+	  of the file will supersede the <function>main</function> of
+	  any Haskell program you link this library against.</para>
+      </note>
 
       <para>There remains one hitch: we will frequently need seven or
 	even ten hash functions.  We really don't want to scrape
@@ -455,9 +503,10 @@
 	functions, <function>hashword2</function> and
 	<function>hashlittle2</function>, that compute two hash
 	values. Here is a C header file that describes the APIs of
-	these two functions.</para>
+	these two functions.  We save this to
+	<filename>cbits/lookup3.h</filename>.</para>
 
-    &lookup3.h:header;
+      &lookup3.h:header;
 
       <para>A <quote>salt</quote> is a value that perturbs the hash
 	value that the function computes.  If we hash the same value
@@ -465,12 +514,17 @@
 	Since these functions compute two hashes, they accept two
 	salts.</para>
 
-      <para>Here are Haskell bindings to these functions.</para>
+      <para>Here are our Haskell bindings to these functions.</para>
 
       &Hash.hs:jenkins;
 
-      <para>For efficiency, we will combine the two 32-bit salts and
-	hashes into a single 64-bit value.</para>
+      <para>We have specified that the definitions of the functions
+	can be found in the <filename>lookup3.h</filename> header file
+	that we just created.</para>
+
+      <para>For convenience and efficiency, we will combine the 32-bit
+	salts consumed, and the hash values computed, by the Jenkins
+	hash functions into a single 64-bit value.</para>
 
       &Hash.hs:hashIO;
 
@@ -501,41 +555,58 @@
 	need to <function>peek</function> the pointer
 	<varname>sp</varname> to retrieve the computed hash.</para>
 
-      <para>To hash basic types, we write a little bit of boilerplate
-	code.</para>
+      <para>We don't want clients of this module to be stuck fiddling
+	with low-level details, so we use a typeclass to provide a
+	clean, high-level interface.</para>
+
+      &Hash.hs:Storable;
+
+      <para>We also provide a number of useful implementations of this
+	typeclass.  To hash basic types, we must write a little
+	boilerplate code.</para>
 
       &Hash.hs:hashStorable;
 
-      <para>We might prefer to be able to make use of the
-	<type>Storable</type> typeclass to write just one declaration,
-	as follows:</para>
+      <para>We might prefer to use the <type>Storable</type> typeclass
+	to write just one declaration, as follows:</para>
 
       &Hash.hs:Storable;
 
       <para>Unfortunately, Haskell does not permit us to write
-	instances of this form, as they make the type system
-	<emphasis>undecidable</emphasis>: they can cause the
-	compiler's type checker to loop infinitely. We are forced to
-	use a little boilerplate instead.  The restriction on
-	undecidable types does not, however, pose a problem for a
+	instances of this form, as allowing them would make the type
+	system <emphasis>undecidable</emphasis>: they can cause the
+	compiler's type checker to loop infinitely. This restriction
+	on undecidable types forces us to write out individual
+	declarations.  It does not, however, pose a problem for a
 	definition such as this one.</para>
 
       &Hash.hs:hashList;
 
-      <para>This instance lets us hash values of many list types.
-	Most importantly, since the <type>Char</type> type is an
-	instance of <type>Storable</type>, we have gained the ability
-	to hash values of type <type>String</type>.</para>
+      <para>The compiler will accept this instance, so we gain the
+	ability to hash values of many list types<footnote>
+	  <para>Unfortunately, we do not have room to explain why one
+	    of these instances is decidable, but the other is
+	    not.</para>
+	</footnote>.  Most importantly, since <type>Char</type> is an
+	instance of <type>Storable</type>, we can now hash
+	<type>String</type> values.</para>
 
       <para>For tuple types, we take advantage of function
-	composition.</para>
+	composition.  We take a salt in at one end of the composition
+	pipeline, and use the result of hashing each tuple element as
+	the salt for the next element.</para>
 
       &Hash.hs:hash2;
 
-      <para>And for <type>ByteString</type> types, we write special
-	instances.</para>
+      <para>To hash <type>ByteString</type> types, we write special
+	instances that plug straight into the internals of the
+	<type>ByteString</type> types.  This gives us excellent
+	hashing performance.</para>
 
       &Hash.hs:hashSB;
+
+      <remark>XXX May need to flesh ByteString details out if not
+	covered elsewhere.</remark>
 
     </sect2>
 
@@ -571,21 +642,26 @@
 
       &Easy.hs:suggestSizing;
 
-      <para>In this function, we attempt to minimise only the size of
-	the Bloom filter, without regard for the number of hashes.  To
-	see why.  Let us
-	interactively explore the relationship between filter size and
+      <para>We perform some rather paranoid checking.  For instance,
+	the <function>sizings</function> function suggests pairs of
+	array size and hash count, but it does not validate its
+	suggestions.  Since we use 32-bit hashes, we must filter out
+	suggested array sizes that are too large.</para>
+
+      <para>In our <function>suggestSizing</function> function, we
+	attempt to minimise only the size of the bit array, without
+	regard for the number of hashes.  To see why, let us
+	interactively explore the relationship between array size and
 	number of hashes.</para>
 
-      <para>Suppose we want
-	to insert 10 million elements into the Bloom filter with a
-	false positive rate of 0.1%.</para>
+      <para>Suppose we want to insert 10 million elements into a Bloom
+	filter, with a false positive rate of 0.1%.</para>
 
       &sizings.ghci:kbytes;
 
       <para>We achieve the most compact table (just over 17KB) by
 	computing 10 hashes. If we do not mind spending an extra 5% on
-	storage, we can reduce the number of hashes to 7.  If we were
+	space, we can reduce the number of hashes to 7.  If we were
 	really calculating 10 hashes over each value, that might be an
 	excellent tradeoff, since even cheap hashes are expensive
 	relative to the cost of a few extra kilobytes of storage.
@@ -728,9 +804,206 @@
       &inconsistent.cabal:modern;
 
       <para>When we run <command>runhaskell Setup configure</command>,
-	we can manually specify the values of flags, though we will
-	rarely need to do so in practice.</para>
+	we can manually specify the values of flags via the
+	<option>--flag</option> option, though we will rarely need to
+	do so in practice.</para>
     </sect2>
+
+    <sect2>
+      <title>Compilation options, and interfacing to C</title>
+
+      <para>Continuing with our <filename>.cabal</filename> file, we
+	fill out the remaining details of the Haskell side of our
+	library.</para>
+
+      &rwh-bloomfilter.cabal:modules;
+
+      <para>The <code>Other-Modules</code> property lists Haskell
+	modules that are private to the library.  Such modules will be
+	invisible to code that uses this package.</para>
+
+      <para>When we build this package with &GHC;, Cabal will pass the
+	options from the <code>GHC-Options</code> property to the
+	compiler.</para>
+
+      <para>The <option>-O2</option> option makes &GHC; optimise our
+	code aggressively.  Code compiled without optimisation is very
+	slow, so we should always use <option>-O2</option> for
+	production code.</para>
+
+      <para>To help ourselves to write cleaner code, we usually add
+	the <option>-Wall</option> option, which enables all of
+	&GHC;'s warnings.  This will cause &GHC; to issue complaints
+	if it encounters potential problems, such as overlapping
+	patterns; function parameters that are not used; and a myriad
+	of other potential stumbling blocks. While it is often safe to
+	ignore these warnings, we generally prefer to fix up our code
+	to eliminate them.  The small added effort usually yields code
+	that is easier to read and maintain.</para>
+
+      <para>When we compile with <option>-fvia-C</option>, &GHC; will
+	generate C code and use the system's C compiler to compile it,
+	instead of going straight to assembly language as it usually
+	does.  This slows compilation down, but sometimes the C
+	compiler can further improve &GHC;'s optimised code, so it can
+	be worthwhile.</para>
+
+      <para>We include <option>-fvia-C</option> here mainly to show
+	how to make compilation with it work.</para>
+
+      &rwh-bloomfilter.cabal:cbits;
+
+      <para>For the <code>C-Sources</code> property, we only need to
+	list files that must be compiled into our library.  The
+	<code>CC-Options</code> property contains options for the C
+	compiler (<option>-O3</option> specifies a high level of
+	optimisation).  Because our FFI bindings for the Jenkins hash
+	functions refer to the <filename>lookup3.h</filename> header
+	file, we need to tell Cabal where to find the header
+	file.</para>
+
+      <tip>
+	<title>The value of -fvia-C with the FFI</title>
+
+	<para>Compiling with <option>-fvia-C</option> has a
+	  substantial benefit when we write FFI bindings. If we
+	  mention a header file in an FFI declaration (e.g.
+	  <code>foreign import "string.h memcpy")</code>, the C
+	  compiler will typecheck the generated Haskell code and
+	  ensure that its invocation of the C function is consistent
+	  with the C function's prototype in the header file.</para>
+
+	<para>If we do not use <option>-fvia-C</option>, we lose that
+	  additional layer of safety.  This makes it easy to let
+	  simple C type errors slip into our Haskell code.  As an
+	  example, on most 64-bit machines, a <type>CInt</type> is 32
+	  bits wide, and a <type>CSize</type> is 64 bits wide.  If we
+	  accidentally use one type to describe a parameter for an FFI
+	  binding when we should use the other, we are likely to cause
+	  data corruption or a crash.</para>
+      </tip>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Testing with QuickCheck</title>
+
+    <para>Before we pay any attention to performance, we want to
+      establish that our Bloom filter behaves correctly.  We can
+      easily use QuickCheck to test some basic properties.</para>
+
+    &BloomCheck.hs:BloomCheck;
+
+    <para>We will not use the normal <function>quickCheck</function>
+      function to test our properties, as the 100 test inputs that it
+      generates do not provide much coverage.</para>
+
+    &BloomCheck.hs:handyCheck;
+
+    <para>Our first task is to ensure that if we add a value to a
+      Bloom filter, a subsequent membership test will always report it
+      as present, no matter what the chosen false positive rate or
+      input value is.</para>
+
+    <para>We will use the <function>easyList</function> function to
+      create a Bloom filter.  The <type>Random</type> instance for
+      <type>Double</type> generates numbers in the range zero to one,
+      so QuickCheck can supply us with arbitrary false positive
+      rates.</para>
+
+    &BloomCheck.hs:prop_one_present;
+
+    <para>Our small combinator, <function>(=~&gt;)</function>, lets us
+      filter out failures of <function>easyList</function>: if it
+      fails, the test automatically passes.</para>
+
+    <sect2>
+      <title>Polymorphic testing</title>
+
+      <para>QuickCheck requires properties to be
+	<emphasis>monomorphic</emphasis>.  Since we have many
+	different hashable types that we would like to test, we would
+	very much like to avoid having to write the same test in many
+	different ways.</para>
+
+      <para>Notice that although our
+	<function>prop_one_present</function> function is polymorphic,
+	it ignores its first argument.  We use this to simulate
+	monomorphic properties, as follows.</para>
+
+      &bloomCheck.ghci:monomorphic;
+
+      <para>We can supply any value as the first argument to
+	<function>prop_one_present</function>.  All that matters is
+	its <emphasis>type</emphasis>, as the same type will be used
+	for the first element of the second argument.</para>
+
+      &bloomCheck.ghci:one;
+
+      <para>If we populate a Bloom filter with many elements, they
+	should all be present afterwards.</para>
+
+      &BloomCheck.hs:prop_all_present;
+
+      <para>This test also succeeds.</para>
+
+      &bloomCheck.ghci:all;
+    </sect2>
+
+    <sect2>
+      <title>Writing Arbitrary instances for ByteStrings</title>
+
+      <para>The QuickCheck library does not provide
+	<type>Arbitrary</type> instances for <type>ByteString</type>
+	types, so we must write our own.  Rather than create a
+	<type>ByteString</type> directly, we will use a
+	<function>pack</function> function to create one from a
+	<type>[Word8]</type>.</para>
+
+      &BloomCheck.hs:ByteString;
+
+      <para>Also missing from QuickCheck are <type>Arbitrary</type>
+	instances for the fixed-width types defined in
+	<code>Data.Word</code> and <code>Data.Int</code>.  We need to
+	at least create an <type>Arbitrary</type> instance for
+	<type>Word8</type>.</para>
+
+      &BloomCheck.hs:Word8;
+
+      <para>We support these instances with  a few common functions so
+	that we can reuse them when writing instances for other
+	integral types.</para>
+
+      &BloomCheck.hs:Word32;
+
+      <para>With these <type>Arbitrary</type> instances created, we
+	can try our existing properties on the <type>ByteString</type>
+	types.</para>
+
+      &bloomCheck.ghci:bs;
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Exercises</title>
+
+    <qandaset defaultlabel="number">
+      <qandaentry>
+	<question>
+	  <para>Our use of<function>genericLength</function> in
+	    <function>easyList</function> will cause our function to
+	    loop infinitely if we supply an infinite list.  Fix
+	    this.</para>
+	</question>
+      </qandaentry>
+      <qandaentry>
+	<question>
+	  <para><emphasis>Difficult.</emphasis>  Write a QuickCheck
+	    property that checks whether the observed false positive
+	    rate is close to the requested false positive rate.</para>
+	</question>
+      </qandaentry>
+    </qandaset>
   </sect1>
 </chapter>
 
