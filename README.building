@@ -12,6 +12,16 @@ On OpenBSD:
 
 ------------------------------------------------------------------------
 
+Hackage packages needed to build examples (assuming you're using GHC
+6.6.1 or newer):
+
+polyparse-1.1
+HaXml-1.19.4
+HDBC-1.1.4.0
+HDBC-sqlite3-1.1.4.0
+
+------------------------------------------------------------------------
+
 Submitting keysigned patches:
 
     darcs get http://darcs.realworldhaskell.org/rwh
