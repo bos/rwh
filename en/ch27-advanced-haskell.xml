@@ -408,7 +408,7 @@
       can generate many hash values, and determine what the capacity
       of a Bloom filter should be.</para>
 
-    &Easy.hs:easyList;
+    &Easy.hs:easyList.type;
 
     <para>Here is a possible <quote>friendlier</quote> way to create a
       Bloom filter.  It leaves responsibility for hashing values in
@@ -559,7 +559,7 @@
 	with low-level details, so we use a typeclass to provide a
 	clean, high-level interface.</para>
 
-      &Hash.hs:Storable;
+      &Hash.hs:Hashable;
 
       <para>We also provide a number of useful implementations of this
 	typeclass.  To hash basic types, we must write a little
