@@ -908,8 +908,40 @@
     <para>We will use the <function>easyList</function> function to
       create a Bloom filter.  The <type>Random</type> instance for
       <type>Double</type> generates numbers in the range zero to one,
-      so QuickCheck can supply us with arbitrary false positive
-      rates.</para>
+      so QuickCheck can <emphasis>nearly</emphasis> supply us with
+      arbitrary false positive rates.</para>
+
+    <para>However, we need to ensure that both zero and one are
+      excluded from the false positives we test with.  QuickCheck
+      gives us two ways to do this.</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>By <emphasis>construction</emphasis>: we specify the
+	  range of valid values to generate.  QuickCheck provides a
+	  <function>forAll</function> combinator for this
+	  purpose.</para>
+      </listitem>
+      <listitem>
+	<para>By <emphasis>elimination</emphasis>: when QuickCheck
+	  generates an arbitrary value for us, we filter out those
+	  that do not fit our criteria, using the
+	  <function>(==&gt;)</function> operator.  If we reject a
+	  value in this way, a test will appear to succeed.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If we can choose either method, it is always preferable to
+      take the constructive approach. To see why, suppose that
+      QuickCheck generates 1,000 arbitrary values for us, and we
+      filter out 800 as unsuitable for some reason.  We will
+      <emphasis>appear</emphasis> to run 1,000 tests, but only
+      200 will actually do anything useful.</para>
+
+    <para>Following this idea, when we generate desired false positive
+      rates, we could eliminate zeroes and ones from whatever
+      QuickCheck gives us, but instead we construct values in an
+      interval that will always be valid.</para>
 
     &BloomCheck.hs:prop_one_present;
 
@@ -981,6 +1013,67 @@
 	types.</para>
 
       &bloomCheck.ghci:bs;
+    </sect2>
+
+    <sect2>
+      <title>Are suggested sizes correct?</title>
+
+      <para>The cost of testing properties of <type>easyList</type>
+	increases rapidly as we increase the number of tests to run.
+	We would still like to have some assurance that
+	<function>easyList</function> will behave well on huge inputs.
+	Since it is not practical to test this directly, we can use a
+	proxy: will <function>suggestSizing</function> give a sensible
+	array size and number of hashes even with extreme
+	inputs?</para>
+
+      <para>This is a slightly tricky property to check.  We need to
+	vary both the desired false positive rate and the expected
+	capacity.  When we looked at some results from the
+	<function>sizings</function> function, we saw that the
+	relationship between these values is not easy to
+	predict.</para>
+
+      <para>We can try to ignore the complexity.</para>
+
+      &BloomCheck.hs:prop_suggest_try1;
+
+      <para>Not surprisingly, this gives us a test that is not
+	actually useful.</para>
+
+      &bloomCheck.ghci:try1;
+
+      <para>When we plug the counterexamples that QuickCheck prints
+	into <function>suggestSizings</function>, we can see that
+	these inputs are rejected because they would result in a bit
+	array that would be too large.</para>
+
+      &bloomCheck.ghci:why;
+
+      <para>Since we can't easily predict which combinations will
+	cause this problem, we must resort to eliminating sizes and
+	false positive rates before they bite us.</para>
+
+      &BloomCheck.hs:prop_suggest_try2;
+
+      <para>If we try this with a small number of tests, it seems to
+	work well.</para>
+
+      &bloomCheck.ghci:try2a;
+
+      <para>On a larger body of tests, we filter out too many
+	combinations.</para>
+
+      &bloomCheck.ghci:try2b;
+
+      <para>To deal with this, we try to reduce the likelihood of
+	generating inputs that we will subsequently reject.</para>
+
+      &BloomCheck.hs:prop_suggestions_sane;
+
+      <para>Finally, we have a robust looking property.</para>
+
+      &bloomCheck.ghci:try3;
     </sect2>
   </sect1>
 

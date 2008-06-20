@@ -59,24 +59,68 @@ instance Arbitrary Strict.ByteString where
 {-- /snippet ByteString --}
 
 {-- snippet prop_one_present --}
+falsePositive :: Gen Double
+falsePositive = choose (epsilon, 1 - epsilon)
+    where epsilon = 1e-6
+
 (=~>) :: Either a b -> (b -> Bool) -> Bool
 k =~> f = either (const True) f k
 
-prop_one_present :: (Hashable a) => a -> (a, Double) -> Bool
-prop_one_present _ (elt,errRate) =
-    B.easyList errRate [elt] =~> \filt ->
-    elt `B.elem` filt
+prop_one_present _ elt =
+    forAll falsePositive $ \errRate ->
+      B.easyList errRate [elt] =~> \filt ->
+        elt `B.elem` filt
 {-- /snippet prop_one_present --}
 
 {-- snippet prop_all_present --}
-prop_all_present :: (Hashable a) => a -> ([a], Double) -> Bool
-prop_all_present _ (xs,errRate) = B.easyList errRate xs =~> \filt ->
-                                  all (`B.elem` filt) xs
+prop_all_present _ xs =
+    forAll falsePositive $ \errRate ->
+      B.easyList errRate xs =~> \filt ->
+        all (`B.elem` filt) xs
 {-- /snippet prop_all_present --}
 
-prop_suggestions_sane errRate =
-    forAll (choose (1,fromIntegral maxWord32 `div` 8)) $ \cap ->
-    (fst . minimum $ B.sizings cap errRate) < fromIntegral maxWord32 ==>
-    either (const False) sane $ B.suggestSizing cap errRate
+{-- snippet prop_suggest_try1 --}
+prop_suggest_try1 =
+  forAll falsePositive $ \errRate ->
+    forAll (choose (1,maxBound :: Word32)) $ \cap ->
+      case B.suggestSizing (fromIntegral cap) errRate of
+        Left err -> False
+        Right (bits,hashes) -> bits > 0 && bits < maxBound && hashes > 0
+{-- /snippet prop_suggest_try1 --}
+
+{-- snippet prop_suggest_try2 --}
+prop_suggest_try2 =
+    forAll falsePositive $ \errRate ->
+      forAll (choose (1,fromIntegral maxWord32)) $ \cap ->
+        let bestSize = fst . minimum $ B.sizings cap errRate
+        in bestSize < fromIntegral maxWord32 ==>
+           either (const False) sane $ B.suggestSizing cap errRate
   where sane (bits,hashes) = bits > 0 && bits < maxBound && hashes > 0
         maxWord32 = maxBound :: Word32
+{-- /snippet prop_suggest_try2 --}
+
+{-- snippet prop_suggestions_sane --}
+prop_suggestions_sane =
+    forAll falsePositive $ \errRate ->
+      forAll (choose (1,fromIntegral maxWord32 `div` 8)) $ \cap ->
+        let size = fst . minimum $ B.sizings cap errRate
+        in size < fromIntegral maxWord32 ==>
+           either (const False) sane $ B.suggestSizing cap errRate
+  where sane (bits,hashes) = bits > 0 && bits < maxBound && hashes > 0
+        maxWord32 = maxBound :: Word32
+{-- /snippet prop_suggestions_sane --}
+
+{-- snippet suggestSizing --}
+suggestSizing :: Int
+              -> Double
+              -> (Int, Int)
+suggestSizing capacity errRate
+    | capacity <= 0                = error "invalid capacity"
+    | errRate <= 0 || errRate >= 1 = error "invalid error rate"
+    | otherwise = (truncate bits, truncate hashes)
+  where cap = fromIntegral capacity
+        bits, hashes :: Double
+        (bits, hashes) =
+            minimum [((-k) * cap / log (1 - (errRate ** (1 / k))), k)
+                     | k <- [1..100]]
+{-- /snippet suggestSizing --}
