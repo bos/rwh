@@ -1,0 +1,22 @@
+<screen><prompt>$</prompt> <userinput>ghc -O2  --make WordTest</userinput>
+[1 of 1] Compiling Main             ( WordTest.hs, WordTest.o )
+Linking WordTest ...
+<prompt>$</prompt> <userinput>./WordTest</userinput>
+0.196347s to read words
+479829 words
+1.063537s to construct filter
+4602978 bits
+0.766899s to query every element
+<prompt>$</prompt> <userinput>./WordTest</userinput>
+0.179284s to read words
+479829 words
+1.069363s to construct filter
+4602978 bits
+0.780079s to query every element
+</screen>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->

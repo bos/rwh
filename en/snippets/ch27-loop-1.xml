@@ -1,0 +1,36 @@
+<programlisting>
+__letrec { <co id="loop1-letrec-co" linkends="loop1-letrec"/>
+  go_s1YC :: [GHC.Word.Word32] -&gt; [GHC.Word.Word32]
+  [Arity 1
+   Str: DmdType S]
+  go_s1YC =
+    \ (ds_a1DR :: [GHC.Word.Word32]) -&gt;
+      case ds_a1DR of wild_a1DS {
+	[] -&gt; GHC.Base.[] @ GHC.Word.Word32;
+	: y_a1DW ys_a1DX -&gt;
+	  GHC.Base.:
+	    @ GHC.Word.Word32
+	    (case h1_s1YA of wild1_a1Mk { GHC.Word.W32# x#_a1Mm -&gt;
+	     case h2_s1Yy of wild2_a1Mu { GHC.Word.W32# x#1_a1Mw -&gt;
+	     case y_a1DW of wild11_a1My { GHC.Word.W32# y#_a1MA -&gt;
+	     GHC.Word.W32#
+	       (GHC.Prim.narrow32Word#
+		  (GHC.Prim.plusWord#
+		     x#_a1Mm (GHC.Prim.narrow32Word#
+                              (GHC.Prim.timesWord# x#1_a1Mw y#_a1MA))))
+	     }
+	     }
+	     })
+	    (go_s1YC ys_a1DX)
+      };
+} in 
+  go_s1YC
+    (GHC.Word.$w$dmenumFromTo2
+       __word 0 (GHC.Prim.narrow32Word# (GHC.Prim.int2Word# ww_s1X3)))
+</programlisting>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->

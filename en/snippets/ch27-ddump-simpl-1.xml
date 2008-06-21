@@ -1,0 +1,9 @@
+<screen><prompt>$</prompt> <userinput>ghc -O2 -c -ddump-simpl --make BloomFilter/Hash.hs &gt; dump.txt</userinput>
+[1 of 1] Compiling BloomFilter.Hash ( BloomFilter/Hash.hs )
+</screen>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->

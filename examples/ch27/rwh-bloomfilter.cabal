@@ -45,7 +45,7 @@ Library
                    BloomFilter.Hash
                    BloomFilter.Mutable
   Other-Modules:   BloomFilter.Internal
-  GHC-Options:     -O2 -Wall -fvia-C
+  GHC-Options:     -O2 -Wall -fvia-C -optc-O2
 -- /snippet modules
 
 -- snippet modules
@@ -53,8 +53,9 @@ Library
 -- /snippet modules
 
 -- snippet cbits
-  C-Sources:       cbits/lookup3.c
-  CC-Options:      -O3
-  Include-Dirs:    cbits
-  Includes:        lookup3.h
+  C-Sources:        cbits/lookup3.c
+  CC-Options:       -O3
+  Include-Dirs:     cbits
+  Includes:         lookup3.h
+  Install-Includes: lookup3.h
 -- /snippet cbits

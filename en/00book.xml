@@ -52,10 +52,12 @@
 <!ENTITY % SHORTCUTS SYSTEM "book-shortcuts.xml">
 %SHORTCUTS;
 
-<!-- Include automatically generated code snippets. -->
+<!-- Include automatically and manually generated code snippets. -->
 
-<!ENTITY % SNIPPETS SYSTEM "auto-snippets.xml">
-%SNIPPETS;
+<!ENTITY % AUTOSNIPPETS SYSTEM "auto-snippets.xml">
+%AUTOSNIPPETS;
+<!ENTITY % MANUALSNIPPETS SYSTEM "manual-snippets.xml">
+%MANUALSNIPPETS;
 ]>
 
 <book id="hs">

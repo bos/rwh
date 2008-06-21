@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="advhs" revision="unpublished">
+<chapter id="advhs" revision="alpha">
   <title>Advanced library design: building a Bloom filter</title>
 
   <sect1>
@@ -21,9 +21,10 @@
       to throttle bulk transfers (e.g. BitTorrent) so that interactive
       sessions (such as <command>ssh</command> sessions or games) see
       good response times.  A traffic shaper might use a Bloom filter
-      to determine whether a particular packet is bulk or interactive.
-      If it misidentifies one in ten thousand bulk packets as
-      interactive and fails to throttle it, nobody will notice.</para>
+      to determine whether a packet belonging to a particular session
+      is bulk or interactive. If it misidentifies one in ten thousand
+      bulk packets as interactive and fails to throttle it, nobody
+      will notice.</para>
 
     <para>The attraction of a Bloom filter is its space efficiency. If
       we want to build a spell checker, and have a dictionary of half
@@ -94,6 +95,10 @@
 	  have reported a false positive.</para>
       </listitem>
     </orderedlist>
+
+    <para>For a survey of some of the uses of Bloom filters in
+      networking, see <biblioref linkend="bib.broder02"/>.</para>
+
   </sect1>
 
   <sect1>
@@ -859,19 +864,22 @@
 	compiler (<option>-O3</option> specifies a high level of
 	optimisation).  Because our FFI bindings for the Jenkins hash
 	functions refer to the <filename>lookup3.h</filename> header
-	file, we need to tell Cabal where to find the header
-	file.</para>
+	file, we need to tell Cabal where to find the header file.  We
+	must also tell it to <emphasis>install</emphasis> the header
+	file (<code>Install-Includes</code>), as otherwise client code
+	will fail to find the header file when we try to build
+	it.</para>
 
       <tip>
 	<title>The value of -fvia-C with the FFI</title>
 
-	<para>Compiling with <option>-fvia-C</option> has a
-	  substantial benefit when we write FFI bindings. If we
-	  mention a header file in an FFI declaration (e.g.
-	  <code>foreign import "string.h memcpy")</code>, the C
-	  compiler will typecheck the generated Haskell code and
-	  ensure that its invocation of the C function is consistent
-	  with the C function's prototype in the header file.</para>
+	<para>Compiling with <option>-fvia-C</option> has a useful
+	  safety benefit when we write FFI bindings. If we mention a
+	  header file in an FFI declaration (e.g. <code>foreign import
+	    "string.h memcpy")</code>, the C compiler will typecheck
+	  the generated Haskell code and ensure that its invocation of
+	  the C function is consistent with the C function's prototype
+	  in the header file.</para>
 
 	<para>If we do not use <option>-fvia-C</option>, we lose that
 	  additional layer of safety.  This makes it easy to let
@@ -1074,6 +1082,138 @@
       <para>Finally, we have a robust looking property.</para>
 
       &bloomCheck.ghci:try3;
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Performance analysis and tuning</title>
+
+    <para>We now have a correctness base line: our QuickCheck tests
+      pass.  When we start tweaking performance, we can rerun the
+      tests at any time to ensure that we haven't inadvertantly broken
+      anything.</para>
+
+    <para>Our first step is to write a small test application that we
+      can use for timing.</para>
+
+    &WordTest.hs:module;
+
+    <para>We borrow the <function>rnf</function> function that we
+      introduced in <xref linkend="concurrent.strategies"/> to develop
+      a simple timing harness.  Out <function>timed</function> action
+      ensures that a value is evaluated to normal form in order to
+      accurately capture the cost of evaluating it.</para>
+
+    <para>The application creates a Bloom filter from the contents of
+      a file, treating each line as an element to add to the
+      filter.</para>
+
+    &WordTest.hs:main;
+
+    <para>We use <function>timed</function> to account for the costs
+      of three distinct phases: reading and splitting the data into
+      lines; populating the Bloom filter; and querying every element
+      in it.</para>
+
+    <para>If we compile this and run it a few times, we can see that
+      the execution time is just long enough to be interesting, while
+      the timing variation from run to run is small.  We have created
+      a plausible-looking microbenchmark.</para>
+
+    &ch27-timing-1;
+
+    <sect2>
+      <title>Profile-driven performance tuning</title>
+
+      <para>To understand where our program might benefit from some
+	tuning, we rebuild it and run it with profiling
+	enabled.</para>
+
+      <para>Since we already built <filename>WordTest</filename> and
+	have not subsequently changed it, if we rerun &ghc; to enable
+	profiling support, it will quite reasonably decide to do
+	nothing.  We must force it to rebuild, which we accomplish by
+	updating the filesystem's idea of when we last edited the
+	source file.</para>
+
+      &ch27-prof-1;
+
+      <para>Our <function>doubleHash</function> function immediately
+	leaps out as a huge time and memory sink.</para>
+
+      <tip>
+	<title>Always profile before&emdash;and while&emdash;you
+	  tune!</title>
+
+	<para>Before our first profiling run, we did not expect
+	  <function>doubleHash</function> to even appear in the top
+	  ten of <quote>hot</quote> functions, much less to dominate
+	  it.  Without this knowledge, we would probably have started
+	  tuning something entirely irrelevant.</para>
+      </tip>
+
+      <para>Recall that the body of <function>doubleHash</function> is
+	an innocuous list comprehension.</para>
+
+      &Hash.hs:doubleHash.noid;
+
+      <para>Since the function returns a list, it makes
+	<emphasis>some</emphasis> sense that it allocates so much
+	memory, but when code this simple performs so badly, we should
+	be suspicious.</para>
+
+      <para>Faced with a performance mystery, the suspicious mind will
+	naturally want to inspect the output of the compiler.  We
+	don't need to start scrabbling through assembly language
+	dumps: it's best to start at a higher level.</para>
+
+      <remark>Make sure we're not repeating anything from the
+	profiling chapter.</remark>
+
+      <para>&GHC;'s <option>-ddump-simpl</option> option prints out
+	the code that it produces after performing all of its
+	high-level optimisations.</para>
+
+      &ch27-ddump-simpl-1;
+
+      <para>The file thus produced is about a thousand lines long.
+	Most of the names in it are mangled somewhat from their
+	original Haskell representations.  Even so, searching for
+	<function>doubleHash</function> will immediately drop us at
+	the definition of the function.  For example, here is how we
+	might start exactly at the right spot from a Unix
+	shell.</para>
+
+      &ch27-less;
+
+      <para>It can be difficult to start reading the output of &GHC;'s
+	simplifier.  There are many automatically generated names, and
+	the code has many obscure annotations. We can make substantial
+	progress by ignoring things that we do not understand,
+	focusing on those that look familiar. The Core language shares
+	some features with regular Haskell, notably type signatures;
+	&let; for variable binding; and &case; for pattern
+	matching.</para>
+
+      <para>If we skim through the definition of
+	<function>doubleHash</function>, we will arrive at a section
+	that looks something like this.</para>
+
+      &ch27-loop-1;
+
+      <para>This is the body of the list comprehension.  It may seem
+	daunting, but its structure is simple.</para>
+
+      <calloutlist>
+	<callout arearefs="loop1-letrec-co" id="loop1-letrec">
+	  <para>A <code>__letrec</code> is equivalent to a normal
+	    Haskell &let;.</para>
+	</callout>
+      </calloutlist>
+
+      &Hash.hs:doubleHash_new;
+
+      &ch27-prof-2;
     </sect2>
   </sect1>
 

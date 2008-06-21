@@ -1,6 +1,29 @@
 <bibliography id="hs.bib">
   <title>Bibliography</title>
   
+  <biblioentry id="bib.broder02">
+    <abbrev>Broder02</abbrev>
+    <biblioset relation="article">
+      <author><firstname>Andrei</firstname><surname>Broder</surname></author>
+      <author><firstname>Michael</firstname><surname>Mitzenmacher</surname></author>
+      <title><ulink
+	  url="http://www.eecs.harvard.edu/~michaelm/postscripts/im2005b.pdf">Network 
+	  applications of Bloom filters: a survey</ulink></title>
+    </biblioset>
+    <biblioset relation="journal">
+      <title><ulink url="http://www.internetmathematics.org/">Internet
+	  Mathematics</ulink></title>
+      <volumenum>1</volumenum>
+      <issuenum>4</issuenum>
+      <pubdate>2005</pubdate>
+      <pagenums>485-509</pagenums>
+      <publisher>
+	<publishername><ulink url="http://www.akpeters.com/">A K
+	    Peters Ltd.</ulink></publishername>
+      </publisher>
+    </biblioset>
+  </biblioentry>
+
   <biblioentry id="bib.google08">
     <abbrev>Google08</abbrev>
     <biblioset relation="article">

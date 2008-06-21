@@ -1,0 +1,7 @@
+<screen><prompt>$</prompt> <userinput>less +/doubleHash dump.txt</userinput></screen>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->

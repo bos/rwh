@@ -19,6 +19,7 @@ src-files := $(src-master) \
 	book-shortcuts.xml \
 	auto-snippets.xml \
 	bibliography.xml \
+	manual-snippets.xml \
 	$(wildcard ch*.xml) \
 	$(wildcard app*.xml)
 
@@ -225,9 +226,15 @@ tools: ../tools/.built
 examples: $(stamp-examples)
 
 auto-snippets.xml: $(stamp-examples)
+	@echo generate $@
 	@mkdir -p x
 	@echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
 	@cat $(sort $^) | sort >> $@
+
+manual-snippets.xml: $(wildcard snippets/*.xml)
+	@echo generate $@
+	@echo '<!-- AUTOMATICALLY GENERATED.  Do not edit. -->' > $@
+	@$(runhaskell) ManualSnippets >> $@
 
 cabal-packages: ../examples/ch27/dist/setup-config
 

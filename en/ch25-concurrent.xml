@@ -1205,7 +1205,7 @@ Gecko/20080201 Firefox/2.0.0.12" 0 hgbook.red-bean.com</programlisting>
       </listitem>
     </itemizedlist>
     
-    <sect2>
+    <sect2 id="concurrent.strategies">
       <title>Separating algorithm from evaluation</title>
 
       <para>In parallel Haskell code, the clutter that would arise

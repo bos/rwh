@@ -1,5 +1,5 @@
 {-- snippet jenkins --}
-{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE BangPatterns, ForeignFunctionInterface #-}
 module BloomFilter.Hash
     (
       Hashable(..)
@@ -106,9 +106,20 @@ instance Hashable Lazy.ByteString where
 
 {-- snippet doubleHash --}
 doubleHash :: Hashable a => Int -> a -> [Word32]
-doubleHash numHashes value = [h1 + (h2 * i) | i <- [1..num]]
+doubleHash numHashes value = [h1 + h2 * i | i <- [0..num]]
     where h   = hashSalt 0x9150a946c4a8966e value
           h1  = fromIntegral (h `shiftR` 32) .&. maxBound
           h2  = fromIntegral h
           num = fromIntegral numHashes
 {-- /snippet doubleHash --}
+
+{-- snippet doubleHash_new --}
+doubleHash1 :: Hashable a => Int -> a -> [Word32]
+doubleHash1 numHashes value = go 0
+    where h   = hashSalt 0x9150a946c4a8966e value
+          !h1  = fromIntegral (h `shiftR` 32) .&. maxBound
+          !h2  = fromIntegral h
+          num = fromIntegral numHashes
+          go n | n == num = []
+               | otherwise = h1 + h2 * n : go (n + 1)
+{-- /snippet doubleHash_new --}

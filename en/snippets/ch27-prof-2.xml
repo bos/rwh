@@ -1,0 +1,34 @@
+<screen><prompt>$</prompt> <userinput>touch WordTest.hs</userinput>
+<prompt>$</prompt> <userinput>ghc -O2 -prof -auto-all --make WordTest</userinput>
+[1 of 1] Compiling Main             ( WordTest.hs, WordTest.o )
+Linking WordTest ...
+
+<prompt>$</prompt> <userinput>./WordTest +RTS -p</userinput>
+0.327671s to read words
+479829 words
+suggested sizings: Right (4602978,7)
+2.262263s to construct filter
+1.830867s to query every element
+~/src/darcs/book/examples/ch27/examples $ head -20 WordTest.prof 
+total time  =        3.68 secs   (184 ticks @ 20 ms)
+total alloc = 2,234,071,944 bytes  (excludes profiling overheads)
+
+COST CENTRE                    MODULE               %time %alloc
+
+doubleHash                     BloomFilter.Hash      42.9   60.8
+elem                           BloomFilter           12.5    1.5
+indices                        BloomFilter.Mutable   11.4   17.2
+insert                         BloomFilter.Mutable    8.7    0.0
+hashIO                         BloomFilter.Hash       8.2    6.5
+hashByteString                 BloomFilter.Hash       7.6    4.7
+easyList                       BloomFilter.Easy       4.9    0.3
+main                           Main                   2.7    4.7
+length                         BloomFilter.Mutable    1.1    1.2
+len                            BloomFilter            0.0    2.9
+</screen>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->
