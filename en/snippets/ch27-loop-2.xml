@@ -1,0 +1,28 @@
+<programlisting>
+__letrec {
+  $wgo_s1UH :: GHC.Prim.Word# -> [GHC.Word.Word32]
+  [Arity 1
+   Str: DmdType L]
+  $wgo_s1UH =
+    \ (ww2_s1St :: GHC.Prim.Word#) ->
+      case GHC.Prim.eqWord# ww2_s1St a_s1T1 of wild1_X2m {
+	GHC.Base.False ->
+	  GHC.Base.: @ GHC.Word.Word32
+	    (GHC.Word.W32#
+	     (GHC.Prim.narrow32Word#
+	      (GHC.Prim.plusWord#
+	       ipv_s1B2
+	       (GHC.Prim.narrow32Word#
+		(GHC.Prim.timesWord# ipv1_s1AZ ww2_s1St)))))
+	    ($wgo_s1UH (GHC.Prim.narrow32Word#
+                        (GHC.Prim.plusWord# ww2_s1St __word 1)));
+	GHC.Base.True -> GHC.Base.[] @ GHC.Word.Word32
+      };
+} in  $wgo_s1UH __word 0
+</programlisting>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch27-advanced-haskell.xml" "sect1" "screen")
+end:
+-->
