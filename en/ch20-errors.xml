@@ -533,7 +533,7 @@
           <literal>qualified</literal>, or hide the symbols from one
           module or the other.</para>
 
-	<para>Note that <literal>Prelude</literal> exports
+	<para id="x_D31">Note that <literal>Prelude</literal> exports
           <literal>System.IO.Error</literal>'s version of &catch;,
           <emphasis>not</emphasis> the version provided by
           <code>Control.Exception</code>.  Remember that the former
@@ -745,24 +745,24 @@ error = throw . ErrorCall
   <sect1>
     <title>Error handling in monads</title>
 
-    <para>Because we must catch exceptions in the &IO; monad, if we
+    <para id="x_E31">Because we must catch exceptions in the &IO; monad, if we
       try to use them inside a monad, or in a stack of monad
       transformers, we'll get bounced out to the &IO; monad.  This is
       almost never what we would actually like.</para>
 
-    <para>We defined a <type>MaybeT</type> transformer in
+    <para id="x_F31">We defined a <type>MaybeT</type> transformer in
       <xref linkend="monadtrans.maybet"/>, but it is more useful as an
       aid to understanding than a programming tool.  Fortunately, a
       dedicated&emdash;and more useful&emdash;monad transformer
       already exists: <type>ErrorT</type>, which is defined in the
       <code>Control.Monad.Error</code> module.</para>
 
-    <para>The <type>ErrorT</type> transformer lets us add exceptions
+    <para id="x_G31">The <type>ErrorT</type> transformer lets us add exceptions
       to a monad.  It gives us some interesting capabilities.</para>
 
     <itemizedlist>
       <listitem>
-	<para>Following the naming pattern of other monad
+	<para id="x_H31">Following the naming pattern of other monad
 	  transformers, the execution function is named
 	  <function>runErrorT</function>. If we do not catch an
 	  exception, it stops propagating upwards when it reaches
@@ -770,23 +770,23 @@ error = throw . ErrorCall
 	  the &IO; monad.</para>
       </listitem>
       <listitem>
-	<para>We get to choose the type an exception can have.</para>
+	<para id="x_I31">We get to choose the type an exception can have.</para>
       </listitem>
     </itemizedlist>
 
-    <para>As with other <code>mtl</code> monads, the interface that
+    <para id="x_J31">As with other <code>mtl</code> monads, the interface that
       <type>ErrorT</type> provides is defined by a typeclass.</para>
 
     &MonadError.hs:MonadError;
 
-    <para>The type variable <varname role="type">e</varname>
+    <para id="x_K31">The type variable <varname role="type">e</varname>
       represents the error type we want to use.  Whatever our error
       type is, we must make it an instance of the <type>Error</type>
       typeclass.</para>
 
     &MonadError.hs:Error;
     
-    <para>The <function>strMsg</function> function is used by
+    <para id="x_L31">The <function>strMsg</function> function is used by
       <type>ErrorT</type>'s implementation of
       <function>fail</function>.  It throws
       <function>strMsg</function> as an exception, passing it the
@@ -794,14 +794,14 @@ error = throw . ErrorCall
       it is used to provide an <function>mzero</function>
       implementation for the <type>MonadPlus</type> typeclass.</para>
 
-    <para>To support the <function>strMsg</function> and
+    <para id="x_M31">To support the <function>strMsg</function> and
       <function>noMsg</function> functions, our
       <type>ParseError</type> type has a <code>Chatty</code>
       constructor. This will be used as the constructor if, for
       example, someone calls <function>fail</function> in our
       monad.</para>
 
-    <para>One last piece of plumbing that we need to know about is the
+    <para id="x_N31">One last piece of plumbing that we need to know about is the
       type of the execution function <type>runErrorT</type>.</para>
 
     &parseInt.ghci:runErrorT;
@@ -809,20 +809,20 @@ error = throw . ErrorCall
     <sect2>
       <title>A tiny parsing framework</title>
 
-      <para>To illustrate the use of <type>ErrorT</type>, let's
+      <para id="x_O31">To illustrate the use of <type>ErrorT</type>, let's
 	develop the bare bones of a parsing library similar to
 	Parsec.</para>
 
       &ParseInt.hs:ParseError;
 
-      <para>For our parser's state, we will create a very small monad
+      <para id="x_P31">For our parser's state, we will create a very small monad
 	transformer stack. A <type>State</type> monad carries around
 	the <type>ByteString</type> to parse, and stacked on top is
 	<type>ErrorT</type> to provide error handling.</para>
 
       &ParseInt.hs:Parser;
 
-      <para>As usual, we have wrapped our monad stack in a &newtype;.
+      <para id="x_Q31">As usual, we have wrapped our monad stack in a &newtype;.
 	This costs us nothing in performance, but adds type safety. We
 	have deliberately avoided deriving an instance of
 	<type>MonadState B.ByteString</type>.  This means that users
@@ -834,19 +834,19 @@ error = throw . ErrorCall
 
       &ParseInt.hs:liftP;
 
-      <para>The <function>catchError</function> function is useful for
+      <para id="x_R31">The <function>catchError</function> function is useful for
 	tasks beyond simple error handling.  For instance, we can
 	easily defang an exception, turning it into a more friendly
 	form.</para>
 
       &ParseInt.hs:optional;
 
-      <para>Our execution function merely plugs together the various
+      <para id="x_S31">Our execution function merely plugs together the various
 	layers, and rearranges the result into a tidier form.</para>
 
       &ParseInt.hs:runParser;
 
-      <para>If we load this into &ghci;, we can put it through its
+      <para id="x_T31">If we load this into &ghci;, we can put it through its
 	paces.</para>
     </sect2>
 
@@ -856,14 +856,14 @@ error = throw . ErrorCall
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para>Write a <function>many</function> parser, with type
+	    <para id="x_U31">Write a <function>many</function> parser, with type
 	      <type>Parser a -&gt; Parser [a]</type>.  It should apply
 	      a parser until it fails.</para>
 	  </question>
 	</qandaentry>
 	<qandaentry>
 	  <question>
-	    <para>Use <function>many</function> to write an
+	    <para id="x_V31">Use <function>many</function> to write an
 	      <function>int</function> parser, with type <type>Parser
 		Int</type>.  It should accept negative as well as
 		positive integers.</para>
@@ -871,7 +871,7 @@ error = throw . ErrorCall
 	</qandaentry>
 	<qandaentry>
 	  <question>
-	    <para>Modify your <function>int</function> parser to throw
+	    <para id="x_W31">Modify your <function>int</function> parser to throw
 	      a <code>NumericOverflow</code> exception if it detects a
 	      numeric overflow while parsing.</para>
 	  </question>

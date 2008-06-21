@@ -157,7 +157,7 @@ The property failed when sorting an empty list &emdash; for which
 
     &minimum.hs:minimum;
 
-    <para>
+    <para id="x_J21">
 So this property will only hold for non-empty lists. QuickCheck, thankfully,
 comes with a full property writing embedded language, so we can specify more
 precisely our invariants, filtering out values we don't want to consider.
@@ -230,7 +230,7 @@ the specification, and ensuring it behaves as required.
   <sect1 id="quickcheck.indepth">
     <title>Testing case study: specifying a pretty printer</title>
 
-    <para>Testing individiual functions for their natural properties is one
+    <para id="x_K21">Testing individiual functions for their natural properties is one
       of the basic building blocks that guides development of large systems
       in Haskell.  We'll look now at a more complicated scenario: taking the
       pretty printing library developed in earlier chapters, and building a
@@ -240,7 +240,7 @@ the specification, and ensuring it behaves as required.
     <sect2> 
       <title>Generating test data</title>
 
-    <para>
+    <para id="x_L21">
       Recall that the pretty printer is built around the
       <type>Doc</type>, an algebraic data type that represents well-formed
       documents:
@@ -251,13 +251,13 @@ the specification, and ensuring it behaves as required.
     <!-- Talking about data generation -->
 
     <!-- TODO added an Eq type. Do the readers care? -->
-    <para>
+    <para id="x_M21">
      The library itself is implemented as a set of functions that build and
      transform values of this document type, before finally rendering it the
      finished document to a string.
     </para>
      
-    <para>
+    <para id="x_N21">
      QuickCheck encourages an approach to testing where the developer
      specifies invariants that should hold for any data we can throw at the
      code. To test the pretty printing library, then, we'll need a source of
@@ -266,7 +266,7 @@ the specification, and ensuring it behaves as required.
      <type>Arbitrary</type> class. The class provides a function,
      <code>arbitrary</code>, to generate data of each type, and with this we
      can define our data generator for our custom data types.
-   <footnote><para>
+   <footnote><para id="x_O21">
     The class also defines a method, <code>coarbitrary</code>,
     which given a value of some type, yields a function for new generators.
     We can ignore this for now, as it is only needed for generating random
@@ -276,7 +276,7 @@ the specification, and ensuring it behaves as required.
       
     &Arbitrary.hs:Class;
 
-    <para> 
+    <para id="x_P21"> 
     One thing to notice is that the generators run in a <type>Gen</type>
     environment: a simple state-passing container used to hide the random
     number generator plumbing happening underneath. As <type>Gen</type>
@@ -289,7 +289,7 @@ the specification, and ensuring it behaves as required.
 
     &Arbitrary.hs:IntroductionForms;
 
-   <para>
+   <para id="x_Q21">
      The function <code>elements</code>, for example, takes a list of values,
      and returns a generator of random values from that list. With this, we
      can start writing generators for simple data types. For example, to write an
@@ -300,7 +300,7 @@ the specification, and ensuring it behaves as required.
 
     &Arbitrary.hs:Instance;
 
-   <para>
+   <para id="x_R21">
      Another approach to data generation is to generate values for one 
      of the basic Haskell types and then translate those values into the
      type you're actually interested in. We could have written the
@@ -311,7 +311,7 @@ the specification, and ensuring it behaves as required.
 
     &Arbitrary2.hs:Instance2;
 
-    <para>For simple <emphasis>sum</emphasis> types, this approach works
+    <para id="x_S21">For simple <emphasis>sum</emphasis> types, this approach works
       nicely, as the integers map nicely onto the constructors of the data
       type.  For <emphasis>product</emphasis> types (such as structures and
       tuples), we need to instead generate each component of the product
@@ -322,7 +322,7 @@ the specification, and ensuring it behaves as required.
     &Arbitrary.hs:InstanceProduct;
 
     <!-- approach one, enumerate the constructors -->
-    <para>
+    <para id="x_T21">
       So let's now write a generator for  all the different variants of the
       <type>Doc</type> type. We'll start by breaking the problem down, first
       generating random constructors for each type, then, depending on the
@@ -339,7 +339,7 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:ArbitraryChar;
 
-    <para>
+    <para id="x_U21">
       With this in place, we can now write an instance for documents, by
       enumating the constructors, and filling the fields in. We choose a 
       random integer to represent which document variant to generate, and
@@ -351,7 +351,7 @@ the specification, and ensuring it behaves as required.
 
     <!-- approach two, use 'oneof' -->
 
-    <para>
+    <para id="x_V21">
       That was fairly straightforward, and we can clean it up some more by
       using the <code>oneof</code> function, to pick between different
       generators in a list (and we can also use the monadic combinator,
@@ -361,7 +361,7 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:ArbitraryDocConcise;
 
-    <para>
+    <para id="x_W21">
       The latter is more concise, just picking between a list of generators,
       but they describe the same data either way. We can check the ouput
       makes sense, by generating a list of random documents:
@@ -369,7 +369,7 @@ the specification, and ensuring it behaves as required.
 
     &arbitrary-doc.ghci:arbitrarydoc;
       
-      <para>
+      <para id="x_X21">
         Looking at the output we see a good mix of simple, base cases, and
         some more complicated nested documents. We'll be generating hundreds
         of these each test run, so that should do a pretty good job.  We can
@@ -380,14 +380,14 @@ the specification, and ensuring it behaves as required.
   <sect2>
     <title>Testing document construction</title>
 
-    <para>
+    <para id="x_Y21">
       Two of the basic functions on documents are the null document constant, 
       and the append function:
     </para>
 
     &Prettify2.hs:append;
 
-    <para>
+    <para id="x_Z21">
       Together, these should have a nice property: appending or prepending
       the empty list onto a second list, should leave the second list
       unchanged. We can state this invariant as a property:
@@ -395,13 +395,13 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:prop_empty;
 
-    <para>
+    <para id="x_a21">
       Confirming this is indeed true, and we're underway with our testing:
     </para>
 
     &qc-test1.ghci:run_prop_empty;
 
-    <para>
+    <para id="x_b21">
       To look at what actual test documents were generated (by substituting
       <code>quickCheck</code> for <code>verboseCheck</code>) it's possible to
       see that there's a good mix of simple cases, and more nested,
@@ -410,7 +410,7 @@ the specification, and ensuring it behaves as required.
 
     <!-- do we want to show an example here? -->
 
-    <para>
+    <para id="x_c21">
       Other functions in the API are also simple enough to have their
       behaviour fully described via properties. By doing so we can maintain
       an external, checkable description of the function's behaviour, so
@@ -419,7 +419,7 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:simple_stuff;
 
-    <para>
+    <para id="x_d21">
      These properties are enough to fully test the structure returned by the
      basic document operators. To test the rest of the library will require
      more work.
@@ -429,7 +429,7 @@ the specification, and ensuring it behaves as required.
   <sect2>
     <title>Using lists as a model</title>
 
-    <para>
+    <para id="x_e21">
       Higher order functions are the basic glue of reusable programming, and
       our pretty printer library is no exception &emdash; a custom fold
       function is used internally to implement both document concatentation
@@ -442,7 +442,7 @@ the specification, and ensuring it behaves as required.
 
     <!-- do we want to get into random function generation with Doc? -->
 
-    <para>
+    <para id="x_f21">
       We can write tests in isolation for specific instances of fold easily.
       Horizontal concatenation of documents, for example, is easy to specify
       by writing a reference implementation on lists:
@@ -450,7 +450,7 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:hcat;
 
-    <para>
+    <para id="x_g21">
       It is a similar story for <code>punctuate</code>, where we can model
       inserting punctuation with list interspersal (from
       <code>Data.List</code>):
@@ -458,7 +458,7 @@ the specification, and ensuring it behaves as required.
 
     &QC.hs:punctuate_wrong;
 
-    <para>
+    <para id="x_h21">
      While this looks fine, running it reveals a flaw in our reasoning:
     </para>
 
@@ -469,7 +469,7 @@ Empty
 [Line,Text "",Line]
     </screen>
 
-    <para>
+    <para id="x_i21">
      The pretty printing  library optimises away redundant empty documents,
      something the model implementation doesn't, so we'll need to augment our
      model to match reality.  First, we can intersperse the punctuation text
@@ -479,7 +479,7 @@ Empty
 
     &QC.hs:punctuate;
 
-    <para>
+    <para id="x_j21">
     Running this in GHCi, we can confirm the result. It is reassuring to have
     the test framework spot the flaws in our reasoning about the code
     &emdash; exactly what we're looking for:
@@ -494,7 +494,7 @@ Empty
 
      <!-- TODO more on test scripts -->
 
-   <para>
+   <para id="x_k21">
      We can put all these tests together in a single file, and run them
      simply by using one of QuickCheck's driver functions. Several exist,
      including fancy parallel ones. the basic batch driver is often good
@@ -504,7 +504,7 @@ Empty
 
     &Run.hs:testscript;
 
-   <para>
+   <para id="x_l21">
 The test script can then be compiled and executed:
    </para>
 
@@ -515,7 +515,7 @@ The test script can then be compiled and executed:
                 complex : ..                               (400)
    </screen>
 
-   <para>
+   <para id="x_m21">
      A total of 1400 individual tests were created, which is comforting. We
      can increase the depth easily enough, but to find out exactly how well
      the code is being tested we should turn to the built in code coverage
@@ -532,7 +532,7 @@ The test script can then be compiled and executed:
 
      <!-- TODO talk about the kind of problems HPC helps us avoid -->
 
-   <para>
+   <para id="x_n21">
     HPC (Haskell Program Coverage) is an extension to the compiler to
     observe what parts of the code were actually executed during a given
     program run. This is useful in the context of testing, as it lets us
@@ -543,7 +543,7 @@ The test script can then be compiled and executed:
     on weak spots in the testsuite.
    </para>
 
-   <para>
+   <para id="x_o21">
      To obtain test coverage data, all we need to do is add the
      <code>-fhpc</code> flag to the command line, when compiling the tests:
    </para>
@@ -552,7 +552,7 @@ The test script can then be compiled and executed:
     $ ghc -fhpc Run.hs --make -no-recomp
   </screen>
 
-  <para>
+  <para id="x_p21">
     Then run the tests as normal;
   </para>
 
@@ -563,7 +563,7 @@ The test script can then be compiled and executed:
 
    </screen>
 
-  <para>
+  <para id="x_q21">
     During the test run the trace of the program is written to .tix and .mix
     files in the current directory. Afterwards, these files are used by the
     command line tool, <code>hpc</code>, to display various statistics about
@@ -587,7 +587,7 @@ The test script can then be compiled and executed:
      42% top-level declarations used (9/21)
     </screen>
 
-    <para>
+    <para id="x_r21">
       we see that, on the last line, 42% of top level definitions were
       evaluated during the test run. Not too bad for a first attempt.
       As we test more and more functions from the library, this figure will 
@@ -600,7 +600,7 @@ The test script can then be compiled and executed:
     $ hpc markup Run --exclude=Main --exclude=QC
   </screen>
 
-    <para>
+    <para id="x_s21">
       This will generate one html file for each Haskell source file, and some
       index files. Loading the file <code>hpc_index.html</code> into a 
       browser, we can see some pretty graphs of the code coverage:
@@ -610,7 +610,7 @@ The test script can then be compiled and executed:
   <graphic fileref="figs/ch12-hpc-round1.png"/>
   </informalfigure>
 
-<para>
+<para id="x_t21">
   Not too bad. Clicking through to the pretty module itself, we see the
   actual source of the program, marked up in yellow for code that wasn't
   tested, and in a bold font for code that was:
@@ -620,7 +620,7 @@ The test script can then be compiled and executed:
   <graphic fileref="figs/ch12-coverage-screen.png"/>
   </informalfigure>
   
-<para>
+<para id="x_u21">
 we forgot to test the <type>Monoid</type> instance, for example, and some of
 the more complicated functions. HPC helps keep our testsuite honest.
 Let's add a test for the type class instance of <type>Monoid</type>, the
@@ -629,13 +629,13 @@ class of types that support appending and empty elements:
 
     &QC.hs:monoid_prop;
 
-<para>
+<para id="x_v21">
 Running this property in ghci, to check it is correct:
 </para>
 
     &qc-monoid.ghci:monoid_prop;
 
-<para>
+<para id="x_w21">
   We can now recompile and run the test driver. It is important to remove
   the old .tix file first though, or an error will occur as HPC tries to
   combine the statistics from separate runs:
@@ -652,7 +652,7 @@ Running this property in ghci, to check it is correct:
                     complex : ...                              (600)
 </screen>
 
-<para>
+<para id="x_x21">
 Another two hundred tests were added to the suite, and our coverage 
 statistics improves to 52 percent of the code base:
 </para>
@@ -661,7 +661,7 @@ statistics improves to 52 percent of the code base:
   <graphic fileref="figs/ch12-hpc-round2.png"/>
   </informalfigure>
 
-<para>
+<para id="x_y21">
 HPC ensures that we're honest in our testing, as anything less than 100% coverage 
 will be pointed out in glaring color. In particular, it ensures the programmer
 has to think about error cases, and complicated branches with obscure conditions.
@@ -674,7 +674,7 @@ That is, it identifies "code smell".
 
     <!--
 
-    <para>An issue that comes up when testing with QuickCheck is where 
+    <para id="x_z21">An issue that comes up when testing with QuickCheck is where 
     to place the properties. Do they live in an external testsuite, or should 
     they be considered part of the module they test? This becomes more of an
     issue when the testsuite needs to break the module abstraction boundaries

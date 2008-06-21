@@ -3,7 +3,7 @@
 <chapter id="stm" revision="unpublished">
   <title>Software transactional memory</title>
 
-  <para>Concurrent software is notoriously difficult to write.  In a single-thread</para>
+  <para id="x_lA1">Concurrent software is notoriously difficult to write.  In a single-thread</para>
 </chapter>
 
 <!--

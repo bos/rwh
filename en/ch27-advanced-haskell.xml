@@ -6,7 +6,7 @@
   <sect1>
     <title>Introducing the Bloom filter</title>
 
-    <para>A Bloom filter is set-like data structure that is highly
+    <para id="x_L71">A Bloom filter is set-like data structure that is highly
       efficient in its use of space.  It only supports two operations:
       insertion and membership querying.  Unlike a normal set data
       structure, a Bloom filter can give incorrect answers.  If we
@@ -16,7 +16,7 @@
       <emphasis>might</emphasis> incorrectly claim that the element is
       present.</para>
 
-    <para>For many applications, a low rate of false positives is
+    <para id="x_M71">For many applications, a low rate of false positives is
       tolerable.  For instance, the job of a network traffic shaper is
       to throttle bulk transfers (e.g. BitTorrent) so that interactive
       sessions (such as <command>ssh</command> sessions or games) see
@@ -26,14 +26,14 @@
       bulk packets as interactive and fails to throttle it, nobody
       will notice.</para>
 
-    <para>The attraction of a Bloom filter is its space efficiency. If
+    <para id="x_N71">The attraction of a Bloom filter is its space efficiency. If
       we want to build a spell checker, and have a dictionary of half
       a million words, a set data structure might consume 20 megabytes
       of space.  A Bloom filter, in contrast, would consume about half
       a megabyte, at the cost of missing perhaps 1% of misspelled
       words.</para>
 
-    <para>Behind the scenes, a Bloom filter is remarkably simple.  It
+    <para id="x_O71">Behind the scenes, a Bloom filter is remarkably simple.  It
       consists of a bit array and a handful of hash functions.  We'll
       use <emphasis>k</emphasis> for the number of hash functions.  If
       we want to insert a value into the Bloom filter, we compute
@@ -42,61 +42,61 @@
       present, we compute <emphasis>k</emphasis> hashes, and check all
       of those bits in the array to see if they are turned on.</para>
 
-    <para>To see how this works, let's say we want to insert the
+    <para id="x_P71">To see how this works, let's say we want to insert the
       strings <code>"foo"</code> and <code>"bar"</code> into a Bloom
       filter that is 8 bits wide, and we have two hash
       functions.</para>
 
     <orderedlist>
       <listitem>
-	<para>Compute the two hashes of <code>"foo"</code>, and get
+	<para id="x_Q71">Compute the two hashes of <code>"foo"</code>, and get
 	  the values <code>1</code> and <code>6</code>.</para>
       </listitem>
       <listitem>
-	<para>Set bits <code>1</code> and <code>6</code> in the bit
+	<para id="x_R71">Set bits <code>1</code> and <code>6</code> in the bit
 	  array.</para>
       </listitem>
       <listitem>
-	<para>Compute the two hashes of <code>"bar"</code>, and get
+	<para id="x_S71">Compute the two hashes of <code>"bar"</code>, and get
 	  the values <code>6</code> and <code>3</code>.</para>
       </listitem>
       <listitem>
-	<para>Set bits <code>6</code> and <code>3</code> in the bit
+	<para id="x_T71">Set bits <code>6</code> and <code>3</code> in the bit
 	  array.</para>
       </listitem>
     </orderedlist>
 
-    <para>This example should make it clear why we cannot remove an
+    <para id="x_U71">This example should make it clear why we cannot remove an
       element from a Bloom filter: both <code>"foo"</code> and
       <code>"bar"</code> resulted in bit 6 being set.</para>
 
-    <para>Suppose we now want to query the Bloom filter, to see
+    <para id="x_V71">Suppose we now want to query the Bloom filter, to see
       whether the values <code>"quux"</code> and <code>"baz"</code>
       are present.</para>
 
     <orderedlist>
       <listitem>
-	<para>Compute the two hashes of <code>"quux"</code>, and get
+	<para id="x_W71">Compute the two hashes of <code>"quux"</code>, and get
 	  the values <code>4</code> and <code>0</code>.</para>
       </listitem>
       <listitem>
-	<para>Check bit <code>4</code> in the bit array.  It is not
+	<para id="x_X71">Check bit <code>4</code> in the bit array.  It is not
 	  set, so <code>"quux"</code> cannot be present.  We do not
 	  need to check bit <code>0</code>.</para>
       </listitem>
       <listitem>
-	<para>Compute the two hashes of <code>"baz"</code>, and get
+	<para id="x_Y71">Compute the two hashes of <code>"baz"</code>, and get
 	  the values <code>1</code> and <code>3</code>.</para>
       </listitem>
       <listitem>
-	<para>Check bit <code>1</code> in the bit array.  It is
+	<para id="x_Z71">Check bit <code>1</code> in the bit array.  It is
 	  set, as is bit <code>3</code>, so we say that
 	  <code>"baz"</code> is present even though it is not.  We
 	  have reported a false positive.</para>
       </listitem>
     </orderedlist>
 
-    <para>For a survey of some of the uses of Bloom filters in
+    <para id="x_a71">For a survey of some of the uses of Bloom filters in
       networking, see <biblioref linkend="bib.broder02"/>.</para>
 
   </sect1>
@@ -104,23 +104,23 @@
   <sect1>
     <title>Use cases and package layout</title>
 
-    <para>Not all users of Bloom filters have the same needs. In some
+    <para id="x_b71">Not all users of Bloom filters have the same needs. In some
       cases, it suffices to create a Bloom filter in one pass, and
       only query it afterwards.  For other applications, we may need
       to continue to update the Bloom filter after we create it.  To
       accommodate these needs, we will design our library with mutable
       and immutable APIs.</para>
 
-    <para>We will segregate the mutable and immutable APIs that we
+    <para id="x_c71">We will segregate the mutable and immutable APIs that we
       publish by placing them in different modules:
       <code>BloomFilter</code> for the immutable code, and
       <code>BloomFilter.Mutable</code> for the mutable code.</para>
 
-    <para>In addition, we will create several <quote>helper</quote>
+    <para id="x_d71">In addition, we will create several <quote>helper</quote>
       modules that won't provide parts of the public API, but will keep
       the internal code cleaner.</para>
 
-    <para>Finally, we will ask the user of our API to provide a
+    <para id="x_e71">Finally, we will ask the user of our API to provide a
       function that can generate a number of hashes of an element.
       This function will have the type <type>a -&gt; [Word32]</type>.
       We will use all of the hashes that this function returns, so the
@@ -130,13 +130,13 @@
   <sect1>
     <title>Basic design</title>
 
-    <para>The data structure that we use for our Haskell Bloom filter
+    <para id="x_f71">The data structure that we use for our Haskell Bloom filter
       is a direct translation of the simple description we gave
       earlier: a bit array and a function that computes hashes.</para>
 
     &Internal.hs:Bloom;
 
-    <para>When we create our Cabal package, we will not be exporting
+    <para id="x_g71">When we create our Cabal package, we will not be exporting
       this <code>BloomFilter.Internal</code> module.  It exists purely
       to let us control the visibility of names.  We will import
       <code>BloomFilter.Internal</code> into both the mutable and
@@ -146,10 +146,10 @@
     <sect2>
       <title>Unboxing, lifting, and bottom</title>
 
-      <para>Unlike other Haskell arrays, a <type>UArray</type>
+      <para id="x_h71">Unlike other Haskell arrays, a <type>UArray</type>
 	contains <emphasis>unboxed</emphasis> values.</para>
 
-      <para>For a normal Haskell type, a value can be either fully
+      <para id="x_i71">For a normal Haskell type, a value can be either fully
 	evaluated, an unevaluated thunk, or the special value
 	&bottom;, pronounced (and sometimes written)
 	<quote>bottom</quote>.  The value &bottom; is a placeholder
@@ -158,13 +158,13 @@
 	loop; an application of <function>error</function>; or the
 	special value <function>undefined</function>.</para>
 
-      <para>A type that can contain &bottom; is referred to as
+      <para id="x_j71">A type that can contain &bottom; is referred to as
 	<emphasis>lifted</emphasis>.  All normal Haskell types are
 	lifted.  In practice, this means that we can always write
 	<code>error "eek!"</code> or <code>undefined</code> in place
 	of a normal expression.</para>
 
-      <para>This ability to store thunks or &bottom; comes with a
+      <para id="x_k71">This ability to store thunks or &bottom; comes with a
 	performance cost: it adds an extra layer of indirection.  To
 	see why we need this indirection, consider the
 	<type>Word32</type> type.  A value of this type is a full 32
@@ -173,7 +173,7 @@
 	has to maintain, and check, some extra data to track whether
 	the value is &bottom; or not.</para>
 
-      <para>An unboxed value does away with this indirection.  In
+      <para id="x_l71">An unboxed value does away with this indirection.  In
 	doing so, it gains performance, but sacrifices the ability to
 	represent a thunk or &bottom;.  Since it can be denser than a
 	normal Haskell array, an array of unboxed values is an
@@ -182,7 +182,7 @@
       <note>
 	<title>Boxing and lifting</title>
 
-	<para>The counterpart of an unboxed type is a
+	<para id="x_m71">The counterpart of an unboxed type is a
 	  <emphasis>boxed</emphasis> type, which uses indirection.
 	  All lifted types are boxed, but a few low-level boxed types
 	  are not lifted. For instance, &GHC;'s runtime system has a
@@ -195,7 +195,7 @@
 	  hacking.  We will never encounter them in normal use.</para>
       </note>
 
-      <para>&GHC; implements a <type>UArray</type> of
+      <para id="x_n71">&GHC; implements a <type>UArray</type> of
 	<type>Bool</type> values by packing eight array elements into
 	each byte, so this type is perfect for our needs.</para>
     </sect2>
@@ -204,19 +204,19 @@
   <sect1>
     <title>The ST monad</title>
 
-    <para>Back in <xref linkend="barcode.array.mutable"/>, we
+    <para id="x_o71">Back in <xref linkend="barcode.array.mutable"/>, we
       mentioned that modifying an immutable array is prohibitively
       expensive, as it requires copying the entire array.  Using a
       <type>UArray</type> does not change this, so what can we do to
       reduce the cost to bearable levels?</para>
 
-    <para>In an imperative language, we would simply modify the
+    <para id="x_p71">In an imperative language, we would simply modify the
       elements of the array in place; this will be our approach in
       Haskell, too.</para>
 
-    <para>Haskell provides a special monad, named
+    <para id="x_q71">Haskell provides a special monad, named
       <type>ST</type><footnote>
-	<para>The name <type>ST</type> is an acronym of <quote>state
+	<para id="x_r71">The name <type>ST</type> is an acronym of <quote>state
 	    threads</quote>.</para>
       </footnote>, which lets us work safely with mutable state.
       Compared to the <type>State</type> monad, it has some powerful
@@ -224,13 +224,13 @@
 
     <itemizedlist>
       <listitem>
-	<para>We can <emphasis>thaw</emphasis> an immutable array to
+	<para id="x_s71">We can <emphasis>thaw</emphasis> an immutable array to
 	  give a mutable array; modify the mutable array in place; and
 	  <emphasis>freeze</emphasis> a new immutable array when we
 	  are done.</para>
       </listitem>
       <listitem>
-	<para>We have the ability to use <emphasis>mutable
+	<para id="x_t71">We have the ability to use <emphasis>mutable
 	    references</emphasis>. This lets us implement data
 	  structures that we can modify after construction, as in an
 	  imperative language.  This ability is vital for some
@@ -240,7 +240,7 @@
       </listitem>
     </itemizedlist>
 
-    <para>The <type>IO</type> monad also provides these capabilities.
+    <para id="x_u71">The <type>IO</type> monad also provides these capabilities.
       The major difference between the two is that the <type>ST</type>
       monad is intentionally designed so that we can
       <emphasis>escape</emphasis> from it back into pure Haskell code.
@@ -249,7 +249,7 @@
       Haskell monads (except <type>IO</type>, of course), and we
       escape by returning from <function>runST</function>.</para>
 
-    <para>When we apply a monad's execution function, we expect it to
+    <para id="x_v71">When we apply a monad's execution function, we expect it to
       behave repeatably: given the same body and arguments, we must
       get the same results every time.  This also applies to
       <function>runST</function>.  To achieve this repeatability, the
@@ -267,12 +267,12 @@
   <sect1>
     <title>Designing an API for qualified import</title>
 
-    <para>The public interfaces that we provide for working with Bloom
+    <para id="x_w71">The public interfaces that we provide for working with Bloom
       filters are worth a little discussion.</para>
 
     &Mutable.hs:Mutable;
 
-    <para>We export several names that clash with names exported by
+    <para id="x_x71">We export several names that clash with names exported by
       the Prelude.  This is deliberate: we expect users of our modules
       to import them with qualified names.  This reduces the burden on
       the memory of our users, as they should already be familiar with
@@ -280,20 +280,20 @@
       <function>notElem</function>, and <function>length</function>
       functions.</para>
 
-    <para>When we use a module written in this style, we might often
+    <para id="x_y71">When we use a module written in this style, we might often
       import it with a single-letter prefix, for instance as
       <code>import qualified BloomFilter.Mutable as M</code>.  This
       would allow us to write <function>M.length</function>, which
       stays compact and readable.</para>
 
-    <para>Alternatively, we could import the module unqualified, and
+    <para id="x_z71">Alternatively, we could import the module unqualified, and
       import the Prelude while hiding the clashing names with
       <code>import Prelude hiding (length)</code>.  This is much less
       useful, as it gives a reader skimming the code no local cue that
       they are <emphasis>not</emphasis> actually seeing the Prelude's
       <function>length</function>.</para>
 
-    <para>Of course, we seem to be violating this precept in our own
+    <para id="x_A81">Of course, we seem to be violating this precept in our own
       module's header: we import the Prelude, and hide some of the
       names it exports.  There is a practical reason for this.  We
       define a function named <function>length</function>.  If we
@@ -302,7 +302,7 @@
       cannot tell whether to export our version of
       <function>length</function> or the Prelude's.</para>
 
-    <para>While we could export the fully qualified name
+    <para id="x_B81">While we could export the fully qualified name
       <function>BloomFilter.Mutable.length</function> to eliminate the
       ambiguity, that seems uglier in this case.  This decision has no
       consequences for someone using our module, just for ourselves as
@@ -313,13 +313,13 @@
   <sect1>
     <title>Creating a mutable Bloom filter</title>
 
-    <para>We put type declaration for our mutable Bloom filter in the
+    <para id="x_C81">We put type declaration for our mutable Bloom filter in the
       <code>BloomFilter.Internal</code> module, along with the
       immutable <type>Bloom</type> type.</para>
 
     &Internal.hs:MutBloom;
 
-    <para>The <type>STUArray</type> type gives us a mutable unboxed
+    <para id="x_D81">The <type>STUArray</type> type gives us a mutable unboxed
       array that we can work with in the <type>ST</type> monad. To
       create an <type>STUArray</type>, we use the
       <function>newArray</function> function.  The
@@ -328,11 +328,11 @@
 
     &Mutable.hs:new;
 
-    <para>Most of the methods of <type>STUArray</type> are actually
+    <para id="x_E81">Most of the methods of <type>STUArray</type> are actually
       implementations of the <type>MArray</type> typeclass, which is
       defined in the <code>Data.Array.MArray</code> module.</para>
 
-    <para>Our <function>length</function> function is slightly
+    <para id="x_F81">Our <function>length</function> function is slightly
       complicated by two factors.  We are relying on our bit array's
       record of its own bounds, and an <type>MArray</type> instance's
       <function>getBounds</function> function has a monadic type.  We
@@ -341,7 +341,7 @@
 
     &Mutable.hs:length;
 
-    <para>To add an element to the Bloom filter, we set all of the
+    <para id="x_G81">To add an element to the Bloom filter, we set all of the
       bits indicated by the hash function.  We use the
       <function>mod</function> function to ensure that all of the
       hashes stay within the bounds of our array, and isolate our code
@@ -349,13 +349,13 @@
 
     &Mutable.hs:insert;
 
-    <para>Testing for membership is no more difficult.  If every bit
+    <para id="x_H81">Testing for membership is no more difficult.  If every bit
       indicated by the hash function is set, we consider an element to
       be present in the Bloom filter.</para>
 
     &Mutable.hs:elem;
 
-    <para>We need to write a small supporting function: a monadic
+    <para id="x_I81">We need to write a small supporting function: a monadic
       version of <function>all</function>, which we will call
       <function>allM</function>.</para>
 
@@ -365,19 +365,19 @@
   <sect1>
     <title>The immutable API</title>
 
-    <para>Our interface to the immutable Bloom filter has the same
+    <para id="x_J81">Our interface to the immutable Bloom filter has the same
       structure as the mutable API.</para>
 
     &BloomFilter.hs:module;
 
-    <para>We provide an easy-to-use means to create an immutable Bloom
+    <para id="x_K81">We provide an easy-to-use means to create an immutable Bloom
       filter, via a <function>fromList</function> function.  This
       hides the <type>ST</type> monad from our users, so that they
       only see the immutable type.</para>
 
     &BloomFilter.hs:fromList;
 
-    <para>The key to this function is
+    <para id="x_L81">The key to this function is
       <function>runSTUArray</function>.  We mentioned earlier that in
       order to return an immutable array from the <type>ST</type>
       monad, we must freeze a mutable array.  The
@@ -388,7 +388,7 @@
       that it returns; and returns that as a
       <type>UArray</type>.</para>
 
-    <para>The <code>MArray</code> typeclass provides a
+    <para id="x_M81">The <code>MArray</code> typeclass provides a
       <function>freeze</function> function that we could use instead,
       but <function>runSTUArray</function> is both more convenient and
       more efficient.  The efficiency lies in the fact that
@@ -406,7 +406,7 @@
   <sect1>
     <title>Creating a friendly interface</title>
 
-    <para>Although our immutable Bloom filter API is straightforward
+    <para id="x_N81">Although our immutable Bloom filter API is straightforward
       to use once we have created a <type>Bloom</type> value, the
       <function>fromList</function> function leaves some important
       decisions unresolved.  We still have to choose a function that
@@ -415,7 +415,7 @@
 
     &Easy.hs:easyList.type;
 
-    <para>Here is a possible <quote>friendlier</quote> way to create a
+    <para id="x_O81">Here is a possible <quote>friendlier</quote> way to create a
       Bloom filter.  It leaves responsibility for hashing values in
       the hands of a typeclass, <type>Hashable</type>.  It lets us
       configure the Bloom filter based on a parameter that is easier
@@ -426,7 +426,7 @@
       <function>genericLength</function> to handle lists that are
       longer than will fit in an <type>Int</type>.</para>
 
-    <para>This function will of course not always be usable: for
+    <para id="x_P81">This function will of course not always be usable: for
       example, it will fail if the length of the input list is too
       long. However, its simplicity rounds out the other interfaces we
       provide.  It lets us provide our users with a range of control
@@ -436,13 +436,13 @@
     <sect2>
       <title>Re-exporting names for convenience</title>
 
-      <para>In the export list for our module, we re-export some names
+      <para id="x_Q81">In the export list for our module, we re-export some names
 	from the base <code>BloomFilter</code> module.  This allows
 	casual users to import only the <code>BloomFilter.Easy</code>
 	module, and have access to all of the types and functions they
 	are likely to need.</para>
 
-      <para>If we import both <code>BloomFilter.Easy</code> and
+      <para id="x_R81">If we import both <code>BloomFilter.Easy</code> and
 	<code>BloomFilter</code>, you might wonder what will happen if
 	we try to use a name exported by both.  We already know that
 	if we import <code>BloomFilter</code> unqualified and try to
@@ -450,7 +450,7 @@
 	about ambiguity, because the Prelude also makes the name
 	<function>length</function> available.</para>
 
-      <para>The Haskell standard requires an implementation to be able
+      <para id="x_S81">The Haskell standard requires an implementation to be able
 	to tell when several names refer to the same
 	<quote>thing</quote>.  For instance, the <type>Bloom</type>
 	type is exported by <code>BloomFilter</code> and
@@ -465,16 +465,16 @@
     <sect2>
       <title>Hashing values</title>
 
-      <para>A Bloom filter depends on fast, high-quality hashes for
+      <para id="x_T81">A Bloom filter depends on fast, high-quality hashes for
 	good performance and a low false positive rate.  It is
 	surprisingly difficult to write a general purpose hash
 	function that has both of these properties.</para>
 
-      <para>Luckily for us, a fellow named Bob Jenkins developed some
+      <para id="x_U81">Luckily for us, a fellow named Bob Jenkins developed some
 	hash functions that have exactly these properties, and he
 	placed the code in the public domain at <ulink
 	  url="http://burtleburtle.net/bob/hash/doobs.html">http://burtleburtle.net/bob/hash/doobs.html</ulink><footnote>
-	  <para>Jenkins's hash functions have
+	  <para id="x_V81">Jenkins's hash functions have
 	    <emphasis>much</emphasis> better mixing properties than
 	    some other popular non-cryptographic hash functions that
 	    you might be familiar with, such as FNV and
@@ -490,7 +490,7 @@
       <note>
 	<title>A little editing</title>
 
-	<para>On line 36 of the copy of <filename>lookup3.c</filename>
+	<para id="x_W81">On line 36 of the copy of <filename>lookup3.c</filename>
 	  that you just downloaded, there is a macro named
 	  <code>SELF_TEST</code> defined.  To use this source file as
 	  a library, you <emphasis>must</emphasis> delete this line or
@@ -500,7 +500,7 @@
 	  any Haskell program you link this library against.</para>
       </note>
 
-      <para>There remains one hitch: we will frequently need seven or
+      <para id="x_X81">There remains one hitch: we will frequently need seven or
 	even ten hash functions.  We really don't want to scrape
 	together that many different functions, and fortunately we do
 	not need to: in most cases, we can get away with just two.  We
@@ -513,27 +513,27 @@
 
       &lookup3.h:header;
 
-      <para>A <quote>salt</quote> is a value that perturbs the hash
+      <para id="x_Y81">A <quote>salt</quote> is a value that perturbs the hash
 	value that the function computes.  If we hash the same value
 	with two different salts, we will get two different hashes.
 	Since these functions compute two hashes, they accept two
 	salts.</para>
 
-      <para>Here are our Haskell bindings to these functions.</para>
+      <para id="x_Z81">Here are our Haskell bindings to these functions.</para>
 
       &Hash.hs:jenkins;
 
-      <para>We have specified that the definitions of the functions
+      <para id="x_a81">We have specified that the definitions of the functions
 	can be found in the <filename>lookup3.h</filename> header file
 	that we just created.</para>
 
-      <para>For convenience and efficiency, we will combine the 32-bit
+      <para id="x_b81">For convenience and efficiency, we will combine the 32-bit
 	salts consumed, and the hash values computed, by the Jenkins
 	hash functions into a single 64-bit value.</para>
 
       &Hash.hs:hashIO;
 
-      <para>Without explicit types around to describe what is
+      <para id="x_c81">Without explicit types around to describe what is
 	happening, the above code is not completely obvious.  The
 	<function>with</function> function allocates room for the salt
 	on the C stack, and stores the current salt value in there, so
@@ -545,7 +545,7 @@
 	<type>Word64</type> salt into two <type>Ptr Word32</type>
 	parameters.</para>
 
-      <para>Because all of our data pointers are coming from the
+      <para id="x_d81">Because all of our data pointers are coming from the
 	Haskell heap, we know that they will be aligned on an address
 	that is safe to pass to either <function>hashWord2</function>
 	(which only accepts 32-bit-aligned addresses) or
@@ -555,29 +555,29 @@
 	4 bytes in size, otherwise
 	<function>hashLittle2</function>.</para>
 
-      <para>Since the C hash function will write the computed hashes
+      <para id="x_e81">Since the C hash function will write the computed hashes
 	into <varname>p1</varname> and <varname>p2</varname>, we only
 	need to <function>peek</function> the pointer
 	<varname>sp</varname> to retrieve the computed hash.</para>
 
-      <para>We don't want clients of this module to be stuck fiddling
+      <para id="x_f81">We don't want clients of this module to be stuck fiddling
 	with low-level details, so we use a typeclass to provide a
 	clean, high-level interface.</para>
 
       &Hash.hs:Hashable;
 
-      <para>We also provide a number of useful implementations of this
+      <para id="x_g81">We also provide a number of useful implementations of this
 	typeclass.  To hash basic types, we must write a little
 	boilerplate code.</para>
 
       &Hash.hs:hashStorable;
 
-      <para>We might prefer to use the <type>Storable</type> typeclass
+      <para id="x_h81">We might prefer to use the <type>Storable</type> typeclass
 	to write just one declaration, as follows:</para>
 
       &Hash.hs:Storable;
 
-      <para>Unfortunately, Haskell does not permit us to write
+      <para id="x_i81">Unfortunately, Haskell does not permit us to write
 	instances of this form, as allowing them would make the type
 	system <emphasis>undecidable</emphasis>: they can cause the
 	compiler's type checker to loop infinitely. This restriction
@@ -587,23 +587,23 @@
 
       &Hash.hs:hashList;
 
-      <para>The compiler will accept this instance, so we gain the
+      <para id="x_j81">The compiler will accept this instance, so we gain the
 	ability to hash values of many list types<footnote>
-	  <para>Unfortunately, we do not have room to explain why one
+	  <para id="x_k81">Unfortunately, we do not have room to explain why one
 	    of these instances is decidable, but the other is
 	    not.</para>
 	</footnote>.  Most importantly, since <type>Char</type> is an
 	instance of <type>Storable</type>, we can now hash
 	<type>String</type> values.</para>
 
-      <para>For tuple types, we take advantage of function
+      <para id="x_l81">For tuple types, we take advantage of function
 	composition.  We take a salt in at one end of the composition
 	pipeline, and use the result of hashing each tuple element as
 	the salt for the next element.</para>
 
       &Hash.hs:hash2;
 
-      <para>To hash <type>ByteString</type> types, we write special
+      <para id="x_m81">To hash <type>ByteString</type> types, we write special
 	instances that plug straight into the internals of the
 	<type>ByteString</type> types.  This gives us excellent
 	hashing performance.</para>
@@ -618,7 +618,7 @@
     <sect2>
       <title>Turning two hashes into many</title>
 
-      <para>As we mentioned earlier, we need many more than two hashes
+      <para id="x_n81">As we mentioned earlier, we need many more than two hashes
 	to make effective use of a Bloom filter.  We can use a
 	technique called <emphasis>double hashing</emphasis> to
 	combine the two values computed by the Jenkins hash functions,
@@ -632,14 +632,14 @@
     <sect2>
       <title>Implementing the easy creation function</title>
 
-      <para>In the <code>BloomFilter.Easy</code> module, we use our
+      <para id="x_o81">In the <code>BloomFilter.Easy</code> module, we use our
 	new <function>doubleHash</function> function to define the
 	<function>easyList</function> function whose type we defined
 	earier.</para>
 
       &Easy.hs:easyList;
 
-      <para>This depends on a <function>suggestSizing</function>
+      <para id="x_p81">This depends on a <function>suggestSizing</function>
 	function that estimates the best combination of filter size
 	and number of hashes to compute, based on our desired false
 	positive rate and the maximum number of elements that we
@@ -647,24 +647,24 @@
 
       &Easy.hs:suggestSizing;
 
-      <para>We perform some rather paranoid checking.  For instance,
+      <para id="x_q81">We perform some rather paranoid checking.  For instance,
 	the <function>sizings</function> function suggests pairs of
 	array size and hash count, but it does not validate its
 	suggestions.  Since we use 32-bit hashes, we must filter out
 	suggested array sizes that are too large.</para>
 
-      <para>In our <function>suggestSizing</function> function, we
+      <para id="x_r81">In our <function>suggestSizing</function> function, we
 	attempt to minimise only the size of the bit array, without
 	regard for the number of hashes.  To see why, let us
 	interactively explore the relationship between array size and
 	number of hashes.</para>
 
-      <para>Suppose we want to insert 10 million elements into a Bloom
+      <para id="x_s81">Suppose we want to insert 10 million elements into a Bloom
 	filter, with a false positive rate of 0.1%.</para>
 
       &sizings.ghci:kbytes;
 
-      <para>We achieve the most compact table (just over 17KB) by
+      <para id="x_t81">We achieve the most compact table (just over 17KB) by
 	computing 10 hashes. If we do not mind spending an extra 5% on
 	space, we can reduce the number of hashes to 7.  If we were
 	really calculating 10 hashes over each value, that might be an
@@ -676,7 +676,7 @@
 	is tiny.  We thus stand to benefit much less benefit by
 	reducing the number of hashes.</para>
 
-      <para>If we increase our tolerance for false positives tenfold,
+      <para id="x_u81">If we increase our tolerance for false positives tenfold,
 	to 1%, the amount of space and the number of hashes we need
 	drop, though not by easily predictable amounts.</para>
 
@@ -688,24 +688,24 @@
   <sect1>
     <title>Creating a Cabal package</title>
 
-    <para>We have created a moderately complicated library, with four
+    <para id="x_v81">We have created a moderately complicated library, with four
       public modules and one internal module.  To turn this into a
       package that we can easily redistribute, we create a
       <filename>rwh-bloomfilter.cabal</filename> file.</para>
 
-    <para>Cabal allows us to describe several libraries in a single
+    <para id="x_w81">Cabal allows us to describe several libraries in a single
       package.  A <filename>.cabal</filename> file begins with
       information that is common to all of the libraries, which is
       followed by a distinct section for each library.</para>
 
     &rwh-bloomfilter.cabal:header;
 
-    <para>As we are bundling some C code with our library, we tell
+    <para id="x_x81">As we are bundling some C code with our library, we tell
       Cabal about our C source files.</para>
 
     &rwh-bloomfilter.cabal:extraSourceFiles;
 
-    <para>The <code>extra-source-files</code> directive has no effect
+    <para id="x_y81">The <code>extra-source-files</code> directive has no effect
       on a build: it directs Cabal to bundle some extra files if we
       run <command>runhaskell Setup sdist</command> to create a source
       tarball for redistribution.</para>
@@ -713,7 +713,7 @@
     <tip>
       <title>Property names are case insensitive</title>
 
-      <para>When reading a property (the text before a
+      <para id="x_z81">When reading a property (the text before a
 	<quote><literal>:</literal></quote> character), Cabal ignores
 	case, so it treats <code>extra-source-files</code> and
 	<code>Extra-Source-Files</code> as the same.</para>
@@ -722,7 +722,7 @@
     <sect2>
       <title>Dealing with different build setups</title>
 
-      <para>Prior to 2007, the standard Haskell libraries were
+      <para id="x_A91">Prior to 2007, the standard Haskell libraries were
 	organised in a handful of large packages, of which the biggest
 	was named <filename>base</filename>.  This organisation tied
 	many unrelated libraries together, so the Haskell community
@@ -731,7 +731,7 @@
 	migrated from <filename>base</filename> into a package named
 	<filename>array</filename>.</para>
 
-      <para>A Cabal package needs to specify the other packages that
+      <para id="x_B91">A Cabal package needs to specify the other packages that
 	it needs to have present in order to build.  This makes it
 	possible for Cabal's command line interface automatically
 	download and build a package's dependencies, if necessary. We
@@ -742,7 +742,7 @@
 	<filename>array</filename> package if it is present, and
 	<filename>base</filename> alone otherwise.</para>
 
-      <para>Cabal provides a generic
+      <para id="x_C91">Cabal provides a generic
 	<emphasis>configurations</emphasis> feature, which we can use
 	to selectively enable parts of a <filename>.cabal</filename>
 	file.  A build configuration is controlled by a Boolean-valued
@@ -755,16 +755,16 @@
 
       <itemizedlist>
 	<listitem>
-	  <para>The configurations feature was introduced in version
+	  <para id="x_D91">The configurations feature was introduced in version
 	    1.2 of Cabal, so we specify that our package cannot be
 	    built with an older version.</para>
 	</listitem>
 	<listitem>
-	  <para>The meaning of the <code>split-base</code> flag should
+	  <para id="x_E91">The meaning of the <code>split-base</code> flag should
 	    be self-explanatory.</para>
 	</listitem>
 	<listitem>
-	  <para>The <code>bytestring-in-base</code> flag deals with a
+	  <para id="x_F91">The <code>bytestring-in-base</code> flag deals with a
 	    more tortured history.  When the
 	    <filename>bytestring</filename> package was first created,
 	    it was bundled with &GHC; 6.4, and kept separate from the
@@ -776,7 +776,7 @@
 	</listitem>
       </itemizedlist>
 
-      <para>These flags are usually invisible to people building a
+      <para id="x_G91">These flags are usually invisible to people building a
 	package, because Cabal handles them automatically.  Before we
 	explain what happens, it will help to see the beginning of the
 	<code>Library</code> section of our <code>.cabal</code>
@@ -784,7 +784,7 @@
 
       &rwh-bloomfilter.cabal:library;
 
-      <para>Cabal creates a package description with the default
+      <para id="x_H91">Cabal creates a package description with the default
 	values of the flags (a missing default is assumed to be
 	<code>True</code>).  If that configuration can be built (e.g.
 	because all of the needed package versions are available), it
@@ -792,14 +792,14 @@
 	of flags until it either finds a configuration that it can
 	build or exhausts the alternatives.</para>
 
-      <para>For example, if we were to begin with both
+      <para id="x_I91">For example, if we were to begin with both
 	<code>split-base</code> and <code>bytestring-in-base</code>
 	set to <code>True</code>, Cabal would select the following
 	package dependencies.</para>
 
       &inconsistent.cabal:bogus;
 
-      <para>The <filename>base</filename> package cannot
+      <para id="x_J91">The <filename>base</filename> package cannot
 	simultaneously be newer than <code>3.0</code> and older than
 	<code>2.2</code>, so Cabal would reject this configuration as
 	inconsistent.  For a modern version of &GHC;, after a few
@@ -808,7 +808,7 @@
 
       &inconsistent.cabal:modern;
 
-      <para>When we run <command>runhaskell Setup configure</command>,
+      <para id="x_K91">When we run <command>runhaskell Setup configure</command>,
 	we can manually specify the values of flags via the
 	<option>--flag</option> option, though we will rarely need to
 	do so in practice.</para>
@@ -817,26 +817,26 @@
     <sect2>
       <title>Compilation options, and interfacing to C</title>
 
-      <para>Continuing with our <filename>.cabal</filename> file, we
+      <para id="x_L91">Continuing with our <filename>.cabal</filename> file, we
 	fill out the remaining details of the Haskell side of our
 	library.</para>
 
       &rwh-bloomfilter.cabal:modules;
 
-      <para>The <code>Other-Modules</code> property lists Haskell
+      <para id="x_M91">The <code>Other-Modules</code> property lists Haskell
 	modules that are private to the library.  Such modules will be
 	invisible to code that uses this package.</para>
 
-      <para>When we build this package with &GHC;, Cabal will pass the
+      <para id="x_N91">When we build this package with &GHC;, Cabal will pass the
 	options from the <code>GHC-Options</code> property to the
 	compiler.</para>
 
-      <para>The <option>-O2</option> option makes &GHC; optimise our
+      <para id="x_O91">The <option>-O2</option> option makes &GHC; optimise our
 	code aggressively.  Code compiled without optimisation is very
 	slow, so we should always use <option>-O2</option> for
 	production code.</para>
 
-      <para>To help ourselves to write cleaner code, we usually add
+      <para id="x_P91">To help ourselves to write cleaner code, we usually add
 	the <option>-Wall</option> option, which enables all of
 	&GHC;'s warnings.  This will cause &GHC; to issue complaints
 	if it encounters potential problems, such as overlapping
@@ -846,19 +846,19 @@
 	to eliminate them.  The small added effort usually yields code
 	that is easier to read and maintain.</para>
 
-      <para>When we compile with <option>-fvia-C</option>, &GHC; will
+      <para id="x_Q91">When we compile with <option>-fvia-C</option>, &GHC; will
 	generate C code and use the system's C compiler to compile it,
 	instead of going straight to assembly language as it usually
 	does.  This slows compilation down, but sometimes the C
 	compiler can further improve &GHC;'s optimised code, so it can
 	be worthwhile.</para>
 
-      <para>We include <option>-fvia-C</option> here mainly to show
+      <para id="x_R91">We include <option>-fvia-C</option> here mainly to show
 	how to make compilation with it work.</para>
 
       &rwh-bloomfilter.cabal:cbits;
 
-      <para>For the <code>C-Sources</code> property, we only need to
+      <para id="x_S91">For the <code>C-Sources</code> property, we only need to
 	list files that must be compiled into our library.  The
 	<code>CC-Options</code> property contains options for the C
 	compiler (<option>-O3</option> specifies a high level of
@@ -873,7 +873,7 @@
       <tip>
 	<title>The value of -fvia-C with the FFI</title>
 
-	<para>Compiling with <option>-fvia-C</option> has a useful
+	<para id="x_T91">Compiling with <option>-fvia-C</option> has a useful
 	  safety benefit when we write FFI bindings. If we mention a
 	  header file in an FFI declaration (e.g. <code>foreign import
 	    "string.h memcpy")</code>, the C compiler will typecheck
@@ -881,7 +881,7 @@
 	  the C function is consistent with the C function's prototype
 	  in the header file.</para>
 
-	<para>If we do not use <option>-fvia-C</option>, we lose that
+	<para id="x_U91">If we do not use <option>-fvia-C</option>, we lose that
 	  additional layer of safety.  This makes it easy to let
 	  simple C type errors slip into our Haskell code.  As an
 	  example, on most 64-bit machines, a <type>CInt</type> is 32
@@ -896,42 +896,42 @@
   <sect1>
     <title>Testing with QuickCheck</title>
 
-    <para>Before we pay any attention to performance, we want to
+    <para id="x_V91">Before we pay any attention to performance, we want to
       establish that our Bloom filter behaves correctly.  We can
       easily use QuickCheck to test some basic properties.</para>
 
     &BloomCheck.hs:BloomCheck;
 
-    <para>We will not use the normal <function>quickCheck</function>
+    <para id="x_W91">We will not use the normal <function>quickCheck</function>
       function to test our properties, as the 100 test inputs that it
       generates do not provide much coverage.</para>
 
     &BloomCheck.hs:handyCheck;
 
-    <para>Our first task is to ensure that if we add a value to a
+    <para id="x_X91">Our first task is to ensure that if we add a value to a
       Bloom filter, a subsequent membership test will always report it
       as present, no matter what the chosen false positive rate or
       input value is.</para>
 
-    <para>We will use the <function>easyList</function> function to
+    <para id="x_Y91">We will use the <function>easyList</function> function to
       create a Bloom filter.  The <type>Random</type> instance for
       <type>Double</type> generates numbers in the range zero to one,
       so QuickCheck can <emphasis>nearly</emphasis> supply us with
       arbitrary false positive rates.</para>
 
-    <para>However, we need to ensure that both zero and one are
+    <para id="x_Z91">However, we need to ensure that both zero and one are
       excluded from the false positives we test with.  QuickCheck
       gives us two ways to do this.</para>
 
     <itemizedlist>
       <listitem>
-	<para>By <emphasis>construction</emphasis>: we specify the
+	<para id="x_a91">By <emphasis>construction</emphasis>: we specify the
 	  range of valid values to generate.  QuickCheck provides a
 	  <function>forAll</function> combinator for this
 	  purpose.</para>
       </listitem>
       <listitem>
-	<para>By <emphasis>elimination</emphasis>: when QuickCheck
+	<para id="x_b91">By <emphasis>elimination</emphasis>: when QuickCheck
 	  generates an arbitrary value for us, we filter out those
 	  that do not fit our criteria, using the
 	  <function>(==&gt;)</function> operator.  If we reject a
@@ -939,53 +939,53 @@
       </listitem>
     </itemizedlist>
 
-    <para>If we can choose either method, it is always preferable to
+    <para id="x_c91">If we can choose either method, it is always preferable to
       take the constructive approach. To see why, suppose that
       QuickCheck generates 1,000 arbitrary values for us, and we
       filter out 800 as unsuitable for some reason.  We will
       <emphasis>appear</emphasis> to run 1,000 tests, but only
       200 will actually do anything useful.</para>
 
-    <para>Following this idea, when we generate desired false positive
+    <para id="x_d91">Following this idea, when we generate desired false positive
       rates, we could eliminate zeroes and ones from whatever
       QuickCheck gives us, but instead we construct values in an
       interval that will always be valid.</para>
 
     &BloomCheck.hs:prop_one_present;
 
-    <para>Our small combinator, <function>(=~&gt;)</function>, lets us
+    <para id="x_e91">Our small combinator, <function>(=~&gt;)</function>, lets us
       filter out failures of <function>easyList</function>: if it
       fails, the test automatically passes.</para>
 
     <sect2>
       <title>Polymorphic testing</title>
 
-      <para>QuickCheck requires properties to be
+      <para id="x_f91">QuickCheck requires properties to be
 	<emphasis>monomorphic</emphasis>.  Since we have many
 	different hashable types that we would like to test, we would
 	very much like to avoid having to write the same test in many
 	different ways.</para>
 
-      <para>Notice that although our
+      <para id="x_g91">Notice that although our
 	<function>prop_one_present</function> function is polymorphic,
 	it ignores its first argument.  We use this to simulate
 	monomorphic properties, as follows.</para>
 
       &bloomCheck.ghci:monomorphic;
 
-      <para>We can supply any value as the first argument to
+      <para id="x_h91">We can supply any value as the first argument to
 	<function>prop_one_present</function>.  All that matters is
 	its <emphasis>type</emphasis>, as the same type will be used
 	for the first element of the second argument.</para>
 
       &bloomCheck.ghci:one;
 
-      <para>If we populate a Bloom filter with many elements, they
+      <para id="x_i91">If we populate a Bloom filter with many elements, they
 	should all be present afterwards.</para>
 
       &BloomCheck.hs:prop_all_present;
 
-      <para>This test also succeeds.</para>
+      <para id="x_j91">This test also succeeds.</para>
 
       &bloomCheck.ghci:all;
     </sect2>
@@ -993,7 +993,7 @@
     <sect2>
       <title>Writing Arbitrary instances for ByteStrings</title>
 
-      <para>The QuickCheck library does not provide
+      <para id="x_k91">The QuickCheck library does not provide
 	<type>Arbitrary</type> instances for <type>ByteString</type>
 	types, so we must write our own.  Rather than create a
 	<type>ByteString</type> directly, we will use a
@@ -1002,7 +1002,7 @@
 
       &BloomCheck.hs:ByteString;
 
-      <para>Also missing from QuickCheck are <type>Arbitrary</type>
+      <para id="x_l91">Also missing from QuickCheck are <type>Arbitrary</type>
 	instances for the fixed-width types defined in
 	<code>Data.Word</code> and <code>Data.Int</code>.  We need to
 	at least create an <type>Arbitrary</type> instance for
@@ -1010,13 +1010,13 @@
 
       &BloomCheck.hs:Word8;
 
-      <para>We support these instances with  a few common functions so
+      <para id="x_m91">We support these instances with  a few common functions so
 	that we can reuse them when writing instances for other
 	integral types.</para>
 
       &BloomCheck.hs:Word32;
 
-      <para>With these <type>Arbitrary</type> instances created, we
+      <para id="x_n91">With these <type>Arbitrary</type> instances created, we
 	can try our existing properties on the <type>ByteString</type>
 	types.</para>
 
@@ -1026,7 +1026,7 @@
     <sect2>
       <title>Are suggested sizes correct?</title>
 
-      <para>The cost of testing properties of <type>easyList</type>
+      <para id="x_o91">The cost of testing properties of <type>easyList</type>
 	increases rapidly as we increase the number of tests to run.
 	We would still like to have some assurance that
 	<function>easyList</function> will behave well on huge inputs.
@@ -1035,51 +1035,51 @@
 	array size and number of hashes even with extreme
 	inputs?</para>
 
-      <para>This is a slightly tricky property to check.  We need to
+      <para id="x_p91">This is a slightly tricky property to check.  We need to
 	vary both the desired false positive rate and the expected
 	capacity.  When we looked at some results from the
 	<function>sizings</function> function, we saw that the
 	relationship between these values is not easy to
 	predict.</para>
 
-      <para>We can try to ignore the complexity.</para>
+      <para id="x_q91">We can try to ignore the complexity.</para>
 
       &BloomCheck.hs:prop_suggest_try1;
 
-      <para>Not surprisingly, this gives us a test that is not
+      <para id="x_r91">Not surprisingly, this gives us a test that is not
 	actually useful.</para>
 
       &bloomCheck.ghci:try1;
 
-      <para>When we plug the counterexamples that QuickCheck prints
+      <para id="x_s91">When we plug the counterexamples that QuickCheck prints
 	into <function>suggestSizings</function>, we can see that
 	these inputs are rejected because they would result in a bit
 	array that would be too large.</para>
 
       &bloomCheck.ghci:why;
 
-      <para>Since we can't easily predict which combinations will
+      <para id="x_t91">Since we can't easily predict which combinations will
 	cause this problem, we must resort to eliminating sizes and
 	false positive rates before they bite us.</para>
 
       &BloomCheck.hs:prop_suggest_try2;
 
-      <para>If we try this with a small number of tests, it seems to
+      <para id="x_u91">If we try this with a small number of tests, it seems to
 	work well.</para>
 
       &bloomCheck.ghci:try2a;
 
-      <para>On a larger body of tests, we filter out too many
+      <para id="x_v91">On a larger body of tests, we filter out too many
 	combinations.</para>
 
       &bloomCheck.ghci:try2b;
 
-      <para>To deal with this, we try to reduce the likelihood of
+      <para id="x_w91">To deal with this, we try to reduce the likelihood of
 	generating inputs that we will subsequently reject.</para>
 
       &BloomCheck.hs:prop_suggestions_sane;
 
-      <para>Finally, we have a robust looking property.</para>
+      <para id="x_x91">Finally, we have a robust looking property.</para>
 
       &bloomCheck.ghci:try3;
     </sect2>
@@ -1088,34 +1088,34 @@
   <sect1>
     <title>Performance analysis and tuning</title>
 
-    <para>We now have a correctness base line: our QuickCheck tests
+    <para id="x_y91">We now have a correctness base line: our QuickCheck tests
       pass.  When we start tweaking performance, we can rerun the
       tests at any time to ensure that we haven't inadvertantly broken
       anything.</para>
 
-    <para>Our first step is to write a small test application that we
+    <para id="x_z91">Our first step is to write a small test application that we
       can use for timing.</para>
 
     &WordTest.hs:module;
 
-    <para>We borrow the <function>rnf</function> function that we
+    <para id="x_AA1">We borrow the <function>rnf</function> function that we
       introduced in <xref linkend="concurrent.strategies"/> to develop
       a simple timing harness.  Out <function>timed</function> action
       ensures that a value is evaluated to normal form in order to
       accurately capture the cost of evaluating it.</para>
 
-    <para>The application creates a Bloom filter from the contents of
+    <para id="x_BA1">The application creates a Bloom filter from the contents of
       a file, treating each line as an element to add to the
       filter.</para>
 
     &WordTest.hs:main;
 
-    <para>We use <function>timed</function> to account for the costs
+    <para id="x_CA1">We use <function>timed</function> to account for the costs
       of three distinct phases: reading and splitting the data into
       lines; populating the Bloom filter; and querying every element
       in it.</para>
 
-    <para>If we compile this and run it a few times, we can see that
+    <para id="x_DA1">If we compile this and run it a few times, we can see that
       the execution time is just long enough to be interesting, while
       the timing variation from run to run is small.  We have created
       a plausible-looking microbenchmark.</para>
@@ -1125,11 +1125,11 @@
     <sect2>
       <title>Profile-driven performance tuning</title>
 
-      <para>To understand where our program might benefit from some
+      <para id="x_EA1">To understand where our program might benefit from some
 	tuning, we rebuild it and run it with profiling
 	enabled.</para>
 
-      <para>Since we already built <filename>WordTest</filename> and
+      <para id="x_FA1">Since we already built <filename>WordTest</filename> and
 	have not subsequently changed it, if we rerun &ghc; to enable
 	profiling support, it will quite reasonably decide to do
 	nothing.  We must force it to rebuild, which we accomplish by
@@ -1138,31 +1138,31 @@
 
       &ch27-prof-1;
 
-      <para>Our <function>doubleHash</function> function immediately
+      <para id="x_GA1">Our <function>doubleHash</function> function immediately
 	leaps out as a huge time and memory sink.</para>
 
       <tip>
 	<title>Always profile before&emdash;and while&emdash;you
 	  tune!</title>
 
-	<para>Before our first profiling run, we did not expect
+	<para id="x_HA1">Before our first profiling run, we did not expect
 	  <function>doubleHash</function> to even appear in the top
 	  ten of <quote>hot</quote> functions, much less to dominate
 	  it.  Without this knowledge, we would probably have started
 	  tuning something entirely irrelevant.</para>
       </tip>
 
-      <para>Recall that the body of <function>doubleHash</function> is
+      <para id="x_IA1">Recall that the body of <function>doubleHash</function> is
 	an innocuous list comprehension.</para>
 
       &Hash.hs:doubleHash.noid;
 
-      <para>Since the function returns a list, it makes
+      <para id="x_JA1">Since the function returns a list, it makes
 	<emphasis>some</emphasis> sense that it allocates so much
 	memory, but when code this simple performs so badly, we should
 	be suspicious.</para>
 
-      <para>Faced with a performance mystery, the suspicious mind will
+      <para id="x_KA1">Faced with a performance mystery, the suspicious mind will
 	naturally want to inspect the output of the compiler.  We
 	don't need to start scrabbling through assembly language
 	dumps: it's best to start at a higher level.</para>
@@ -1170,13 +1170,13 @@
       <remark>Make sure we're not repeating anything from the
 	profiling chapter.</remark>
 
-      <para>&GHC;'s <option>-ddump-simpl</option> option prints out
+      <para id="x_LA1">&GHC;'s <option>-ddump-simpl</option> option prints out
 	the code that it produces after performing all of its
 	high-level optimisations.</para>
 
       &ch27-ddump-simpl-1;
 
-      <para>The file thus produced is about a thousand lines long.
+      <para id="x_MA1">The file thus produced is about a thousand lines long.
 	Most of the names in it are mangled somewhat from their
 	original Haskell representations.  Even so, searching for
 	<function>doubleHash</function> will immediately drop us at
@@ -1186,7 +1186,7 @@
 
       &ch27-less;
 
-      <para>It can be difficult to start reading the output of &GHC;'s
+      <para id="x_NA1">It can be difficult to start reading the output of &GHC;'s
 	simplifier.  There are many automatically generated names, and
 	the code has many obscure annotations. We can make substantial
 	progress by ignoring things that we do not understand,
@@ -1195,89 +1195,89 @@
 	&let; for variable binding; and &case; for pattern
 	matching.</para>
 
-      <para>If we skim through the definition of
+      <para id="x_OA1">If we skim through the definition of
 	<function>doubleHash</function>, we will arrive at a section
 	that looks something like this.</para>
 
       &ch27-loop-1;
 
-      <para>This is the body of the list comprehension.  It may seem
+      <para id="x_PA1">This is the body of the list comprehension.  It may seem
 	daunting, but we can look through it piece by piece and find
 	that it is not, after all, so complicated.</para>
 
       <calloutlist>
 	<callout arearefs="loop1-letrec-co" id="loop1-letrec">
-	  <para>A <code>__letrec</code> is equivalent to a normal
+	  <para id="x_QA1">A <code>__letrec</code> is equivalent to a normal
 	    Haskell &let;.</para>
 	</callout>
 	<callout arearefs="loop1-def-co" id="loop1-def">
-	  <para>&GHC; compiled the body of our list comprehension into
+	  <para id="x_RA1">&GHC; compiled the body of our list comprehension into
 	    a loop named <function>go_s1YC</function>.</para>
 	</callout>
 	<callout arearefs="loop1-pat-empty-co" id="loop1-pat-empty">
-	  <para>If our &case; expression matches the empty list, we
+	  <para id="x_SA1">If our &case; expression matches the empty list, we
 	    return the empty list.  This is reassuringly
 	    familiar.</para>
 	</callout>
 	<callout arearefs="loop1-pat-colon-co" id="loop1-pat-colon">
-	  <para>This pattern would read in Haskell as
+	  <para id="x_TA1">This pattern would read in Haskell as
 	    <code>(y_a1DW:ys_a1DX)</code>.  The <code>(:)</code>
 	    constructor appears before its operands because the Core
 	    language uses prefix notation exclusively for
 	    simplicity.</para>
 	</callout>
 	<callout arearefs="loop1-cons-colon-co" id="loop1-cons-colon">
-	  <para>This is an application of the <function>(:)</function>
+	  <para id="x_UA1">This is an application of the <function>(:)</function>
 	    constructor.  The <code>@</code> notation indicates that
 	    the first operand will have type <type>Word32</type>.</para>
 	</callout>
 	<callout arearefs="loop1-unbox-co" id="loop1-unbox">
-	  <para>Each of the three &case; expressions
+	  <para id="x_VA1">Each of the three &case; expressions
 	    <emphasis>unboxes</emphasis> a <type>Word32</type>value,
 	    to get at the primitive value inside.  First to be unboxed
 	    is <varname>h1</varname> (named <varname>h1_s1YA</varname>
 	    here), then <varname>h2</varname>, then the current list
 	    element, <varname>y</varname>.</para>
 
-	  <para>The unboxing occurs via pattern matching:
+	  <para id="x_WA1">The unboxing occurs via pattern matching:
 	    <type>W32#</type> is the constructor that boxes a
 	    primitive value.  By convention, primitive types and
 	    values, and functions that use them, always contains a
 	    <code>#</code> somewhere in their name.</para>
 	</callout>
 	<callout arearefs="loop1-rebox-co" id="loop1-rebox">
-	  <para>Here, we apply the <code>W32#</code> constructor to a
+	  <para id="x_XA1">Here, we apply the <code>W32#</code> constructor to a
 	    value of the primitive type <type>Word32#</type>, to give
 	    a normal value of type <type>Word32</type>.</para>
 	</callout>
 	<callout arearefs="loop1-add-co" id="loop1-add">
-	  <para>The <function>plusWord#</function> and
+	  <para id="x_YA1">The <function>plusWord#</function> and
 	    <function>timesWord#</function> functions add and multiply
 	    primitive unsigned integers.</para>
 	</callout>
 	<callout arearefs="loop1-cons-cdr-co" id="loop1-cons-cdr">
-	  <para>This is the second argument to the
+	  <para id="x_ZA1">This is the second argument to the
 	    <function>(:)</function> constructor, in which the
 	    <function>go_s1YC</function> function applies itself
 	    recursively.</para>
 	</callout>
 	<callout arearefs="loop1-apply-co" id="loop1-apply">
-	  <para>Here, we apply our list comprehension loop function.
+	  <para id="x_aA1">Here, we apply our list comprehension loop function.
 	    Its argument is the Core translation of the expression
 	    <code>[0..n]</code>.</para>
 	</callout>
       </calloutlist>
 
-      <para>From reading the Core for this code, we can see two
+      <para id="x_bA1">From reading the Core for this code, we can see two
 	interesting behaviours.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para>We are creating a list, then immediately
+	  <para id="x_cA1">We are creating a list, then immediately
 	    deconstructing it in the <function>go_s1YC</function>
 	    loop.</para>
 
-	  <para>&GHC; can often spot this pattern of production
+	  <para id="x_dA1">&GHC; can often spot this pattern of production
 	    followed immediately by consumption, and transform it into
 	    a loop in which no allocation occurs.  This class of
 	    transformation is called <emphasis>fusion</emphasis>,
@@ -1286,18 +1286,18 @@
 	</listitem>
 
 	<listitem>
-	  <para>The repeated unboxing of <varname>h1</varname> and
+	  <para id="x_eA1">The repeated unboxing of <varname>h1</varname> and
 	    <varname>h2</varname> in the body of the loop is
 	    wasteful.</para>
 	</listitem>
       </itemizedlist>
 
-      <para>To address these problems, we make a few tiny changes to
+      <para id="x_fA1">To address these problems, we make a few tiny changes to
 	our <function>doubleHash</function> function.</para>
 
       &Hash.hs:doubleHash_new;
 
-      <para>We have manually fused the <code>[0..num]</code>
+      <para id="x_gA1">We have manually fused the <code>[0..num]</code>
 	expression and the code that consumes it into a single loop.
 	We have added strictness annotations to <varname>h1</varname>
 	and <varname>h2</varname>.  And nothing more.  This has turned
@@ -1306,13 +1306,13 @@
 
       &ch27-loop-2;
 
-      <para>Our new function has compiled down to a simple counting
+      <para id="x_hA1">Our new function has compiled down to a simple counting
 	loop.  This is very encouraging, but how does it actually
 	perform?</para>
 
       &ch27-prof-2;
 
-      <para>Our tweak has improved performance by about 11%.  This is
+      <para id="x_iA1">Our tweak has improved performance by about 11%.  This is
 	a good result for such a small change.</para>
     </sect2>
   </sect1>
@@ -1323,7 +1323,7 @@
     <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
-	  <para>Our use of<function>genericLength</function> in
+	  <para id="x_jA1">Our use of<function>genericLength</function> in
 	    <function>easyList</function> will cause our function to
 	    loop infinitely if we supply an infinite list.  Fix
 	    this.</para>
@@ -1331,7 +1331,7 @@
       </qandaentry>
       <qandaentry>
 	<question>
-	  <para><emphasis>Difficult.</emphasis>  Write a QuickCheck
+	  <para id="x_kA1"><emphasis>Difficult.</emphasis>  Write a QuickCheck
 	    property that checks whether the observed false positive
 	    rate is close to the requested false positive rate.</para>
 	</question>
