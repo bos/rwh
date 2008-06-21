@@ -1202,18 +1202,118 @@
       &ch27-loop-1;
 
       <para>This is the body of the list comprehension.  It may seem
-	daunting, but its structure is simple.</para>
+	daunting, but we can look through it piece by piece and find
+	that it is not, after all, so complicated.</para>
 
       <calloutlist>
 	<callout arearefs="loop1-letrec-co" id="loop1-letrec">
 	  <para>A <code>__letrec</code> is equivalent to a normal
 	    Haskell &let;.</para>
 	</callout>
+	<callout arearefs="loop1-def-co" id="loop1-def">
+	  <para>&GHC; compiled the body of our list comprehension into
+	    a loop named <function>go_s1YC</function>.</para>
+	</callout>
+	<callout arearefs="loop1-pat-empty-co" id="loop1-pat-empty">
+	  <para>If our &case; expression matches the empty list, we
+	    return the empty list.  This is reassuringly
+	    familiar.</para>
+	</callout>
+	<callout arearefs="loop1-pat-colon-co" id="loop1-pat-colon">
+	  <para>This pattern would read in Haskell as
+	    <code>(y_a1DW:ys_a1DX)</code>.  The <code>(:)</code>
+	    constructor appears before its operands because the Core
+	    language uses prefix notation exclusively for
+	    simplicity.</para>
+	</callout>
+	<callout arearefs="loop1-cons-colon-co" id="loop1-cons-colon">
+	  <para>This is an application of the <function>(:)</function>
+	    constructor.  The <code>@</code> notation indicates that
+	    the first operand will have type <type>Word32</type>.</para>
+	</callout>
+	<callout arearefs="loop1-unbox-co" id="loop1-unbox">
+	  <para>Each of the three &case; expressions
+	    <emphasis>unboxes</emphasis> a <type>Word32</type>value,
+	    to get at the primitive value inside.  First to be unboxed
+	    is <varname>h1</varname> (named <varname>h1_s1YA</varname>
+	    here), then <varname>h2</varname>, then the current list
+	    element, <varname>y</varname>.</para>
+
+	  <para>The unboxing occurs via pattern matching:
+	    <type>W32#</type> is the constructor that boxes a
+	    primitive value.  By convention, primitive types and
+	    values, and functions that use them, always contains a
+	    <code>#</code> somewhere in their name.</para>
+	</callout>
+	<callout arearefs="loop1-rebox-co" id="loop1-rebox">
+	  <para>Here, we apply the <code>W32#</code> constructor to a
+	    value of the primitive type <type>Word32#</type>, to give
+	    a normal value of type <type>Word32</type>.</para>
+	</callout>
+	<callout arearefs="loop1-add-co" id="loop1-add">
+	  <para>The <function>plusWord#</function> and
+	    <function>timesWord#</function> functions add and multiply
+	    primitive unsigned integers.</para>
+	</callout>
+	<callout arearefs="loop1-cons-cdr-co" id="loop1-cons-cdr">
+	  <para>This is the second argument to the
+	    <function>(:)</function> constructor, in which the
+	    <function>go_s1YC</function> function applies itself
+	    recursively.</para>
+	</callout>
+	<callout arearefs="loop1-apply-co" id="loop1-apply">
+	  <para>Here, we apply our list comprehension loop function.
+	    Its argument is the Core translation of the expression
+	    <code>[0..n]</code>.</para>
+	</callout>
       </calloutlist>
+
+      <para>From reading the Core for this code, we can see two
+	interesting behaviours.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>We are creating a list, then immediately
+	    deconstructing it in the <function>go_s1YC</function>
+	    loop.</para>
+
+	  <para>&GHC; can often spot this pattern of production
+	    followed immediately by consumption, and transform it into
+	    a loop in which no allocation occurs.  This class of
+	    transformation is called <emphasis>fusion</emphasis>,
+	    because the producer and consumer become fused together.
+	    Unfortunately, it is not occurring here.</para>
+	</listitem>
+
+	<listitem>
+	  <para>The repeated unboxing of <varname>h1</varname> and
+	    <varname>h2</varname> in the body of the loop is
+	    wasteful.</para>
+	</listitem>
+      </itemizedlist>
+
+      <para>To address these problems, we make a few tiny changes to
+	our <function>doubleHash</function> function.</para>
 
       &Hash.hs:doubleHash_new;
 
+      <para>We have manually fused the <code>[0..num]</code>
+	expression and the code that consumes it into a single loop.
+	We have added strictness annotations to <varname>h1</varname>
+	and <varname>h2</varname>.  And nothing more.  This has turned
+	a 6-line function into an 8-line function.  What effect does
+	our change have on Core output?</para>
+
+      &ch27-loop-2;
+
+      <para>Our new function has compiled down to a simple counting
+	loop.  This is very encouraging, but how does it actually
+	perform?</para>
+
       &ch27-prof-2;
+
+      <para>Our tweak has improved performance by about 11%.  This is
+	a good result for such a small change.</para>
     </sect2>
   </sect1>
 

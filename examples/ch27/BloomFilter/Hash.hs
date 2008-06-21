@@ -104,6 +104,7 @@ instance Hashable Lazy.ByteString where
                        foldM hashByteString salt (Lazy.toChunks bs)
 {-- /snippet hashSB --}
 
+{-
 {-- snippet doubleHash --}
 doubleHash :: Hashable a => Int -> a -> [Word32]
 doubleHash numHashes value = [h1 + h2 * i | i <- [0..num]]
@@ -112,14 +113,17 @@ doubleHash numHashes value = [h1 + h2 * i | i <- [0..num]]
           h2  = fromIntegral h
           num = fromIntegral numHashes
 {-- /snippet doubleHash --}
+-}
 
 {-- snippet doubleHash_new --}
-doubleHash1 :: Hashable a => Int -> a -> [Word32]
-doubleHash1 numHashes value = go 0
-    where h   = hashSalt 0x9150a946c4a8966e value
-          !h1  = fromIntegral (h `shiftR` 32) .&. maxBound
-          !h2  = fromIntegral h
-          num = fromIntegral numHashes
-          go n | n == num = []
+doubleHash :: Hashable a => Int -> a -> [Word32]
+doubleHash numHashes value = go 0
+    where go n | n == num  = []
                | otherwise = h1 + h2 * n : go (n + 1)
+
+          !h1 = fromIntegral (h `shiftR` 32) .&. maxBound
+          !h2 = fromIntegral h
+
+          h   = hashSalt 0x9150a946c4a8966e value
+          num = fromIntegral numHashes
 {-- /snippet doubleHash_new --}

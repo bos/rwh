@@ -1,30 +1,29 @@
 <programlisting>
 __letrec { <co id="loop1-letrec-co" linkends="loop1-letrec"/>
-  go_s1YC :: [GHC.Word.Word32] -&gt; [GHC.Word.Word32]
+  go_s1YC :: [GHC.Word.Word32] -&gt; [GHC.Word.Word32] <co id="loop1-def-co" linkends="loop1-def"/>
   [Arity 1
    Str: DmdType S]
   go_s1YC =
     \ (ds_a1DR :: [GHC.Word.Word32]) -&gt;
       case ds_a1DR of wild_a1DS {
-	[] -&gt; GHC.Base.[] @ GHC.Word.Word32;
-	: y_a1DW ys_a1DX -&gt;
-	  GHC.Base.:
-	    @ GHC.Word.Word32
-	    (case h1_s1YA of wild1_a1Mk { GHC.Word.W32# x#_a1Mm -&gt;
+	[] -&gt; GHC.Base.[] @ GHC.Word.Word32; <co id="loop1-pat-empty-co" linkends="loop1-pat-empty"/>
+	: y_a1DW ys_a1DX -&gt; <co id="loop1-pat-colon-co" linkends="loop1-pat-colon"/>
+	  GHC.Base.: @ GHC.Word.Word32 <co id="loop1-cons-colon-co" linkends="loop1-cons-colon"/>
+	    (case h1_s1YA of wild1_a1Mk { GHC.Word.W32# x#_a1Mm -&gt; <co id="loop1-unbox-co" linkends="loop1-unbox"/>
 	     case h2_s1Yy of wild2_a1Mu { GHC.Word.W32# x#1_a1Mw -&gt;
 	     case y_a1DW of wild11_a1My { GHC.Word.W32# y#_a1MA -&gt;
-	     GHC.Word.W32#
+	     GHC.Word.W32# <co id="loop1-rebox-co" linkends="loop1-rebox"/>
 	       (GHC.Prim.narrow32Word#
-		  (GHC.Prim.plusWord#
+		  (GHC.Prim.plusWord# <co id="loop1-add-co" linkends="loop1-add"/>
 		     x#_a1Mm (GHC.Prim.narrow32Word#
                               (GHC.Prim.timesWord# x#1_a1Mw y#_a1MA))))
 	     }
 	     }
 	     })
-	    (go_s1YC ys_a1DX)
+	    (go_s1YC ys_a1DX) <co id="loop1-cons-cdr-co" linkends="loop1-cons-cdr"/>
       };
 } in 
-  go_s1YC
+  go_s1YC <co id="loop1-apply-co" linkends="loop1-apply"/>
     (GHC.Word.$w$dmenumFromTo2
        __word 0 (GHC.Prim.narrow32Word# (GHC.Prim.int2Word# ww_s1X3)))
 </programlisting>
