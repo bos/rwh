@@ -48,23 +48,23 @@ chapters = [
    $ Beta "2008-04-22"
  , ch "binary" "Code case study: parsing a binary data format"
    $ Beta "2008-04-22"
- , ch "testing" "Testing your code" Unpublished
- , ch "barcode" "Barcode recognition" $ Alpha "2008-04-22"
+ , ch "testing" "Testing and quality assurance" $ Beta "2008-06-21"
+ , ch "barcode" "Barcode recognition" $ Beta "2008-06-21"
  , ch "data" "Data structures" $ Beta "2008-04-22"
  , ch "monads" "Monads" $ Beta "2008-04-22"
  , ch "monadcase" "Programming with monads" $ Beta "2008-04-30"
  , ch "monadtrans" "Monad transformers" $ Beta "2008-04-30"
- , ch "parsec" "The Parsec parsing library" $ Alpha "2008-04-22"
+ , ch "parsec" "The Parsec parsing library" $ Beta "2008-06-21"
  , ch "ffi" "The foreign function interface" Unpublished
- , ch "errors" "Error handling" Unpublished
- , ch "systems" "Systems programming" $ Alpha "2008-04-22"
+ , ch "errors" "Error handling" $ Beta "2008-06-21"
+ , ch "systems" "Systems programming" $ Beta "2008-06-21"
  , ch "databases" "Working with databases" $ Beta "2008-04-22"
- , ch "webclient" "Web client programming" $ Alpha "2008-04-22"
- , ch "gui" "GUI programming" $ Alpha "2008-04-22"
- , ch "concurrent" "Basic concurrent and parallel programming" Unpublished
+ , ch "webclient" "Web client programming" $ Beta "2008-06-21"
+ , ch "gui" "GUI programming" $ Beta "2008-06-21"
+ , ch "concurrent" "Basic concurrent and parallel programming" $ Beta "2008-06-21"
  , ch "profiling" "Profiling and tuning for performance" Unpublished
- , ch "advhs" "Advanced language features" Unpublished
- , ch "sockets" "Network programming" $ Alpha "2008-04-22"
+ , ch "bloomfilter" "Advanced library design: building a Bloom filter" $ Beta "2008-06-21"
+ , ch "sockets" "Network programming" $ Beta "2008-06-21"
  , ch "webapp" "A concurrent RESTful web application" Unpublished
  , app "install" "Installing GHC" $ Beta "2008-01-21"
  , app "escapes" "Characters, strings, and escaping rules" $ Beta "2008-01-21"
