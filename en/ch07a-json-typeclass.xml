@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="jsonclass" revision="alpha;beta">
-  <title>More work with typeclasses</title>
+  <title>Typeclasses at work: making JSON easier to use</title>
 
   <sect1>
     <title></title>
