@@ -30,8 +30,6 @@
 
   <sect1 id="io.basics">
     <title>Classic I/O in Haskell</title>
-    <remark>FIXME: have we already explained main?</remark>
-    <remark>FIXME: have we already explained $ ?</remark>
     <para id="x_AC">
       Let's get started with I/O in Haskell by looking at a program that looks
       surprisingly similar to I/O in other languages such as C or Perl.
@@ -53,8 +51,8 @@ Welcome to Haskell, John!
     <para id="x_CC">
       That's a fairly simple, obvious result.  You can see that &putStrLn;
       writes out a &String;, followed by an end-of-line character.  &getLine;
-      reads a line from standard input.  The &larrow; operator may be new to
-      you.  Put simply, that operator binds the result from executing an
+      reads a line from standard input.  The &larrow; syntax may be new to
+      you.  Put simply, that binds the result from executing an
       I/O action to a name. 
       <footnote><para id="x_DC">You will later see that it has a more
         broad application, but it is sufficient to think of it in these terms
@@ -81,16 +79,18 @@ Welcome to Haskell, John!
     <para id="x_IC">
       Anything that is type <literal>IO
         <replaceable>something</replaceable></literal> is an I/O
-      <emphasis>action</emphasis>.  You can store it and nothing will happen.
-      I could say <literal>writefoo = putStrLn "foo"</literal> and nothing
-      happens right then.  But if I later call <literal>writefoo</literal> in
-      the middle of another I/O action, the
-        <literal>writefoo</literal> action will be executed when its
-        parent action is executed. The
-      <literal>()</literal> is an empty tuple (pronounced <quote>unit</quote>), indicating that there is
-      no return value from &putStrLn;.  This is similar to
-        <literal>void</literal> in Java or C.<footnote><para
-        id="x_KN">The type of the value <literal>()</literal> is also <literal>()</literal>.</para>
+      <emphasis>action</emphasis>.  You can store it and nothing
+      will happen.  I could say <literal>writefoo = putStrLn
+        "foo"</literal> and nothing happens right then.  But if I
+      later use <literal>writefoo</literal> in the middle of
+      another I/O action, the <literal>writefoo</literal> action
+      will be executed when its parent action is executed -- I/O
+      actions can be glued together to form bigger I/O actions.  The
+      <literal>()</literal> is an empty tuple (pronounced
+      <quote>unit</quote>), indicating that there is no return value
+      from &putStrLn;.  This is similar to <literal>void</literal>
+      in Java or C.<footnote><para id="x_KN">The type of the value
+          <literal>()</literal> is also <literal>()</literal>.</para>
       </footnote>
     </para>
     <tip>
@@ -115,7 +115,7 @@ Welcome to Haskell, John!
       action, &ghci; will perform it for you on the spot.
     </para>
     <note>
-      <title>What Is An Action?</title>
+      <title>What Is An I/O Action?</title>
       <para id="x_NN">
         Actions:
       </para>
@@ -133,7 +133,8 @@ Welcome to Haskell, John!
           </para>
         </listitem>
         <listitem><para id="x_RN">Any expression may produce an action as its
-        value, but the action will not perform I/O until it is executed</para>
+        value, but the action will not perform I/O until it is
+        executed inside another I/O action (or it is <literal>main</literal>)</para>
         </listitem>
         <listitem><para id="x_SN">Performing (executing) an action of type <literal>IO
         t</literal> may perform I/O and will ultimately deliver a
@@ -159,9 +160,8 @@ Welcome to Haskell, John!
       program begins.  This, then, is the mechanism that provides
       isolation from side effects in Haskell: you perform I/O in
       your <literal>IO</literal> actions, and call pure (non-I/O) functions
-      from there.  Most Haskell programs will still have the majority
-        of their code outside <literal>IO</literal> actions; the I/O
-        actions are just used to perform I/O and call the pure code.
+      from there.  Most Haskell code is pure; the I/O actions perform
+        I/O and call that pure code.
     </para>
 
 
@@ -170,8 +170,6 @@ Welcome to Haskell, John!
       see later, there are other ways.  When you use &do; in this way,
       indentation is significant; make sure you line up your actions
       properly.
-      <remark>FIXME: describe more on indentation of do blocks here,
-      space vs. tabs, etc?</remark>
     </para>
     <para id="x_FC">
       You only need to use &do; if you have more than one action that you need
@@ -197,7 +195,7 @@ Welcome to Haskell, John!
       <literal>length</literal>.
     </para>
     <para id="x_OC">
-      Down in <literal>main</literal>, we assign the result of
+      Down in <literal>main</literal>, we bind the result of
       <literal>name2reply inpStr</literal> to <literal>outStr</literal>.
       When you're working in a &do; block, you use &larrow; to get
       results from &IO; actions and &let; to get results from pure
@@ -257,7 +255,7 @@ Welcome to Haskell, John!
         I/O actions avoid these rules.
       </para>
       <table id="io.purevsimpure.table">
-        <title>Pure vs. I/O</title>
+        <title>Pure vs. Impure</title>
         <tgroup cols='2' align='left'>
           <colspec colname='c1'/>
           <colspec colname='c2'/>
@@ -344,8 +342,6 @@ Welcome to Haskell, John!
       reference for <literal>System.IO</literal> provides a good summary of
       all the basic I/O functions, should you need one that we aren't touching upon
       here. 
-      <remark>FIXME: insert xref to instructions on finding library
-      ref</remark> 
     </para>
 
     <para id="x_WC">
