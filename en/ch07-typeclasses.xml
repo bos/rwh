@@ -493,7 +493,6 @@ class  Eq a  where
           linkend="typeclasses.auto.derivation"/>), you can use it for
         some really complex data structures.  Here are a few examples of
         slightly more complex data structures:
-        <remark>FIXME: like to def of $, or explain it here</remark>
       </para>
       &serialization.ghci:ex3;
     </sect2>
@@ -600,7 +599,7 @@ class  Eq a  where
 
       <para id="x_mB">
         These are quite a few different numeric types.  There are some
-        operations, such as addition, that ought to work with all of them.
+        operations, such as addition, that work with all of them.
         There are others, such as <literal>asin</literal>, that only apply to
         floating-point types.  <xref linkend="numerictypes.funcs"/>
         summarizes the different functions that operate on numeric types,
@@ -1090,7 +1089,7 @@ class  Eq a  where
       <tip>
         <para id="x_pp">Sometimes, the ordering in &Ord; is arbitrary.  For
         instance, for &Maybe;, &Nothing; sorts before <literal>Just
-        x</literal>, but this was an arbitrary decision.
+        x</literal>, but this was a somewhat arbitrary decision.
         </para>
       </tip>
 
@@ -1117,7 +1116,7 @@ class  Eq a  where
     <para id="x_IN">
       Notice that the sort order for <literal>Color</literal>
       was based on the order that
-      the constructors were defined, not on an alphabetical ordering.
+      the constructors were defined.
     </para>
     <para id="x_uB">
       Automatic derivation is not always possible.  For instance, if you
