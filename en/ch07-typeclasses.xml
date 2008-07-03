@@ -4,7 +4,7 @@
   <title>Using Typeclasses</title>
 
   <para id="x_iA">
-    Typeclasses are one of the most powerful features in Haskell.
+    Typeclasses are among the most powerful features in Haskell.
     They allow you to define generic interfaces that provide a common
     feature set over a wide variety of types.  Typeclasses 
     are at the heart of some basic language features such as equality
@@ -61,7 +61,8 @@
     <para id="x_nA">
       Typeclasses define a set of functions that can have different
       implementations depending on the type of data they are given.
-      Typeclasses may look like objects, but they are truly quite different.  
+      Typeclasses may look like the objects of object-oriented
+      programming, but they are truly quite different.
     </para>
 
     <para id="x_tA">
@@ -82,6 +83,14 @@
       That function takes two parameters&emdash;both corresponding to instance
       types&emdash;and returns a <literal>Bool</literal>.
     </para>
+    <note>
+      <para>
+        The keywoard to define a typeclass in Haskell is
+        <literal>class</literal>.  Unfortunately, this may be
+        confusing for those of you coming from an object-oriented
+        background, as we are not really defining the same thing.
+      </para>
+    </note>
     <para id="x_wA">
       On the first line, the name of the parameter <literal>a</literal>
       was chosen arbitrarily.  We could have used any name.  The key is that,
@@ -137,14 +146,6 @@ isEqual :: (BasicEq a) => a -> a -> Bool
     <para id="x_CB">
       While our definition of <literal>BasicEq2</literal> is fine, it seems
       that we're making extra work for ourselves.  
-      Logically speaking, for any type, if we know the return value of
-      <literal>isEqual</literal>, we also know the return value of
-      <literal>isNotEqual</literal>, and vice-versa.  The definition of
-      <literal>BasicEq2</literal> requires programmers to define both
-      functions for every instance of <literal>BasicEq2</literal>.  It would
-      be nice to only require programmers to write one function, and have the
-      system figure out the proper return value of the other automatically.
-
       Logically speaking, if we
       know what <literal>isEqual</literal> or
       <literal>isNotEqual</literal> would return, we know how to figure out
@@ -183,7 +184,7 @@ isEqual :: (BasicEq a) => a -> a -> Bool
       defines a typeclass that implements equality
       comparison.  Here is the code for the built-in
       <literal>Eq</literal> typeclass.
-        <literal>Eq</literal> typeclass  Note how similar it is to our
+      Note how similar it is to our
         <literal>BasicEq3</literal> typeclass.
     </para>
     <programlisting>
