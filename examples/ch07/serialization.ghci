@@ -1,9 +1,9 @@
 --# ex1
 let d1 = [Just 5, Nothing, Nothing, Just 8, Just 9]::[Maybe Int]
 putStrLn (show d1)
-writeFile "/tmp/test" (show d1)
+writeFile "test" (show d1)
 --# ex2
-input <- readFile "/tmp/test"
+input <- readFile "test"
 let d2 = read input
 let d2 = (read input)::[Maybe Int]
 print d1

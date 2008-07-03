@@ -253,7 +253,7 @@ class  Eq a  where
       here.  For more details, the Haskell library reference is a good
       resource.  It will give you a description of the typeclasses, and
       usually also will tell you which functions you must implement to have a
-      complete definition.  <remark>FIXME: add link to lib ref</remark>
+      complete definition.  
     </para>
 
     <sect2 id="typeclasses.wellknown.show">
@@ -336,7 +336,8 @@ class  Eq a  where
       <para id="x_TB">
         The &Read; typeclass is essentially the opposite of &Show;: it
         defines functions that will
-        take a &String;, parse it, and return data in a native Haskell type.
+        take a &String;, parse it, and return data in any type that is
+        a member of &Read;.
         The most useful function in &Read; is &read;.
         You can ask &ghci; for its type like this:
       </para>
@@ -467,7 +468,7 @@ class  Eq a  where
         First, we assign <literal>d1</literal> to be a list.  Next, we print
         out the result of <literal>show d1</literal> so we can see what it
         generates.  Then, we write the result of <literal>show d1</literal>
-        to a file named <literal>/tmp/test</literal>.
+        to a file named <literal>test</literal>.
       </para>
       <para id="x_gB">
         Let's try reading it back.
