@@ -526,7 +526,7 @@ I/O IS FUN
         internal buffers for files.  This provides an important performance
         boost.  However, it means that until you call &hClose; on a
         file that is open for writing, your data may not be flushed
-        out the operating system.  
+        out to the operating system.  
       </para>
       <para id="x_jC">
         Another reason to make sure to &hClose; files is that open files take
@@ -556,7 +556,7 @@ I/O IS FUN
       <para id="x_mC">
         When reading and writing from a &Handle; that corresponds to
         a file on disk, the operating system maintains
-        an internal idea of the current position.  Each time you do another
+        an internal record of the current position.  Each time you do another
         read, the operating system returns the next chunk of data that begins
         at the current position, and increments the position to reflect the
         data that you read.
@@ -580,7 +580,6 @@ I/O IS FUN
         kind of information that &hTell; gives you.  &RelativeSeek; means to
         seek from the current position.  A positive number requests going 
         forwards in the file, and a negative number means going backwards.
-      <remark>FIXME: do we need an example?</remark>
         Finally, &SeekFromEnd; will seek to the specified number of bytes
         before the end of the file.  <literal>hSeek handle SeekFromEnd
           0</literal> will take you to the end of the file.
@@ -626,7 +625,7 @@ print = hPrint stdout
         </para>
       </tip>
       <para id="x_vC">
-        Earlier, I told you what the three standard file handles "normally"
+        Earlier, we told you what the three standard file handles "normally"
         correspond to.  That's because some operating systems let you
         redirect the file handles to come from (or go to) different places&emdash;files, devices, or even other programs.  This feature is used
         extensively in shell scripting on POSIX (Linux, BSD, Mac)
@@ -761,8 +760,7 @@ Your name contains 4 characters.
       There is some exception handling going on to make the program more
       robust in the face of errors.  You normally want the temporary files to
       be deleted after processing completes, even if something went wrong.  So we make sure
-      that happens.  For more on exception handling, and the use of &catch;
-      and &finally; see <remark>FIXME: add ref (ch 18 or 24?)</remark>.
+      that happens.  For more on exception handling, see <xref linkend="errors"/>.
     </para>
     <para id="x_KD">Let's return to the start of the program.  &main; is defined simply
       as <literal>withTempFile "mytemp.txt" myAction</literal>.
@@ -934,16 +932,18 @@ Which could be expressed as this Haskell literal:
         changes to a program could make the call to
         <literal>hClose</literal> important.
       </para>
-      <para id="x_eN">
-        When using &hGetContents;, it is important to remember that
-        even though you may never again explicitly reference &Handle;
-        directly in the rest of the program, you must not close the
-        &Handle; until you have finished consuming its results via
-        &hGetContents;.  Doing so would cause you to miss on some or
-        all of the file's data.  Since Haskell is lazy, you generally
-        can assume that you have consumed input only after you have
-        output the result of the computations involving the input.
-      </para>
+      <warning>
+        <para id="x_eN">
+          When using &hGetContents;, it is important to remember that
+          even though you may never again explicitly reference &Handle;
+          directly in the rest of the program, you must not close the
+          &Handle; until you have finished consuming its results via
+          &hGetContents;.  Doing so would cause you to miss on some or
+          all of the file's data.  Since Haskell is lazy, you generally
+          can assume that you have consumed input only after you have
+          output the result of the computations involving the input.
+        </para>
+      </warning>
     </sect2>
     <sect2 id="io.lazy.readFile">
       <title>readFile and writeFile</title>
@@ -962,7 +962,7 @@ Which could be expressed as this Haskell literal:
       </para>
       &readfile.ghci:all;
       <para id="x_tp">
-        Now, here's about an example program that uses &readFile; and
+        Now, here's an example program that uses &readFile; and
         &writeFile;:
       </para>
       &toupper-lazy3.hs:all;
