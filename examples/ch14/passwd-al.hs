@@ -39,8 +39,8 @@ parseline input =
     let fields = split ':' input
         in (read (fields !! 2), fields !! 0)
 
-{- | Takes a delimiter and a list.  Break up the last based on the
--  delimeter. -}
+{- | Takes a delimiter and a list.  Break up the list based on the
+-  delimiter. -}
 split :: Eq a => a -> [a] -> [[a]]
 
 -- If the input is empty, the result is a list of empty lists.

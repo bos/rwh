@@ -13,7 +13,7 @@ al = [(1, "one"), (2, "two"), (3, "three"), (4, "four")]
 mapFromAL =
     Map.fromList al
 
-{- | Create a map represetation of 'al' by doing a fold -}
+{- | Create a map representation of 'al' by doing a fold -}
 mapFold =
     foldl (\map (k, v) -> Map.insert k v map) Map.empty al
 

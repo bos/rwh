@@ -2,13 +2,9 @@
 
 <chapter id="data" revision="alpha;beta">
   <title>Data Structures</title>
-  <remark>
-    FIXME:
-    Mutable storage with MVars needs to go in threading area
-  </remark>
 
   <para id="x_RH">
-    Back in <remark>FIXME: add ref to chapter 3ish</remark>, you saw how to
+    Back in <xref linkend="deftypes.alias"/>, you saw how to
     use &type; to create handy aliases for types.  That's a useful feature,
     but in this chapter we'll take it a step further.  We'll show you how to
     create entirely new types.  After doing that, we'll also show you some of
@@ -17,8 +13,8 @@
   </para>
   <para id="x_pL">
     Before going on, there's a word that you might expect to see frequently
-    in a chapter such as this: <emphasis>object</emphasis>.  You're not going
-    to see it at all in this chapter because Haskell isn't an object-oriented
+    in this chapter: <emphasis>object</emphasis>.  You're not going
+    to see it in this chapter because Haskell isn't an object-oriented
     language.  Concepts in this chapter may have similar-sounding names, but
     are likely quite different than the object-oriented ideas you may be
     familiar with already.
@@ -50,7 +46,7 @@
   <sect1 id="data.assoc">
     <title>Association Lists</title>
     <para id="x_NI">
-      Often times, we have to deal with data that is unordered but is indexed
+      Often, we have to deal with data that is unordered but is indexed
       by a key.  For instance, a Unix administrator might have a list of
       numeric UIDs and the textual usernames that they correspond to.  The
       utility of this list is being able to look up a textual username for a
@@ -71,7 +67,9 @@
       An association list is just a normal list containing (key, value)
       tuples.  The type of a list of mappings from UID to username might be
       <literal>[(Integer, String)]</literal>.  You could use just about any
-      type for both the key and the value.
+      type<footnote><para>The type you use for the key must be a
+      member of the &Eq; typeclass.</para>
+      </footnote>for both the key and the value.
     </para>
     <para id="x_rI">
       You can build association lists just like you would build any other
@@ -122,12 +120,18 @@ mail:x:8:8:mail:/var/mail:/bin/sh
 news:x:9:9:news:/var/spool/news:/bin/sh
 jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </programlisting>
+    <para>
+      Its fields are separated by colons, and include a username,
+      numeric user ID, numeric group ID, full name, home directory,
+      and shell.  No field may contain an internal colon.
+    </para>
   </sect1>
   <sect1 id="data.map">
     <title>Maps</title>
     <para id="x_wI">
-      The <literal>Data.Map</literal> module is used for working with
-      maps.  This module has some functions with same
+      The <literal>Data.Map</literal> provides behavior that is
+      similar to association lists, but provides much faster access.
+      This module has some functions with the same
       names as those in <literal>Prelude</literal> or other common modules.
       Therefore, when using it, most people import it using
       <literal>import qualified Data.Map as Map</literal> and use
@@ -229,7 +233,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       This example maintains two maps: one from username to
       <literal>PasswdEntry</literal> and another one from UID to
       <literal>PasswdEntry</literal>.  Database developers may find it
-      convenient to think of this has having two different indices into the
+      convenient to think of this as having two different indices into the
       data to speed searching on different fields.
     </para>
     <para id="x_CJ">

@@ -38,8 +38,8 @@ instance Read PasswdEntry where
                  [(PasswdEntry f1 f2 (read f3) (read f4) f5 f6 f7, [])]
              x -> error $ "Invalid number of fields in input: " ++ show x
         where 
-        {- | Takes a delimiter and a list.  Break up the last based on the
-        -  delimeter. -}
+        {- | Takes a delimiter and a list.  Break up the list based on the
+        -  delimiter. -}
         split :: Eq a => a -> [a] -> [[a]]
 
         -- If the input is empty, the result is a list of empty lists.
@@ -91,6 +91,7 @@ main = do
 
 mainMenu maps@(uidmap, usermap) = do
     putStr optionText
+    hFlush stdout
     sel <- getLine
     -- See what they want to do.  For every option except 4,
     -- return them to the main menu afterwards by calling
