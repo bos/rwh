@@ -345,7 +345,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       &numsimple.hs:all;
       <para id="x_KM">
         First, we define a type called <literal>Op</literal>.  This type
-        simply represents some of the operations we will intend to support.
+        simply represents some of the operations we will support.
         Next, there is a definition for <literal>SymbolicManip a</literal>.
         Because of the <literal>Num a</literal> constraint, any
         <literal>Num</literal> can be used for the <literal>a</literal>.  So
@@ -398,12 +398,14 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         <literal>Units</literal> in different ways.  
       </para>
       <para id="x_QM">
-        There is one other point that this example drives home.  In many
-        languages, even those with objects and overloading, there are still
+        There is one other point that this example drives home.  Every language
+        even those with objects and overloading, has
         some parts of the language that are special in some way.  In Haskell,
         the "special" bits are extremely small.  We have just developed a new
         representation for something as fundamental as a number, and it has
-        been really quite easy.  Haskell takes code reuse and
+        been really quite easy.  Our new type is a first-class type,
+        and the compiler knows what functions to use with it at
+        compile time.  Haskell takes code reuse and
         interchangability to the extreme.  It is easy to make code generic
         and work on things of many different types.  It's also easy to make
         up new types and make them automatically be 

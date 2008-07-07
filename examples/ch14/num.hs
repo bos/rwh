@@ -17,7 +17,7 @@ arithmetic operation (such as cos)
 
 Notice the types of BinaryArith and UnaryArith: it's a recursive
 type.  So, we could represent a (+) over two SymbolicManips. -}
-data Num a => SymbolicManip a = 
+data SymbolicManip a = 
           Number a           -- Simple number, such as 5
         | Symbol String      -- A symbol, such as x
         | BinaryArith Op (SymbolicManip a) (SymbolicManip a)
@@ -63,7 +63,7 @@ instance (Floating a) => Floating (SymbolicManip a) where
     atanh a = UnaryArith "atanh" a
 
 {- Show a SymbolicManip as a String, using conventional
-algebriac notation -}
+algebraic notation -}
 prettyShow :: (Show a, Num a) => SymbolicManip a -> String
 
 -- Show a number or symbol as a bare number or serial
@@ -75,8 +75,8 @@ prettyShow (BinaryArith op a b) =
         pb = simpleParen b
         pop = op2str op
         in pa ++ pop ++ pb
-prettyShow (UnaryArith op a) = 
-    op ++ "(" ++ show a ++ ")"
+prettyShow (UnaryArith opstr a) = 
+    opstr ++ "(" ++ show a ++ ")"
 
 op2str :: Op -> String
 op2str Plus = "+"
