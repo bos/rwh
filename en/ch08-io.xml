@@ -1483,7 +1483,7 @@ Data: Done!
       </para>
       <para id="x_rE">
         &BlockBuffering; causes Haskell to read or write data in fixed-size
-        chunks when possible.  This is the best performer whe processing
+        chunks when possible.  This is the best performer when processing
         large amounts of data in batch, even if that data is line-oriented.
         However, it is unusable for interactive programs because it will
         block input until a full block is read.  &BlockBuffering; accepts one
@@ -1504,7 +1504,8 @@ Data: Done!
       <title>Flushing The Buffer</title>
       <para id="x_tE">
         For any type of buffering, you may sometimes want to force Haskell to
-        write out any data that been saved up in the buffer.  There are few
+        write out any data that has been saved up in the buffer.
+        There are a few
         times when this will happen automatically: a call to &hClose;, for
         instance.  Sometimes you may want to instead call &hFlush;, which
         will force any pending data to be written immediately.  This
@@ -1521,7 +1522,7 @@ Data: Done!
     <para id="x_uE">
       Many command-line programs are interested in the parameters passed on
       the command line.  <literal>System.Environment.getArgs</literal>
-      returns a <literal>[String]</literal> listing each argument.
+      returns <literal>IO [String]</literal> listing each argument.
       This is the same as <literal>argv</literal> in C, starting with
       <literal>argv[1]</literal>.  The program name
       (<literal>argv[0]</literal> in C) is available from <literal>System.Environment.getProgName</literal>.
@@ -1529,7 +1530,7 @@ Data: Done!
     <para id="x_wE">
       The <literal>System.Console.GetOpt</literal> module provides some tools
       for parsing command-line options.  If you have a program with complex
-      options, you may find it useful.
+      options, you may find it useful.  
     </para>
   </sect1>
 
