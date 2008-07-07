@@ -411,6 +411,11 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         up new types and make them automatically be 
         first-class features of the system.
       </para>
+      <para>
+        Remember our &ghci; examples at the beginning of the chapter?  All of
+        them were made with the code in this example.  You might want
+        to try them out for yourself and see how they work.
+      </para>
     </sect2>
   </sect1>
 
