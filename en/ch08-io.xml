@@ -35,8 +35,6 @@
       surprisingly similar to I/O in other languages such as C or Perl.
     </para>
     &basicio.hs:all;
-    <remark>FIXME: have we explained how to compile to a standalone
-    program?</remark>
     <para id="x_BC">
       You can compile this program to a standalone executable, run it with
       &runghc;, or invoke &main; from within &ghci;.
@@ -215,8 +213,6 @@ Welcome to Haskell, John!
     <para id="x_QC">
       Let's examine this with &ghci;:
     </para>
-
-      <remark>FIXME: have we introduced :l?</remark>
 
     &callingpure.ghci:all;
 
@@ -1128,7 +1124,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
           about it, a filter&emdash;such as the standard Unix program
           <command>grep</command>&emdash;sounds a lot like a function.  It takes
           some input, applies some computation, and generates a predictable
-          output.  This is a great match for Haskell.
+          output.
         </para>
       </sect3>
     </sect2>
@@ -1250,7 +1246,7 @@ Data: Done!
       <tip>
         <para id="x_TE">
           These functions actually work for more than just I/O; they work for any
-          &Monad;.  For now, wherever you see "m", just think "IO".
+          &Monad;.  For now, wherever you see "M", just think "IO".
           Also, functions that end with an underscore typically
           discard their result.
         </para>
@@ -1270,8 +1266,8 @@ Data: Done!
         <literal>(str2action . show)</literal> to every element in
         <literal>numbers</literal>.  &show; converts each number to a &String;
         and <literal>str2action</literal> converts each &String; to an action.
-        &mapM_; then takes care of executing each action, which results
-        in a line printed out.
+        &mapM_; combines these individual actions into one big
+        action that prints out lines.
       </para>
     </sect2>
     <sect2 id="io.bind">
