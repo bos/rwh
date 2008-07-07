@@ -6,7 +6,7 @@ data Op = Plus | Minus | Mul | Div | Pow
         deriving (Eq, Show)
 
 {- The core symbolic manipulation type -}
-data Num a => SymbolicManip a = 
+data SymbolicManip a = 
           Number a           -- Simple number, such as 5
         | Arith Op (SymbolicManip a) (SymbolicManip a)
           deriving (Eq, Show)

@@ -264,7 +264,8 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       when we interact with our new types.  To start with, it might be nice
       to render numeric expressions as strings, making sure to indicate
       proper precedence.  Perhaps we could create a function called
-      <literal>prettyShow</literal> to do that.
+      <literal>prettyShow</literal> to do that.  We'll show you how to
+      write it in a bit, but first we'll look at how we might use it.
     </para>
     &num.ghci:prettyshow;
     <para id="x_zL">
@@ -315,7 +316,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
     &num.ghci:final;
     <para id="x_GM">
-      Perhaps a future excercise could enhance <literal>prettyShow</literal>
+      Perhaps future development. could enhance <literal>prettyShow</literal>
       to remove unnecessary parentheses as well.
     </para>
     <para id="x_HM">
