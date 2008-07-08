@@ -3,11 +3,15 @@
 <chapter id="gui" revision="alpha;beta">
   <title>GUI Programming with gtk2hs</title>
   <para id="x_Bw">
-    Thoughout this book, we have been developing simple text-based
+    Throughout this book, we have been developing simple text-based
     tools.  While these are often ideal interfaces, sometimes a
     graphical user interface (GUI) is required.  There are several GUI
     toolkits available for Haskell.  In this chapter, we will look at
-    the most popular of them, gtk2hs.
+    one of the, gtk2hs.<footnote><para>Several alternatives also
+    exist.  Alongside gtk2hs, wxHaskell is also a prominent
+    cross-platform GUI toolkit.</para>
+    </footnote>
+
   </para>
   
   <sect1 id="gui.install">
@@ -23,7 +27,7 @@
       Windows and Mac developers should consult the gtk2hs downloads
       site at <ulink
       url="http://www.haskell.org/gtk2hs/download/"></ulink>.  Begin
-      by downloading gtk2hs from there.  Then you will also need glade
+      by downloading gtk2hs from there.  Then you will also need Glade
       version 3.  Mac developers can find this at <ulink
       url="http://www.macports.org/"></ulink>, while Windows
       developers should consult <ulink
@@ -84,7 +88,7 @@
           The gtk2hs homepage also has a useful documentation section,
           which contains an API reference to gtk2hs as well as a glade
           tutorial.  <ulink
-          url="http://www.haskell.org/gtk2hs/"></ulink>
+          url="http://www.haskell.org/gtk2hs/documentation/"></ulink>
         </para>
       </listitem>
     </itemizedlist>
@@ -107,7 +111,13 @@
       <para id="x_Ow">
         Glade, then, is a widget layout tool.  We set up a whole tree
         of widgets, with top-level windows at the top of the tree.
-        Glade saves this description into an XML file.  Our program
+        You can think of Glade and widgets in somewhat the same terms
+        as HTML: you can arrange widgets in a table-like layout, set
+        up padding rules, and structure the entire description in a
+        hierarchical way.
+      </para>
+      <para>
+        Glade saves the widget descriptions into an XML file.  Our program
         loads this XML file at runtime.  We load the widgets by asking
         the Glade runtime library to load a widget with a specific
         name.
@@ -146,7 +156,7 @@
       combination of open windows could be a complicated proposition.
     </para>
     <para id="x_Tw">
-      Event-driven programming compliments Haskell nicely.  As we've
+      Event-driven programming complements Haskell nicely.  As we've
       discussed over and over in this book, functional languages
       thrive on passing around functions.  So we'll be passing
       functions to gtk2hs that get called when certain events occur.
@@ -225,7 +235,7 @@
     <para id="x_bw">
       Our new <literal>GUI</literal> type stores all the widgets we
       will care about in the entire program.  Large programs may not
-      wish to have a monolothinc type like this.  For this small
+      wish to have a monolithic type like this.  For this small
       example, it makes sense because it can be easily passed around to
       different functions, and we'll know that we always have the
       information we need available.

@@ -28,21 +28,6 @@
     powerful and -- surprise -- even exciting.
   </para>
 
-  <remark>FIXME: need to integrate this elsewhere</remark>
-
-      <para id="x_BI">
-        Named fields also make it easy to "modify" one or more components of a
-        type.  Here's an example:
-      </para>
-      &colornamed.ghci:update;
-      <para id="x_Gq">
-        Of course, in Haskell, you don't actually modify an existing
-        value.  This syntax creates a copy of your original value,
-        identical to the original in every way except the changes you
-        specify.
-      </para>
-
-
   <sect1 id="data.assoc">
     <title>Association Lists</title>
     <para id="x_NI">
