@@ -15,7 +15,6 @@
 <!ENTITY ch05     SYSTEM "ch05-fp.xml">
 <!ENTITY ch06     SYSTEM "ch06-library.xml">
 <!ENTITY ch07     SYSTEM "ch07-typeclasses.xml">
-<!ENTITY ch07a    SYSTEM "ch07a-json-typeclass.xml">
 <!ENTITY ch08     SYSTEM "ch08-io.xml">
 <!ENTITY ch09     SYSTEM "ch09-globs-and-regexps.xml">
 <!ENTITY ch10     SYSTEM "ch10-find-dsl.xml">
@@ -122,7 +121,6 @@
   &ch05;
   &ch06;
   &ch07;
-  &ch07a;
   &ch08;
   &ch09;
   &ch10;
