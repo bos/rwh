@@ -7,7 +7,7 @@ getCurrentDirectory
 --# contents
 getDirectoryContents "/"
 --# contents2
-getDirectoryContents "/" >>= return . filter (\c -> not $ elem c [".", ".."])
+getDirectoryContents "/" >>= return . filter (`notElem` [".", ".."])
 --# query
 getHomeDirectory
 getAppUserDataDirectory "myApp"

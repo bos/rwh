@@ -92,6 +92,14 @@
         <literal>getDirectoryContents</literal>, refer to <xref
           linkend="glob"/>.
       </para>
+      <para>
+        Is the <literal>filter (`notElem` [".", ".."])</literal> part
+        confusing?  That could got also be written as <literal>filter
+        (\c -> not $ elem c [".", ".."])</literal>.  The backticks in
+        this case effectively let us pass the second argument to
+        <literal>notElem</literal>; see <xref linkend="fp.infix"/> for
+        more information on backticks.
+      </para>
     </tip>
     <para id="x_Sa">
       You can also query the system about the location of certain
@@ -138,10 +146,10 @@
         <literal>System.Time</literal> module is primarily responsible for
         date and time handling.  It defines two types: &ClockTime; and
         &CalendarTime;.  </para> <para id="x_Xa"> &ClockTime; is the Haskell version of
-        the traditional POSIX epoch.  A &ClockTime; represents the number of
-        seconds since midnight the morning of January 1, 1970, UTC.  A
-        negative &ClockTime; represents times prior to that date, while a
-        positive number represents times after it.  
+        the traditional POSIX epoch.  A &ClockTime; represents a time
+         relative to midnight the morning of January 1, 1970, UTC.  A
+        negative &ClockTime; represents a number of seconds prior to that date, while a
+        positive number represents a count of seconds after it.  
       </para> 
       <para id="x_Ya">
         &ClockTime; is convenient for computations.  Since it tracks
@@ -153,14 +161,14 @@
             follows, states that every day is exactly 86,400 seconds in
             length in its representation, so you need not be concerned about
             leap seconds when performing routine calculations.  The exact
-            manner of handling leap seconds is system-dependant and complex,
+            manner of handling leap seconds is system-dependent and complex,
             though usually it can be explained as having a "long second".
             This nuance is generally only of interest when performing precise
             subsecond calculations.</para></footnote>, which makes time
         interval calculations simple.  You can, for instance, check the
         &ClockTime; at the start of a long task, again at the end, and simply
         subtract the start time from the end time to determine how much time
-        elapsed.  You can then divide by 24 and display the elapsed time as a
+        elapsed.  You can then divide by 3600 and display the elapsed time as a
         count of hours if you wish.
       </para>
       <para id="x_aa">
@@ -180,8 +188,6 @@
       </para>
       <itemizedlist>
         <listitem><para id="x_ga">Is today Monday?</para></listitem>
-        <listitem><para id="x_ha">What will be the time on this date next
-            month?</para></listitem>
         <listitem><para id="x_ia">What day of the week will May 1 fall on next
             year?</para></listitem>
         <listitem><para id="x_ja">What is the current time in my local timezone,
@@ -231,7 +237,8 @@ data ClockTime = TOD Integer Integer
         &time.ghci:ClockTime2;
         <para id="x_qa">
           Here we first construct a &ClockTime; representing the point in
-          time 1500 seconds after midnight on January 1, 1970, UTC.
+          time 1000 seconds after midnight on January 1, 1970, UTC.
+          That moment in time is known as the <emphasis>epoch</emphasis>.
           Depending on your timezone, this moment in time may correspond to
           the evening of December 31, 1969, in your local timezone.
         </para>
@@ -447,43 +454,17 @@ data TimeDiff = TimeDiff
         <literal>FileStatus</literal> type returned by
         <literal>getFileStatus</literal>.
       </para>
-      <para id="x_Ob">
+      <para>
+        The functions such as <literal>accessTime</literal> return
+        data in a POSIX-specific type called
+        <literal>EpochTime</literal>, which se convert to a
+        &ClockTime; using the <literal>toct</literal> function.
         <literal>System.Posix.Files</literal> also provides a
         <literal>setFileTimes</literal> function to set the atime and mtime
         for a file.<footnote><para id="x_Pb">It is not normally possible to set the
             ctime on POSIX systems.</para></footnote>
       </para>
     </sect2>
-  </sect1>
-
-  <sect1 id="systems.cmd">
-    <title>Invoking External Commands</title>
-    <para id="x_Qb">
-      The <literal>System.Cmd</literal> module provides a cross-platform way
-      to invoke external commands.  This could let you call system utilities
-      or
-      start up programs to gather data from the user.  The functions in
-      <literal>System.Cmd</literal> pause execution of your Haskell program
-      while the new program runs, then continue where it left off after the
-      called program terminates.
-    </para>
-    <para id="x_Rb">
-      The most useful if the functions in <literal>System.Cmd</literal> is
-      <literal>rawSystem</literal>.  It takes an executble name and a list of
-      command-line arguments to pass to it, and returns an exit code.  You
-      can even test it from &ghci; like this:
-    </para>
-    &cmd.ghci:all;
-    <para id="x_Sb">
-      <literal>rawSystem</literal> does not pass the command or its arguments
-      through the shell.  This is an important safety and integrity feature.
-      The shell may perform wildcard expansion, argument parsing, and other
-      tasks on the input.  This can lead to problems or even security risks
-      when dealing with things as simple as filenames containing spaces or
-      strings containing punctuation.  For this reason, we recommend using
-      <literal>rawSystem</literal> instead of alternatives such as
-      <literal>system</literal> at all times.
-    </para>
   </sect1>
 
   <sect1 id="systems.piping">
@@ -562,7 +543,7 @@ TERMCAP
       <para id="x_Zb">
         There is another piece of the puzzle, however.  We can't just use
         <literal>dupTo</literal> before a call such as
-        <literal>rawSystem</literal> because this would mess up the stdandard
+        <literal>rawSystem</literal> because this would mess up the standard
         input or output of our main Haskell process.  Moreover,
         <literal>rawSystem</literal> blocks until the invoked program executes,
         leaving us no way to start multiple processes running in parallel.  To
