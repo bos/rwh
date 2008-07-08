@@ -1,7 +1,7 @@
 --# all
-:l PodDB.hs
+:load PodDB.hs
 dbh <- connect "poddbtest.db"
-:t dbh
+:type dbh
 getTables dbh
 pc <- addPodcast dbh (Podcast {castId=0, castURL="http://www.example.com/foo.xml"})
 getPodcasts dbh

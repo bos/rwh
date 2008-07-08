@@ -1,5 +1,5 @@
 --# setup
-:m Database.HDBC Database.HDBC.Sqlite3
+:module Database.HDBC Database.HDBC.Sqlite3
 conn <- connectSqlite3 "test1.db"
 run conn "CREATE TABLE test (id INTEGER NOT NULL, desc VARCHAR(80))" []
 run conn "INSERT INTO test (id) VALUES (0)" []
@@ -43,7 +43,7 @@ mapM_ print results
 disconnect conn
 
 --# queryhs
-:l query.hs
+:load query.hs
 query 2
 
 --# metadata

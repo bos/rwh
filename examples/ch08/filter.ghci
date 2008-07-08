@@ -1,4 +1,4 @@
 --# all
-:t lines
-:t unlines
-:t elem
+:type lines
+:type unlines
+:type elem

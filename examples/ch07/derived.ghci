@@ -1,4 +1,4 @@
-:l colorderived.hs
+:load colorderived.hs
 --# all
 show Red
 (read "Red")::Color

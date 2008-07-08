@@ -100,12 +100,12 @@
     <para id="x_yA">
       Let's look at this in &ghci;.
       Recall that you
-      can type <command>:t</command> in &ghci; to 
+      can type <command>:type</command> in &ghci; to 
       have it show you the type of something.  Let's see what it says about
       <literal>isEqual</literal>:
     </para>
     <screen>
-*Main&gt; <userinput>:t isEqual</userinput>
+*Main&gt; <userinput>:type isEqual</userinput>
 isEqual :: (BasicEq a) => a -> a -> Bool
     </screen>
     <para id="x_zA">

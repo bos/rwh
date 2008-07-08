@@ -1,5 +1,5 @@
 --# all
-:l RunProcessSimple.hs
+:load RunProcessSimple.hs
 runIO $ ("pwd", []::[String])
 runIO $ ("ls", ["/usr"])
 runIO $ ("ls", ["/usr"]) -|- ("grep", ["^l"])

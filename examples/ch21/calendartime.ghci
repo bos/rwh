@@ -1,5 +1,5 @@
 --# conv
-:m System.Time
+:module System.Time
 now <- getClockTime
 nowCal <- toCalendarTime now
 let nowUTC = toUTCTime now

@@ -1,5 +1,5 @@
 --# showtype
-:t show
+:type show
 --# showex
 show 1
 show [1, 2, 3]
@@ -15,7 +15,7 @@ putStrLn (show "Hi")
 show "Hi, \"Jane\""
 putStrLn (show "Hi, \"Jane\"")
 --# junk
-:l eqclasses.hs
+:load eqclasses.hs
 --# color
 show Red
 

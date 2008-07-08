@@ -1,5 +1,5 @@
 --# all
-:m System.Time
+:module System.Time
 let feb5 = toClockTime $ CalendarTime 2008 February 5 0 0 0 0 Sunday 0 "UTC" 0 False
 feb5
 addToClockTime (TimeDiff 0 1 0 0 0 0 0) feb5

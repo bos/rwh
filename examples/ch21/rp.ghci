@@ -1,5 +1,5 @@
 --# shell 
-:l RunProcess.hs
+:load RunProcess.hs
 runIO $ ("ls", ["/etc"]) -|- ("grep", ["m.*ap"]) -|- ("tr", ["a-z", "A-Z"])
 runIO $ "ls /etc" -|- "grep 'm.*ap'" -|- "tr a-z A-Z"
 

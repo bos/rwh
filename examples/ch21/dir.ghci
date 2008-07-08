@@ -1,5 +1,5 @@
 --# setdir
-:m System.Directory
+:module System.Directory
 setCurrentDirectory "/etc"
 getCurrentDirectory
 setCurrentDirectory ".."

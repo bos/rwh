@@ -218,7 +218,7 @@
         printed on the display by the server.  Let's try it out:
       </para>
       <screen>
-<prompt>ghci&gt; </prompt><userinput>:l syslogtcpserver.hs</userinput>
+<prompt>ghci&gt; </prompt><userinput>:load syslogtcpserver.hs</userinput>
 [1 of 1] Compiling Main             ( syslogtcpserver.hs, interpreted )
 Ok, modules loaded: Main.
 <prompt>ghci&gt; </prompt><userinput>serveLog "10514" plainHandler</userinput>
@@ -285,7 +285,7 @@ From 127.0.0.1:38790: syslogtcpserver.hs: client disconnected
         like this:
       </para>
       <screen>
-<prompt>ghci&gt; </prompt><userinput>:l syslogtcpclient.hs</userinput>
+<prompt>ghci&gt; </prompt><userinput>:load syslogtcpclient.hs</userinput>
 Loading package base ... linking ... done.
 [1 of 2] Compiling SyslogTypes      ( SyslogTypes.hs, interpreted )
 [2 of 2] Compiling Main             ( syslogtcpclient.hs, interpreted )

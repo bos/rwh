@@ -1,5 +1,5 @@
 --# getClockTime
-:m System.Time
+:module System.Time
 getClockTime
 --# ClockTime2
 TOD 1000 0

@@ -1,5 +1,5 @@
 --#all
-:l callingpure.hs
+:load callingpure.hs
 name2reply "John"
 putStrLn (name2reply "John")
 
