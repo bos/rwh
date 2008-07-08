@@ -6,8 +6,7 @@
   <sect1 id="sockets.basics">
     <title>Basic Networking</title>
     <para id="x_Od">
-      In several earlier chapters of this book <remark>FIXME: insert
-      refs</remark>, we have discussed services that operate over a
+      In several earlier chapters of this book, we have discussed services that operate over a
       network.  Two examples are client/server databases and web
       services.  When the need arises to devise a new protocol, or to
       communicate with a protocol that doesn't have an existing helper
