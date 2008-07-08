@@ -280,7 +280,7 @@
       loads the Glade XML file.  It returns <literal>Nothing</literal>
       on error.  Here we are using pattern matching to extract the
       result value on success.  If it fails, there will be a console
-      (not graphical) exception displayed; one of the excercises at
+      (not graphical) exception displayed; one of the exercises at
       the end of this chapter addresses this.
     </para>
     <para id="x_gw">
@@ -340,6 +340,9 @@
       URL of the podcast.  We have defined this dialog box in Glade,
       so all we need to do is set it up.
     </para>
+
+    &PodMainGUI.hs:guiAdd;
+
     <para id="x_mw">
       We start by calling <literal>entrySetText</literal> to set the
       contents of the entry box (the place where the user types in the
@@ -380,7 +383,7 @@
     <title>Long-Running Tasks</title>
     <para id="x_qw">
       As we think about the buttons available in the main window,
-      three of them correspond to tasks that could take awhile to
+      three of them correspond to tasks that could take a while to
       complete: update, download, and fetch.  While these operations
       take place, we'd like to do two things with our GUI: provide the
       user with the status of the operation, and provide the user with
