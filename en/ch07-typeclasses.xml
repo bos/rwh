@@ -1127,16 +1127,6 @@ class  Eq a  where
     </para>
   </sect1>
 
-  <sect1 id="typeclasses.conclusion">
-    <title>Conclusion</title>
-    <para id="x_JN">In this chapter, you learned about the need for typeclasses and how
-      to use them.  We talked about defining our own typeclasses and then
-      covered some of the important typeclasses that are defined in the
-      Haskell library.  Finally, we showed how to have the Haskell compiler
-      automatically derive instances of certain typeclasses for your types.
-    </para>
-  </sect1>
-
   <sect1 id="jsonclass">
     <title>Typeclasses at work: making JSON easier to use</title>
     <remark>FIXME: title added by John; bos -- is this what you were after?</remark>
@@ -1757,6 +1747,18 @@ class  Eq a  where
       disappear.  If this degree of portability isn't a concern to
       you, then by all means enable the language extension.</para>
   </sect1>
+
+  <sect1 id="typeclasses.conclusion">
+    <title>Conclusion</title>
+    <remark>FIXME: needs extending to cover JSON</remark>
+    <para id="x_JN">In this chapter, you learned about the need for typeclasses and how
+      to use them.  We talked about defining our own typeclasses and then
+      covered some of the important typeclasses that are defined in the
+      Haskell library.  Finally, we showed how to have the Haskell compiler
+      automatically derive instances of certain typeclasses for your types.
+    </para>
+  </sect1>
+
 
 </chapter>
 
