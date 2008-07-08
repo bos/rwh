@@ -53,7 +53,7 @@
 
   <tip>
     <para id="x_hk">The code in this chapter was written specifically for this
-    book, but is based off code written for hpodder, an existing
+    book, but is based on code written for hpodder, an existing
     podcatcher written in Haskell.  hpodder has many more features
     than the examples presented here, which make it too long and
     complex for coverage in this book.  If you are interested in
@@ -104,7 +104,7 @@
     <para id="x_mk">
       We'll use HDBC (see <xref linkend="databases"/>) to interact
       with a Sqlite database.  Sqlite is lightweight and
-      self-contained, which makes is perfect for this project.  For
+      self-contained, which makes it perfect for this project.  For
       information on installing HDBC and Sqlite, consult <xref
       linkend="databases.hdbc.install"/>.
     </para>
@@ -170,9 +170,9 @@
       <literal>PodTypes.hs</literal>.
     </para>
     <para id="x_lv">
-      Next, it os on to parsing.  The <literal>parse</literal>
-      function takes a &String; represeting the XML content as well as
-      a name, and returns a <literal>Feed</literal>.
+      Next, it is on to parsing.  The <literal>parse</literal>
+      function takes a &String; representing the XML content as well as
+      a &String; representing a name to use in error messages, and returns a <literal>Feed</literal>.
     </para>
     <para id="x_mv">
       HaXml is designed as a "filter" converting data of one type to
@@ -187,7 +187,7 @@ type CFilter = Content -> [Content]
     <para id="x_nv">
       That is, a <literal>CFilter</literal> takes a fragment of an XML
       document and returns 0 or more fragments.  A
-      <literal>CFilter</literal> might be asked to file all children
+      <literal>CFilter</literal> might be asked to find all children
       of a specified tag, all tags with a certain name, the literal
       text contained within a part of an XML document, or any of a
       number of other things.  There is also an operator
@@ -275,7 +275,7 @@ ghc --make -O2 -o pod -package HTTP -package HaXml -package network \
     </programlisting>
     <para id="x_xv">
       Alternatively, you could use a Cabal file as documented in
-      <remark>FIXME: insert ref</remark> to build this project:
+      <xref linkend="library.package"/> to build this project:
     </para>
     <programlisting>
 -- ch23/pod.cabal

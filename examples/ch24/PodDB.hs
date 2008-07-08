@@ -125,7 +125,7 @@ Just Podcast if it does. -}
 getPodcast :: IConnection conn => conn -> Integer -> IO (Maybe Podcast)
 getPodcast dbh wantedId =
     do res <- quickQuery' dbh 
-              "SELECT castid, caturl FROM podcasts WHERE castid = ?"
+              "SELECT castid, casturl FROM podcasts WHERE castid = ?"
               [toSql wantedId]
        case res of
          [x] -> return (Just (convPodcastRow x))

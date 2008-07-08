@@ -23,7 +23,7 @@ of data consistency for us:
 
 * castid and epid both are unique primary keys and must never be duplicated
 * castURL also is unique
-* In the spidoes table, for a given podcast (epcast), there must be only
+* In the episodes table, for a given podcast (epcast), there must be only
   one instance of each given URL or episode ID
 -}
 prepDB :: IConnection conn => conn -> IO ()
@@ -125,7 +125,7 @@ Just Podcast if it does. -}
 getPodcast :: IConnection conn => conn -> Integer -> IO (Maybe Podcast)
 getPodcast dbh wantedId =
     do res <- quickQuery' dbh 
-              "SELECT castid, caturl FROM podcasts WHERE castid = ?"
+              "SELECT castid, casturl FROM podcasts WHERE castid = ?"
               [toSql wantedId]
        case res of
          [x] -> return (Just (convPodcastRow x))

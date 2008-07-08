@@ -1052,7 +1052,7 @@ null]]></programlisting>
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="library.package">
     <title>Creating a package</title>
 
     <para id="x_Ep">The Haskell community has built a standard set of tools,
