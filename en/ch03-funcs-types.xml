@@ -45,11 +45,9 @@
       language's type system deeply colours the way we think, and
       write code, in that language.</para>
 
-    <para id="x_rl">Haskell's type system allows us to think at a very abstract
-      level: this is what permits us to write concise, powerful
-      programs.  However, we don't give up the ability to <quote>get
-	close to the metal</quote> when low-level performance is
-      important.</para>
+    <para id="x_rl">Haskell's type system allows us to think at a very
+      abstract level: it permits us to write concise, powerful
+      programs.</para>
   </sect1>
 
   <sect1 id="funcstypes.types">
@@ -72,7 +70,7 @@
 	system guarantees that a program cannot contain certain kinds
 	of errors.  These errors come from trying to write expressions
 	that don't make sense, such as using an integer as a function.
-	Similarly, if a function expects to work with integers, and we
+	For instance, if a function expects to work with integers, and we
 	pass it a string, a Haskell compiler will reject this.</para>
 
       <para id="x_Yd">We call an expression that obeys a language's type
@@ -156,22 +154,27 @@
       &ch03.basics.ghci:error;
 
       <para id="x_CN">This error message is of a kind we've seen
-	before. The compiler has inferred that the most general type
-	of the expression <literal>"false"</literal> is
-	<type>[Char]</type>, which is a synonym for
-	<type>String</type>.  The <function>(&amp;&amp;)</function>
-	operator requires each of its operands to be of type
-	<type>Bool</type>, and its left operand indeed has this type.
-	Since the actual type of <literal>"false"</literal> does not
-	match the required type, the compiler rejects this expression
-	as ill typed.</para>
+	before. The compiler has inferred that the type of the
+	expression <literal>"false"</literal> is <type>[Char]</type>.
+	The <function>(&amp;&amp;)</function> operator requires each
+	of its operands to be of type <type>Bool</type>, and its left
+	operand indeed has this type. Since the actual type of
+	<literal>"false"</literal> does not match the required type,
+	the compiler rejects this expression as ill typed.</para>
       
-      <para id="x_xl">Static typing does make writing some useful programs
-	difficult, or sometimes impossible.  In languages like Python,
+      <para id="x_xl">Static typing can occasionally make it difficult
+	to write some useful kinds of code.  In languages like Python,
 	<quote>duck typing</quote> is common, where an object acts
-	enough like another to be used as a substitute for it. While
-	Haskell has some support for programming with dynamic types,
-	it's not nearly as easy or expressive as in a language that
+	enough like another to be used as a substitute for
+	it<footnote>
+	  <para><quote>If it walks like a duck, and quacks like a
+	      duck, then let's call it a duck.</quote></para>
+	</footnote>.  Fortunately, Haskell's system of
+	<emphasis>typeclasses</emphasis>, which we will cover in <xref
+	linkend="typeclasses"/>, provides almost all of the benefits
+	of dynamic typing, in a safe and convenient form. For Haskell
+	has some support for programming with truly dynamic types,
+	though it is not quite as easy as in a language that
 	wholeheartedly embraces the notion.</para>
 
       <para id="x_u2">Haskell's combination of strong and static
@@ -197,6 +200,14 @@
 	moving code around, then recompiling and tidying up a few
 	times until the compiler gives us the <quote>all
 	  clear</quote>.</para>
+
+      <para>A helpful analogy to understand the value of static typing
+	is to look at it as putting pieces into a jigsaw puzzle. In
+	Haskell, if a piece has the wrong shape, it simply won't fit.
+	In a dynamically typed language, all the pieces are 1x1
+	squares and always fit, so you have to constantly examine the
+	resulting picture and check (through testing) whether it's
+	correct.</para>
     </sect2>
 
     <sect2>
@@ -206,13 +217,12 @@
 	deduce the types of almost<footnote>
 	  <para id="x_Am">Occasionally, we need to give the compiler a little
 	    information to help it to make a choice in understanding
-	    our code.  <emphasis>XXX Insert link to wherever we talk
-	      about this.</emphasis></para>
+	    our code.</para>
 	</footnote> all expressions in a program. This process is
 	known as <emphasis>type inference</emphasis>. Haskell allows
 	us to explicitly declare the type of any value, but the
 	presence of type inference means that this is almost always
-	optional, not something we must do.</para>
+	optional, not something we are required to do.</para>
     </sect2>
   </sect1>
 
@@ -223,16 +233,18 @@
       Haskell's type system will span a number of chapters.  Early on,
       you may find Haskell's types to be a chore to deal with.</para>
 
-    <para id="x_Cm">For example, instead of simply writing some code and running
-      it to see if it works as you might in Python or Ruby, you'll
-      first need to make sure that your program passes the scrutiny of
-      the type checker.  Why stick with the learning curve?</para>
+    <para id="x_Cm">For example, instead of simply writing some code
+      and running it to see if it works as you might expect in Python
+      or Ruby, you'll first need to make sure that your program passes
+      the scrutiny of the type checker.  Why stick with the learning
+      curve?</para>
 
     <para id="x_DN">While strong, static typing makes Haskell safe,
       type inference makes it concise.  The result is potent: we end
       up with a language that's both safer than popular statically
       typed languages, and often more expressive than dynamically
-      typed languages.</para>
+      typed languages.  This is a strong claim to make, and we will
+      back it up with evidence throughout the book.</para>
 
     <para id="x_Dm">Fixing type errors may initially feel like more work than if
       you were using a dynamic language.  It might help to look at
@@ -291,9 +303,11 @@
       <listitem>
 	<para id="x_B3">An <type>Integer</type> value is a signed
 	  integer of unbounded size.  <type>Integer</type>s are not
-	  used as often as <type>Int</type>s, because they're more
-	  expensive in terms of both performance and space
-	  consumption.</para>
+	  used as often as <type>Int</type>s, because they are more
+	  expensive both in performance and space consumption.  On the
+	  other hand, <type>Integer</type> computations do not
+	  silently overflow, so they give more reliably correct
+	  answers.</para>
       </listitem>
       <listitem>
 	<para id="x_C3">Values of type <type>Double</type> are used
@@ -317,6 +331,8 @@
 
     &ch03.basics.ghci:types;
 
+    <para>The combination of <code>::</code> and the type after it is
+      called a <emphasis>type signature</emphasis>.</para>
   </sect1>
 
   <sect1 id="funcstypes.calling">
@@ -349,23 +365,26 @@
 
     &func.ghci:precedence;
 
-    <para id="x_Im">The parentheses don't do any harm, but they add some visual
-      noise.  Sometimes parentheses are necessary, for example to
-      indicate how we want a complicated expression to be
-      parsed.</para>
+    <para id="x_Im">The above parentheses don't do any harm, but they
+      add some visual noise.  Sometimes, however, we
+      <emphasis>must</emphasis> use parentheses to indicate how we
+      want a complicated expression to be parsed.</para>
 
     &func.ghci:precedence2;
 
-    <para id="x_Jm">This applies <function>compare</function> to the results of
-      applying <code>odd 3</code> and <code>odd 6</code>,
-      respectively.</para>
+    <para id="x_Jm">This applies <function>compare</function> to the
+      results of applying <code>sqrt 3</code> and <code>sqrt 6</code>,
+      respectively.  If we omit the parentheses, it looks like we are
+      trying to pass four arguments to <function>compare</function>,
+      instead of the two it accepts.</para>
   </sect1>
 
   <sect1 id="funcstypes.composite">
     <title>Useful composite data types: lists and tuples</title>
 
-    <para id="x_D3">The most common composite data types in Haskell
-      are lists and tuples.</para>
+    <para id="x_D3">A composite data type is constructed from other
+      types.  The most common composite data types in Haskell are
+      lists and tuples.</para>
 
     <para id="x_E3">We've already seen the list type mentioned in
       <xref
@@ -374,13 +393,13 @@
       and that the type <quote>list of <type>Char</type></quote> is
       written <type>[Char]</type>.</para>
 
-    <para id="x_Km">The <function>head</function> function returns the first
-      element of a list.</para>
+    <para id="x_Km">The <function>head</function> function returns the
+      first element of a list.</para>
 
     &func.ghci:head;
 
-    <para id="x_S3">Its counterpart, <function>tail</function>, returns all
-      <emphasis>but</emphasis> the head of a list.</para>
+    <para id="x_S3">Its counterpart, <function>tail</function>,
+      returns all <emphasis>but</emphasis> the head of a list.</para>
 
     &func.ghci:tail;
 
@@ -388,13 +407,12 @@
       <function>head</function> and <function>tail</function> to lists
       of different types.  Applying <function>head</function> to a
       <type>[Char]</type> value returns a <type>Char</type> value,
-      while applying it to a <type>[Bool]</type> value
-      returns a <type>Bool</type> value.  The
-      <function>head</function> function doesn't care what type of
-      list it deals with.</para>
+      while applying it to a <type>[Bool]</type> value returns a
+      <type>Bool</type> value.  The <function>head</function> function
+      doesn't care what type of list it deals with.</para>
 
-    <para id="x_Lm">Because a list can contain any type of value, we call it
-      <emphasis>polymorphic</emphasis><footnote>
+    <para id="x_Lm">Because the values in a list can have any type, we
+      call the list type <emphasis>polymorphic</emphasis><footnote>
 	<para id="x_Mm">We'll talk more about polymorphism in <xref
 	    linkend="funcstypes.polymorphism"/>.</para>
       </footnote>.  When we want to write a polymorphic type, we use a
@@ -402,8 +420,7 @@
       lowercase letter.  A type variable is a placeholder, where
       eventually we'll substitute a real type.</para>
 
-    <para id="x_Nm">If we have a type variable <varname role="type">a</varname>,
-      we can write the type <quote>list of <varname
+    <para id="x_Nm">We can write the type <quote>list of <varname
 	  role="type">a</varname></quote> by enclosing the type
       variable in square brackets: <type>[a]</type>.  This amounts to
       saying <quote>I don't care what type I have; I can make a list
@@ -412,15 +429,15 @@
     <note>
       <title>Distinguishing type names and type variables</title>
 
-      <para id="x_Om">We can now see why a type name must start with an
-	uppercase letter: this makes it distinct from a type variable,
-	which must start with a lowercase letter.</para>
+      <para id="x_Om">We can now see why a type name must start with
+	an uppercase letter: this makes it distinct from a type
+	variable, which must start with a lowercase letter.</para>
     </note>
 
-    <para id="x_bd">When we want to talk about a list containing
-      values of a specific type, we substitute that type for our type
-      variable.  So, for example, the type <type>[Int]</type> is a
-      list of values of type <type>Int</type>, because we substituted
+    <para id="x_bd">When we talk about a list with values of a
+      specific type, we substitute that type for our type variable.
+      So, for example, the type <type>[Int]</type> is a list of values
+      of type <type>Int</type>, because we substituted
       <type>Int</type> for <varname role="type">a</varname>.
       Similarly, the type <type>[MyPersonalType]</type> is a list of
       values of type <type>MyPersonalType</type>.  We can perform this
@@ -429,6 +446,9 @@
       <type>Int</type>.</para>
 
     &usingtypes.ghci:listlist;
+
+    <para>The type of this expression is a list of lists of
+      <type>Bool</type>.</para>
 
     <note>
       <title>Lists are special</title>
@@ -446,41 +466,45 @@
 
     <para id="x_H3">A tuple is a fixed-size collection of values,
       where each value can have a different type.  This distinguishes
-      them from a list, whose elements must all have the same
-      type.</para>
+      them from a list, which can have any length, but whose elements
+      must all have the same type.</para>
 
-    <para id="x_Pm">To help to understand the difference, let's say we want to
-      track two pieces of information about a book.  It has a year of
-      publication, which is a number, and a title, which is a string.
-      We can't keep both of these pieces of information in a list,
-      because they have different types.  Instead, we use a
+    <para id="x_Pm">To help to understand the difference, let's say we
+      want to track two pieces of information about a book.  It has a
+      year of publication, which is a number, and a title, which is a
+      string. We can't keep both of these pieces of information in a
+      list, because they have different types.  Instead, we use a
       tuple.</para>
 
     &tuple.ghci:book;
 
-    <para id="x_dd">We write a tuple by enclosing its elements in parentheses
-      and separating them with commas.  We use the same notation for
-      writing its type.</para>
+    <para id="x_dd">We write a tuple by enclosing its elements in
+      parentheses and separating them with commas.  We use the same
+      notation for writing its type.</para>
 
     &tuple.ghci:tuple;
 
-    <para id="x_ed">There's a special type, <type>()</type>, that acts as a
-      tuple of zero elements.  This type has only one value, also
+    <para id="x_ed">There's a special type, <type>()</type>, that acts
+      as a tuple of zero elements.  This type has only one value, also
       written <code>()</code>.  Both the type and the value are
-      usually pronounced <quote>unit</quote>.</para>
+      usually pronounced <quote>unit</quote>.  If you are familiar
+      with C, <type>()</type> is somewhat similar to
+      <type>void</type>.</para>
     
     <para id="x_fd">Haskell doesn't have a notion of a one-element
       tuple. Tuples are often referred to using the number of elements
       as a prefix. A 2-tuple has two elements, and is usually called a
-      pair.  A <quote>3-tuple</quote> (sometimes called a triple) has
-      three elements; a 5-tuple has five; and so on. In practice,
-      working with tuples that contain more than a handful of elements
-      makes code unwieldy, so tuples of more than half a dozen
-      elements are rarely used.</para>
+      <emphasis>pair</emphasis>.  A <quote>3-tuple</quote> (sometimes
+      called a <emphasis>triple</emphasis>) has three elements; a
+      5-tuple has five; and so on. In practice, working with tuples
+      that contain more than a handful of elements makes code
+      unwieldy, so tuples of more than a few elements are rarely
+      used.</para>
 
-    <para id="x_gd">A tuple's type represents the number, positions, and types
-      of its elements.  This means that tuples containing different
-      numbers or types of elements have distinct types.</para>
+    <para id="x_gd">A tuple's type represents the number, positions,
+      and types of its elements.  This means that tuples containing
+      different numbers or types of elements have distinct types, as
+      do tuples whose types appear in different orders.</para>
 
     &tuple.ghci:type1;
 
@@ -534,43 +558,43 @@
 
     <para id="x_Q3">Our discussion of lists and tuples mentioned how
       we can construct them, but little about how we do anything with
-      them afterwards.  We have only been introduced to
+      them afterwards.  We have only been introduced to two list
+      functions so far,
       <function>head</function> and <function>tail</function>.</para>
 
-    <para id="x_T3">A related pair of functions,
+    <para id="x_T3">A related pair of list functions,
       <function>take</function> and <function>drop</function>, take
       two arguments.  Given a number <varname>n</varname> and a list,
       <function>take</function> returns the first <varname>n</varname>
       elements of the list, while <function>drop</function> returns
       all <emphasis>but</emphasis> the first <varname>n</varname>
-      elements of the list.  As these functions take two arguments,
-      notice that we still separate each function and its arguments
-      using white space.</para>
+      elements of the list.  (As these functions take two arguments,
+      notice that we separate each function and its arguments
+      using white space.)</para>
 
     &func.ghci:takeDrop;
 
-    <para id="x_ld">Here's something to watch out for, until you gain
-      a little more familiarity with the language.  For tuples, the
-      <function>fst</function> and <function>snd</function> functions
-      return the first and second element of a pair,
-      respectively.</para>
+    <para id="x_ld">For tuples, the <function>fst</function> and
+      <function>snd</function> functions return the first and second
+      element of a pair, respectively.</para>
 
     &tuple.ghci:fst;
 
     <para id="x_Qm">If your background is in any of a number of other languages,
       each of these may look like an application of a function to two
       arguments. Under Haskell's convention for function application,
-      each one is an application of a single pair.</para>
+      each one is an application of a function to a single pair.</para>
 
     <note>
       <title>Haskell tuples aren't immutable lists</title>
 
-      <para id="x_md">If your background is in Python, you'll probably
-	be used to lists and tuples being almost interchangeable.
-	Although the elements of a Python tuple are immutable, it can
-	be indexed and iterated over using the same methods as a list.
-	This isn't the case in Haskell, so don't try to carry that
-	idea with you into unfamiliar linguistic territory.</para>
+      <para id="x_md">If you are coming from the Python world, you'll
+	probably be used to lists and tuples being almost
+	interchangeable. Although the elements of a Python tuple are
+	immutable, it can be indexed and iterated over using the same
+	methods as a list. This isn't the case in Haskell, so don't
+	try to carry that idea with you into unfamiliar linguistic
+	territory.</para>
 
       <para id="x_nd">As an illustration, take a look at the type
 	signatures of <function>fst</function> and
@@ -585,11 +609,11 @@
       <title>Passing an expression to a function</title>
 
       <para id="x_X3">In Haskell, function application is left
-	associative.  This mouthful is easier to understand visually,
-	by adding parentheses: the expression <code>a b c d</code> is
-	equivalent to <code>(((a b) c) d)</code>. If we want to use one
-	expression as an argument to another, we have to use explicit
-	parentheses to tell the parser what we really mean.  Here's an
+	associative.  This is best illustrated by example: the
+	expression <code>a b c d</code> is equivalent to <code>(((a b)
+	  c) d)</code>. If we want to use one expression as an
+	argument to another, we have to use explicit parentheses to
+	tell the parser what we really mean.  Here's an
 	example.</para>
 
       &func.ghci:headDrop;
@@ -664,8 +688,14 @@
       functions in &ghci;, it's not a good environment for this.  It
       only accepts a highly restricted subset of Haskell: most
       importantly, the syntax it uses for defining functions is not
-      the same as we use in a Haskell source file. Instead, we'll
-      finally break down and create a source file.</para>
+      the same as we use in a Haskell source file<footnote>
+	<para>The environment in which &ghci; operates is called the
+	  &IO; monad.  In <xref
+	  linkend="io"/>, we will cover the &IO; monad in depth, and
+	  the seemingly arbitrary restrictions that &ghci; places on
+	  us will make more sense.</para>
+      </footnote>. Instead, we'll finally break down and create a
+      source file.</para>
 
     <para id="x_i3">Haskell source files are usually identified with a suffix of
       <filename>.hs</filename>.  Here's a simple function definition:
@@ -713,11 +743,12 @@
       statements.  The value of the expression is the result of the
       function.  (Haskell does have a function called
       <function>return</function>, but we won't discuss it for a
-      while.)</para>
+      while; it has a different meaning than in imperative
+      languages.)</para>
 
     <para id="x_qd">When you see an <literal>=</literal> symbol in Haskell code,
       it represents <quote>meaning</quote>: the name on the left
-      is equivalent to the expression on the right.</para>
+      is defined to be the expression on the right.</para>
 
     <sect2 id="funcstypes.variable">
       <title>Just what is a variable, anyway?</title>
@@ -758,39 +789,6 @@
 	twice.</para>
 
       &assign.ghci:load;
-
-      <sect3>
-	<title>Shadowing</title>
-
-	<para id="x_sd">Sit with &ghci; for a few moments and enter the
-	  following series of expressions.</para>
-
-	&shadowing.ghci:shadow;
-
-	<para id="x_td">It looks like we're giving <varname>x</varname> two
-	  different values.  This seems to directly contradict our
-	  earlier statement that we can't change a variable's
-	  value!</para>
-
-	<para id="x_ud">However, what we've done with the second &let; is
-	  introduce a completely new variable, which happens to be named
-	  <varname>x</varname>.  The older <varname>x</varname> is
-	  still present, and still has the value <literal>1</literal>.
-	  The new <varname>x</varname> hides the older
-	  <varname>x</varname>: we say that it
-	  <emphasis>shadows</emphasis> the other variable.</para>
-
-	<para id="x_vd">While there's really nothing untoward going on here, we
-	  won't be fully describing the rules for this particular case
-	  until <xref linkend="monads.do"/>.  Our function
-	  <function>f</function> still has access to the shadowed
-	  definition of <varname>x</varname>.</para>
-
-	&shadowing.ghci:f;
-
-	<para id="x_Xm">We'll see another case of shadowing later in this
-	  chapter.</para>
-      </sect3>
     </sect2>
 
     <sect2 id="funcstypes.if">
@@ -812,7 +810,9 @@
 	removes elements until either it runs out or reaches the given
 	number. Here's a <function>myDrop</function> function that has
 	the same behaviour, and uses Haskell's <code>if</code>
-	expression to decide what to do.</para>
+	expression to decide what to do.  The
+	<function>null</function> function below checks whether a list
+	is empty.</para>
 
       &myDrop.hs:myDrop;
 
@@ -820,7 +820,13 @@
 	<emphasis>continues</emphasis> an existing definition, instead
 	of starting a new one.  Don't omit the indentation!</para>
 
-      <para id="x_o3">Let's save it in a file named
+      <para>You might wonder where the variable name
+	<varname>xs</varname> comes from in the Haskell function. This
+	is a common naming pattern for lists: you can read the
+	<code>s</code> as a suffix, so the name is essentially
+	<quote>plural of <varname>x</varname></quote>.</para>
+
+      <para id="x_o3">Let's save our Haskell function in a file named
 	<filename>myDrop.hs</filename>, then load it into
 	&ghci;.</para>
 
@@ -830,41 +836,40 @@
 	in action, let's return to the source code and look at all the
 	novelties we've introduced.</para>
 
-      <para id="x_wd">First of all, we have introduced <code>--</code>, the
-	beginning of a single-line comment.  A single-line comment
-	stretches from this sequence until the end of the same
-	line.</para>
+      <para id="x_wd">First of all, we have introduced
+	<code>--</code>, the beginning of a single-line comment.  This
+	comment extends to the end of the line.</para>
 
       <para id="x_q3">Next is the <code>if</code> keyword itself.  It
 	introduces an expression that has three components.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para id="x_xd">An expression of type <type>Bool</type>, immediately
-	    following the &if;.  We refer to this as a
+	  <para id="x_xd">An expression of type <type>Bool</type>,
+	    immediately following the &if;.  We refer to this as a
 	    <emphasis>predicate</emphasis>.</para>
 	</listitem>
 	<listitem>
-	  <para id="x_yd">A <code>then</code> keyword, followed by another
-	    expression.  This expression will be used as the value of
-	    the &if; expression if the predicate evaluates to
+	  <para id="x_yd">A <code>then</code> keyword, followed by
+	    another expression.  This expression will be used as the
+	    value of the &if; expression if the predicate evaluates to
 	    <code>True</code>.</para>
 	</listitem>
 	<listitem>
-	  <para id="x_zd">An <code>else</code> keyword, followed by another
-	    expression.  This expression will be used as the value of
-	    the &if; expression if the predicate evaluates to
+	  <para id="x_zd">An <code>else</code> keyword, followed by
+	    another expression.  This expression will be used as the
+	    value of the &if; expression if the predicate evaluates to
 	    <code>False</code>.</para>
 	</listitem>
       </itemizedlist>
 
-      <para id="x_Ae">We'll refer to the expressions after the <code>then</code>
-	and <code>else</code> keywords as <quote>branches</quote>. The
-	branches must have the same types; the &if; expression will
-	also have this type.  An expression such as <code>if True then
-	  1 else "foo"</code> has different types for its branches, so
-	it is ill typed and will be rejected by a compiler or
-	interpreter.</para>
+      <para id="x_Ae">We'll refer to the expressions after the
+	<code>then</code> and <code>else</code> keywords as
+	<quote>branches</quote>. The branches must have the same
+	types; the &if; expression will also have this type.  An
+	expression such as <code>if True then 1 else "foo"</code> has
+	different types for its branches, so it is ill typed and will
+	be rejected by a compiler or interpreter.</para>
 
       <para id="x_Zm"></para>
 
@@ -895,10 +900,10 @@
 	    into</quote> the language: it's an ordinary
 	  function.</para>
 
-	<para id="x_am">The <function>(||)</function> operator <quote>short
-	    circuits</quote>: if its left operand evaluates to
-	  <code>True</code>, it doesn't evaluate its right operand. In
-	  most languages, short-circuit evaluation requires special
+	<para id="x_am">The <function>(||)</function> operator
+	  <quote>short circuits</quote>: if its left operand evaluates
+	  to <code>True</code>, it doesn't evaluate its right operand.
+	  In most languages, short-circuit evaluation requires special
 	  support, but not in Haskell.  We'll see why shortly.</para>
       </tip>
 
@@ -909,12 +914,23 @@
       <para id="x_v3">Finally, our <code>if</code> expression spans
 	several lines.  We align the <code>then</code> and
 	<code>else</code> branches under the <code>if</code> for
-	neatness.  This is not mandatory, provided we remember to use
-	some indentation.  If we wanted, we could write the entire
-	expression on a single line, but it would be unreadably
-	long.</para>
+	neatness.  So long as we use some indentation, the exact
+	amount is not important.  If we wish, we can write the
+	entire expression on a single line.</para>
 
       &myDrop.hs:myDrop2;
+
+      <para>The length of this version makes it more difficult to
+	read.  We will usually break an &if; expression across several
+	lines to keep the predicate and each of the branches easier to
+	follow.</para>
+
+      <para>For comparison, here is a Python equivalent of the Haskell
+	<function>myDrop</function>.  The two are structured
+	similarly: each decrements a counter while removing an element
+	from the head of the list.</para>
+
+      &myDrop.py:myDrop;
 
     </sect2>
   </sect1>
@@ -948,98 +964,63 @@
       <para id="x_cm">Here, <function>mod</function> is the standard modulo
 	function.  The first big step to understanding how evaluation
 	works in Haskell is figuring out what the result of evaluating
-	the expression <code>odd (1 + 2)</code> is.</para>
+	the expression <code>isOdd (1 + 2)</code> is.</para>
 
-      <para id="x_dm">Before we explain how evaluation proceeds in Haskell, let
-	us recap the sort of evaluation strategy used by more familiar
-	languages.  First, evaluate the subexpression <code>1 +
-	  2</code>, to give <code>3</code>.  Then apply the
+      <para id="x_dm">Before we explain how evaluation proceeds in
+	Haskell, let us recap the sort of evaluation strategy used by
+	more familiar languages.  First, evaluate the subexpression
+	<code>1 + 2</code>, to give <code>3</code>.  Then apply the
 	<function>odd</function> function with <varname>n</varname>
-	bound to <code>3</code>.  Finally, evaluate <code>3 `mod`
+	bound to <code>3</code>.  Finally, evaluate <code>mod 3
 	  2</code> to give <code>1</code>, and <code>1 == 1</code> to
 	give <code>True</code>.</para>
 
-      <para id="x_em">This way of evaluating an expression is referred to as
-	<emphasis>strict</emphasis>: the arguments to a function are
-	evaluated before the function is applied.  Haskell chooses
-	another path: <emphasis>non-strict</emphasis>
+      <para id="x_em">In a language that uses
+	<emphasis>strict</emphasis> evaluation, the arguments to a
+	function are evaluated before the function is applied.
+	Haskell chooses another path: <emphasis>non-strict</emphasis>
 	evaluation.</para>
 
-      <para id="x_fm">In Haskell, the subexpression <code>1 + 2</code> is
-	<emphasis>not</emphasis> reduced to the value <code>3</code>.
-	Instead, we create a <quote>promise</quote> that when the
-	value of the expression <code>odd (1 + 2)</code> is needed,
-	we'll be able to compute it.  This promise is referred to as a
+      <para id="x_fm">In Haskell, the subexpression <code>1 + 2</code>
+	is <emphasis>not</emphasis> reduced to the value
+	<code>3</code>. Instead, we create a <quote>promise</quote>
+	that when the value of the expression <code>isOdd (1 + 2)</code>
+	is needed, we'll be able to compute it.  The record that we
+	use to track an unevaluated expression is referred to as a
 	<emphasis>thunk</emphasis>.  This is <emphasis>all</emphasis>
-	that happens: we defer the work until it's actually needed. If
-	the result of this expression is never subsequently needed, we
-	will not compute it at all.</para>
+	that happens: we create a thunk, and defer the actual
+	evaluation until it's really needed. If the result of this
+	expression is never subsequently used, we will not compute its
+	value at all.</para>
 
       <para id="x_gm">Non-strict evaluation is often referred to as
-	<emphasis>lazy evaluation</emphasis>.</para>
-
-      <para id="x_hm">This example doesn't give us a very complete picture of
-	how lazy evaluation works.  Let's extend it.</para>
-
-      &RoundToEven.hs:demo;
-
-      <para id="x_im">The <function>demo</function> function uses the
-	<function>putStrLn</function> function to print a
-	string.</para>
-
-      &roundToEven.ghci:demo;
-
-      <para id="x_jm">In order to print anything, <function>demo</function>
-	needs the values of <varname>n</varname> and
-	<varname>r</varname>.  How are these computed?  Let's walk
-	through the evaluation of <code>demo (3 + 1)</code>, from the
-	perspective of a Haskell implementation.</para>
-
-      <para id="x_km">We begin with the variable <code>k</code> bound to a thunk
-	representing <code>3 + 1</code>, and the &let; bindings create
-	two more thunks for <varname>n</varname> and
-	<varname>r</varname>.</para>
-
-      <para id="x_lm">Not until we need to print the value of
-	<varname>n</varname> are any of these expressions evaluated.
-	At this point, to evaluate <varname>n</varname>, we must
-	evaluate <varname>k</varname>.  This takes place with a twist.
-	When <varname>k</varname> is evaluated to the value
-	<code>4</code>, the unevaluated expression in the thunk is
-	<emphasis>replaced</emphasis> with the evaluated result.  This
-	is a form of <emphasis>memoisation</emphasis>: it ensures that
-	<varname>k</varname> is evaluated <emphasis>at most
-	  once</emphasis>.</para>
-
-      <para id="x_mm">Similarly, once we've evaluated <varname>n</varname> to
-	the value <code>9</code>, we replace the unevaluated thunk
-	with the result <code>9</code>.  Once the time comes for us to
-	print the value of <varname>r</varname>, we don't need to
-	recalculate <varname>n</varname>: we just evaluate
-	<code>roundToEven 9</code>.</para>
-
-      <para id="x_nm">By now, we should be able to guess that the result of
-	<code>roundToEven 9</code> is not the value <code>8</code>, it
-	is a thunk: <code>9 - 1</code>.  We have to evaluate this
-	immediately in order to render it as a string, but it still
-	starts life as a thunk.</para>
+	<emphasis>lazy evaluation</emphasis><footnote>
+	  <para>The terms <quote>non-strict</quote> and
+	    <quote>lazy</quote> have slightly different technical
+	    meanings, but we won't go into the details of the
+	    distinction here.</para>
+	</footnote>.</para>
     </sect2>
 
     <sect2>
       <title>A more involved example</title>
 
-      <para id="x_om">Let us now look at the evaluation of the expression
-	<code>myDrop 2 "abcd"</code>, again so that we can print its
-	result.</para>
+      <para id="x_om">Let us now look at the evaluation of the
+	expression <code>myDrop 2 "abcd"</code>, where we use
+	<function>print</function> to ensure that it will be
+	evaluated.</para>
 
       &myDrop.ghci:print;
 
-      <para id="x_pm">When we start, our first step
-	is to apply the function <function>myDrop</function>. We bind
-	the variable <varname>n</varname> to the value
-	<code>2</code>, and <varname>xs</varname> to
-	<code>"abcd"</code>. If we substitute these values into the
-	predicate, we get the following expression.</para>
+      <para id="x_pm">Our first step is to attempt to apply
+	<function>print</function>, which needs its argument to be
+	evaluated.  To do that, we apply the function
+	<function>myDrop</function> to the values <code>2</code> and
+	<code>"abcd"</code>.  We bind the variable
+	<varname>n</varname> to the value <code>2</code>, and
+	<varname>xs</varname> to <code>"abcd"</code>. If we substitute
+	these values into <function>myDrop</function>'s predicate, we
+	get the following expression.</para>
 
       &myDrop.ghci:myDrop1;
 
@@ -1069,7 +1050,7 @@
       <para id="x_Ie">We now substitute this value back into the
 	<function>(||)</function> expression.  Since both operands
 	evaluate to <literal>False</literal>, the
-	<function>(||)</function> expression does too, thus the
+	<function>(||)</function> expression does too, and thus the
 	predicate evaluates to <literal>False</literal>.</para>
 
       &myDrop.ghci:myDrop4;
@@ -1081,13 +1062,30 @@
       <note>
 	<title>Short circuiting for free</title>
 
-	<para id="x_qm">Many languages need to treat the logical-or operator
-	  specially so that it short circuits if its left operand
-	  evaluates to <code>True</code>.  We can see from this
-	  example that we don't need any extra support in order for
-	  Haskell's <function>(||)</function> operator to short
-	  circuit: non-strict evaluation builds this capability into
-	  the language.</para>
+	<para id="x_qm">Many languages need to treat the logical-or
+	  operator specially so that it short circuits if its left
+	  operand evaluates to <code>True</code>.  In Haskell,
+	  <function>(||)</function> is an ordinary function:
+	  non-strict evaluation builds this capability into the
+	  language.</para>
+
+	<para>In Haskell, we can easily define a new function that
+	  short circuits.</para>
+
+	&shortCircuit.hs:newOr;
+
+	<para>If we write an expression like <code>newOr True (length
+	    [1..] &gt; 0)</code>, it will not evaluate its second
+	  argument.  (This is just as well: that expression tries to
+	  compute the length of an infinite list.  If it were
+	  evaluated, it would hang &ghci;, looping infinitely until we
+	  killed it.)</para>
+
+	<para>Were we to write a comparable function in, say, Python,
+	  strict evaluation would bite us: both arguments would be
+	  evaluated before being passed to <function>newOr</function>,
+	  and we would not be able to avoid the infinite loop on the
+	  second argument.</para>
       </note>
     </sect2>
 
@@ -1131,7 +1129,7 @@
     </sect2>
 
     <sect2>
-      <title>More recursion</title>
+      <title>Ending the recursion</title>
 
       <para id="x_Qe">In the next recursive application of
 	<function>myDrop</function>, we bind <varname>n</varname> to
@@ -1165,9 +1163,9 @@
       <para id="x_Ue">Remember, we're now inside our second recursive
 	application of <function>myDrop</function>.  This application
 	evaluates to <code>tail "bcd"</code>.  We return from the
-	application, substituting this expression for <code>myDrop (1
-	  - 1) (tail "bcd")</code>, to become the result of this
-	application.</para>
+	application of the function, substituting this expression for
+	<code>myDrop (1 - 1) (tail "bcd")</code>, to become the result
+	of this application.</para>
 
       &myDrop.ghci:myDrop13;
 
@@ -1191,13 +1189,6 @@
 	finally evaluated when &ghci; needs to print it.</para>
 
       &myDrop.ghci:myDrop16;
-    </sect2>
-
-    <sect2>
-      <title>A visual tour</title>
-
-      <remark>Create a series of graphics showing the reduction
-	process.</remark>
     </sect2>
 
     <sect2>
@@ -1228,11 +1219,9 @@
   <sect1 id="funcstypes.polymorphism">
     <title>Polymorphism in Haskell</title>
 
-    <para id="x_he">When we introduced lists, we mentioned that the list type is
-      polymorphic.  We'll talk about polymorphism in more detail here:
-      like <quote>strong type</quote>, it's a generic term that has
-      distinct meanings in different programming language
-      communities.</para>
+    <para id="x_he">When we introduced lists, we mentioned that the
+      list type is polymorphic.  We'll talk about Haskell's
+      polymorphism in more detail here.</para>
 
     <para id="x_ie">If we want to fetch the last element of a list, we
       use the <function>last</function> function.  The value that it
@@ -1264,8 +1253,8 @@
 
       <para id="x_me">It's common Haskell practice to keep the names of type
 	variables very short.  One letter is overwhelmingly common;
-	longer names show up infrequrently.
-	Type signatures are usually brief, so we gain more in
+	longer names show up infrequently.
+	Type signatures are usually brief; we gain more in
 	readability by keeping names short than we would by making
 	them descriptive.</para>
     </tip>
@@ -1293,7 +1282,7 @@
 
       <para id="x_pe">If a type contains type parameters, we say that
 	it is a parameterised type, or a polymorphic type.  If a
-	function's type contains type parameters, we call the function
+	function or value's type contains type parameters, we call it
 	polymorphic.</para>
     </tip>
 
@@ -1386,10 +1375,10 @@
   <sect1>
     <title>The type of a function of more than one argument</title>
 
-    <para id="x_d3">So far, we haven't seen a signature for a function
-      that takes <emphasis>more</emphasis> than one argument.  We've
-      already used a few such functions; let's look at the signature
-      of one, <function>take</function>.</para>
+    <para id="x_d3">So far, we haven't looked much at signatures for
+      functions that take more than one argument.  We've already used
+      a few such functions; let's look at the signature of one,
+      <function>take</function>.</para>
 
     &func.ghci:take.type;
 

@@ -12,7 +12,7 @@ myDrop n xs = if n <= 0 || null xs
 {-- /snippet myDrop --}
 
 {-- snippet myDrop2 --}
-myDrop2 n xs = if n <= 0 || null xs then xs else myDrop (n - 1) (tail xs)
+myDropX n xs = if n <= 0 || null xs then xs else myDropX (n - 1) (tail xs)
 {-- /snippet myDrop2 --}
 
 {-- snippet niceDrop --}

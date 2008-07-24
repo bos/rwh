@@ -1,6 +1,4 @@
 --# listlist
 
-:type [[True],[False]]
-
---# badlist
+:type [[True],[False,False]]
 

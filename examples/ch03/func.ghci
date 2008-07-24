@@ -67,4 +67,7 @@ compare 2 3 == LT
 
 --# precedence2
 
-compare (odd 3) (odd 6)
+compare (sqrt 3) (sqrt 6)
+
+--# precedence3
+compare sqrt 3 sqrt 6

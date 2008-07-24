@@ -19,13 +19,13 @@ myDrop 7 []
 myDrop (-2) "foo"
 
 --# myDrop1
-:type 2 <= 0 || null "abcd"
+:type  2 <= 0 || null "abcd"
 
 --# myDrop2
 2 <= 0
 
 --# myDrop2a
-:type False || null "abcd"
+:type  False || null "abcd"
 
 --# myDrop3
 null "abcd"
@@ -82,4 +82,4 @@ tail "bcd"
 :type (||)
 
 --# print
-print (myDrop2 "abcd")
+print (myDrop 2 "abcd")
