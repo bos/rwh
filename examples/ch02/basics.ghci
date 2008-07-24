@@ -22,15 +22,15 @@
 
 --# whitespace.ok
 
-2+3
+2*3
 
 --# whitespace.eek
 
-2+-3
+2*-3
 
 --# whitespace.whew
 
-2+(-3)
+2*(-3)
 
 --# pi
 
@@ -123,8 +123,8 @@ not True
 
 --# concat
 
-"foo" ++ "bar"
-[] ++ [1,2,3] ++ [4]
+[3,1,3] ++ [3,7]
+[] ++ [False,True] ++ [True]
 
 --# cons
 
@@ -137,8 +137,7 @@ not True
 
 --# newline
 
-"Here's a newline -->\n<-- See?"
-putStr "Here's a newline -->\n<-- See?"
+putStrLn "Here's a newline -->\n<-- See?"
 
 --# list
 
@@ -161,6 +160,7 @@ putStr "Here's a newline -->\n<-- See?"
 
 [1.0,1.25..2.0]
 [1,4..15]
+[10,9..1]
 
 --# char
 
@@ -176,6 +176,13 @@ let a = ['l', 'o', 't', 's', ' ', 'o', 'f', ' ', 'w', 'o', 'r', 'k']
 a
 a == "lots of work"
 
+--# emptystring
+"" == []
+
+--# newstring
+'a':"bc"
+"foo" ++ "bar"
+
 --# range.double
 
 [1.0..1.8]
@@ -183,3 +190,6 @@ a == "lots of work"
 --# prefix
 2 + 2
 (+) 2 2
+
+--# caret
+:info (^)

@@ -1,0 +1,7 @@
+<screen><prompt>$</prompt> <userinput>runghc WC &lt; quux.txt</userinput>
+7</screen>
+<!--
+local variables: 
+sgml-parent-document: ("../ch02-starting.xml" "sect1" "screen")
+end:
+-->

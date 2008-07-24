@@ -1,0 +1,14 @@
+<screen><prompt>$</prompt> <userinput>cat quux.txt</userinput>
+Teignmouth, England
+Paris, France
+Ulm, Germany
+Auxerre, France
+Brunswick, Germany
+Beaumont-en-Auge, France
+Ryazan, Russia</screen>
+
+<!--
+local variables: 
+sgml-parent-document: ("../ch02-starting.xml" "sect1" "screen")
+end:
+-->
