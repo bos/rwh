@@ -2,7 +2,7 @@
 
 --# using
 :type Yellow
-Red
+:type Red
 Red == Yellow
 Green == Green
 

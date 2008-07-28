@@ -11,6 +11,14 @@ myDrop n xs = if n <= 0 || null xs
               else myDrop (n - 1) (tail xs)
 {-- /snippet myDrop --}
 
+{-
+{-- snippet myDrop1 --}
+myDrop n xs = if n <= 0 || null xs
+              then xs
+              else myDrop (n - 1) (tail xs)
+{-- /snippet myDrop1 --}
+-}
+
 {-- snippet myDrop2 --}
 myDropX n xs = if n <= 0 || null xs then xs else myDropX (n - 1) (tail xs)
 {-- /snippet myDrop2 --}

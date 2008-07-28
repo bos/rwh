@@ -7,9 +7,9 @@ Nil
 Cons 0 Nil
 
 --# two
-Cons 1 (Cons 0 Nil)
-Cons 2 (Cons 1 (Cons 0 Nil))
-Cons 3 (Cons 2 (Cons 1 (Cons 0 Nil)))
+Cons 1 it
+Cons 2 it
+Cons 3 it
 
 --# fromList
 fromList "durian"

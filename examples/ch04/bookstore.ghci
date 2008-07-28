@@ -1,13 +1,17 @@
 --# load
 :load BookStore
 
---# bookInfo
-bookInfo
-:type bookInfo
+--# myInfo
+myInfo
+:type myInfo
 
 --# newValue
 
 Book 0 "The Book of Imaginary Beings" ["Jorge Luis Borges"]
+
+--# newVar
+
+let cities = Book 173 "Use of Weapons" ["Iain M. Banks"]
 
 --# valueType
 
@@ -41,6 +45,9 @@ bookAuthors (Book 3 "Probability Theory" ["E.T.H. Jaynes"])
 --# customer1
 customer1
 
+--# cities
+cities
+
 --# accessor.type
 :type customerID
 
@@ -52,3 +59,6 @@ customerName customer1
 
 :type CreditCard
 CreditCard "2901650221064486" "Thomas Gradgrind" ["Dickens", "England"]
+:type it
+Invoice
+:type it

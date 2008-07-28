@@ -12,6 +12,11 @@ whichFruit f = case f of
                  orange -> Orange
 {-- /snippet whichFruit --}
 
+{-- snippet equational --}
+equational apple = Apple
+equational orange = Orange
+{-- /snippet equational --}
+
 {-- snippet betterFruit --}
 betterFruit f = case f of
                   "apple"  -> Apple

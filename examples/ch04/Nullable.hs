@@ -1,15 +1,17 @@
+import Prelude hiding (Maybe)
+
 {-- snippet Nullable --}
-data Nullable a = Really a
-                | Null
+data Maybe a = Just a
+             | Nothing
 {-- /snippet Nullable --}
 
 {-- snippet wrappedTypes --}
-nullableBool = Really True
+someBool = Just True
 
-nullableString = Really "something"
+someString = Just "something"
 {-- /snippet wrappedTypes --}
                 
 
 {-- snippet parens --}
-wrapped = Really (Really "wrapped")
+wrapped = Just (Just "wrapped")
 {-- /snippet parens --}

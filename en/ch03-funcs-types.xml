@@ -3,8 +3,6 @@
 <chapter id="funcstypes" revision="alpha;beta">
   <title>Types and Functions</title>
 
-  <para id="x_n2">Topics: built-in types.  Writing functions.</para>
-
   <sect1>
     <title>Why care about types?</title>
 

@@ -1,6 +1,4 @@
-:load Nullable
-
 --# experiment
-Really 1.5
-Null
-:type Really "Really"
+Just 1.5
+Nothing
+:type Just "invisible bike"

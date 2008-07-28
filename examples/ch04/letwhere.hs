@@ -1,7 +1,7 @@
 {-- snippet where --}
-foo = a
-    where a = b
-              where b = 2
+foo = x
+    where x = y
+              where y = 2
 {-- /snippet where --}
 
 {-- snippet let --}
