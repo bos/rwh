@@ -704,6 +704,11 @@ error = throw . ErrorCall
         function that will do just that:
       </para>
       &dynexc.hs:throwSql;
+      <tip>
+        <para>As a reminder, <literal>evaluate</literal> is like
+        &return; but forces the evaluation of its argument.
+      </para></tip>
+
       <para id="x_G21">
         This completes our dynamic exception support.  That was a lot
         of code, and you may not have needed that much, but we wanted
