@@ -1373,11 +1373,14 @@ data CalendarTime = CalendarTime {
   <sect1 id="deftypes.case">
     <title>The case expression</title>
 
-    <para id="x_q5">We are not limited to using patterns when defining
-      functions.  The &case; construct lets us match patterns within
-      an expression.  Here's what it looks like.</para>
+    <para id="x_q5">Function definitions are not the only place where
+      we can use pattern matching.  The &case; construct lets us match
+      patterns within an expression.  Here's what it looks like.  This
+      function (defined for us in <code>Data.Maybe</code>) unwraps a
+      <type>Maybe</type> value, using a default if the value is
+      <code>Nothing</code>.</para>
 
-      &Roots.hs:hasRealRoots;
+    &Guard.hs:fromMaybe;
 
     <para id="x_r5">The <code>case</code> keyword is followed by an
       arbitrary expression: the pattern match is performed against the
