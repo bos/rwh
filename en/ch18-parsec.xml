@@ -6,7 +6,7 @@
     The task of parsing a file, or data of various types, is a common one for
     programmers.  You already learned about Haskell's support for regular
     expressions back in <xref linkend="glob.regex"/>.  Regular expressions
-    are nice for many tasks.  But they can become quite complex and difficult
+    are nice for many tasks.  But they can become quite complicated and difficult
     when dealing with a data format that is complex.  For instance, you
     probably wouldn't want to use regular expressions to parse C source code.
   </para>
@@ -289,7 +289,7 @@
     &csv4.hs:eol;
     <para id="x_oJ">
       This also isn't right.  Recall that &PChoice; only attempts the option
-      on the right of the option on the left consumed no input.  But by the
+      on the right if the option on the left consumed no input.  But by the
       time we are able to see if there is a <literal>\r</literal> after the
       <literal>\n</literal>, we've already consumed the
       <literal>\n</literal>.  This time, we fail on the other case in &ghci;:
@@ -327,10 +327,10 @@
         parser.  If the parser doesn't succeed, &try; behaves as if it hadn't
         consumed any input at all.  So, when you use &try; on the left side
         of &PChoice;, Parsec will try the option on the right even if the
-        lift side failed after consuming some input.  &try; only has an
+        left side failed after consuming some input.  &try; only has an
         effect if it is on the left of a &PChoice;.  Keep in mind, though,
         that many functions use
-        &PChoice; interally.  Here's a way to add
+        &PChoice; internally.  Here's a way to add
         expanded end-of-line support to our CSV parser using &try;:
       </para>
       &csv6.hs:all;
@@ -358,13 +358,14 @@
       <title>Error Handling</title>
       <para id="x_wJ">
         At the beginning of this chapter, you saw how Parsec could generate
-        error messages that list the location where the error occured as well
+        error messages that list the location where the error occurred as well
         as what was expected.  As parsers get more complex, the list of what
         was expected can become cumbersome.  Parsec provides a way for you to
         specify custom error messages in the event of parse failures.
       </para>
       <para id="x_xJ">
-        Let's look at what happens on an error when our current CSV parser:
+        Let's look at what happens when our current CSV parser
+      encounters an error:
       </para>
       &csv6.ghci:error;
       <para id="x_yJ">
