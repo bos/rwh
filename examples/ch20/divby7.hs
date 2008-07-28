@@ -1,8 +1,7 @@
 {-- snippet all --}
 -- ch20/divby7.hs
 
-data Show a => 
-    DivByError a = DivBy0
+data DivByError a = DivBy0
                  | ForbiddenDenominator a
                    deriving (Eq, Read, Show)
 

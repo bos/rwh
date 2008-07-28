@@ -602,9 +602,9 @@
         any &Exception;, and can do so in a pure context.  There is a
         companion function &throwIO; with type <literal>Exception
         -&gt; IO a</literal> that raises an exception in the &IO;
-        monad.  Both of these functions require you to craft an
-        &Exception; by hand&emdash;or to have already have one on hand to
-        raise, perhaps from a handler called by &handle;.
+        monad.  Both functions require an &Exception; to throw.  You
+        can craft an &Exception; by hand, or reuse an &Exception; that
+        was previously created.
       </para>
       <para id="x_v11">
         There is also a function &ioError;, which is defined
@@ -631,7 +631,6 @@ fail = ioError . userError
 error :: String -> a
 error = throw . ErrorCall
       </programlisting>
-      <remark>FIXME: do we need examples here?</remark>
     </sect2>
 
     <sect2 id="errors.exceptions.dynamic">
