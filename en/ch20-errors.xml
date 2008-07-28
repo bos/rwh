@@ -53,7 +53,7 @@
     &divby1.ghci:ex2;
     <para id="x_Dz">
       Isn't that interesting?  &ghci; started displaying the output,
-      then stopped when an exception when it got to the zero.  That's
+      then stopped with an exception when it got to the zero.  That's
       lazy evaluation at work&emdash;it calculated results as needed.
     </para>
     <para id="x_Ez">
@@ -142,7 +142,7 @@
           error handling at no expense to laziness.
         </para>
         <para id="x_Pz">
-          But how to apply this to our <literal>divBy</literal>
+          But how do we apply this to our <literal>divBy</literal>
           example?  Let's consider the situation there: failure is a
           property of an individual bad input, not of the input list
           itself.  How about making failure a property of an
@@ -224,7 +224,7 @@
         </para>
         <para id="x_Yz">
           The <literal>Control.Monad.Error</literal> module in the
-          <literal>mtl</literal> package makes &Either; into a monad
+          <literal>mtl</literal> package makes <literal>Either String</literal> into a monad
           as well.  If you use &Either;, you can get a pure result
           that preserves the error message, like so:
         </para>
@@ -245,7 +245,8 @@
         </footnote>  Although the language imposes no restrictions, by
         convention, a function returning an &Either; uses a &Left;
         return value to indicate an error, and &Right; to indicate
-        success.  We can start with our <literal>divby2.hs</literal>
+        success.  If it helps you remember, you can think of getting
+    the &Right; answer.  We can start with our <literal>divby2.hs</literal>
         example from the earlier section on &Maybe; and adapt it to
         work with &Either;:
       </para>
@@ -325,7 +326,7 @@
       Exception handling is found in many programming languages,
       including Haskell.  It can be useful because, when a problem
       occurs, it can provide an easy way of handling it, even if it
-      occured several layers down through a chain of function calls.
+      occurred several layers down through a chain of function calls.
       With exceptions, it's not necessary to check the return value of
       every function call to check for errors, and take care to
       produce a return value that reflects the error, as C programmers
@@ -337,8 +338,8 @@
     <para id="x_V11">
       Some problems&emdash;especially those involving I/O&emdash;call for
       working with exceptions.  In Haskell, exceptions may be raised
-      from any location in the program.  However, due to lazy
-      evaluation, they can only be caught in the &IO; monad.  Haskell
+      from any location in the program.  However, due to the
+    unspecified evaluation order, they can only be caught in the &IO; monad.  Haskell
       exception handling doesn't involve special syntax as it does in
       Python or Java.  Rather, the mechanisms to catch and handle
       exceptions are&emdash;surprise&emdash;functions.
@@ -356,7 +357,7 @@
         handling.  If an exception was raised, it will return a &Left;
         value with the exception; otherwise, a &Right; value with the
         original result.  Let's try this out in &ghci;.  We'll first
-        trigger an un-handled exception, and then try to catch it.
+        trigger an unhandled exception, and then try to catch it.
       </para>
       &exc.ghci:try1;
       <para id="x_X11">
@@ -379,7 +380,7 @@
         experiment.  Let's say we want to catch the result of
         <literal>try</literal> for future evaluation, so we can handle
         the result of division.  Perhaps we
-        would do it liks this:
+        would do it like this:
       </para>
       &exc.ghci:try2;
       <para id="x_Z11">
@@ -395,7 +396,7 @@
         it only wraps it up.  So, the result of <literal>try (return
         undefined)</literal> would be <literal>Right
         undefined</literal>.  Now, &ghci; wants to display this result
-        on the terminal.  It gets as far as printint out
+        on the terminal.  It gets as far as printing out
         <literal>"Right "</literal>, but you can't print out
         &undefined; (or the result of division by zero).  So when you
         see the exception message, it's coming from &ghci;, not your
@@ -430,7 +431,7 @@
     <sect2 id="errors.exceptions.handle">
       <title>Using handle</title>
       <para id="x_e11">
-        Often, you may wish to perform one action of a piece of code
+        Often, you may wish to perform one action if a piece of code
         completes without an exception, and a different action
         otherwise.  For situations like this, there's a function
         called &handle;.  This function has type <literal>(Exception
@@ -442,7 +443,7 @@
       &exc.ghci:handle1;
       <para id="x_f11">
         This way, we can print out a nice message if there is an error
-        in the calculations.  It's nicer that having the program crash
+        in the calculations.  It's nicer than having the program crash
         with a division by zero error, for sure.
       </para>
     </sect2>
@@ -600,7 +601,7 @@
         <literal>Exception -&gt; a</literal>.  This function can throw
         any &Exception;, and can do so in a pure context.  There is a
         companion function &throwIO; with type <literal>Exception
-        -&gt; IO a</literal> that raises an exception in tne &IO;
+        -&gt; IO a</literal> that raises an exception in the &IO;
         monad.  Both of these functions require you to craft an
         &Exception; by hand&emdash;or to have already have one on hand to
         raise, perhaps from a handler called by &handle;.
