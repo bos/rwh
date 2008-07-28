@@ -136,6 +136,14 @@ $(xsltproc) $(xsltproc-opts) -o $(1).xml \
   --stringparam profile.revision "$(2)" ../xsl/dtd-profile.xsl $(src-master)
 endef
 
+svn: beta
+	[ ! -d book-svn ] || svn co \
+	  https://prod.oreilly.com/external/authors/books/9780596514983/current
+	cp beta.xml book-svn/book.xml
+	cp figs/*.png book-svn/figs
+	svn add -q book-svn/figs/*.png
+	svn ci -m 'Author snapshot from darcs' book-svn
+
 websup: $(extras-web)
 
 web: websup webfigs alpha beta html
