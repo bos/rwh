@@ -15,8 +15,10 @@ adler32 xs = helper 1 0 xs
 
 {-- snippet adler32_try2 --}
 adler32_try2 xs = helper (1,0) xs
-    where helper (a,b) (x:xs) = let a' = (a + (ord x .&. 0xff)) `mod` base
-                                in helper (a', (a' + b) `mod` base) xs
+    where helper (a,b) (x:xs) =
+              let a' = (a + (ord x .&. 0xff)) `mod` base
+                  b' = (a' + b) `mod` base
+              in helper (a',b') xs
           helper (a,b) _     = (b `shiftL` 16) .|. a
 {-- /snippet adler32_try2 --}
 

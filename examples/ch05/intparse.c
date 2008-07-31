@@ -1,12 +1,13 @@
 #include <stdio.h>
+#include <ctype.h>
 
 /** snippet as_int */
 int as_int(char *str)
 {
-    int acc;
+    int acc; /* accumulate the partial result */
 
-    for (acc = 0; *str != '\0'; str++) {
-	acc = acc * 10 + *str - '0';
+    for (acc = 0; isdigit(*str); str++) {
+	acc = acc * 10 + (*str - '0');
     }
 
     return acc;

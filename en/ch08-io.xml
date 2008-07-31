@@ -1070,7 +1070,7 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       &toupper-lazy5.hs:all;
         <tip><para id="x_gN">If the use of the <literal>.</literal> operator is
         confusing, you might wish to refer to <xref
-        linkend="fp.aspattern.codereuse"/>.
+        linkend="fp.compose"/>.
           </para>
         </tip>
       <para id="x_xD">

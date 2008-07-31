@@ -1562,16 +1562,6 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Create a function that computes the root mean square
-	    of a list.  One way to do so is by squaring every element
-	    of the list, calculating the mean of the new list, and
-	    obtaining the square root (using
-	    <function>sqrt</function>) of the mean.</para>
-	</question>
-      </qandaentry>
-
-      <qandaentry>
-	<question>
 	  <para>Turn a list into a palindrome, i.e. it should read the
 	    same both backwards and forwards.  For example, given the
 	    list <code>[1,2,3]</code>, your function should return

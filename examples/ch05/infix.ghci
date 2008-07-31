@@ -14,3 +14,11 @@ elem 'a' "camogie"
 
 --# infix
 3 `elem` [1,2,4,8]
+
+--# isPrefixOf
+:module +Data.List
+"foo" `isPrefixOf` "foobar"
+
+--# isInfixOf
+"needle" `isInfixOf` "haystack full of needle thingies"
+"end" `isSuffixOf` "the end"

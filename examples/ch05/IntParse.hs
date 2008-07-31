@@ -1,7 +1,7 @@
 -- Idea courtesy of William Lee Irwin.
 
 {-- snippet type --}
-import Data.Char (ord)
+import Data.Char (digitToInt) -- we'll need ord shortly
 
 asInt :: String -> Int
 {-- /snippet type --}
@@ -17,6 +17,6 @@ loop acc [] = acc
 {-- /snippet base --}
 
 {-- snippet inductive --}
-loop acc (x:xs) = let acc' = acc * 10 + ord x - ord '0'
+loop acc (x:xs) = let acc' = acc * 10 + digitToInt x
                   in loop acc' xs
 {-- /snippet inductive --}

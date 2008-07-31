@@ -12,3 +12,7 @@ isInAny2 needle haystack = any (\s -> needle `isInfixOf` s) haystack
 {-- snippet isInAny3 --}
 isInAny3 needle haystack = any (isInfixOf needle) haystack
 {-- /snippet isInAny3 --}
+
+{-- snippet isInAny4 --}
+isInAny4 needle haystack = any (needle `isInfixOf`) haystack
+{-- /snippet isInAny4 --}

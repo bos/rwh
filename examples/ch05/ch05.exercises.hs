@@ -1,4 +1,4 @@
-import Data.Char (ord)
+import Data.Char (ord, digitToInt)
 import Prelude hiding (concat, takeWhile)
 
 {-- snippet concat --}
@@ -25,8 +25,8 @@ groupBy f = foldr step []
 {-- snippet asInt_fold --}
 asInt_fold :: String -> Int
 {-- /snippet asInt_fold --}
-asInt_fold ('-':xs) = negate (asInt_fold' xs)
-asInt_fold xs = asInt_fold' xs
+asInt_fold ('-':xs) = negate (asInt_fold xs)
+asInt_fold xs = foldl (\a b -> (a*10) + (digitToInt b)) 0 xs
 
 asInt_fold' [] = error "empty string"
 asInt_fold' xs = foldr step 0 xs

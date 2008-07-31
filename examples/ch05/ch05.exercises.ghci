@@ -3,6 +3,7 @@
 --# asInt_fold
 asInt_fold "101"
 asInt_fold "-31337"
+asInt_fold "1798"
 
 --# asInt_fold.errors
 asInt_fold ""

@@ -25,7 +25,7 @@ splitLines "foo"
 
 --# break.foo
 
-break isLineSeparator "foo"
+break isLineTerminator "foo"
 
 --# splitLines.foobar
 
@@ -33,7 +33,7 @@ splitLines "foo\r\nbar"
 
 --# break.foobar
 
-break isLineSeparator "foo\r\nbar"
+break isLineTerminator "foo\r\nbar"
 
 --# splitLines.bar
 

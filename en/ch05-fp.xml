@@ -6,24 +6,20 @@
   <sect1 id="fp.thinking">
     <title>Thinking in Haskell</title>
 
-    <para id="x_V6">There are two aspects to the early stages of programming
-      effectively in Haskell.  The first is coming to terms with the
-      shift in mindset from imperative programming to functional: we
-      have to step away from an entire toolbox of programming habits
-      from other languages.  We do this not because these techniques
-      are bad, but because in a functional language they're either not
-      applicable or they turn out downright ungainly.  At the same
-      time, we have to come up to speed with a replacement vocabulary,
-      so that we can hack productively.</para>
+    <para id="x_V6">Our early learning of Haskell has two distinct
+      aspects.  The first is coming to terms with the shift in mindset
+      from imperative programming to functional: we have to replace
+      our programming habits from other languages.  We do this not
+      because imperative techniques are bad, but because in a
+      functional language other techniques work better.</para>
 
-    <para id="x_W6">Our second challenge is learning our way around the standard
-      Haskell libraries.  As in any language, the libraries act as a
-      lever, enabling us to multiply our problem solving power.
-      However, Haskell libraries tend to be organised around a higher
+    <para id="x_W6">Our second challenge is learning our way around
+      the standard Haskell libraries.  As in any language, the
+      libraries act as a lever, enabling us to multiply our problem
+      solving power. Haskell libraries tend to operate at a higher
       level of abstraction than those in many other languages.  We'll
-      probably have to put more effort into learning them, but in
-      exchange they offer a tantalisingly greater magnification of our
-      efforts.</para>
+      need to work a little harder to learn to use the libraries, but
+      in exchange they offer a lot of power.</para>
 
     <para id="x_X6">In this chapter, we'll introduce a number of common
       functional programming techniques.  We'll draw upon examples
@@ -32,6 +28,57 @@
       of the fundamentals of Haskell's standard libraries.  We'll also
       intermittently cover a few more language features along the
       way.</para>
+  </sect1>
+
+  <sect1 id="fp.framework">
+    <title>A simple command line framework</title>
+
+    <para>In most of this chapter, we will concern ourselves with code
+      that has no interaction with the outside world.  To maintain our
+      focus on practical code, we will begin by developing a gateway
+      between our <quote>pure</quote> code and the outside world. Our
+      framework simply reads the contents of one file, applies a
+      function to the file, and writes the result to another
+      file.</para>
+
+    &InteractWith.hs:main;
+
+    <para>This is all we need to write simple, but complete, file
+      processing programs.  This is a complete program.  We can
+      compile it to an executable named
+      <filename>InteractWith</filename> as follows.</para>
+
+    <screen><prompt>$</prompt> <userinput>ghc --make InteractWith</userinput>
+[1 of 1] Compiling Main             ( InteractWith.hs, InteractWith.o )
+Linking InteractWith ...</screen>
+
+    <para>If we run this program from the shell or command prompt, it
+      will accept two file names: the name of a file to read, and the
+      name of a file to write.</para>
+
+    <screen><prompt>$</prompt> <userinput>./Interact</userinput>
+error: exactly two arguments needed
+<prompt>$</prompt> <userinput>./Interact hello-in.txt hello-out.txt</userinput>
+<prompt>$</prompt> <userinput>cat hello-in.txt</userinput>
+hello world
+<prompt>$</prompt> <userinput>cat hello-out.txt</userinput>
+hello world</screen>
+
+    <para>Some of the notation in our source file is new.  The &do;
+      keyword introduces a block of <emphasis>actions</emphasis> that
+      can cause effects in the real world, such as reading or writing
+      a file.  The <code>&lt;-</code> operator is the equivalent of
+      assignment inside a &do; block.  This is enough explanation to
+      get us started.  We will talk in much more detail about these
+      details of notation, and I/O in general, in <xref
+      linkend="io"/>.</para>
+
+    <para>When we want to test a function that cannot talk to the
+      outside world, we simply replace the name
+      <function>id</function> in the code above with the name of the
+      function we want to test.  Whatever our function does, it will
+      need to have the type <type>String -&gt; String</type>: in other
+      words, it must accept a string, and return a string.</para>
   </sect1>
 
   <sect1 id="fp.splitlines">
@@ -44,125 +91,129 @@
 
     &splitlines.ghci:lines;
 
-    <para id="x_Z6">While <function>lines</function> looks useful, it relies on
-      us reading a file in <quote>text mode</quote> in order to work
-      (yes, we'll be talking about opening files soon); it doesn't
-      deal well with Windows line ending conventions.</para>
+    <para id="x_Z6">While <function>lines</function> looks useful, it
+      relies on us reading a file in <quote>text mode</quote> in order
+      to work.  Text mode is a feature common to many programming
+      languages: it provides a special behavior when we read and
+      write files on Windows.  When we read a file in text mode, the
+      file I/O library translates the line ending sequence
+      <code>"\r\n"</code> (carriage return followed by newline) to
+      <code>"\n"</code> (newline alone), and it does the reverse when
+      we write a file. On Unix-like systems, text mode does not
+      perform any translation. As a result of this difference, if we
+      read a file on one platform that was written on the other, the
+      line endings are likely to become a mess. (Both
+      <function>readFile</function> and <function>writeFile</function>
+      operate in text mode.)</para>
 
     &splitlines.ghci:lines.cr;
 
-    <para id="x_a6">The function only splits on newline characters, leaving
-      carriage returns dangling at the ends of lines.  Ugh.  We can't
-      rely on opening a file in text mode to do the right thing on our
-      behalf.  For example, if we're reading a Windows-generated text
+    <para id="x_a6">The <function>lines</function> function only
+      splits on newline characters, leaving carriage returns dangling
+      at the ends of lines.  If we read a Windows-generated text
       file on a Linux or Unix box, we'll get trailing carriage returns
       at the end of each line.</para>
 
-    <para id="x_b6">Years of comfortable hacking with Python's <quote>universal
-	newline</quote> support, which transparently handles Unix and
-      Windows line ending conventions for us, left us wanting
-      something similar in Haskell.  Although Python conveniently
-      provides a built-in <function>splitlines</function> string
-      method, we'll rewrite it as a Python function, just to see what
-      a reasonable Python implementation might look like.</para>
+    <para id="x_b6">We have comfortably used Python's <quote>universal
+	newline</quote> support for years: this transparently handles Unix and
+      Windows line ending conventions for us.  We would like to
+      provide something similar in Haskell.</para>
 
-    &splitlines.py:splitlines;
+    <para id="x_d6">Since we are still early in our career of reading
+      Haskell code, we will discuss our Haskell implementation in
+      quite some detail.</para>
 
-    <para id="x_c6">The key to understanding this code lies with Python's
-      <function>partition</function> string method: it searches for a
-      substring.  If it finds it, it returns a triple of the substring
-      before the match, the match, and the substring after the match.
-      Otherwise, it returns a triple of the entire string and two
-      empty strings.</para>
+    &SplitLines.hs:splitLines.type;
 
-    <para id="x_d6">Because we're still early in our career of reading Haskell
-      code, we'll discuss our Haskell implementation in quite some
-      detail.  This is almost the last instance where we'll walk
-      through <quote>basic</quote> Haskell code at this level.</para>
-
-    <para id="x_e6">Haskell provides a similar function named
-      <function>break</function> that we can use to the same end.
-      Unlike Python's <function>partition</function>, it operates over
-      lists of any type, instead of strings.  It does this by taking a
-      function as its first parameter: this function takes an element
-      of the list, and returns a <type>Bool</type> to indicate whether
-      to break the list there or not.  What <function>break</function>
-      returns is a two-tuple, of the sublist before the predicate
-      returns <code>True</code> (the prefix), and the rest of the list
-      (the suffix).</para>
-
-    &splitlines.ghci:break;
-
-    <para id="x_f6">This makes <function>break</function> both more and less
-      powerful than <function>partition</function>: we can use it on
-      any type of list, not just a string; but it can only examine a
-      single item at a time, not a sublist.</para>
-
-    <para id="x_g6">For our purposes, examining one character at a time will work
-      perfectly well, since we only need to match a single carriage
-      return or newline.</para>
+    <para>Our function's type signature indicates that it accepts a
+      single string, the contents of a file with some unknown
+      line ending convention.  It returns a list of strings,
+      representing each line from the file.</para>
 
     &SplitLines.hs:splitLines;
 
-    <para id="x_h6">Our function first calls <function>break</function> on its
-      input string, to break it into the substring before a line
-      terminator, and the rest of the string (which will include the
-      line terminator, if any).</para>
+    <para>Before we dive into detail, notice first how we have
+      organized our code.  We have presented the important pieces of
+      code first, keeping the definition of
+      <function>isLineTerminator</function> until later. Because we
+      have given the helper function a readable name, we can guess
+      what it does even before we've read it, which eases the smooth
+      <quote>flow</quote> of reading the code.</para>
 
-    <para id="x_i6">It then uses the pattern matching capabilities of
-      <code>case</code> to inspect the return value of
-      <function>break</function>.  We know that
-      <function>break</function> always returns a two-tuple, so each
-      pattern on the left matches a two-tuple.  The first element of
-      the tuple pattern doesn't inspect its value; it just binds the
-      variable <varname>pre</varname> to whatever value is in that
-      element of the tuple.  The second element of the pattern
-      <emphasis>does</emphasis> inspect its value.  The first pattern
-      matches any string containing at least two characters that
-      begins with a carriage return, followed by a newline, then binds
-      <varname>suf</varname> to the remainder of the string.  The
-      other patterns should be self-explanatory.</para>
+    <para id="x_e6">The Prelude defines a function named
+      <function>break</function> that we can use to partition a list
+      into two parts. It takes a function as its first parameter. That
+      function must examine an element of the list, and return a
+      <type>Bool</type> to indicate whether to break the list at that
+      point.  The <function>break</function> function returns a pair,
+      which consists of the sublist consumed before the predicate
+      returned <code>True</code> (the <emphasis>prefix</emphasis>),
+      and the rest of the list (the
+      <emphasis>suffix</emphasis>).</para>
 
-    <para id="x_j6">The right-hand side of each of the first three branches of
-      the <code>case</code> expression constructs a new list, using
-      the prefix string <varname>pre</varname> as the head, and as the
-      remainder, the list of strings resulting from applying
-      <function>splitLines</function> to the suffix string
-      <varname>suf</varname> without the leading line separator
-      characters.</para>
+    &splitlines.ghci:break;
 
-    <para id="x_k6">Following a prose description of the behaviour of a Haskell
-      function isn't easy.  We can get a better understanding by
-      stepping into &ghci;, and watching the function at work in
-      different circumstances.</para>
+    <para id="x_g6">Since we only need to match a single carriage
+      return or newline at a time, examining one element of the list
+      at a time is good enough for our needs.</para>
 
-    <para id="x_l6">We'll start by looking at a string that doesn't contain any
-      line separators.</para>
+    <para>The first equation of <function>splitLines</function>
+      indicates that if we match an empty string, we have no further
+      work to do.</para>
+
+    <para id="x_h6">In the second equation, we first apply
+      <function>break</function> to our input string.  The prefix is
+      the substring before a line terminator, and the suffix is the
+      remainder of the string.  The suffix will include the line
+      terminator, if any is present.</para>
+
+    <para>The <quote><code>pre :</code></quote> expression tells us
+      that we should add the <varname>pre</varname> value to the front
+      of the list of lines.  We then use a &case; expression to
+      inspect the suffix, so we can decide what to do next.  The
+      result of the &case; expression will be used as the second
+      argument to the <function>(:)</function> list constructor.</para>
+
+    <para id="x_i6">The first pattern matches a string that begins
+      with a carriage return, followed by a newline.  The variable
+      <varname>rest</varname> is bound to the remainder of the string.
+      The other patterns are similar, so they ought to be
+      easy to follow.</para>
+
+    <para id="x_k6">A prose description of a Haskell function isn't
+      necessarily easy to follow.  We can gain a better understanding
+      by stepping into &ghci;, and oberving the behavior of the
+      function in different circumstances.</para>
+
+    <para id="x_l6">Let's start by partitioning a string that doesn't
+      contain any line terminators.</para>
 
     &splitlines.ghci:splitLines.foo;
 
-    <para id="x_m6">Here, our call to <function>break</function> never finds a
-      line separator, so we get an empty suffix.</para>
+    <para id="x_m6">Here, our application of
+      <function>break</function> never finds a line terminator, so the
+      suffix it returns is empty.</para>
 
     &splitlines.ghci:break.foo;
 
-    <para id="x_n6">The <code>case</code> expression thus hits a match on the
-      fourth branch, and we're done.  What about a slightly more
+    <para id="x_n6">The &case; expression in
+      <function>splitLines</function> must thus be matching on the
+      fourth branch, and we're finished.  What about a slightly more
       interesting case?</para>
 
     &splitlines.ghci:splitLines.foobar;
 
-    <para id="x_o6">Our first call to <function>break</function> gives us a
-      non-empty suffix.</para>
+    <para id="x_o6">Our first application of
+      <function>break</function> gives us a non-empty suffix.</para>
 
     &splitlines.ghci:break.foobar;
 
     <para id="x_p6">Because the suffix begins with a carriage return, followed
       by a newline, we match on the first branch of the
-      <code>case</code> expression.  This gives us
+      &case; expression.  This gives us
       <varname>pre</varname> bound to <code>"foo"</code>, and
-      <varname>suf</varname> bound to <code>"bar"</code>.  We call
-      <function>splitLines</function> again, this time on
+      <varname>suf</varname> bound to <code>"bar"</code>.  We apply
+      <function>splitLines</function> recursively, this time on
       <code>"bar"</code> alone.</para>
 
     &splitlines.ghci:splitLines.bar;
@@ -172,54 +223,124 @@
       <code>["bar"]</code>.</para>
 
     &splitlines.ghci:cons;
+
+    <para>This sort of experimenting with &ghci; is a helpful way to
+      understand and debug the behavior of a piece of code.  It has
+      an even more important benefit that is almost accidental in
+      nature.  It can be tricky to test complicated code from
+      &ghci;, so we will tend to write smaller functions.  This can
+      further help the readability of our code.</para>
+
+    <para>This style of creating and reusing small, powerful pieces of
+      code is a fundamental part of functional programming.</para>
+
+    <sect2>
+      <title>A line ending conversion program</title>
+
+      <para>Let's hook our <function>splitLines</function> function
+	into the little framework we wrote earlier.  Make a copy of
+	the <filename>Interact.hs</filename> source file; let's call
+	the new file <filename>FixLines.hs</filename>.  Add the
+	<function>splitLines</function> function to the new source
+	file.  Since our function must produce a single
+	<type>String</type>, we must stitch the list of lines back
+	together.  The Prelude provides an
+	<function>unlines</function> function that concatenates a list
+	of strings, adding a newline to the end of each.</para>
+
+      &SplitLines.hs:fixLines;
+
+      <para>If we replace the <function>id</function> function with
+	<function>fixLines</function>, we can compile an executable
+	that will convert a text file to our system's native line
+	ending.</para>
+
+    <screen><prompt>$</prompt> <userinput>ghc --make FixLines</userinput>
+[1 of 1] Compiling Main             ( FixLines.hs, FixLines.o )
+Linking FixLines ...</screen>
+
+      <para>If you are on a Windows system, find and download a text
+	file that was created on a Unix system (for example <ulink
+	  url="http://www.gnu.org/licenses/gpl-3.0.txt">gpl-3.0.txt</ulink>). 
+	Open it in the standard Notepad text editor.  The lines should
+	all run together, making the file almost unreadable.  Process
+	the file using the <command>FixLines</command> command you
+	just created, and open the output file in Notepad.  The line
+	endings should now be fixed up.</para>
+
+      <para>On Unix-like systems, the standard pagers and editors hide
+	Windows line endings.  This makes it more difficult to verify
+	that <command>FixLines</command> is actually eliminating
+	them.  Here are a few commands that should help.</para>
+
+    <screen><prompt>$</prompt> <userinput>file gpl-3.0.txt</userinput>
+gpl-3.0.txt: ASCII English text
+<prompt>$</prompt> <userinput>unix2dos gpl-3.0.txt</userinput>
+unix2dos: converting file gpl-3.0.txt to DOS format ...
+<prompt>$</prompt> <userinput>file gpl-3.0.txt</userinput>
+gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
+    </sect2>
   </sect1>
 
   <sect1 id="fp.infix">
     <title>Infix functions</title>
 
-    <para id="x_K6">Usually, when we define or call a function in
+    <para id="x_K6">Usually, when we define or apply a function in
       Haskell, we write the name of the function, followed by its
       arguments.  This notation is referred to as
       <emphasis>prefix</emphasis>, because the name of the function
       comes before its arguments.</para>
 
-    <para id="x_Rh">If a function or constructor takes two arguments, we have
-      the option of using it in <emphasis>infix</emphasis> form, where
-      we place it between its first and second arguments. This allows
-      us to write expressions using functions as if they were infix
-      operators.</para>
+    <para id="x_Rh">If a function or constructor takes two or more
+      arguments, we have the option of using it in
+      <emphasis>infix</emphasis> form, where we place it
+      <emphasis>between</emphasis> its first and second arguments.
+      This allows us to use functions as infix operators.</para>
 
-    <para id="x_L6">To define or use a function, constructor, or type
+    <para id="x_L6">To define or apply a function or value constructor
       using infix notation, we enclose its name in backtick characters
       (sometimes known as backquotes).  Here are simple infix
       definitions of a function and a type.</para>
 
     &Plus.hs:plus;
 
-    <para id="x_M6">As a purely syntactic convenience, infix notation
-      doesn't change a function's behaviour.</para>
+    <para id="x_M6">Since infix notation is purely a syntactic
+    convenience, it does not change a function's behavior.</para>
 
     &infix.ghci:plus;
 
-    <para id="x_N6">Infix notation is useful for more than just our own
-      functions.  For example, Haskell's Prelude defines a function,
+    <para id="x_N6">Infix notation can often help readability.  For
+      instance, the Prelude defines a function,
       <function>elem</function>, that indicates whether a value is
-      present in a list. If we call <function>elem</function> using
-      prefix notation, it's not difficult to read.</para>
+      present in a list. If we use <function>elem</function> using
+      prefix notation, it is fairly easy to read.</para>
 
     &infix.ghci:prefix;
 
-    <para id="x_Q6">However, if we switch to infix notation, the code
-      is easier to understand. It's now clearer that we're
+    <para id="x_Q6">If we switch to infix notation, the code
+      becomes even easier to understand. It is now clearer that we're
       checking to see if the value on the left is present in the list
       on the right.</para>
 
     &infix.ghci:infix;
 
-    <para id="x_R6">There's no hard-and-fast rule that dictates when you ought
-      to use infix versus prefix notation, although prefix notation is
-      far more common.  It's best to choose whichever makes your code
-      more readable in a specific situation.</para>
+    <para>We see a more pronounced improvement with some useful functions from the
+      <code>Data.List</code> module.
+      The <function>isPrefixOf</function> function tells us if one list
+      matches the beginning of another.</para>
+
+    &infix.ghci:isPrefixOf;
+
+    <para>The <function>isInfixOf</function> and
+    <function>isSuffixOf</function> functions match anywhere in a list
+    and at its end, respectively.</para>
+
+    &infix.ghci:isInfixOf;
+
+    <para id="x_R6">There is no hard-and-fast rule that dictates when
+      you ought to use infix versus prefix notation, although prefix
+      notation is far more common.  It's best to choose whichever
+      makes your code more readable in a specific situation.</para>
 
     <note>
       <title>Beware familiar notation in an unfamiliar
@@ -233,7 +354,7 @@
       <para id="x_S6">The only legal thing we can do with backticks in
 	Haskell is wrap them around the name of a function.  We can't,
 	for example, use them to enclose a complex expression whose
-	type is a function.  It might be <emphasis>nice</emphasis> if
+	value is a function.  It might be convenient if
 	we could, but that's not how the language is today.</para>
     </note>
   </sect1>
@@ -257,13 +378,13 @@
       save will be huge.</para>
 
     <para id="x_s6">The <code>Data.List</code> module is the <quote>real</quote>
-      logical home of all standard list functions. The prelude merely
+      logical home of all standard list functions. The Prelude merely
       re-exports a large subset of the functions exported by
-      <code>Data.List</code>. Several invaluable functions in
+      <code>Data.List</code>. Several useful functions in
       <code>Data.List</code> are <emphasis>not</emphasis> re-exported
       by the standard prelude.  As we walk through list functions in
-      the sections that follow, we'll explicitly mention those that
-      are in <code>Data.List</code>.</para>
+      the sections that follow, we will explicitly mention those that
+      are only in <code>Data.List</code>.</para>
       
     &ch05.list.ghci:Data.List;
 
@@ -276,18 +397,17 @@
     <sect2 id="fp.lists.basic">
       <title>Basic list manipulation</title>
 
-      <para id="x_u6">The simplest function on a list is
-	<function>null</function>, which merely tells us whether or
-	not the list is empty.</para>
-
-      &ch05.list.ghci:null;
-
       <para id="x_v6">The <function>length</function> function tells us how many
 	elements are in a list.</para>
 
       &ch05.list.ghci:length;
 
-      <para id="x_w6">To get the first element of a list, we use the
+      <para>If you need to determine whether a list is empty, use the
+	<function>null</function> function.</para>
+
+      &ch05.list.ghci:null;
+
+      <para id="x_w6">To access the first element of a list, we use the
 	<function>head</function> function.</para>
 
       &ch05.list.ghci:head;
@@ -308,34 +428,37 @@
 
       &ch05.list.ghci:init;
 
-      <para id="x_A7">None of the above functions is well-behaved on empty
-	lists, so be careful if you don't know whether or not a list
-	is empty.  What form does their misbehaviour take?</para>
+      <para id="x_A7">Several of the functions above behave poorly on
+	empty lists, so be careful if you don't know whether or not a
+	list is empty.  What form does their misbehavior take?</para>
       
       &ch05.list.ghci:head.empty;
     
+      <para>Try each of the above functions in &ghci;.  Which ones
+	crash when given an empty list?</para>
+
     </sect2>
 
     <sect2 id="fp.lists.safe">
-      <title>Safely and sanely working with unsafe functions</title>
+      <title>Safely and sanely working with crashy functions</title>
 
       <para id="x_B7">When we want to use a function like
-	<function>safe</function>, where we know that it might blow up
+	<function>head</function>, where we know that it might blow up
 	on us if we pass in an empty list, the temptation might
 	initially be strong to check the length of the list before we
-	call <function>safe</function>.  Let's construct a hideously
+	call <function>head</function>.  Let's construct an
 	artificial example to illustrate our point.</para>
 
       &EfficientList.hs:myDumbExample;
 
-      <para id="x_C7">If we're coming from a language like Perl or python, this
-	might seem like a perfectly natural way to write this test.
-	Behind the scenes, Python lists are arrays; and Perl arrays
-	are, well, arrays.  So they necessarily know how long they
-	are, and calling <code>len(foo)</code> or <code>$#foo+1</code>
-	is a perfectly natural thing to do.  But as with many other
-	things, it's not a good idea to blindly transplant such an
-	assumption into Haskell.</para>
+      <para id="x_C7">If we're coming from a language like Perl or
+	Python, this might seem like a perfectly natural way to write
+	this test. Behind the scenes, Python lists are arrays; and
+	Perl arrays are, well, arrays.  So they necessarily know how
+	long they are, and calling <code>len(foo)</code> or
+	<code>scalar(@foo)</code> is a perfectly natural thing to do.
+	But as with many other things, it's not a good idea to blindly
+	transplant such an assumption into Haskell.</para>
 
       <para id="x_D7">We've already seen the definition of the list
 	algebraic data type many times, and know that a list doesn't
@@ -343,17 +466,22 @@
 	<function>length</function> can operate is to walk the entire
 	list.</para>
 
-      <para id="x_E7">Therefore,  when we only care whether or not a list is
-	empty, calling <function>length</function> isn't a good
-	strategy. It can potentially do a lot more work than we want,
-	if the list we're working is finite.  Worse, Haskell lets us
-	define infinitely long lists, on which an unsuspecting call to
-	<function>length</function> will never return!</para>
+      <para id="x_E7">Therefore,  when we only care whether or not a
+	list is empty, calling <function>length</function> isn't a
+	good strategy. It can potentially do a lot more work than we
+	want, if the list we're working with is finite.  Since Haskell lets
+	us easily create infinite lists, a careless use of
+	<function>length</function> may even result in an infinite
+	loop.</para>
 
-      <para id="x_F7">A more appropriate function to call here instead is
-	<function>null</function>, which runs in constant time.  Better
-	yet, using <function>null</function> makes our code indicate
-	what property of the list we really care about.</para>
+      <para id="x_F7">A more appropriate function to call here instead
+	is <function>null</function>, which runs in constant time.
+	Better yet, using <function>null</function> makes our code
+	indicate what property of the list we really care about.  Here
+	are two improved ways of expressing
+	<function>myDumbExample</function>.</para>
+
+      &EfficientList.hs:mySmartExample;
     </sect2>
 
     <sect2>
@@ -393,12 +521,12 @@
       &ch05.list.ghci:append;
 
       <para id="x_L7">The <function>concat</function> function takes a list of
-	lists, all of the same type, and <quote>flattens</quote> them
+	lists, all of the same type, and concatenates them
 	into a single list.</para>
 
       &ch05.list.ghci:concat;
 
-      <para id="x_M7">It only flattens one level of nesting.</para>
+      <para id="x_M7">It removes one level of nesting.</para>
 
       &ch05.list.ghci:concat.multi;
 
@@ -411,7 +539,7 @@
 	<function>and</function> and <function>or</function> functions
 	generalise their two-argument
 	cousins,<function>(&amp;&amp;)</function> and
-	<function>(||)</function>.</para>
+	<function>(||)</function>, over lists.</para>
 
       &ch05.list.ghci:and.or;
 
@@ -421,7 +549,7 @@
 	<function>all</function> returns <code>True</code> if that
 	predicate succeeds on every element of the list, while
 	<function>any</function> returns <code>True</code> if the
-	predicate succeeds on any element of the list.</para>
+	predicate succeeds on at least one element of the list.</para>
 
       &ch05.list.ghci:all.any;
 
@@ -430,27 +558,29 @@
     <sect2>
       <title>Working with sublists</title>
 
-      <para id="x_Q7">The <function>take</function> function, which we already
-	met in <xref linkend="funcstypes.calling"/>, returns a
-	sublist consisting of the first several  elements from a list.
-	Its converse, <function>drop</function>, drops several
-	elements from the head of the list.</para>
+      <para id="x_Q7">The <function>take</function> function, which we
+	already met in <xref linkend="funcstypes.calling"/>, returns a
+	sublist consisting of the first <emphasis>k</emphasis>
+	elements from a list. Its converse, <function>drop</function>,
+	drops <emphasis>k</emphasis> elements from the start of the
+	list.</para>
 
       &ch05.list.ghci:take.drop;
 
-      <para id="x_R7">The <function>splitAt</function> function combines the
-	functions of <function>take</function> and
-	<function>drop</function>, returning a two-tuple of the input
-	list, split at the given index.</para>
+      <para id="x_R7">The <function>splitAt</function> function
+	combines the functions of <function>take</function> and
+	<function>drop</function>, returning a pair of the input list,
+	split at the given index.</para>
 
       &ch05.list.ghci:splitAt;
 
       <para id="x_S7">The <function>takeWhile</function> and
 	<function>dropWhile</function> functions take predicates:
-	<function>takeWhile</function> constructs a list as long as
-	the predicate returns <code>True</code>, while
-	<function>dropWhile</function> drops elements from the list as
-	long as the predicate returns <code>True</code>.</para>
+	<function>takeWhile</function> takes elements from the
+	beginning of a list as long as the predicate returns
+	<code>True</code>, while <function>dropWhile</function> drops
+	elements from the list as long as the predicate returns
+	<code>True</code>.</para>
       
       &ch05.list.ghci:takeWhile.dropWhile;
 
@@ -492,8 +622,7 @@
 	<function>isInfixOf</function>, and
 	<function>isSuffixOf</function>, let us test for the presence
 	of sublists within a bigger list.  The easiest way to use them
-	is using infix notation, which we introduced in <xref
-	linkend="fp.infix"/>.</para>
+	is using infix notation.</para>
 
       <para id="x_Y7">The <function>isPrefixOf</function> function tells us
 	whether its left argument matches the beginning of its right
@@ -531,7 +660,11 @@
       &ch05.list.ghci:zipWith;
 
       <para id="x_d7">Haskell's type system makes it an interesting challenge to
-	write functions that take variable numbers of arguments.  So
+	write functions that take variable numbers of
+	arguments<footnote>
+	  <para>Unfortunately, we do not have room to address that
+	    challenge in this book.</para>
+	</footnote>.  So
 	if we want to zip three lists together, we call
 	<function>zip3</function> or <function>zipWith3</function>,
 	and so on up to <function>zip7</function> and
@@ -543,10 +676,10 @@
 
       <para id="x_e7">We've already encountered the standard
 	<function>lines</function> function in <xref
-	linkend="fp.splitlines"/>.  It has a standard counterpart,
-	<function>unlines</function>, which joins a list of lines
-	together using newline characters, and adds another newline to
-	the end of the string.</para>
+	linkend="fp.splitlines"/>, and its standard counterpart,
+	<function>unlines</function>.  Notice that
+	<function>unlines</function> always places a newline on the
+	end of its result.</para>
 
       &ch05.list.ghci:unlines;
 
@@ -586,6 +719,23 @@
 
 	  </question>
 	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Using the command framework from <xref
+	    linkend="fp.framework"/>, write a program that prints the
+	    first word of each line of its input.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Write a program that transposes the text in a file.
+	      For instance, it should convert
+	      <code>"hello\nworld\n"</code> to
+	      <code>"hw\neo\nlr\nll\nod\n"</code>.</para>
+	  </question>
+	</qandaentry>
       </qandaset>
     </sect2>
   </sect1>
@@ -596,8 +746,7 @@
     <para id="x_i7">Unlike traditional languages, Haskell has neither a
       <code>for</code> loop nor a <code>while</code> loop.  If we've
       got a lot of data to process, what do we use instead?  There are
-      several possible answers to this question, so let's build up a
-      toolbox of answers.</para>
+      several possible answers to this question.</para>
 
     <sect2 id="fp.tailrecursion">
       <title>Explicit recursion</title>
@@ -619,11 +768,11 @@
 
       &IntParse.hs:type;
 
-      <para id="x_m7">The C code computes the result incrementally as it
-	traverses the string; the Haskell code can do the same.
-	However, in Haskell, we write the loop as a function, which
-	we'll call <function>loop</function> just to keep things nice
-	and explicit.</para>
+      <para id="x_m7">The C code computes the result incrementally as
+	it traverses the string; the Haskell code can do the same.
+	However, in Haskell, we can express the equivalent of a loop as a
+	function.   We'll call ours <function>loop</function> just to
+	keep things nice and explicit.</para>
 
       &IntParse.hs:loop;
 
@@ -646,12 +795,13 @@
 
       &IntParse.hs:base;
 
-      <para id="x_q7">An empty list doesn't just mean <quote>the input string is
-	  empty</quote>; it's also the case we'll encounter when we
-	traverse all the way to the end of a non-empty list.  So we
-	don't want to <quote>error out</quote> if we see an empty
-	list.  Instead, we should do something sensible.  Here, the
-	sensible thing is to return our accumulated value.</para>
+      <para id="x_q7">An empty list doesn't just mean <quote>the input
+	  string is empty</quote>; it's also the case we'll encounter
+	when we traverse all the way to the end of a non-empty list.
+	So we don't want to <quote>error out</quote> if we see an
+	empty list.  Instead, we should do something sensible.  Here,
+	the sensible thing is to terminate the loop, and return our
+	accumulated value.</para>
 
       <para id="x_r7">The other case we have to consider arises when the input
 	list is not empty.  We need to do something with the current
@@ -679,11 +829,15 @@
 	  related to <varname>foo</varname>.  It's often a new value
 	  for <varname>foo</varname>, as in our code above.</para>
 
-	<para id="x_u7">Sometimes we'll see this idiom extended, such as
-	  <varname>foo''</varname>.  Since keeping track of the number
-	  of single quotes tacked onto the end of a name rapidly
-	  becomes tedious, use of more than two in a row is thankfully
-	  rare.</para>
+	<para id="x_u7">Sometimes we'll see this idiom extended, such
+	  as <varname>foo''</varname>.  Since keeping track of the
+	  number of single quotes tacked onto the end of a name
+	  rapidly becomes tedious, use of more than two in a row is
+	  thankfully rare.  Indeed, even one single quote can be easy
+	  to miss, which can lead to confusion on the part of readers.
+	  It might be better to think of the use of single quotes as a
+	  coding convention that you should be able to recognize, and
+	  less as one that you should actually follow.</para>
       </note>
 
       <para id="x_v7">Each time the <function>loop</function> function calls
@@ -715,15 +869,16 @@
 	called <emphasis>structural recursion</emphasis>.</para>
 
       <para id="x_A8">We call the non-recursive case (when the list is
-	empty) the <emphasis>base case</emphasis>.  We'll see people
+	empty) the <emphasis>base case</emphasis> (sometimes the
+	<emphasis>terminating case</emphasis>).  We'll see people
 	refer to the case where the function calls itself as the
 	recursive case (surprise!), or they might give a nod to
 	mathematical induction and call it the <emphasis>inductive
 	  case</emphasis>.</para>
 
-      <para id="x_B8">Structural induction isn't confined to lists; we can use
-	it on other algebraic data types, too.  We'll have more to say
-	about it later.</para>
+      <para id="x_B8">As a useful technique, structural recursion is
+	not confined to lists; we can use it on other algebraic data
+	types, too.  We'll have more to say about it later.</para>
 
       <note>
 	<title>What's the big deal about tail recursion?</title>
@@ -731,21 +886,21 @@
 	<para id="x_QL">In an imperative language, a loop executes in constant
 	  space.  Lacking loops, we use tail recursive functions in
 	  Haskell instead.  Normally, a recursive function allocates
-	  some space each time it calls itself, so it knows where to
+	  some space each time it applies itself, so it knows where to
 	  return to.</para>
 
-	<para id="x_RL">Clearly, a tail recursive function would be at a huge
+	<para id="x_RL">Clearly, a recursive function would be at a huge
 	  disadvantage relative to a loop if it allocated memory for
-	  every recursive call: this would require linear space
+	  every recursive application: this would require linear space
 	  instead of constant space.  However, functional language
-	  implementations usually detect uses of tail recursion, and
+	  implementations detect uses of tail recursion, and
 	  transform tail recursive calls to run in constant space;
 	  this is called <emphasis>tail call
-	    optimisation</emphasis>.</para>
+	    optimisation</emphasis>, abbreviated TCO.</para>
 
-	<para id="x_SL">Few imperative language implementations perform tail
-	  call optimisation; this is why writing imperative code in
-	  any kind of ambitiously functional style often leads to
+	<para id="x_SL">Few imperative language implementations
+	  perform TCO; this is why using any kind of ambitiously
+	  functional style in an imperative language often leads to
 	  space leaks and poor performance.</para>
       </note>
     </sect2>
@@ -770,7 +925,7 @@
 	to get its head and tail.  It squares the first element, then
 	puts that on the front of a new list, which is constructed by
 	calling <function>square</function> on the remainder of the
-	empty list.   The second equations ensures that
+	empty list.   The second equation ensures that
 	<function>square</function> halts when it reaches the end of
 	the input list.</para>
 
@@ -838,10 +993,7 @@
       <para id="x_O8">The signature tells us that <function>map</function> takes
 	two arguments.  The first is a function that takes a value of
 	one type, <varname role="type">a</varname>, and returns a
-	value of another type, <varname role="type">b</varname>.  This
-	is the only unfamiliar piece of notation in the type; notice
-	the parentheses that surround the signature of the function
-	argument so we (and Haskell) won't misread it.</para>
+	value of another type, <varname role="type">b</varname>.</para>
 
       <para id="x_P8">Since <function>map</function> takes a function as
 	argument, we refer to it as a
@@ -876,9 +1028,14 @@
 	  constructors.  We've already matched on the non-empty
 	  constructor in the first equation that defines
 	  <function>myMap</function>.  By elimination, the constructor
-	  in the second equation is thus necessarily the empty list
-	  constructor, so there's no point in doing a pattern match to
+	  in the second equation is necessarily the empty list
+	  constructor, so there's no need to perform a match to
 	  see what its value really is.</para>
+
+	<para>As a matter of style, it is fine to use wild cards for
+	  well known simple types like lists and <type>Maybe</type>.
+	  For more complicated or less familiar types, it can be safer
+	  and more readable to name constructors explicitly. </para>
       </note>
 
       <para id="x_R8">We try out our <function>myMap</function> function to give
@@ -887,25 +1044,23 @@
 
       &ch05.map.ghci:inuse;
 
-      <para id="x_S8">This business of seeing that we're repeating an idiom,
-	then abstracting it so we can reuse (and write less!) code, is
-	a common aspect of Haskell programming.</para>
+      <para id="x_S8">This pattern of spotting a repeated idiom, then
+	abstracting it so we can reuse (and write less!) code, is a
+	common aspect of Haskell programming.  While abstraction isn't
+	unique to Haskell, higher order functions make it remarkably
+	easy.</para>
     </sect2>
 
     <sect2 id="fp.filter">
       <title>Selecting pieces of input</title>
 
-      <para id="x_T8">Another common operation on a sequence of data is to comb
-	through it for elements that satisfy some criterion.  Here's
-	an example in C++ of a function that walks a linked list of
-	numbers and returns those that are odd.</para>
-
-      &filter.cpp:oddList;
-
-      <para id="x_U8">Our Haskell equivalent has a recursive case that's a bit
-	more complex than our earlier functions: it only puts a number
-	in the list it returns if the number is odd.  Using a guard
-	expresses this nicely.</para>
+      <para id="x_T8">Another common operation on a sequence of data
+	is to comb through it for elements that satisfy some
+	criterion.  Here's a function that walks a list of numbers and
+	returns those that are odd. Our code has a recursive case
+	that's a bit more complex than our earlier functions: it only
+	puts a number in the list it returns if the number is odd.
+	Using a guard expresses this nicely.</para>
 
       &Filter.hs:oddList;
 
@@ -913,28 +1068,27 @@
 
       &ch05.filter.ghci:oddList;
 
-      <para id="x_W8">Once again, this idiom is so common that Haskell's prelude
-	defines a function, <function>filter</function>, which removes
-	the need for boilerplate code to recurse over the list.</para>
+      <para id="x_W8">Once again, this idiom is so common that the
+	Prelude defines a function, <function>filter</function>, which
+	we have already introduced.  It removes the need for
+	boilerplate code to recurse over the list.</para>
 
       &ch05.filter.ghci:filter;
 
-      <para id="x_X8">The <function>filter</function> function takes a predicate
-	(a function that tests an argument and returns a
-	<type>Bool</type>) and applies it to every element in its
-	input list, returning a list of only those for which the
-	predicate evaluates to <code>True</code>.</para>
-
-      <para id="x_Y8">We'll be discussing <function>filter</function> again
-	soon, in <xref linkend="fp.foldr.filter"/>.</para>
+      <para id="x_X8">The <function>filter</function> function takes a
+	predicate and applies it to every element in its input list,
+	returning a list of only those for which the predicate
+	evaluates to <code>True</code>.  We'll revisit
+	<function>filter</function> again soon, in <xref
+	  linkend="fp.foldr.filter"/>.</para>
     </sect2>
 
     <sect2>
       <title>Computing one answer over a collection</title>
 
-      <para id="x_Z8">Another common thing to do with a loop is to <quote>fold
-	  it up</quote>.  A simple example of this is summing the
-	values of a list.</para>
+      <para id="x_Z8">Another common thing to do with a collection is
+	reduce it to a single value.  A simple example of this is
+	summing the values of a list.</para>
 
       &Sum.hs:mySum;
 
@@ -952,40 +1106,47 @@
 	all input bytes, plus one.  The second is the sum of all
 	intermediate values of the first checksum.  In each case, the
 	sums are computed modulo 65521.  Here's a straightforward,
-	unoptimised Java implementation.</para>
+	unoptimised Java implementation.  (It's safe to skip it if you
+	don't read Java.)</para>
 
       &Adler32.java:Adler32;
 
-      <para id="x_c8">Although Adler-32 is a simple checksum, this code isn't
-	particularly easy to read on account of the bit-twiddling
-	involved.  Can we do any better with a Haskell
+      <para id="x_c8">Although Adler-32 is a simple checksum, this
+	code isn't particularly easy to read on account of the
+	bit-twiddling involved.  Can we do any better with a Haskell
 	implementation?</para>
 
       &Adler32.hs:adler32;
 
-      <para id="x_d8">This code isn't exactly easier to follow than the Java code,
-	but let's look at what's going on.  Once again,
-	<function>helper</function> function is tail recursive.  We've
-	turned the two variables we updated on every loop iteration in
-	Java into accumulator parameters.  When our recursion
-	terminates on the end of the input list, we compute our
-	checksum and return it.</para>
+      <para id="x_d8">This code isn't exactly easier to follow than
+	the Java code, but let's look at what's going on.  First of
+	all, we've introduced some new functions.  The
+	<function>shiftL</function> function implements a logical
+	shift left; <function>(.&amp;.)</function> provides bitwise
+	<quote>and</quote>; and <function>(.|.)</function> provides
+	bitwise <quote>or</quote>.</para>
 
-      <para id="x_e8">If we take a step back, we can restructure our Haskell
-	<function>adler32</function> to more closely resemble our
-	earlier <function>mySum</function> function.  Instead of two
-	accumulator parameters, we can use a single accumulator that's
-	a two-tuple.</para>
+      <para>Once again, our <function>helper</function> function is
+	tail recursive.  We've turned the two variables we updated on
+	every loop iteration in Java into accumulator parameters.
+	When our recursion terminates on the end of the input list, we
+	compute our checksum and return it.</para>
+
+      <para id="x_e8">If we take a step back, we can restructure our
+	Haskell <function>adler32</function> to more closely resemble
+	our earlier <function>mySum</function> function.  Instead of
+	two accumulator parameters, we can use a pair as the
+	accumulator.</para>
 
       &Adler32.hs:adler32_try2;
 
-      <para id="x_f8">Why would we want to make this seemingly meaningless
-	structural change?  Because as we've already seen with
-	<function>map</function> and <function>filter</function>, we
-	can extract the common behaviour shared by
+      <para id="x_f8">Why would we want to make this seemingly
+	meaningless structural change?  Because as we've already seen
+	with <function>map</function> and <function>filter</function>,
+	we can extract the common behavior shared by
 	<function>mySum</function> and
 	<function>adler32_try2</function> into a higher-order
-	function.  We can describe this behaviour as <quote>do
+	function.  We can describe this behavior as <quote>do
 	  something to every element of a list, updating an
 	  accumulator as we go, and returning the accumulator when
 	  we're done</quote>.</para>
@@ -1004,8 +1165,8 @@
       &Fold.hs:foldl;
 
       <para id="x_h8">The <function>foldl</function> function takes a
-	<quote>stepper</quote> function, an initial value for its
-	accumulator, and a list.  The <quote>stepper</quote> takes an
+	<quote>step</quote> function, an initial value for its
+	accumulator, and a list.  The <quote>step</quote> takes an
 	accumulator and an element from the list, and returns a new
 	accumulator value. All <function>foldl</function> does is call
 	the <quote>stepper</quote> on the current accumulator and an
@@ -1028,7 +1189,7 @@
 
       &Sum.hs:niceSum;
 
-      <para id="x_k8">Notice how much simpler this code is than our `
+      <para id="x_k8">Notice how much simpler this code is than our
 	original <function>mySum</function>?  We're no longer using
 	explicit recursion, because <function>foldl</function> takes
 	care of that for us.  We've simplified our problem down to two
@@ -1040,18 +1201,18 @@
 
       <para id="x_WL">Let's take a deeper look at what
 	<function>foldl</function> is doing here, by manually writing
-	out each step in the evaluation of <code>step</code> function
-	when we call <code>niceSum [1,2,3]</code>.</para>
+	out each step in its evaluation when we call <code>niceSum
+	  [1,2,3]</code>.</para>
 
       &Fold.hs:foldl.expand;
 
-      <para id="x_l8">We can rewrite <function>adler32_try2</function> in a
-	similar way, using <function>foldl</function> to let us focus
-	on the details that are important.</para>
+      <para id="x_l8">We can rewrite <function>adler32_try2</function>
+	using <function>foldl</function> to let us focus on the
+	details that are important.</para>
 
       &Adler32.hs:adler32_foldl;
 
-      <para id="x_m8">Here, our accumulator is a two-tuple, so the result of
+      <para id="x_m8">Here, our accumulator is a pair, so the result of
 	<function>foldl</function> will be, too. We pull the final
 	accumulator apart when <function>foldl</function> returns, and
 	bit-twiddle it into a <quote>proper</quote> checksum.</para>
@@ -1065,83 +1226,30 @@
 	than <function>adler32_try2</function>.  Why should we use a
 	fold in this case?  The advantage here lies in the fact that
 	folds are extremely common in Haskell, and they have regular,
-	predictable behaviour.</para>
+	predictable behavior.</para>
 
-      <para id="x_o8">This means that a reader with a little experience will
-	have an easier time understanding a function that uses a fold
-	than one that uses explicit recursion.  Where a fold isn't
-	going to produce any surprises, the behaviour of a function
+      <para id="x_o8">This means that a reader with a little
+	experience will have an easier time understanding a use of a
+	fold than code that uses explicit recursion.  A fold isn't
+	going to produce any surprises, but the behavior of a function
 	that recurses explicitly isn't immediately obvious.  Explicit
 	recursion requires us to read closely to understand exactly
 	what's going on.</para>
 
-      <para id="x_p8">This line of reasoning applies to other higher-order
-	library functions, including those we've already seen,
-	<function>map</function> and <function>filter</function>.
-	Because they're library functions with well-defined behaviour,
-	we only need to learn what they do once, and we'll have an
-	advantage when we need to understand any code that uses
-	them.</para>
-    </sect2>
-
-    <sect2>
-      <title>Avoiding multiple traversals of a list</title>
-
-      <para id="x_q8">From looking at <function>adler32_foldl</function>, we
-	know that we can accumulate more than one value at a time when
-	we fold over a list.  Here's another use for a fold:
-	optimising code by avoiding multiple traversals of a
-	list.</para>
-
-      <para id="x_r8">Let's consider the problem of finding the root mean square
-	of a list of numbers: compute the sum of the squares of every
-	element in the list, divide by its length, then compute the
-	square root of that number.  In an imperative language like C,
-	we wouldn't even think twice about writing code like
-	this.</para>
-
-      &rms.c:rootMeanSquare;
-
-      <para id="x_s8">Clearly, we're looping over the list just once, updating
-	the accumulator values <varname>mean_square</varname> and
-	<varname>length</varname> as we go.</para>
-
-      <para id="x_t8">Meanwhile, over in functional programming land, the
-	temptation is strong to turn our verbal description of the
-	root mean square into code.</para>
-
-      &rms.hs:rootMeanSquare;
-
-      <para id="x_u8">This is a lovely, compact translation of the verbal
-	description.  It even uses our new friend, the
-	<function>map</function> function, to make the code clearer by
-	avoiding explicit recursion, but it's not necessarily good
-	code.  The calls to <function>map</function> and
-	<function>length</function> are each going to traverse the
-	input list once.</para>
-
-      <para id="x_v8">On a small list, the cost of traversing it twice obviously
-	won't matter, but on a big list, we're likely to notice. We
-	can use a fold to avoid this need to traverse the list
-	twice.</para>
-
-      &rms.hs:rootMeanSquare_foldl;
-
-      <para id="x_w8">Clearly, this code isn't as readable as the earlier
-	version that used <function>map</function> and
-	<function>length</function>.  Which version should we prefer?
-	It's often best to start out by writing the most readable
-	code, since we can make that correct most quickly, and put off
-	worrying about transforming it into something faster until
-	much later, when we have profiling data for our program.  Only
-	if those numbers indicate a performance problem should we
-	worry about stepping back in and transforming our code.  We'll
-	have much more to say about profiling, performance, and
-	optimisation later, in chapter XXX.</para>
+      <para id="x_p8">This line of reasoning applies to other
+	higher-order library functions, including those we've already
+	seen, <function>map</function> and
+	<function>filter</function>. Because they're library functions
+	with well-defined behavior, we only need to learn what they do
+	once, and we'll have an advantage when we need to understand
+	any code that uses them.  These improvements in readability
+	also carry over to writing code.  Once we start to think with
+	higher order functions in mind, we'll produce concise code
+	more quickly.</para>
     </sect2>
 
     <sect2 id="fp.foldr.filter">
-      <title>Folding from the right and primitive recursion</title>
+      <title>Folding from the right</title>
 
       <para id="x_x8">The counterpart to <function>foldl</function> is
 	<function>foldr</function>, which folds from the right of a
@@ -1156,19 +1264,20 @@
 
       &Fold.hs:foldr.expand;
 
-      <para id="x_YL">The difference between <function>foldl</function> and
-	<function>foldr</function> should be clear from looking at
-	where the parentheses and the <quote>empty list</quote>
-	elements show up.  With <function>foldl</function>, the empty
-	list element is on the left, and all the parentheses group to
-	the left.  With <function>foldr</function>, the empty list
-	element is on the right, and the parentheses group to the
+      <para id="x_YL">The difference between
+	<function>foldl</function> and <function>foldr</function>
+	should be clear from looking at where the parentheses and the
+	<quote>empty list</quote> elements show up.  With
+	<function>foldl</function>, the empty list element is on the
+	left, and all the parentheses group to the left.  With
+	<function>foldr</function>, the <varname>zero</varname> value
+	is on the right, and the parentheses group to the
 	right.</para>
 
-      <para id="x_ZL">In fact, there's a lovely intuitive explanation of how
+      <para id="x_ZL">There is a lovely intuitive explanation of how
 	<function>foldr</function> works: it replaces the empty list
-	with the empty list element, and every constructor in the list
-	with an application of the step function.</para>
+	with the <varname>zero</varname> value, and every constructor
+	in the list with an application of the step function.</para>
 
       &Fold.hs:foldr.sub;
 
@@ -1189,7 +1298,7 @@
       &Fold.hs:myFilter;
 
       <para id="x_A9">This is the sort of definition that could cause us a
-	headache, so let's examine it a little depth.  Like
+	headache, so let's examine it in a little depth.  Like
 	<function>foldl</function>, <function>foldr</function> takes a
 	function and a base case (what to do when the input list is
 	empty) as arguments.  From reading the type of
@@ -1224,31 +1333,21 @@
       <tip>
 	<title>Understanding foldl in terms of foldr</title>
 
-	<para id="x_E9">If you want to understand the definition of
-	  <function>foldl</function> using <function>foldr</function>,
-	  it's best to have the following tools at hand: some headache
-	  pills, a glass of water, &ghci; (so you can find out what
-	  the <function>id</function> function does), and a pencil and
+	<para id="x_E9">If you want to set yourself a solid challenge,
+	  try to follow the above definition of
+	  <function>foldl</function> using <function>foldr</function>.
+	  Be warned: this is not trivial!  You might want to have the
+	  following tools at hand: some headache pills and a glass of
+	  water, &ghci; (so that you can find out what the
+	  <function>id</function> function does), and a pencil and
 	  paper.</para>
 
-	<para id="x_aL">All you'll need to do is follow the same manual
-	  evaluation steps as we did to see what
+	<para id="x_aL">You will want to follow the same manual
+	  evaluation process as we outlined above to see what
 	  <function>foldl</function> and <function>foldr</function>
-	  were really doing.</para>
+	  were really doing.  If you get stuck, you may find the task
+	  easier after reading <xref linkend="fp.partialapp"/>.</para>
       </tip>
-
-      <para id="x_F9">While we can write <function>foldl</function> in terms of
-	<function>foldr</function>, we can't do the converse:
-	<function>foldr</function> is <quote>more basic</quote> than
-	<function>foldl</function>.  This should make it clearer why
-	we call functions written with <function>foldr</function>
-	primitive recursive.</para>
-
-      <para id="x_G9">(By the way, don't feel like you have to go to special
-	lengths to remember the term <quote>primitive
-	  recursive</quote>.  It's just useful to remember that you
-	read about it somewhere, and that it has something to do with
-	<function>foldr</function>.)</para>
 
       <para id="x_H9">Returning to our earlier intuitive explanation
 	of what <function>foldr</function> does, another useful way to
@@ -1269,9 +1368,9 @@
 
       &fold.ghci:identity;
 
-      <para id="x_K9">If <function>foldr</function> replaces the end of a list
-	with some other value, this gives us an easy way to think
-	about Haskell's list append function,
+      <para id="x_K9">If <function>foldr</function> replaces the end
+	of a list with some other value, this gives us another way to
+	look at Haskell's list append function,
 	<function>(++)</function>.</para>
 
       &fold.ghci:append.builtin;
@@ -1286,28 +1385,87 @@
 
       &fold.ghci:append;
 
-      <para id="x_bL">Here, we're replacing each list constructor with another
-	list constructor, but we're replacing the empty list with the
+      <para id="x_bL">Here, we replace each list constructor with another
+	list constructor, but we replace the empty list with the
 	list we want to append onto the end of our first list.</para>
 
-      <para id="x_P9">As our extended treatment of folds should indicate, the
-	<function>foldr</function> function is nearly as important a
-	member of our list-programming toolbox as the more basic list
-	functions we saw in <xref
-	  linkend="fp.lists"/>.</para>
+      <para id="x_P9">As our extended treatment of folds should
+	indicate, the <function>foldr</function> function is nearly as
+	important a member of our list-programming toolbox as the more
+	basic list functions we saw in <xref
+	  linkend="fp.lists"/>. It can consume and produce a list
+	incrementally, which makes it useful for writing lazy data
+	processing code.</para>
     </sect2>
 
     <sect2>
-      <title>A final note about foldl</title>
+      <title>Left folds, laziness, and space leaks</title>
 
       <para id="x_Q9">To keep our initial discussion simple, we used
 	<function>foldl</function> throughout most of this section.
-	However, any time you want to fold from the left in practice,
-	use <function>foldl'</function> from the
-	<code>Data.List</code> module instead, because it's more
-	efficient.  You should take this on faith for now; we'll
-	explain why you should avoid plain <function>foldl</function>
-	in normal use in section XXX.</para>
+	This is convenient for testing, but we will never use
+	<function>foldl</function> in practice.</para>
+
+      <para>The reason has to do with Haskell's non-strict evaluation.
+	If we apply <code>foldl (+) [1,2,3]</code>, it evaluates to
+	the expression <code>(((0 + 1) + 2) + 3)</code>.  We can see
+	this occur if we revisit the way in which the function gets
+	expanded.</para>
+
+      &Fold.hs:foldl.expand.noid;
+
+      <para>The final expression will not be evaluated to
+	<code>6</code> until its value is demanded.  Before it is
+	evaluated, it must be stored as a thunk.  Not surprisingly, a
+	thunk is more expensive to store than a single number, and the
+	more complex the thunked expression, the more space it needs.
+	For something cheap like arithmetic, thunking an expresion is
+	more computationally expensive than evaluating it immediately.
+	We thus end up paying both in space and in time.</para>
+
+      <para>When &GHC; is evaluating a thunked expression, it uses an
+	internal stack to do so.  Because a thunked expression could
+	potentially be infinitely large, &GHC; places a fixed limit on
+	the maximum size of this stack.  Thanks to this limit, we can
+	try a large thunked expression in &ghci; without needing to
+	worry that it might consume all of memory.</para>
+
+      &thunky.ghci:sum;
+
+      <para>From looking at the expansion above, we can surmise that
+	this creates a thunk that consists of 1000 integers and 999
+	applications of <function>(+)</function>.  That's a lot of
+	memory and effort to represent a single number! With a larger
+	expression, although the size is still modest, the results are
+	more dramatic.</para>
+	
+      &thunky.ghci:overflow;
+
+      <para>On small expressions, <function>foldl</function> will work
+	correctly but slowly, due to the thunking overhead that it
+	incurs. We refer to this invisible thunking as a
+	<emphasis>space leak</emphasis>, because our code is operating
+	normally, but using far more memory than it should.</para>
+
+      <para>On larger expressions, code with a space leak will simply
+	fail, as above.  A space leak with <code>foldl</code> is a
+	classic roadblock for new Haskell programmers. Fortunately,
+	this is easy to avoid.</para>
+
+      <para>The <code>Data.List</code> module defines a function named
+	<function>foldl'</function> that is similar to
+	<function>foldl</function>, but does not build up thunks.  The
+	difference in behavior between the two is immediately
+	obvious.</para>
+
+      &thunky.ghci:strict;
+
+      <para>Due to the thunking behavior of
+	<function>foldl</function>, it is wise to avoid this function
+	in real programs: even if it doesn't fail outright, it will be
+	unnecessarily inefficient. Instead, import
+	<code>Data.List</code> and use
+	<function>foldl'</function>.</para>
     </sect2>
 
     <sect2 id="fp.fold.exercises">
@@ -1362,14 +1520,9 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x_X9">The Prelude function <function>takeWhile</function>
-	      has the following type.</para>
-
-	    &ch05.exercises.hs:takeWhile;
-
-	    <para id="x_Y9">Use &ghci; to figure out what
-	      <function>takeWhile</function> does.  Write your own
-	      definitions, first using explicit recursion, then
+	    <para id="x_X9">Write your own definition of the standard
+	      <function>takeWhile</function> function, first using
+	      explicit recursion, then
 	      <function>foldr</function>.</para>
 	  </question>
 	</qandaentry>
@@ -1390,8 +1543,22 @@
 
 	<qandaentry>
 	  <question>
-	    <para id="x_b9">How many of the following standard prelude functions
-	      can you rewrite using list folds?</para>
+	    <para id="x_b9">How many of the following Prelude
+	      functions can you rewrite using list folds?</para>
+
+	    <itemizedlist>
+	      <listitem>
+		<para><function>any</function></para>
+		<para><function>cycle</function></para>
+		<para><function>words</function></para>
+		<para><function>unlines</function></para>
+	      </listitem>
+	    </itemizedlist>
+
+	    <para>For those functions where you can use either
+	      <function>foldl'</function> or
+	      <function>foldr</function>, which is more
+	      appropriate in each case?</para>
 	  </question>
 	</qandaentry>
       </qandaset>
@@ -1416,13 +1583,19 @@
 
     &Partial.hs:isInAny;
 
-    <para id="x_e9">Haskell lets us write completely anonymous functions, which
-      we can use to avoid the need to give names to our helper
-      functions.  Anonymous functions are often called
+    <para id="x_e9">Haskell lets us write completely anonymous
+      functions, which we can use to avoid the need to give names to
+      our helper functions.  Anonymous functions are often called
       <quote>lambda</quote> functions, in a nod to their heritage in
       the lambda calculus.  We introduce an anonymous function with a
-      backslash character, <code>\</code>.  This is followed by the
-      function's arguments (which can include patterns), then an arrow
+      backslash character, <code>\</code>, pronounced <emphasis>lambda</emphasis><footnote>
+	<para>The backslash was chosen for its visual
+	  resemblance to the Greek letter lambda,
+	  <code>&#x03bb;</code>.  Although &GHC; can accept Unicode
+	  input, it correctly treats <code>&#x03bb;</code> as a
+	  letter, not as a synonym for <code>\</code>.</para>
+      </footnote>.  This is followed by the function's
+      arguments (which can include patterns), then an arrow
       <code>-&gt;</code> to introduce the function's body.</para>
 
     <para id="x_f9">Lambdas are most easily illustrated by example.  Here's a
@@ -1434,12 +1607,12 @@
     <para id="x_g9">We've wrapped the lambda in parentheses here so that Haskell
       can tell where the function body ends.</para>
 
-    <para id="x_h9">Anonymous functions behave in every respect identically to
-      functions that have names, but Haskell places a few important on
-      how we can define them.  Most importantly, whereas we can write
-      a normal function using multiple clauses containing different
-      patterns and guards, a lambda can only have a single clause in
-      its definition.</para>
+    <para id="x_h9">Anonymous functions behave in every respect
+      identically to functions that have names, but Haskell places a
+      few important restrictions on how we can define them.  Most
+      importantly, while we can write a normal function using
+      multiple clauses containing different patterns and guards, a
+      lambda can only have a single clause in its definition.</para>
 
     <para id="x_i9">The limitation to a single clause restricts how we can use
       patterns in the definition of a lambda.  We'll usually write a
@@ -1449,7 +1622,7 @@
     &Lambda.hs:safeHead;
 
     <para id="x_j9">But as we can't write multiple clauses to define a lambda,
-      we have to be sure that any patterns we use will match.</para>
+      we must be certain that any patterns we use will match.</para>
 
     &Lambda.hs:unsafeHead;
 
@@ -1485,14 +1658,6 @@
       function.  Don't know what a partially applied function is yet?
       Read on!</para>
 
-    <para id="x_cL">A lambda has two other disadvantages: it is both less
-      expressive and more brittle than a top-level or local function.
-      We can use patterns in the parameters of a lambda, but we can't
-      use guards, and we can't define a lambda using a series of
-      equations.  If any pattern on the left hand side of a lambda
-      fails to match, we'll get a runtime pattern matching
-      error.</para>
-
     <para id="x_dL">We don't intend these caveats to suggest that lambdas are
       useless, merely that we ought to be mindful of the potential
       pitfalls when we're thinking of using them.  In later chapters,
@@ -1503,37 +1668,38 @@
   <sect1 id="fp.partialapp">
     <title>Partial function application and currying</title>
 
-    <para id="x_o9">In Haskell, a single piece of syntax doesn't often get
-      pressed into use for multiple tasks.  So why does the
-      <code>-&gt;</code> arrow get used for what looks like two
-      purposes in the type signature of a function?</para>
+    <para id="x_o9">You may wonder why the <code>-&gt;</code> arrow is
+      used for what seems to be two purposes in the type signature of
+      a function.</para>
 
     &ch05.list.ghci:dropWhile;
 
-    <para id="x_p9">It looks like the <code>-&gt;</code> is separating the
-      arguments to <function>dropWhile</function> from each other, but
-      also that it separates the arguments from the return type.  But
-      in fact <function>-&gt;</function> has only one meaning: it
+    <para id="x_p9">It looks like the <code>-&gt;</code> is separating
+      the arguments to <function>dropWhile</function> from each other,
+      but that it also separates the arguments from the return type.
+      But in fact <function>-&gt;</function> has only one meaning: it
       denotes a function that takes an argument of the type on the
       left, and returns a value of the type on the right.</para>
 
-    <para id="x_q9">The implication here is that in Haskell, all functions take
-      only one argument.  While <function>dropWhile</function>
+    <para id="x_q9">The implication here is very important: in
+      Haskell, <emphasis>all functions take only one
+	argument</emphasis>. While <function>dropWhile</function>
       <emphasis>looks</emphasis> like a function that takes two
-      arguments, it only takes one.  Here's a perfectly valid Haskell
-      expression.</para>
+      arguments, it is actually a function of one argument, which
+      returns a function that takes one argument. Here's a perfectly
+      valid Haskell expression.</para>
 
     &ch05.list.ghci:dropWhile.isSpace;
 
-    <para id="x_r9">What type does it have, and what does it do?</para>
+    <para id="x_s9">Well, <emphasis>that</emphasis> looks useful.  The
+      value <code>dropWhile isSpace</code> is a function that strips
+      leading white space from a string.  How is this useful?  As one
+      example, we can use it as an argument to a higher order
+      function.</para>
 
-    &ch05.list.ghci:dropWhile.isSpace.type;
-    
-    <para id="x_s9">Well, <emphasis>that</emphasis> looks useful.  The value
-      <code>dropWhile isSpace</code> is a function that strips leading
-      white space from a string.</para>
+    &ch05.list.ghci:dropWhile.isSpace.use;
 
-    <para id="x_t9">Every time we give an argument to a function, we can
+    <para id="x_t9">Every time we supply an argument to a function, we can
       <quote>chop</quote> an element off the front of its type
       signature.  Let's take <function>zip3</function> as an example
       to see what we mean; this is a function that zips three lists
@@ -1541,11 +1707,10 @@
 
     &ch05.list.ghci:zip3;
 
-    <para id="x_u9">If we call <function>zip3</function> with just one argument,
-      we get a function that accepts two arguments, where the first
-      argument is now <emphasis>fixed</emphasis>.  No matter what
-      second or third arguments we pass, the first argument to this
-      new function will always be the fixed value we already
+    <para id="x_u9">If we apply <function>zip3</function> with just
+      one argument, we get a function that accepts two arguments.  No
+      matter what arguments we supply to this compound function, its
+      first argument will always be the fixed value we
       specified.</para>
 
     &ch05.list.ghci:zip3foo;
@@ -1558,20 +1723,20 @@
     <para id="x_w9">In the example above, we have a partially applied function,
       <code>zip3 "foo"</code>, and a new function,
       <function>zip3foo</function>.  We can see that the type
-      signatures of the two and their behaviour are identical.</para>
+      signatures of the two and their behavior are identical.</para>
 
     <para id="x_x9">This applies just as well if we fix two arguments, giving us
       a function of just one argument.</para>
 
     &ch05.list.ghci:zip3foobar;
 
-    <para id="x_y9">Partial function application lets us avoid writing tiresome
-      throwaway functions.  It's generally a lot better for this
+    <para id="x_y9">Partial function application lets us avoid writing
+      tiresome throwaway functions.  It's often more useful for this
       purpose than the anonymous functions we introduced in <xref
 	linkend="fp.anonymous"/>.  Looking back at the
       <function>isInAny</function> function we defined there, here's
-      how we'd write it to use a partially applied function instead of
-      a named helper function or a lambda.</para>
+      how we'd use a partially applied function instead of a named
+      helper function or a lambda.</para>
 
     &Partial.hs:isInAny3;
 
@@ -1580,20 +1745,24 @@
       <function>isInfixOf</function>, and <quote>fixing</quote> its
       first argument to be the <varname>needle</varname> variable from
       our parameter list.  This gives us a partially applied function
-      that has exactly the same type and behaviour as the helper and
+      that has exactly the same type and behavior as the helper and
       lambda in our earlier definitions.</para>
+
+    <para>Partial function application is named
+      <emphasis>currying</emphasis>, after the logician Haskell
+      Curry (for whom the Haskell language is named).</para>
 
     <para id="x_eL">As another example of currying in use, let's return to the
       list-summing function we wrote in <xref
 	linkend="fp.foldl"/>.</para>
 
-      &Sum.hs:niceSum.noid;
+    &Sum.hs:niceSum.noid;
 
-    <para id="x_fL">We don't need to fully apply <function>foldl</function>; we
-      can omit the list <varname>xs</varname> from both the parameter
-      list and the parameters to <function>foldl</function>, and we'll
-      end up with a more compact function that has the same
-      type.</para>
+    <para id="x_fL">We don't need to fully apply
+      <function>foldl</function>; we can omit the list
+      <varname>xs</varname> from both the parameter list and the
+      parameters to <function>foldl</function>, and we'll end up with
+      a more compact function that has the same type.</para>
 
     &Sum.hs:nicerSum;
 
@@ -1601,7 +1770,7 @@
       <title>Sections</title>
 
       <para id="x_AA">Haskell provides a handy notational shortcut to let us
-	write partially applied functions using infix operators.  If
+	write a partially applied function in infix style.  If
 	we enclose an operator in parentheses, we can supply its left
 	or right argument inside the parentheses to get a partially
 	applied function.  This kind of partial application is called
@@ -1625,30 +1794,36 @@
 
       &partial.ghci:lower.letter;
 
-      <para id="x_EA">Using this as an argument to <function>any</function>, we
-	get a function that checks an entire string to see if it's all
-	lowercase.</para>
+      <para id="x_EA">Using this as an argument to
+	<function>all</function>, we get a function that checks an
+	entire string to see if it's all lowercase.</para>
 
       &partial.ghci:lower.string;
+
+      <para>If we use this style, we can further improve the
+	readability of our earlier <function>isInAny3</function>
+	function.</para>
+
+      &Partial.hs:isInAny4;
+
     </sect2>
   </sect1>
 
   <sect1 id="fp.aspattern">
-    <title>As-patterns and function composition</title>
+    <title>As-patterns</title>
 
-    <para id="x_FA">Haskell's <function>tails</function> function, in the
-      <code>Data.List</code> module, generalises the
-      <function>tail</function> function we introduced earlier.  It
-      successively applies <function>tail</function> to its input,
-      then calls itself on the result, until there's nothing
-      left.</para>
+    <para id="x_FA">Haskell's <function>tails</function> function, in
+      the <code>Data.List</code> module, generalises the
+      <function>tail</function> function we introduced earlier.
+      Instead of returning one <quote>tail</quote> of a list, it
+      returns <emphasis>all</emphasis> of them.</para>
 
     &suffix.ghci:tails;
 
     <para id="x_GA">Each of these strings is a <emphasis>suffix</emphasis> of
       the initial string, so <function>tails</function> produces a
       list of all suffixes, plus an extra empty list at the
-      end.  In fact, it always produces that extra empty list, even
+      end.  It always produces that extra empty list, even
       when its input list is empty.</para>
 
     &suffix.ghci:tails.empty;
@@ -1656,188 +1831,215 @@
     <para id="x_HA">What if we want a function that behaves like
       <function>tails</function>, but which <emphasis>only</emphasis>
       returns the non-empty suffixes?  One possibility would be for us
-      to write our own version by hand.</para>
+      to write our own version by hand.  We'll use a new piece of
+      notation, the <code>@</code> symbol.</para>
 
     &SuffixTree.hs:suffixes;
 
-    <para id="x_IA">Let's try out that definition.</para>
+    <para id="x_JA">The pattern <code>xs@(_:xs')</code> is called an
+      <emphasis>as-pattern</emphasis>, and it means <quote>bind the
+	variable <varname>xs</varname> to the value that matches the
+	right side of the <code>@</code> symbol</quote>.</para>
+
+    <para id="x_KA">In our example, if the pattern after the
+      <quote>@</quote> matches, <varname>xs</varname> will be bound to
+      the entire list that matched, and <varname>xs'</varname> to all
+      but the head of the list (we used the wild card <code>_</code>
+      pattern to indicate that we're not interested in the value of
+      the head of the list).</para>
 
     &suffix.ghci:suffixes;
 
-    <sect2>
-      <title>Where did that at-sign come from?</title>
+    <para id="x_LA">The as-pattern makes our code more readable. To
+      see how it helps, let us compare a definition that lacks an
+      as-pattern.</para>
 
-      <para id="x_JA">You may have noticed the funny-looking pattern
-	<code>xs@(_:xs')</code> in our definition of
-	<function>suffixes</function>.  This is called an
-	<emphasis>as-pattern</emphasis>, and it means <quote>bind the
-	  variable <varname>xs</varname> to the expression in the
-	  matched pattern <code>(_:xs')</code></quote>.</para>
-
-      <para id="x_KA">In this case, if the pattern after the <quote>@</quote>
-	matches, <varname>xs</varname> will be bound to the entire
-	list that matched, and <varname>xs'</varname> to the rest of
-	the list (we used the wild card <code>_</code> pattern to
-	indicate that we're not interested in the value of the head of
-	the list).</para>
-
-      <para id="x_LA">Let's look at a second definition of the
-	<function>suffixes</function> function, only this time without
-	using an as-pattern.</para>
-
-      &SuffixTree.hs:noisier;
+      &SuffixTree.hs:noAsPattern;
 
       <para id="x_MA">Here, the list that we've deconstructed in the pattern
 	match just gets put right back together in the body of the
-	function.  The as-pattern makes the code more readable by
-	letting us avoid the need to repeat ourselves.</para>
+	function.</para>
 
-      <note>
-	<title>As-patterns are not just for readability</title>
+    <para id="x_NA">As-patterns have a more practical use than simple
+      readability: they can help us to share data instead of copying
+      it.  In our definition of <function>noAsPattern</function>, when
+      we match <code>(x:xs)</code>, we construct a new copy of it in
+      the body of our function.  This causes us to allocate a new
+      list node at run time.  That may be cheap, but it isn't free.
+      In contrast, when we defined <function>suffixes</function>, we
+      reused the value <varname>xs</varname> that we matched with our
+      as-pattern.  Since we reuse an existing value, we avoid a little
+      allocation.</para>
+  </sect1>
 
-	<para id="x_NA">Not only can as-patterns reduce the clutter in our code;
-	  they can help it to execute more efficiently, too.  Since we
-	  don't have much of a mental model for thinking about
-	  evaluation and efficiency yet, we'll return to this topic
-	  later, in XXX.</para>
-      </note>
-    </sect2>
+  <sect1 id="fp.compose">
+    <title>Code reuse through composition</title>
 
-    <sect2 id="fp.aspattern.codereuse">
-      <title>Code reuse</title>
+    <para id="x_OA">It seems a shame to introduce a new function,
+      <function>suffixes</function>, that does almost the same thing
+      as the existing <function>tails</function> function.  Surely we
+      can do better?</para>
 
-      <para id="x_OA">It seems a shame to introduce a new function,
-	<function>suffixes</function>, that does almost the same thing
-	as the existing <function>tails</function> function.  Surely
-	we can do better?</para>
+    <para id="x_PA">Recall the <function>init</function> function we
+      introduced in <xref linkend="fp.lists"/>: it returns all but
+      the last element of a list.</para>
 
-      <para id="x_PA">Remember the <function>init</function> function we
-	introduced in <xref linkend="fp.lists"/>?</para>
+    &SuffixTree.hs:suffixes2;
 
-      &SuffixTree.hs:suffixes2;
+    <para id="x_QA">This <function>suffixes2</function> function
+      behaves identically to <function>suffixes</function>, but it's a
+      single line of code.</para>
 
-      <para id="x_QA">The <function>suffixes2</function> function behaves
-	identically to <function>suffixes</function>, but it's a
-	single line of code.</para>
+    &suffix.ghci:suffixes2;
 
-      &suffix.ghci:suffixes2;
+    <para id="x_RA">If we take a step back, we see the glimmer of a
+      pattern here: we're applying a function, then applying another
+      function to its result.  Let's turn that pattern into a function
+      definition.</para>
 
-      <para id="x_RA">If we take a step back, we see the glimmer of a pattern
-	here: we're calling a function, then applying another function
-	to its result.  Let's turn that pattern into a function
-	definition.</para>
+    &SuffixTree.hs:compose;
 
-      &SuffixTree.hs:compose;
+    <para id="x_SA">We now have a function,
+      <function>compose</function>, that we can use to
+      <quote>glue</quote> two other functions together.</para>
 
-      <para id="x_SA">We now have a function, <function>compose</function>, that
-	we can use to <quote>glue</quote> two other functions
-	together.</para>
+    &SuffixTree.hs:suffixes3;
 
-      &SuffixTree.hs:suffixes3;
+    <para id="x_TA">Haskell's automatic currying lets us drop the
+      <varname>xs</varname> variable, so we can make our definition
+      even shorter.</para>
 
-      <para id="x_TA">As Haskell's automatic currying lets us drop the
-	<varname>xs</varname> variable, we can make our definition
-	even shorter.</para>
+    &SuffixTree.hs:suffixes4;
 
-      &SuffixTree.hs:suffixes4;
+    <para id="x_UA">Fortunately, we don't need to write our own
+      <function>compose</function> function.  Plugging functions into
+      each other like this is so common that the Prelude provides
+      function composition via the <function>(.)</function>
+      operator.</para>
 
-      <para id="x_UA">Fortunately, we don't need to write our own
-	<function>compose</function> function.  Plugging functions
-	into each other like this is so common that Haskell's prelude
-	provides the <function>(.)</function> operator to denote
-	function composition.</para>
+    &SuffixTree.hs:suffixes5;
 
-      &SuffixTree.hs:suffixes5;
+    <para id="x_VA">The <function>(.)</function> operator isn't a
+      special piece of language syntax; it's just a normal
+      operator.</para>
 
-      <para id="x_VA">The <function>(.)</function> operator isn't a special
-	piece of language syntax; it's just a normal operator.</para>
+    &suffix.ghci:types;
 
-      &suffix.ghci:types;
+    <para id="x_WA">We can create new functions at any time by writing
+      chains of composed functions, stitched together with
+      <function>(.)</function>, so long (of course) as the result type
+      of the function on the right of each <function>(.)</function>
+      matches the type of parameter that the function on the left can
+      accept.</para>
 
-      <para id="x_WA">We can create new functions at any time by writing chains
-	of composed functions, stitched together with
-	<function>(.)</function>, so long (of course) as the result
-	type of the function on the right of each
-	<function>(.)</function> matches the type of parameter that
-	the function on the left can accept.</para>
+    <para>As an example, let's solve a simple puzzle: counting the
+      number of words in a string that begin with a capital
+      letter.</para>
 
-      &suffix.ghci:dotty;
+    &suffix.ghci:dotty;
 
-      <para id="x_XA">Here's an example drawn from a piece of code I wrote the
-	day before I started on this section.  I wanted to get a list
-	of C preprocessor definitions from a header file shipped with
-	<code>libpcap</code>, a popular network packet filtering
-	library.</para>
+    <para>We can understand what this composed function does by
+      examining its pieces.  The <function>(.)</function> function is
+      right associative, so we will proceed from right to left.</para>
+
+    &suffix.ghci:words.type;
+
+    <para>The <function>words</function> function has a result type of
+      <type>[String]</type>, so whatever is on the left side of
+      <function>(.)</function> must accept a compatible
+      argument.</para>
+
+    &suffix.ghci:capped.type;
+
+    <para>This function returns <code>True</code> if a word begins
+      with a capital letter (try it in &ghci;), so <code>filter
+	(isUpper . head)</code> returns a list of <type>String</type>s
+      containing only words that begin with capital letters.</para>
+
+    &suffix.ghci:capfilt.type;
+
+    <para>Since this expression returns a list, all that remains is
+      calculate the length of the list, which we do with another
+      composition.</para>
+
+    <para id="x_XA">Here's another example, drawn from a real
+      application.  We want to extract a list of macro names from a C
+      header file shipped with <code>libpcap</code>, a popular network
+      packet filtering library.  The header file contains a large
+      number definitions of the following form.</para>
+
+    <programlisting>
+#define DLT_EN10MB      1       /* Ethernet (10Mb) */
+#define DLT_EN3MB       2       /* Experimental Ethernet (3Mb) */
+#define DLT_AX25        3       /* Amateur Radio AX.25 */</programlisting>
+
+    <para>Our goal is to extract names such as <code>DLT_EN10MB</code>
+      and <code>DLT_AX25</code>.</para>
 
       &dlts.hs:dlts;
 
-      <para id="x_YA">We take an entire file, split it up with
-	<function>lines</function>, then call <code>foldr step
-	  []</code> on the result.  Since I know, based on the type of
-	<function>lines</function>, that I'm folding over a list of
-	strings, the <function>step</function> helper function must
-	thus operate on individual lines.</para>
+    <para id="x_YA">We treat an entire file as a string, split it up
+      with <function>lines</function>, then apply <code>foldr step
+	[]</code> to the resulting list of lines. The
+      <function>step</function> helper function operates on a single
+      line.</para>
 
       &dlts.hs:step;
 
-      <para id="x_ZA">If we match a macro definition, we cons the name of the
-	macro onto the head of the list we're returning; otherwise, we
-	do nothing with the list on this invocation.</para>
+    <para id="x_ZA">If we match a macro definition with our guard
+      expression, we cons the name of the macro onto the head of the
+      list we're returning; otherwise, we leave the list
+      untouched.</para>
 
-      <para id="x_aA">We can see heavy use of function composition in the body
-	of <function>step</function>.  While all of these functions
-	are by now familiar to us, it can take a little practice to
-	glue together the sequence of types in a chain of compositions
-	like this.  Let's walk through the procedure by hand.</para>
+    <para id="x_aA">While the individual functions in the body of
+      <function>secondWord</function> are by now familiar to us, it
+      can take a little practice to piece together a chain of
+      compositions like this.  Let's walk through the
+      procedure.</para>
 
-      <para id="x_bA">The first call is to <function>words</function>.</para>
+    <para id="x_bA">Once again, we proceed from right to left.  The
+      first function is <function>words</function>.</para>
 
       &dlts.ghci:words;
 
-      <para id="x_cA">We then call the partially applied function <code>drop
-	  1</code> on the result of <function>words</function>.</para>
+    <para id="x_cA">We then apply <code>tail</code> to the result of
+      <function>words</function>.</para>
 
       &dlts.ghci:drop1;
 
-      <para id="x_dA">See how naturally partial application fits in here?  It's
-	given us a function that turns a list into another list.
-	Composing these, we match up the result of
-	<function>words</function> with the parameter of <code>drop
-	  1</code>.</para>
-
-      &dlts.ghci:drop1.words;
-
-      <para id="x_eA">Finally, calling <function>head</function> on the result
-	of <code>drop 1 . words</code> will give us what we want: the
-	name of the macro we're defining.</para>
+    <para id="x_eA">Finally, applying <function>head</function> to the
+      result of <code>drop 1 . words</code> will give us the name of
+      our macro.</para>
 
       &dlts.ghci:head.drop1.words;
 
-      <note>
-	<title>Use your head wisely</title>
+    <sect2>
+      <title>Use your head wisely</title>
 
-	<para id="x_fA">After warning against unsafe list functions in <xref
-	    linkend="fp.lists.safe"/>, here we are calling
-	  <function>head</function>, one of those unsafe list
-	  functions.  What gives?</para>
+      <para id="x_fA">After warning against unsafe list functions in
+	  <xref
+	    linkend="fp.lists.safe"/>, here we are calling both
+	<function>head</function> and <function>tail</function>, two
+	of those unsafe list functions.  What gives?</para>
 
-	<para id="x_gA">In this case, we can reassure ourselves that we're safe
-	  from a runtime failure in the call to
-	  <function>head</function>.  The pattern guard in the
-	  definition of <function>step</function> ensures that after
-	  we call <function>words</function> on any string that makes
-	  it past the guard, we'll have a list of at least two
-	  elements, <code>"#define"</code> and some macro beginning
-	  with <code>"DLT_"</code>.  You can see this in some of the
-	  &ghci; code snippets above.</para>
+      <para id="x_gA">In this case, we can assure ourselves by
+	inspection that we're safe from a runtime failure.  The
+	pattern guard in the definition of <function>step</function>
+	contains two words, so when we apply
+	<function>words</function> to any string that makes it past
+	the guard, we'll have a list of at least two elements,
+	<code>"#define"</code> and some macro beginning with
+	<code>"DLT_"</code>.</para>
 
-	<para id="x_hA">This is an example of the kind of reasoning we ought to
-	  do to convince ourselves that our code won't explode when we
-	  call partial functions.  Don't forget our earlier
-	  admonition: calling unsafe functions like this requires
-	  care, and can often make our code more fragile in subtle
-	  ways.</para>
-      </note>
+      <para id="x_hA">This the kind of reasoning we ought to do to
+	convince ourselves that our code won't explode when we call
+	partial functions.  Don't forget our earlier admonition:
+	calling unsafe functions like this requires care, and can
+	often make our code more fragile in subtle ways.  If we for
+	some reason modified the pattern guard to only contain one
+	word, we could expose ourselves to the possibility of a crash,
+	as the body of the function assumes that it will receive two
+	words.</para>
     </sect2>
   </sect1>
 
@@ -1849,45 +2051,185 @@
       functions.  As nice as these are, we don't often want to use
       them.</para>
 
-    <para id="x_hL">Many tail recursive functions are better expressed using
-      list manipulation functions like <function>map</function>,
-      <function>take</function>, and <function>filter</function>.
-      Without a doubt, it takes some practice to get used to using
-      these.  What we get in return for our initial investment in
-      learning to use these functions is the ability to skim more
-      easily over code that uses them.</para>
+    <para id="x_hL">Many list manipulation operations can be most
+      easily expressed using combinations of library functions such as
+      <function>map</function>, <function>take</function>, and
+      <function>filter</function>.  Without a doubt, it takes some
+      practice to get used to using these.  In return for our initial
+      investment, we can write and read code more quickly, and with
+      fewer bugs.</para>
 
-    <para id="x_iL">The reason for this is simple.  A tail recursive function
-      definition has the same problem as a loop in an imperative
-      language: it's completely general, so we have to look at the
-      exact details of every loop, and every tail recursive function,
-      to see what it's really doing.  In contrast,
+    <para id="x_iL">The reason for this is simple.  A tail recursive
+      function definition has the same problem as a loop in an
+      imperative language: it's completely general.  It might perform
+      some filtering, some mapping, or who knows what else. We are
+      forced to look in detail at the entire definition of the
+      function to see what it's really doing.  In contrast,
       <function>map</function> and most other list manipulation
-      functions do only <emphasis>one</emphasis> thing; we can take
+      functions do only <emphasis>one</emphasis> thing.  We can take
       for granted what these simple building blocks do, and focus on
       the idea the code is trying to express, not the minute details
       of how it's manipulating its inputs.</para>
 
-    <para id="x_jL">In the middle ground between tail recursive functions (with
-      complete generality) and our toolbox of list manipulation
-      functions (each of which does one thing) lie the folds.  A fold
-      takes more effort to understand than, say, a composition of
-      <function>map</function> and <function>filter</function> that
-      does the same thing, but at the same time it behaves more
-      regularly and predictably than a tail recursive function.  As a
-      general rule, don't use a fold if you don't need one, but think
-      about using one instead of a tail recursive loop if you
-      can.</para>
+    <para id="x_jL">In the middle ground between tail recursive
+      functions (with complete generality) and our toolbox of list
+      manipulation functions (each of which does one thing) lie the
+      folds.  A fold takes more effort to understand than, say, a
+      composition of <function>map</function> and
+      <function>filter</function> that does the same thing, but it
+      behaves more regularly and predictably than a tail recursive
+      function.  As a general rule, don't use a fold if you can
+      compose some library functions, but otherwise try to use a fold
+      in preference to a hand-rolled a tail recursive loop.</para>
 
-    <para id="x_kL">As for anonymous functions, they tend to interrupt the
-      <quote>flow</quote> of reading a piece of code.  It is very
+    <para id="x_kL">As for anonymous functions, they tend to interrupt
+      the <quote>flow</quote> of reading a piece of code.  It is very
       often as easy to write a local function definition in a
       <code>let</code> or <code>where</code> clause, and use that, as
       it is to put an anonymous function into place.  The relative
-      advantages of a named function are twofold: we're not confronted
-      with the need to understand the function's definition when we're
-      reading the code that uses it; and a well chosen function name
-      acts as a tiny piece of local documentation.</para>
+      advantages of a named function are twofold: we don't need to
+      understand the function's definition when we're reading the code
+      that uses it; and a well chosen function name acts as a tiny
+      piece of local documentation.</para>
+  </sect1>
+
+  <sect1 id="fp.seq">
+    <title>Space leaks and strict evaluation</title>
+
+    <para>The <function>foldl</function> function that we discussed
+      earlier is not the only place where space leaks can arise in
+      Haskell code.  We will use it to illustrate how non-strict
+      evaluation can sometimes be problematic, and how to solve the
+      difficulties that can arise.</para>
+
+    <tip>
+      <para>It is perfectly reasonable to skip this section until you
+	encounter a space leak <quote>in the wild</quote>.  Provided
+	you use <function>foldr</function> if you are generating a
+	list, and <function>foldl'</function> instead of
+	<function>foldl</function> otherwise, space leaks are unlikely
+	to bother you in practice for a while.</para>
+    </tip>
+
+    <sect2>
+      <title>Avoiding space leaks with seq</title>
+
+      <para>We refer to an expression that is not evaluated lazily as
+	<emphasis>strict</emphasis>, so <function>foldl'</function> is
+	a strict left fold. It bypasses Haskell's usual non-strict
+	evaluation through the use of a special function named
+	<function>seq</function>.</para>
+
+      &Fold.hs:strict;
+
+      <para>This <function>seq</function> function has a peculiar
+	type, hinting that it is not playing by the usual
+	rules.</para>
+
+      &thunky.ghci:seq;
+
+      <para>It operates as follows: when a <function>seq</function>
+	expression is evaluated, it forces its first argument to be
+	evaluated, then returns its second argument.  It doesn't
+	actually do anything with the first argument:
+	<function>seq</function> exists solely as a way to force that
+	value to be evaluated. Let's walk through a brief application
+	to see what happens.</para>
+
+      &Fold.hs:step1;
+
+      <para>This expands as follows.</para>
+
+      &Fold.hs:step2;
+
+      <para>The use of <function>seq</function> forcibly evaluates
+	<varname>new</varname> to <code>3</code>, and returns its
+	second argument.</para>
+
+      &Fold.hs:step3;
+
+      <para>We end up with the following result.</para>
+
+      &Fold.hs:step4;
+
+      <para>Thanks to <function>seq</function>, there are no thunks in
+	sight.</para>
+    </sect2>
+
+    <sect2>
+      <title>Learning to use seq</title>
+
+      <para>Without some direction, there is an element of mystery
+	to using <function>seq</function> effectively.
+	Here are some useful rules for using it well.</para>
+
+      <para>To have any effect, a <function>seq</function>
+	expression must be the first thing evaluated in an
+	expression.</para>
+
+      &Fold.hs:hiddenInside;
+
+      <para>To strictly evaluate several values, chain
+	applications of <function>seq</function> together.</para>
+
+      &Fold.hs:chained;
+
+      <para>A common mistake is to try to use <function>seq</function>
+	with two unrelated expressions.</para>
+
+      &Fold.hs:badExpression;
+
+      <para>Here, the apparent intention is to evaluate <code>step
+	  zero x</code> strictly.  Since the expression is duplicated
+	in the body of the function, strictly evaluating the first
+	instance of it will have no effect on the second.  The use of
+	&let; from the definition of <function>foldl'</function> above
+	shows how to achieve this effect correctly.</para>
+
+      <para>When evaluating an expression, <function>seq</function>
+	stops as soon as it reaches a constructor.  For simple types
+	like numbers, this means that it will evaluate them
+	completely.  Algebraic data types are a different story.
+	Consider the value <code>(1+2):(3+4):[]</code>.  If we apply
+	<function>seq</function> to this, it will evaluate the
+	<code>(1+2)</code> thunk.  Since it will stop when it reaches
+	the first <code>(:)</code> constructor, it will have no effect
+	on the second thunk.  The same is true for tuples: <code>seq
+	  ((1+2),(3+4)) True</code> will do nothing to the thunks
+	inside the pair, since it immediately hits the pair's
+	constructor.</para>
+
+      <para>If necessary, we can use normal functional programming
+	techniques to work around these limitations.</para>
+
+      &Fold.hs:strictPair;
+      
+      <para>It is important to understand that
+	<function>seq</function> isn't free: it has to perform a check
+	at runtime to see if an expression has been evaluated. Use it
+	sparingly.  For instance, while our
+	<function>strictPair</function> function evaluates the
+	contents of a pair up to the first constructor, it adds the
+	overheads of pattern matching, two applications of
+	<function>seq</function>, and the construction of a new tuple.
+	If we were to measure its performance in the inner loop of a
+	benchmark, we might find it to slow the program down.</para>
+
+      <para>Aside from its performance cost if overused,
+	<function>seq</function> is not a miracle cure-all for memory
+	consumption problems.  Just because you
+	<emphasis>can</emphasis> evaluate something strictly doesn't
+	mean you <emphasis>should</emphasis>.  Careless use of
+	<function>seq</function> may do nothing at all; move existing
+	space leaks around; or introduce new leaks.</para>
+
+      <para>The best guides to whether <function>seq</function> is
+	necessary, and how well it is working, are performance
+	measurement and profiling, which we will cover in <xref
+	  linkend="profiling"/>.  From a base of empirical
+	measurement, you will develop a reliable sense of when
+	<function>seq</function> is most useful.</para>
+    </sect2>
   </sect1>
 </chapter>
 

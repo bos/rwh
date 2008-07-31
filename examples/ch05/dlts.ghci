@@ -3,12 +3,11 @@
 words "#define DLT_CHAOS    5"
 
 --# drop1
-:type drop 1
-
---# drop1.words
-:type drop 1 . words
-(drop 1 . words) "#define DLT_CHAOS    5"
+:type tail
+tail ["#define","DLT_CHAOS","5"]
+:type tail . words
+(tail . words) "#define DLT_CHAOS    5"
 
 --# head.drop1.words
-:type head . drop 1 . words
-(head . drop 1 . words) "#define DLT_CHAOS    5"
+:type head . tail . words
+(head . tail . words) "#define DLT_CHAOS    5"

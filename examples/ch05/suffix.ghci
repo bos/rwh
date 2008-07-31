@@ -27,5 +27,22 @@ suffixes2 "foo"
 suffixes5 "foo"
 
 --# dotty
+:module +Data.Char
+let capCount = length . filter (isUpper . head) . words
+capCount "Hello there, Mom!"
 
-(sum . map sum . filter (any odd)) [[1,4,9],[2,4,6]]
+--# words.type
+:type words
+
+--# capped.type
+:type isUpper . head
+
+--# capfilt.type
+:type filter (isUpper . head)
+
+--# compose1.type
+:type length . filter (isUpper . head)
+
+--# foo
+let foo = sum . map sum . filter (any odd)
+:type foo

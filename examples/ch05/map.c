@@ -1,7 +1,7 @@
 /** snippet uppercase */
 #include <ctype.h>
 
-char *uppercase(char *out, const char *in)
+char *uppercase(const char *in)
 {
     char *out = strdup(in);
     

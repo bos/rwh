@@ -41,11 +41,11 @@ suffixes xs@(_:xs') = xs : suffixes xs'
 suffixes _ = []
 {-- /snippet suffixes --}
 
-{-- snippet noisier --}
-noisier :: [a] -> [[a]]
-noisier (x:xs) = (x:xs) : noisier xs
-noisier _ = []                 
-{-- /snippet noisier --}
+{-- snippet noAsPattern --}
+noAsPattern :: [a] -> [[a]]
+noAsPattern (x:xs) = (x:xs) : noAsPattern xs
+noAsPattern _ = []                 
+{-- /snippet noAsPattern --}
 
 {-- snippet suffixes2 --}
 suffixes2 xs = init (tails xs)

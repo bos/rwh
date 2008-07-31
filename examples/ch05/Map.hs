@@ -10,13 +10,13 @@ upperCase []     = []
 {-- snippet square --}
 square :: [Double] -> [Double]
 
-square (x:xs) = x**2 : square xs
+square (x:xs) = x*x : square xs
 square []     = []
 {-- /snippet square --}
 
 {-- snippet map2 --}
 square2 xs = map squareOne xs
-    where squareOne x = x ** 2
+    where squareOne x = x * x
 
 upperCase2 xs = map toUpper xs
 {-- /snippet map2 --}
@@ -25,5 +25,5 @@ upperCase2 xs = map toUpper xs
 myMap :: (a -> b) -> [a] -> [b]
 
 myMap f (x:xs) = f x : myMap f xs
-myMap _ _     = []
+myMap _ _      = []
 {-- /snippet myMap --}

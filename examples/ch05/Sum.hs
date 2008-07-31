@@ -10,9 +10,11 @@ foldlSum xs = foldl step 0 xs
 {-- /snippet foldlSum --}
 
 {-- snippet niceSum --}
+niceSum :: [Integer] -> Integer
 niceSum xs = foldl (+) 0 xs
 {-- /snippet niceSum --}
 
 {-- snippet nicerSum --}
+nicerSum :: [Integer] -> Integer
 nicerSum = foldl (+) 0
 {-- /snippet nicerSum --}
