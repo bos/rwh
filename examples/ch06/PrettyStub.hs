@@ -1,8 +1,14 @@
 module PrettyStub where
 
-import Prettify (Doc(..))
-
 {-- snippet stubs --}
+import SimpleJSON
+
+data Doc = ToBeDefined
+         deriving (Show)
+
+string :: String -> Doc
+string str = undefined
+
 text :: String -> Doc
 text str = undefined
 
@@ -11,6 +17,8 @@ double num = undefined
 {-- /snippet stubs --}
 
 {-- snippet append --}
+-- file: Prettify.hs
+
 (<>) :: Doc -> Doc -> Doc
 a <> b = undefined
 
@@ -27,3 +35,6 @@ hcat xs = undefined
 fsep :: [Doc] -> Doc
 fsep xs = undefined
 {-- /snippet fsep --}
+
+hexEscape :: Char -> Doc
+hexEscape c = undefined

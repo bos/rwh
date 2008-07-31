@@ -97,9 +97,9 @@ flatten other          = other
 
 {-- snippet punctuate --}
 punctuate :: Doc -> [Doc] -> [Doc]
+punctuate p []     = []
 punctuate p [d]    = [d]
 punctuate p (d:ds) = (d <> p) : punctuate p ds
-punctuate p _      = []
 {-- /snippet punctuate --}
 
 {-- snippet compact --}
@@ -132,13 +132,11 @@ pretty width x = best 0 [x]
                 a `Union` b  -> nicest col (best col (a:ds))
                                            (best col (b:ds))
           best _ _ = ""
-{-- /snippet pretty --}
 
-{-- snippet nicest --}
           nicest col a b | (width - least) `fits` a = a
                          | otherwise                = b
                          where least = min width col
-{-- /snippet nicest --}
+{-- /snippet pretty --}
 
 {-- snippet fits --}
 fits :: Int -> String -> Bool

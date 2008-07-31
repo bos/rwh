@@ -1,40 +1,28 @@
 {-- snippet module --}
 module PutJSON where
 
-import Control.Monad (forM_)
+import Data.List (intercalate)
 import SimpleJSON
 
-putJValue :: JValue -> IO ()
+renderJValue :: JValue -> String
 
-putJValue (JString s) = putStr (show s)
-putJValue (JNumber n) = putStr (show n)
-putJValue (JBool True) = putStr "true"
-putJValue (JBool False) = putStr "false"
-putJValue JNull = putStr "null"
+renderJValue (JString s)   = show s
+renderJValue (JNumber n)   = show n
+renderJValue (JBool True)  = "true"
+renderJValue (JBool False) = "false"
+renderJValue JNull         = "null"
+
+renderJValue (JObject o) = "{" ++ pairs o ++ "}"
+  where pairs [] = ""
+        pairs ps = intercalate ", " (map renderPair ps)
+        renderPair (k,v)   = show k ++ ": " ++ renderJValue v
+
+renderJValue (JArray a) = "[" ++ values a ++ "]"
+  where values [] = ""
+        values vs = intercalate ", " (map renderJValue vs)
 {-- /snippet module --}
 
 {-- snippet putJValue --}
-putJValue (JObject xs) = do
-    putChar '{'
-    case xs of
-      [] -> putStr ""
-      (p:ps) -> do putPair p
-                   forM_ ps $ \q -> do putStr ", "
-                                       putPair q
-    putChar '}'
-  where putPair (k,v)   = do putStr (show k)
-                             putStr ": "
-                             putJValue v
+putJValue :: JValue -> IO ()
+putJValue v = putStrLn (renderJValue v)
 {-- /snippet putJValue --}
-
-putJValue (JArray xs) = do
-    putChar '['
-    case xs of
-      [] -> return ()
-      (p:ps) -> do putJValue p
-                   putJValues ps
-    putChar ']'
-  where putJValues (p:ps) = do putStr ", "
-                               putJValue p
-                               putJValues ps
-        putJValues _      = return ()

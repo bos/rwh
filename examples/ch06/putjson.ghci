@@ -2,3 +2,4 @@
 :load PutJSON
 putJValue (JBool True)
 putJValue (JString "foo")
+putJValue (JObject [("foo", JNumber 1)])

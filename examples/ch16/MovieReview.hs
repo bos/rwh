@@ -51,6 +51,6 @@ apReview alist =
 
 attila =
 {-- snippet attila --}
-    [("name", Just "Attila \"The Hun\""),
+    [("name",       Just "Attila \"The Hun\""),
      ("occupation", Just "Khan")]
 {-- /snippet attila --}

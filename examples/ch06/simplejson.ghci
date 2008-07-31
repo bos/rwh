@@ -5,6 +5,11 @@ JNumber 2.7
 :type JBool True
 
 --# reload
-:reload SimpleJSON
+:reload
 getString (JString "hello")
 getString (JNumber 3)
+
+--# truncate
+truncate 5.8
+:module +Data.Ratio
+truncate (22 % 7)

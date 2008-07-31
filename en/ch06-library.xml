@@ -3,34 +3,39 @@
 <chapter id="library" revision="alpha;beta">
   <title>Writing a library: working with JSON data</title>
 
-  <para id="x_Fi">In this chapter, we'll take a look at developing a
-    small, but complete, Haskell library.</para>
-
   <sect1>
-    <title>A whirlwind tour of the JSON language</title>
+    <title>A whirlwind tour of JSON</title>
+
+    <para id="x_Fi">In this chapter, we'll develop a small, but
+      complete, Haskell library.  Our library will manipulate and
+      serialize data in a popular form known as JSON.</para>
 
     <para id="x_Gi">The JSON (JavaScript Object Notation) language is
-      a small, simple representation for structured data.  Its most
-      common use is to transfer data from a web service to a
-      browser-based JavaScript application.</para>
+      a small, simple representation for storing and transmitting
+      structured data, for example over a network connection.  It is
+      most commonly used to transfer data from a web service to a
+      browser-based JavaScript application.  The JSON format is
+      described at <ulink
+	url="http://www.json.org/">www.json.org</ulink>, and in
+      greater detail by <ulink
+	url="http://www.ietf.org/rfc/rfc4627.txt">RFC
+	4627</ulink>.</para>
 
     <para id="x_Hi">JSON supports four basic types of value: strings,
       numbers, booleans, and a special value named
       <code>null</code>.</para>
 
-    <programlisting><![CDATA["a string"
-12345
-true
-null]]></programlisting>
+    <programlisting><![CDATA["a string" 12345 true
+      null]]></programlisting>
 
-    <para id="x_Ii">The language also supports compound values.  Its
-      compound types are the array&emdash;an ordered sequence of
-      values&emdash;and the struct&emdash;an unordered collection of
-      name/value pairs.  The values in a struct or array can be of any
-      type.</para>
+    <para id="x_Ii">The language provides two compound types: an
+      <emphasis>array</emphasis> is an ordered sequence of values, and
+      an <emphasis>object</emphasis> is an unordered collection of
+      name/value pairs.  The names in an object are always strings;
+      the values in an object or array can be of any type.</para>
 
     <programlisting><![CDATA[[-3.14, true, null, "a string"]
-{"numbers": [1,2,3,4,5], "useful": false}]]></programlisting>
+      {"numbers": [1,2,3,4,5], "useful": false}]]></programlisting>
   </sect1>
 
   <sect1 id="library.jvalue">
@@ -38,13 +43,11 @@ null]]></programlisting>
 
     <para id="x_Ji">To work with JSON data in Haskell, we use an
       algebraic data type to represent the range of possible JSON
-      types.  In a text editor, create a file named
-      <filename>SimpleJSON.hs</filename>, and insert the following
-      contents.</para>
+      types.</para>
 
     &SimpleJSON.hs:JValue;
 
-    <para id="x_Ki">Here, we associate each JSON type with a distinct
+    <para id="x_Ki">For each JSON type, we supply a distinct value
       constructor. Some of these constructors have parameters: if we
       want to construct a JSON string, we must provide a
       <type>String</type> value as an argument to the
@@ -57,18 +60,20 @@ null]]></programlisting>
     &simplejson.ghci:load;
 
     <para id="x_Mi">We can see how to use a constructor to take a
-      normal Haskell value and turn it into a JSON value.  To do the
-      reverse, we use pattern matching.  Here's a function that we can
-      add to <filename>SimpleJSON.hs</filename> that will extract a
-      string from a JSON value for us.  If the JSON value actually
-      contains a string, our function will wrap the string with the
-      <code>Just</code> constructor, otherwise it will return
-      <code>Nothing</code>.</para>
+      normal Haskell value and turn it into a <type>JValue</type>.  To
+      do the reverse, we use pattern matching.  Here's a function that
+      we can add to <filename>SimpleJSON.hs</filename> that will
+      extract a string from a JSON value for us.  If the JSON value
+      actually contains a string, our function will wrap the string
+      with the <code>Just</code> constructor.  Otherwise, it will
+      return <code>Nothing</code>.</para>
 
     &SimpleJSON.hs:getString;
 
-    <para id="x_Ni">If we save the modified source file, we can reload
-      it in &ghci; and try the new definition.</para>
+    <para id="x_Ni">When we save the modified source file, we can
+      reload it in &ghci; and try the new definition.  (The
+      <command>:reload</command> command remembers the last source file
+      we loaded, so we do not need to name it explicitly.)</para>
 
     &simplejson.ghci:reload;
 
@@ -77,26 +82,34 @@ null]]></programlisting>
 
     &SimpleJSON.hs:getters;
 
+    <para>The <function>truncate</function> function turns a floating
+      point or rational number into an integer by dropping the digits
+      after the decimal point.</para>
+
+    &simplejson.ghci:truncate;
+
   </sect1>
 
   <sect1 id="library.anatomy">
     <title>The anatomy of a Haskell module</title>
 
-    <para id="x_Pi">A Haskell source file contains a single
-      <emphasis>module</emphasis>.  A module lets us determine which
-      namesinside the module are accessible from other modules.</para>
+    <para id="x_Pi">A Haskell source file contains a definition of a
+      single <emphasis>module</emphasis>.  A module lets us determine
+      which names inside the module are accessible from other
+      modules.</para>
 
-    <para id="x_Qi">Normally, a source file begins with a module
-      declaration.</para>
+    <para id="x_Qi">A source file begins with a <emphasis>module
+	declaration</emphasis>.  This must precede all other
+      definitions in the source file.</para>
 
     &SimpleJSON.hs:module;
 
     <para id="x_Ri">The word <code>module</code> is reserved.  It is
       followed by the name of the module, which must begin with a
-      capital letter. By convention, a source file has the same
-      <emphasis>base name</emphasis> (the component before the suffix)
-      as the module it contains, which is why our file
-      <filename>SimpleJSON.hs</filename> contains the module
+      capital letter. A source file must have the same <emphasis>base
+	name</emphasis> (the component before the suffix) as the name
+      of the module it contains. This is why our file
+      <filename>SimpleJSON.hs</filename> contains a module named
       <code>SimpleJSON</code>.</para>
 
     <para id="x_Si">Following the module name is a list of
@@ -105,36 +118,42 @@ null]]></programlisting>
       follows.</para>
 
     <para id="x_Ti">The list of exports indicates which names in this
-      module are visible from other modules.  This lets us keep
+      module are visible to other modules.  This lets us keep
       private code hidden from the outside world. The special notation
       <code>(..)</code> that follows the name <code>JValue</code>
       indicates that we are exporting both the type and all of its
       constructors.</para>
 
     <para id="x_Ui">It might seem strange that we can export a type's
-      name, but not its constructors.  The ability to do this is
-      important: it lets us hide the details of a type from its users,
-      making the type <emphasis>abstract</emphasis>.  If we can't see
-      a type's constructors, we can't pattern match against a value of
-      that type, nor can we construct a new value of that type.  Later
-      in this chapter, we'll discuss some situations in which we might
+      name (i.e. its type constructor), but not its value
+      constructors.  The ability to do this is important: it lets us
+      hide the details of a type from its users, making the type
+      <emphasis>abstract</emphasis>.  If we cannot see a type's value
+      constructors, we cannot pattern match against a value of that
+      type, nor can we construct a new value of that type.  Later in
+      this chapter, we'll discuss some situations in which we might
       want to make a type abstract.</para>
 
-    <para id="x_Vi">If we omit the list of exports (including the
-      parentheses) from a module declaration, every name in the module
-      will be exported: <code>module SimpleJSON where ...</code>.  To
-      export no names at all (only infrequently useful), we write an
-      empty list using a pair of parentheses: <code>module SimpleJSON
-	() where ...</code>.</para>
+    <para id="x_Vi">If we omit the exports (and the parentheses that
+      enclose them) from a module declaration, every name in the
+      module will be exported.</para>
+
+    &Exporting.hs:ExportAll;
+    
+    <para>To export no names at all (which is rarely useful), we write
+      an empty export list using a pair of parentheses.</para>
+
+    &Exporting.hs:ExportNone;
+
   </sect1>
 
   <sect1>
     <title>Compiling Haskell source</title>
 
-    <para id="x_Wi">In addition to the &ghci; interpreter; the &GHC;
-      distribution includes an optimising Haskell compiler, named
-      &ghc;.  If you're already familiar with a command line compiler
-      such as <command>gcc</command> or <command>cl</command> (the
+    <para id="x_Wi">In addition to the &ghci; interpreter, the &GHC;
+      distribution includes a compiler, &ghc;, that generates native
+      code.  If you are already familiar with a command line compiler
+      such as <command>gcc</command> or <command>cl</command> (the C++
       compiler component of Microsoft's Visual Studio), you'll
       immediately be at home with &ghc;.</para>
 
@@ -147,19 +166,20 @@ null]]></programlisting>
     <para id="x_Yi">The <option>-c</option> option tells &ghc; to only
       generate object code.  If we were to omit the
       <option>-c</option> option, the compiler would attempt to
-      generate a complete executable.  That would in turn fail,
-      because we haven't written a <function>main</function> function
-      yet.</para>
+      generate a complete executable.  That would fail, because we
+      haven't written a <function>main</function> function, which
+      &GHC; calls to start the execution of a standalone
+      program.</para>
 
     <para id="x_Zi">After &ghc; completes, if we list the contents of
       the directory, it should contain two new files:
       <filename>SimpleJSON.hi</filename> and
-      <filename>SimpleJSON.o</filename>
-      (<filename>SimpleJSON.obj</filename> on Windows).  The former is
-      an <emphasis>interface file</emphasis>, in which &ghc; stores
+      <filename>SimpleJSON.o</filename>.  The former is an
+      <emphasis>interface file</emphasis>, in which &ghc; stores
       information about the names exported from our module in
       machine-readable form.  The latter is an <emphasis>object
-	file</emphasis>, which contains the generated code.</para>
+	file</emphasis>, which contains the generated machine
+      code.</para>
   </sect1>
 
   <sect1>
@@ -176,13 +196,14 @@ null]]></programlisting>
       follows the module declaration.  This indicates that we want to
       take all of the names that are exported from the
       <code>SimpleJSON</code> module, and make them available in our
-      module.  Any <code>import</code> directives must appear together
-      at the beginning of a module.  We cannot scatter them throughout
-      a source file.</para>
+      module.  Any <code>import</code> directives must appear in a
+      group at the beginning of a module.  They must appear after the
+      module declaration, but before all other code.  We cannot, for
+      example, scatter them throughout a source file.</para>
 
     <para id="x_ci">Our choice of naming for the source file and
-      function is deliberate.  In order to create an executable, &ghc;
-      needs a module named <code>Main</code>, and it must contain a
+      function is deliberate.  To create an executable, &ghc;
+      expects a module named <code>Main</code> that contains a
       function named <function>main</function>.  The
       <function>main</function> function is the one that will be
       called when we run the program once we've built it.</para>
@@ -197,26 +218,30 @@ null]]></programlisting>
       source files and link an executable in a single
       invocation.</para>
 
-    <para id="x_ei">We're passing &ghc; a new option,
+    <para id="x_ei">We pass &ghc; a new option,
       <option>-o</option>, which takes one argument: this is the name
-      of the executable that &ghc; should create.  Here, we've decided
+      of the executable that &ghc; should create<footnote>
+	<para>Memory aid: <option>-o</option> stands for
+	  <quote>output</quote> or <quote>object file</quote>.</para>
+      </footnote>.  Here, we've decided
       to name the program <filename>simple</filename>.  On Windows,
       the program will have the suffix <filename>.exe</filename>, but
       on Unix variants there will not be a suffix.</para>
 
-    <para id="x_fi">Finally, we're passing the name of our new source
+    <para id="x_fi">Finally, we supply the name of our new source
       file, <filename>Main.hs</filename>, and the object file we
       already compiled, <filename>SimpleJSON.o</filename>.  We must
       explicitly list every one of our files that contains code that
       should end up in the executable.  If we forget a source or
-      object file, &ghc; will complain about <quote>undefined
-	symbols</quote>.</para>
+      object file, &ghc; will complain about <emphasis>undefined
+	symbols</emphasis>, which indicates that some of the
+      definitions that it needs are not provided in the files we have
+      supplied.</para>
 
     <para id="x_gi">When compiling, we can pass &ghc; any mixture of
       source and object files.  If &ghc; notices that it has already
-      compiled a source file into an object once, and we invoke it a
-      second time, it will only recompile the source file if we've
-      modified it.</para>
+      compiled a source file into an object file, it will only
+      recompile the source file if we've modified it.</para>
 
     <para id="x_hi">Once &ghc; has finished compiling and linking our
       <filename>simple</filename> program, we can run it from the
@@ -232,103 +257,176 @@ null]]></programlisting>
 
     <para id="x_ji">There are a few ways we could go about this.
       Perhaps the most direct would be to write a rendering function
-      that prints a value in JSON form.  We'll quickly show how to do
-      this, because it's about time we started interacting with the
-      outside world.  Once we're done, we'll explore some more
-      interesting approaches.</para>
-
-    <para id="x_Dn">Since this will be our first example of printing data, we'll
-      be introducing some new functions and notation below.  Rather
-      than cover these in depth, we'll skim over them, and defer a
-      more extended treatment until <xref
-	linkend="io"/>.</para>
+      that prints a value in JSON form.  Once we're done, we'll
+      explore some more interesting approaches.</para>
 
     &PutJSON.hs:module;
 
-    <para id="x_En">The result type of <function>putJValue</function> is
-      <type>IO ()</type>, where <type>IO</type> indicates that the
-      function performs I/O.  The <function>putStr</function> function
-      prints a string, and <function>show</function> returns a string
-      representation of a Haskell value.</para>
+    <para id="x_En">Good Haskell style involves separating pure code
+      from code that performs I/O.  Our
+      <function>renderJValue</function> function has no interaction
+      with the outside world, but we still need to be able to print a
+      <type>JValue</type>.</para>
 
-    <para id="x_Fn">Clearly, printing a simple JSON value is easy.</para>
-
-    &putjson.ghci:simple;
-
-    <para id="x_Gn">A compound value requires a little more work, so we can
-      ensure that it's formatted correctly.</para>
-    
     &PutJSON.hs:putJValue;
 
-    <para id="x_Hn">We've introduced one unfamiliar piece of notation here, the
-      &do; keyword.  In this context, it lets us perform a series of
-      actions in sequence.</para>
+    <para id="x_Fn">Printing a JSON value is now easy.</para>
 
-    <para id="x_In">To print a <code>JObject</code> value, we begin by printing
-      an opening brace.  We must then determine whether we have zero
-      or more than zero key/value pairs to print, in order to get the
-      formatting right.  If we have no pairs to print, we print
-      nothing<footnote>
-	<para id="x_Jn">If you're already somewhat familiar with Haskell, you'll
-	  know that this is not an idiomatic way to do nothing. We'll
-	  introduce <code>return ()</code> in <xref
-	    linkend="io"/>.</para>
-      </footnote>.  Otherwise, we print the first pair, then we loop
-      over all the pairs that follow, and print each one preceded by a
-      comma.  (The <function>forM_</function> function takes a list
-      and a function that can perform I/O, and applies the function to
-      every element of the list.)</para>
+    <para id="x_Kn">Why should we separate the rendering code from the
+      code that actually prints a value?  This gives us flexibility.
+      For instance, if we wanted to compress the data before writing
+      it out, and we intermixed rendering with printing, it would be
+      much more difficult to adapt our code to that change in
+      circumstances.</para>
+
+    <para id="x_Ln">This idea of separating pure from impure code is
+      powerful, and pervasive in Haskell code.  Several Haskell
+      compression libraries exist, all of which have simple
+      interfaces: a compression function accepts an uncompressed
+      string and returns a compressed string. We can use function
+      composition to render JSON data to a string, then compress to
+      another string, postponing any decision on how to actually
+      display or transmit the data.</para>
   </sect1>
 
   <sect1>
-    <title>Another look at rendering JSON</title>
+    <title>Type inference is a double-edged sword</title>
 
-    <para id="x_Kn">If simply printing JSON data is both obvious and easy, why
-      might we want to consider doing something else?  For example, we
-      could easily to modify our printing code above to output to an
-      arbitrary file handle.  However, if we wanted to compress the
-      data somehow before writing it out, we could not as easily adapt
-      the code to do this.</para>
+    <para id="x_Wn">A Haskell compiler's ability to infer types is
+      powerful and valuable.  Early on, you'll probably be faced by a
+      strong temptation to take advantage of type inference by
+      omitting as many type declarations as possible: let's simply
+      make the compiler figure the whole lot out!</para>
 
-    <para id="x_Ln">If we separate the rendering from what we do with the
-      rendered data, we grant ourselves more flexibility.  There are
-      several Haskell libraries that handle data compression, but they
-      all do so by providing very simple compression and decompression
-      functions: a compression function takes an uncompressed string
-      and returns a compressed string.  If we write a function that
-      takes JSON data and produces a rendered string, we can build a
-      pipeline: we pass the rendered JSON into our desired compression
-      function, and get compressed, rendered JSON back.
-    </para>
+    <para id="x_Xn">Skimping on explicit type information has a
+      downside, one that disproportionately affects new Haskell
+      programmer.  As a new Haskell programmer, we're extremely likely
+      to write code that will fail to compile due to straightforward
+      type errors.</para>
 
-    <para id="x_Mn">To render JSON data, we'll begin by assuming that we already
-      have a generic rendering library: we'll develop its skeleton as
-      we go.  We'll call this module <code>Prettify</code>, so its
-      code will go into a source file named
-      <filename>Prettify.hs</filename>.  After we're done writing our
-      client code, we'll go back and fill in the details of the
-      <code>Prettify</code> module.</para>
+    <para>When we omit explicit type information, we force the
+      compiler to figure out our intentions.  It will infer types that
+      are logical and consistent, but perhaps not at all what we
+      meant.  If we and the compiler unknowingly disagree about what
+      is going on, it will naturally take us longer to find the source
+      of our problem.</para>
 
-    <para id="x_Nn">Instead of rendering straight to a string, we'll make our
-      JSON renderer work with values of a type that we'll call
-      <type>Doc</type>.  The renderer won't be able to see any of the
-      internals of the <type>Doc</type> type: instead, it will call
-      functions from our rendering library, which will hide the
-      details from the client.</para>
+    <para id="x_Yn">Suppose, for instance, that we write a function
+      that we believe returns a <type>String</type>, but we don't
+      write a type signature for it.</para>
 
-    <para id="x_On">By basing our generic rendering library on this abstract
-      <type>Doc</type> type, we can choose an implementation that is
-      flexible and efficient.</para>
+    &Trouble.hs:upcaseFirst;
 
-    <para id="x_Pn">We'll name our JSON rendering function
-      <function>jvalue</function>.  Rendering one of the basic JSON
-      values is a straightforward business.</para>
+    <para id="x_Zn">Here, we want to upper-case the first character of
+      a word, but we've forgotten to append the rest of the word onto
+      the result.  We think our function's type is <type>String -&gt;
+	String</type>, but the compiler will correctly infer its type
+      as <type>String -> Char</type>.  Let's say we then try to use
+      this function somewhere else.</para>
 
-    &PrettyJSON.hs:jvalue;
+    &Trouble.hs:camelCase;
+      
+    <para id="x_an">When we try to compile this code or load it into
+      &ghci;, we won't necessarily get an obvious error
+      message.</para>
 
-    <para id="x_Qn">We'll write the <function>text</function> and
-      <function>double</function> functions as part of our
-      <code>Prettify</code> module.</para>
+      &trouble.ghci:load;
+
+    <para id="x_bn">Notice that the error is reported where we
+      <emphasis>use</emphasis> the <function>upcaseFirst</function>
+      function.  If we're erroneously convinced that our definition
+      and type for <function>upcaseFirst</function> are correct, we
+      may end up staring at the wrong piece of code for quite a while,
+      until enlightenment strikes.</para>
+
+    <para id="x_cn">Every time we write a type signature, we remove a
+      degree of freedom from the type inference engine.  This reduces
+      the likelihood of divergence between our understanding of our
+      code and the compiler's.  Type declarations also act as
+      shorthand for ourselves as readers of our own code, making it
+      easier for us to develop a sense of what must be going
+      on.</para>
+
+    <para id="x_dn">This is not to say that we need to pepper every
+      tiny fragment of code with a type declaration.  It is, however,
+      usually good form to add a signature to every top-level
+      definition in our code.  It's best to start out fairly
+      aggressive with explicit type signatures, and slowly ease back
+      as your mental model of how type checking works becomes more
+      accurate.</para>
+
+    <tip>
+      <title>Explicit types, undefined values, and error</title>
+
+      <para id="x_en">The special value <code>undefined</code> will
+	happily typecheck no matter where we use it, as will an
+	expression like <code>error "argh!"</code>.  It is especially
+	important that we write type signatures when we use these.
+	Suppose we use <code>undefined</code> or <code>error "write
+	  me"</code> to act as a placeholder in the body of a
+	top-level definition.  If we omit a type signature, we may be
+	able to use the value we have defined in places where a
+	correctly typed version would be rejected by the compiler.
+	This can easily lead us astray.</para>
+    </tip>
+    </sect1>
+
+  <sect1>
+    <title>A more general look at rendering</title>
+
+    <para id="x_Mn">Our JSON rendering code is narrowly tailored to
+      the exact needs of our data types and the JSON formatting
+      conventions.  The output it produces can be unfriendly to human
+      eyes.  We will now look at rendering as a more generic task: how
+      can we build a library that is useful for rendering data in a
+      variety of situations?</para>
+
+    <para>We would like to produce output that is suitable either for
+      human consumption (e.g. for debugging) or for machine
+      processing.  Libraries that perform this job are referred to as
+      <emphasis>pretty printers</emphasis>.  There already exist
+      several Haskell pretty printing libraries.  We are creating one
+      of our own not to replace them, but for the many useful insights
+      we will gain into both library design and functional programming
+      techniques.</para>
+
+    <para>We will call our generic pretty printing module
+      <code>Prettify</code>, so our code will go into a source file
+      named <filename>Prettify.hs</filename>.</para>
+
+    <note>
+      <title>Naming</title>
+
+      <para>In our <code>Prettify</code> module, we will base our
+	names on those used by several established Haskell pretty
+	printing libraries.  This will give us a degree of
+	compatibility with existing mature libraries.</para>
+    </note>
+
+    <para>To make sure that <code>Prettify</code> meets practical
+      needs, we write a new JSON renderer that uses the
+      <code>Prettify</code> API. After we're done, we'll go back and
+      fill in the details of the <code>Prettify</code> module.</para>
+
+    <para id="x_Nn">Instead of rendering straight to a string, our
+      <code>Prettify</code> module will use an abstract type that
+      we'll call <type>Doc</type>. By basing our generic rendering
+      library on an abstract type, we can choose an implementation
+      that is flexible and efficient.  If we decide to change the
+      underlying code, our users will not be able to tell.</para>
+
+    <para id="x_Pn">We will name our new JSON rendering module
+      <filename>PrettyJSON.hs</filename>, and retain the name
+      <function>renderJValue</function> for the rendering function.
+      Rendering one of the basic JSON values is
+      straightforward.</para>
+
+    &PrettyJSON.hs:renderJValue;
+
+    <para id="x_Qn">The <function>text</function>,
+      <function>double</function>, and <function>string</function>
+      functions will be provided by our <code>Prettify</code>
+      module.</para>
 
   </sect1>
 
@@ -347,123 +445,65 @@ null]]></programlisting>
       ourselves that we're not wandering too far off into the
       programming weeds.</para>
 
-    <para id="x_Tn">One useful technique for quickly developing the skeleton of
-      a program is to write <emphasis>stub</emphasis> versions of
-      functions.  For example, we mentioned above that our
-      <function>text</function> and <function>double</function>
-      functions would be provided by our <code>Prettify</code> module.
-      If we don't provide definitions for those functions, our
-      attempts to <quote>compile early, compile often</quote> with our
-      JSON renderer will fail, as the compiler won't know anything
-      about those functions.  To avoid this problem, we write stub
-      functions that don't do anything.</para>
+    <para id="x_Tn">One useful technique for quickly developing the
+      skeleton of a program is to write placeholder, or
+      <emphasis>stub</emphasis> versions of types and functions.  For
+      instance, we mentioned above that our
+      <function>string</function>, <function>text</function> and
+      <function>double</function> functions would be provided by our
+      <code>Prettify</code> module. If we don't provide definitions
+      for those functions or the <type>Doc</type> type, our attempts
+      to <quote>compile early, compile often</quote> with our JSON
+      renderer will fail, as the compiler won't know anything about
+      those functions.  To avoid this problem, we write stub code that
+      doesn't do anything.</para>
 
     &PrettyStub.hs:stubs;
 
-    <para id="x_Un">The special value <code>undefined</code> always typechecks,
-      no matter where we use it, but it will cause our program to
-      crash if we attempt to evaluate it.</para>
+    <para id="x_Un">The special value <code>undefined</code> has the
+      type <varname role="type">a</varname>, so it always typechecks,
+      no matter where we use it.  If we attempt to evaluate it, it
+      will cause our program to crash.</para>
 
     &prettystub.ghci:crash;
 
-    <para id="x_Vn">By providing stub definitions for these functions, we allow
-      ourselves to compile our code early on, even though we won't yet
-      be able to run it.   By doing this, we can take advantage of the
-      compiler's type checker to ensure that our program is sensibly
+    <para id="x_Vn">Even though we can't yet run our stubbed code, the
+      compiler's type checker will ensure that our program is sensibly
       typed.</para>
-
-    <sect2>
-      <title>Beware of type inference</title>
-
-      <para id="x_Wn">A Haskell compiler's ability to infer types is both
-	powerful and valuable.  Early on, you'll probably be faced by
-	a strong temptation to take advantage of type inference by
-	omitting as many type declarations as possible: let's simply
-	make the compiler figure the whole lot out!</para>
-
-      <para id="x_Xn">There is, however, a downside to skimping on explicit type
-	information, and it has a disproportionate effect on the new
-	Haskell programmer.  While we work to gain some experience,
-	we're initially extremely likely to write code that will fail
-	to compile due to straightforward type errors.  When we leave
-	out type information, we give the compiler more leeway.  It
-	will infer types that are logical and consistent, but quite
-	possibly not at all what we thought we were actually using.
-	When what we think we're doing diverges from what the compiler
-	infers, the error messages that result can be very difficult
-	to interpret: not only are we doing something wrong, but the
-	compiler's attempt to make sense of what we've tried can
-	sometimes briefly lead us astray.</para>
-
-      <para id="x_Yn">Consider an example: let's say we write a function that we
-	think returns a <type>String</type>, but we don't write a type
-	signature for it.</para>
-
-      &Trouble.hs:upcaseFirst;
-
-      <para id="x_Zn">Here, we want to upper-case the first character of a word,
-	but we've forgotten to append the rest of the word onto the
-	result.  We think our function's type is <type>String -&gt;
-	  String</type>, but the compiler will correctly infer its
-	type as <type>String -> Char</type>.  Let's say we then try to
-	use this function somewhere else.</para>
-
-      &Trouble.hs:camelCase;
-      
-      <para id="x_an">When we try to compile this code or load it into &ghci;,
-	we won't necessarily get an obvious error message.</para>
-
-      &trouble.ghci:load;
-
-      <para id="x_bn">Notice that the error is reported where we
-	<emphasis>use</emphasis> the <function>upcaseFirst</function>
-	function.  If we're erroneously convinced that our definition
-	and type for <function>upcaseFirst</function> are correct, we
-	may end up staring at the wrong piece of code for quite a
-	while, until enlightenment strikes.</para>
-
-      <para id="x_cn">Every time we write a type signature, we remove a degree
-	of freedom from the type inference engine.  This reduces the
-	likelihood of divergence between our understanding of our code
-	and the compiler's.  Type declarations also act as shorthand
-	for ourselves as readers of our own code, making it easier for
-	us to do our own mental inference of what must be going
-	on.</para>
-
-      <para id="x_dn">This is not to say that we need to pepper every tiny
-	fragment of code with a type declaration.  It is, however,
-	usually good form to add a signature to every top-level
-	function and variable in our code.  It's best to start out
-	fairly aggressive with explicit type signatures, and slowly
-	ease back as your mental model of how type checking works
-	becomes more accurate.</para>
-
-      <tip>
-	<title>Explicit types and undefined values</title>
-
-	<para id="x_en">Because the special value <code>undefined</code> will
-	  happily typecheck no matter where we use it, it's especially
-	  important to write type signatures when we start slinging it
-	  around. If we use <code>undefined</code> to stub in a
-	  temporary definition for a function, and we don't write a
-	  type signature for the function, we'll potentially be able
-	  to use that stubbed definition in completely nonsensical
-	  contexts, thus planting the seed of later confusion.</para>
-      </tip>
-    </sect2>
   </sect1>
 
   <sect1>
     <title>Pretty printing a string</title>
 
-    <para id="x_fn">When it comes to to pretty printing a string value, our code
-      gets a little complicated: JSON strings have some moderately
-      involved escaping rules that we must follow.</para>
-
-    <para id="x_gn">At the highest level, a string is just a series of
-      characters wrapped in quotes.</para>
+    <para id="x_fn">When we must pretty print a string value, JSON has
+      moderately involved escaping rules that we must follow. At the
+      highest level, a string is just a series of characters wrapped
+      in quotes.</para>
 
       &PrettyJSON.hs:string;
+
+    <note>
+      <title>Point-free style</title>
+
+      <para>This style of writing a definition exclusively as a
+	composition of other functions is called <emphasis>point-free
+	  style</emphasis>.  The use of the word <quote>point</quote>
+	is not related to the <quote><code>.</code></quote> character
+	used for function composition.  The term
+	<emphasis>point</emphasis> is roughly synonymous (in Haskell)
+	with <emphasis>value</emphasis>, so a
+	<emphasis>point-free</emphasis> expression makes no mention of
+	the values that it operates on.</para>
+
+      <para>Contrast the point-free definition of
+	<function>string</function> above with this
+	<quote>pointy</quote> version, which uses a variable
+	<varname>s</varname> to refer to the value on which it
+	operates.</para>
+
+      &PrettyJSON.hs:pointyString;
+
+    </note>
 
     <para id="x_hn">The <function>enclose</function> function simply wraps a
       <type>Doc</type> value with an opening and closing
@@ -471,9 +511,9 @@ null]]></programlisting>
 
       &PrettyJSON.hs:enclose;
 
-    <para id="x_in">To do this, it uses the <function>(&lt;&gt;)</function>
-      function from our pretty printing library, which appends two
-      <type>Doc</type> values: it's the <type>Doc</type> equivalent of
+    <para id="x_in">We provide a <function>(&lt;&gt;)</function>
+      function in our pretty printing library.  It appends two
+      <type>Doc</type> values, so it's the <type>Doc</type> equivalent of
       <function>(++)</function>.</para>
 
       &PrettyStub.hs:append;
@@ -485,38 +525,41 @@ null]]></programlisting>
 
       &PrettyStub.hs:hcat;
 
-    <para id="x_kn">Our <function>string</function> function thus applies the as
-      yet unseen <function>oneChar</function> function to every
-      character in a string, concatenates the lot, and encloses the
-      result in quotes.  What does <function>oneChar</function> look
-      like?</para>
+    <para id="x_kn">Our <function>string</function> function applies
+      the <function>oneChar</function> function to every character in
+      a string, concatenates the lot, and encloses the result in
+      quotes.  The <function>oneChar</function> function escapes or
+      renders an individual character.</para>
 
       &PrettyJSON.hs:oneChar;
 
-    <para id="x_ln">The <function>specialEscapes</function> value is a list of
-      pairs that we call an <emphasis>association list</emphasis>, or
-      <emphasis>alist</emphasis> for short: it maps a few characters
-      to simple escaped representations.</para>
+    <para id="x_ln">The <function>simpleEscapes</function> value is a
+      list of pairs.  We call a list of pairs an <emphasis>association
+	list</emphasis>, or <emphasis>alist</emphasis> for short.
+      Each element of our alist associates a character with
+      its escaped representation.</para>
 
       &prettyjson.ghci:simpleEscapes;
 
-    <para id="x_mn">Our &case; expression attempts to see if our character has a
-      match in this alist.  If we find the match, we emit it,
-      otherwise we might need to escape the character in a more
-      complicated way. If so, we perform this more complicated
-      escaping.  Only if neither kind of escaping is required do we
-      emit the plain character.</para>
+    <para id="x_mn">Our &case; expression attempts to see if our
+      character has a match in this alist.  If we find the match, we
+      emit it, otherwise we might need to escape the character in a
+      more complicated way. If so, we perform this escaping.  Only if
+      neither kind of escaping is required do we emit the plain
+      character.  To be conservative, the only unescaped characters we
+      emit are printable ASCII characters.</para>
 
     <para id="x_nn">The more complicated escaping involves turning a character
       into the string <quote><code>\u</code></quote> followed by a
       four-character sequence of hexadecimal digits representing the
-      numeric value of the Unicode code point.</para>
+      numeric value of the Unicode character.</para>
 
       &PrettyJSON.hs:smallHex;
 
-    <para id="x_on">The <function>showHex</function> function comes from the
-      <code>Numeric</code> library, and returns a hexadecimal
-      representation of a number.</para>
+    <para id="x_on">The <function>showHex</function> function comes
+      from the <code>Numeric</code> library (you will need to import
+      this at the beginning of <filename>Prettify.hs</filename>), and
+      returns a hexadecimal representation of a number.</para>
 
       &prettyjson.ghci:showHex;
 
@@ -528,20 +571,12 @@ null]]></programlisting>
 
     <para id="x_qn">There's a wrinkle: the four-digit encoding that
       <function>smallHex</function> provides can only represent
-      Unicode code points up to <code>0xffff</code>.  This portion of
-      the Unicode code space is called the <emphasis>basic
-	multilingual plane</emphasis>: it contains most of the world's
-      common characters and glyphs. However, the Unicode code space
-      extends up to <code>0x10ffff</code>: values between
-      <code>0x10000</code> and <code>0x10ffff</code> are said to
-      inhabit one of the <emphasis>astral planes</emphasis>.</para>
-
-    <para id="x_rn">To properly represent an astral plane code point in a JSON
-      string, we must decompose it into two <emphasis>surrogate
-	characters</emphasis>.  For our purposes, we don't need to
-      care what a surrogate character is: we'll look at it instead as
-      an opportunity to perform some bit-level manipulation of Haskell
-      numbers.</para>
+      Unicode characters up to <code>0xffff</code>.  Valid Unicode
+      characters can range up to <code>0x10ffff</code>.  To properly
+      represent a character above <code>0xffff</code> in a JSON
+      string, we follow some complicated rules to split it into two.
+      This gives us an opportunity to perform some bit-level
+      manipulation of Haskell numbers.</para>
 
       &PrettyJSON.hs:astral;
 
@@ -579,46 +614,60 @@ null]]></programlisting>
       <varname role="type">a</varname>, and it returns a value of type
       <type>Doc</type>.</para>
 
-    <para id="x_wn">We have already written <function>enclose</function>, a
+    <para>Notice that although our type signature mentions four
+      parameters, we have only listed three in the definition of the
+      function.  We are simply following the same rule that lets us
+      simplify a definiton like <code>myLength xs = length xs</code>
+      to <code>myLength = length</code>.</para>
+
+    <para id="x_wn">We have already written <function>enclose</function>,
       which wraps a <type>Doc</type> value in opening and closing
       characters.  The <function>fsep</function> function will live in
-      our <code>Prettify</code> module.  It combines a series of
+      our <code>Prettify</code> module.  It combines a list of
       <type>Doc</type> values into one, possibly wrapping lines if the
-      output will not fit on a single line.  The
-      <function>punctuate</function> function will also live in our
-      <code>Prettify</code> module, and we can define it in terms of
-      functions for which we've already written stubs.</para>
+      output will not fit on a single line.</para>
+
+    &PrettyStub.hs:fsep;
+
+    <para>By now, you should be able to define your own stubs in
+      <filename>Prettify.hs</filename>, by following the examples we
+      have supplied.  We will not explicitly define any more
+      stubs.</para>
+
+    <para>The <function>punctuate</function> function will also live
+      in our <code>Prettify</code> module, and we can define it in
+      terms of functions for which we've already written stubs.</para>
 
     &Prettify.hs:punctuate;
 
     <para id="x_xn">With this definition of <function>series</function>, pretty
       printing an array is entirely straightforward.  We add this
       equation  to the end of the block we've already written for our
-      <function>jvalue</function> function.</para>
+      <function>renderJValue</function> function.</para>
 
-      &PrettyJSON.hs:jvalue.array;
+      &PrettyJSON.hs:renderJValue.array;
 
     <para id="x_yn">To pretty print an object, we need to do only a little more
       work: for each element, we have both a name and a value to deal
       with.</para>
 
-      &PrettyJSON.hs:jvalue.object;
+      &PrettyJSON.hs:renderJValue.object;
   </sect1>
 
   <sect1>
-    <title>Writing a module header, and good defensive coding</title>
+    <title>Writing a module header</title>
 
-    <para id="x_zn">The header at the beginning of our
-      <filename>PrettyJSON.hs</filename> source file looks like
-      this.</para>
+    <para id="x_zn">Now that we have written the bulk of our
+      <filename>PrettyJSON.hs</filename> file, we must go back to the
+      top and add a module declaration.</para>
 
     &PrettyJSON.hs:module;
 
-    <para id="x_Ao">We're only exporting one name from this module:
-      <function>jvalue</function>, our pretty printing function.  The
-      other functions in the module are purely present to support
-      <function>jvalue</function>, so there's no reason to make them
-      visible to other modules.</para>
+    <para id="x_Ao">We export just one name from this module:
+      <function>renderJValue</function>, our JSON rendering function.
+      The other definitions in the module exist purely to support
+      <function>renderJValue</function>, so there's no reason to make
+      them visible to other modules.</para>
 
     <para id="x_Bo">Regarding imports, the <code>Numeric</code> and
       <code>Data.Bits</code> modules are distributed with &GHC;. We've
@@ -638,8 +687,8 @@ null]]></programlisting>
       <listitem>
 	<para id="x_Do">An explicit list makes it clear which names we're
 	  importing from where.  This will make it easier for a reader
-	  to look up documentation, if they run across an unfamiliar
-	  module.</para>
+	  to look up documentation if they encounter an unfamiliar
+	  function.</para>
       </listitem>
       <listitem>
 	<para id="x_Eo">Occasionally, a library maintainer will remove or rename
@@ -666,7 +715,7 @@ null]]></programlisting>
       usually makes sense, not a hard-and-fast rule. Occasionally,
       we'll need so many names from a module that listing each one
       becomes messy.  In other cases, a module might be so widely used
-      that that a moderately experienced Haskell programmer will
+      that a moderately experienced Haskell programmer will
       probably know which names come from that module.</para>
   </sect1>
 
@@ -678,20 +727,22 @@ null]]></programlisting>
 
     &Prettify.hs:Doc;
 
-    <para id="x_Io">Notice that the <type>Doc</type> type describes a tree: the
-      <code>Concat</code> and <code>Union</code> constructor create an
-      internal node from two other <type>Doc</type> values, while the
-      <code>Empty</code> and other simple constructors build
-      leaves.</para>
+    <para id="x_Io">Observe that the <type>Doc</type> type is actually
+      a tree.  The <code>Concat</code> and <code>Union</code>
+      constructors create an internal node from two other
+      <type>Doc</type> values, while the <code>Empty</code> and other
+      simple constructors build leaves.</para>
     
     <para id="x_Jo">In the header of our module, we will export the name of the
       type, but not any of its constructors: this will prevent modules
       that use the <type>Doc</type> type from creating and pattern
       matching against <type>Doc</type> values.</para>
 
-    <para id="x_Ko">Instead, to create a <type>Doc</type>, a user of the
-      <code>Prettify</code> module will call a function that we
-      provide.  Here are the simple construction functions.</para>
+    <para id="x_Ko">Instead, to create a <type>Doc</type>, a user of
+      the <code>Prettify</code> module will call a function that we
+      provide.  Here are the simple construction functions.  As we add
+      real definitions, we must replace any stubbed versions already
+      in the <filename>Prettify.hs</filename> source file.</para>
 
     &Prettify.hs:basic;
 
@@ -700,7 +751,7 @@ null]]></programlisting>
       <emphasis>hard</emphasis> line breaks, which always appear in
       the pretty printer's output.  Sometimes we'll want a
       <emphasis>soft</emphasis> line break, which is only used if a
-      line is too wide.  We'll introduce a
+      line is too wide to fit in a window or page.  We'll introduce a
       <function>softline</function> function shortly.</para>
 
     &Prettify.hs:line;
@@ -711,23 +762,24 @@ null]]></programlisting>
 
     &Prettify.hs:append;
     
-    <para id="x_No">Notice that we pattern match against <code>Empty</code>:
-      concatenating a <type>Doc</type> value with <code>Empty</code>
-      on the left or right has no effect.  This keeps us from bloating
-      the tree with useless values.</para>
+    <para id="x_No">We pattern match against <code>Empty</code> so
+      that concatenating a <type>Doc</type> value with
+      <code>Empty</code> on the left or right will have no effect.
+      This keeps us from bloating the tree with useless values.</para>
 
     &prettify.ghci:append;
 
     <tip>
       <title>A mathematical moment</title>
 
-      <para id="x_Oo">If we briefly put on our mathematical hats, we can say
-	that <code>Empty</code> is the identity under concatenation.
-	Taking the mathematical perspective has useful practical
-	consequences, and we'll explain why later.</para>
-
-      <remark>Add a reference to wherever we introduce
-	monoids.</remark>
+      <para id="x_Oo">If we briefly put on our mathematical hats, we
+	can say that <code>Empty</code> is the identity under
+	concatenation, since nothing happens if we concatenate a
+	<type>Doc</type> value with <code>Empty</code>.  In a similar
+	vein, 0 is the identity for adding numbers, and 1 is the
+	identity for multiplying them. Taking the mathematical
+	perspective has useful practical consequences, as we will see
+	in a number of places throughout this book.</para>
     </tip>
 
     <para id="x_Po">Our <function>hcat</function> and <function>fsep</function>
@@ -740,7 +792,7 @@ null]]></programlisting>
     &Concat.hs:concat;
 
     <para id="x_Qo">Since <function>(&lt;&gt;)</function> is analogous to
-      <function>(:)</function>, and <function>empty</function> to
+      <function>(++)</function>, and <function>empty</function> to
       <function>[]</function>, we can see how we might write
       <function>hcat</function> and <function>fsep</function> as
       folds, too.</para>
@@ -769,22 +821,12 @@ null]]></programlisting>
 
     &Prettify.hs:flatten;
 
-    <para id="x_Uo">Notice that we always call <function>flatten</function> on
-      the left element of a <code>Union</code>: the left of each
-      <code>Union</code> is always the same width as, or wider than,
-      the right.  We'll be making use of this property in our rendering
+    <para id="x_Uo">Notice that we always call
+      <function>flatten</function> on the left element of a
+      <code>Union</code>: the left of each <code>Union</code> is
+      always the same width (in characters) as, or wider than, the
+      right.  We'll be making use of this property in our rendering
       functions below.</para>
-
-      <note>
-	<title>Infix use of constructors</title>
-
-	<para id="x_Vo">We've used infix notation to represent the
-	<code>Concat</code> and <code>Union</code> constructors in the
-	final two patterns of our &case; expression.  This has no
-	effect on the meaning of our code.  Just like using a
-	constructor or function infix in an application, it's merely a
-	small change for readability.</para>
-      </note>
 
     <sect2>
       <title>Compact rendering</title>
@@ -849,7 +891,7 @@ null]]></programlisting>
 	    <code>Concat</code>, the <code>Concat</code> pattern
 	    matches in the &case; expression.  On the right hand side,
 	    we add <code>Char 'f'</code> and <code>Text "oo"</code> to
-	    the stack, and call
+	    the stack, and apply
 	    <function>transform</function>recursively.</para>
 	</listitem>
 	<listitem>
@@ -927,7 +969,7 @@ null]]></programlisting>
 	have the option of either continuing the current line or
 	beginning a new line.  Elsewhere, we must strictly follow the
 	directives set out by the person using our pretty printing
-	combinators.</para>
+	functions.</para>
 
       <para id="x_oo">Here's the core of our implementation</para>
 
@@ -944,17 +986,15 @@ null]]></programlisting>
 	obvious: we push the two concatenated components onto our
 	stack/list, and don't touch <varname>col</varname>.</para>
 
-      <para id="x_ro">The interesting case is concerned with the
+      <para id="x_ro">The interesting case involves the
 	<code>Union</code> constructor.  Recall that we applied
 	<function>flatten</function> to the left element, and did
 	nothing to the right.  Also, remember that
 	<function>flatten</function> replaces newlines with spaces.
-	Therefore, our job is to see which (ir either) of the two
+	Therefore, our job is to see which (if either) of the two
 	layouts, the <function>flatten</function>ed one or the
 	original, will fit into our <varname>width</varname>
 	restriction.</para>
-
-      &Prettify.hs:nicest;
 
       <para id="x_so">To do this, we write a small helper that determines
 	whether a single line of a rendered <type>Doc</type> value
@@ -968,11 +1008,11 @@ null]]></programlisting>
       <title>Following the pretty printer</title>
 
       <para id="x_to">In order to understand how this code works, let's first
-	consider a very simple <type>Doc</type> value.</para>
+	consider a simple <type>Doc</type> value.</para>
 
       &prettify.ghci:simple;
 
-      <para id="x_uo">We'll call <function>pretty 2</function> on this value.
+      <para id="x_uo">We'll apply <function>pretty 2</function> on this value.
 	When we first apply <function>best</function>, the value of
 	<code>col</code> is zero.  It matches the <code>Concat</code>
 	case, pushes the values <code>Union (Char ' ') Line</code> and
@@ -1014,21 +1054,22 @@ null]]></programlisting>
     <sect2>
       <title>Exercises</title>
 
-      <para id="x_zo">Our current pretty printer is spartan to fit within our
-	space constraints, but there are a number of useful
-	improvements we can make.</para>
+      <para id="x_zo">Our current pretty printer is spartan, so that
+	it will fit within our space constraints, but there are a
+	number of useful improvements we can make.</para>
 
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para id="x_Ap">Write a function, <function>fill</function>:</para>
+	    <para id="x_Ap">Write a function,
+	    <function>fill</function>, with the following type signature.</para>
 
 	    &Prettify.hs:fill;
 
-	    <para id="x_Bp">It should render the document, then add spaces so
-	      that the rendered text is the given number of columns
-	      wide.  If the text is already wider than this value, it
-	      should add no spaces.</para>
+	    <para id="x_Bp">It should add spaces to a document until
+	      it is the given number of columns wide.  If it is
+	      already wider than this value, it should add no
+	      spaces.</para>
 	  </question>
 	</qandaentry>
 
@@ -1055,11 +1096,11 @@ null]]></programlisting>
   <sect1 id="library.package">
     <title>Creating a package</title>
 
-    <para id="x_Ep">The Haskell community has built a standard set of tools,
-      named Cabal, that help with building, installing, and
+    <para id="x_Ep">The Haskell community has built a standard set of
+      tools, named Cabal, that help with building, installing, and
       distributing software. Cabal organises software as a
-      <emphasis>package</emphasis>, which consists of one or more
-      libraries or executable programs.</para>
+      <emphasis>package</emphasis>.  A package contains one library,
+      and possibly several executable programs.</para>
 
     <sect2>
       <title>Writing a package description</title>
@@ -1070,14 +1111,13 @@ null]]></programlisting>
 	the top-level directory of your project.  It has a simple
 	format, which we'll describe below.</para>
 
-      <para id="x_Gp">A Cabal package must have a name.  Usually, the name of
-	the package matches the name of the
+      <para id="x_Gp">A Cabal package must have a name.  Usually, the
+	name of the package matches the name of the
 	<filename>.cabal</filename> file.  We'll call our package
 	<code>mypretty</code>, so our file is
-	<filename>mypretty.cabal</filename>.  (Quite often, the
-	directory that contains the
-	<filename>mypretty.cabal</filename> file is also called
-	<code>mypretty</code>.)</para>
+	<filename>mypretty.cabal</filename>.  Often, the directory
+	that contains a <filename>.cabal</filename> file will have the
+	same name as the package, e.g. <code>mypretty</code>.</para>
 
       <para id="x_Hp">A package description begins with a series of global
 	properties, which apply to every library and executable in the
@@ -1090,7 +1130,7 @@ null]]></programlisting>
 	your system, &GHC; will become very confused.</para>
 
       <para id="x_Jp">The global properties include a substantial amount of
-	information that intended for human readers, not Cabal
+	information that is intended for human readers, not Cabal
 	itself.</para>
 
       &mypretty.cabal:human;
@@ -1119,16 +1159,18 @@ null]]></programlisting>
 
       &mypretty.cabal:version;
 
-      <para id="x_Op">To describe an individual library within a package, we
-	write a <emphasis>library section</emphasis>.</para>
+      <para id="x_Op">To describe an individual library within a
+	package, we write a <emphasis>library section</emphasis>.  The
+	use of indentation here is significant: the contents of a
+	section must be indented.</para>
 
       &mypretty.cabal:library;
 
       <para id="x_Pp">The <code>Exposed-Modules</code> field contains a list of
 	modules that should be available to users of this package. An
 	optional field, <code>Other-Modules</code>, contains a list of
-	<emphasis>internal</emphasis> modules, which are required for
-	this library to function, but shouldn't be visible to
+	<emphasis>internal</emphasis> modules.  These are required for
+	this library to function, but will not be visible to
 	users.</para>
 
       <para id="x_Qp">The <code>Build-Depends</code> field contains a
@@ -1157,11 +1199,12 @@ PrettyJSON.hs:8:7:
     Could not find module `Data.Bits':
       it is a member of package base, which is hidden</screen>
 
-	<para id="x_Sp">The error message makes it clear that we need to add the
-	  <code>base</code> package, even though <code>base</code> is
-	  already installed.  Forcing us to be explicit about every
-	  package we need has a practical benefit: a Cabal tool named
-	  <filename>cabal-install</filename> can automatically
+	<para id="x_Sp">The error message makes it clear that we need
+	  to add the <code>base</code> package, even though
+	  <code>base</code> is already installed.  Forcing us to be
+	  explicit about every package we need has a practical
+	  benefit: a command line tool named
+	  <filename>cabal-install</filename> will automatically
 	  download, build, and install a package and all of the
 	  packages it depends on.</para>
       </tip>
@@ -1170,28 +1213,25 @@ PrettyJSON.hs:8:7:
     <sect2>
       <title>GHC's package manager</title>
 
-      <para id="x_Tp">&GHC; includes a simple package manager.  It knows which
-	packages are installed, and what versions of those packages
-	are installed.  A command line tool named &ghc_pkg; lets us
+      <para id="x_Tp">&GHC; includes a simple package manager that tracks which
+	packages are installed, and what the versions of those packages
+	are.  A command line tool named &ghc_pkg; lets us
 	work with its package databases.</para>
 
-      <para id="x_Up">We say <emphasis>databases</emphasis> because &GHC;
-	distinguishes between <emphasis>system-wide</emphasis>
+      <para id="x_Up">We say <emphasis>databases</emphasis> because
+	&GHC; distinguishes between <emphasis>system-wide</emphasis>
 	packages, which are available to every user, and
-	<emphasis>per-user</emphasis>packages, which are only visible
-	to the current user.</para>
-
-      <para id="x_Vp">In practice, since most computers are single-user, the
-	per-user database is mostly useful as a sandbox for testing,
-	and to avoid the hassle of using administrative privileges to
-	install packages.</para>
+	<emphasis>per-user</emphasis> packages, which are only visible
+	to the current user.  The per-user database lets us avoid the
+	need for administrative privileges to install packages.</para>
 
       <para id="x_Wp">The &ghc_pkg; command provides subcommands to address
 	different tasks. Most of the time, we'll only need two of
 	them.  The <code>ghc-pkg list</code> command lets us see what
 	packages are installed.  When we want to uninstall a package,
 	<code>ghc-pkg unregister</code> tells &GHC; that we won't be
-	using a particular package any longer.</para>
+	using a particular package any longer.  (We will have to
+	manually delete the installed files ourselves.)</para>
     </sect2>
 
     <sect2>
@@ -1203,20 +1243,13 @@ PrettyJSON.hs:8:7:
 	package needs it.  The simplest setup file looks like
 	this.</para>
 
-      &Setup.lhs:setup;
+      &Setup.hs:setup;
 
       <para id="x_Yp">We save this file under the name
-	<filename>Setup.lhs</filename>, to indicate that it is a
-	literate Haskell file<footnote>
-	  <para id="x_Zp">We use literate Haskell notation so that on a Linux or
-	    Unix system, if we make the file executable, it will be
-	    treated as a script, and we can run it directly.  This is
-	    probably the only time you'll see literate Haskell in this
-	    book.</para>
-	</footnote>.</para>
+	<filename>Setup.hs</filename>.</para>
 
       <para id="x_ap">Once we have the <filename>.cabal</filename> and
-	<filename>Setup.lhs</filename> files written, we have three
+	<filename>Setup.hs</filename> files written, we have three
 	steps left.</para>
 
       <para id="x_bp">To instruct Cabal how to build and where to install a
@@ -1241,10 +1274,11 @@ PrettyJSON.hs:8:7:
 
 <screen><prompt>$</prompt> <userinput>runghc Setup build</userinput></screen>
 
-      <para id="x_fp">If this succeeds, we can install the package.  We don't
-	need to indicate where to install to: Cabal will use the
-	settings we provided in the <code>configure</code>
-	step.</para>
+      <para id="x_fp">If this succeeds, we can install the package.
+	We don't need to indicate where to install to: Cabal will use
+	the settings we provided in the <code>configure</code> step.
+	It will install to our own directory and update &GHC;'s
+	per-user package database.</para>
 
 <screen><prompt>$</prompt> <userinput>runghc Setup install</userinput></screen>
 
@@ -1252,7 +1286,7 @@ PrettyJSON.hs:8:7:
   </sect1>
 
   <sect1>
-    <title>Practical pointers, and further reading</title>
+    <title>Practical pointers and further reading</title>
 
     <para id="x_gp">&GHC; already bundles a pretty printing library,
       <code>Text.PrettyPrint.HughesPJ</code>.  It provides the same
@@ -1268,10 +1302,13 @@ PrettyJSON.hs:8:7:
       discussion of how to design a library in Haskell.</para>
 
     <para id="x_ip">In this chapter, our pretty printing library is
-      based on a simpler model described by Philip Wadler in
+      based on a simpler system described by Philip Wadler in
       <citation><biblioref linkend="bib.wadler98"/></citation>.  His
       library was extended by Daan Leijen; this version is available
-      for download from Hackage.</para>
+      for download from Hackage as <filename>wl-pprint</filename>.  If
+      you use the <command>cabal</command> command line tool, you can
+      download, build, and install it in one step with <command>cabal
+	install wl-pprint</command>.</para>
   </sect1>
 </chapter>
 
