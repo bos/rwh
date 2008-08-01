@@ -7,7 +7,7 @@
 Building real systems means caring about quality control, robustness and 
 correctness. With the right quality assurance mechanisms in place, 
 well-written code can feel like a precision machine, with all functions
-performing their tasks precisely and exactly as specified. There is no
+performing their tasks exactly as specified. There is no
 sloppiness around the edges, and the final result can be code that is
 self-explanatory, obviously correct -- the kind of code that inspires
 confidence.  </para>
@@ -51,7 +51,10 @@ test its behaviour.
     </para>
 
     <para id="x_zp">
-First, we import the QuickCheck library, and any other modules we need:
+First, we import the QuickCheck library<footnote><para>
+Throughout this chapter we'll use QuickCheck 1.0 (classic QuickCheck). It
+should be kept in mind that a some functions may differ in later releases of
+the library. </para></footnote>, and any other modules we need:
     </para>
 
     &QC-basics.hs:module;
@@ -64,14 +67,14 @@ And the function we want to test &emdash; a custom sort routine:
 
     <para id="x_Bq">
 This is the classic Haskell sort implementation: a study in functional
-programming elegance, if not efficiency. Now, we'd like to check that this
-function obeys the basic rules a good sort should follow. One useful
-invariant to start with, and one that comes up in a lot of purely functional
-code, is <emphasis>idempotency</emphasis> &emdash; applying a function twice has
-the same result as applying it only once. For our sort routine, this should
-certainly be true, or things have gone horribly wrong! This invariant can be
-encoded as a property simply:
-</para>
+programming elegance, if not efficiency (this isn't an inplace sort). Now,
+we'd like to check that this function obeys the basic rules a good sort
+should follow. One useful invariant to start with, and one that comes up in a
+lot of purely functional code, is <emphasis>idempotency</emphasis> &emdash;
+applying a function twice has the same result as applying it only once. For
+our sort routine, a stable sort algorithm, this should certainly be true, or
+things have gone horribly wrong! This invariant can be encoded as a property
+simply: </para>
 
     &QC-basics.hs:idempotent;
 
@@ -87,14 +90,15 @@ for a few simple cases by hand:
 
     <para id="x_oy">
 Looking good. However, writing out the input data by hand is tedious, and
-violates the moral code of the lazy functional programmer: let the machine do the
-work! To automate this the QuickCheck library comes with a set of data
-generators for all the basic Haskell data types.  QuickCheck uses the
-<type>Arbitrary</type> type class to present a uniform interface to random
+violates the moral code of the efficient functional programmer: let the
+machine do the work! To automate this the QuickCheck library comes with a set
+of data generators for all the basic Haskell data types.  QuickCheck uses the
+<type>Arbitrary</type> type class to present a uniform interface to (pseudo-)random
 data generation with the type system used to resolve which generator to use.
-QuickCheck normally hides the data generation plumbing, however, we can also
-run the generators by hand to get a sense for the random data QuickCheck
-produces. For example, to generate a random list of boolean values:
+QuickCheck normally hides the data generation plumbing, however we can also
+run the generators by hand to get a sense for the distribution of data
+QuickCheck produces. For example, to generate a random list of boolean
+values:
   </para>
 
     &qc-arbitrary.ghci:arbitrary;
@@ -103,12 +107,13 @@ produces. For example, to generate a random list of boolean values:
 QuickCheck generates test data like this and passes it to the property of our
 choosing, via the <code>quickCheck</code> function. The type of the property
 itself determines which data generator is used. <code>quickCheck</code> then
-checks that for all the test data produced, the property is satisifed. 
+checks that for all the test data produced, the property is satisfied. 
 Now, since our idempotency test is polymorphic in the list element type, we
 need to pick a particular type to generate test data for, which we write as a
 type constraint on the property. To run the test, we just call
-<code>quickCheck</code> with our property function, set to the require data
-type:
+<code>quickCheck</code> with our property function, set to the required data
+type (otherwise the list element type will default to the uninteresting
+<code>()</code> type):
   </para>
 
     &qc-basics.ghci:basics;
@@ -116,9 +121,9 @@ type:
   <para id="x_Dq">
 For the 100 different lists generated, our property held &emdash; great!
 When developing tests, it is often useful to see the actual data
-generated for each test. To do this, we replace
+generated for each test. To do this, we would replace
 <code>quickCheck</code> with its sibling, <code>verboseCheck</code>, to see
-(noisy) output for each test. Now, let's look at more sophisticated
+(verbose) output for each test. Now, let's look at more sophisticated
 properties that our function might satisfy.
   </para>
 
@@ -129,7 +134,7 @@ properties that our function might satisfy.
 Good libraries consist of a set of orthogonal primitives having sensible
 relationships to each other. We can use QuickCheck to specify the
 relationships between functions in our code, helping us find a good library
-interface by developing a functions that are interrelated via useful
+interface by developing functions that are interrelated via useful
 properties. QuickCheck in this way acts as an API "lint" tool &emdash; it
 provides machine support for ensuring our library API makes sense.
     </para>
@@ -152,7 +157,8 @@ Testing this, though, reveals an error:
 
     <para id="x_ry">
 The property failed when sorting an empty list &emdash; for which
-<code>minimum</code> isn't defined, as we can see from its definition:
+<code>head</code> and <code>minimum</code> are't defined, as we can see from
+their definition:
     </para>
 
     &minimum.hs:minimum;
@@ -185,7 +191,7 @@ testing them, rather than a simple boolean constant).
 </para>
 
 <para id="x_uy">
-We can now complete out basic property set for the sort function with
+We can now complete the basic property set for the sort function with
 some other invariants that it should satisfy: the last sorted element should
 be the largest element; and if we find the smallest element of two different lists,
 that should be the first element if we append and sort those lists. These
@@ -230,11 +236,11 @@ the specification, and ensuring it behaves as required.
   <sect1 id="quickcheck.indepth">
     <title>Testing case study: specifying a pretty printer</title>
 
-    <para id="x_K21">Testing individiual functions for their natural properties is one
+    <para id="x_K21">Testing individual functions for their natural properties is one
       of the basic building blocks that guides development of large systems
       in Haskell.  We'll look now at a more complicated scenario: taking the
       pretty printing library developed in earlier chapters, and building a
-      testsuite for it.
+      test suite for it.
     </para>
 
     <sect2> 
@@ -253,7 +259,7 @@ the specification, and ensuring it behaves as required.
     <!-- TODO added an Eq type. Do the readers care? -->
     <para id="x_M21">
      The library itself is implemented as a set of functions that build and
-     transform values of this document type, before finally rendering it the
+     transform values of this document type, before finally rendering the
      finished document to a string.
     </para>
      
@@ -261,8 +267,8 @@ the specification, and ensuring it behaves as required.
      QuickCheck encourages an approach to testing where the developer
      specifies invariants that should hold for any data we can throw at the
      code. To test the pretty printing library, then, we'll need a source of
-     input data. To do tihs, we take advantage of the small combinator suite for building
-     random data generation QuickCheck provides, via the
+     input data. To do this, we take advantage of the small combinator suite for building
+     random data that QuickCheck provides via the
      <type>Arbitrary</type> class. The class provides a function,
      <code>arbitrary</code>, to generate data of each type, and with this we
      can define our data generator for our custom data types.
@@ -327,7 +333,7 @@ the specification, and ensuring it behaves as required.
       <type>Doc</type> type. We'll start by breaking the problem down, first
       generating random constructors for each type, then, depending on the
       result, the components of each field. The most complicated case are the
-      union and concatentation variants. But first we need to write an
+      union and concatenation variants. But first we need to write an
       instance for generating random characters &emdash; QuickCheck doesn't
       have a default instance for characters, due to the abundance of
       different text encodings we might want to use for character tests, so
@@ -341,10 +347,11 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_U21">
       With this in place, we can now write an instance for documents, by
-      enumating the constructors, and filling the fields in. We choose a 
+      enumerating the constructors, and filling the fields in. We choose a 
       random integer to represent which document variant to generate, and
       then dispatch based on the result. To generate concat or union document
-      nodes, we just recurse:
+      nodes, we just recurse on <code>arbitrary</code>, letting type
+      inference determine which instance of <code>Arbitrary</code> we mean:
     </para>
 
     &QC.hs:ArbitraryDoc;
@@ -363,7 +370,7 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_W21">
       The latter is more concise, just picking between a list of generators,
-      but they describe the same data either way. We can check the ouput
+      but they describe the same data either way. We can check that the output
       makes sense, by generating a list of random documents:
     </para>
 
@@ -396,16 +403,17 @@ the specification, and ensuring it behaves as required.
     &QC.hs:prop_empty;
 
     <para id="x_a21">
-      Confirming this is indeed true, and we're underway with our testing:
+      Confirming that this is indeed true, we're now underway with our testing:
     </para>
 
     &qc-test1.ghci:run_prop_empty;
 
     <para id="x_b21">
-      To look at what actual test documents were generated (by substituting
-      <code>quickCheck</code> for <code>verboseCheck</code>) it's possible to
-      see that there's a good mix of simple cases, and more nested,
-      complicated forms being tested.
+      To look at what actual test documents were generated (by replacing
+      <code>quickCheck</code> with <code>verboseCheck</code>).  A good
+      mixture of both simple and complicated cases are being generated.
+      We can refine the data generation further, with constraints on the
+      proportion of generated data, if desirable.
     </para>
 
     <!-- do we want to show an example here? -->
@@ -432,10 +440,10 @@ the specification, and ensuring it behaves as required.
     <para id="x_e21">
       Higher order functions are the basic glue of reusable programming, and
       our pretty printer library is no exception &emdash; a custom fold
-      function is used internally to implement both document concatentation
-      and interleaving separators between document chunks. The document
-      <code>fold</code> takes a list of document pieces, and glues them all
-      together with a supplied combining function:
+      function is used internally to implement both document concatenation
+      and interleaving separators between document chunks. The 
+      <code>fold</code> defined for documents takes a list of document
+      pieces, and glues them all together with a supplied combining function:
     </para>
 
     &Prettify2.hs:fold;
@@ -540,7 +548,7 @@ The test script can then be compiled and executed:
     evaluated. The result is precise knowledge about the percent of code
     tested, that's easy to obtain. HPC comes with a simple utility to
     generate useful graphs of program coverage, making it easy to zoom in 
-    on weak spots in the testsuite.
+    on weak spots in the test suite.
    </para>
 
    <para id="x_o21">
@@ -622,7 +630,7 @@ The test script can then be compiled and executed:
   
 <para id="x_u21">
 we forgot to test the <type>Monoid</type> instance, for example, and some of
-the more complicated functions. HPC helps keep our testsuite honest.
+the more complicated functions. HPC helps keep our test suite honest.
 Let's add a test for the type class instance of <type>Monoid</type>, the
 class of types that support appending and empty elements:
 </para>
@@ -675,9 +683,9 @@ That is, it identifies "code smell".
     <!--
 
     <para id="x_z21">An issue that comes up when testing with QuickCheck is where 
-    to place the properties. Do they live in an external testsuite, or should 
+    to place the properties. Do they live in an external test suite, or should 
     they be considered part of the module they test? This becomes more of an
-    issue when the testsuite needs to break the module abstraction boundaries
+    issue when the test suite needs to break the module abstraction boundaries
     we have in place (for example, we might need access to constructors that
     are normally hidden). For our pretty printer, this means we'll need, for
     testing purposes, to expose the constructors of the Doc type, in order
