@@ -33,7 +33,7 @@ data Doc = Empty
          | Line
          | Concat Doc Doc
          | Union Doc Doc
-           deriving (Show)
+           deriving (Show,Eq)
 {-- /snippet Doc --}
 
 {-- snippet append --}
