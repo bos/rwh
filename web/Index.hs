@@ -41,7 +41,6 @@ chapters = [
  , ch "fp" "Functional programming" $ Beta "2008-05-07"
  , ch "library" "Writing a library: working with JSON data" $ Beta "2008-05-07"
  , ch "typeclasses" "Using typeclasses" $ Beta "2008-02-21"
- , ch "jsonclass" "Typeclasses at work: making JSON easier to use" $ Beta "2008-06-21"
  , ch "io" "Input and output" $ Beta "2008-02-21"
  , ch "glob" "Case study: regular expressions and file name matching"
    $ Beta "2008-01-21"
