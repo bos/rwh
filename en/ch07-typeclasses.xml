@@ -77,7 +77,7 @@
     <para id="x_uA">
       This says that we are declaring a typeclass named
       <literal>BasicEq</literal>, and we'll refer to instance types with the
-      letter <literal>a</literal>.  An instance type of this typeeclass
+      letter <literal>a</literal>.  An instance type of this typeclass
       is any type that implements the functions defined in the typeclass.
       This typeclass defines one function.
       That function takes two parameters&emdash;both corresponding to instance
@@ -1099,37 +1099,47 @@ class  Eq a  where
   <sect1 id="typeclasses.auto.derivation">
     <title>Automatic Derivation</title>
     <para id="x_rB">
-      For many simple data types, the Haskell compiler can automatically
-      derive instances of &Read;, &Show;, &Bounded;, &Enum;, &Eq;, and &Ord;
-      for you.<footnote><para id="x_HN">While these are defined as regular Haskell
-          typeclasses without any special magic, automatic derivation is a special
-          feature of the compiler only supported with these particular
-          typeclasses.</para></footnote>
-      This saves you the effort of having to manually write code to compare
-      or display your own types.
+      For many simple data types, the Haskell compiler can
+      automatically derive instances of &Read;, &Show;, &Bounded;,
+      &Enum;, &Eq;, and &Ord; for us. This saves us the effort of
+      having to manually write code to compare or display our own
+      types.
     </para>
     &colorderived.hs:all;
+
+    <note>
+      <para id="x_HN">The Haskell standard requires compilers to be
+	able to automatically derive instances of these specific
+	typeclasses. This automation is not available for other
+	typeclasses.</para>
+    </note>
+
     <para id="x_sB">
       Let's take a look at how these derived instances work for us:
     </para>
     &derived.ghci:all;
     <para id="x_IN">
-      Notice that the sort order for <literal>Color</literal>
-      was based on the order that
-      the constructors were defined.
+      Notice that the sort order for <literal>Color</literal> was
+      based on the order that the constructors were defined.
     </para>
     <para id="x_uB">
-      Automatic derivation is not always possible.  For instance, if you
-      defined a type <literal>data MyType = MyType (Int -> Bool)</literal>,
-      the compiler will not be able to derive an instance of &Show; because
-      it doesn't know how to render a function.  You will get a compilation
-      error in such a situation.
+      Automatic derivation is not always possible.  For instance, if
+      you defined a type <literal>data MyType = MyType (Int ->
+	Bool)</literal>, the compiler will not be able to derive an
+      instance of &Show; because it doesn't know how to render a
+      function.  We will get a compilation error in such a situation.
     </para>
+
+    <para>When we automatically derive an instance of some typeclass,
+      the types that we refer to in our &data; declaration must
+      also be instances of that typeclass (manually or automatically).</para>
+
+    &AutomaticDerivation.hs:CannotShow;
   </sect1>
 
   <sect1 id="jsonclass">
     <title>Typeclasses at work: making JSON easier to use</title>
-    <remark>FIXME: title added by John; bos -- is this what you were after?</remark>
+
     <para id="x_jz">The <type>JValue</type> type that we introduced in <xref
       linkend="library.jvalue"/> is not especially easy to work with.
       Here is a truncated and tidied snippet of some real JSON data,
@@ -1170,7 +1180,7 @@ class  Eq a  where
       <title>More helpful errors</title>
 
       <para id="x_pz">The return type of our <function>fromJValue</function>
-	function uses the predefined <type>Either</type> type.  Like
+	function uses the <type>Either</type> type.  Like
 	<type>Maybe</type>, this type is predefined for us, and we'll
 	often use it to represent a computation that could
 	fail.</para>
@@ -1186,7 +1196,7 @@ class  Eq a  where
 
       <para id="x_rz">Quite often, the type we use for the <varname
 	  role="type">a</varname> parameter value is
-	<type>String</type>, which lets us return an error message if
+	<type>String</type>, so we can provide a useful description if
 	something goes wrong.  To see how we use the
 	<type>Either</type> type in practice, let's look at a simple
 	instance of our typeclass.</para>
@@ -1232,19 +1242,19 @@ class  Eq a  where
     <title>Living in an open world</title>
 
     <para id="x_wz">Haskell's typeclasses are intentionally designed to let us
-      create new instances of a typeclass whenever we like.</para>
+      create new instances of a typeclass whenever we see fit.</para>
 
     &JSONClass.hs:doubleToJValue;
 
-    <para id="x_xz">We can add new instances anywhere; they are not confined to
-      the module where we define a typeclass.  This feature of the
-      typeclass system is referred to as its <emphasis>open world
-	assumption</emphasis>.  If we could say <quote>the following
-	are the only instances of this typeclass that can
-	exist</quote>, we could have a <emphasis>closed</emphasis>
-      world.</para>
+    <para id="x_xz">We can add new instances anywhere; they are not
+      confined to the module where we define a typeclass.  This
+      feature of the typeclass system is referred to as its
+      <emphasis>open world assumption</emphasis>.  If we had a way to
+      express a notion of <quote>the following are the only instances
+	of this typeclass that can exist</quote>, we would have a
+      <emphasis>closed</emphasis> world.</para>
 
-    <para id="x_yz">One useful instance we'd like to be able to write is to turn
+    <para id="x_yz">We would like to be able to turn
       a list into what JSON calls an array.  We won't worry about
       implementation details just yet, so let's use
       <code>undefined</code> as the bodies of the instance's
@@ -1287,7 +1297,7 @@ class  Eq a  where
 	the more specific instance.</para>
 
       <para id="x_F01">However, &GHC; is conservative by default, and insists
-	that there must be only one possible instance that it could
+	that there must be only one possible instance that it can
 	use.  It will thus report an error if we try to use
 	<code>bork</code>.</para>
 
@@ -1302,23 +1312,43 @@ class  Eq a  where
     </sect2>
 
     <sect2>
-      <title>Relaxing the rules for overlapping instances</title>
+      <title>Relaxing some restrictions on typeclasses</title>
 
-      <para id="x_H01">&GHC; supports a useful language extension,
-	<code>OverlappingInstances</code>: when there are multiple
+      <para>Normally, we cannot write an instance of a typeclass for a
+	specialized version of a polymorphic type.  The
+	<type>[Char]</type> type is the polymorphic type
+	<type>[a]</type> specialized to the type <type>Char</type>. We
+	are thus prohibited from declaring <type>[Char]</type> to be
+	an instance of a typeclass.  This is highly inconvenient,
+	since strings are ubiquitous in real code.</para>
+
+      <para>The <code>TypeSynonymInstances</code> language extension
+	removes this restriction, permitting us to write such
+	instances.</para>
+
+      <para id="x_H01">&GHC; supports another useful language extension,
+	<code>OverlappingInstances</code>, which addresses the problem
+	we saw with overlapping instances.  When there are multiple
 	overlapping instances to choose from, this extension causes
 	the compiler to pick the most specific one.</para>
 
       <para id="x_I01">We frequently use this extension together with
-	<code>TypeSynonymInstances</code>, so that we can provide an
-	instance for <type>String</type> and an instance for other
-	types of list.  Here's an example.</para>
+	<code>TypeSynonymInstances</code>.  Here's an example.</para>
 
       &SimpleClass.hs:Foo;
     
-      <para id="x_J01">With the <code>OverlappingInstances</code> extension
-	enabled, &GHC; will still reject code if it finds more than
-	one most specific instance.</para>
+      <para>If we apply <function>foo</function> to a
+	<type>String</type>, the compiler will use the
+	<type>String</type>-specific implementation.  Even though we
+	have an instance of <type>Foo</type> for <type>[a]</type> and
+	<type>Char</type>, the instance for <type>String</type> is
+	more specific, so &GHC; chooses it.  For other types of list,
+	we will see the behavior specified for
+	<type>[a]</type>.</para>
+
+      <para id="x_J01">With the <code>OverlappingInstances</code>
+	extension enabled, &GHC; will still reject code if it finds
+	more than one equally specific instance.</para>
 
       <note>
 	<title>When to use the OverlappingInstances extension</title>
@@ -1330,19 +1360,19 @@ class  Eq a  where
 	  define an instance that we wish to allow to overlap with
 	  another instance, we must enable the extension for the
 	  module that contains the definition.  When it compiles the
-	  module, &GHC; will mark that instance as <quote>can be
+	  module, &GHC; will record that instance as <quote>can be
 	    overlapped with other instances</quote>.</para>
 
-	<para id="x_L01">Once we import this module and use the instance, we
-	  <emphasis>won't</emphasis> need to enable
+	<para id="x_L01">Once we import this module and use the
+	  instance, we <emphasis>won't</emphasis> need to enable
 	  <code>OverlappingInstances</code> in the importing module:
 	  &GHC; will already know that the instance was marked as
 	  <quote>okay to overlap</quote> when it was defined.</para>
 
-	<para id="x_M01">This behaviour is useful when we are writing a library:
-	  it lets us choose to create overlappable instances, without
-	  forcing clients of our library to enable language extensions
-	  in order to use it.</para>
+	<para id="x_M01">This behaviour is useful when we are writing
+	  a library: we can choose to create overlappable instances,
+	  but users of our library do not need to enable any special
+	  language extensions.</para>
       </note>
     </sect2>
 
@@ -1358,16 +1388,23 @@ class  Eq a  where
 	via a clever, but simple, trick.</para>
 
       <para id="x_O01">The <type>Show</type> class defines both a
-	<function>show</function> method and a
-	<function>showList</function> method.  The default
-	implementation of <function>showList</function> renders
-	elements using square brackets and commas.  The instance of
-	<type>Show</type> for <type>[a]</type> uses
-	<function>showList</function>.  The instance of
-	<type>Show</type> for <type>Char</type> simply provides a
+	<function>show</function> method, which renders one value,
+	and a <function>showList</function> method, which renders a
+	list of values.  The default implementation of
+	<function>showList</function> renders a list using square
+	brackets and commas.</para>
+
+      <para>The instance of <type>Show</type> for <type>[a]</type> is
+	implemented using <function>showList</function>.  The instance
+	of <type>Show</type> for <type>Char</type> provides a
 	special implementation of <function>showList</function> that
 	uses double quotes and escapes non-ASCII-printable
 	characters.</para>
+
+      <para>As a result, if someone applies <function>show</function>
+	to a <type>[Char]</type> value, the implementation of
+	<function>showList</function> will be chosen, and it will
+	correctly render the string using quotes.</para>
 
       <para id="x_P01">At least sometimes, then, we can avoid the need for the
 	<code>OverlappingInstances</code> extension with a little bit
@@ -1376,60 +1413,90 @@ class  Eq a  where
   </sect1>
 
   <sect1>
-    <title>How to give a type a secret identity</title>
+    <title>How to give a type a new identity</title>
 
-    <para id="x_Q01">In addition to the familiar &data; keyword, Haskell provides
-      us with another way to create a new type, via &newtype;.</para>
+    <para id="x_Q01">In addition to the familiar &data; keyword,
+      Haskell provides us with another way to create a new type, using
+      the &newtype; keyword.</para>
 
     &Newtype.hs:newtype;
 
     <para id="x_R01">The purpose of a &newtype; declaration is to rename an
       existing type, giving it a distinct identity.  As we can see, it
-      is similar in appearance to a type declaration using the &data;
+      is similar in appearance to a type declared using the &data;
       keyword.</para>
 
-    <para id="x_S01">When we declare a &newtype;, we can choose to make any of
-      the underlying type's typeclass instances available. Here, we've
-      elected to make <type>NewtypeInt</type> provide
+    <note>
+      <title>The type and newtype keywords</title>
+
+      <para>Although their names are similar, the &type; and &newtype;
+	keywords have different purposes.  The &type; keyword gives us
+	another way of referring to a type, like a nickname for a
+	friend.  Both we and the compiler know that
+	<type>[Char]</type> and <type>String</type> names refer to the
+	same type.</para>
+
+      <para>In contrast, the &newtype; keyword exists to
+	<emphasis>hide</emphasis> the nature of a type.  Consider a
+	<type>UniqueID</type> type.</para>
+
+      &Newtype.hs:UniqueID;
+
+      <para>The compiler treats <type>UniqueID</type> as a different
+	type from <type>Int</type>.  As a user of a
+	<type>UniqueID</type>, we know only that we have a unique
+	identifier; we cannot see that it is implemented as an
+	<type>Int</type>.</para>
+    </note>
+
+    <para id="x_S01">When we declare a &newtype;, we must choose which
+      of the underlying type's typeclass instances we want to expose.
+      Here, we've elected to make <type>NewtypeInt</type> provide
       <type>Int</type>'s instances for <type>Eq</type>,
       <type>Ord</type> and <type>Show</type>.  As a result, we can
       compare and print values of type <type>NewtypeInt</type>.</para>
 
     &newtype.ghci:compare;
 
-    <para id="x_T01">However, since we are <emphasis>not</emphasis> exposing
+    <para id="x_T01">Since we are <emphasis>not</emphasis> exposing
       <type>Int</type>'s <type>Num</type> or <type>Integral</type>
       instances, values of type <type>NewtypeInt</type> are not
       numbers.  For instance, we can't add them.</para>
 
     &newtype.ghci:num;
 
-    <para id="x_U01">As with the &data; keyword, we can use a &newtype;'s value
-      constructor to create a new value, or to pattern match on an
-      existing value.</para>
+    <para id="x_U01">As with the &data; keyword, we can use a
+      &newtype;'s value constructor to create a new value, or to
+      pattern match on an existing value.</para>
+
+    <para>If a &newtype; does not use automatic deriving to expose the
+      underlying type's implementation of a typeclass, we are free to
+      either write a new instance or leave the typeclass
+      unimplemented.</para>
 
     <sect2>
       <title>Differences between data and newtype declarations</title>
 
-      <para id="x_V01">The &newtype; keyword exists to give an existing type a
-	new identity, and it is more restricted in how we can use it
-	than the &data; keyword.  Specifically, a &newtype; can only
-	have one value constructor, and that constructor must have
-	exactly one field.</para>
+      <para id="x_V01">The &newtype; keyword exists to give an
+	existing type a new identity, and it has more restrictions on
+	its uses than the &data; keyword.  Specifically, a &newtype;
+	can only have one value constructor, and that constructor must
+	have exactly one field.</para>
 
       &NewtypeDiff.hs:newtype;
 
-      <para id="x_W01">Beyond this, there's another important difference between
-	&data; and &newtype;.   A type created with the &data; keyword
-	has some runtime book-keeping overhead, to record which
-	constructor a value was created with.  A &newtype; value, on
-	the other hand, can only have one constructor, and so does not
-	need this overhead.  This makes it more space- and
-	time-efficient at runtime.</para>
+      <para id="x_W01">Beyond this, there's another important
+	difference between &data; and &newtype;.   A type created with
+	the &data; keyword has a book-keeping cost at runtime, for
+	example to track which constructor a value was created with.
+	A &newtype; value, on the other hand, can only have one
+	constructor, and so does not need this overhead.  This makes
+	it more space- and time-efficient at runtime.</para>
 
-      <para id="x_X01">Because a &newtype;'s constructor is used only at compile
-	time and doesn't have a runtime representation, pattern
-	matching on &undefined; behaves differently.</para>
+      <para id="x_X01">Because a &newtype;'s constructor is used only
+	at compile time and does not even exist at runtime, pattern
+	matching on &undefined; behaves differently for types defined
+	using &newtype; than for those that use &data;.</para>
 
       <para id="x_Y01">To understand the difference, let's first review what we
 	might expect with a normal datatype.  We are already familiar
@@ -1446,17 +1513,18 @@ class  Eq a  where
 
       <para id="x_a01">Since our pattern matches against the constructor but
 	doesn't inspect the payload, the &undefined; remains
-	unevaluated and does not cause a crash.</para>
+	unevaluated and does not cause an exception to be thrown.</para>
 
       <para id="x_b01">In this example, we're not using the <code>D</code>
-	constructor, so the unprotected &undefined; gets evaluated
-	when the pattern match occurs, and we crash.</para>
+	constructor, so the unprotected &undefined; is evaluated
+	when the pattern match occurs, and we throw an exception.</para>
 
       &newtype.ghci:data;
 
-      <para id="x_c01">When we use the <code>N</code> constructor, we get the
-	same behaviour as we did with the <code>D</code> constructor:
-	no crash.</para>
+      <para id="x_c01">When we use the <code>N</code> constructor for
+	the <type>NewtypeInt</type> type, we see the same behaviour as
+	with the <type>DataInt</type> type's <code>D</code>
+	constructor: no exception.</para>
 
       &newtype.ghci:N;
 
@@ -1467,24 +1535,25 @@ class  Eq a  where
       &newtype.ghci:newtype;
 
       <para id="x_e01">We don't crash!  Because there's no constructor present at
-	runtime, matching against <code>N _</code> is actually
+	runtime, matching against <code>N _</code> is in fact
 	equivalent to matching against the plain wild card
-	<code>_</code>: since this always matches, the expression
-	doesn't need to be evaluated.</para>
+	<code>_</code>: since the wild card always matches, the expression
+	does not need to be evaluated.</para>
 
       <tip>
 	<title>Another perspective on newtype constructors</title>
 
-	<para id="x_f01">Even though we use a <code>newtype</code> type's
-	  constructor in the same way as a <code>data</code> type's
-	  constructor, it really exists just to coerce a value between
-	  the two types.</para>
+	<para id="x_f01">Even though we use the value constructor for
+	  a &newtype; in the same way as that of a type defined using
+	  the &data; keyword, all it does is coerce a value between
+	  its <quote>normal</quote> type and its &newtype;
+	  type.</para>
 
 	<para id="x_g01">In other words, when we apply the <code>N</code>
 	  constructor in an expression, we coerce an expression from type
 	  <type>Int</type> to type <type>NewtypeInt</type> as far as
 	  we and the compiler are concerned, but absolutely nothing
-	  happens at runtime.</para>
+	  occurs at runtime.</para>
 
 	<para id="x_h01">Similarly, when we match on the <code>N</code>
 	  constructor in a pattern, we coerce an expression from type
@@ -1521,20 +1590,28 @@ class  Eq a  where
   <sect1 id="jsonclass.instances">
     <title>JSON typeclasses without overlapping instances</title>
 
-    <para id="x_m01">Enabling &GHC;'s support for overlapping instances might be
-      a tempting and quick way to make our JSON code happy, but it
-      won't teach us how to work with &newtype;.  In any case, we will
-      on occasion be faced with several equally good instances, in
-      which case overlapping instances will not save us.</para>
+    <para id="x_m01">Enabling &GHC;'s support for overlapping
+      instances is an effective and quick way to make our JSON code
+      happy.  In more complex cases, we will occasionally be faced
+      with several equally good instances for some typeclass, in which
+      case overlapping instances will not help us and we will need to
+      put some &newtype; declarations into place.  To see what's
+      involved, let's rework our JSON typeclass instances to use
+      &newtype;s instead of overlapping instances.</para>
 
-    <para id="x_n01">Our first task, then, is to wrap up the list type so that
-      the compiler will not see it as a list.</para>
+    <para id="x_n01">Our first task, then, is to help the compiler to
+      distinguish between <type>[a]</type>, the representation we use
+      for JSON arrays, and <type>[(String,[a])]</type>, which we use
+      for objects.  These were the types that gave us problems before
+      we learned about <code>OverlappingInstances</code>. We wrap up
+      the list type so that the compiler will not see it as a
+      list.</para>
 
     &JSONClass.hs:JAry;
 
-    <para id="x_o01">When we export this type from our module, we'll export the
-      complete details of the type.  Our module header will look like
-      this:</para>
+    <para id="x_o01">When we export this type from our module, we'll
+      export the complete details of the type.  Our module header will
+      look like this:</para>
 
     &JSONClassExport.hs:module;
 
@@ -1542,32 +1619,37 @@ class  Eq a  where
       <type>JAry</type> name means <quote>export all details of this
 	type</quote>.</para>
 
-    <para id="x_q01">Usually, when we export a &newtype;, we do
-      <emphasis>not</emphasis> export the data constructor. Instead,
-      we define a function that applies the constructor for us.</para>
+    <note>
+      <title>A slight deviation from normal use</title>
 
-    &JSONClass.hs:jary;
+      <para id="x_q01">Usually, when we export a &newtype;, we will
+	<emphasis>not</emphasis> export its data constructor, in order
+	to keep the details of the type abstract. Instead, we would
+	define a function to apply the constructor for us.</para>
 
-    <para id="x_r01">We then export the type constructor, the deconstructor
-      function, and the construction function, but
-      <emphasis>not</emphasis> the data constructor.</para>
+      &JSONClass.hs:jary;
 
-    &JSONClassExport.hs:abstract;
+      <para id="x_r01">We would then export the type constructor, the
+	deconstructor function, and our construction function, but not
+	the data constructor.</para>
 
-    <para id="x_s01">However, the usual reason to avoid exporting the data
-      constructor is to <quote>hide the plumbing</quote>, keeping our
-      type abstract.  When we don't export a type's data constructor,
-      clients of our library can only use the functions we provide to
-      construct and deconstruct values of that type.  That gives us,
-      the library authors, the liberty to change our internal
-      representation if we need to.  If we export the data
-      constructor, and decide to change the details of our type, we'll
-      run the risk of breaking any existing code that uses the
-      constructor.</para>
+      &JSONClassExport.hs:abstract;
 
-    <para id="x_t01">In this case, we really won't gain anything by making the
-      array wrapper abstract, so it makes more sense if we simply
-      export the entire definition.</para>
+      <para id="x_s01">When we don't export a type's data constructor,
+	clients of our library can only use the functions we provide
+	to construct and deconstruct values of that type. This gives
+	us, the library authors, the liberty to change our internal
+	representation if we need to.</para>
+
+      <para>If we export the data constructor, clients are likely to
+	start depending on it, for instance by using it in patterns.
+	If we later wish to change the innards of our type, we'll risk
+	breaking any code that uses the constructor.</para>
+
+      <para id="x_t01">In our circumstances here, we have nothing to
+	gain by making the array wrapper abstract, so we may as well
+	simply export the entire definition of the type.</para>
+    </note>
 
     <para id="x_u01">We provide another wrapper type that hides our
       representation of a JSON object.</para>
@@ -1580,8 +1662,8 @@ class  Eq a  where
     &JSONClass.hs:JValue;
 
     <para id="x_w01">This change doesn't affect the instances of the
-      <type>JSON</type> typeclass that we've already written, but we'd
-      like to write instances for our new <type>JAry</type> and
+      <type>JSON</type> typeclass that we've already written, but we
+      will want to write instances for our new <type>JAry</type> and
       <type>JObj</type> types.</para>
 
     &JSONClass.hs:instance.JAry;

@@ -65,9 +65,10 @@ instance JSON JValue where
 
 {-- snippet String --}
 instance JSON String where
-    toJValue = JString
+    toJValue               = JString
+
     fromJValue (JString s) = Right s
-    fromJValue _ = Left "not a JSON string"
+    fromJValue _           = Left "not a JSON string"
 {-- /snippet String --}
 
 {-- snippet doubleToJValue --}

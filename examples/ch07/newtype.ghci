@@ -20,3 +20,6 @@ case N undefined of N _ -> 1
 
 --# newtype
 case undefined of N _ -> 1
+
+--# unique
+UniqueID 314159265

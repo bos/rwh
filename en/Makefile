@@ -137,8 +137,7 @@ $(xsltproc) $(xsltproc-opts) -o $(1).xml \
 endef
 
 svn: beta
-	[ ! -d book-svn ] || svn co \
-	  https://prod.oreilly.com/external/authors/books/9780596514983/current
+	svn co https://prod.oreilly.com/external/authors/books/9780596514983/current book-svn
 	cp beta.xml book-svn/book.xml
 	cp figs/*.png book-svn/figs
 	svn add -q book-svn/figs/*.png
