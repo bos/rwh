@@ -19,7 +19,7 @@ import System.FilePath (dropTrailingPathSeparator, splitFileName, (</>))
 namesMatching :: String -> IO [FilePath]
 {-- /snippet type --}
 
-{-- snippet mundane --}
+{-- snippet namesMatching --}
 isPattern :: String -> Bool
 isPattern = any (`elem` "[*?")
 
@@ -27,23 +27,18 @@ namesMatching pat
   | not (isPattern pat) = do
     exists <- doesNameExist pat
     return (if exists then [pat] else [])
-{-- /snippet mundane --}
-{-- snippet otherwise  --}
+{-- /snippet namesMatching --}
+
+{-- snippet namesMatching2 --}
   | otherwise = do
-{-- /snippet otherwise  --}
-{-- snippet curdir  --}
     case splitFileName pat of
       ("", baseName) -> do
           curDir <- getCurrentDirectory
           listMatches curDir baseName
-{-- /snippet curdir  --}
-{-- snippet pats  --}
       (dirName, baseName) -> do
           dirs <- if isPattern dirName
                   then namesMatching (dropTrailingPathSeparator dirName)
                   else return [dirName]
-{-- /snippet pats  --}
-{-- snippet glue  --}
           let listDir = if isPattern baseName
                         then listMatches
                         else listPlain
@@ -51,9 +46,9 @@ namesMatching pat
                            baseNames <- listDir dir baseName
                            return (map (dir </>) baseNames)
           return (concat pathNames)
-{-- /snippet glue  --}
+{-- /snippet namesMatching2 --}
 
-{-- snippet listfuncs --}
+{-- snippet listMatches --}
 listMatches :: FilePath -> String -> IO [String]
 listMatches dirName pat = do
     dirName' <- if null dirName
@@ -66,19 +61,18 @@ listMatches dirName pat = do
                      else filter (not . isHidden) names
         return (filter (`matchesGlob` pat) names')
 
+isHidden ('.':_) = True
+isHidden _       = False
+{-- /snippet listMatches --}
+
+{-- snippet listPlain --}
 listPlain :: FilePath -> String -> IO [String]
 listPlain dirName baseName = do
     exists <- if null baseName
               then doesDirectoryExist dirName
               else doesNameExist (dirName </> baseName)
     return (if exists then [baseName] else [])
-{-- /snippet listfuncs --}
-
-{-- snippet isHidden --}
-isHidden :: String -> Bool
-isHidden ('.':_) = True
-isHidden _ = False
-{-- /snippet isHidden --}
+{-- /snippet listPlain --}
 
 {-- snippet doesNameExist --}
 doesNameExist :: FilePath -> IO Bool

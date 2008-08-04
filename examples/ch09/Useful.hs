@@ -23,7 +23,7 @@ rename old new = do
 {-- /snippet rename --}
 
 {-- snippet cc2cpp --}
-cc2cpp name =
-    mapM (renameWith (flip replaceExtension ".cpp")) =<< namesMatching "*.cc"
+cc2cpp =
+  mapM (renameWith (flip replaceExtension ".cpp")) =<< namesMatching "*.cc"
 {-- /snippet cc2cpp --}
 

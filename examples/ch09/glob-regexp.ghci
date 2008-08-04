@@ -23,7 +23,7 @@ globToRegex "f??.c"
 
 --# fnmatch
 
-let fnmatch pat name = name =~ globToRegex pat :: Bool
+let fnmatch pat name  =  name =~ globToRegex pat :: Bool
 :type fnmatch
 
-fnmatch "myname" "d*"
+fnmatch "d*" "myname"
