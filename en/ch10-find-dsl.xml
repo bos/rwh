@@ -256,7 +256,7 @@
 
 	  <para id="x_VO">(If you cannot recall the special &ghci;
 	    variable <varname>it</varname>, take a look back at <xref
-	    linkend="starting.it"/>.)  A directory will be
+	    linkend="starting.types"/>.)  A directory will be
 	    <function>searchable</function> if we have permission to
 	    list its contents; files are never
 	    <function>searchable</function>.</para>
