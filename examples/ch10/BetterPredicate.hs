@@ -1,14 +1,24 @@
-{-- snippet imports --}
+{-- snippet Predicate --}
+-- file: BetterPredicate.hs
+
 import Control.Monad (filterM)
-import RecursiveContents (getRecursiveContents)
 import System.Directory (Permissions(..), getModificationTime, getPermissions)
 import System.Time (ClockTime(..))
-{-- /snippet imports --}
 import System.FilePath (takeExtension)
-{-- snippet simpleFileSize --}
 import Control.Exception (bracket, handle)
 import System.IO (IOMode(..), hClose, hFileSize, openFile)
 
+-- the function we wrote earlier
+import RecursiveContents (getRecursiveContents)
+
+type Predicate =  FilePath      -- path to directory entry
+               -> Permissions   -- permissions
+               -> Maybe Integer -- file size (Nothing if not file)
+               -> ClockTime     -- last modified
+               -> Bool
+{-- /snippet Predicate --}
+
+{-- snippet simpleFileSize --}
 simpleFileSize :: FilePath -> IO Integer
 
 simpleFileSize path = do
@@ -19,13 +29,15 @@ simpleFileSize path = do
 {-- /snippet simpleFileSize --}
 
 {-- snippet getFileSize --}
-getFileSize path = handle (const (return Nothing)) $
+getFileSize path = handle (\_ -> return Nothing) $
   bracket (openFile path ReadMode) hClose $ \h -> do
     size <- hFileSize h
     return (Just size)
 {-- /snippet getFileSize --}
 
 {-- snippet saferFileSize --}
+saferFileSize :: FilePath -> IO (Maybe Integer)
+
 saferFileSize path = handle (\_ -> return Nothing) $ do
   h <- openFile path ReadMode
   size <- hFileSize h
@@ -33,15 +45,8 @@ saferFileSize path = handle (\_ -> return Nothing) $ do
   return (Just size)
 {-- /snippet saferFileSize --}
 
-{-- snippet Predicate --}
-type Predicate =  FilePath      -- path to directory entry
-               -> Permissions   -- permissions
-               -> Maybe Integer -- file size (Nothing if not file)
-               -> ClockTime     -- last modified
-               -> Bool
-{-- /snippet Predicate --}
-
 {-- snippet betterFind --}
+-- soon to be defined
 getFileSize :: FilePath -> IO (Maybe Integer)
 
 betterFind :: Predicate -> FilePath -> IO [FilePath]
@@ -61,7 +66,7 @@ myTest _ _ _ _ = False
 {-- /snippet myTest --}
 
 {-- snippet InfoP --}
-type InfoP a = FilePath         -- path to directory entry
+type InfoP a =  FilePath        -- path to directory entry
              -> Permissions     -- permissions
              -> Maybe Integer   -- file size (Nothing if not file)
              -> ClockTime       -- last modified
@@ -77,7 +82,7 @@ pathP path _ _ _ = path
 {-- snippet sizeP --}
 sizeP :: InfoP Integer
 sizeP _ _ (Just size) _ = size
-sizeP _ _ Nothing _ = -1
+sizeP _ _ Nothing     _ = -1
 {-- /snippet sizeP --}
 
 {-- snippet equalP --}
@@ -90,14 +95,14 @@ equalP' :: (Eq a) => InfoP a -> a -> InfoP Bool
 equalP' f k w x y z = f w x y z == k
 {-- /snippet equalP2 --}
 
-{-- snippet liftPK --}
-liftPK :: (a -> b -> c) -> InfoP a -> b -> InfoP c
-liftPK q f k w x y z = f w x y z `q` k
+{-- snippet liftP --}
+liftP :: (a -> b -> c) -> InfoP a -> b -> InfoP c
+liftP q f k w x y z = f w x y z `q` k
 
 greaterP, lesserP :: (Ord a) => InfoP a -> a -> InfoP Bool
-greaterP = liftPK (>)
-lesserP = liftPK (<)
-{-- /snippet liftPK --}
+greaterP = liftP (>)
+lesserP = liftP (<)
+{-- /snippet liftP --}
 
 {-- snippet simpleAndP --}
 simpleAndP :: InfoP Bool -> InfoP Bool -> InfoP Bool
@@ -116,7 +121,7 @@ orP = liftP2 (||)
 constP :: a -> InfoP a
 constP k _ _ _ _ = k
 
-liftPK' q f k w x y z = f w x y z `q` constP k w x y z
+liftP' q f k w x y z = f w x y z `q` constP k w x y z
 {-- /snippet constP --}
 
 {-- snippet myTest2 --}
@@ -124,7 +129,7 @@ liftPath :: (FilePath -> a) -> InfoP a
 liftPath f w _ _ _ = f w
 
 myTest2 = (liftPath takeExtension `equalP` ".cpp") `andP`
-          (sizeP `greaterP` 1024)
+          (sizeP `greaterP` 131072)
 {-- /snippet myTest2 --}
 
 {-- snippet myTest3 --}
@@ -132,8 +137,7 @@ myTest2 = (liftPath takeExtension `equalP` ".cpp") `andP`
 (&&?) = andP
 (>?) = greaterP
 
-myTest3 = (liftPath takeExtension ==? ".cpp") &&? (sizeP >? 1024)
--- 
+myTest3 = (liftPath takeExtension ==? ".cpp") &&? (sizeP >? 131072)
 {-- /snippet myTest3 --}
 
 {-- snippet myTest4 --}
@@ -141,5 +145,5 @@ infix 4 ==?
 infixr 3 &&?
 infix 4 >?
 
-myTest4 = liftPath takeExtension ==? ".cpp" &&? sizeP >? 1024
+myTest4 = liftPath takeExtension ==? ".cpp" &&? sizeP >? 131072
 {-- /snippet myTest4 --}

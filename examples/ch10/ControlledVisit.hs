@@ -29,7 +29,7 @@ getInfo :: FilePath -> IO Info
 
 {-- snippet getInfo --}
 maybeIO :: IO a -> IO (Maybe a)
-maybeIO act = handle (const (return Nothing)) (Just `liftM` act)
+maybeIO act = handle (\_ -> return Nothing) (Just `liftM` act)
 
 getInfo path = do
   perms <- maybeIO (getPermissions path)
@@ -44,16 +44,16 @@ traverse :: ([Info] -> [Info]) -> FilePath -> IO [Info]
 {-- snippet traverse --}
 traverse order path = do
     names <- getUsefulContents path
-    contents <- mapM (getInfo . (path </>)) ("" : names)
+    contents <- mapM getInfo (path : map (path </>) names)
     liftM concat $ forM (order contents) $ \info -> do
-        if isDirectory info && infoPath info /= path
-            then traverse order (infoPath info)
-            else return [info]
+      if isDirectory info && infoPath info /= path
+        then traverse order (infoPath info)
+        else return [info]
 
 getUsefulContents :: FilePath -> IO [String]
 getUsefulContents path = do
     names <- getDirectoryContents path
-    return (filter (not . (`elem` [".", ".."])) names)
+    return (filter (`notElem` [".", ".."]) names)
 
 isDirectory :: Info -> Bool
 isDirectory = maybe False searchable . infoPerms
@@ -62,7 +62,7 @@ isDirectory = maybe False searchable . infoPerms
 {-- snippet traverseVerbose --}
 traverseVerbose order path = do
     names <- getDirectoryContents path
-    let usefulNames = filter (not . (`elem` [".", ".."])) names
+    let usefulNames = filter (`notElem` [".", ".."]) names
     contents <- mapM getEntryName ("" : usefulNames)
     recursiveContents <- mapM recurse (order contents)
     return (concat recursiveContents)

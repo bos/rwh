@@ -9,7 +9,7 @@ getRecursiveContents :: FilePath -> IO [FilePath]
 
 getRecursiveContents topdir = do
   names <- getDirectoryContents topdir
-  let properNames = filter (not . (`elem` [".", ".."])) names
+  let properNames = filter (`notElem` [".", ".."]) names
   paths <- forM properNames $ \name -> do
     let path = topdir </> name
     isDirectory <- doesDirectoryExist path
