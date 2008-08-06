@@ -1144,7 +1144,9 @@
 	&ch13-map.ghci:union;
 
 	<para id="x_iV">We have barely covered ten percent of the
-	  <code>Data.Map</code> API.  For further inspiration, we
+	  <code>Data.Map</code> API.  We will cover maps and similar
+	  data structures in greater detail in <xref
+	  linkend="data"/>.  For further inspiration, we
 	  encourage you to browse the module documentation.  The
 	  module is impressively thorough.</para>
       </sect3>
