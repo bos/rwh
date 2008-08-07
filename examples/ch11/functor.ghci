@@ -16,7 +16,7 @@ treeMap (odd . length) tree
 --# fmap
 
 fmap length ["foo","quux"]
-fmap length (Node (Leaf "livingstone") (Leaf "i presume"))
+fmap length (Node (Leaf "Livingstone") (Leaf "I presume"))
 
 --# id
 

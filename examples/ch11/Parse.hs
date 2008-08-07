@@ -16,8 +16,8 @@ module Parse
     ) where
 
 import Control.Applicative ((<$>))
+import qualified Data.ByteString.Lazy.Char8 as L8
 import qualified Data.ByteString.Lazy as L
-import Data.ByteString.Lazy.Char8 (pack)
 import Data.Char (chr, ord, isDigit, isSpace)
 import Data.Int (Int64)
 import Data.Word (Word8)
@@ -28,9 +28,19 @@ import PNM (Greymap(..))
 {-- snippet ParseState --}
 data ParseState = ParseState {
       string :: L.ByteString
-    , offset :: Int64
+    , offset :: Int64           -- imported from Data.Int
     } deriving (Show)
 {-- /snippet ParseState --}
+
+{-- snippet simpleParse --}
+simpleParse :: ParseState -> (a, ParseState)
+simpleParse = undefined
+{-- /snippet simpleParse --}
+
+{-- snippet betterParse --}
+betterParse :: ParseState -> Either String (a, ParseState)
+betterParse = undefined
+{-- /snippet betterParse --}
 
 {-- snippet Parse --}
 newtype Parse a = Parse {
@@ -51,16 +61,22 @@ bail err = Parse $ \s -> Left $
 
 {-- snippet bind --}
 (==>) :: Parse a -> (a -> Parse b) -> Parse b
-x ==> f = Parse (\st -> case runParse x st of
-                          Left err -> Left err
-                          Right (a, st') -> runParse (f a) st')
+
+firstParser ==> secondParser  =  Parse chainedParser
+  where chainedParser initState   =
+          case runParse firstParser initState of
+            Left errMessage ->
+                Left errMessage
+            Right (firstResult, newState) ->
+                runParse (secondParser firstResult) newState
 {-- /snippet bind --}
 
 {-- snippet parse --}
 parse :: Parse a -> L.ByteString -> Either String a
-parse f s = case runParse f (ParseState s 0) of
-              Left err -> Left err
-              Right (a, _) -> Right a
+parse parser initState
+    = case runParse parser (ParseState initState 0) of
+        Left err          -> Left err
+        Right (result, _) -> Right result
 {-- /snippet parse --}
 
 {-- snippet Monad --}
@@ -78,34 +94,37 @@ putState :: ParseState -> Parse ()
 putState s = Parse (\_ -> Right ((), s))
 {-- /snippet getPut --}
 
-{-- snippet uncons --}
-uncons :: L.ByteString -> Maybe (Word8, L.ByteString)
-uncons s = if L.null s
-           then Nothing
-           else Just (L.head s, L.tail s)
-{-- /snippet uncons --}
+{-- snippet modifyOffset --}
+modifyOffset :: ParseState -> Int64 -> ParseState
+modifyOffset initState newOffset =
+    initState { offset = newOffset }
+{-- /snippet modifyOffset --}
 
 {-- snippet parseByte --}
+-- import the Word8 type from Data.Word
 parseByte :: Parse Word8
 parseByte =
-    getState ==> \st ->
-    case uncons (string st) of
-      Nothing -> bail "no more input"
-      Just (c, s) -> let st' = st { string = s, offset = offset st + 1 }
-                     in putState st' ==> \_ -> identity c
+    getState ==> \initState ->
+    case L.uncons (string initState) of
+      Nothing ->
+          bail "no more input"
+      Just (byte,remainder) ->
+          putState newState ==> \_ ->
+          identity byte
+        where newState = initState { string = remainder,
+                                     offset = newOffset }
+              newOffset = offset initState + 1
 {-- /snippet parseByte --}
 
 {-- snippet peekByte --}
 peekByte :: Parse (Maybe Word8)
-peekByte = (fmap fst . uncons . string) <$> getState
+peekByte = (fmap fst . L.uncons . string) <$> getState
 {-- /snippet peekByte --}
 
 {-- snippet Functor --}
 instance Functor Parse where
-    fmap f p = Parse (\st -> case runParse p st of
-                               Left err -> Left err
-                               Right (a, st') -> let fa = identity (f a)
-                                                 in runParse fa st')
+    fmap f parser = parser ==> \result ->
+                    identity (f result)
 {-- /snippet Functor --}
 
 {-- snippet peekChar --}
@@ -117,6 +136,7 @@ peekChar = fmap w2c <$> peekByte
 w2c :: Word8 -> Char
 w2c = chr . fromIntegral
 
+-- import Control.Applicative
 parseChar :: Parse Char
 parseChar = w2c <$> parseByte
 {-- /snippet parseChar --}
@@ -135,14 +155,15 @@ parseWhileVerbose p =
     peekByte ==> \mc ->
     case mc of
       Nothing -> identity []
-      Just _ -> parseByte ==> \b ->
-                if p b
-                then parseWhileVerbose p ==> \bs ->
-                     identity (b:bs)
-                else identity []
+      Just c | p c ->
+                 parseByte ==> \b ->
+                 parseWhileVerbose p ==> \bs ->
+                 identity (b:bs)
+             | otherwise ->
+                 identity []
 {-- /snippet parseWhileVerbose --}
 
-{-- snippet parseNat --}
+{-- snippet helpers --}
 parseWhileWith :: (Word8 -> a) -> (a -> Bool) -> Parse [a]
 parseWhileWith f p = fmap f <$> parseWhile (p . f)
 
@@ -154,9 +175,7 @@ parseNat = parseWhileWith w2c isDigit ==> \digits ->
                 in if n < 0
                    then bail "integer overflow"
                    else identity n
-{-- /snippet parseNat --}
 
-{-- snippet helpers --}
 (==>&) :: Parse a -> Parse b -> Parse b
 p ==>& f = p ==> \_ -> f
 
@@ -182,7 +201,7 @@ parseBytes n =
 
 {-- snippet parseRawPGM --}
 parseRawPGM =
-    parseWhileWith w2c (/= '\n') ==> \header -> skipSpaces ==>&
+    parseWhileWith w2c notWhite ==> \header -> skipSpaces ==>&
     assert (header == "P5") "invalid raw header" ==>&
     parseNat ==> \width -> skipSpaces ==>&
     parseNat ==> \height -> skipSpaces ==>&
@@ -190,4 +209,5 @@ parseRawPGM =
     parseByte ==>&
     parseBytes (width * height) ==> \bitmap ->
     identity (Greymap width height maxGrey bitmap)
+  where notWhite = `notElem` " \r\n\t"
 {-- /snippet parseRawPGM --}

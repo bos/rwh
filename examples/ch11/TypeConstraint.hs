@@ -6,13 +6,13 @@ data (Ord a) => OrdStack a = Bottom
                              deriving (Show)
 {-- /snippet OrdStack --}
 
-{-- snippet isMonotonic --}
-isMonotonic :: (Ord a) => OrdStack a -> Bool
-isMonotonic (Item a rest@(Item b _))
-    | compare a b `elem` [GT, LT] = isMonotonic rest
+{-- snippet isIncreasing --}
+isIncreasing :: (Ord a) => OrdStack a -> Bool
+isIncreasing (Item a rest@(Item b _))
+    | a < b     = isIncreasing rest
     | otherwise = False
-isMonotonic _ = True
-{-- /snippet isMonotonic --}
+isIncreasing _  = True
+{-- /snippet isIncreasing --}
 
 {-- snippet push --}
 push :: (Ord a) => a -> OrdStack a -> OrdStack a

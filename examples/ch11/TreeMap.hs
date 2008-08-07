@@ -1,6 +1,8 @@
 import Prelude hiding (Functor(..))
 
 {-- snippet Tree --}
+-- file: TreeMap.hs
+
 data Tree a = Node (Tree a) (Tree a)
             | Leaf a
               deriving (Show)
@@ -13,7 +15,7 @@ treeLengths (Node l r) = Node (treeLengths l) (treeLengths r)
 
 {-- snippet treeMap --}
 treeMap :: (a -> b) -> Tree a -> Tree b
-treeMap f (Leaf a) = Leaf (f a)
+treeMap f (Leaf a)   = Leaf (f a)
 treeMap f (Node l r) = Node (treeMap f l) (treeMap f r)
 {-- /snippet treeMap --}
 
@@ -34,6 +36,6 @@ instance Functor [] where
 
 {-- snippet Functor.Maybe --}
 instance Functor Maybe where
-    fmap _ Nothing = Nothing
+    fmap _ Nothing  = Nothing
     fmap f (Just x) = Just (f x)
 {-- /snippet Functor.Maybe --}

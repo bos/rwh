@@ -1,4 +1,5 @@
 {-- snippet Foo --}
+-- file: ValidFunctor.hs
 data Foo a = Foo a
            
 instance Functor Foo where
@@ -7,9 +8,7 @@ instance Functor Foo where
 
 {-- snippet Bar --}
 data Eq a => Bar a = Bar a
-{-- /snippet Bar --}
 
-{-- snippet Functor --}
 instance Functor Bar where
     fmap f (Bar a) = Bar (f a)
-{-- /snippet Functor --}
+{-- /snippet Bar --}

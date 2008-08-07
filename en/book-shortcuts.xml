@@ -143,7 +143,7 @@
 <!ENTITY putStr "<literal>putStr</literal>">
 <!ENTITY putStrLn "<literal>putStrLn</literal>">
 <!ENTITY quickQueryp "<literal>quickQuery'</literal>">
-<!ENTITY rarrow "<literal>&gt;-</literal>">
+<!ENTITY rarrow "<literal>-&gt;</literal>">
 <!ENTITY read "<literal>read</literal>">
 <!ENTITY readFile "<literal>readFile</literal>">
 <!ENTITY removeFile "<literal>removeFile</literal>">
