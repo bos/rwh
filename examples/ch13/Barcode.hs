@@ -213,6 +213,19 @@ bestScores srl ps = take 3 . sort $ scores
           digits = [0..9]
 {-- /snippet bestScores --}
 
+{-
+{-- snippet listcomp --}
+-- our original
+zip [distance d (scaleToOne ps) | d <- srl] digits
+
+-- the same expression, expressed without a list comprehension
+zip (map (flip distance (scaleToOne ps)) srl) digits
+
+-- the same expression, written entirely as a list comprehension
+[(distance d (scaleToOne ps), n) | d <- srl, n <- digits]
+{-- /snippet listcomp --}
+-}
+
 {-- snippet firstDigit --}
 firstDigit :: [Parity a] -> Digit
 firstDigit = snd

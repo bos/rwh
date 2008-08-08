@@ -776,8 +776,11 @@
       &listcomp.ghci:pattern;
 
       <para>List comprehensions are powerful and concise.  As a
-	result, they can be difficult to read.  It is wise to use them
-	with care.</para>
+	result, they can be difficult to read.  When used with care,
+	they can make our code easier to follow.</para>
+
+      &Barcode.hs:listcomp;
+
     </sect2>
 
     <sect2>
