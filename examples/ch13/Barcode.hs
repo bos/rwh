@@ -1,22 +1,21 @@
-{-- snippet Array --}
-import Data.Array (Array(..), (!), bounds, elems, indices, ixmap, listArray)
-{-- /snippet Array --}
-import Data.Char (isDigit, ord)
-import Data.Ratio (Ratio, (%))
+{-- snippet imports --}
+import Data.Array (Array(..), (!), bounds, elems, indices,
+                   ixmap, listArray)
+
+import Control.Applicative ((<$>))
+import Control.Monad (forM_)
+import Data.Char (digitToInt)
 import Data.Ix (Ix(..))
 import Data.List (foldl', group, sort, sortBy, tails)
 import Data.Maybe (catMaybes, listToMaybe)
-import qualified Data.ByteString.Lazy.Char8 as L
-import Control.Applicative ((<$>))
-import Control.Monad (forM_)
-import Data.Bits (shiftR, xor, (.&.))
+import Data.Ratio (Ratio)
 import Data.Word (Word8)
 import System.Environment (getArgs)
-{-- snippet import.Map --}
+import qualified Data.ByteString.Lazy.Char8 as L
 import qualified Data.Map as M
-{-- /snippet import.Map --}
 
-import Parse
+import Parse                    -- from chapter 11
+{-- /snippet imports --}
 
 {-- snippet checkDigit --}
 checkDigit :: (Integral a) => [a] -> a
@@ -24,7 +23,7 @@ checkDigit ds = 10 - (sum products `mod` 10)
     where products = mapEveryOther (*3) (reverse ds)
 
 mapEveryOther :: (a -> a) -> [a] -> [a]
-mapEveryOther f = zipWith id (cycle [f,id])
+mapEveryOther f = zipWith ($) (cycle [f,id])
 {-- /snippet checkDigit --}
 
 {-- snippet encodingTables --}
@@ -54,7 +53,7 @@ parityCodes = listToArray parityList
 
 {-- snippet encode --}
 encodeEAN13 :: String -> String
-encodeEAN13 = concat . encodeDigits . map asDigit
+encodeEAN13 = concat . encodeDigits . map digitToInt
 
 -- | This function computes the check digit; don't pass one in.
 encodeDigits :: [Int] -> [String]
@@ -70,10 +69,6 @@ leftEncode '0' = (leftEvenCodes !)
 
 rightEncode :: Int -> String
 rightEncode = (rightCodes !)
-
-asDigit :: Char -> Int
-asDigit c | isDigit c = ord c - ord '0'
-          | otherwise = error "not a digit"
 
 outerGuard = "101"
 centerGuard = "01010"
@@ -154,8 +149,8 @@ threshold :: (Ix k, Integral a) => Double -> Array k a -> Array k Bit
 threshold n a = binary <$> a
     where binary i | i < pivot  = Zero
                    | otherwise  = One
-          pivot = round $ least + (greatest - least) * n
-          least = fromIntegral $ choose (<) a
+          pivot    = round $ least + (greatest - least) * n
+          least    = fromIntegral $ choose (<) a
           greatest = fromIntegral $ choose (>) a
           choose f = foldA1 $ \x y -> if f x y then x else y
 {-- /snippet threshold --}
@@ -250,7 +245,7 @@ instance Functor Parity where
 
 {-- snippet AltParity --}
 data AltParity a = AltEven {fromAltParity :: a}
-                 | AltOdd {fromAltParity :: a}
+                 | AltOdd  {fromAltParity :: a}
                  | AltNone {fromAltParity :: a}
                    deriving (Show)
 {-- /snippet AltParity --}
@@ -281,10 +276,9 @@ candidateDigits rle | length rle < 59 = []
 {-- /snippet candidateDigits.head --}
 
 {-- snippet candidateDigits --}
-candidateDigits rle =
-    if any null match
-    then []
-    else map (map (fmap snd)) match
+candidateDigits rle
+    | any null match = []
+    | otherwise      = map (map (fmap snd)) match
   where match = map bestLeft left ++ map bestRight right
         left = chunksOf 4 . take 24 . drop 3 $ runLengths
         right = chunksOf 4 . take 24 . drop 32 $ runLengths
@@ -374,7 +368,7 @@ findMatch = listToMaybe
 {-- snippet findEAN13 --}
 findEAN13 :: Pixmap -> Maybe [Digit]
 findEAN13 pixmap = withRow center pixmap (fmap head . findMatch)
-  where (_, (maxX, maxY)) = bounds pixmap
+  where (_, (maxX, _)) = bounds pixmap
         center = (maxX + 1) `div` 2
 {-- /snippet findEAN13 --}
 
@@ -385,7 +379,7 @@ main = do
   forM_ args $ \arg -> do
     e <- parse parseRawPPM <$> L.readFile arg
     case e of
-      Left err -> print $ "error: " ++ err
+      Left err ->     print $ "error: " ++ err
       Right pixmap -> print $ findEAN13 pixmap
 {-- /snippet main --}
 

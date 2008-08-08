@@ -2,8 +2,11 @@
 
 :load Barcode
 
+--# group
+group [1,1,2,3,3,3,3]
+
 --# runLength
-let bits = [0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,1]
+let bits = [0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0]
 runLength bits
 
 --# runLengths

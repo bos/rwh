@@ -5,116 +5,144 @@
 
   <para id="x_ET">In this chapter, we'll make use of the image parsing library
     we developed in <xref linkend="binary"/> to build a barcode
-    recognition application.  This lets us take a picture of the back
-    of a book using a camera phone, and extract its ISBN
+    recognition application.  Given a picture of the back
+    of a book taken with a camera phone, we could use this to extract its ISBN
     number.</para>
-
-  <para id="x_FT">As usual, our application is a vehicle for introducing new
-    concepts.</para>
 
   <sect1>
     <title>A little bit about barcodes</title>
 
-    <para id="x_GT">The vast majority of packaged and mass-produced consumer
-      goods sold have a barcode somewhere on them.  Although there are
-      dozens of barcode systems used across a variety specialised
-      domains, consumer products typically only have two to contend
-      with: UPC-A and EAN-13.  UPC-A was developed in the United
-      States, while EAN-13 is European in origin.</para>
+    <para id="x_GT">The vast majority of packaged and mass-produced
+      consumer goods sold have a barcode somewhere on them.  Although
+      there are dozens of barcode systems used across a variety
+      specialised domains, consumer products typically use either
+      UPC-A or EAN-13.  UPC-A was developed in the United States,
+      while EAN-13 is European in origin.</para>
 
-    <para id="x_HT">EAN-13 was developed after UPC-A, as a superset.  (In fact,
-      UPC-A has been officially declared obsolete since 2005, though
-      it's still widely used within the United States.)  Any software
-      or hardware that can understand EAN-13 barcodes will
-      automatically handle UPC-A barcodes.  This neatly reduces our
-      descriptive problem to one standard.</para>
+    <para id="x_HT">EAN-13 was developed after UPC-A, and is a
+      superset of UPC-A.  (In fact, UPC-A has been officially declared
+      obsolete since 2005, though it's still widely used within the
+      United States.)  Any software or hardware that can understand
+      EAN-13 barcodes will automatically handle UPC-A barcodes.  This
+      neatly reduces our descriptive problem to one standard.</para>
 
-    <para id="x_IT">As the name suggests, EAN-13 is a 13-digit sequence,
-      composed of four groups.  The first two digits describe the
-      <quote>number system</quote>.  This can indicate the nationality
-      of the manufacturer, or one of a few other miscellaneous
-      purposes, such as ISBN (book identifier) numbers.  The next five
-      digits are a manufacturer ID, assigned by a country's numbering
-      authority.  The five that follow are a product ID, assigned by
-      the manufacturer.  (Smaller manufacturers may have a longer
-      manufacturer ID and shorter product ID, still fitting into ten
-      digits.)  The last digit is a <quote>check digit</quote>,
-      allowing a scanner to validate the digit string it scans.</para>
+    <para id="x_IT">As the name suggests, EAN-13 describes a 13-digit
+      sequence, which is broken into four groups.</para>
 
-    <para id="x_JT">The only way in which an EAN-13 barcode differs from a UPC-A
-      barcode is that the latter uses a single digit to represent its
-      number system.  EAN-13 barcodes retain UPC-A compatibility by
-      simply setting the first number system digit to zero.</para>
+    <itemizedlist>
+      <listitem>
+	<para>The first two digits describe the <emphasis>number
+	    system</emphasis>.  This can either indicate the
+	  nationality of the manufacturer, or describe one of a few
+	  other categories, such as ISBN (book identifier)
+	  numbers.</para>
+      </listitem>
+
+      <listitem>
+	<para>The next five digits are a manufacturer ID, assigned by
+	  a country's numbering authority.</para>
+      </listitem>
+
+      <listitem>
+	<para>The five digits that follow are a product ID, assigned
+	  by the manufacturer.  (Smaller manufacturers may have a
+	  longer manufacturer ID and shorter product ID, but they
+	  still add up to ten digits.)</para>
+      </listitem>
+
+      <listitem>
+	<para>The last digit is a <emphasis>check digit</emphasis>,
+	  allowing a scanner to validate the digit string it
+	  scans.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para id="x_JT">The only way in which an EAN-13 barcode differs
+      from a UPC-A barcode is that the latter uses a single digit to
+      represent its number system.  EAN-13 barcodes retain UPC-A
+      compatibility by setting the first number system digit to
+      zero.</para>
 
     <sect2 id="barcode.encode">
       <title>EAN-13 encoding</title>
 
-      <para id="x_KT">Before we worry about decoding an EAN-13 barcode, we need
-	to understand how they are encoded.  The system used by
-	EAN-13 is a little involved.  We start by computing the check
-	digit, which is the last digit of a string.</para>
+      <para id="x_KT">Before we worry about decoding an EAN-13
+	barcode, we need to understand how they are encoded.  The
+	system used by EAN-13 is a little involved.  We start by
+	computing the check digit, which is the last digit of a
+	string.</para>
 
       &Barcode.hs:checkDigit;
 
-      <para id="x_LT">This is one of those algorithms that's more easily
-	understood via the code than a verbal description.  The
+      <para id="x_LT">This is one of those algorithms that is more
+	easily understood via the code than a verbal description.  The
 	computation proceeds from the right of the string. Each
 	successive digit is either multiplied by three or left alone
 	(the <function>cycle</function> function repeats its input
 	list infinitely). The check digit is the difference between
 	their sum, modulo ten, and the number ten.</para>
 
-      <para id="x_MT">A barcode is a series of fixed-width bars, where black
-	represents a binary <quote>one</quote> digit, and white a
-	<quote>zero</quote>.  Consecutive same-valued bars thus look
-	like thicker bars.</para>
+      <para id="x_MT">A barcode is a series of fixed-width bars, where
+	black represents a binary <quote>one</quote> bit, and white
+	a <quote>zero</quote>.  A run of the same digits thus looks
+	like a thicker bar.</para>
 
-      <para id="x_NT">The sequence of bits in a barcode is as follows.</para>
+      <para id="x_NT">The sequence of bits in a barcode is as
+	follows.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para id="x_OT">The leading guard sequence, encoded as 101.</para>
+	  <para id="x_OT">The leading guard sequence, encoded as
+	    101.</para>
 	</listitem>
 	<listitem>
-	  <para id="x_PT">A group of six digits, each seven bits wide.</para>
+	  <para id="x_PT">A group of six digits, each seven bits
+	    wide.</para>
 	</listitem>
 	<listitem>
-	  <para id="x_QT">Another guard sequence, encoded as 01010.</para>
+	  <para id="x_QT">Another guard sequence, encoded as
+	    01010.</para>
 	</listitem>
 	<listitem>
 	  <para id="x_RT">A group of six more digits.</para>
 	</listitem>
 	<listitem>
-	  <para id="x_ST">The trailing guard sequence, encoded as 101.</para>
+	  <para id="x_ST">The trailing guard sequence, encoded as
+	    101.</para>
 	</listitem>
       </itemizedlist>
 
-      <para id="x_TT">The digits in the left and right groups have separate
-	encodings. On the left, digits are encoded with parity bits.
-	The parity bits encode the 13th digit of the barcode.</para>
+      <para id="x_TT">The digits in the left and right groups have
+	separate encodings. On the left, digits are encoded with
+	parity bits. The parity bits encode the 13th digit of the
+	barcode.</para>
     </sect2>
   </sect1>
 
   <sect1 id="barcode.array">
     <title>Introducing arrays</title>
 
-    <para id="x_UT">The barcode encoding process can largely be table-driven, in
-      which we use small tables of bit patterns to decide how to
-      encode each digit.  Haskell's bread-and-butter data types, lists
-      and tuples, are not well suited to use for tables whose elements
-      may be accessed randomly.  A list has to be traversed linearly
-      to reach the Nth element.  A tuple doesn't have this problem,
-      but Haskell's type system makes it difficult to write a function
-      that takes a tuple and an element offset and returns the element
-      at that offset within the tuple.  (We'll explore why in the
-      exercises below.)</para>
+    <para>Before we continue, here are all of the imports that we will
+      be using in the remainder of this chapter.</para>
 
-    <para id="x_VT">The usual data type for constant-time random access is of
-      course the array. Haskell provides several array data types.
-      We'll thus represent our encoding tables as arrays of
-      strings.</para>
+    &Barcode.hs:imports;
 
-    &Barcode.hs:Array;
+    <para id="x_UT">The barcode encoding process can largely be
+      table-driven, in which we use small tables of bit patterns to
+      decide how to encode each digit.  Haskell's bread-and-butter
+      data types, lists and tuples, are not well suited to use for
+      tables whose elements may be accessed randomly.  A list has to
+      be traversed linearly to reach the <emphasis>k</emphasis>th
+      element.  A tuple doesn't have this problem, but Haskell's type
+      system makes it difficult to write a function that takes a tuple
+      and an element offset and returns the element at that offset
+      within the tuple.  (We'll explore why in the exercises
+      below.)</para>
+
+    <para id="x_VT">The usual data type for constant-time random
+      access is of course the array. Haskell provides several array
+      data types. We'll thus represent our encoding tables as arrays
+      of strings.</para>
 
     <para id="x_WT">The simplest array type is in the <code>Data.Array</code>
       module, which we're using here.  This presents arrays that can
@@ -127,16 +155,17 @@
 
     &Barcode.hs:encodingTables;
 
-    <para id="x_XT">The <function>listArray</function> function populates an
-      array from a list.  It takes as its first parameter the bounds
-      of the array to create; the second is the values with which to
-      populate it.</para>
+    <para id="x_XT">The <code>Data.Array</code> module's
+      <function>listArray</function> function populates an array from
+      a list.  It takes as its first parameter the bounds of the array
+      to create; the second is the values with which to populate
+      it.</para>
 
-    <para id="x_YT">An unusual feature of the<type>Array</type> type is that its
+    <para id="x_YT">An unusual feature of the <type>Array</type> type is that its
       type is parameterised over both the data it contains and the
       index type. For example, the type of a one-dimensional array of
       <type>String</type> is <type>Array Int String</type>, but a
-      two-dimensional array would have the type <type>Array (Int, Int)
+      two-dimensional array would have the type <type>Array (Int,Int)
 	String</type>.</para>
 
     &array.ghci:type;
@@ -145,11 +174,9 @@
 
     &array.ghci:chars;
 
-    <para id="x_aT">Notice that we have to specify the lower and uppoer bounds
+    <para id="x_aT">Notice that we have to specify the lower and upper bounds
       of the array.  These bounds are inclusive, so an array from 0 to
-      2 has elements 0, 1, and 2.  The list that we use to populate
-      the array must contain at least as many elements as are in the
-      array.  If it is not, we'll get an error at runtime.</para>
+      2 has elements 0, 1, and 2.</para>
 
     &array.ghci:listArray;
 
@@ -167,8 +194,8 @@
     &array.ghci:bounds;
 
     <para id="x_dT">The index type can be any member of the <type>Ix</type>
-      type.  This lets us use, for example, <type>Char</type>s as
-      indices.</para>
+      type.  This lets us use, for example, <type>Char</type> as the
+      index type.</para>
 
     &array.ghci:char;
 
@@ -178,6 +205,29 @@
       class.  To illustrate, here's a small three-dimensional array.</para>
 
     &array.ghci:3d;
+
+    <sect2>
+      <title>Arrays and laziness</title>
+
+      <para>The list that we use to populate the array must contain at
+	least as many elements as are in the array.  If we do not
+	provide enough elements, we'll get an error at runtime.  When
+	the error will occur depends on the nature of the
+	array.</para>
+
+      <para>Here, we are using an array type that is non-strict in its
+	elements.  If we provide a list of three values to an array
+	that we specify as containing more than three elements, the
+	remaining elements will undefined.  We will not get
+	an error unless we access an element beyond the third.</para>
+
+      &array.ghci:lazy;
+
+      <para>Haskell also provides strict arrays, which behave
+	differently.  We will discuss the tradeoffs between the two
+	kinds of array much later, in <xref
+	  linkend="bloomfilter.uarray"/>.</para>
+    </sect2>
 
     <sect2 id="barcode.fold">
       <title>Folding over arrays</title>
@@ -191,16 +241,16 @@
 
       &Barcode.hs:fold;
 
-      <para id="x_gT">You might wonder why the array modules don't already
-	provide such useful things as folding functions.  For a
-	one-dimensional array, there's are some obvious
-	correspondences between an array and a list.  There are only
-	two natural ways in which we can fold sequentially:
-	left-to-right and right-to-left.  Additionally, we can only
-	fold over one element at a time.</para>
+      <para id="x_gT">You might wonder why the array modules don't
+	already provide such useful things as folding functions. There
+	are some obvious correspondences between a one-dimensional
+	array and a list.  For instance, there are only two natural
+	ways in which we can fold sequentially: left-to-right and
+	right-to-left. Additionally, we can only fold over one element
+	at a time.</para>
 
-      <para id="x_hT">This correspondence breaks down in two ways for
-	two-dimensional arrays.  The first is that there are several
+      <para id="x_hT">This does not translate even to
+	two-dimensional arrays.  First of all, there are several
 	kinds of fold that make sense.  We might still want to fold
 	over single elements, but we now have the possibility of
 	folding over rows or columns, too.  On top of this, for
@@ -211,7 +261,7 @@
 	enough permutations of possibly useful behaviour that there
 	aren't many compelling reasons to choose a handful for a
 	standard library.  This problem is only compounded for higher
-	dimensions, so it's safest to let developers write folds that
+	dimensions, so it's best to let developers write folds that
 	suit the needs of their applications.  As we can see from our
 	examples above, this is not hard to do.</para>
     </sect2>
@@ -226,24 +276,26 @@
 	returns a new array with the values at the given indices
 	replaced.</para>
 
-      <para id="x_kT">However, since arrays are immutable, modifying even one
-	element requires copying the entire array, which quickly
-	becomes prohibitively expensive on arrays of any non-trivial
+      <para id="x_kT">Since arrays are immutable, modifying even one
+	element requires copying the entire array.  This quickly
+	becomes prohibitively expensive on arrays of even modest
 	size.</para>
 
-      <para id="x_lT">Another array type, <type>DiffArray</type> in the
-	<code>Data.Array.Diff</code> module, attempts to offset the
-	cost of small modifications by storing deltas between
+      <para id="x_lT">Another array type, <type>DiffArray</type> in
+	the <code>Data.Array.Diff</code> module, attempts to offset
+	the cost of small modifications by storing deltas between
 	successive versions of an array.  Unfortunately, it is not
-	implemented efficiently, and is hence too slow to be of
-	practical use.</para>
+	implemented efficiently at the time we are writing this book,
+	and is currently too slow to be of practical use.</para>
 
       <note>
 	<title>Don't lose hope</title>
 
 	<para id="x_mT">It <emphasis>is</emphasis> in fact possible to
-	  modify an array efficiently in Haskell, but this is a
-	  subject that we will have to return to later.</para>
+	  modify an array efficiently in Haskell, using the
+	  <type>ST</type> monad.  This is a subject that we will
+	  return to later, in <xref
+	    linkend="bloomfilter"/>.</para>
       </note>
     </sect2>
 
@@ -287,7 +339,11 @@
   <sect1>
     <title>Encoding an EAN-13 barcode</title>
 
-    <para id="x_rT">It's useful to have an encoder for reference.</para>
+    <para id="x_rT">Even though our goal is to
+      <emphasis>decode</emphasis> a barcode, it's useful to have an
+      encoder for reference. This will allow us to, for example,
+      ensure that our code is correct by checking that the output of
+      <code>decode . encode</code> the same as its input.</para>
 
     &Barcode.hs:encode;
 
@@ -316,19 +372,21 @@
     <para id="x_vT">Before we talk about decoding, let's set a few practical
       limits on what kinds of barcode image we can work with.</para>
 
-    <para id="x_wT">Phone cameras and webcams generally output JPEG images, but
-      we would spend an entire chapter writing a JPEG decoder. We'll
-      simplify our parsing task to working with the netpbm file
-      format, using parsing combinators we developed earlier, in <xref
+    <para id="x_wT">Phone cameras and webcams generally output JPEG
+      images, but writing a JPEG decoder would take us several
+      chapters. We'll simplify our parsing problem by handling the
+      netpbm file format.  We will use the parsing combinators we
+      developed earlier, in <xref
 	linkend="binary"/>.</para>
 
-    <para id="x_xT">We'd like to deal with real images from cheap, fixed-focus
-      cameras.  These tend to be out of focus, noisy, low in contrast,
-      and of poor resolution.  Fortunately, it's not hard to write
-      code that can handle noisy, defocused VGA-resolution (640x400)
-      images with terrible contrast ratios.  We've verified that the
-      code in this chapter captures barcodes from real books, from
-      pictures taken by authentically mediocre cameras.</para>
+    <para id="x_xT">We'd like to deal with real images from the kinds
+      of cheap, fixed-focus cameras that come with low-end cell
+      phones.  These images tend to be out of focus, noisy, low in
+      contrast, and of poor resolution.  Fortunately, it's not hard to
+      write code that can handle noisy, defocused VGA-resolution
+      (640x480) images with terrible contrast ratios.  We've verified
+      that the code in this chapter captures barcodes from real books,
+      using pictures taken by authentically mediocre cameras.</para>
 
     <para id="x_yT">We will avoid any image processing heroics, because that's
       another chapter-consuming subject.  We won't correct
@@ -350,7 +408,7 @@
   </sect1>
 
   <sect1>
-    <title>Dividing and conquering</title>
+    <title>Divide and conquer</title>
 
     <para id="x_zT">Our task is to take a camera image and extract a valid
       barcode from it.  Given such a nonspecific description, it can
@@ -381,36 +439,35 @@
       mirrors the actual work we did when writing the code that we
       present in this chapter.  The answer is that we're far from
       image processing gurus, and when we started on this chapter we
-      didn't know exactly what the solution was going to look like. In
-      fact, we hadn't written any image processing code before.</para>
+      didn't know exactly what our solution was going to look like.</para>
     
     <para id="x_FU">We made some early educated guesses as to what a reasonable
       solution might look like, and came up with the list of subtasks
       above.  We were then able to start tackling those parts that we
-      knew how to solve, devoting spare cycles to thinking about the
+      knew how to solve, using our spare time to think about the
       bits that we had no prior experience with.  We certainly didn't
       have a pre-existing algorithm or master plan in mind.</para>
 
-    <para id="x_GU">Dividing the problem up like this helped us in two ways.  By
-      making progress on familiar ground, we had the psychological
-      advantage of starting to solve the problem, even when we didn't
-      really know where we were going.  And as we started to work on a
-      particular subproblem, we found ourselves able to further
-      subdivide it into more and less familiar tasks.  We continued to
-      focus on easier components, deferrring ones we hadn't thought
-      about in enough detail yet, jumping from one element of the
-      master list above to another. Eventually, we ran out of problems
-      that were both unfamiliar and unsolved, and we had a complete
-      solution.</para>
+    <para id="x_GU">Dividing the problem up like this helped us in two
+      ways.  By making progress on familiar ground, we had the
+      psychological advantage of starting to solve the problem, even
+      when we didn't really know where we were going.  And as we
+      started to work on a particular subproblem, we found ourselves
+      able to further subdivide it into tasks of varying familiarity.
+      We continued to focus on easier components, deferring ones we
+      hadn't thought about in enough detail yet, and jumping from one
+      element of the master list above to another. Eventually, we ran
+      out of problems that were both unfamiliar and unsolved, and we
+      had a complete idea of our eventual solution.</para>
   </sect1>
 
   <sect1>
     <title>Turning a colour image into something tractable</title>
 
-    <para id="x_HU">Since we want to work with barcodes, which are sequences of
-      black and white stripes, and we want to write a simple decoder,
-      it seems clear that the easiest representation to work with will
-      be a monochrome image, in which each pixel is either black or
+    <para id="x_HU">Since we want to work with barcodes, which are
+      sequences of black and white stripes, and we want to write a
+      simple decoder, an easy representation to work with will be a
+      monochrome image, in which each pixel is either black or
       white.</para>
 
     <sect2>
@@ -459,10 +516,13 @@
     <sect2>
       <title>Greyscale conversion</title>
 
-      <para id="x_OU">Now that we have a colour image in hand, we need to
-	convert the colour data into monochrome.  An intermediate step
-	is to convert the data to greyscale.  There's a simple, widely
-	used formula for converting an RGB image into a greyscale
+      <para id="x_OU">Now that we have a colour image in hand, we need
+	to convert the colour data into monochrome.  An intermediate
+	step is to convert the data to greyscale.  There's a simple,
+	widely used formula<footnote>
+	  <para>The formula originates in ITU-R Recommendation
+	    601.</para>
+	</footnote> for converting an RGB image into a greyscale
 	image, based on the perceived brightness of each colour
 	channel.</para>
 
@@ -483,7 +543,7 @@
     </sect2>
 
     <sect2>
-      <title>Greyscale to monochrome, and type safety</title>
+      <title>Greyscale to binary, and type safety</title>
 
       <para id="x_RU">Our next subproblem is to convert the greyscale image into
 	a two-valued image, where each pixel is either on or
@@ -508,7 +568,7 @@
 	alias.  In the same way that we declared <type>Pixel</type> to
 	be a synonym of <type>Word8</type>, we could declare a
 	<type>Bit</type> type as a synonym of <type>Pixel</type>.
-	While this helps readability, type synonyms still don't make
+	While this might help readability, type synonyms still don't make
 	the compiler do any useful work on our behalf.</para>
 
       <para id="x_VU">The compiler would treat <type>Pixel</type> and
@@ -599,17 +659,26 @@
       <title>Run length encoding</title>
 
       <para id="x_fU">How can we overcome the problem of not even knowing how
-	thick our bars are?  The answer is to run-length encode our
+	thick our bars are?  The answer is to run length encode our
 	image data.</para>
 
       &Barcode.hs:runLength;
 
+      <para>The <function>group</function> function takes sequences of
+	identical elements in a list, and groups them into
+	sublists.</para>
+
+      &barcode.ghci:group;
+
+      <para>Our <function>runLength</function> function represents
+	each group as a pair of its length and first element.</para>
+
       &barcode.ghci:runLength;
 
-      <para id="x_gU">Since the data we're run-length encoding are just ones and
+      <para id="x_gU">Since the data we're run length encoding are just ones and
 	zeros, the encoded numbers will simply alternate between one
 	and zero.  We can throw the encoded values away without losing
-	any useful information, keeping only the run lengths.</para>
+	any useful information, keeping only the length of each run.</para>
 
       &Barcode.hs:runLengths;
 
@@ -671,6 +740,47 @@
     </sect2>
 
     <sect2>
+      <title>List comprehensions</title>
+
+      <para>The new notation that we introduced in the previous
+	example is an example of a <emphasis>list
+	comprehension</emphasis>, which creates a list from one or
+	more other lists.</para>
+
+      &listcomp.ghci:listcomp;
+
+      <para>The expression on the left of the vertical bar is
+	evaluated for each combination of <emphasis>generator
+	  expressions</emphasis> on the right. A generator expression
+	binds a variable on the left of a &larrow; to an element of
+	the list on the right.  As the example above shows, the
+	combinations of generators are evaluated in depth first order:
+	for the first element of the first list, we evaluate every
+	element of the second, and so on.</para>
+
+      <para>In addition to generators, we can also specify guards on
+	the right of a list comprehension.  A guard is a
+	<type>Bool</type> expression.  If it evaluates to
+	<code>False</code>, that element is skipped over.</para>
+
+      &listcomp.ghci:evens;
+
+      <para>We can also bind local variables using a &let;
+	expression.</para>
+
+      &listcomp.ghci:vowels;
+
+      <para>If a pattern match fails in a generator expression, no
+	error occurs.  Instead, that list element is skipped.</para>
+
+      &listcomp.ghci:pattern;
+
+      <para>List comprehensions are powerful and concise.  As a
+	result, they can be difficult to read.  It is wise to use them
+	with care.</para>
+    </sect2>
+
+    <sect2>
       <title>Remembering a match's parity</title>
 
       <para id="x_oU">For each match in the left group, we have to remember
@@ -679,13 +789,15 @@
 
       &Barcode.hs:Parity;
 
-      <para id="x_pU">We're wrapping a value in the parity with which it was
+      <para id="x_pU">We wrap a value in the parity with which it was
 	encoded, and making it a <code>Functor</code> instance so that
 	we can easily manipulate parity-encoded values.</para>
 
-      <para id="x_qU">We'd like to be able to sort parity-encoded values based
-	on the values they contain.  There's a lovely combinator we
-	can use for this called <function>on</function>.</para>
+      <para id="x_qU">We would like to be able to sort parity-encoded
+	values based on the values they contain.  The
+	<code>Data.Function</code> module provides a lovely combinator
+	that we can use for this, named
+	<function>on</function>.</para>
 
       &Barcode.hs:compareWithoutParity;
 
@@ -693,15 +805,10 @@
 	<function>on</function> as a function of two arguments,
 	<varname>f</varname> and <varname>g</varname>, which returns a
 	function of two arguments, <varname>x</varname> and
-	<varname>y</varname>.  It calls <function>g</function> on
-	<varname>x</varname> and on <varname>y</varname>, then
+	<varname>y</varname>.  It applies <function>g</function> to
+	<varname>x</varname> and to <varname>y</varname>, then
 	<function>f</function> on the two results (hence the name
 	<function>on</function>).</para>
-
-      <para id="x_sU">The <function>on</function> function was added to the
-	<code>Data.Function</code> module in &GHC; 6.8.1.  If you're
-	stuck using an older version of &GHC;, you'll have to define
-	it yourself.</para>
 
       <para id="x_tU">Wrapping a match in a parity value is
 	straightforward.</para>
@@ -723,7 +830,7 @@
 
 	&Barcode.hs:AltParity;
 
-	<para id="x_wU">So why didn't we do this?  The answer is slightly
+	<para id="x_wU">Why did we not do this?  The answer is slightly
 	  shameful, and has to do with interactive debugging in
 	  &ghci;.  When we tell &GHC; to automatically derive a
 	  <type>Show</type> instance for a type, it produces different
@@ -744,23 +851,23 @@
 	  <type>fromParity</type> function instead, letting &GHC;
 	  derive a more terse <type>Show</type> instance for us.  This
 	  isn't an especially satisfying rationale, but programmer
-	  laziness is an end in itself.</para>
+	  laziness can lead in odd directions at times.</para>
       </sect3>
     </sect2>
 
     <sect2>
       <title>Chunking a list</title>
 
-      <para id="x_zU">A common aspect of working with lists is wanting to
-	<quote>chunk</quote> them.  For example, each digit in a
-	barcode is encoded using four runs, but the contents of a row
-	is a flat list.  We can turn it into a list of four-element
-	lists as follows.</para>
+      <para id="x_zU">A common aspect of working with lists is needing
+	to <quote>chunk</quote> them.  For example, each digit in a
+	barcode is encoded using a run of four digits.  We can turn
+	the flat list that represents a row into a list of
+	four-element lists as follows.</para>
 
       &Barcode.hs:chunksOf;
 
-      <para id="x_AV">It's somewhat rare that we need to write generically
-	useful list manipulation functions like this.  Quite often, a
+      <para id="x_AV">It's somewhat rare that we need to write generic
+	list manipulation functions like this.  Often, a
 	glance through the <code>Data.List</code> module will find us
 	a function that does exactly, or close enough to, what we
 	need.</para>
@@ -774,11 +881,13 @@
 	digit group is easy to write.  First of all, we take care of a
 	few early checks to determine whether matching even makes
 	sense.  A list of runs must start on a black
-	(<code>Zero</code>) bar, and contain enough bars.</para>
+	(<code>Zero</code>) bar, and contain enough bars.  Here are
+	the first few equations of our function.</para>
 
       &Barcode.hs:candidateDigits.head;
 
-      <para id="x_CV">If any call to <function>bestLeft</function> or
+      <para id="x_CV">If any application of
+	<function>bestLeft</function> or
 	<function>bestRight</function> results in an empty list, we
 	can't possibly have a match.  Otherwise, we throw away the
 	scores, and return a list of lists of parity-encoded candidate
@@ -786,7 +895,12 @@
 	in the barcode.  The digits in each sublist are ordered by
 	match quality.</para>
 
-      <para id="x_DV">Here's a glance at the candidate digits chosen for each
+      <para>Here is the remainder of the definition of our
+	function.</para>
+
+      &Barcode.hs:candidateDigits;
+
+      <para id="x_DV">Let's take a glance at the candidate digits chosen for each
 	group of bars, from a row taken from the image above.</para>
 
       &barcode.ghci:candidateDigits;
@@ -824,11 +938,12 @@
       the lists at other offsets, but we've already dealt performance
       a fatal blow simply by having to copy the spine.</para>
 
-    <para id="x_IV">At a single stroke, then, immutable arrays have eliminated
-      <emphasis>two</emphasis> canonical imperative data structures
-      from our toolbox.  Arrays are barely useful in pure Haskell
-      code; we'll have to do quite a bit of learning before we can use
-      mutable arrays.</para>
+    <para id="x_IV">At a single stroke, then, immutable arrays have
+      eliminated <emphasis>two</emphasis> canonical imperative data
+      structures from our toolbox.  Arrays are somewhat less useful in
+      pure Haskell code than in many other languages.  Still, many
+      array codes only update an array during a build phase, and
+      subsequently use it in a read-only manner.</para>
 
     <sect2>
       <title>A forest of solutions</title>
@@ -877,7 +992,7 @@
 	<title>A word about performance</title>
 
 	<para id="x_OV">Compared to a hash table, a well-implemented purely
-	  functional tree data structure can perform competitively.
+	  functional tree data structure will perform competitively.
 	  You should not approach trees with the assumption that your
 	  code will pay a performance penalty.</para>
       </note>
@@ -886,28 +1001,27 @@
     <sect2>
       <title>A brief introduction to maps</title>
 
-      <para id="x_PV">The <code>Data.Map</code> module provides a parameterised
-	type, <type>Map k a</type>, that maps from a key type <varname
-	  role="type">k</varname> to a value type <varname
-	  role="type">a</varname>.  It is written as a size-balanced
-	binary tree, but the implementation is completely
-	opaque.</para>
+      <para id="x_PV">The <code>Data.Map</code> module provides a
+	parameterised type, <type>Map k a</type>, that maps from a key
+	type <varname role="type">k</varname> to a value type <varname
+	  role="type">a</varname>.  Although it is internally a
+	size-balanced binary tree, the implementation is not visible
+	to us.</para>
 
-      <para id="x_QV"><type>Map</type> is strict in its keys, but lazy in its
-	values.  In other words, the <quote>spine</quote>, or
-	structure, of the map is always kept up to date, but values in
-	the map aren't evaluated unless you force them to be.</para>
+      <para id="x_QV"><type>Map</type> is strict in its keys, but
+	non-strict in its values.  In other words, the
+	<emphasis>spine</emphasis>, or structure, of the map is always
+	kept up to date, but values in the map aren't evaluated unless
+	we force them to be.</para>
 
       <para id="x_RV">It is very important to remember this, as
 	<type>Map</type>'s laziness over values is a frequent source
 	of space leaks among coders who are not expecting it.</para>
 
-      <para id="x_SV">Because the <code>Data.Map</code> module contains a number
-	of names that clash with Prelude names, it's usually imported
-	in qualified form.  In this chapter, we'll import it using the
-	prefix <code>M</code>.</para>
-
-      &Barcode.hs:import.Map;
+      <para id="x_SV">Because the <code>Data.Map</code> module
+	contains a number of names that clash with Prelude names, it's
+	usually imported in qualified form.  Earlier in this chapter,
+	we imported it using the prefix <code>M</code>.</para>
 
       <sect3>
 	<title>Type constraints</title>
@@ -946,15 +1060,17 @@
 	  Just a handful of these comprise the most frequently used
 	  core of the module.</para>
 
-	<para id="x_XV">To create an empty map, or one that contains one
-	  key/value pair, we use <function>empty</function> or
-	  <function>singleton</function>, respectively.</para>
+	<para id="x_XV">To create an empty map, we use
+	  <function>empty</function>.  For a map containing one
+	  key/value pair, we use
+	  <function>singleton</function>.</para>
 
 	&ch13-map.ghci:create;
 
-	<para id="x_YV">Since the implementation is abstract, we can't pattern
-	  match on <type>Map</type> values.  Instead, there are two
-	  common lookup functions.  The <function>lookup</function>
+	<para id="x_YV">Since the implementation is abstract, we can't
+	  pattern match on <type>Map</type> values.  Instead, it
+	  provides a number of lookup functions, of which two are
+	  particularly widely used.  The <function>lookup</function>
 	  function has a slightly tricky type signature, but don't
 	  worry; all will become clear shortly, in <xref
 	    linkend="monads"/>.</para>
@@ -980,12 +1096,8 @@
 	    performs a lookup and returns the unadorned value
 	    associated with a key (i.e. not wrapped in
 	    <code>Maybe</code> or whatever).  Unfortunately, it is not
-	    a total function: It calls <function>error</function> if
+	    a total function: it calls <function>error</function> if
 	    the key is not present in the map.</para>
-
-	  <para id="x_cV">We mention this function only to urge you to avoid any
-	    temptation to use it.  Unless, that is, you like creating
-	    subtly buggy code.</para>
 	</warning>
 
 	<para id="x_dV">To add a key/value pair to the map, the most useful
@@ -999,7 +1111,7 @@
 
 	<para id="x_eV">The <function>insertWith'</function> function takes a
 	  further <emphasis>combining function</emphasis> as its
-	  argument.  If no key was present in the map, the new value
+	  argument.  If no matching key was present in the map, the new value
 	  is inserted verbatim.  Otherwise, the combining function is
 	  called on the new and old values, and its result is inserted
 	  into the map.</para>
@@ -1028,10 +1140,10 @@
 
 	&ch13-map.ghci:union;
 
-	<para id="x_iV">We have barely covered ten per cent of the
+	<para id="x_iV">We have barely covered ten percent of the
 	  <code>Data.Map</code> API.  For further inspiration, we
-	  encourage you to browse the module documentation.  It's an
-	  impressively complete module.</para>
+	  encourage you to browse the module documentation.  The
+	  module is impressively thorough.</para>
       </sect3>
     </sect2>
 
@@ -1309,7 +1421,12 @@
       blocks when we were done with them.  However, we find that the
       added vertical space, small function bodies, and type signatures
       make the code far more readable, so we generally avoided
-      <quote>golfing</quote> functions after we wrote them.</para>
+      <quote>golfing</quote> functions after we wrote them<footnote>
+	<para>Our use of the word <quote>golf</quote> comes from a
+	  game originally played by Perl hackers, in which programmers
+	  try to create the smallest piece of code for some purpose.
+	  The code with the fewest (key)strokes wins.</para>
+      </footnote>.</para>
 
     <para id="x_WW">Working in a language with strong, static typing does not at
       all interfere with incrementally and fluidly developing a

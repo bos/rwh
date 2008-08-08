@@ -30,7 +30,7 @@ M.insert "foo" 9999 m
 --# insertWith
 
 :type M.insertWith'
-M.insertWith' "quux" 10 m
+M.insertWith' (+) "zippity" 10 m
 M.insertWith' (+) "foo" 9999 m
 
 --# delete

@@ -901,7 +901,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	<para id="x_SL">Few imperative language implementations
 	  perform TCO; this is why using any kind of ambitiously
 	  functional style in an imperative language often leads to
-	  space leaks and poor performance.</para>
+	  memory leaks and poor performance.</para>
       </note>
     </sect2>
 

@@ -143,7 +143,7 @@
       immutable modules, but we will re-export from each module only
       the type that is relevant to that module's API.</para>
 
-    <sect2>
+    <sect2 id="bloomfilter.uarray">
       <title>Unboxing, lifting, and bottom</title>
 
       <para id="x_h71">Unlike other Haskell arrays, a <type>UArray</type>
@@ -217,7 +217,7 @@
     <para id="x_q71">Haskell provides a special monad, named
       <type>ST</type><footnote>
 	<para id="x_r71">The name <type>ST</type> is an acronym of <quote>state
-	    threads</quote>.</para>
+	    transformer</quote>.</para>
       </footnote>, which lets us work safely with mutable state.
       Compared to the <type>State</type> monad, it has some powerful
       added capabilities.</para>

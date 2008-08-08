@@ -2,6 +2,7 @@ module PNM
     (
       Anymap(..)
     , Greymap(..)
+    , parseP5
     ) where
 
 {-- snippet imports --}
@@ -9,7 +10,6 @@ import qualified Data.ByteString.Lazy.Char8 as L8
 import qualified Data.ByteString.Lazy as L
 import Data.Char (isSpace)
 {-- /snippet imports --}
-import Debug.Trace
 
 {-- snippet Anymap --}
 class Anymap a where

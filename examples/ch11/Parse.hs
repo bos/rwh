@@ -13,15 +13,14 @@ module Parse
     , parseWhileWith
     , identity
     , parse
+    , parseRawPGM
     ) where
 
 import Control.Applicative ((<$>))
-import qualified Data.ByteString.Lazy.Char8 as L8
 import qualified Data.ByteString.Lazy as L
-import Data.Char (chr, ord, isDigit, isSpace)
+import Data.Char (chr, isDigit, isSpace)
 import Data.Int (Int64)
 import Data.Word (Word8)
-import Debug.Trace
 
 import PNM (Greymap(..))
 
@@ -209,5 +208,5 @@ parseRawPGM =
     parseByte ==>&
     parseBytes (width * height) ==> \bitmap ->
     identity (Greymap width height maxGrey bitmap)
-  where notWhite = `notElem` " \r\n\t"
+  where notWhite = (`notElem` " \r\n\t")
 {-- /snippet parseRawPGM --}
