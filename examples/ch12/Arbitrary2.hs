@@ -4,12 +4,19 @@ import Prelude hiding (Bool(..))
 import Test.QuickCheck
 
 -- define our own
-data Bool = True | False
+data Ternary
+    = Yes
+    | No
+    | Unknown
+    deriving (Eq,Show)
 
 {-- snippet Instance2 --}
-instance Arbitrary Bool where
+instance Arbitrary Ternary where
   arbitrary     = do
-      n <- choose (0, 1) :: Gen Int
-      return $ if n == 0 then False else True
+      n <- choose (0, 2) :: Gen Int
+      return $ case n of
+                    0 -> Yes
+                    1 -> No
+                    _ -> Unknown
 {-- /snippet Instance2 --}
 

@@ -93,12 +93,12 @@ prop_hcat xs = hcat xs == glue xs
 -- wrong: due to <> removing Empty's
 {-- snippet punctuate_wrong --}
 
-prop_puncutate s xs = punctuate s xs == intersperse s xs
+prop_punctuate s xs = punctuate s xs == intersperse s xs
 
 {-- /snippet punctuate_wrong --}
 
 {-- snippet punctuate --}
-prop_puncutate' s xs = punctuate s xs == combine (intersperse s xs)
+prop_punctuate' s xs = punctuate s xs == combine (intersperse s xs)
     where
         combine []           = []
         combine [x]          = [x]

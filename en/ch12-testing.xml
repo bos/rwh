@@ -191,10 +191,13 @@ testing them, rather than a simple boolean constant).
 </para>
 
 <para id="x_uy">
-We can now complete the basic property set for the sort function with
-some other invariants that it should satisfy: the last sorted element should
-be the largest element; and if we find the smallest element of two different lists,
-that should be the first element if we append and sort those lists. These
+We can now complete the basic property set for the sort function with some
+other invariants that it should satisfy: that the output is ordered (each
+element should be smaller than, or equal to, its successor); that the output
+is a permutation of the input (which we achieve via the list difference
+function, <code>(\\)</code>); that the last sorted element should be the
+largest element; and if we find the smallest element of two different lists,
+that should be the first element if we append and sort those lists.  These
 properties can be stated as:
     </para>
 
@@ -275,8 +278,10 @@ the specification, and ensuring it behaves as required.
    <footnote><para id="x_O21">
     The class also defines a method, <code>coarbitrary</code>,
     which given a value of some type, yields a function for new generators.
-    We can ignore this for now, as it is only needed for generating random
-    values of function type.
+    We can disregard for now, as it is only needed for generating random
+    values of function type. One result of disregarding
+    <code>coarbitrary</code> is that GHC will warn about it not being
+    defined, however, it is safe to ignore these warnings.
   </para></footnote>
   </para>
       
@@ -284,25 +289,34 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_P21"> 
     One thing to notice is that the generators run in a <type>Gen</type>
-    environment: a simple state-passing container used to hide the random
-    number generator plumbing happening underneath. As <type>Gen</type>
-    is defined as a monad, we can use <code>do</code> syntax to write new
-    generators that access the implicit random number source.  To actually
-    write generators for our custom type we use any of a set of functions
-    defined in the library for introducing new random values and gluing them
-    together to build up data structures of the type we're interested in:
+    environment, indicated by the type. This is a simple state-passing monad
+    that is used to hide the random number generator state that is threaded
+    through the code. We'll look thoroughly at monads in later chapters, but
+    for now it suffices to know that, as <type>Gen</type> is defined as a
+    monad, we can use <code>do</code> syntax to write new generators that
+    access the implicit random number source. To actually write generators
+    for our custom type we use any of a set of functions defined in the
+    library for introducing new random values and gluing them together to
+    build up data structures of the type we're interested in. The types of
+    the key functions are:
   </para>
 
     &Arbitrary.hs:IntroductionForms;
 
    <para id="x_Q21">
      The function <code>elements</code>, for example, takes a list of values,
-     and returns a generator of random values from that list. With this, we
-     can start writing generators for simple data types. For example, to write an
-     <type>Arbitrary</type> for <type>Bool</type> is just a function that
-     picks elements from a list of all the values in the <type>Bool</type>
-     type:
-  </para>
+     and returns a generator of random values from that list.
+     <code>choose</code> and <code>oneof</code> we'll use later. With this,
+     we can start writing generators for simple data types. For example, if
+     we define a new data type for ternary logic:
+   </para>
+     
+    &Arbitrary.hs:ternary;
+     
+    <para>
+     we can write an <type>Arbitrary</type> instance for the
+     <type>Ternary</type> type by defining a function that picks elements
+     from a list of the possible values of <type>Ternary</type> type: </para>
 
     &Arbitrary.hs:Instance;
 
@@ -310,9 +324,9 @@ the specification, and ensuring it behaves as required.
      Another approach to data generation is to generate values for one 
      of the basic Haskell types and then translate those values into the
      type you're actually interested in. We could have written the
-     <type>Bool</type> instance by generating integer values
-     between 0 and 1 instead, using <code>choose</code>, and then mapping
-     them onto the booleans:
+     <type>Ternary</type> instance by generating integer values
+     from 0 to 2 instead, using <code>choose</code>, and then mapping
+     them onto the ternary values:
   </para>
 
     &Arbitrary2.hs:Instance2;
@@ -333,14 +347,17 @@ the specification, and ensuring it behaves as required.
       <type>Doc</type> type. We'll start by breaking the problem down, first
       generating random constructors for each type, then, depending on the
       result, the components of each field. The most complicated case are the
-      union and concatenation variants. But first we need to write an
-      instance for generating random characters &emdash; QuickCheck doesn't
-      have a default instance for characters, due to the abundance of
-      different text encodings we might want to use for character tests, so
-      we'll write our own, and, as we don't care about the actual text
-      content of the document, a simple generator of alphabetic characters
-      and punctuation will suffice (richer generators are simple extensions
-      of this basic approach):
+      union and concatenation variants.
+    </para>
+      
+    <para>
+      First, though, we need to write an instance for generating random
+      characters &emdash; QuickCheck doesn't have a default instance for
+      characters, due to the abundance of different text encodings we might
+      want to use for character tests. We'll write our own, and, as we don't
+      care about the actual text content of the document, a simple generator
+      of alphabetic characters and punctuation will suffice (richer
+      generators are simple extensions of this basic approach):
     </para>
 
     &QC.hs:ArbitraryChar;
@@ -360,10 +377,10 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_V21">
       That was fairly straightforward, and we can clean it up some more by
-      using the <code>oneof</code> function, to pick between different
-      generators in a list (and we can also use the monadic combinator,
-      <code>liftM</code> to avoid naming intermediate results from each
-      generator):
+      using the <code>oneof</code> function, whose type we saw earlier, to
+      pick between different generators in a list (we can also use the
+      monadic combinator, <code>liftM</code> to avoid naming intermediate
+      results from each generator):
     </para>
 
     &QC.hs:ArbitraryDocConcise;
@@ -371,7 +388,8 @@ the specification, and ensuring it behaves as required.
     <para id="x_W21">
       The latter is more concise, just picking between a list of generators,
       but they describe the same data either way. We can check that the output
-      makes sense, by generating a list of random documents:
+      makes sense, by generating a list of random documents (seeding the
+      pseudo-random generator with an initial seed of 2):
     </para>
 
     &arbitrary-doc.ghci:arbitrarydoc;
@@ -382,14 +400,18 @@ the specification, and ensuring it behaves as required.
         of these each test run, so that should do a pretty good job.  We can
         now write some generic properties for our document functions.
     </para>
+
+    <para>
+    <para>
   </sect2>
 
   <sect2>
     <title>Testing document construction</title>
 
     <para id="x_Y21">
-      Two of the basic functions on documents are the null document constant, 
-      and the append function:
+      Two of the basic functions on documents are the null document constant
+      (a nullary function), <code>empty</code>, and the append function,
+      <code>(<>)</code>. Their types are:
     </para>
 
     &Prettify2.hs:append;
@@ -460,8 +482,9 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_g21">
       It is a similar story for <code>punctuate</code>, where we can model
-      inserting punctuation with list interspersal (from
-      <code>Data.List</code>):
+      inserting punctuation with list interspersion (from
+      <code>Data.List</code>, <code>intersperse</code> is a function that
+      takes an element and interleaves it between other elements of a list):
     </para>
 
     &QC.hs:punctuate_wrong;
@@ -471,7 +494,7 @@ the specification, and ensuring it behaves as required.
     </para>
 
     <screen>
-<prompt>ghci&gt; </prompt><userinput> quickCheck prop_puncutate</userinput>
+<prompt>ghci&gt; </prompt><userinput> quickCheck prop_punctuate</userinput>
 Falsifiable, after 6 tests:
 Empty
 [Line,Text "",Line]
@@ -481,7 +504,7 @@ Empty
      The pretty printing  library optimises away redundant empty documents,
      something the model implementation doesn't, so we'll need to augment our
      model to match reality.  First, we can intersperse the punctuation text
-     through the document list, then a little loop to clean up the
+     throughout the document list, then a little loop to clean up the
      <code>Empty</code> documents scattered through, like so:
     </para>
 
@@ -505,7 +528,7 @@ Empty
    <para id="x_k21">
      We can put all these tests together in a single file, and run them
      simply by using one of QuickCheck's driver functions. Several exist,
-     including fancy parallel ones. the basic batch driver is often good
+     including elaborate parallel ones. The basic batch driver is often good
      enough, however. All we need do is set up some default test parameters,
      and then list the functions we want to test:
    </para>
@@ -513,7 +536,11 @@ Empty
     &Run.hs:testscript;
 
    <para id="x_l21">
-The test script can then be compiled and executed:
+We've structured the code here as a separate, standalone test script, with
+instances and properties in their own file, separate to the library source.
+This is typical for library projects, where the tests are kept apart from 
+the library itself, and import the library via the module system.  The test
+script can then be compiled and executed:
    </para>
 
    <screen>
@@ -557,7 +584,7 @@ The test script can then be compiled and executed:
    </para>
 
    <screen>
-    $ ghc -fhpc Run.hs --make -no-recomp
+    $ ghc -fhpc Run.hs --make
   </screen>
 
   <para id="x_p21">
@@ -619,9 +646,9 @@ The test script can then be compiled and executed:
   </informalfigure>
 
 <para id="x_t21">
-  Not too bad. Clicking through to the pretty module itself, we see the
-  actual source of the program, marked up in yellow for code that wasn't
-  tested, and in a bold font for code that was:
+Not too bad. Clicking through to the pretty module itself, we see the
+actual source of the program, marked up in bold yellow for code that wasn't
+tested, and code that was executed simply bold.
   </para>
 
   <informalfigure>
@@ -629,7 +656,7 @@ The test script can then be compiled and executed:
   </informalfigure>
   
 <para id="x_u21">
-we forgot to test the <type>Monoid</type> instance, for example, and some of
+We forgot to test the <type>Monoid</type> instance, for example, and some of
 the more complicated functions. HPC helps keep our test suite honest.
 Let's add a test for the type class instance of <type>Monoid</type>, the
 class of types that support appending and empty elements:
@@ -670,10 +697,12 @@ statistics improves to 52 percent of the code base:
   </informalfigure>
 
 <para id="x_y21">
-HPC ensures that we're honest in our testing, as anything less than 100% coverage 
-will be pointed out in glaring color. In particular, it ensures the programmer
-has to think about error cases, and complicated branches with obscure conditions.
-That is, it identifies "code smell".
+HPC ensures that we're honest in our testing, as anything less than 100%
+coverage will be pointed out in glaring color. In particular, it ensures the
+programmer has to think about error cases, and complicated branches with
+obscure conditions, all forms of code smell. When combined with a saturating
+test generation system, like QuickCheck's, testing becomes a rewarding
+activity, and a core part of Haskell development.
 </para>
 
    <!-- what kind of things can we do with HPC -->

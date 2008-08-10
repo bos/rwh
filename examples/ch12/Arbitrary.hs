@@ -13,9 +13,17 @@ class Arbitrary a where
   oneof    :: [Gen a] -> Gen a
 {-- /snippet IntroductionForms --}
 
+{-- snippet ternary --}
+data Ternary
+    = Yes
+    | No
+    | Unknown
+    deriving (Eq,Show)
+{-- /snippet ternary --}
+
 {-- snippet Instance --}
-instance Arbitrary Bool where
-  arbitrary     = elements [True, False]
+instance Arbitrary Ternary where
+  arbitrary     = elements [Yes, No, Unknown]
 {-- /snippet Instance --}
 
 {-- snippet InstanceProduct --}

@@ -26,6 +26,14 @@ prop_minimum' xs         = not (null xs) ==> head (qsort xs) == minimum xs
 {-- /snippet relatives_right --}
 
 {-- snippet relatives --}
+prop_ordered xs = ordered (qsort xs)
+    where ordered []       = True
+          ordered [x]      = True
+          ordered (x:y:xs) = x <= y && ordered (y:xs)
+
+prop_permutation xs = permutation xs (qsort xs)
+    where permutation xs ys = null (xs \\ ys) && null (ys \\ xs)
+
 prop_maximum xs         =
     not (null xs) ==>
         last (qsort xs) == maximum xs
