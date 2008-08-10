@@ -408,8 +408,7 @@ the specification, and ensuring it behaves as required.
 
     <para id="x_Y21">
       Two of the basic functions on documents are the null document constant
-      (a nullary function), <code>empty</code>, and the append function,
-      <code>(<>)</code>. Their types are:
+      (a nullary function), <code>empty</code>, and the append function. Their types are:
     </para>
 
     &Prettify2.hs:append;
