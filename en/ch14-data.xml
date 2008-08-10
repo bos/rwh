@@ -3,61 +3,37 @@
 <chapter id="data" revision="alpha;beta">
   <title>Data Structures</title>
 
-  <para id="x_RH">
-    Back in <xref linkend="deftypes.alias"/>, you saw how to
-    use &type; to create handy aliases for types.  That's a useful feature,
-    but in this chapter we'll take it a step further.  We'll show you how to
-    create entirely new types.  After doing that, we'll also show you some of
-    the built-in tools that Haskell provides for arranging large amounts of
-    data.
-  </para>
-  <para id="x_pL">
-    Before going on, there's a word that you might expect to see frequently
-    in this chapter: <emphasis>object</emphasis>.  You're not going
-    to see it in this chapter because Haskell isn't an object-oriented
-    language.  Concepts in this chapter may have similar-sounding names, but
-    are likely quite different than the object-oriented ideas you may be
-    familiar with already.
-  </para>
-  <para id="x_qL">
-    In this chapter, you'll learn how to create and use your own types.
-    We'll start with very basic types, and progress all the way to defining
-    your own numeric types.  We'll have an example showing you how you can
-    extend Haskell's numeric type system to support units of measure and
-    symbolic manipulations.  We think you'll find Haskell's typing system
-    powerful and -- surprise -- even exciting.
-  </para>
-
   <sect1 id="data.assoc">
     <title>Association Lists</title>
     <para id="x_NI">
-      Often, we have to deal with data that is unordered but is indexed
-      by a key.  For instance, a Unix administrator might have a list of
-      numeric UIDs and the textual usernames that they correspond to.  The
-      utility of this list is being able to look up a textual username for a
-      given UID, not the order of the data.  In otherwords, the UID is a key
-      into a database.
+      Often, we have to deal with data that is unordered but is
+      indexed by a key.  For instance, a Unix administrator might have
+      a list of numeric UIDs (user IDs) and the textual usernames that
+      they correspond to.  The value of this list lies in being able
+      to look up a textual username for a given UID, not in the order
+      of the data.  In other words, the UID is a key into a database.
     </para>
     <para id="x_OI">
       In Haskell, there are several ways to handle data that is structured in
       this way.  The two most common are association lists and the
+      <type>Map</type> type provided by
       <literal>Data.Map</literal> module.  Association lists are handy
       because they are simple.  They are standard Haskell lists, so all the
-      functions that work on those lists work on association lists.  However,
-      for large data sets, <literal>Data.Map</literal> will have a
+      familiar list functions work with association lists.  However,
+      for large data sets, <type>Map</type> will have a
       considerable performance advantage over association lists.  We'll
-      consider both in this chapter.
+      use both in this chapter.
     </para>
     <para id="x_PI">
       An association list is just a normal list containing (key, value)
       tuples.  The type of a list of mappings from UID to username might be
-      <literal>[(Integer, String)]</literal>.  You could use just about any
-      type<footnote><para>The type you use for the key must be a
+      <literal>[(Integer, String)]</literal>.  We could use just about any
+      type<footnote><para>The type we use for the key must be a
       member of the &Eq; typeclass.</para>
       </footnote>for both the key and the value.
     </para>
     <para id="x_rI">
-      You can build association lists just like you would build any other
+      We can build association lists just we do any other
       list.  Haskell comes with one built-in function called 
       <literal>Data.List.lookup</literal> to look up data in an association
       list.  Its type is <literal>Eq a => a -> [(a, b)] -> Maybe b</literal>.
@@ -67,7 +43,7 @@
     &lookup.ghci:lookup1;
     <para id="x_sI">
       The <literal>lookup</literal> function is really simple.  Here's
-      one way you could write it:
+      one way we could write it:
     </para>
     &lookup.hs:standalone;
     <para id="x_tI">
@@ -77,12 +53,12 @@
       the rest of the list.
     </para>
     <para id="x_uI">
-      Let's take a look at a more complex example of association lists.
-      On Unix/Linux machines,
-      there is a file called <literal>/etc/passwd</literal> that stores
-      usernames, UIDs, home directories, and various other information.
-      Let's write a program that parses such a file, creates an association
-      list, and lets the user look up a username by giving a UID.
+      Let's take a look at a more complex example of association
+      lists. On Unix/Linux machines, there is a file called
+      <filename>/etc/passwd</filename> that stores usernames, UIDs,
+      home directories, and various other data.  We will write a program
+      that parses such a file, creates an association list, and lets
+      the user look up a username by giving a UID.
     </para>
     &passwd-al.hs:all;
     <para id="x_vI">
@@ -114,43 +90,55 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
   <sect1 id="data.map">
     <title>Maps</title>
     <para id="x_wI">
-      The <literal>Data.Map</literal> provides behavior that is
-      similar to association lists, but provides much faster access.
-      This module has some functions with the same
-      names as those in <literal>Prelude</literal> or other common modules.
-      Therefore, when using it, most people import it using
-      <literal>import qualified Data.Map as Map</literal> and use
-      <literal>Map.<replaceable>function</replaceable></literal> to refer to
-      functions in that module.  
-      Let's start our look at <literal>Data.Map</literal> by
-      taking a look at some ways to build a map.
+      The <literal>Data.Map</literal> module provides a
+      <type>Map</type> type with behavior that is similar to
+      association lists, but has much better performance.</para>
+
+    <para>
+      Maps give us the same capabilities as hash tables do in other
+      languages.  Internally, a map is implemented as a balanced
+      binary tree.  Compared to a hash table, this is a much more
+      efficient representation in a language with immutable data. This
+      is the most visible example of how deeply pure functional
+      programming affects how we write code: we choose data structures
+      and algorithms that we can express cleanly and that perform
+      efficiently, but our choices for specific tasks are often
+      different their counterparts in imperative languages.</para>
+
+    <para>Some functions in the <code>Data.Map</code> module have the
+      same names as those in the Prelude. Therefore, we will import it
+      with <literal>import qualified Data.Map as Map</literal> and use
+      <literal>Map.<replaceable>name</replaceable></literal> to refer
+      to names in that module. Let's start our tour of
+      <literal>Data.Map</literal> by taking a look at some ways to
+      build a map.
     </para>
     &buildmap.hs:all;
     <para id="x_xI">
-      Functions like <literal>Map.insert</literal> work in the usual Haskell
-      way: they return a copy of the input data, with the requested change
-      applied.  This is quite handy with maps.  It means that you can use
-      <literal>foldl</literal> to build up a map as in the
-      <literal>mapFold</literal> example.  Or, you can chain together
-      calls to <literal>Map.insert</literal> as in the
-      <literal>mapManual</literal> example.  Let's use &ghci; to verify
-      that all of these maps are as expected:
+      Functions like <literal>Map.insert</literal> work in the usual
+      Haskell way: they return a copy of the input data, with the
+      requested change applied.  This is quite handy with maps.  It
+      means that you can use <literal>foldl</literal> to build up a
+      map as in the <literal>mapFold</literal> example.  Or, you can
+      chain together calls to <literal>Map.insert</literal> as in the
+      <literal>mapManual</literal> example.  Let's use &ghci; to
+      verify that all of these maps are as expected:
     </para>
     &buildmap.ghci:all;
     
     <para id="x_yI">
-      Notice that the output from <literal>mapManual</literal> doesn't occur
-      in the order it was passed in.  Maps do not guarantee that they will
-      preserve the original ordering.
+      Notice that the output from <literal>mapManual</literal> differs
+      from the order of the list we used to construct the map.  Maps do
+      not guarantee that they will preserve the original ordering.
     </para>
     <para id="x_zI">
-      Maps operate similar in concept to association lists.  The
-      <literal>Data.Map</literal> module provides functions for adding and
-      removing data from maps.  It also provides functions for converting
-      maps back and forth to association lists, filtering them, modifying
-      them, and folding them.  The library documentation for this module is
-      good, so instead of going into detail on each function, we're going to
-      present an example that ties together much of the concepts we've
+      Maps operate similarly in concept to association lists.  The
+      <literal>Data.Map</literal> module provides functions for adding
+      and removing data from maps.  It also lets us filter them,
+      modify them, fold over them, and convert to and from association
+      lists.  The library documentation for this module is good, so
+      instead of going into detail on each function, we will present
+      an example that ties together many of the concepts we've
       discussed in this chapter.
     </para>
   </sect1>
@@ -162,9 +150,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       one.
     </remark>
     <para id="x_rL">
-      Back in the beginning of the chapter, we reminded you that Haskell isn't
-      object-oriented.  Part of Haskell's power is the ease with which you
-      can create and manipulate functions with it.  Let's take a look at a
+      Part of Haskell's power is the ease with which it lets us create and manipulate functions.  Let's take a look at a
       record that stores a function as one of its fields:
     </para>
     &funcrecs.hs:all;
@@ -182,8 +168,8 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </para>
     &funcrecs.ghci:all;
     <para id="x_tL">
-      That worked well enough, but you might be wondering how to do something
-      more advanced such as making a piece of data available multiple places.
+      That worked well enough, but you might wonder how to do something
+      more advanced, such as making a piece of data available in multiple places.
       A type construction function can be helpful.  Here's an example:
     </para>
     &funcrecs2.hs:all;
@@ -191,7 +177,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       Here we have a function called <literal>mkFuncRec</literal> that
       takes a &String; and another function as parameters, and returns
       a new <literal>FuncRec</literal> record.  Notice how both parameters to
-      <literal>mkFuncRec</literal> are used multiple places.  Let's try it
+      <literal>mkFuncRec</literal> are used in multiple places.  Let's try it
       out:
     </para>
     &funcrecs2.ghci:all;
@@ -263,7 +249,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       How about converting a numeric expression to Reverse Polish Notation
       (RPN)?  RPN is a postfix notation that never requires parentheses, and
       is commonly found on HP calculators.  RPN is a stack-based notation.
-      You enter numbers onto the stack, and when you enter operations, they
+      We push numbers onto the stack, and when we enter operations, they
       pop the most recent numbers off the stack and place the result on the
       stack.
     </para>
@@ -300,10 +286,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       different kinds of expressions together.
     </para>
     &num.ghci:final;
-    <para id="x_GM">
-      Perhaps future development. could enhance <literal>prettyShow</literal>
-      to remove unnecessary parentheses as well.
-    </para>
     <para id="x_HM">
       Everything you've just seen is possible with Haskell types and classes.
       In fact, you've been reading a real &ghci; session demonstrating
@@ -402,21 +384,33 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         to try them out for yourself and see how they work.
       </para>
     </sect2>
+    <sect2>
+      <title>Exercises</title>
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>Extend the <function>prettyShow</function> function
+	      to remove unnecessary parentheses.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
+    </sect2>
   </sect1>
 
   <sect1 id="data.dlist">
     <title>Taking advantage of functions as data</title>
 
     <para id="x_Hq">In an imperative language, appending two lists is cheap and
-      easy.  Here's a simple C implementation in which we maintain a
+      easy.  Here's a simple C structure in which we maintain a
       pointer to the head and tail of a list.</para>
 
     &list.c:list;
 
-    <para id="x_Iq">When we want to append another list onto the end, we modify
-      the last node of the existing list to point to its
-      <code>head</code> node, then update its <code>tail</code>
-      pointer to point to its <code>tail</code> node.</para>
+    <para id="x_Iq">When we have one list, and want to append another
+      list onto its end, we modify the last node of the existing list
+      to point to its <code>head</code> node, then update its
+      <code>tail</code> pointer to point to its <code>tail</code>
+      node.</para>
     
     <para id="x_Jq">Obviously, this approach is off limits to us in Haskell if
       we want to stay pure.  Since pure data is immutable, we can't go
@@ -428,7 +422,13 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
     <para id="x_Kq">From inspecting the code, we can see that the cost of
       creating a new list depends on the length of the initial
-      list.</para>
+      list<footnote>
+	<para>Non-strict evaluation makes the cost calculation more
+	  subtle.  We only pay for an append if we actually use the
+	  resulting list.  Even then, we only pay for as much as we
+	  actually use.</para>
+      </footnote>
+.</para>
 
     <para id="x_Lq">We often need to append lists over and over, to construct
       one big list.  For instance, we might be generating the contents
@@ -530,7 +530,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       &DList.hs:newtype;
 
       <para id="x_aq">The <function>unDL</function> function is our
-	deconstructor, that removes the <code>DL</code> constructor.
+	deconstructor, which removes the <code>DL</code> constructor.
 	When we go back and decide what we want to export from our
 	module, we will omit our data constructor and deconstruction
 	function, so the <type>DList</type> type will be completely
@@ -540,8 +540,8 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       &DList.hs:append;
 
       <para id="x_bq">Our <function>append</function> function may seem a little
-	complicated, but it's just doing some simple book-keeping
-	around the use of the <function>(.)</function> operator that
+	complicated, but it's just performing some book-keeping
+	around the same use of the <function>(.)</function> operator that
 	we demonstrated earlier.  To compose our functions, we must
 	first unwrap them from their <type>DL</type> constructor,
 	hence the uses of <function>unDL</function>.  We then re-wrap
@@ -570,13 +570,14 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
       &DList.hs:common;
 
-      <para id="x_gq">Although the <type>DList</type> approach makes appends
-	cheap, not all list-like operations are easily available.  The
-	<function>head</function> function has constant cost for
-	lists.  Our equivalent requires that we convert the entire
-	<type>DList</type> to a regular list, so it is much more
-	expensive than its list counterpart: its cost is
-	linear.</para>
+      <para id="x_gq">Although the <type>DList</type> approach makes
+	appends cheap, not all list-like operations are easily
+	available.  The <function>head</function> function has
+	constant cost for lists.  Our <type>DList</type> equivalent
+	requires that we convert the entire <type>DList</type> to a
+	regular list, so it is much more expensive than its list
+	counterpart: its cost is linear in the number of appends we
+	have performed to construct the <type>DList</type>.</para>
 
       &DList.hs:safeHead;
 
@@ -595,11 +596,11 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     <sect2>
       <title>Lists, difference lists, and monoids</title>
 
-      <para id="x_jq">In abstract algebra, there exists a simple abstract
-	structure called a <emphasis>monoid</emphasis>.  Many
-	mathematical objects are monoids, because the bar to entry is
-	very low.  In order to be considered a monoid, an object must
-	have two properties.</para>
+      <para id="x_jq">In abstract algebra, there exists a simple
+	abstract structure called a <emphasis>monoid</emphasis>.  Many
+	mathematical objects are monoids, because the <quote>bar to
+	  entry</quote> is very low.  In order to be considered a
+	monoid, an object must have two properties.</para>
 
       <itemizedlist>
 	<listitem>
@@ -624,9 +625,12 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 	binary operator and one as the identity value, integers form a
 	different monoid.</para>
 
-      <para id="x_nq">Monoids are ubiquitous in Haskell.  The
-	<type>Monoid</type> type class is defined in the
-	<code>Data.Monoid</code>module.</para>
+      <para id="x_nq">Monoids are ubiquitous in Haskell<footnote>
+	  <para>Indeed, monoids are ubiquitous throughout programming.
+	    The difference is that in Haskell, we recognize them, and
+	    talk about them.</para>
+	</footnote>.  The <type>Monoid</type> type class is defined in
+	the <code>Data.Monoid</code> module.</para>
 
       &Monoid.hs:Monoid;
 
@@ -670,7 +674,99 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <para id="x_uq">We will have more to say about difference lists and their
 	monoidal nature in <xref
 	  linkend="monadcase.writer.dlist"/>.</para>
+
+      <tip>
+	<para>As with the rules for functors, Haskell cannot check the
+	  rules for monoids on our behalf.  If we're defining a
+	  <type>Monoid</type> instance, we can easily write QuickCheck
+	  properties to give us high statistical confidence that our
+	  code is following the monoid rules.</para>
+      </tip>
     </sect2>
+  </sect1>
+
+  <sect1>
+    <title>General purpose sequences</title>
+
+    <para>Both Haskell's built-in list type and the <type>DList</type>
+      type that we defined above have poor performance characteristics
+      under some circumstances.  The <code>Data.Sequence</code> module
+      defines a <type>Seq</type> container type that gives good
+      performance for a wider variety of operations.</para>
+
+    <para>As with other modules, <code>Data.Sequence</code> is
+      intended to be used via qualified import.</para>
+
+    &DataSequence.hs:import1;
+
+    <para>We can construct an empty <type>Seq</type> using
+      <function>empty</function>, and a single-element container using
+      <function>singleton</function>.</para>
+
+    &dataSequence.ghci:simple;
+
+    <para>We can create a <type>Seq</type> from a list using
+      <function>fromList</function>.</para>
+
+    &dataSequence.ghci:list;
+
+    <para>The <code>Data.Sequence</code> module provides some
+      constructor functions in the form of operators. When we perform
+      a qualified import, we must qualify the name of an operator in
+      our code, which is ugly.</para>
+
+    &dataSequence.ghci:ugly;
+
+    <para>If we import the operators explicitly, we can avoid the need
+      to qualify them.</para>
+
+    &DataSequence.hs:import2;
+
+    <para>By removing the qualification from the operator, we improve
+      the readability of our code.</para>
+
+    &dataSequence.ghci:nice;
+
+    <para>A useful way to remember the <function>(&lt;|)</function>
+      and <function>(|&gt;)</function> functions is that the
+      <quote>arrow</quote> points to the element we're adding to the
+      <code>Seq</code>.  The element will be added on the side to which the
+      arrow points: <function>(&lt;|)</function> adds on the left,
+      <function>(|&gt;)</function> on the right.</para>
+
+    <para>Both adding on the left and adding on the right are
+      constant-time operations.  Appending two <code>Seq</code>s is
+      also cheap, occurring in time proportional to the logarithm of
+      whichever is shorter.  To append, we use the
+      <function>(&gt;&lt;)</function> operator.</para>
+
+    &dataSequence.ghci:append;
+
+    <para>If we want to create a list from a <type>Seq</type>, we must
+      use the <code>Data.Foldable</code> module, which is best
+      imported qualified.</para>
+
+    &DataSequence.hs:import3;
+
+    <para>This module defines a typeclass, <type>Foldable</type>,
+      which <type>Seq</type> implements.</para>
+
+    &dataSequence.hs:toList;
+
+    <para>If we want to fold over a <type>Seq</type>, we use the fold
+      functions from the <code>Data.Foldable</code> module.</para>
+
+    &dataSequence.hs:foldl;
+
+    <para>The <code>Data.Sequence</code> module provides a number of
+      other useful list-like functions.  Its documentation is very
+      thorough, giving time bounds for each operation.</para>
+
+    <para>If <type>Seq</type> has so many desirable characteristics,
+      why is it not the default sequence type?  Lists are simpler and
+      have less overhead, and so quite often they are good enough for
+      the task at hand.  They are also well suited to a lazy setting,
+      where <type>Seq</type> does not fare well.</para>
   </sect1>
 </chapter>
  

@@ -11,7 +11,7 @@ data CustomColor =
 {- | A new type that stores a name and a function.
 
 The function takes an Int, applies some computation to it, and returns
-the Int along with a CustomColor -}
+an Int along with a CustomColor -}
 data FuncRec =
     FuncRec {name :: String,
              colorCalc :: Int -> (CustomColor, Int)}

@@ -458,10 +458,23 @@
       <para>The function doesn't really <quote>do</quote> much: it
 	just creates a <emphasis>closure</emphasis> to remember the
 	values of <varname>firstParser</varname> and
-	<varname>secondParser</varname>.  This closure won't be
-	unwrapped and applied until we apply
-	<function>parse</function>.  At that point, it will be applied
-	with a <type>ParseState</type>.  It will apply
+	<varname>secondParser</varname>.</para>
+
+      <tip>
+	<para>A closure is simply the pairing of a function with its
+	  <emphasis>environment</emphasis>, the bound variables that
+	  it can see.  Closures are commonplace in Haskell.  For
+	  instance, the section <function>(+5)</function> is a
+	  closure.  An implementation must record the value
+	  <code>5</code> as the second argument to the
+	  <function>(+)</function> operator, so that the resulting
+	  function can add <code>5</code> to whatever value it is
+	  passed.</para>
+      </tip>
+
+      <para>This closure will not be unwrapped and applied until we
+	apply <function>parse</function>.  At that point, it will be
+	applied with a <type>ParseState</type>.  It will apply
 	<varname>firstParser</varname> and inspect its result.  If
 	that parse fails, the closure will fail too.  Otherwise, it
 	will pass the result of the parse and the new
