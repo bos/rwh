@@ -751,12 +751,12 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     <para>This module defines a typeclass, <type>Foldable</type>,
       which <type>Seq</type> implements.</para>
 
-    &dataSequence.hs:toList;
+    &dataSequence.ghci:toList;
 
     <para>If we want to fold over a <type>Seq</type>, we use the fold
       functions from the <code>Data.Foldable</code> module.</para>
 
-    &dataSequence.hs:foldl;
+    &dataSequence.ghci:foldl;
 
     <para>The <code>Data.Sequence</code> module provides a number of
       other useful list-like functions.  Its documentation is very
