@@ -8,4 +8,4 @@ import Data.Sequence ((><), (<|), (|>))
 
 {-- snippet import3 --}
 import qualified Data.Foldable as Foldable
-{-- /snippet import2 --}
+{-- /snippet import3 --}
