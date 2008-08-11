@@ -1192,6 +1192,7 @@
 	in the usual Haskell right-to-left style.</para>
 
       &CartesianProduct.hs:wordCount;
+    </sect2>
   </sect1>
 
   <sect1 id="monads.state">

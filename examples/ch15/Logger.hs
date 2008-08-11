@@ -99,7 +99,7 @@ escape c
     | c `elem` regexChars = record "escape" >> return ['\\',c]
     | otherwise           = return [c]
   where regexChars = "\\+()^$.{}]|"
-{-- /snippet escape --}
+{-- /snippet last --}
 
 {-- snippet charClass_wordy --}
 charClass_wordy (']':cs) =
