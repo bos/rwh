@@ -3,7 +3,7 @@ module Logger
     (
       Logger
     , Log
-    , execLogger
+    , runLogger
     , record
     ) where
 {-- /snippet module --}
@@ -13,7 +13,7 @@ type Log = [String]
 {-- /snippet Log --}
 
 {-- snippet Logger --}
-newtype Logger a = Logger { runLogger :: (a, Log) }
+newtype Logger a = Logger { execLogger :: (a, Log) }
 {-- /snippet Logger --}
 
 {-- snippet return --}
@@ -21,9 +21,10 @@ instance Monad Logger where
     return a = Logger (a, [])
 {-- /snippet return --}
 {-- snippet bind --}
-    m >>= k = let (a, w) = runLogger m
+    -- (>>=) :: Logger a -> (a -> Logger b) -> Logger b
+    m >>= k = let (a, w) = execLogger m
                   n      = k a
-                  (b, x) = runLogger n
+                  (b, x) = execLogger n
               in Logger (b, w ++ x)
 {-- /snippet bind --}
 
@@ -35,12 +36,12 @@ stricterBind m k =
                 in Logger (b, w ++ x)
 {-- /snippet stricterBind --}
 
-{-- snippet execLogger.type --}
-execLogger :: Logger a -> (a, Log)
-{-- /snippet execLogger.type --}
-{-- snippet execLogger --}
-execLogger = runLogger
-{-- /snippet execLogger --}
+{-- snippet runLogger.type --}
+runLogger :: Logger a -> (a, Log)
+{-- /snippet runLogger.type --}
+{-- snippet runLogger --}
+runLogger = execLogger
+{-- /snippet runLogger --}
 
 {-- snippet record.type --}
 record :: String -> Logger ()
@@ -92,14 +93,12 @@ globToRegex' ('[':_) =
 {-- /snippet class --}
 {-- snippet last --}
 globToRegex' (c:cs) = liftM2 (++) (escape c) (globToRegex' cs)
-{-- /snippet last --}
 
-{-- snippet escape --}
 escape :: Char -> Logger String
 escape c
-    | c `elem` regexChars = record "escape" >> return ('\\' : [c])
-    | otherwise = return [c]
-    where regexChars = "\\+()^$.{}]|"
+    | c `elem` regexChars = record "escape" >> return ['\\',c]
+    | otherwise           = return [c]
+  where regexChars = "\\+()^$.{}]|"
 {-- /snippet escape --}
 
 {-- snippet charClass_wordy --}

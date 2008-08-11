@@ -16,6 +16,17 @@ blockyDo xs ys = do
 {-- snippet blockyPlain --}
 blockyPlain xs ys =
     xs >>=
-      \x -> ys >>=
-         \y -> return (x, y)
+    \x -> ys >>=
+    \y -> return (x, y)
+
+blockyPlain_reloaded xs ys =
+    concat (map (\x ->
+                 concat (map (\y ->
+                              return (x, y))
+                         ys))
+            xs)
 {-- /snippet blockyPlain --}
+
+{-- snippet wordCount --}
+wordCount = print . length . words =<< getContents
+{-- /snippet wordCount --}

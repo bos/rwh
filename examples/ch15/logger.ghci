@@ -1,7 +1,7 @@
 :load Logger
 
 --# firstExample
-execLogger (globToRegex "foo*.[ch]")
+runLogger (globToRegex "foo*.[ch]")
 
 --# bind.type
 :type (>>=)
@@ -9,10 +9,10 @@ execLogger (globToRegex "foo*.[ch]")
 
 --# simple
 let simple = return True :: Logger Bool
-execLogger simple
+runLogger simple
 
 --# logged
-execLogger (record "hi mom!" >> return 3.1337)
+runLogger (record "hi mom!" >> return 3.1337)
 
 --# m
 let m = return "foo" :: Logger String
@@ -21,4 +21,4 @@ let m = return "foo" :: Logger String
 length m
 
 --# m.length2
-m >>= \s -> return (length s)
+:type   m >>= \s -> return (length s)

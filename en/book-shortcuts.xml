@@ -144,6 +144,7 @@
 <!ENTITY putStrLn "<literal>putStrLn</literal>">
 <!ENTITY quickQueryp "<literal>quickQuery'</literal>">
 <!ENTITY rarrow "<literal>-&gt;</literal>">
+<!ENTITY rbind "<function>(=&lt;&lt;)</function>">
 <!ENTITY read "<literal>read</literal>">
 <!ENTITY readFile "<literal>readFile</literal>">
 <!ENTITY removeFile "<literal>removeFile</literal>">

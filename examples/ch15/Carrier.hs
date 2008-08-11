@@ -24,7 +24,7 @@ variation1 person phoneMap carrierMap addressMap =
       Just number ->
           case M.lookup number carrierMap of
             Nothing -> Nothing
-            Just carrier -> M.lookup addressMap carrier
+            Just carrier -> M.lookup carrier addressMap
 {-- /snippet variation1 --}
 
 {-- snippet variation2 --}

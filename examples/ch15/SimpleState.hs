@@ -29,9 +29,13 @@ bindAlt :: (s -> (a, s))        -- step
 {-- /snippet bindAlt.type --}
 
 {-- snippet bindAlt --}
+-- m == step
+-- k == makeStep
+-- s == oldState
+
 bindAlt step makeStep oldState =
     let (result, newState) = step oldState
-    in (makeStep result) newState
+    in  (makeStep result) newState
 {-- /snippet bindAlt --}
 
 {-- snippet getPut --}
