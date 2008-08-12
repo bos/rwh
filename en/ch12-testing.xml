@@ -93,7 +93,7 @@ Looking good. However, writing out the input data by hand is tedious, and
 violates the moral code of the efficient functional programmer: let the
 machine do the work! To automate this the QuickCheck library comes with a set
 of data generators for all the basic Haskell data types.  QuickCheck uses the
-<type>Arbitrary</type> type class to present a uniform interface to (pseudo-)random
+<type>Arbitrary</type> typeclass to present a uniform interface to (pseudo-)random
 data generation with the type system used to resolve which generator to use.
 QuickCheck normally hides the data generation plumbing, however we can also
 run the generators by hand to get a sense for the distribution of data
@@ -655,7 +655,7 @@ tested, and code that was executed simply bold.
 <para id="x_u21">
 We forgot to test the <type>Monoid</type> instance, for example, and some of
 the more complicated functions. HPC helps keep our test suite honest.
-Let's add a test for the type class instance of <type>Monoid</type>, the
+Let's add a test for the typeclass instance of <type>Monoid</type>, the
 class of types that support appending and empty elements:
 </para>
 

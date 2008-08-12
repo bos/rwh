@@ -37,3 +37,11 @@ next = S $ do st <- get
 
 runSupply (S m) xs = runState m xs
 {-- /snippet code --}
+
+{-- snippet showTwo --}
+showTwo :: (Show s) => Supply s String
+showTwo = do
+  a <- next
+  b <- next
+  return (show "a: " ++ show a ++ ", b: " ++ show b)
+{-- /snippet showTwo --}

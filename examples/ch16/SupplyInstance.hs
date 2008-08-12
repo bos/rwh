@@ -1,30 +1,38 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses,
     GeneralizedNewtypeDeriving #-}
 
+module SupplyInstance where
+
 import SupplyClass
 import RandomSupply
+import Control.Monad (liftM)
 
 {-- snippet Reader --}
-newtype Reader i a = R { runReader :: i -> a }
+newtype Reader e a = R { runReader :: e -> a }
 {-- /snippet Reader --}
 
 {-- snippet Monad --}
-instance Monad (Reader i) where
+instance Monad (Reader e) where
     return a = R $ \_ -> a
     m >>= k = R $ \r -> runReader (k (runReader m r)) r
 {-- /snippet Monad --}
 
 {-- snippet ask --}
-ask :: Reader i i
+ask :: Reader e e
 ask = R id
 {-- /snippet ask --}
 
-instance MonadSupply s (Reader s) where
-    next = R return
-
 {-- snippet MySupply --}
-newtype MySupply i a = MySupply { runMySupply :: Reader i a }
-    deriving (Monad, MonadSupply i)
+newtype MySupply e a = MySupply { runMySupply :: Reader e a }
+    deriving (Monad)
+
+instance MonadSupply e (MySupply e) where
+    next = MySupply $ do
+             v <- ask
+             return (Just v)
+
+    -- more concise:
+    -- next = MySupply (Just `liftM` ask)
 {-- /snippet MySupply --}
 
 {-- snippet runMS --}

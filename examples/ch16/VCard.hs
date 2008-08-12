@@ -33,15 +33,15 @@ twalumba = [(Business, "+260-02-55-5121")]
 {-- /snippet numbers --}
 
 {-- snippet personalPhone --}
-personalPhone :: [(Context, Phone)] -> Maybe Phone
-
-personalPhone ps = case lookup Home ps of
-                     Nothing -> lookup Mobile ps
-                     Just n -> Just n
+onePersonalPhone :: [(Context, Phone)] -> Maybe Phone
+onePersonalPhone ps = case lookup Home ps of
+                        Nothing -> lookup Mobile ps
+                        Just n -> Just n
 {-- /snippet personalPhone --}
 
 {-- snippet businessPhones --}
-businessPhones ps = map snd numbers
+allBusinessPhones :: [(Context, Phone)] -> [Phone]
+allBusinessPhones ps = map snd numbers
     where numbers = case filter (contextIs Business) ps of
                       [] -> filter (contextIs Mobile) ps
                       ns -> ns
@@ -50,12 +50,12 @@ contextIs a (b, _) = a == b
 {-- /snippet businessPhones --}
 
 {-- snippet caseless --}
-businessPhone :: [(Context, Phone)] -> Maybe Phone
-businessPhone ps = lookup Business ps `mplus` lookup Mobile ps
+oneBusinessPhone :: [(Context, Phone)] -> Maybe Phone
+oneBusinessPhone ps = lookup Business ps `mplus` lookup Mobile ps
 
-personalPhones :: [(Context, Phone)] -> [Phone]
-personalPhones ps = map snd $ filter (contextIs Home) ps `mplus`
-                              filter (contextIs Mobile) ps
+allPersonalPhones :: [(Context, Phone)] -> [Phone]
+allPersonalPhones ps = map snd $ filter (contextIs Home) ps `mplus`
+                                 filter (contextIs Mobile) ps
 {-- /snippet caseless --}
 
 {-- snippet lookup --}

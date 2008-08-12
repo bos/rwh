@@ -1,3 +1,8 @@
+:m +System.Random
+
+--# getStdRandom
+:type getStdRandom
+
 --# random
 :load RandomSupply
 (fst . runSupply next) `fmap` randomsIO

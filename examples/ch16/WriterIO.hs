@@ -1,9 +1,12 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving, MultiParamTypeClasses,
     TypeSynonymInstances #-}
 
+module WriterIO where
+
 import Control.Monad.Writer
 import MonadHandle
 import System.IO (IOMode(..))
+import SafeHello
 
 {-- snippet Event --}
 data Event = Open FilePath IOMode

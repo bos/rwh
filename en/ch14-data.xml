@@ -629,7 +629,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 	  <para>Indeed, monoids are ubiquitous throughout programming.
 	    The difference is that in Haskell, we recognize them, and
 	    talk about them.</para>
-	</footnote>.  The <type>Monoid</type> type class is defined in
+	</footnote>.  The <type>Monoid</type> typeclass is defined in
 	the <code>Data.Monoid</code> module.</para>
 
       &Monoid.hs:Monoid;
@@ -685,7 +685,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="data.seq">
     <title>General purpose sequences</title>
 
     <para>Both Haskell's built-in list type and the <type>DList</type>

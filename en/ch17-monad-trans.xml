@@ -76,7 +76,7 @@
 	a</type>.  The first parameter <varname
 	role="type">w</varname> is the type of the values to be
       recorded, while <varname role="type">a</varname> is the usual
-      type that the <type>Monad</type> type class requires. Thus
+      type that the <type>Monad</type> typeclass requires. Thus
       <type>Writer [(FilePath, Int)]</type> is a writer monad that
       records a list of directory names and sizes.</para>
       
@@ -123,7 +123,7 @@
 
     <para id="x_Rt">Most of the monads and monad transformers in the
       <code>mtl</code> library follow a few common patterns around
-      naming and type classes.  It's helpful to know these rules of
+      naming and typeclasses.  It's helpful to know these rules of
       thumb, because they are both useful and few in number.</para>
 
     <para id="x_St">Rather than speak in general terms, we'll focus on a single
@@ -138,8 +138,8 @@
       function parameter.</para>
 
     <para id="x_Tt">The reader monad's API is detailed in the
-      <type>MonadReader</type> type class.  Most <code>mtl</code>
-      monads have similarly named type classes:
+      <type>MonadReader</type> typeclass.  Most <code>mtl</code>
+      monads have similarly named typeclasses:
       <type>MonadWriter</type> defines the API of the writer monad,
       and so on.</para>
 
@@ -152,7 +152,7 @@
 	m</type> monad transformer.  Again, this pattern is repeated
       by other <type>mtl</type> monads: there usually exist both a
       concrete monad and a transformer, each of which are instances of
-      the type class that defines the monad's API.</para>
+      the typeclass that defines the monad's API.</para>
 
     <para id="x_Vt">Returning to the specifics of the reader monad, we haven't
       touched upon the <function>local</function> function before.  It
@@ -172,7 +172,7 @@
     <para id="x_Xt">When the underlying monad <varname role="type">m</varname>
       is an instance of <type>MonadIO</type>, the <code>mtl</code>
       library provides an instance for <type>ReaderT r m</type>, and
-      also for a number of other type classes.  Here are a few.</para>
+      also for a number of other typeclasses.  Here are a few.</para>
 
     &Reader.hs:instances;
 
@@ -317,7 +317,7 @@
 	these instances for us.  How does this work?</para>
 
       <para id="x_ut">Earlier, we mentioned that the <code>mtl</code> library
-	provides instances of a number of type classes for each monad
+	provides instances of a number of typeclasses for each monad
 	transformer.  For example, the <type>IO</type> monad
 	implements <type>MonadIO</type>.  If the underlying monad is
 	an instance of <type>MonadIO</type>, <code>mtl</code> makes
@@ -328,7 +328,7 @@
 	transformer in the stack is an instance of all of the type
 	classes that we're rederiving with our <code>deriving</code>
 	clause. This is a consequence of <code>mtl</code> providing a
-	carefully coordinated set of type classes and instances that
+	carefully coordinated set of typeclasses and instances that
 	fit together well.  We can still make progress in the absence
 	of this framework, and we'll shortly see how.</para>
     </sect2>
@@ -356,7 +356,7 @@
 
     <para id="x_zt">In the framework that <code>mtl</code> provides, each monad
       transformer in the stack makes the API of a lower level
-      available by providing instances of a host of type classes.  We
+      available by providing instances of a host of typeclasses.  We
       could follow this pattern, and write a number of boilerplate
       instances.</para>
 
@@ -372,9 +372,9 @@
       caring about which layer provides the <emphasis>real</emphasis>
       implementation.</para>
 
-    <para id="x_Bu">Instead of relying on all of these type class instances to
+    <para id="x_Bu">Instead of relying on all of these typeclass instances to
       work for us behind the scenes, we can be explicit. The
-      <type>MonadTrans</type> type class defines a useful function
+      <type>MonadTrans</type> typeclass defines a useful function
       named <function>lift</function>.</para>
 
     &monadTrans.ghci:MonadTrans;
@@ -414,7 +414,7 @@
 
     <para id="x_Iu">If we want to access the <type>AppState</type> carried by
       the <type>StateT</type>, we would usually rely on
-      <code>mtl</code>'s type classes and instances to handle the
+      <code>mtl</code>'s typeclasses and instances to handle the
       plumbing for us.</para>
     
     &UglyStack.hs:implicitGet;
@@ -434,7 +434,7 @@
 
       <para id="x_Lu">One case in which we <emphasis>must</emphasis> use
 	<function>lift</function> is when we create a monad
-	transformer stack in which instances of the same type class
+	transformer stack in which instances of the same typeclass
 	appear at multiple levels.</para>
 
       &StackStack.hs:Foo;
@@ -499,12 +499,12 @@
     &MaybeT.hs:bindMT.type;
 
     <para id="x_Uu">To understand this type signature, hark back to our
-      discussion of multi-parameter type classes in <xref
+      discussion of multi-parameter typeclasses in <xref
 	linkend="monadcase.mptc"/>.  The thing that we intend to make
       a <type>Monad</type> instance is the <emphasis>partial
 	type</emphasis> <type>MaybeT m</type>: this has the usual
       single type parameter, <varname>a</varname>, that satisfies the
-      requirements of the <type>Monad</type> type class.</para>
+      requirements of the <type>Monad</type> typeclass.</para>
 
     <para id="x_Vu">The trick to understanding the body of our &bind;
       implementation is that everything inside the &do; block executes
@@ -553,15 +553,15 @@
     </sect2>
 
     <sect2>
-      <title>More type class instances</title>
+      <title>More typeclass instances</title>
 
       <para id="x_bu">Once we have an instance for <type>MonadTrans</type>
 	defined, we can use it to define instances for the umpteen
-	other <code>mtl</code> type classes.</para>
+	other <code>mtl</code> typeclasses.</para>
 
       &MaybeT.hs:mtl;
 
-      <para id="x_cu">Because several of the <code>mtl</code> type classes use
+      <para id="x_cu">Because several of the <code>mtl</code> typeclasses use
 	functional dependencies, some of our instance declarations
 	require us to considerably relax &GHC;'s usual strict type
 	checking rules. (If we were to forget any of these directives,
@@ -793,7 +793,7 @@
 
       <para id="x_Dv">For example, if we create a new monad transformer
 	<type>FooT</type>and want to follow the same pattern as
-	<code>mtl</code>, we'll have it implement a type class
+	<code>mtl</code>, we'll have it implement a typeclass
 	<type>MonadFoo</type>.  If we really want to integrate it
 	cleanly into the <code>mtl</code>, we'll have to provide
 	instances for each of the dozen or so <code>mtl</code> type

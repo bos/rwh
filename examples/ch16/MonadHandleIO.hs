@@ -16,14 +16,6 @@ instance MonadHandle System.IO.Handle IO where
     hPutStrLn = System.IO.hPutStrLn
 {-- /snippet IO --}
 
-{-- snippet safeHello --}
-safeHello :: MonadHandle h m => FilePath -> m ()
-safeHello path = do
-  h <- openFile path WriteMode
-  hPutStrLn h "hello world"
-  hClose h
-{-- /snippet safeHello --}
-
 {-- snippet tidyHello --}
 tidyHello :: (MonadIO m, MonadHandle h m) => FilePath -> m ()
 tidyHello path = do
