@@ -1,3 +1,4 @@
+{-- snippet headers --}
 {-# INCLUDE <pcre.h> #-}
 {-# LINE 1 "Regex_hsc_const.hsc" #-}
 {-# LANGUAGE CPP, ForeignFunctionInterface #-}

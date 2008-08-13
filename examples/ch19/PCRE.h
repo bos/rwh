@@ -1,5 +1,5 @@
 
-/** snippet contants */
+/** snippet constants */
 /* Options */
 
 #define PCRE_CASELESS           0x00000001

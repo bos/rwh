@@ -20,6 +20,7 @@ familiarity with regular expressions.
 
 <!-- dicuss the foreign function interface standard -->
 
+<!--
 <para>
 Binding one language to another is a non-trivial task. The binding language
 needs to understand the calling conventions, type system, data structures,
@@ -39,7 +40,7 @@ programmer writing a new binding will encounter.
 </para>
 
 <para>
-  For Haskell, this technology stack is specified by <ulink ="http://www.cse.unsw.edu.au/~chak/haskell/ffi/">the Foreign Function Interface addendum</ulink> to
+  For Haskell, this technology stack is specified by <ulink url="http://www.cse.unsw.edu.au/~chak/haskell/ffi/">the Foreign Function Interface addendum</ulink> to
 the Haskell report. The FFI report describes how to correctly bind code to
 and from Haskell and C, and how to extend bindings to other languages.  FFI
 bindings will work portably across Haskell implementations and C compilers.
@@ -60,9 +61,11 @@ hardware. It also gives us a performance escape hatch: if we can't get a key
 hotspot fast enough, there's always the option of trying again in C.  So
 let's look at what the FFI actually means for writing code. 
 </para>
+-->
 
 <!-- some simple examples: the cmath library -->
 
+<!--
 <sect1>
   <title>Foreign language bindings: the basics</title>
 
@@ -128,7 +131,7 @@ to Haskell. The result is then wrapped up as a Haskell value of type
 <para>
 It is a common idiom to expose the C function with the prefix "c_",
 distinguishing it from more user friendly, higher level functions. The C
-function is specified by the <code>math.h<code> header, where it is has
+function is specified by the <code>math.h</code> header, where it is has
 type:
 </para>
 
@@ -281,11 +284,13 @@ We're well on our way now, with a full program, statically linked against
 C, which interleaves C and Haskell code, and passes data across the language
 boundary. Time now to tackle a larger problem.
 </para>
+-->
 
 <!-- unsafe/ safe calls -->
 
 <!-- a more complicated engineering task: pcre -->
 
+<!--
 <para>
 Simple bindings like the above are almost trivial, as the standard
 <code>Foreign</code> library provides convenient aliases for common types,
@@ -295,14 +300,18 @@ memory management and type safety.
 </para>
 
 </sect1>
+-->
+
+<!--
+<sect1>
+  <title>Regular expressions for Haskell: binding to PCRE</title>
+   -->
 
 <!-- linking -->
 
 <!-- motivate regular expressions -->
 
-<sect1>
-  <title>Regular expressions for Haskell: binding to PCRE</title>
-
+<!--
 <para>
 As we've seen in previous sections, Haskell programs have an implicit bias
 towards lists as a foundational data structure.  List functions are a core
@@ -329,8 +338,12 @@ found at <ulink url="http://www.pcre.org/">http://www.pcre.org/</ulink>. The fol
 sections we'll assume the PCRE library and headers are available on the
 machine.
 </para>
+-->
 
 <!-- expose C constants -->
+
+<!--
+
 <sect2>
   <title>Simple tasks: using CPP</title>
 
@@ -396,7 +409,7 @@ type information.  We'll bind the regular expression C constants in a new
 file, <code>Regex.hsc</code>, much like a Haskell file, consisting of some
 language pragmas, import statements, like so: </para>
 
-&Regex_hsc.hs:headers;
+&Regex-hsc.hs:headers;
 
 <para>
 The module begins with a typical preamble for an FFI binding: enable CPP,
@@ -448,7 +461,7 @@ To do this, we define a <code>newtype</code> for PCRE compile time options,
 whose representation is actually that of a <code>CInt</code> value, like so:
 </para>
 
-&Regex_hsc.hs:newtype;
+&Regex-hsc.hs:newtype;
 
 <para>
 The type name is <code>PCREOption</code>, and it has a single constructor,
@@ -480,7 +493,7 @@ be provided by the C preprocessor. We can bind to the constants manually, by
 listing the CPP symbols for them using the <code>#const</code> keyword:
 </para>
 
-&Regex_hsc_const.hs:constoptions;
+&Regex-hsc-const.hs:constoptions;
 
 <para>
 This introduces three new constants on the Haskell side,
@@ -505,7 +518,7 @@ This creates a new output file, <code>Regex.hs</code>, where the CPP
 variables have been expanded, yielding valid Haskell code:
 </para>
 
-&Regex_hsc_const_generated.hs:generatedconsts;
+&Regex-hsc-const-generated.hs:generatedconsts;
 
 <para>
 Notice also how the original line in the <code>.hsc</code> is listed next
@@ -524,7 +537,7 @@ PCREOption {unPCREOption = 1}
 *Regex> unPCREOption caseless + unPCREOption caseless
 2
 *Regex> caseless + caseless
-<interactive>:1:0:
+interactive>:1:0:
     No instance for (Num PCREOption)
 </screen>
 
@@ -534,6 +547,7 @@ and operate on them if needed. To unwrap the values, we use
 <code>unPCREOption</code>. That's a good start.
 </para>
 
+</sect3>
 
 <sect3>
   <title>
@@ -552,7 +566,7 @@ automate it: the <code>#enum</code> construct.
 We replace our list of top level bindings with the equivalent:
 </para>
 
-&Regex_hsc.hs:constants;
+&Regex-hsc.hs:constants;
 
 <para>
 Much more concise! The <code>#enum</code> construct gives us three
@@ -605,9 +619,14 @@ Let's turn now to actually compiling some regular expressions.
 
 </sect1>
 
+-->
+
+<!--
 <sect1>
   <title>Passing string data between Haskell and C
+
 </sect1>
+ -->
 
 </chapter>
 

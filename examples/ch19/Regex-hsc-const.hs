@@ -1,3 +1,4 @@
+{-- snippet headers --}
 {-# LANGUAGE CPP, ForeignFunctionInterface #-}
 
 module Regex where

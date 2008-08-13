@@ -1,3 +1,3 @@
-{-- snippet type --}
+/** snippet type **/
 double sin(double x);
-{-- /snippet type --}
+/** /snippet type **/
