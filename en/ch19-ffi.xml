@@ -20,7 +20,6 @@ familiarity with regular expressions.
 
 <!-- dicuss the foreign function interface standard -->
 
-<!--
 <para>
 Binding one language to another is a non-trivial task. The binding language
 needs to understand the calling conventions, type system, data structures,
@@ -61,13 +60,12 @@ hardware. It also gives us a performance escape hatch: if we can't get a key
 hotspot fast enough, there's always the option of trying again in C.  So
 let's look at what the FFI actually means for writing code. 
 </para>
--->
 
 <!-- some simple examples: the cmath library -->
 
-<!--
-<sect1>
+<!-- <sect1>
   <title>Foreign language bindings: the basics</title>
+  -->
 
 <para>
 The most common operation we'll want to do, unsurprisingly, is call a C
@@ -255,7 +253,7 @@ Alternatively, we can compile it to a binary:
 </para>
 
 <screen>
-$ ghc -O --make SimpleFFI.hs
+<prompt>$ </prompt><userinput>ghc -O --make SimpleFFI.hs</userinput>
 [1 of 1] Compiling Main             ( SimpleFFI.hs, SimpleFFI.o )
 Linking SimpleFFI ...
 </screen>
@@ -284,13 +282,11 @@ We're well on our way now, with a full program, statically linked against
 C, which interleaves C and Haskell code, and passes data across the language
 boundary. Time now to tackle a larger problem.
 </para>
--->
 
 <!-- unsafe/ safe calls -->
 
 <!-- a more complicated engineering task: pcre -->
 
-<!--
 <para>
 Simple bindings like the above are almost trivial, as the standard
 <code>Foreign</code> library provides convenient aliases for common types,
@@ -299,19 +295,15 @@ engineering task: binding to the PCRE library.  which brings up issues of
 memory management and type safety.
 </para>
 
-</sect1>
--->
+<!-- </sect1> -->
 
-<!--
 <sect1>
   <title>Regular expressions for Haskell: binding to PCRE</title>
-   -->
 
 <!-- linking -->
 
 <!-- motivate regular expressions -->
 
-<!--
 <para>
 As we've seen in previous sections, Haskell programs have an implicit bias
 towards lists as a foundational data structure.  List functions are a core
@@ -338,11 +330,8 @@ found at <ulink url="http://www.pcre.org/">http://www.pcre.org/</ulink>. The fol
 sections we'll assume the PCRE library and headers are available on the
 machine.
 </para>
--->
 
 <!-- expose C constants -->
-
-<!--
 
 <sect2>
   <title>Simple tasks: using CPP</title>
@@ -529,7 +518,7 @@ results:
 </para>
 
 <screen>
-$ ghci Regex.hs
+<prompt>$ </prompt>ghci Regex.hs
 *Regex> caseless
 PCREOption {unPCREOption = 1}
 *Regex> unPCREOption caseless
@@ -618,8 +607,6 @@ Let's turn now to actually compiling some regular expressions.
 </sect2>
 
 </sect1>
-
--->
 
 <!--
 <sect1>
