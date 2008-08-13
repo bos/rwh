@@ -1,6 +1,6 @@
 {-- snippet LANGUAGE --}
-{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
-{-# OPTIONS_GHC -fallow-undecidable-instances #-}
+{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses,
+             UndecidableInstances #-}
 {-- /snippet LANGUAGE --}
 
 module MaybeT

@@ -12,7 +12,7 @@ outerPut = put
 
 {-- snippet innerPut --}
 innerPut :: String -> Foo ()
-innerPut s = lift (put s)
+innerPut = lift . put
 {-- /snippet innerPut --}
 
 {-- snippet Bar --}

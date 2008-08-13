@@ -6,29 +6,35 @@
   <sect1>
     <title>Motivation: boilerplate avoidance</title>
 
-    <para id="x_Ct">Monads provide a powerful way to build computations with
-      effects.  Each of the standard monads is specialised to do
-      exactly one thing.  Quite often, this does not fit our real
-      world needs.</para>
+    <para id="x_Ct">Monads provide a powerful way to build
+      computations with effects.  Each of the standard monads is
+      specialised to do exactly one thing.  In real code, we
+      often need to be able to use several effects at once.</para>
 
-    <para id="x_Dt">Recall the <type>Parse</type> type that we developed in
-      <xref linkend="binary"/>.  When we introduced monads, we
-      mentioned that this type was a state monad in disguise. In fact,
-      it's a little more complex than the standard <type>State</type>
-      monad, because it uses the <type>Either</type> type to allow the
-      possibility of a parsing failure.  If a parse fails early on, we
-      want to stop parsing, not continue in some broken state.</para>
 
-    <para id="x_Et">The normal <type>State</type> monad doesn't let us exit
-      early in this way.  It uses the default implementation of
-      <function>fail</function>: this calls
+    <para id="x_Dt">Recall the <type>Parse</type> type that we
+      developed in
+      <xref linkend="binary"/>, for instance.  When we introduced
+      monads, we mentioned that this type was a state monad in
+      disguise. Our monad is more complex than the standard
+      <type>State</type> monad, because it uses the
+      <type>Either</type> type to allow the possibility of a parsing
+      failure.  In our case, if a parse fails early on, we want to
+      stop parsing, not continue in some broken state.  Our monad
+      combines the effect of carrying state around with the effect of
+      early exit.</para>
+
+    <para id="x_Et">The normal <type>State</type> monad doesn't let us
+      escape in this way; it only carries state.  It uses the default
+      implementation of <function>fail</function>: this calls
       <function>error</function>, which throws an exception that we
       can't catch in pure code.  The <type>State</type> monad thus
-      <emphasis>appears</emphasis> to allow for failure, without
-      actually being any use.  (Once again, we recommend that you
-      almost always avoid using <function>fail</function>!)</para>
+      <emphasis>appears</emphasis> to allow for failure, without that
+      capability actually being any use.  (Once again, we recommend
+      that you almost always avoid using
+      <function>fail</function>!)</para>
 
-    <para id="x_Ft">Obviously, it would be ideal if we could somehow take the
+    <para id="x_Ft">It would be ideal if we could somehow take the
       standard <type>State</type> monad and add failure handling to
       it, without resorting to the wholesale construction of custom
       monads by hand. The standard monads in the <code>mtl</code>
@@ -54,34 +60,37 @@
   <sect1>
     <title>A simple monad transformer example</title>
 
-    <para id="x_It">This function recurses into a directory tree, and returns a
-      list of the number of entries it finds at each level of the
-      tree.</para>
+    <para id="x_It">Before we introduce monad transformers, let's look
+      at a function written using techniques we are already familiar
+      with.  The function below recurses into a directory tree, and
+      returns a list of the number of entries it finds at each level
+      of the tree.</para>
 
     &CountEntries.hs:countEntriesTrad;
 
-    <para id="x_Jt">Let's consider a different approach, using the
-      <type>Writer</type> monad.  Since it lets us record a value
-      wherever we want, our code doesn't need to explicitly return a
+    <para id="x_Jt">We'll now look at using the writer monad to
+      achieve the same goal.  Since this monad lets us record a value
+      wherever we want, we don't need to explicitly build up a
       result.</para>
 
-    <para id="x_Kt">As our function executes in the <type>IO</type> monad, we
+    <para id="x_Kt">As our function must execute in the
+      <type>IO</type> monad so that it can traverse directories, we
       can't use the <type>Writer</type> monad directly.  Instead, we
       use <type>WriterT</type> to add the recording capability to
-      <type>IO</type>.  To do this, it helps to understand the types
-      involved.</para>
+      <type>IO</type>.  We will find the going easier if we look at
+      the types involved.</para>
 
     <para id="x_Lt">The normal <type>Writer</type> monad has two type
       parameters, so it's more properly written <type>Writer w
 	a</type>.  The first parameter <varname
 	role="type">w</varname> is the type of the values to be
-      recorded, while <varname role="type">a</varname> is the usual
+      recorded, and <varname role="type">a</varname> is the usual
       type that the <type>Monad</type> typeclass requires. Thus
-      <type>Writer [(FilePath, Int)]</type> is a writer monad that
+      <type>Writer [(FilePath, Int)] a</type> is a writer monad that
       records a list of directory names and sizes.</para>
       
     <para id="x_Mt">The <type>WriterT</type> transformer has a similar
-      structure, but it adds another type parameter, <varname
+      structure, but it adds another type parameter <varname
 	role="type">m</varname>: this is the underlying monad whose
       behaviour we are augmenting. The full signature of
       <type>WriterT</type> is <type>WriterT w m a</type>.</para>
@@ -93,7 +102,7 @@
       <type>WriterT [(FilePath, Int)] IO a</type>.  This stack of
       monad transformer and monad is itself a monad.</para>
 
-    &CountEntries.hs:countEntries;
+    &CountEntriesT.hs:countEntries;
 
     <para id="x_Ot">This code is not terribly different from our earlier
       version. We use <function>liftIO</function> to expose the
@@ -116,6 +125,11 @@
 
     &countEntries.ghci:countEntries;
 
+    <para>We use a <type>WriterT</type> on top of <type>IO</type>
+      because there is no <type>IOT</type> monad transformer.
+      Whenever we use the <type>IO</type> monad with one or more monad
+      transformers, <type>IO</type> will always be at the bottom of
+      the stack.</para>
   </sect1>
 
   <sect1>
@@ -123,25 +137,14 @@
 
     <para id="x_Rt">Most of the monads and monad transformers in the
       <code>mtl</code> library follow a few common patterns around
-      naming and typeclasses.  It's helpful to know these rules of
-      thumb, because they are both useful and few in number.</para>
+      naming and typeclasses.</para>
 
-    <para id="x_St">Rather than speak in general terms, we'll focus on a single
-      straightforward monad: the reader monad. This provides a piece
-      of immutable, implicit state, often called the
-      <emphasis>environment</emphasis>.  The environment is usually
-      used to carry around static information, where we don't want to
-      be burdened with the bother of passing it around as an explicit
-      parameter.  One common use for the reader monad is to store
-      configuration information for a program, so that it's available
-      when needed, without needing to be passed around as an explicit
-      function parameter.</para>
-
-    <para id="x_Tt">The reader monad's API is detailed in the
-      <type>MonadReader</type> typeclass.  Most <code>mtl</code>
-      monads have similarly named typeclasses:
-      <type>MonadWriter</type> defines the API of the writer monad,
-      and so on.</para>
+    <para id="x_St">To illustrate these rules, we will focus on a
+      single straightforward monad: the reader monad.  The reader
+      monad's API is detailed by the <type>MonadReader</type>
+      typeclass.  Most <code>mtl</code> monads have similarly named
+      typeclasses: <type>MonadWriter</type> defines the API of the
+      writer monad, and so on.</para>
 
     &Reader.hs:class;
 
@@ -186,16 +189,16 @@
 
     <para id="x_Zt">As we have already mentioned, when we stack a monad
       transformer on a normal monad, the result is another monad. This
-      suggests the possobility that we can again stack a monad
+      suggests the possibility that we can again stack a monad
       transformer on top of our combined monad, to give a new monad,
       and in fact this is a common thing to do.  Under what
       circumstances might we want to create such a stack?</para>
 
     <itemizedlist>
       <listitem>
-	<para id="x_at">Often, we'll have <type>IO</type> at the base of the
-	  stack, because we're interested in programs that need to
-	  talk to the outside world.</para>
+	<para id="x_at">If we need to talk to the outside world, we'll
+	  have <type>IO</type> at the base of the stack. Otherwise, we
+	  will have some normal monad.</para>
       </listitem>
       <listitem>
 	<para id="x_bt">If we add a <type>ReaderT</type> layer, we give
@@ -232,10 +235,14 @@
     &UglyStack.hs:App;
 
     <para id="x_ht">Our transformer stack has <type>IO</type> on the bottom,
-      then <type>StateT</type>, with <type>ReaderT</type> on top. Even
-      a small stack of monad transformers quickly develops an unwieldy
-      type name.  We use a &type; alias to reduce the lengths of the
-      type signatures that we write.</para>
+      then <type>StateT</type>, with <type>ReaderT</type> on top.  In
+      this particular case, it doesn't matter whether we have
+      <type>ReaderT</type> or <type>WriterT</type> on top, but
+      <type>IO</type> must be on the bottom.</para>
+
+    <para>Even a small stack of monad transformers quickly develops an
+      unwieldy type name.  We can use a &type; alias to reduce the lengths
+      of the type signatures that we write.</para>
 
     <note>
       <title>Where's the missing type parameter?</title>
@@ -291,7 +298,7 @@
     <para id="x_qt">We can write most of an application's imperative-style code
       in a monad stack similar to our <type>App</type> monad.  In a
       real program, we'd carry around more complex configuration data,
-      but we'd still use <type>ReaderT</type> to keep the it read-only
+      but we'd still use <type>ReaderT</type> to keep it read-only
       and hidden except when needed.  We'd have more mutable state to
       manage, but we'd still use <type>StateT</type> to encapsulate
       it.</para>
@@ -329,8 +336,42 @@
 	classes that we're rederiving with our <code>deriving</code>
 	clause. This is a consequence of <code>mtl</code> providing a
 	carefully coordinated set of typeclasses and instances that
-	fit together well.  We can still make progress in the absence
-	of this framework, and we'll shortly see how.</para>
+	fit together well.  There is nothing more going on than the
+	usual automatic derivation that we can perform with &newtype;
+	declarations.</para>
+    </sect2>
+
+    <sect2>
+      <title>Exercises</title>
+
+      <qandaset defaultlabel="number">
+	<qandaentry>
+	  <question>
+	    <para>Modify the <type>App</type> type synonym to swap the
+	      order of <type>ReaderT</type> and <type>WriterT</type>.
+	      What effect does this have on the
+	      <function>runApp</function> execution function?</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Add the <type>WriterT</type> transformer to the
+	      <type>App</type> monad transformer stack.  Modify
+	      <function>runApp</function> to work with this new
+	      setup.</para>
+	  </question>
+	</qandaentry>
+
+	<qandaentry>
+	  <question>
+	    <para>Rewrite the <function>constrainedCount</function>
+	      function to record results using the
+	      <type>WriterT</type> transformer in your new
+	      <type>App</type> stack.</para>
+	  </question>
+	</qandaentry>
+      </qandaset>
     </sect2>
   </sect1>
 
@@ -343,7 +384,7 @@
       Indeed, we already know enough about monad transformers to
       simplify many common programming tasks.</para>
 
-    <para id="x_xt">There exist a few common ways in which we can depart from
+    <para id="x_xt">There are a few useful ways in which we can depart from
       the comfort of <code>mtl</code>.  Most often, a custom monad
       sits at the bottom of the stack, or a custom monad transformer
       lies somewhere within the stack.  To understand the potential
@@ -386,8 +427,8 @@
       instance of <type>MonadTrans</type>.</para>
 
     <para id="x_Du">We use the name <function>lift</function> based on its
-      similarity to <function>fmap</function> and
-      <function>liftM</function>: in each case, we hoist something
+      similarity of purpose to <function>fmap</function> and
+      <function>liftM</function>. In each case, we hoist something
       from a lower level of the type system to the level we're
       currently working in.</para>
 
@@ -439,16 +480,16 @@
 
       &StackStack.hs:Foo;
 
-      <para id="x_Mu">If we try to use <type>MonadState</type>'s
-	<function>put</function> action, <type>StateT Int</type>'s
-	instance of <type>MonadState</type> is the one we get, because
-	it's at the top of the stack.</para>
+      <para id="x_Mu">If we try to use the <function>put</function>
+	action of the <type>MonadState</type> typeclass, the instance
+	we will get is that of <type>StateT Int</type>, because it's
+	at the top of the stack.</para>
 
       &StackStack.hs:outerPut;
 
-      <para id="x_Nu">The only way we can access the underlying
-	<type>State</type> monad's <function>put</function> is through
-	use of <function>lift</function>.</para>
+      <para id="x_Nu">In this case, the only way we can access the
+	underlying <type>State</type> monad's <function>put</function>
+	is through use of <function>lift</function>.</para>
 
       &StackStack.hs:innerPut;
 
@@ -460,11 +501,13 @@
 
       &StackStack.hs:Bar;
 
-      <para id="x_Pu">When we need to use <function>lift</function>, it can be
-	good style to write wrapper functions that do the lifting for
-	us, as above, and to use those.  The alternative of sprinkling
-	explicit uses of <function>lift</function> throughout our code
-	tends to look messy.</para>
+      <para id="x_Pu">When we need to use <function>lift</function>,
+	it can be good style to write wrapper functions that do the
+	lifting for us, as above, and to use those.  The alternative
+	of sprinkling explicit uses of <function>lift</function>
+	throughout our code tends to look messy.  Worse, it hard-wires
+	the details of the layout of our monad stack into our code,
+	which will complicate any subsequent modifications.</para>
 
     </sect2>
   </sect1>
@@ -472,11 +515,11 @@
   <sect1 id="monadtrans.maybet">
     <title>Understanding monad transformers by building one</title>
 
-    <para id="x_Qu">To give ourselves some insight into how monad transformers
-      in general work, we will create one and describe its machinery
-      as we go.  Our target is simple and useful, but surprisingly
-      it's missing from the <code>mtl</code> library:
-      <type>MaybeT</type>.</para>
+    <para id="x_Qu">To give ourselves some insight into how monad
+      transformers in general work, we will create one and describe
+      its machinery as we go.  Our target is simple and useful.
+      Surprisingly, though, it is missing from the <code>mtl</code>
+      library: <type>MaybeT</type>.</para>
 
     <para id="x_Ru">This monad transformer modifies the behaviour of an
       underlying monad <type>m a</type> by wrapping its type parameter
@@ -570,13 +613,14 @@
 
       &MaybeT.hs:LANGUAGE;
 
-      <para id="x_du">Is it better to use <function>lift</function> explicitly,
-	or to spend time writing these boilerplate instances?  That
-	depends on what we expect to do with our monad transformer.
-	If we're going to use it in just a few restricted situations, we
-	can get away with providing an instance for
-	<type>MonadTrans</type> alone.  A few more instances might
-	make sense, such as <type>MonadIO</type>.  If the transformer
+      <para id="x_du">Is it better to use <function>lift</function>
+	explicitly, or to spend time writing these boilerplate
+	instances?  That depends on what we expect to do with our
+	monad transformer. If we're going to use it in just a few
+	restricted situations, we can get away with providing an
+	instance for <type>MonadTrans</type> alone.  In this case, a
+	few more instances might still make sense, such as
+	<type>MonadIO</type>.  On the other hand, if our transformer
 	is going to pop up in diverse situations throughout a body of
 	code, spending a dull hour to write those instances might be a
 	good investment.</para>
@@ -675,10 +719,10 @@
       type <type>Maybe</type>.  In our test case, we only get to see
       the log of what happened if nothing actually went wrong!</para>
 
-    <para id="x_pu">Stacking monad transformers is analogous to composing
-      functions.  We are not surprised when we change the order in
-      which we apply functions and thus get different results, and so
-      it is with monad transformers, too.</para>
+    <para id="x_pu">Stacking monad transformers is analogous to
+      composing functions.  If we change the order in which we apply
+      functions, and we then get different results, we are not
+      surprised.  So it is with monad transformers, too.</para>
   </sect1>
 
   <sect1>
@@ -705,13 +749,14 @@
 	libraries don't always provide monadic versions of pure
 	functions.</para>
 
-      &monadProblems.ghci:zip;
-
-      <para id="x_tu">The reason for this lies in history.  Eugenio Moggi
-	introduced the idea of using monads for programming in 1988,
-	around the time the Haskell 1.0 standard was being developed.
-	Many of the functions in today's <code>Prelude</code> date
-	back to Haskell 1.0, which was released in 1990.</para>
+      <para id="x_tu">The reason for this lies in history.  Eugenio
+	Moggi introduced the idea of using monads for programming in
+	1988, around the time the Haskell 1.0 standard was being
+	developed. Many of the functions in today's
+	<code>Prelude</code> date back to Haskell 1.0, which was
+	released in 1990.  In 1991, Philip Wadler started writing for
+	a wider functional programming audience about the potential of
+	monads, at which point they began to see some use.</para>
 
       <para id="x_uu">Not until 1996, and the release of Haskell 1.3, did the
 	standard acquire support for monads.  By this time, the
@@ -727,12 +772,12 @@
 	<code>Data.Traversable</code> and <code>Data.Foldable</code>
 	modules.  As appealing as those modules are, we do not cover
 	them in this book. This is in part for want of space, but also
-	because if you've still following our book at this point, you
+	because if you're still following our book at this point, you
 	won't have trouble figuring them out for yourself.</para>
 
       <para id="x_wu">In an ideal world, would we make a break from the past,
 	and switch over <code>Prelude</code> to use
-	<type>Traversable</type> and <type>Foldtable</type> types?
+	<type>Traversable</type> and <type>Foldable</type> types?
 	Probably not.  Learning Haskell is already a stimulating
 	enough adventure for newcomers.  The <type>Foldable</type> and
 	<type>Traversable</type> abstractions are easy to pick up when
@@ -746,7 +791,7 @@
     <sect2>
       <title>Overdetermined ordering</title>
 
-      <para id="x_xu">One of the principle reasons that we use monads is that
+      <para id="x_xu">One of the principal reasons that we use monads is that
 	they let us specify an ordering for effects.  Look again at a
 	small snippet of code we wrote earlier.</para>
 
@@ -764,8 +809,8 @@
     <sect2>
       <title>Runtime overhead</title>
 
-      <para id="x_zu">Finally, when we use, monads and monad transformers, we
-	pay an efficiency tax.  For instance, the <type>State</type>
+      <para id="x_zu">Finally, when we use monads and monad transformers, we
+	can pay an efficiency tax.  For instance, the <type>State</type>
 	monad carries its state around in a closure.  Closures might
 	be cheap in a Haskell implementation, but they're not
 	free.</para>
@@ -780,6 +825,17 @@
       <para id="x_Bv">A sufficiently smart compiler might make some or all of
 	these costs vanish, but that degree of sophistication is not
 	yet widely available.</para>
+
+      <para>There are relatively simple techniques to avoid some of
+	these costs, though we lack space to do more than mention them
+	by name. For instance, by using a continuation monad, we can
+	avoid the constant wrapping and unwrapping in &bind;, only
+	paying for effects when we use them.  Much of the complexity
+	of this approach has already been packaged up in libraries.
+	This area of work is still under lively development as we
+	write.   If you want to make your use of monad transformers
+	more efficient, we recommend looking on Hackage, or asking for
+	directions on a mailing list or IRC.</para>
     </sect2>
 
     <sect2>
@@ -792,7 +848,7 @@
 	deficiencies start to show.</para>
 
       <para id="x_Dv">For example, if we create a new monad transformer
-	<type>FooT</type>and want to follow the same pattern as
+	<type>FooT</type> and want to follow the same pattern as
 	<code>mtl</code>, we'll have it implement a typeclass
 	<type>MonadFoo</type>.  If we really want to integrate it
 	cleanly into the <code>mtl</code>, we'll have to provide
@@ -800,9 +856,9 @@
 	classes.</para>
 
       <para id="x_Ev">On top of that, we'll have to declare instances of
-	<type>MonadFoo</type> for each of the dozen or so
+	<type>MonadFoo</type> for each of the
 	<code>mtl</code> transformers.  Most of those instances will
-	be almost identical, and quite dull to write.  Worse, if we
+	be almost identical, and quite dull to write.  If we
 	want to keep integrating new monad transformers into the
 	<code>mtl</code> framework, the number of moving parts we must
 	deal with increases with the <emphasis>square</emphasis> of
@@ -824,6 +880,14 @@
 	<code>mtl</code>.  If at some point you turn into a hard core
 	hacker of monad transformers, it is well worth looking
 	at.</para>
+
+      <para>The quadratic instances definition is actually a problem
+	with the approach of using monad transformers. There have been
+	many other approaches put forward for composing monads that
+	don't have this problem, but none of them seem as convenient
+	to the end user as monad transformers.  Fortunately, there
+	simply aren't that many foundational, generically useful monad
+	transformers.</para>
     </sect2>
 
     <sect2>

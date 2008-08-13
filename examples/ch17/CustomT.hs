@@ -5,7 +5,7 @@ newtype CustomT m a = ...
 {-- /snippet CustomT --}
 
 {-- snippet mtl --}
-instance MonadReader m => MonadReader (CustomT m) where
+instance MonadReader r m => MonadReader r (CustomT m) where
     ...
 
 instance MonadIO m => MonadIO (CustomT m) where
