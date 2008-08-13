@@ -14,7 +14,7 @@
     We can often implement error handling for them by simply using
     Haskell's expressive data type system to our advantage.  Haskell
     also has an exception system.  Due to the complexities of lazy
-    evaluation, exceptions in Haskell can be raised anywhere, but only
+    evaluation, exceptions in Haskell can be thrown anywhere, but only
     caught within the &IO; monad.  In this chapter, we'll consider
     both.
   </para>
@@ -68,7 +68,7 @@
         One immediately-recognizable easy way to indicate failure is
         to use &Maybe;.<footnote><para id="x_Gz">For an introduction to &Maybe;,
         refer to <xref linkend="deftypes.morecontrolled"/>.</para>
-        </footnote>  Instead of just returning a list and raising
+        </footnote>  Instead of just returning a list and throwing
         an exception on failure, we can return &Nothing; if the input
         list contained a zero anywhere, or &Just; with the results
         otherwise.  Here's an implementation of such an algorithm:
@@ -110,7 +110,7 @@
           Having said all that, &Maybe; is often a fine choice.  In this
           particular case, we don't know whether there will be a problem
           until we get into evaluating the entire input.  Sometimes we
-          know of a problem up front.  For instance, saying
+          know of a problem up front, for instance, that
           <literal>tail []</literal> in &ghci; produces an exception.
           We could easly write an infinite-capable &tail; that doesn't
           have this problem:
@@ -137,7 +137,7 @@
           Here you can see that both &tail; and
           <literal>safeTail</literal> handled infinite lists just
           fine.  Note that we were able to deal better with an empty
-          input list; instead of raising an exception, we decided to
+          input list; instead of throwing an exception, we decided to
           return &Nothing; in that situation.  We were able to achieve
           error handling at no expense to laziness.
         </para>
@@ -239,9 +239,10 @@
       <title>Use of Either</title>
       <para id="x_az">
         The &Either; type is similar to the &Maybe; type, with one key
-        difference: it can carry attached data both for an error and a
-        success.  <footnote><para id="x_bz">For more information on &Either;,
-        refer to <xref linkend="glob.errapi"/>.</para>
+	difference: it can carry attached data both for an error and a
+	success (<quote>the <code>Right</code> answer</quote>).
+	<footnote><para id="x_bz">For more information on &Either;,
+	    refer to <xref linkend="glob.errapi"/>.</para>
         </footnote>  Although the language imposes no restrictions, by
         convention, a function returning an &Either; uses a &Left;
         return value to indicate an error, and &Right; to indicate
@@ -249,40 +250,37 @@
     the &Right; answer.  We can start with our <literal>divby2.hs</literal>
         example from the earlier section on &Maybe; and adapt it to
         work with &Either;:
-      </para>
-      &divby6.hs:all;
-      <para id="x_cz">
-        This code is almost identical to the &Maybe; code; we've
-        substituted &Right; for every &Just;.  &Left; compares to
-        &Nothing;, but now it can carry a message.  Let's check it out
-        in &ghci;:
-      </para>
+      </para> &divby6.hs:all; <para id="x_cz"> This code is almost
+	identical to the &Maybe; code; we've substituted &Right; for
+	every &Just;.  &Left; compares to &Nothing;, but now it can
+	carry a message.  Let's check it out in &ghci;: </para>
       &divby6.ghci:ex1;
       <sect3>
         <title>Custom Data Types for Errors</title>
         <para id="x_dz">
-          While a &String; indicating the cause of an error
-          may be useful to humans down the road, it's often helpful to
-          define a custom error type that we can use to programmatically
-          decide on a course of action based upon exactly what the
-          problem was.  For instance, let's say that for some reason,
-          besides 0, we also don't want to divide by 10 or 20.  We could
-          define a custom error type like so:
+          While a &String; indicating the cause of an error may be
+	  useful to humans down the road, it's often helpful to define
+	  a custom error type that we can use to programmatically
+	  decide on a course of action based upon exactly what the
+	  problem was.  For instance, let's say that for some reason,
+	  besides 0, we also don't want to divide by 10 or 20.  We
+	  could define a custom error type like so:
         </para>
         &divby7.hs:all;
         <para id="x_ez">
           Now, in the event of an error, the &Left; data could be
-          inspected to find the exact cause.  Or, it could simply be
-          printed out with &show;, which will generate a reasonable idea
-          of the problem as well.  Here's this function in action:
+	  inspected to find the exact cause.  Or, it could simply be
+	  printed out with &show;, which will generate a reasonable
+	  idea of the problem as well.  Here's this function in
+	  action:
         </para>
         &divby7.ghci:ex1;
         <warning>
           <para id="x_fz">
             All of these &Either; examples suffer from the lack of
-            laziness that our early &Maybe; examples suffered from.  We
-            address that with an exercise question at the end of this
-            chapter.
+	    laziness that our early &Maybe; examples suffered from.
+	    We address that with an exercise question at the end of
+	    this chapter.
           </para>
         </warning>
       </sect3>
@@ -290,31 +288,31 @@
         <title>Monadic Use of Either</title>
         <para id="x_gz">
           Back in <xref linkend="errors.maybe.monad"/>, we showed you
-          how to use &Maybe; in a monad.  &Either; can be used in a
-          monad too, but can be slightly more complicated.  The reason
-          is that &fail; is hard-coded to accept only a &String; as
-          the failure code, so we have to have a way to map such a
-          string into whatever type we used for &Left;.  As you saw
-          earlier, <literal>Control.Monad.Error</literal> provides
-          built-in support for <literal>Either String a</literal>,
-          which involves no mapping for the argument to &fail;.
-          Here's how we can set up our example to work with &Either;
-          in the monadic style:
+	  how to use &Maybe; in a monad.  &Either; can be used in a
+	  monad too, but can be slightly more complicated.  The reason
+	  is that &fail; is hard-coded to accept only a &String; as
+	  the failure code, so we have to have a way to map such a
+	  string into whatever type we used for &Left;.  As you saw
+	  earlier, <literal>Control.Monad.Error</literal> provides
+	  built-in support for <literal>Either String a</literal>,
+	  which involves no mapping for the argument to &fail;. Here's
+	  how we can set up our example to work with &Either; in the
+	  monadic style:
         </para>
         &divby8.hs:all;
         <para id="x_hz">
           Here, we needed to turn on the
-          <literal>FlexibleContexts</literal> language extension in
-          order to provide the type signature for
-          <literal>divByGeneric</literal>.  The
-          <literal>divBy</literal> function works exactly the same as
-          before.  For <literal>divByGeneric</literal>, we make
-          <literal>divByError</literal> a member of the
-          <literal>Error</literal> class, by defining what happens
-          when someone calls <literal>fail</literal> (the
-          <literal>strMsg</literal> function).  We also convert
-          &Right; to &return; and &Left; to
-          <literal>throwError</literal> to enable this to be generic.
+	  <literal>FlexibleContexts</literal> language extension in
+	  order to provide the type signature for
+	  <literal>divByGeneric</literal>.  The
+	  <literal>divBy</literal> function works exactly the same as
+	  before.  For <literal>divByGeneric</literal>, we make
+	  <literal>divByError</literal> a member of the
+	  <literal>Error</literal> class, by defining what happens
+	  when someone calls <literal>fail</literal> (the
+	  <literal>strMsg</literal> function).  We also convert
+	  &Right; to &return; and &Left; to
+	  <literal>throwError</literal> to enable this to be generic.
         </para>
       </sect3>
     </sect2>
@@ -337,7 +335,7 @@
     </para>
     <para id="x_V11">
       Some problems&emdash;especially those involving I/O&emdash;call for
-      working with exceptions.  In Haskell, exceptions may be raised
+      working with exceptions.  In Haskell, exceptions may be thrown
       from any location in the program.  However, due to the
     unspecified evaluation order, they can only be caught in the &IO; monad.  Haskell
       exception handling doesn't involve special syntax as it does in
@@ -354,7 +352,7 @@
         handling exceptions.  Let's start by looking at &try;, which
         has type <literal>IO a -&gt; IO (Either Exception
         a)</literal>.  This wraps an &IO; action with exception
-        handling.  If an exception was raised, it will return a &Left;
+        handling.  If an exception was thrown, it will return a &Left;
         value with the exception; otherwise, a &Right; value with the
         original result.  Let's try this out in &ghci;.  We'll first
         trigger an unhandled exception, and then try to catch it.
@@ -362,7 +360,7 @@
       &exc.ghci:try1;
       <para id="x_X11">
         Notice that no exception was
-        raised by the &let; statements.  That's to be expected due to
+        thrown by the &let; statements.  That's to be expected due to
         lazy evaluation; the division by zero won't be attempted until
         it is demanded by the attempt to print out
         <literal>x</literal>.  Also, notice that there were two lines
@@ -370,7 +368,7 @@
         line was produced by <literal>print</literal>, which displayed
         the digit 5 on the terminal.  The second was produced by
         &ghci;, which is showing you that <literal>print y</literal>
-        returned <literal>()</literal> and didn't raise an exception.
+        returned <literal>()</literal> and didn't throw an exception.
       </para>
     </sect2>
     <sect2 id="errors.exceptions.lazy">
@@ -421,7 +419,7 @@
       </para>
       <tip>
         <para id="x_d11">
-          Remember: whenever you are trying to catch exceptions raised
+          Remember: whenever you are trying to catch exceptions thrown
           by pure code, use &evaluate; instead of &return; inside your
           exception-catching function.
         </para>
@@ -457,7 +455,7 @@
         <emphasis>any</emphasis> exception.  There may have been an
         exception other than a division by zero exception.  For
         instance, there may have been an error displaying the output,
-        or some other exception could have been raised by the pure
+        or some other exception could have been thrown by the pure
         code.
       </para>
       <para id="x_h11">
@@ -561,12 +559,12 @@
       &toupper-impch20.hs:all;
       <para id="x_q11">
         Here, we use the <literal>System.IO.Error</literal> version of
-        &try; to check whether <literal>hGetLine</literal> raised an
+        &try; to check whether <literal>hGetLine</literal> threw an
         &IOError;.  If it did, we use <literal>isEOFError</literal>
         (defined in <literal>System.IO.Error</literal>) to see if the
-        raised exception indicated that we reached the end of the
+        thrown exception indicated that we reached the end of the
         file.  If it did, we exit the loop.  If the exception was
-        something else, we call &ioError; to re-raise it.
+        something else, we call &ioError; to re-throw it.
       </para>
       <para id="x_r11">
         There are many such tests and ways to extract information from
@@ -577,31 +575,35 @@
     </sect2>
 
     <sect2 id="errors.exceptions.raising">
-      <title>Raising Exceptions</title>
+      <title>Throwing Exceptions</title>
       <para id="x_s11">
         Thus far, we have talked in detail about handling exceptions.
-        There is another piece to the puzzle: raising exceptions.  In
+        There is another piece to the puzzle: throwing
+        exceptions<footnote>
+	  <para>In some other languages, throwing an exception is
+	    referred to as <emphasis>raising</emphasis> it.</para>
+	</footnote>.  In
         the examples we have visited so far in this chapter, the
-        Haskell system raises exceptions for you.  However, it is
-        possible to raise any exception yourself.  We'll show you how.
+        Haskell system throws exceptions for you.  However, it is
+        possible to throw any exception yourself.  We'll show you how.
       </para>
       <para id="x_t11">
-        You'll notice that most of these function appear to return a
+        You'll notice that most of these functions appear to return a
         value of type <literal>a</literal> or <literal>IO
         a</literal>.  This means that the function can appear to
         return a value of any type.  In fact, because these functions
-        raise exceptions, they never "return" anything in the normal
+        throw exceptions, they never "return" anything in the normal
         sense.  These return values let you use these functions in
         various contexts where various different types are expected.
       </para>
       <para id="x_u11">
-        Let's start our tour of ways to raise exceptions with the
+        Let's start our tour of ways to throw exceptions with the
         functions in <literal>Control.Exception</literal>.  The
         most generic function is &throw;, which has type
         <literal>Exception -&gt; a</literal>.  This function can throw
         any &Exception;, and can do so in a pure context.  There is a
         companion function &throwIO; with type <literal>Exception
-        -&gt; IO a</literal> that raises an exception in the &IO;
+        -&gt; IO a</literal> that throws an exception in the &IO;
         monad.  Both functions require an &Exception; to throw.  You
         can craft an &Exception; by hand, or reuse an &Exception; that
         was previously created.
@@ -613,36 +615,10 @@
         -&gt; IO a</literal>.  This is used when you want to generate
         an arbitrary I/O-related exception.
       </para>
-      <para id="x_w11">
-        Perhaps most useful are two shortcut functions: &error; and
-        &fail;.  When used in the &IO; monad, &fail; could be thought
-        of like this:
-      </para>
-      <programlisting>
-fail :: String -> IO a
-fail = ioError . userError
-      </programlisting>
-      <para id="x_x11">
-        So, &fail; is useful for generating an exception with an
-        arbitrary error message in the &IO; monad.  For pure code, you
-        can use &error;, which is defined like this:
-      </para>
-      <programlisting>
-error :: String -> a
-error = throw . ErrorCall
-      </programlisting>
     </sect2>
 
     <sect2 id="errors.exceptions.dynamic">
       <title>Dynamic Exceptions</title>
-      <para id="x_y11">
-        While &fail; and &error; are often quite useful, you may not
-        want to use them often in reusable code.  Since they take only
-        arbitrary strings as arguments, it can be difficult to
-        represent complex error data.  Sometimes the built-in
-        exception mechanism isn't enough for you, either.  In these
-        cases, you can use Haskell's dynamic exception support.
-      </para>
       <para id="x_z11">
         This makes use of two little-used Haskell modules:
         <literal>Data.Dynamic</literal> and
@@ -662,13 +638,17 @@ error = throw . ErrorCall
         start with the data structure representing the error itself:
       </para>
       &dynexc.hs:sqlerror;
-      <para id="x_B21">
-        Next, we define a bit of infrastructure to make the error type
-        participate in Haskell's dynamic typing system.  Note that the
-        argument to <literal>mkTyCon</literal> must be unique
-        throughout your entire application.
-      </para>
-      &dynexc.hs:dynamic;
+      <para id="x_B21">By deriving the <type>Typeable</type>
+	typeclass, we've made this type available for dynamically
+	typed programming.  In order for &GHC; to automatically
+	generate a <type>Typeable</type> instance, we had to enable
+	the <code>DeriveDataTypeable</code> language
+	extension<footnote>
+	  <para>
+	    It is possible to derive <type>Typeable</type> instances
+	    by hand, but that is cumbersome.</para>
+	</footnote>.</para>
+
       <para id="x_C21">
         Now, let's define a <literal>catchSql</literal> and a
         <literal>handleSql</literal> that can be used to catch an
@@ -686,20 +666,20 @@ error = throw . ErrorCall
         exceptions.
       </para>
       <para id="x_E21">
-        Normally, when an exception is raised, but not caught
+        Normally, when an exception is thrown, but not caught
         anywhere, the program will crash and will display the
         exception to standard error.  With a dynamic exception,
         however, the system will not know how to display this, so you
         will simply see an unhelpful "unknown exception" message.  We
         can provide a utility so that application writers can simply
         say <literal>main = handleSqlError $ do ...</literal>, and
-        have confidence that any exceptions raised (in that thread)
+        have confidence that any exceptions thrown (in that thread)
         will be displayed.  Here's how to write
         <literal>handleSqlError</literal>:
       </para>
       &dynexc.hs:handleSqlError;
       <para id="x_F21">
-        Finally, let's give you an example of how to raise an
+        Finally, let's give you an example of how to throw an
         <literal>SqlError</literal> as an exception.  Here's a
         function that will do just that:
       </para>
@@ -720,15 +700,15 @@ error = throw . ErrorCall
       &dynexc.ghci:e1;
       <para id="x_H21">
         From this, you can see that &ghci; doesn't know how to display
-        an SQL error by itself.  Howerver, you can also see that our
+        an SQL error by itself.  However, you can also see that our
         <literal>handleSqlError</literal> function helped out with
         that, but also passed through other errors unmodified.  Let's
         finally try out a custom handler:
       </para>
       &dynexc.ghci:e2;
       <para id="x_I21">
-        Here we defined a custom error handler that raised a new
-        exception consisting of the message in the
+        Here, we defined a custom error handler that threw a new
+        exception, consisting of the message in the
         <literal>seErrorMsg</literal> field of the
         <literal>SqlError</literal>.  You can see that it worked as
         intended.
@@ -762,22 +742,41 @@ error = throw . ErrorCall
       already exists: <type>ErrorT</type>, which is defined in the
       <code>Control.Monad.Error</code> module.</para>
 
-    <para id="x_G31">The <type>ErrorT</type> transformer lets us add exceptions
-      to a monad.  It gives us some interesting capabilities.</para>
+    <para id="x_G31">The <type>ErrorT</type> transformer lets us add
+      exceptions to a monad, but it uses its own special exception
+      machinery, separate from that provided the
+      <code>Control.Exception</code> module.  It gives us some
+      interesting capabilities.</para>
 
     <itemizedlist>
       <listitem>
-	<para id="x_H31">Following the naming pattern of other monad
-	  transformers, the execution function is named
-	  <function>runErrorT</function>. If we do not catch an
-	  exception, it stops propagating upwards when it reaches
-	  <function>runErrorT</function>. We will not be kicked out to
-	  the &IO; monad.</para>
+	<para>If we stick with the <type>ErrorT</type> interfaces, we
+	  can both throw and catch exceptions within this
+	  monad.</para>
       </listitem>
       <listitem>
-	<para id="x_I31">We get to choose the type an exception can have.</para>
+	<para id="x_H31">Following the naming pattern of other monad
+	  transformers, the execution function is named
+	  <function>runErrorT</function>. An uncaught
+	  <type>ErrorT</type> exception will stop propagating upwards
+	  when it reaches <function>runErrorT</function>. We will not
+	  be kicked out to the &IO; monad.</para>
+      </listitem>
+      <listitem>
+	<para id="x_I31">We control the type our exceptions will
+	  have.</para>
       </listitem>
     </itemizedlist>
+
+    <note>
+      <title>Do not confuse ErrorT with regular exceptions</title>
+
+      <para>If we use the <function>throw</function> function from
+	<code>Control.Exception</code> inside <type>ErrorT</type> (or
+	if we use <function>error</function> or
+	<code>undefined</code>), we will <emphasis>still</emphasis> be
+	bounced out to the &IO; monad.</para>
+    </note>
 
     <para id="x_J31">As with other <code>mtl</code> monads, the interface that
       <type>ErrorT</type> provides is defined by a typeclass.</para>
@@ -801,7 +800,7 @@ error = throw . ErrorCall
 
     <para id="x_M31">To support the <function>strMsg</function> and
       <function>noMsg</function> functions, our
-      <type>ParseError</type> type has a <code>Chatty</code>
+      <type>ParseError</type> type will have a <code>Chatty</code>
       constructor. This will be used as the constructor if, for
       example, someone calls <function>fail</function> in our
       monad.</para>
@@ -853,6 +852,9 @@ error = throw . ErrorCall
 
       <para id="x_T31">If we load this into &ghci;, we can put it through its
 	paces.</para>
+
+      &parseInt.ghci:test;
+
     </sect2>
 
     <sect2>

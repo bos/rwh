@@ -1,22 +1,16 @@
 {-- snippet sqlerror --}
 -- ch20/dynexc.hs
 
+{-# LANGUAGE DeriveDataTypeable #-}
+
 import Data.Dynamic
 import Control.Exception
 
 data SqlError = SqlError {seState :: String,
                           seNativeError :: Int,
                           seErrorMsg :: String}
-                deriving (Eq, Show, Read)
+                deriving (Eq, Show, Read, Typeable)
 {-- /snippet sqlerror --}
-
-{-- snippet dynamic --}
-sqlErrorTc :: TyCon
-sqlErrorTc = mkTyCon "RWH.ch20.SqlError"
-
-instance Typeable SqlError where
-    typeOf _ = mkTyConApp sqlErrorTc []
-{-- /snippet dynamic --}
 
 {-- snippet catch --}
 {- | Execute the given IO action.
@@ -29,7 +23,7 @@ catchSql = catchDyn
 
 {- | Like 'catchSql', with the order of arguments reversed. -}
 handleSql :: (SqlError -> IO a) -> IO a -> IO a
-handleSql h f = catchDyn f h
+handleSql = flip catchSql
 {-- /snippet catch -}
 
 {-- snippet handleSqlError --}

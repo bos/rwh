@@ -658,16 +658,20 @@
 	      message if parsing fails.</para>
 
 	    <tip>
-	      <para id="x_hu">If you like to explore the Haskell libraries for
-		fun, you may have run across an existing
+	      <para id="x_hu">If you like to explore the Haskell
+		libraries for fun, you may have run across an existing
 		<type>Monad</type> instance for the
 		<type>Either</type> type in the
-		<code>Control.Monad.Error</code> module.  Don't use
-		that as a guide; its design is too restrictive.</para>
+		<code>Control.Monad.Error</code> module.  We suggest
+		that you do not use that as a guide. Its design is
+		too restrictive: it turns <type>Either String</type>
+		into a monad, when you could use a type parameter
+		instead of <type>String</type>.</para>
 
-	      <para id="x_T11"><emphasis>Hint</emphasis>: You'll probably need to
-		use the <code>FlexibleInstances</code> language
-		extension in your definition.</para>
+	      <para id="x_T11"><emphasis>Hint</emphasis>: If you
+		follow this suggestion, you'll probably need to use
+		the <code>FlexibleInstances</code> language extension
+		in your definition.</para>
 	    </tip>
 	  </question>
 	</qandaentry>
