@@ -63,9 +63,8 @@ let's look at what the FFI actually means for writing code.
 
 <!-- some simple examples: the cmath library -->
 
-<!-- <sect1>
+<sect1>
   <title>Foreign language bindings: the basics</title>
-  -->
 
 <para>
 The most common operation we'll want to do, unsurprisingly, is call a C
@@ -196,6 +195,9 @@ example).
 
 </sect2>
 
+<sect2>
+  <title>A high level wrapper</title>
+
 <para>
 The next step is to convert the C types we pass to and from the foreign
 language call into native Haskell types, wrapping the binding so it appears 
@@ -295,7 +297,9 @@ engineering task: binding to the PCRE library.  which brings up issues of
 memory management and type safety.
 </para>
 
-<!-- </sect1> -->
+</sect2>
+
+</sect1>
 
 <sect1>
   <title>Regular expressions for Haskell: binding to PCRE</title>
