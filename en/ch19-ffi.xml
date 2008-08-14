@@ -414,6 +414,7 @@ import some things from the base library. The unusal item is the final line,
 where we include the C header for PCRE. This wouldn't be valid in a
 <code>.hs</code> source file, but is fine in <code>.hsc</code> code.
 </para>
+</sect2>
 
 <sect2>
   <title>
@@ -611,8 +612,6 @@ accumulator. The final accumulated state is then wrapped up in the
 Let's turn now to actually compiling some regular expressions.
 </para>
   
-</sect2>
-
 </sect2>
 
 </sect1>
