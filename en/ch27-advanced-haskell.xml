@@ -6,7 +6,7 @@
   <sect1>
     <title>Introducing the Bloom filter</title>
 
-    <para id="x_L71">A Bloom filter is set-like data structure that is highly
+    <para id="x_L71">A Bloom filter is a set-like data structure that is highly
       efficient in its use of space.  It only supports two operations:
       insertion and membership querying.  Unlike a normal set data
       structure, a Bloom filter can give incorrect answers.  If we
@@ -399,7 +399,7 @@
       <type>UArray</type>.  Thanks to the type system,
       <function>runSTUArray</function> can guarantee that an
       <type>STUArray</type> is no longer accessible when it uses it to
-      create a <type>UArray</type>.  It can thus share the underyling
+      create a <type>UArray</type>.  It can thus share the underlying
       contents between the two arrays, avoiding the copy.</para>
   </sect1>
 
@@ -422,9 +422,7 @@
       to understand, namely the rate of false positives that we are
       willing to tolerate.  And it chooses the size of the filter for
       us, based on the desired false positive rate and the number of
-      elements in the input list.  Notice that we use
-      <function>genericLength</function> to handle lists that are
-      longer than will fit in an <type>Int</type>.</para>
+      elements in the input list.</para>
 
     <para id="x_P81">This function will of course not always be usable: for
       example, it will fail if the length of the input list is too
@@ -551,7 +549,7 @@
 	(which only accepts 32-bit-aligned addresses) or
 	<function>hashLittle2</function>.  Since
 	<function>hashWord32</function> is the faster of the two
-	hashing functions, we call it if we our data is a multiple of
+	hashing functions, we call it if our data is a multiple of
 	4 bytes in size, otherwise
 	<function>hashLittle2</function>.</para>
 
@@ -610,9 +608,6 @@
 
       &Hash.hs:hashSB;
 
-      <remark>XXX May need to flesh ByteString details out if not
-	covered elsewhere.</remark>
-
     </sect2>
 
     <sect2>
@@ -635,7 +630,7 @@
       <para id="x_o81">In the <code>BloomFilter.Easy</code> module, we use our
 	new <function>doubleHash</function> function to define the
 	<function>easyList</function> function whose type we defined
-	earier.</para>
+	earlier.</para>
 
       &Easy.hs:easyList;
 
@@ -664,17 +659,14 @@
 
       &sizings.ghci:kbytes;
 
-      <para id="x_t81">We achieve the most compact table (just over 17KB) by
-	computing 10 hashes. If we do not mind spending an extra 5% on
-	space, we can reduce the number of hashes to 7.  If we were
-	really calculating 10 hashes over each value, that might be an
-	excellent tradeoff, since even cheap hashes are expensive
-	relative to the cost of a few extra kilobytes of storage.
-	Since we are using Jenkins's hash functions which compute two
-	hashes in a single pass, and double hashing the results to
-	produce additional hashes, our cost of computing extra hashes
-	is tiny.  We thus stand to benefit much less benefit by
-	reducing the number of hashes.</para>
+      <para id="x_t81">We achieve the most compact table (just over
+	17KB) by computing 10 hashes. If we really were hashing the
+	data repeatedly, we could reduce the number of hashes to 7 at
+	a cost of 5% in space. Since we are using Jenkins's hash
+	functions which compute two hashes in a single pass, and
+	double hashing the results to produce additional hashes, the
+	cost to us of computing extra those hashes is tiny, so we
+	will choose the smallest table size.</para>
 
       <para id="x_u81">If we increase our tolerance for false positives tenfold,
 	to 1%, the amount of space and the number of hashes we need
@@ -765,7 +757,7 @@
 	</listitem>
 	<listitem>
 	  <para id="x_F91">The <code>bytestring-in-base</code> flag deals with a
-	    more tortured history.  When the
+	    more torturous history.  When the
 	    <filename>bytestring</filename> package was first created,
 	    it was bundled with &GHC; 6.4, and kept separate from the
 	    <filename>base</filename> package. In &GHC; 6.6, it was
@@ -817,9 +809,11 @@
     <sect2>
       <title>Compilation options, and interfacing to C</title>
 
-      <para id="x_L91">Continuing with our <filename>.cabal</filename> file, we
-	fill out the remaining details of the Haskell side of our
-	library.</para>
+      <para id="x_L91">Continuing with our <filename>.cabal</filename>
+	file, we fill out the remaining details of the Haskell side of
+	our library.  If we enable profiling when we build, we want
+	all of our top-level functions to show up in any profiling
+	output.</para>
 
       &rwh-bloomfilter.cabal:modules;
 
@@ -1090,7 +1084,7 @@
 
     <para id="x_y91">We now have a correctness base line: our QuickCheck tests
       pass.  When we start tweaking performance, we can rerun the
-      tests at any time to ensure that we haven't inadvertantly broken
+      tests at any time to ensure that we haven't inadvertently broken
       anything.</para>
 
     <para id="x_z91">Our first step is to write a small test application that we
@@ -1166,9 +1160,6 @@
 	naturally want to inspect the output of the compiler.  We
 	don't need to start scrabbling through assembly language
 	dumps: it's best to start at a higher level.</para>
-
-      <remark>Make sure we're not repeating anything from the
-	profiling chapter.</remark>
 
       <para id="x_LA1">&GHC;'s <option>-ddump-simpl</option> option prints out
 	the code that it produces after performing all of its
