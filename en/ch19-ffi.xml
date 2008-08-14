@@ -14,8 +14,11 @@ means by which Haskell code can use, and be used by, code written in other
 languages. In this chapter we'll look at how the FFI works, and how to
 produce a Haskell library binding to C code. The challenge: take PCRE, the
 standard Perl-compatible regular expression library, and make it usable from
-Haskell in a clean, efficient and functional way. We assume only some basic
-familiarity with regular expressions.
+Haskell in an efficient and functional way. Throughout, we'll seek to
+abstract out the manual effort of the C implementation, automating the work
+of managing memory, and making the interface more robust, yielding a clean,
+high level binding.  We assume only some basic familiarity with regular
+expressions.
 </para>
 
 <!-- dicuss the foreign function interface standard -->
@@ -616,12 +619,737 @@ Let's turn now to actually compiling some regular expressions.
 
 </sect1>
 
-<!--
 <sect1>
-  <title>Passing string data between Haskell and C
+  <title>Passing string data between Haskell and C</title>
+
+<para>
+The next task is to write a binding to the PCRE regular expression
+<code>compile</code> function. Let's look at its type, straight from the
+<code>pcre.h</code> header file:
+</para>
+
+&PCRE-compile.h:pcre_compile;
+
+<para>
+This function compiles a regular expression pattern into some internal
+format, taking the pattern as an argument, along with some flags, and some
+variables for returning status information.
+</para>
+
+<para>
+We need to work out what Haskell types to represent each argument with. Most
+of these types are covered by equivalents defined for us by the FFI standard,
+and available in <code>Foreign.C.Types</code>. The first argument, the
+regular expression itself, is passed as a null-terminated char pointer to C,
+equivalent to the Haskell <code>CString</code> type. PCRE compile time
+options we've already chosen to represent as the abstract
+<code>PCREOption</code> newtype, whose runtime representation is a
+<code>CInt</code>. As the representations are guaranteed to be identical, we
+can pass the <code>newtype</code> safely. The other arguments are a little
+more complicated, and require some work to construct and take apart.
+</para>
+
+<para>
+The third argument, a pointer to a C string, will be used as a reference  to
+any error message generated when compiling the expression. The value of the
+pointer will be modified by the C function to point to a custom error string.
+This we can represent with a <code>Ptr CString</code> type. Pointers in
+Haskell are heap allocated containers for raw addresses, and can be created
+and operated on, by a number of allocation primitives in the FFI library. We
+can also represnt a pointer to a C <code>int</code> as <code>Ptr CInt</code>,
+and a (constant) pointer to an unsigned char as a <code>Ptr Word8</code>.
+</para>
+
+<note>
+  <title>A note about pointers</title>
+
+<para>
+Once we have a Haskell <code>Ptr</code> value handy, we can do various
+pointer-like things with it. We can compare it for equality with the null
+pointer, represented with the special <code>nullPtr</code> constant. We can
+cast a pointer from one type to a pointer to another, or we can increment a
+pointer by an integral amount, with <code>plusPtr</code>. We can even modify
+the value pointed to, using <code>poke</code>, and of course dereference a
+pointer, yielding that which it points to, with <code>peek</code>.
+In the majority of circumstances, a Haskell programmer doesn't need to
+operate on pointers directly, but when they are needed, these tools come in
+handy.
+</para>
+</note>
+
+<para>
+The question then is how to represent abstract <code>pcre</code> pointer returned 
+when we compile the regex. We can use a trick here, since the structure is
+abstract, and we'll never look at it's internals. We can assign the data any
+heap-allocated Haskell type, as long as it has few or no operations on it!
+This is a common trick for arbitrarily typed foreign data. 
+A simple type, that's unlikely to be messed with, to represent our unknown
+data, is the <code>()</code> type. We can use a type synomnym to remember the
+binding:
+</para>
+
+&PCRE-compile.hs:unit;
+
+<para>
+That is, it is some unknown block of data, and we'll treat it as a pointer
+to <code>()</code>, knowing full well that we'll never actually dereference
+that pointer. This gives us the following foreign import binding for
+<code>pcre_compile</code>:
+</para>
+
+&PCRE-compile.hs:pcre_compile;
+
+<sect2>
+  <title>
+    Typed pointers
+  </title>
+
+<para>
+Another common trick is, instead of using the <code>()</code> type, to use
+a "typed pointer": a unique type, distinct from the unit type, that has no
+valid values. A type for which no data can be constructed, making
+dereferencing it a type error. One good way to build such provably
+uninspectable data types is with a nullary data type:
+</para>
+
+&PCRE-nullary.hs:nullary;
+
+<para>
+This requires the <code>EmptyDataDecls</code> language extension. This type
+clearly contains no values! We can only ever construct pointers to values of
+this type, as there are no concrete values (other than bottom) that have this
+type.
+</para>
+
+<para>
+We can also achive the same thing, without requiring a language extension, by
+using a recursive <code>newtype</code>:
+</para>
+
+&PCRE-recursive.hs:nullary;
+
+<para>
+Again, we can't really do anything with a value of this type, as it has no
+actual runtime representation. Using typed pointers like this is again
+another way to add safety to a Haskell layer over what C. What would require
+discipline on the part of the C programmer to ensure correctness, (e.g.
+remembering never to dereferene a PCRE pointer) can be enforced statically in
+the type system of the Haskell binding. If this code compiles, the type
+checker has given us a proof that the PCRE objects returned by C are never
+dereferenced on the Haskell side.
+</para>
+
+<para>
+We have the foreign import declaration sorted out now, the next step is to
+marshal data into the right form, so we can finally call the C code.
+</para>
+
+</sect2>
+
+<!-- foreign pointers -->
+
+<!-- memory management -->
+
+<sect2>
+  <title>
+    Memory management: let the garbage collector do the work
+  </title>
+
+<para>
+One question that isn't resolved yet is how to manage the memory associated
+with the abstract <code>PCRE</code> structure returned by the C library. The
+caller didn't have to allocate it: the library took care of that. But at some
+point we'll need to deallocate it. This, again, is an opportunity to abstract
+out some of the tedium of using the C library inside the Haskell binding.
+</para>
+
+<para>
+We'll use the Haskell garbage collector to automatically deallocate the C
+structure once it is no longer in use on the Haskell side. To do this, we'll
+make use of garbage collector finalizers, and the <code>ForeignPtr</code>
+type.
+</para>
+
+<para>
+We don't want users to have to manually deallocate the <code>Ptr
+    PCRE</code> value by the foreign call. This structure
+is allocated on the C side with <code>malloc</code>, and needs to be freed
+when no longer in use, or we risk leaking memory. The Haskell garbage
+collector already goes to great lengths to automate the task of managing
+memory for Haskell values. Cleverly, we can also assign our hardworking
+garbage collector the task of looking after C's memory! The trick is to
+associate a piece of Haskell data with the foreign allocator data, and give
+the Haskell garbage collector a function to run once it notices that the
+Haskell data is out of scope.
+</para>
+
+<para>
+We have two tools at our disposal here, the opaque <code>ForeignPtr</code>
+data type, and the <code>newForeignPtr</code> function, which has type:
+</para>
+
+&ForeignPtr.hs:newForeignPtr;
+
+<para>
+The function takes two arguments, a finalizer to run when the data goes out
+of scope, and a pointer to the C allocated object. It returns a new managed
+pointer which will have the associated finalizer run once the garbage
+collector decides the data is no longer in use. What a lovely abstraction!
+</para>
+
+<para>
+These finalizable pointers are appropriate whenever a C library requires the
+user to explicitly deallocate, or otherwise clean up a resource, when it is
+no longer in use. It is a simple piece of equipment that goes a long way
+towards making the C library binding more natural and "functional" in
+flavour.
+</para>
+
+<para>
+So with this in mind, we can hide the manually managed <code>Ptr PCRE</code>
+type inside a automatically managed data structure, yielding us the actual
+data type used to represent regular expressions:
+</para>
+
+&PCRE-compile.hs:data;
+
+<para>
+This new <code>Regex</code> data types consists of two parts. The first is
+an abstract <code>ForeignPtr</code>, that we'll use to manage the underlying
+<code>PCRE</code> data allocated in C. The second component is a strict
+<code>ByteString</code>, which is the string representation of the regular
+expression that we compiled. By keeping it handy, it'll be easier to print
+user friendly error messages, or to show the <code>Regex</code> in a
+meaningful way.
+</para>
+
+</sect2>
+
+<sect2>
+  <title>
+    A high level interface: marshalling data
+  </title>
+
+<para>
+The challenge when writing FFI bindings, once the Haskell types have been
+decided upon, is to convert regular data types a Haskell programmer will be
+familiar with into low level pointers to arrays and other C types. What would
+an ideal Haskell interface to regular expression compilation look like?
+We have some design intuition to guide us.
+</para>
+
+<para>
+For starters, the act of compilation should be a referentially transparent
+operation: passing the same regex string will yield the same compiled
+pattern, each time. We should be able to represent it as a pure function at
+the very least. The ability to represent a C function in Haskell as a pure
+operation is a key step towards flexibility, and a sign the interface will be
+easy to use (as it won't require complicated state to be initialised
+beforehand).
+</para>
+
+<para>
+Despite being pure, the function can still fail. If the regular expression
+input provided by the user is ill-formed an error string is returned. A good
+data type to represent optional failure, with an error value, is
+<code>Either</code>. That is, either we return a valid compiled regular
+expression, or we'll return an error string. Encoding the results of a C
+function in a familiar, foundational Haskell type is another step we can make
+towards usability.
+</para>
+
+<para>
+For the user supplied parameters, we've already decided to pass compilation
+flags in as a list. We can choose to pass the input regular expression either
+as an efficient <code>ByteString</code>, or as a regular <code>String</code>.
+An appropriate data type, then, for referentially transparent success with a
+value, or failure with an error string, would be:
+</para>
+
+&PCRE-compile.hs:compiletype;
+
+<para>
+The input is a <code>ByteString</code>, available from the
+<code>Data.ByteString.Char8</code> module (and we'll import this
+<code>qualified</code> to avoid name clashes), containing the regular
+expression, and a list of flags (or the empty list if there are no flags to
+pass). The result is either an error string, or a new, compiled. regular
+expression.
+</para>
+
+</sect2>
+
+<sect2>
+  <title>Mashalling ByteStrings</title>
+
+<para>
+Given this type, we can sketch out the <code>compile</code> function. At
+its heart, it will call <code>c_pcre_compile</code>. Before it does that,
+it has to marshall the input <code>ByteString</code> into a
+<code>CString</code>. This is done with the <code>ByteString</code> library's
+<code>useAsCString</code> function:
+</para>
+
+&ForeignPtr.hs:useAsCString;
+
+<para>
+This function takes a <code>ByteString</code> as input, and the second
+argument is a user-defined function that will run with the resulting
+<code>CString</code>. That is, a closure! We see here another useful idiom:
+data marshalling functions that are naturally scoped via closures. Our
+<code>useAsCString</code> function will convert the input data to a C string,
+which we can then pass to C, and all we need to do is supply it with a
+chunk of code to actually call C. Code in this style is often written in a
+dangling "do-block" notation. The following pseudocode illustrates this
+structure:
+</para>
+
+&DoBlock.hs:doblock;
+
+<para>
+The second argument here is an anonymous function, a lambda, with a monadic
+"do" block for a body. It is common to use the simple <code>($)</code>
+application operator, to avoid the need for parenthesis to delimit the code
+block argument. A useful idiom to remember for parameterised code blocks like
+this.
+</para>
+
+</sect2>
+
+<sect2>
+  <title>Allocating local C data: the Storable class</title>
+
+<para> 
+We can happily marshal <code>ByteString</code> data to C compatible types,
+but the <code>pcre_compile</code> function also needs some pointers and
+arrays in which to place its other return values. These should only exist
+briefly, so we don't need complicated allocation strategies. Such
+short-lifetime C data can be created with the <code>alloc</code> function:
+</para>
+
+&ForeignPtr.hs:alloc;
+
+<para>
+This function takes a code block accepting a pointer to some C type as an
+argument, and arranges to call that function with the correct data, allocated
+freshly. The allocated memory is then released once the argument function
+exits. In this way we get lexically scoped C data allocation, guaranteed to
+be released once the local scope is exited. We can use it to allocate any
+data types that are instances of the <code>Storable</code> class, a type
+class. This also means that the actual data type allocated can be determined
+soley based on type information, or even inferred based on use! Haskell will
+know what to allocate for C by what functions we use on that data.
+</para>
+
+<para>
+To allocate a pointer to a <code>CString</code>, for example, which will be
+updated to pointed to a particular <code>CString</code> by the called
+function, we would call <code>alloc</code>, in pseudocode as:
+</para>
+
+&DoBlock.hs:alloc;
+
+<para>
+This locally allocates a <code>Ptr CString</code>, and applies
+the code block to that pointer, which then calls a C function to modify the
+pointer contents. Finally, we dereference the pointer with the
+<code>Storable</code> class <code>peek</code> function, yielding a
+<code>CString</code>.
+</para>
+
+<para>
+We can now put it all together, to complete our high level PCRE compilation
+wrapper.
+</para>
+
+</sect2>
+
+<sect2>
+  <title>Putting it all together</title>
+
+<para>
+We've decided what Haskell type to represent the C function with, what the
+result data will be represented by, and how its memory will be managed. We've
+chosen a representation for flags to the <code>pcre_compile</code> function,
+and worked out how to get C strings to and from code inspecting it. So let's
+write the complete function for compiling PCRE regular expressions from
+Haskell:
+</para>
+
+&PCRE-compile.hs:compileReal;
+
+<!-- woot, the dreaded unsafePerformIO -->
+
+<para>
+That's it. Let's carefully walk through the details here, since it is rather
+dense in concepts. The first thing that stands out is the use of
+<code>unsafePerformIO</code>, a rather infamous function, with a very unusual
+type:
+</para>
+
+&ForeignPtr.hs:unsafePerformIO;
+
+<para>
+This function does something rather odd: it takes an IO value and
+converts it to a pure one! After warning about the danger of effects for so
+long, here we have the epitome of dangerous effects in one line. Used
+unwisely, this function let's us side step all safety guarantees regarding
+purity the Haskell type system provides, inserting arbitrary effects into a
+Haskell program, anywhere. The dangers in doing this are significant: we can
+break optimisations, modify arbitrary locations in memory, remove files on
+the user's machine, or launch nuclear missles inside our fibonacci functions.
+So why does this function exist at all?
+</para>
+
+<para>
+It exists precisely to enable Haskell code to bind to C code that we know to
+be referentially transparent, but can't prove the case to the Haskell type system.
+It let's us say to the compiler, "I know what I'm doing - this
+code really is pure". For regular expression compilation, we know this to be
+the case: given the same pattern, we should get the same regular expression
+matcher every time. However, proving that to the compiler is beyond the
+Haskell type system, at the time of writing, so we're forced to assert that
+this code is pure. Using <code>unsafePerformIO</code> allows us to do just that.
+</para>
+
+<!-- say more about the risks and benefits ? -->
+
+<para>
+The argument to <code>unsafePerformIO</code> is the actual body of our
+compilation function, which consists of four parts: marshalling Haskell data
+to C form; calling into the C library; checking the return values; and
+finally, constructing a Haskell value from the results.
+</para>
+
+<!-- the wrapper -->
+
+<para>
+We marshal with <code>useAsCString</code> and <code>alloc</code>, setting
+up the data we need to pass to C, and use <code>combineOptions</code>, to
+collapse the list of flags into a single <code>CInt</code>. Once that's all
+in place, we can finally call <code>c_pcre_compile</code> with the pattern,
+flags, and pointers for the results. We can use <code>nullPtr</code> for the
+character encoding table, which is unused in this scenario.
+</para>
+
+<para>
+The result returned from the C call is a pointer to the abstract
+<code>PCRE</code> structure. We then test this against the
+<code>nullPtr</code>. If there was a problem with the regular expression, 
+we have to dereference the error pointer, yielding a <code>CString</code>. We
+then unpack that to a normal Haskell list with the library function,
+<code>peekCString</code>. The final result of the error path is a value of
+<code>Left err</code>, indicating failure to the caller.
+</para>
+
+<para>
+If the call succeeded, however, we allocate a new storage-managed pointer,
+with the C function using a <code>ForeignPtr</code>. The special value,
+<code>finalizerFree</code>, is bound as the finalizer for this data, which
+means that the standard C <code>free</code> will be used to deallocate the
+data, as the PCRE library requires. This is then wrapped as an opaque
+<code>Regex</code> value. The successful result is tagged as such with
+<code>Right</code>, and returned to the user. And now we're done!
+</para>
+
+<para>
+We need to process our source file with hsc2hs, and then load the function in GHCi.
+However, doing this results in an error on the first attempt:
+</para>
+
+<screen>
+<prompt>$ </prompt><userinput>hsc2hs Regex.hsc</userinput>
+<prompt>$ </prompt><userinput>ghci Regex.hs</userinput>
+
+During interactive linking, GHCi couldn't find the following symbol:
+  pcre_compile
+This may be due to you not asking GHCi to load extra object files,
+archives or DLLs needed by your current session.  Restart GHCi, specifying
+the missing library using the -L/path/to/object/dir and -lmissinglibname
+flags, or simply by naming the relevant files on the GHCi command line.
+</screen>
+
+<para>
+A little scary. However, this is just because we didn't actaully link in the
+C library with all the code we want to call.  Assuming the PCRE library has
+been installed on the system in the default C library location, we can let
+GHCi know about it by adding <code>-lpcre</code> to the GHCi command line,
+and then we can try it the code on some regular expressions, looking at
+success and error case:
+</para>
+
+<screen>
+<prompt>$ </prompt><userinput>ghci Regex.hs -lpcre</userinput>
+<prompt>*Regex> </prompt><userinput>:m + Data.ByteString.Char8</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>compile (pack "a.*b") []</userinput>
+Right (Regex 0x00000000028882a0 "a.*b")
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>compile (pack "a.*b[xy]+(foo?)") []</userinput>
+Right (Regex 0x0000000002888860 "a.*b[xy]+(foo?)")
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>compile (pack "*") []</userinput>
+Left "nothing to repeat"
+</screen>
+
+<para>
+The regular expressions are packed into byte strings, marshalled to C, and
+compiled by the PCRE library. The result is then shuffled back to Haskell,
+where we display the structure, using the default <code>Show</code> instance.
+Our next step is to pattern match some strings with these compiled regular
+expressions.
+</para>
+
+</sect2>
 
 </sect1>
- -->
+
+<sect1>
+    <title>Matching on strings</title>
+
+<para>
+The second part of a good regular expression library is the matching
+function. Given a compiled regular expression, this actually matches our
+regex against some input, and indiciates whether it matched, and if so, what
+parts of the string matched. In PCRE this function is <code>pcre_exec</code>, 
+which has type:
+</para>
+
+&PCRE-compile.h:pcre_exec;
+
+<para>
+The most important arguments are the input <code>pcre</code> pointer
+structure, which we obtained from <code>pcre_compile</code>, and the subject
+string. The other flags let us provide bookkeeping for these structures, and
+space for return values. We can directly translate this type to the Haskell
+import declaration:
+</para>
+
+&RegexExec.hs:pcreexec;
+
+<para>
+We use the same method as before to create typed pointers for
+the   <code>PCREExtra</code> structure, and a <code>newtype</code> to
+represent flags passed at regex execution time. This lets us ensure users
+don't pass compile time flags incorrectly at runtime.
+</para>
+
+<sect2>
+  <title>Extracting information about the pattern</title>
+
+<para>
+The main complication involved in calling <code>pcre_exec</code> is the
+array of <code>int</code> pointers used to hold the offsets of any matched
+substrings found by the regular expression. These offsets are held in an
+offset vector, whose required size is determined by analysing the input
+regular expression for the number of captured patterns it contains. PCRE
+provides a function, <code>pcre_fullinfo</code>, for determining information
+about the regular expression, including the number of patterns. Now, we can
+just write down directly the Haskell type, which is given by,
+</para>
+
+&RegexExec.hs:pcrefullinfo;
+
+<para>
+The most important arguments to this function are the compiled regular expression,
+and the <code>PCREInfo</code> flag, indicating which information we're
+interested in, in this case, the captured pattern count. Which information
+we'll receive is determined by this numeric value, and we'll need to use the
+<code>PCRE_INFO_CAPTURECOUNT</code> constant. There's a range of other
+constants which determine what result type we receive, and we can bind to those
+using the <code>#enum</code> construct as before. The final argument is a
+pointer to a location to store the information about the pattern (whose size
+depends on the flag we pass in!).
+</para>
+
+<para>
+Calling <code>pcre_fullinfo</code> to determine the captured pattern count
+is pretty easy now:
+</para>
+
+&RegexExec.hs:captured;
+
+<para>
+This takes a raw PCRE pointer, allocates space for the <code>CInt</code>
+count of the matched patterns. We then call the information function, and
+peek into the result structure, finding a <code>CInt</code>. Finally, we
+convert this to a normal Haskell <code>Int</code> and pass it back to the
+user.
+</para>
+
+
+</sect2>
+
+<sect2>
+  <title>Pattern matching with substrings</title>
+
+<para>
+Let's write the regex matching function. The Haskell type for matching
+is similar to that for compiling regular expressions:
+</para>
+
+&RegexExec.hs:exectype;
+
+<para>
+This function is how users will match strings against compiled regular
+expressions. Again, the main design point is that it is a pure function.
+Matching is a pure function: given the same input regular expression and
+subject string, it will always return the same matched substrings. So we can
+convey this to the user by using a pure type.
+</para>
+
+<para>
+The arguments are a compiled <code>Regex</code>, a strict
+<code>ByteString</code>, containing the input data, and a list of
+matching-time flags to modify the regular expression engine. The result is
+either no match at all, given by <code>Nothing</code>, or just a list of
+matched substrings. By using strict <code>ByteString</code>s for the input
+data, we can extract matched substrings in constant time, without copying,
+making the interface rather efficient. If substrings are matched in the
+input, the offset vector is populated with pairs of integer offsets into the
+subject string. We'll need to loop over this result vector, reading offsets,
+and building <code>ByteString</code> slices as we go.
+</para>
+
+<para>
+The matching function implementation can be broken into three parts.
+At the top level, our function takes apart the compiled <code>Regex</code>
+structure, yielding the underlying <code>PCRE</code> pointer
+</para>
+
+&RegexExec.hs:matchtop;
+
+<para>
+As it is pure, we can use <code>unsafePerformIO</code> to hide any allocation
+effects internally. To take apart the <code>ForeignPtr</code> that hides our
+C-allocated PCRE structure, we have to use <code>withForeignPtr</code>. This
+holds the Haskell data associated with the PCRE value while the call is being
+made, preventing it from being collected for at least the time it is used by
+this call. We then call the information helper function, and use that value
+to compute the size of the offset vector (the formula for which is given in
+the PCRE documentation). The number of bytes we need is the number of
+elements multiplied by the size of a <code>CInt</code> on this machine. To
+portably compute C type sizes, the <code>Storable</code> class provides a
+<code>sizeOf</code> function, that takes some arbitrary value of the required
+type (and we can use the <code>undefined</code> value here, as it is a member
+of every type).
+</para>
+
+<para>
+The next step is to allocate an offset vector of the size we computed, to
+convert the input <code>ByteString</code> into a pointer to a C
+<code>char</code> array. Finally, we call <code>pcre_exec</code> with all the
+required arguments:
+</para>
+
+&RegexExec.hs:alloc;
+
+<!-- matching -->
+
+<para>
+For the offset vector, we use <code>allocBytes</code> to control exactly
+the size of the allocated array. It is like <code>alloc</code>, but rather
+than using the <code>Storable</code> class to determine the required size,
+it takes an explicit size. Taking apart <code>ByteString</code>'s, yielding
+the underlying pointer to memory they contain, is done with
+<code>toForeignPtr</code>, which convets our nice <code>ByteString</code>
+type into a managed pointer. Using <code>withForeignPtr</code> on the result
+gives us a raw <code>Ptr CChar</code>, which is exactly what we need to pass
+the input string to C. Programming in Haskell is often just a type puzzle!
+</para>
+
+<!-- taking substrings -->
+
+<para>
+We then just call <code>c_pcre_exec</code> with the raw PCRE pointer, the
+input string pointer at the correct offset, its length, and the result vector
+pointer. A status code is returned.
+</para>
+
+<para>
+Finally, we analyse the result:
+</para>
+  
+&RegexExec.hs:results;
+
+<para>
+If the result value was less than zero, then there was an error, or no match,
+so we return <code>Nothing</code> to the user. Otherwise, we need a loop to 
+peeking pairs of offsets from the offset vector (via <code>peekElemOff</code>), 
+and constructing the substrings at those offsets. To build substrings we use
+a helper function that, given a start and end offset, drops the surrounding
+portions of the subject string, yielding just the matched portion. The loop 
+runs until it has extracted the number of substrings we were told about in
+the return value.
+</para>
+
+<para>
+The substrings are accumulated in a tail recursive loop, building up a
+reverse list of each string. Before returning the substrings ot the user,
+we need to flip that list around, and wrap it in a successful
+<code>Just</code> tag. Let's try it out!
+</para>
+
+</sect2>
+
+<sect2>
+  <title>The real deal: compiling and matching regular expressions</title>
+
+<para>
+If we take this function, and its surrounding hsc2hs definitions, and data
+wrappers, and process it with hsc2hs, we can load the resulting Haskell file
+in GHCi, and try out our code (we need to import
+<code>Data.ByteString.Char8</code> so we can build <code>ByteString</code>s
+from string literals):
+</para>
+
+<screen>
+<prompt>$ </prompt><userinput>hsc2hs Regex.hsc</userinput>
+<prompt>$ </prompt><userinput>ghci Regex.hs -lpcre</userinput>
+<prompt>*Regex> </prompt><userinput>:t compile</userinput>
+compile :: ByteString -> [PCREOption] -> Either String Regex
+<prompt>*Regex> </prompt><userinput>:t match</userinput>
+match :: Regex -> ByteString -> Maybe [ByteString]
+</screen>
+
+<para>
+Things seem to be in order, now let's try some compilation and matching.
+First, something easy:
+</para>
+
+<screen>
+<prompt>*Regex> </prompt><userinput>:m + Data.ByteString.Char8</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>let Right r = compile (pack "the quick brown fox") []</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "the quick brown fox")</userinput>
+Just ["the quick brown fox"]
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "The Quick Brown Fox")</userinput>
+Nothing
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "What do you know about the quick brown fox?")</userinput>
+Just ["the quick brown fox"]
+</screen>
+
+<para>
+Or we can be more adventurous:
+</para>
+
+<screen>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>let Right r = compile (pack "a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz") []</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "abxyzpqrrrabbxyyyypqAzz")</userinput>
+Just ["abxyzpqrrrabbxyyyypqAzz"]
+</screen>
+
+<para>
+That's pretty awesome. The full power of Perl regular expressions, in Haskell at your fingertips.
+</para>
+
+</sect2>
+
+<!-- summaries: how well does it integrate into Haskell: pattern guards -->
+
+<!-- a String interface -->
+
+<!-- capturing monadic failure -->
+
+<!-- questions/ thoughts, further work -->
+
+</sect1>
 
 </chapter>
 
