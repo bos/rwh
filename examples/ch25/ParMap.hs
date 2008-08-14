@@ -4,11 +4,12 @@ import Control.Parallel (par)
 parallelMap :: (a -> b) -> [a] -> [b]
 parallelMap f (x:xs) = let r = f x
                        in r `par` r : parallelMap f xs
+parallelMap _ _      = []
 {-- /snippet parallelMap --}
 
 {-- snippet forceList --}
 forceList :: [a] -> ()
-forceList (x:xs) = x `seq` forceList xs
+forceList (x:xs) = x `pseq` forceList xs
 forceList _      = ()
 {-- /snippet forceList --}
 

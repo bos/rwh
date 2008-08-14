@@ -38,8 +38,9 @@ seqSort _ = []
 
 {-- snippet force --}
 force :: [a] -> ()
-force (x:xs) = x `pseq` force xs
-force _ = ()
+force xs = go xs `pseq` ()
+    where go (_:xs) = go xs
+          go [] = 1
 {-- /snippet force --}
 
 {-- snippet parSort2 --}
