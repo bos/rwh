@@ -2230,23 +2230,6 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	measurement, you will develop a reliable sense of when
 	<function>seq</function> is most useful.</para>
     </sect2>
-
-    <sect2>
-      <title>Normal form and head normal form</title>
-
-      <para>The <function>seq</function> function evaluates an
-	expression to what we call <emphasis>head normal
-	  form</emphasis> (HNF): it stops once it reaches the
-	outermost constructor (the <quote>head</quote>). This is
-	distinct from <emphasis>normal form</emphasis> (NF), in which
-	an expression is completely evaluated.</para>
-
-      <para>You may also hear Haskell programmers refer to
-	<emphasis>weak</emphasis> head normal form (WHNF).  In most cases,
-	weak head normal form is identical to head normal form.  The
-	difference is abstruse, and only arises in relation to
-	functions.  For normal data, the two are the same.</para>
-    </sect2>
   </sect1>
 </chapter>
 

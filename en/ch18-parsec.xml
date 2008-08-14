@@ -3,35 +3,33 @@
 <chapter id="parsec" revision="alpha;beta">
   <title>Using Parsec</title>
   <para id="x_DJ">
-    The task of parsing a file, or data of various types, is a common one for
-    programmers.  You already learned about Haskell's support for regular
-    expressions back in <xref linkend="glob.regex"/>.  Regular expressions
-    are nice for many tasks.  But they can become quite complicated and difficult
-    when dealing with a data format that is complex.  For instance, you
-    probably wouldn't want to use regular expressions to parse C source code.
+    The task of parsing a file, or data of various types, is a common
+    one for programmers.  We already learned about Haskell's support
+    for regular expressions back in <xref linkend="glob.regex"/>.
+    Regular expressions are nice for many tasks, but they rapidly
+    become unwieldy, or cannot be used at all, when dealing with a
+    complex data format.  For instance, we cannot use regular
+    expressions to parse source code from most programming languages.
   </para>
 
   <para id="x_EJ">
-    Haskell has a very useful library called Parsec.  Parsec
-    is a parser combinator library.  With Parsec, you will combine small
-    parsing functions together to build up more complex parsers.  Parsec
-    provides some simple parsing functions, as well as functions to tie them
-    all together.  It should come as no surprise that this parser library for
-    Haskell is built around the notion of functions.
+    Parsec is a useful parser combinator library, with which we
+    combine small parsing functions to build more sophisticated
+    parsers.  Parsec provides some simple parsing functions, as well
+    as functions to tie them all together.  It should come as no
+    surprise that this parser library for Haskell is built around the
+    notion of functions.
   </para>
 
   <para id="x_FJ">
-    Those of you that are familiar with parser tools in other languages may
-    be interested to know that Parsec can take the place of both parser tools
-    such as Yacc and lexers such as flex.  Parsec can also be used to
-    implement a single-stage parser.
+    It's helpful to know where Parsec fits compared to the tools used
+    for parsing in other languages.  Parsing is sometimes divided into
+    two stages: lexical analysis (the domain of tools like
+    <command>flex</command>) and parsing itself (performed by programs
+    such as <command>bison</command>). Parsec can perform both lexical
+    analysis and parsing.
   </para>
 
-  <para id="x_GJ">
-    In this chapter, we will use Parsec to build up a parser for CSV files.
-    We will also use Parsec to build a more complex parser for sectioned 
-    configuration files.
-  </para>
   <sect1 id="parsec.firststeps">
     <title>First Steps with Parsec: Simple CSV Parsing</title>
     <para id="x_HJ">
@@ -88,9 +86,9 @@
       here, we are storing the results of parsing all lines in
       <literal>result</literal>.  Then we look for the end-of-file indicator,
       called <literal>eof</literal>.  Finally, we return the
-      <literal>result</literal>.  So, a CSV file is made of of many lines,
-      then the end of file.  You can often read out Parsec functions in plain
-      English just like that.
+      <literal>result</literal>.  So, a CSV file is made up of many lines,
+      then the end of file.  We can often read out Parsec functions in plain
+      English just like this.
     </para>
     <para id="x_SJ">
       Now we must answer the question: what is a line?  We define the
@@ -149,12 +147,9 @@
       <literal>parse</literal> function, filling in a few parameters.
       <literal>parse</literal> returns <literal>Either ParseError
         [[String]]</literal> for the CSV file.  If there was an error, the
-      return vaule will be &Left; with the error; otherwise, it will be
+      return value will be &Left; with the error; otherwise, it will be
       &Right; with the result.
     </para>
-
-
-
     <para id="x_JJ">
       Now that we understand this code, 
       let's play with it a bit and see what
@@ -211,9 +206,9 @@
     </para>
     &csv2.hs:all;
     <para id="x_cJ">
-      This program behaves exactly the same as the first one.  You can verify
-      that by using &ghci; to re-run our examples from the earlier example.
-      You'll get the same result from every one.  Yet the program is much
+      This program behaves exactly the same as the first one.  We can verify
+      this by using &ghci; to re-run our examples from the earlier example.
+      We'll get the same result from every one.  Yet the program is much
       shorter and more readable.  It won't be long before you can translate
       Parsec code like this into a file format definition in plain English.
       As you read over this code, you can see that:
@@ -275,10 +270,11 @@
     </para>
     &csv3.ghci:s1;
     <para id="x_mJ">
-      It may look like it worked for both endings, but actually looking at it
-      this way, we can't tell.  If it left something un-parsed, we don't
-      know, because we're not looking for anything else.  So let's look for
-      the end-of-file after our end of line:
+      It may seem like the parser worked for both endings, but
+      actually looking at it this way, we can't tell.  If it left
+      something un-parsed, we don't know, because we're not trying to
+      consume anything else from the input.  So let's look for the
+      end-of-file after our end of line:
     </para>
     &csv3.ghci:s2;
     <para id="x_nJ">
@@ -409,7 +405,7 @@
     <para id="x_EK">
       Here is a full CSV parser.  You can use this from &ghci;, or if you
       compile it to a standalone program, it will parse a CSV file on
-      standard input and convert it a different format on output.
+      standard input and convert it to a different format on output.
     </para>
     &csv9.hs:all;
     <para id="x_FK">
@@ -445,14 +441,14 @@
       one that must be within the implementation of <literal>many</literal>.
     </para>
     <para id="x_KK">
-      This &try; is actually quite important.  Let's say you are parsing a
-      quoted cell and are getting towards the end of it.  There will be
-      another cell following.  So you will expect to see a quote to end the
-      current cell, followed by a comma.  When you hit
-      <literal>quotedChar</literal>, you will fail the
+      This &try; is important.  Let's say we are parsing a
+      quoted cell, and are getting towards the end of it.  There will be
+      another cell following.  So we will expect to see a quote to end the
+      current cell, followed by a comma.  When we hit
+      <literal>quotedChar</literal>, we will fail the
       <literal>noneOf</literal> test and proceed to the test that looks for
-      two quotes in a row.  You'll also fail that one because you'll have a
-      quote, then a comma.  If you hadn't used &try;, you'd crash with an
+      two quotes in a row.  We'll also fail that one because we'll have a
+      quote, then a comma.  If we hadn't used &try;, we'd crash with an
       error at this point, saying that it was expecting the second quote,
       because the first quote was already consumed.  Since we use &try;, this
       is properly recognized as not a character that's part of the cell, so
@@ -461,11 +457,11 @@
       that it is so easy to add makes it a remarkable tool in Parsec.
     </para>
     <para id="x_LK">
-      You can test this program with &ghci; over some quoted cells:
+      We can test this program with &ghci; over some quoted cells.
     </para>
     &csv9.ghci:s1;
     <para id="x_MK">
-      Let's run it over a real CSV file.  Here's a CSV file generated by a
+      Let's run it over a real CSV file.  Here's one generated by a
       spreadsheet program:
     </para>
     <programlisting>
@@ -491,12 +487,15 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
   <sect1>
     <title>Parsec and MonadPlus</title>
 
-    <para id="x_Wj">Parsec's <type>GenParser</type> monad is an instance of the
-      <type>MonadPlus</type> typeclass that we introduced in
+    <para id="x_Wj">Parsec's <type>GenParser</type> monad is an
+      instance of the <type>MonadPlus</type> typeclass that we
+      introduced in
 	<xref linkend="monadcase.monadplus"/>.  The value
       <code>mzero</code> represents a parse failure, while
       <function>mplus</function> combines two alternative parses into
       one, using <function>(&lt;|>)</function>.</para>
+
+    &ParsecPlus.hs:instance;
   </sect1>
 
   <sect1 id="applicative.urlencoded">
@@ -564,7 +563,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
       expressions to work for <quote>casual</quote> parsing. They're
       notoriously tricky for this purpose: hard to write, difficult to
       debug, nearly incomprehensible after a few months of neglect,
-      and no error messages on failure.</para>
+      and provide no error messages on failure.</para>
 
     <para id="x_gj">If we can write compact Parsec parsers, we'll gain in
       readability, expressiveness, and error reporting.  Our parsers
@@ -628,9 +627,13 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     &ApplicativeParsec.hs:ApplicativeParsec;
 
-    <para id="x_oj">For convenience, our module's export section exports all the
-      names we imported from both the <code>Applicative</code> and
-      <code>Parsec</code> modules.</para>
+    <para id="x_oj">For convenience, our module's export section
+      exports all the names we imported from both the
+      <code>Applicative</code> and <code>Parsec</code> modules.
+      Because we hid Parsec's version of
+      <function>(&lt;|&gt;)</function> when importing, the one that
+      will be exported is from <code>Control.Applicative</code>, as we
+      would like.</para>
   </sect1>
 
   <sect1>
@@ -638,11 +641,12 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     <para id="x_pj">We'll begin by rewriting our existing form parser from the
       bottom up, beginning with <function>p_hex</function>, which
-      parses a hexadecimal escape sequence.</para>
+      parses a hexadecimal escape sequence.  Here's the code in normal
+      &do;-notation style.</para>
 
     &FormApp.hs:p_hex;
 
-    <para id="x_qj">Here's our applicative version.</para>
+    <para id="x_qj">And here's our applicative version.</para>
 
     &FormApp.hs:a_hex;
 
@@ -693,12 +697,12 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     <para id="x_yj">Therefore, <code>char '%' *&gt; hexDigit</code> has the same
       type, since <function>(*&gt;)</function> returns the result on
-      its right.  (Remember that <type>CharParser</type> is nothing
+      its right.  (The <type>CharParser</type> type is nothing
       more than a synonym for <type>GenParser Char</type>.)</para>
 
     &formApp.ghci:char;
 
-    <para id="x_zj">The expression <code>hexify &lt;%$&gt; (char '%' *&gt;
+    <para id="x_zj">The expression <code>hexify &lt;$&gt; (char '%' *&gt;
 	hexDigit)</code> is a parser that matches a <quote>%</quote>
       character followed by hex digit, and whose result is a
       function.</para>
@@ -751,17 +755,14 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
       write a JSON parser that follows the definition in RFC
       4627.</para>
 
-    <remark>Insert a backreference to the introduction to JSON,
-      whenever that shows up.</remark>
-
     <para id="x_Ik">At the top level, a JSON value must be either an object or
       an array.</para>
 
     &JSONParsec.hs:p_text;
 
     <para id="x_Jk">These are structurally similar, with an opening character,
-      following by one or more items separated by commas, followed by
-      a closing characters.  We capture this similarity by writing a
+      followed by one or more items separated by commas, followed by
+      a closing character.  We capture this similarity by writing a
       small helper function.</para>
 
     &JSONParsec.hs:p_series;
@@ -775,7 +776,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
     &JSONParsec.hs:p_array;
 
     <para id="x_Lk">Dealing with a JSON object is hardly more complicated,
-      requiring just a little more effort to product a name/value pair
+      requiring just a little additional effort to produce a name/value pair
       for each of the object's fields.</para>
 
     &JSONParsec.hs:p_object;
@@ -785,6 +786,12 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
       <type>JValue</type> constructor.</para>
 
     &JSONParsec.hs:p_value;
+
+    <para>The <function>choice</function> combinator allows us to
+      represent this kind of ladder-of-alternatives as a list.  It
+      returns the result of the first parser to succeed.</para>
+
+    &JSONParsec.hs:p_value_choice;
 
     <para id="x_Nk">This leads us to the two most interesting parsers, for
       numbers and strings.  We'll deal with numbers first, since
@@ -813,30 +820,20 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     &JSONParsec.hs:p_string;
 
-    <para id="x_Rk">We can parse and unescape an escape sequence with the help
-      of a generic function for combining
-      <type>Alternative</type>s.</para>
+    <para id="x_Rk">We can parse and decode an escape sequence with
+      the help of the <function>choice</function> combinator that we
+      just met.</para>
 
     &JSONParsec.hs:p_escape;
 
-    <para id="x_Sk">(We're basing the name <function>asum</function> on the
-      <function>msum</function> function in
-      <code>Control.Monad</code>, which serves the same purpose for
-      <type>MonadPlus</type> instances.  It's a little surprising that
-      <function>asum</function> isn't already defined for us.)</para>
-
     <para id="x_Tk">Finally, JSON lets us encode a Unicode character in
       a string as <quote><code>\u</code></quote> followed by four
-      hexadecimal digits.  Because the number of values that can be
-      represented in 32 bits is much larger than the number of valid
-      Unicode code points, we must check to ensure that we're decoding
-      a value within the valid Unicode range, or else we could cause
-      ourselves a runtime error.</para>
+      hexadecimal digits.</para>
 
     &JSONParsec.hs:p_unicode;
 
     <para id="x_Uk">The only piece of functionality that applicative
-      functors are missing compared to monads is the ability to bind a
+      functors are missing, compared to monads, is the ability to bind a
       value to a variable, which we need here in order to be able to
       validate the value we're trying to decode.</para>
 
@@ -854,8 +851,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
     <title>Parsing a HTTP request</title>
 
     <para id="x_Kv">As another example of applicative parsing, we will develop a
-      basic HTTP request parser.  We'll use this later on to create a
-      small web server.</para>
+      basic parser for HTTP requests.</para>
 
     &HttpRequestParser.hs:module;
 
@@ -873,61 +869,26 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     &HttpRequestParser.hs:p_request;
 
-    <para id="x_Nv">Briefly, the <function>q</function> helper function accepts
-      a method name, the type constructor to apply to it, and a parser
-      for a request's optional body.  The <function>url</function>
-      helper does not attempt to validate a URL, because the HTTP
-      specification does not specify what characters; it just consumes
-      input until either the line ends or it reaches a HTTP version
+    <para id="x_Nv">Briefly, the <function>q</function> helper
+      function accepts a method name, the type constructor to apply to
+      it, and a parser for a request's optional body.  The
+      <function>url</function> helper does not attempt to validate a
+      URL, because the HTTP specification does not specify what
+      characters an URL contain. The function just consumes input
+      until either the line ends or it reaches a HTTP version
       identifier.</para>
 
     <sect2>
       <title>Backtracking and its discontents</title>
 
-      <para id="x_Ov">The major point worth calling attention to is our use of
-	the <function>try</function> combinator.  This attempts to
-	execute a parser.  Normally, if a parser fails partway through
-	parsing, whatever input it has consumed stays consumed, and is
-	no longer available to whatever parser comes next.  When the
-	parser it takes as argument fails, the
-	<function>try</function> combinator restores the state of the
-	input as it was when that parser began.  This allows us to
-	<emphasis>backtrack</emphasis> to an earlier state of the
-	input, and use another parser.</para>
-
-      <para id="x_Pv">What does this mean, and why is it important?  Let's
-	consider a very simple parser.</para>
-
-      &try.ghci:simple;
-
-      <para id="x_Qv">As we expect, if the parser fails to match its input, we
-	get an error.  Let's make the parser slightly more
-	complex.</para>
-
-      &try.ghci:broken;
-
-      <para id="x_Rv">Once again, the parser behaves as we expect in one case.
-	However, let's see if we can handle the other string we expect
-	to be able to match.</para>
-
-      &try.ghci:fail;
-
-      <para id="x_Sv">We get the same error message as before!  The reason is
-	that the first parser has already consumed the first two
-	characters of the input when it fails.  The second parser thus
-	doesn't have access to them.</para>
-
-      <para id="x_Tv">If we wrap the first parser in a <function>try</function>,
-	it will reset the input state if it fails.  We now get
-	sensible results in each case.</para>
-
-      &try.ghci:try;
-
-      <para id="x_Uv">There is a problem, however: because it has to hold onto
-	input in case it needs to restore it, <function>try</function>
-	is expensive to use.  Sprinkling a parser with unnecessary
-	uses of <function>try</function> is a very effective way to
-	slow it down, sometimes to the point of unacceptable
+      <para id="x_Uv">The &try; combinator has to hold onto input in
+	case it needs to restore it, so that an alternative parser can
+	be used.  This practice is referred to as
+	<emphasis>backtracking</emphasis>. Because
+	<function>try</function> must save input, it is expensive to
+	use.  Sprinkling a parser with unnecessary uses of
+	<function>try</function> is a very effective way to slow it
+	down, sometimes to the point of unacceptable
 	performance.</para>
 
       <para id="x_Vv">The standard way to avoid the need for backtracking is to
@@ -1003,11 +964,13 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
 	<qandaentry>
 	  <question>
-	    <para id="x_dv">Another popular attack is to open a connection and
-	      either leave it idle or send data extremely slowly.  Use
-	      the <code>System.Timeout</code> module to write a
-	      wrapper for the parser that will close the connection if
-	      the parser has not completed within 30 seconds.</para>
+	    <para id="x_dv">Another popular attack is to open a
+	      connection and either leave it idle or send data
+	      extremely slowly.  Write a wrapper in the &IO; monad
+	      that will invoke the parser.  Use the
+	      <code>System.Timeout</code> module to close the
+	      connection if the parser has not completed within 30
+	      seconds.</para>
 	  </question>
 	</qandaentry>
       </qandaset>
