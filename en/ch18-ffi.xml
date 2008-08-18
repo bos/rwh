@@ -8,16 +8,17 @@
 <para>
 Programming languages do not exist in perfect isolation. They inhabit an
 ecosystem of tools and libraries, built up over decades, and often written in
-a range of other programming languages. Good engineering practice suggests we
-reuse that effort. The Haskell Foreign Function Interface (the "FFI") is the
-means by which Haskell code can use, and be used by, code written in other
+a range of programming languages. Good engineering practice suggests we reuse
+that effort. The Haskell Foreign Function Interface (the "FFI") is the means
+by which Haskell code can use, and be used by, code written in other
 languages. In this chapter we'll look at how the FFI works, and how to
-produce a Haskell library binding to C code. The challenge: take PCRE, the
+produce a Haskell binding to a C library, including how to use an FFI
+preprocessor to automate much of the work. The challenge: take PCRE, the
 standard Perl-compatible regular expression library, and make it usable from
 Haskell in an efficient and functional way. Throughout, we'll seek to
-abstract out the manual effort of the C implementation, automating the work
-of managing memory, and making the interface more robust, yielding a clean,
-high level binding.  We assume only some basic familiarity with regular
+abstract out manual effort required by the C implementation, delegating that
+work to Haskell, making the interface more robust, and yielding a clean, high
+level binding.  We assume only some basic familiarity with regular
 expressions.
 </para>
 
@@ -33,9 +34,9 @@ passes between them.
 </para>
 
 <para>
-Beyond low level compatibility, to make a foreign function interface usable
-by mere mortals, a certain amount of syntactic sugar and tool support has to
-be put in place. Good syntactic and tool support eases the burden on the
+Beyond low level compatibility, a certain amount of syntactic sugar and tool
+support has to be put in place to make a foreign function interface usable by
+mere mortals. Good syntactic and tool support eases the burden on the
 programmer by simplifying and automating common tasks. Finally, a set of
 libraries and idioms need to be developed to cover the everyday jobs a
 programmer writing a new binding will encounter.
@@ -44,21 +45,22 @@ programmer writing a new binding will encounter.
 <para>
 For Haskell, this technology stack is specified by <ulink url="http://www.cse.unsw.edu.au/~chak/haskell/ffi/">the Foreign Function Interface addendum</ulink> to
 the Haskell report. The FFI report describes how to correctly bind code to
-and from Haskell and C, and how to extend bindings to other languages.  FFI
-bindings will work portably across Haskell implementations and C compilers.
+and from Haskell and C, and how to extend bindings to other languages. The
+standard is designed to be portable, so that FFI bindings will work reliably
+across Haskell implementations, operating systems and C compilers.
 </para>
 
 <para>
 All implementations of Haskell support the FFI, and it is a key enabling
 technology: it dramatically reduces the work required to use Haskell in a
 field. Instead of reimplementing the standard libraries in a domain, we can
-just bind to the existing ones.
+just bind to existing ones written in languages other than Haskell.
 </para>
 
 <para>
 The FFI adds a new dimension of flexibility to the language: if we need to
 access raw hardware for some reason (say we're programming new hardware, or
-implementing an operating system), the FFI let's us get access to that
+implementing an operating system), the FFI lets us get access to that
 hardware. It also gives us a performance escape hatch: if we can't get a code
 hot spot fast enough, there's always the option of trying again in C.  So
 let's look at what the FFI actually means for writing code. 
@@ -73,13 +75,13 @@ let's look at what the FFI actually means for writing code.
 The most common operation we'll want to do, unsurprisingly, is call a C
 function from Haskell. So let's do that, by binding to some functions
 from the standard C math library. We'll put the binding in a source file, and
-then compile it into into a simple Haskell program that uses some C code.
+then compile it into a Haskell binary that makes use of the C code.
 </para>
 
 <para>
 To start with, we need to enable the foreign function interface extension,
-since the FFI isn't Haskell98. We do this, as always, via a
-<code>LANGUAGE</code> pragma, at the top of our source file:
+as the FFI isn't part of the Haskell 98 standard. We do this, as always, via
+a <code>LANGUAGE</code> pragma, at the top of our source file:
 </para>
 
 &SimpleFFI.hs:pragma;
@@ -87,7 +89,7 @@ since the FFI isn't Haskell98. We do this, as always, via a
 <para>
 The <code>LANGUAGE</code> pragmas indicate which extension to Haskell 98 a
 module uses. We bring just the FFI extension in play this time. It is important
-to track which extensions to the lanuage you need. Less extensions generally
+to track which extensions to the language you need. Less extensions generally
 means more portable, more robust code. Indeed, it is common for Haskell
 programs written more than a decade ago to compile perfectly well today,
 thanks to standardisation, and despite radical innovations in the language.
@@ -103,7 +105,7 @@ bindings to other languages:
 &SimpleFFI.hs:imports;
 
 <para>
-If you work extensively in foreign libraries, a good knowlege of the
+For extensive work with foreign libraries, a good knowlege of the
 <code>Foreign</code> modules becomes essential. Other useful modules include
 <code>Foreign.C.String</code>, <code>Foreign.Ptr</code> and
 <code>Foreign.Marshal.Array</code>.
@@ -130,10 +132,10 @@ to Haskell. The result is then wrapped up as a Haskell value of type
 </para>
 
 <para>
-It is a common idiom to expose the C function with the prefix "c_",
-distinguishing it from more user friendly, higher level functions. The C
-function is specified by the <code>math.h</code> header, where it is has
-type:
+A common idiom when writing FFI bindings is to expose the C function with the
+prefix "c_", distinguishing it from more user friendly, higher level
+functions. The C function is specified by the <code>math.h</code> header,
+where it is has type:
 </para>
 
 &math.c:type;
@@ -147,9 +149,9 @@ mistake is made in the translation the Haskell compiler will happily generate
 incorrect code to call C! The poor Haskell compiler doesn't know anything
 about what types the C function actually requires, so if instructed to, it
 will call the C function with the wrong arguments.  At best this will lead to
-C compiler warnings, and more likely will result in a runtime crash. At
-worse, it will silently go unnoticed until some critical failure occurs. So
-make sure you use the correct FFI types!
+C compiler warnings, and more likely, it will end with in a runtime crash. At
+worse the error will silently go unnoticed until some critical failure
+occurs. So make sure you use the correct FFI types!
 <footnote><para>Some more advanced binding tools provide greater degrees of
 type checking. For example, <code>c2hs</code> is able to parse the C
 header, and generate the binding definition for you, and is especially
@@ -159,8 +161,8 @@ suited for large projects where the full API is specified.
 </para>
 
 <para> 
-The most important primitive C types are represented in Haskell as:
-<code>CChar</code>, <code>CUChar</code>, <code>CInt</code>,
+The most important primitive C types are represented in Haskell with the
+somewhat intuitive names: <code>CChar</code>, <code>CUChar</code>, <code>CInt</code>,
 <code>CUInt</code>, <code>CLong</code>, <code>CULong</code>,
 <code>CSize</code>, <code>Float</code>, <code>CDouble</code>. More are
 defined in the FFI standard, and can be found in the Haskell base library
@@ -173,28 +175,29 @@ Haskell-side representation types for C, as we'll see later.
 
 <para>
 One point to note is that we bound <code>sin</code> as a pure function in Haskell, 
-one with no side effects. This is correct, since the <code>sin</code>
+one with no side effects. That's fine in this case, since the <code>sin</code>
 function in C is referentially transparent. By binding pure C functions to
 pure Haskell functions, the Haskell compiler is taught something about the C
 code, namely that it has no side effects, making optimisations easier. Pure
-code is also more flexible code for the programmer, as it is naturally
-persistant, and threadsafe. While pure Haskell code is always threadsafe,
-this is harder to guarantee of C. Even if the documentation indicates the
-function is likely to be pure, there's little to ensure it is also
-threadsafe, unless explicitly documented as "reentrant".  Pure, threadsafe C
-code is rare, but valuable, for these reasons.
+code is also more flexible code for the Haskell programmer, as it is naturally
+persistant and threadsafe. However, while pure Haskell code is always
+threadsafe this is harder to guarantee of C. Even if the documentation
+indicates the function is likely to expose no side effects, there's little to
+ensure it is also threadsafe, unless explicitly documented as "reentrant".
+Pure, threadsafe C code is rare, but valuable, for these reasons. It is the
+easiest flavour of C to use from Haskell.
 </para>
 
 <para>
-Side effecting code is more more common in imperative languages, like C, of
-course. There it is much more common for functions to return different
-values, given the same arguments, because of changes to global or local
-state, or to have other side effects. Typically this is signalled in C by the
-function returning only a status value, or some void type, rather than a
-concrete result.  This let's us know the real work of the function was in its
-side effects. For such functions, we'll need to capture those side effects in
-the IO monad (by changing the return type to <code>IO CDouble</code>, for
-example).
+Of course, side effecting code is more more common in imperative languages,
+where the explicit sequencing of statements encourages the use of effects. It
+is much more common in C for functions to return different values, given the
+same arguments, due to changes in global or local state, or to have other
+side effects. Typically this is signalled in C by the function returning only
+a status value, or some void type, rather than a useful result value.  This
+indicates that the real work of the function was in its side effects. For
+such functions, we'll need to capture those side effects in the IO monad (by
+changing the return type to <code>IO CDouble</code>, for example).
 </para>
 
 </sect2>
@@ -203,9 +206,9 @@ example).
   <title>A high level wrapper</title>
 
 <para>
-The next step is to convert the C types we pass to and from the foreign
-language call into native Haskell types, wrapping the binding so it appears 
-as a normal-looking Haskell function:
+With the foreign imports out of the way, the next step is to convert the C
+types we pass to and from the foreign language call into native Haskell
+types, wrapping the binding so it appears as a normal Haskell function:
 </para>
 
 &SimpleFFI.hs:highlevel;
@@ -234,8 +237,8 @@ tenths:
 
 <para>
 A simple program that prints each result as it is computed.
-We can put all this code in a file, <code>SimpleFFI.hs</code> and run it in
-<code>GHCi</code>:
+Putting the complete binding in a file, <code>SimpleFFI.hs</code> we can run
+it in <code>GHCi</code>:
 </para>
 
 <screen>
@@ -255,7 +258,7 @@ $ ghci SimpleFFI.hs
 </screen>
 
 <para>
-Alternatively, we can compile it to a binary:
+Alternatively, we can compile the code to a binary:
 </para>
 
 <screen>
@@ -265,7 +268,7 @@ Linking SimpleFFI ...
 </screen>
 
 <para>
-And then run that:
+and then run that:
 </para>
 
 <screen>
@@ -286,49 +289,46 @@ $ ./SimpleFFI
 <para>
 We're well on our way now, with a full program, statically linked against
 C, which interleaves C and Haskell code, and passes data across the language
-boundary. Time now to tackle a larger problem.
+boundary.  Simple bindings like the above are almost trivial, as the standard
+<code>Foreign</code> library provides convenient aliases for common types,
+like <code>CDouble</code>. In the next section we'll look at a larger
+engineering task: binding to the PCRE library.  which brings up issues of
+memory management and type safety. A larger problem to tackle.
 </para>
 
 <!-- unsafe/ safe calls -->
 
 <!-- a more complicated engineering task: pcre -->
 
-<para>
-Simple bindings like the above are almost trivial, as the standard
-<code>Foreign</code> library provides convenient aliases for common types,
-like <code>CDouble</code>. In the next section we'll look at a larger
-engineering task: binding to the PCRE library.  which brings up issues of
-memory management and type safety.
-</para>
-
 </sect2>
 
 </sect1>
 
 <sect1>
-  <title>Regular expressions for Haskell: binding to PCRE</title>
+  <title>Regular expressions for Haskell: a binding for PCRE</title>
 
 <!-- linking -->
 
 <!-- motivate regular expressions -->
 
 <para>
-As we've seen in previous sections, Haskell programs have somewhat of a bias
+As we've seen in previous sections, Haskell programs have something of a bias
 towards lists as a foundational data structure.  List functions are a core
 part of the base library, and convenient syntax for constructing and taking
 apart list structures is wired into the language. Strings are, of course,
-simply lists of characters (rather than, for example, arrays of characters).
+simply lists of characters (rather than, for example, flat arrays of characters).
 This flexibility is all well and good, but it results in a tendency for the
-standard library to favour polymorphic list operations, at the expense of
+standard library to favour polymorphic list operations at the expense of
 string-specific operations.
 </para>
 
 <para>
-For example, many useful jobs can be solved via regular expression-based
+Indeed, many useful jobs can be solved via regular expression-based
 string processing, yet support for regular expressions isn't part of the
-Haskell Prelude. So let's look at how we'd take an off-the-shelf regular
-expression library, PCRE, and provide a natural, convenient Haskell binding
-to it, giving us useful regular expressions for Haskell.
+Haskell <literal>Prelude</literal>. So let's look at how we'd take an
+off-the-shelf regular expression library, PCRE, and provide a natural,
+convenient Haskell binding to it, giving us useful regular expressions for
+Haskell.
 </para>
 
 <para>
@@ -348,26 +348,27 @@ machine.
 The simplest task when setting out to write a new FFI binding from C to
 Haskell is to bind constants defined in C headers to equivalent Haskell
 values. For example, PCRE provides a set of flags for modifying how the core
-pattern matching system works (e.g. ignoring case, or matching newlines).
-These flags appear as numeric constants in the PCRE header files:
+pattern matching system works (such as ignoring case, or allowing matching on
+newlines).  These flags appear as numeric constants in the PCRE header files:
 </para>
 
 &PCRE.h:constants;
 
 <para>
 To export these values to Haskell we need to insert them into a Haskell
-source file some how. One obvious way to do this is by using the C
+source file somehow. One obvious way to do this is by using the C
 preprocessor to substitute definitions from C into the Haskell source, which we
-then compile as a normal Haskell source file. Using the preprocessor we can,
-for example, declare simple constants to do textual substitutions on the
-Haskell source file:
+then compile as a normal Haskell source file. Using the preprocessor we can
+even declare simple constants, via textual substitutions on the Haskell
+source file:
 </para>
 
 &Enum1.hs:cpp;
 
 <para>
-This works as expected (and CPP is run for us by the Haskell compiler, when
-it spots the <code>LANGUAGE</code> pragma),
+This works much as for C source (with CPP run for us by the Haskell compiler,
+when it spots the <code>LANGUAGE</code> pragma), resulting in program
+output:
 </para>
 
 <screen>
@@ -379,10 +380,9 @@ it spots the <code>LANGUAGE</code> pragma),
 However, relying on CPP is a rather fragile approach. The C preprocessor
 isn't aware it is processing a Haskell source file, and will happily include
 text, or transform source, in such a way as to make our Haskell code invalid.
-We need to be careful not to confuse CPP. If we were to include C headers,
-for example, we risk substituting unwanted symbols, or inserting C type
-information and prototypes into the Haskell source, resulting in a broken
-mess.
+We need to be careful not to confuse CPP. If we were to include C headers we
+risk substituting unwanted symbols, or inserting C type information and
+prototypes into the Haskell source, resulting in a broken mess.
 </para>
   
 <para>
@@ -401,11 +401,9 @@ Binding Haskell to C with hsc2hs
 
 <para>
 To use hsc2hs as an intelligent binding tool for Haskell, we need to create
-an <code>.hsc</code> file, which will contain the Haskell source for our
-binding, along with hsc2hs processing rules, along with some C headers and
-type information.  We'll bind the regular expression C constants in a new
-file, <code>Regex.hsc</code>, much like a Haskell file, consisting of some
-language pragmas, import statements, like so:
+an <code>.hsc</code> file, <code>Regex.hsc</code>, which will hold the Haskell source for our
+binding, along with hsc2hs processing rules, C headers and C type
+information. To start off, we need some pragmas and imports:
 </para>
 
 &Regex-hsc.hs:headers;
@@ -413,7 +411,7 @@ language pragmas, import statements, like so:
 <para>
 The module begins with a typical preamble for an FFI binding: enable CPP,
 enable the foreign function interface syntax, declare a module name, and then
-import some things from the base library. The unusal item is the final line,
+import some things from the base library. The unusual item is the final line,
 where we include the C header for PCRE. This wouldn't be valid in a
 <code>.hs</code> source file, but is fine in <code>.hsc</code> code.
 </para>
@@ -428,33 +426,33 @@ where we include the C header for PCRE. This wouldn't be valid in a
 Next we need a type to represent PCRE compile time flags. In C, these are
 integer flags to the <code>compile</code> function, so we could just use
 <code>CInt</code> to represent them. All we know about the flags is that
-they're C numeric constants, so <code>CInt</code> would be a fine
+they're C numeric constants, so <code>CInt</code> is the isomorphic
 representation.
 </para>
 
 <para>
 As a Haskell library writer though, this feels sloppy. The type of values
 that can be used as regex flags contains fewer values than <code>CInt</code>
-allows for.  Nothing would prevent the end user using passing illegal integer
-values as arguments, or mixing up flags that should be passed only at regex compile
-time, with runtime flags. It is also possible to do arbitrary math on flags,
-or make other mistakes where integers and flags are confused. We really need
-to more precisely specify that the type of flags is distinct from its runtime
-representation as a numeric value. If we can do this, we can statically
-prevent a class of bugs relating to misuse of flags.
+allows for.  Nothing would prevent the end user passing illegal integer
+values as arguments, or mixing up flags that should be passed only at regex
+compile time, with runtime flags. It is also possible to do arbitrary math on
+flags, or make other mistakes where integers and flags are confused. We
+really need to more precisely specify that the type of flags is distinct from
+its runtime representation as a numeric value. If we can do this, we can
+statically prevent a class of bugs relating to misuse of flags.
 </para>
 
 <para>
-Adding such a layer of type safey is a great use case for
+Adding such a layer of type safey is relatively easy, and a great use case for
 <code>newtype</code>, the seemingly obscure type introduction declaration.
-What <code>newtype</code> let's us do is create a type that has an indentical
-runtime representation type to another type, but is treated as a separate
-type at compile time. We can represent flags at runtime as
-<code>CInt</code> values at runtime, but at compile time, tag them distinctly
-for the type checker. This will make it a type error to use invalid flag
-values, or to pass flags to functions expecting integers. We effectively use
-the Haskell type system to introduce a layer of type safety to the C PCRE
-interface.
+What <code>newtype</code> lets us do is create a type with an indentical
+runtime representation type to another type, but which is treated as a separate
+type at compile time. We can represent flags at runtime as <code>CInt</code>
+values at runtime, but at compile time, they'll be tagged distinctly for the
+type checker. This makes it a type error to use invalid flag values (as we
+specify only those valid flags, and prevent access to the type constructor),
+or to pass flags to functions expecting integers. We get use the Haskell type
+system to introduce a layer of type safety to the C PCRE API.
 </para>
 
 <para>
@@ -467,11 +465,11 @@ whose representation is actually that of a <code>CInt</code> value, like so:
 <para>
 The type name is <code>PCREOption</code>, and it has a single constructor,
 also named <code>PCREOption</code>, which lifts a <code>CInt</code> value
-into a new type. We can also happily define, using the Haskell record syntax,
-an accessor to the underlying <code>CInt</code>, 
-<code>unPCREOption</code>. That's a lot of convenience in one line. While
-we're here, we can derive some useful type class operations for flags
-(equality, comparison, and printing and parsing).
+into a new type by wrapping it in a constructor. We can also happily define
+an accessor, <code>unPCREOption</code>, using the Haskell record syntax, to the underlying
+<code>CInt</code>. That's a lot of convenience in one line. While we're here,
+we can also derive some useful type class operations for flags (equality,
+comparison, printing and parsing).
 </para>
 
 </sect2>
@@ -489,7 +487,7 @@ define some Haskell values corresponding to those PCRE constants.
 
 <para>
 We can do this in two ways with hsc2hs. The first, easy way, is to use the
-<code>#const</code> keyword hsc2hs provides. This let's us name constants to
+<code>#const</code> keyword hsc2hs provides. This lets us name constants to
 be provided by the C preprocessor. We can bind to the constants manually, by
 listing the CPP symbols for them using the <code>#const</code> keyword:
 </para>
@@ -501,7 +499,7 @@ This introduces three new constants on the Haskell side,
 <code>caseless</code>, <code>dollar_endonly</code> and <code>dotall</code>,
 corresponding to the similary named C definitions. We immediately wrap the
 constants in a newtype constructor, so they're exposed to the programmer as
-abstract <code>PCREOption</code> types.
+abstract <code>PCREOption</code> types only.
 </para>
 
 <para>
@@ -523,10 +521,10 @@ variables have been expanded, yielding valid Haskell code:
 
 <para>
 Notice also how the original line in the <code>.hsc</code> is listed next
-to each expanded definition. This enables the compiler to report errors in
-terms of their source in the original file, rather than the generated one.
-We can load this generated <code>.hs</code> file, and play with the
-results:
+to each expanded definition via the <code>LINE</code> pragma. The compiler
+uses this information to report errors in terms of their source, in the
+original file, rather than the generated one.  We can load this generated
+<code>.hs</code> file into the interpreter, and play with the results:
 </para>
 
 <screen>
@@ -543,10 +541,11 @@ interactive>:1:0:
 </screen>
 
 <para>
-So things are working as expected. The values are opaque, we can unwrap them
-and operate on them if needed. To unwrap the values, we use
-<code>unPCREOption</code>. That's a good start, but let's see how we can
-simplify this task further.
+So things are working as expected. The values are opaque, we get type errors
+if we try to break the abstraction, and we can unwrap them and operate on
+them if needed. The <code>unPCREOption</code> accessor is used to unwrap the
+boxes.  That's a good start, but let's see how we can simplify this task
+further.
 </para>
 
 </sect2>
@@ -573,7 +572,7 @@ We can replace our list of top level bindings with the equivalent:
 <para>
 This is much more concise! The <code>#enum</code> construct gives us three
 fields to work with. The first is the name of the type we'd like the C
-defines to be treated as. This let's us pick something other than just
+defines to be treated as. This lets us pick something other than just
 <code>CInt</code> for the binding. We chose <code>PCREOption</code>'s to
 construct.
 </para>
@@ -598,15 +597,15 @@ Perfect. Now we can do something in Haskell with these values. Our aim here
 is to treat flags as abstract types, not as bit fields in integers in C.
 Passing multiple flags in C would be done by bitwise or-ing multiple flags 
 together. For an abstract type though, that would expose too much
-information. Preserving the abstraction, we'd prefer users passed in flags in a
-list that the library itself combined. This is achievable with an easy fold:
-</para>
+information. Preserving the abstraction, and giving it a Haskell flavour,
+we'd prefer users passed in flags in a list that the library itself combined.
+This is achievable with a simple fold: </para>
 
 &Regex.hs:bitwise;
 
 <para>
 A simple loop, starting with an initial value of 0, it unpacks each flag, and
-uses bitwise-or's, <code>(.|.)</code>, to combine each value with the loop
+uses bitwise-or, <code>(.|.)</code>, to combine each value with the loop
 accumulator. The final accumulated state is then wrapped up in the
 <code>PCREOption</code> constructor.
 </para>
@@ -646,7 +645,7 @@ options we've already chosen to represent as the abstract
 <code>PCREOption</code> newtype, whose runtime representation is a
 <code>CInt</code>. As the representations are guaranteed to be identical, we
 can pass the <code>newtype</code> safely. The other arguments are a little
-more complicated, and require some work to construct and take apart.
+more complicated and require some work to construct and take apart.
 </para>
 
 <para>
@@ -655,9 +654,10 @@ any error message generated when compiling the expression. The value of the
 pointer will be modified by the C function to point to a custom error string.
 This we can represent with a <code>Ptr CString</code> type. Pointers in
 Haskell are heap allocated containers for raw addresses, and can be created
-and operated on, by a number of allocation primitives in the FFI library. We
-can also represnt a pointer to a C <code>int</code> as <code>Ptr CInt</code>,
-and a (constant) pointer to an unsigned char as a <code>Ptr Word8</code>.
+and operated on with a number of allocation primitives in the FFI library.
+For example, we can represnt a pointer to a C <code>int</code> as <code>Ptr
+CInt</code>, and a (constant) pointer to an unsigned char as a <code>Ptr
+Word8</code>.
 </para>
 
 <note>
@@ -672,7 +672,7 @@ pointer by an integral amount, with <code>plusPtr</code>. We can even modify
 the value pointed to, using <code>poke</code>, and of course dereference a
 pointer, yielding that which it points to, with <code>peek</code>.
 In the majority of circumstances, a Haskell programmer doesn't need to
-operate on pointers directly, but when they are needed, these tools come in
+operate on pointers directly, but when they are needed these tools come in
 handy.
 </para>
 </note>
@@ -683,18 +683,17 @@ when we compile the regex. We can use a trick here, since the structure is
 abstract, and we'll never look at it's internals. We can assign the data any
 heap-allocated Haskell type, as long as it has few or no operations on it!
 This is a common trick for arbitrarily typed foreign data. 
-A simple type, that's unlikely to be messed with, to represent our unknown
-data, is the <code>()</code> type. We can use a type synomnym to remember the
-binding:
+A simple type used to represent ounknown data is the <code>()</code> type. We
+can use a type synomnym to remember the binding:
 </para>
 
 &PCRE-compile.hs:unit;
 
 <para>
-That is, it is some unknown block of data, and we'll treat it as a pointer
-to <code>()</code>, knowing full well that we'll never actually dereference
-that pointer. This gives us the following foreign import binding for
-<code>pcre_compile</code>:
+That is, the foreign data is some unknown, opaque object, and we'll just
+treat it as a pointer to <code>()</code>, knowing full well that we'll never
+actually dereference that pointer. This gives us the following foreign import
+binding for <code>pcre_compile</code>:
 </para>
 
 &PCRE-compile.hs:pcre_compile;
@@ -722,7 +721,7 @@ type.
 </para>
 
 <para>
-We can also achive the same thing, without requiring a language extension, by
+We can also achieve the same thing, without requiring a language extension, 
 using a recursive <code>newtype</code>:
 </para>
 
@@ -730,18 +729,18 @@ using a recursive <code>newtype</code>:
 
 <para>
 Again, we can't really do anything with a value of this type, as it has no
-actual runtime representation. Using typed pointers like this is again
+actual runtime representation. Using typed pointers like this is
 another way to add safety to a Haskell layer over what C. What would require
-discipline on the part of the C programmer to ensure correctness, (e.g.
-remembering never to dereferene a PCRE pointer) can be enforced statically in
-the type system of the Haskell binding. If this code compiles, the type
+discipline on the part of the C programmer to ensure correctness,
+(remembering never to dereferene a PCRE pointer) can be enforced statically
+in the type system of the Haskell binding. If this code compiles, the type
 checker has given us a proof that the PCRE objects returned by C are never
 dereferenced on the Haskell side.
 </para>
 
 <para>
 We have the foreign import declaration sorted out now, the next step is to
-marshal data into the right form, so we can finally call the C code.
+marshal data into the right form, so that we can finally call the C code.
 </para>
 
 </sect2>
@@ -765,22 +764,21 @@ out some of the tedium of using the C library inside the Haskell binding.
 
 <para>
 We'll use the Haskell garbage collector to automatically deallocate the C
-structure once it is no longer in use on the Haskell side. To do this, we'll
-make use of garbage collector finalizers, and the <code>ForeignPtr</code>
-type.
+structure once it is no longer in use. To do this, we'll make use of Haskell
+garbage collector finalizers, and the <code>ForeignPtr</code> type.
 </para>
 
 <para>
-We don't want users to have to manually deallocate the <code>Ptr
-    PCRE</code> value by the foreign call. This structure
+We don't want users to have to manually deallocate the <code>Ptr PCRE</code>
+value by the foreign call. This structure
 is allocated on the C side with <code>malloc</code>, and needs to be freed
 when no longer in use, or we risk leaking memory. The Haskell garbage
 collector already goes to great lengths to automate the task of managing
 memory for Haskell values. Cleverly, we can also assign our hardworking
 garbage collector the task of looking after C's memory! The trick is to
 associate a piece of Haskell data with the foreign allocator data, and give
-the Haskell garbage collector a function to run once it notices that the
-Haskell data is out of scope.
+the Haskell garbage collector a function to deallocate the C resource, once
+it notices that the Haskell data is done with.
 </para>
 
 <para>
@@ -993,7 +991,7 @@ type:
 This function does something rather odd: it takes an IO value and
 converts it to a pure one! After warning about the danger of effects for so
 long, here we have the epitome of dangerous effects in one line. Used
-unwisely, this function let's us side step all safety guarantees regarding
+unwisely, this function lets us side step all safety guarantees regarding
 purity the Haskell type system provides, inserting arbitrary effects into a
 Haskell program, anywhere. The dangers in doing this are significant: we can
 break optimisations, modify arbitrary locations in memory, remove files on
@@ -1004,7 +1002,7 @@ So why does this function exist at all?
 <para>
 It exists precisely to enable Haskell code to bind to C code that we know to
 be referentially transparent, but can't prove the case to the Haskell type system.
-It let's us say to the compiler, "I know what I'm doing - this
+It lets us say to the compiler, "I know what I'm doing - this
 code really is pure". For regular expression compilation, we know this to be
 the case: given the same pattern, we should get the same regular expression
 matcher every time. However, proving that to the compiler is beyond the
