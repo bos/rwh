@@ -1530,7 +1530,8 @@ Data: Done!
     <para id="x_wE">
       The <literal>System.Console.GetOpt</literal> module provides some tools
       for parsing command-line options.  If you have a program with complex
-      options, you may find it useful.  
+      options, you may find it useful.  You can find an example of its
+      use in <xref linkend="stm.urlcheck.parseArgs"/>.
     </para>
   </sect1>
 

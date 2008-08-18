@@ -43,6 +43,7 @@ extras-web-base := \
 	$(obj-websup)/hsbook.js \
 	$(obj-websup)/jquery-min.js \
 	$(obj-websup)/jquery.js \
+	$(obj-websup)/rwh-200.jpg \
 	$(obj-websup)/styles.css
 
 extras-web := $(extras-web-base) $(extras-web-base:%=%.gz)
@@ -275,6 +276,7 @@ clean:
 vpath %.html.in ../web
 vpath %.css ../web
 vpath %.js ../web/javascript
+vpath %.jpg ../web
 
 vpath %.c $(src-dirs)
 vpath %.cabal $(src-dirs)
@@ -329,6 +331,10 @@ x/.stamp-%.ghci: %.ghci
 	../tools/bin/ghcisession $(CURDIR)/x $< > $@
 
 $(obj-websup)/%.css: %.css
+	@mkdir -p $(dir $@)
+	cp $< $@
+
+$(obj-websup)/%.jpg: %.jpg
 	@mkdir -p $(dir $@)
 	cp $< $@
 

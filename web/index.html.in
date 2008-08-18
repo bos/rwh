@@ -9,16 +9,40 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
 <div class="book">
   <h2>Welcome to Real World Haskell</h2>
 
-  <p>This is the online home of the book &#8220;Real World Haskell&#8221;.  We
-    are currently writing the book, and regularly post <a
-    href="/beta/">early drafts of beta chapters</a> for public
-    review.  Please let us know what you think of our work!</p>
+  <span style="float: right; margin-left: 20px;">
+    <img src="support/rwh-200.jpg" alt="Real World Haskell book cover"
+	    float="right" />
+  </span>
+  <span>
+    <p>This is the online home of the book &#8220;Real World Haskell&#8221;.  We
+      are currently finishing the book, and regularly post <a
+      href="/beta/">drafts of beta chapters</a> for public
+      review.  Please let us know what you think of our work!</p>
 
-  <p>The book will be published by <a
-  href="http://www.oreilly.com/">O'Reilly Media</a>.  A
-  publication date has not yet been set.</p>
+    <p>The book will be published by <a
+    href="http://www.oreilly.com/">O'Reilly Media</a>.  A
+    final publication date has not yet been set, but we expect it to
+    be available around the end of October.</p>
 
-  <p>Please visit <a href="http://www.realworldhaskell.org/blog/">
-      our blog</a> for news about our progress.</p>
+    <p>Please visit <a href="http://www.realworldhaskell.org/blog/">
+	our blog</a> for news about our progress.</p>
+  </span>
+
+  <a name="buy"><h2>Buy online</h2></a>
+
+  <ul>
+    <li><a href="http://www.powells.com/partner/33317/biblio/9780596514983">Powell's Books (USA)</a></li>
+    <li><a
+    href="http://www.amazon.com/gp/product/0596514980?ie=UTF8&tag=reaworhas-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=0596514980">Amazon (USA)</a><img src="http://www.assoc-amazon.com/e/ir?t=reaworhas-20&l=as2&o=1&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></li>
+  </ul>
+
+  <h2>What's that creature on the cover?</h2>
+
+  <p>The illustration on our cover is of a <a
+    href="http://en.wikipedia.org/wiki/Hercules_beetle">Hercules
+    beetle</a>.  These beetles are among the largest in the world.
+    They are also, in proportion to their size, the strongest
+    animals on Earth, able to lift up to 850 times their own weight.</p>
+      
 </div>
 {% endblock %}

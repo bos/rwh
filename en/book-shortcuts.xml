@@ -51,6 +51,7 @@
 <!ENTITY ReadWriteMode "<literal>ReadWriteMode</literal>">
 <!ENTITY RelativeSeek "<literal>RelativeSeek</literal>">
 <!ENTITY Right "<literal>Right</literal>">
+<!ENTITY STM "<type>STM</type>">
 <!ENTITY SeekFromEnd "<literal>SeekFromEnd</literal>">
 <!ENTITY SeekMode "<literal>SeekMode</literal>">
 <!ENTITY Show "<literal>Show</literal>">
@@ -73,6 +74,7 @@
 <!ENTITY Word64 "<literal>Word64</literal>">
 <!ENTITY Word8 "<literal>Word8</literal>">
 <!ENTITY WriteMode "<literal>WriteMode</literal>">
+<!ENTITY atomically "<function>atomically</function>">
 <!ENTITY bind "<function>(&gt;&gt;=)</function>">
 <!ENTITY bind_ "<function>(&gt;&gt;)</function>">
 <!ENTITY bottom "&#8869;">
@@ -138,6 +140,7 @@
 <!ENTITY openBinaryTempFile "<literal>openBinaryTempFile</literal>">
 <!ENTITY openFile "<literal>openFile</literal>">
 <!ENTITY openTempFile "<literal>openTempFile</literal>">
+<!ENTITY orElse "<function>orElse</function>">
 <!ENTITY prepare "<literal>prepare</literal>">
 <!ENTITY print "<function>print</function>">
 <!ENTITY putStr "<literal>putStr</literal>">
@@ -149,6 +152,7 @@
 <!ENTITY readFile "<literal>readFile</literal>">
 <!ENTITY removeFile "<literal>removeFile</literal>">
 <!ENTITY renameFile "<literal>renameFile</literal>">
+<!ENTITY retry "<function>retry</function>">
 <!ENTITY return "<literal>return</literal>">
 <!ENTITY rollback "<literal>rollback</literal>">
 <!ENTITY rr "<literal>&gt;&gt;</literal>">

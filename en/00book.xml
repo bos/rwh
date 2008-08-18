@@ -36,7 +36,7 @@
 <!ENTITY ch26     SYSTEM "ch26-profiling.xml">
 <!ENTITY ch27     SYSTEM "ch27-advanced-haskell.xml">
 <!ENTITY ch28     SYSTEM "ch28-sockets.xml">
-<!ENTITY ch29     SYSTEM "ch29-http-proxy.xml">
+<!ENTITY ch29     SYSTEM "ch29-stm.xml">
 
 <!-- Appendices. -->
 

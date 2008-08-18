@@ -480,7 +480,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="concurrent.hard">
     <title>Shared-state concurrency is still hard</title>
 
     <para id="x_k41">Although Haskell has different primitives for sharing data
@@ -567,7 +567,7 @@
 	here are by no means the end of the story.  A more recent
 	addition to Haskell, Software Transactional Memory, is both
 	easier and safer to work with.  We will discuss it in chapter
-	XXX.</para>
+	<xref linkend="stm"/>.</para>
     </sect2>
   </sect1>
 

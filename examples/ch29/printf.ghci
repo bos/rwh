@@ -1,0 +1,5 @@
+--# printf
+:m +Text.Printf
+printf "%s" (True)
+printf "%d and %d\n" (3::Int)
+printf "%s and %d\n" "foo" (3::Int)
