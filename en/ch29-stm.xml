@@ -557,6 +557,36 @@
 	</listitem>
       </itemizedlist>
     </sect2>
+
+    <sect2>
+      <title>Pattern guards</title>
+
+      <para>We sneaked one last language extension into our definition
+	of <function>parseArgs</function>.  Pattern guards let us
+	write more concise guard expressions.  They are enabled via
+	the <code>PatternGuards</code> language extension.</para>
+
+      <para>A pattern guard has three components: a pattern, a
+	<code>&lt;-</code> symbol, and an expression.  The expression
+	is evaluated and matched against the pattern.  If it matches,
+	any variables present in the pattern are bound.  We can mix
+	pattern guards and normal <type>Bool</type> guard expressions
+	in a single guard by separating them with commas.</para>
+
+      &PatternGuard.hs:testme;
+
+      <para>In the above example, we return a value from the alist
+	<varname>xs</varname> if its associated key
+	<varname>x</varname> is present, provided the value is greater
+	than 3.  The above definition is equivalent to the
+	following.</para>
+
+      &PatternGuard.hs:testme_noguards;
+
+      <para>Pattern guards let us <quote>collapse</quote> a collection
+	of guards and &case; expressions into a single guard, allowing
+	us to write more succinct and descriptive guards.</para>
+    </sect2>
   </sect1>
 
   <sect1>
