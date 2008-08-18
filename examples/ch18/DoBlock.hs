@@ -5,7 +5,7 @@ useAsCString str $ \cstr -> do
 {-- /snippet doblock --}
 
 {-- snippet alloc --}
-alloc $ \stringptr -> do
+alloca $ \stringptr -> do
    ... call some Ptr CString function
    peek stringptr
 {-- /snippet alloc --}
