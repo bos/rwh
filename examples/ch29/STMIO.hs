@@ -5,6 +5,8 @@ import GHC.Conc
 someAction = undefined
 
 {-- snippet someTransaction --}
+someAction :: IO a
+
 stmTransaction :: STM (IO a)
 stmTransaction = return someAction
 

@@ -24,9 +24,9 @@
 <!ENTITY ch14     SYSTEM "ch14-data.xml">
 <!ENTITY ch15     SYSTEM "ch15-monads.xml">
 <!ENTITY ch16     SYSTEM "ch16-monad-case.xml">
-<!ENTITY ch17     SYSTEM "ch17-monad-trans.xml">
-<!ENTITY ch18     SYSTEM "ch18-parsec.xml">
-<!ENTITY ch19     SYSTEM "ch19-ffi.xml">
+<!ENTITY ch17     SYSTEM "ch17-parsec.xml">
+<!ENTITY ch18     SYSTEM "ch18-ffi.xml">
+<!ENTITY ch19     SYSTEM "ch19-monad-trans.xml">
 <!ENTITY ch20     SYSTEM "ch20-errors.xml">
 <!ENTITY ch21     SYSTEM "ch21-systems.xml">
 <!ENTITY ch22     SYSTEM "ch22-databases.xml">
@@ -64,11 +64,9 @@
 
   <bookinfo>
 
-    <subtitle>Some Clever-Clever Subtitle</subtitle>
+    <subtitle>Code you can believe in</subtitle>
 
-    <!-- XXX -->
-
-    <isbn>?-?????-???-?</isbn>
+    <isbn>978-0596514983</isbn>
     <authorgroup>
 
       <author>

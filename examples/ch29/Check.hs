@@ -139,13 +139,15 @@ getStatus = chase (5 :: Int)
 worker :: TChan String -> TChan Task -> TVar Int -> IO ()
 worker badLinks jobQueue badCount = loop
   where
+    -- Consume jobs until we are told to exit.
     loop = do
         job <- atomically $ readTChan jobQueue
         case job of
             Done  -> return ()
-            Check x -> run (B.unpack x) >> loop
+            Check x -> checkOne (B.unpack x) >> loop
 
-    run url = case parseURI url of
+    -- Check a single link.
+    checkOne url = case parseURI url of
         Just uri -> do
             code <- getStatus uri `catch` (return . Left . show) 
             case code of

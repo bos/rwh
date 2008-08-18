@@ -107,24 +107,27 @@
     
     <para>The properties of atomicity and isolation guarantee that if
       another thread sees a change in <code>bob</code>'s balance, they
-      will also be able to see <code>alice</code>'s balance
-      modified.</para>
+      will also be able to see the modification of
+      <code>alice</code>'s balance.</para>
 
     <para>Even in a concurrent program, we strive to keep as much of
-      our code as possible purely functional, since this makes it
-      easier both to reason about and to test.  Here's a function that
-      removes an item from the list we use to represent a player's
+      our code as possible purely functional.  This makes our code
+      easier both to reason about and to test.  It also gives the
+      underlying STM engine less work to do, since the data involved
+      is not transactional.  Here's a pure function that removes an
+      item from the list we use to represent a player's
       inventory.</para>
 
     &GameInventory.hs:removeInv;
 
-    <para>The result is mapped in <type>Maybe</type> so that we can
-      tell whether the item was actually present in the player's
+    <para>The result uses <type>Maybe</type> so that we can tell
+      whether the item was actually present in the player's
       inventory.</para>
 
-    <para>Here is a function to give an item to another player.  It is
-      slightly complicated by the need to determine whether the donor
-      actually <emphasis>has</emphasis> the item in question.</para>
+    <para>Here is a transactional function to give an item to another
+      player.  It is slightly complicated by the need to determine
+      whether the donor actually <emphasis>has</emphasis> the item in
+      question.</para>
 
     &GameInventory.hs:maybeGiveItem;
   </sect1>
@@ -139,29 +142,32 @@
 
     &gameInventory.ghci:atomically;
 
-    <para>The action that the &atomically; block takes as its
-      parameter executes in the &STM; monad, and its result is made
-      available to us in the &IO; monad.  The functions that we have
-      seen for manipulating <type>TVar</type> values operate in the
-      &STM; monad.</para>
+    <para>The &atomically; block takes an action in the &STM; monad,
+      executes it, and makes its result available to us in the &IO;
+      monad.  This is the monad in which all transactional code
+      executes.  For instance, the functions that we have seen for
+      manipulating <type>TVar</type> values operate in the &STM;
+      monad.</para>
 
     &gameInventory.ghci:stm;
 
-    <para>This is also the case for the functions we defined
+    <para>This is also true of the transactional functions we defined
       earlier.</para>
 
     &GameInventory.hs:types;
 
     <para>The &STM; monad does not let us perform I/O or manipulate
-      non-STM shared state such as <type>MVar</type> values.</para>
+      non-transactional mutable state, such as <type>MVar</type>
+      values.  This lets us avoid operations that might violate the
+      transactional guarantees.</para>
   </sect1>
 
   <sect1>
     <title>Retrying a transaction</title>
 
-    <para>Our <function>maybeGiveItem</function> function is somewhat
-      awkward in its API.  It only gives an item if the character
-      actually possesses it, which is reasonable.  By returning a
+    <para>The API of our <function>maybeGiveItem</function> function
+      is somewhat awkward.  It only gives an item if the character
+      actually possesses it, which is reasonable, but by returning a
       <type>Bool</type>, it complicates the code of its callers.  Here
       is an item sale function that has to look at the result of
       <function>maybeGiveItem</function> to decide what to do
@@ -169,17 +175,23 @@
 
     &GameInventory.hs:maybeSellItem;
 
-    <para>The STM API provides a &retry; action which will immediately
-      terminate an &atomically; block that cannot proceed.  As the
-      name suggests, execution of the block is restarted from scratch.
-      Here is a rewrite of <function>maybeGiveItem</function> to use
-      &retry;.</para>
+    <para>Not only do we have to check whether the item was given, we
+      have to propagate an indication of success back to our caller.
+      The complexity thus cascades outwards.</para>
+
+    <para>There is a more elegant way to handle transactions that
+      cannot succeed.  The STM API provides a &retry; action which
+      will immediately terminate an &atomically; block that cannot
+      proceed.  As the name suggests, when this occurs, execution of
+      the block is restarted from scratch, with any previous
+      modifications unperformed. Here is a rewrite of
+      <function>maybeGiveItem</function> to use &retry;.</para>
 
     &GameInventory.hs:giveItem;
 
     <para>Our <function>basicTransfer</function> from earlier had a
       different kind of flaw: it did not check the sender's balance to
-      see if it was sufficient to transfer. We
+      see if they had sufficient money to transfer. We
       can use &retry; to correct this, while keeping the function's
       type the same.</para>
 
@@ -204,8 +216,9 @@
     <sect2>
       <title>What happens when we retry?</title>
 
-      <para>In addition to the clean code that &retry; makes possible,
-	its underlying behavior seems nearly magical. If we call it,
+      <para>The &retry; function doesn't just make our code cleaner:
+	its underlying behavior seems nearly magical. When we call it,
+	it doesn't restart our transaction immediately.  Instead,
 	it blocks our thread until one or more of the variables that
 	we touched before calling &retry; is changed by another
 	thread.</para>
@@ -240,7 +253,7 @@
       function to return immediately.</para>
 
     <sect2>
-      <title>Higher order programming</title>
+      <title>Using higher order code with transactions</title>
 
       <para>Imagine that we'd like to be a little more ambitious, and
 	buy the first item from a list that is both in the possession
@@ -288,18 +301,15 @@
     <para>The &STM; monad forbids us from performing arbitrary I/O
       actions because they can break the guarantees of atomicity and
       isolation that the monad provides.  Of course the need to
-      perform I/O still arises; we just have to treat it
-      differently.</para>
+      perform I/O still arises; we just have to treat it very
+      carefully.</para>
 
     <para>Most often, we will need to perform some I/O action as a
       result of a decision we made inside an &atomically; block.  In
       these cases, the right thing to do is usually to return a piece
       of data from &atomically;, which will tell the caller in the
-      &IO; monad what to do next. Indeed, since actions in monads are
-      first class values, we can if we wish return the &IO; action to
-      perform as the result of &atomically;, and use
-      <function>join</function> to execute it once we return to the
-      &IO; monad.</para>
+      &IO; monad what to do next.  We can even return the action to
+      perform, since actions are first class values.</para>
 
     &STMIO.hs:someTransaction;
 
@@ -327,16 +337,13 @@
 
     <para>If the <function>mightRetry</function> block causes our
       transaction to restart, we will call
-      <function>launchTorpedoes</function> more than once.</para>
-
-    <tip>
-      <title>Creating new top-level TVars</title>
-
-      <para>If we are outside the &STM; monad, we can still create new
-	<type>TVar</type> values in the &IO; monad using the
-	<code>newTVarIO</code> function.  This is occasionally
-	useful.</para>
-    </tip>
+      <function>launchTorpedoes</function> more than once.  Indeed, we
+      can't predict how many times it will be called, since the
+      runtime system handles retries for us.  The solution is not to
+      perform these kinds of non-idempotent<footnote>
+	<para>An idempotent action gives the same result every time it
+	  is invoked, no matter how many times this occurs.</para>
+      </footnote> I/O operations inside a transaction.</para>
   </sect1>
 
   <sect1>
@@ -376,12 +383,20 @@
 
     &Check.hs:main;
 
+    <para>When we are in the &IO; monad, we can create new
+      <type>TVar</type> values using the <code>newTVarIO</code>
+      function.  There are also counterparts for creating
+      <type>TMVar</type> and <type>TChan</type> values.</para>
+
     <para>Notice that we use the <function>printf</function> function
       to print a report at the end.  Unlike its counterpart in C, the
       Haskell <function>printf</function> function can check its
       argument types, and their number, at runtime.</para>
 
     &printf.ghci:printf;
+
+    <para>Try evaluating <code>printf "%d" True</code> at the &ghci;
+      prompt, and see what happens.</para>
 
     <para>Supporting &main; are several short functions.</para>
 
@@ -391,16 +406,18 @@
       of identical worker threads, and decreases the
       <quote>alive</quote> count each time a thread exits.  We use a
       <function>finally</function> combinator to ensure that the count
-      is decremented, no matter whether the thread exits normally or
-      is killed by an uncaught exception.</para>
+      is always decremented, no matter how the thread
+      terminates.</para>
 
     <para>Next, the <function>writeBadLinks</function> function prints
       each broken or dead link to <code>stdout</code>.</para>
 
     &Check.hs:writeBadLinks;
 
-    <para>It uses the <function>forever</function> combinator, which
-      repeats an action endlessly.</para>
+    <para>We use the <function>forever</function> combinator above,
+      which repeats an action endlessly.</para>
+
+    &printf.ghci:forever;
 
     <para>Our <function>waitFor</function> function uses
       <function>check</function>, which calls
@@ -412,10 +429,17 @@
     <sect2>
       <title>Checking a link</title>
 
-      <para>To check the status of a link, we perform a HEAD request
-	against it.</para>
+      <para>Here is our function to check the state of a link.  This
+	code is similar to the podcatcher that we developed in
+	<xref linkend="webclient"/>, with a few small
+	differences.</para>
 
       &Check.hs:getStatus;
+
+      <para>We follows a HTTP redirect response just a few times, to
+	avoid endless redirect loops.  To determine whether a URL is
+	valid, we use the HTTP standard's HEAD verb, which uses less
+	bandwidth than a full GET.</para>
     </sect2>
 
     <sect2>
@@ -431,17 +455,18 @@
       <title>Finding links</title>
 
       <para>We structure our link finding around a state monad
-	transformer stacked on &IO;. Our state tracks links that we
-	have already seen (so we don't check a repeated link more than
-	once), the total number of links we have encountered, and the
-	queue to which we should add the links that we will be
-	checking.</para>
+	transformer stacked on the &IO; monad. Our state tracks links
+	that we have already seen (so we don't check a repeated link
+	more than once), the total number of links we have
+	encountered, and the queue to which we should add the links
+	that we will be checking.</para>
 
       &Check.hs:Job;
 
       <para>Strictly speaking, for a small standalone program, we
-	don't need the &newtype; wrapper, but we include it here for
-	practice. </para>
+	don't need the &newtype; wrapper, but we include it here as an
+	example of good practice (it only costs a few lines of code,
+	anyway).</para>
 
       <para>The &main; function maps <function>checkURLs</function>
 	over each input file, so <function>checkURLs</function> only
@@ -551,6 +576,13 @@
       the<function>retry</function> and <function>orElse</function>
       functions give us some beautiful ways to structure our
       code.</para>
+
+    <para>Code that uses STM will not deadlock, but it is possible for
+      threads to starve each other to some degree.  A long-running
+      transaction can cause another transaction to &retry; often
+      enough that it will make comparatively little progress.  To
+      address a problem like this, make your transactions as short as
+      you can, while keeping your data consistent.</para>
 
     <sect2>
       <title>Getting comfortable with giving up control</title>
