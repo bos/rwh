@@ -55,7 +55,7 @@ chapters = [
  , ch "monadcase" "Programming with monads" $ Beta "2008-04-30"
  , ch "monadtrans" "Monad transformers" $ Beta "2008-04-30"
  , ch "parsec" "The Parsec parsing library" $ Beta "2008-06-21"
- , ch "ffi" "The foreign function interface" Unpublished
+ , ch "ffi" "The foreign function interface" Beta "2008-08-17"
  , ch "errors" "Error handling" $ Beta "2008-06-21"
  , ch "systems" "Systems programming" $ Beta "2008-06-21"
  , ch "databases" "Working with databases" $ Beta "2008-04-22"
@@ -65,7 +65,7 @@ chapters = [
  , ch "profiling" "Profiling and tuning for performance" Unpublished
  , ch "bloomfilter" "Advanced library design: building a Bloom filter" $ Beta "2008-06-21"
  , ch "sockets" "Network programming" $ Beta "2008-06-21"
- , ch "webapp" "A concurrent RESTful web application" Unpublished
+ , ch "stm" "Software transactional memory" Beta "2008-08-17"
  , app "install" "Installing GHC" $ Beta "2008-01-21"
  , app "escapes" "Characters, strings, and escaping rules" $ Beta "2008-01-21"
  , app "web" "Web site and comment system usage and policies" $
