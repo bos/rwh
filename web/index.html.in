@@ -31,9 +31,11 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
   <a name="buy"><h2>Buy online</h2></a>
 
   <ul>
-    <li><a href="http://www.powells.com/partner/33317/biblio/9780596514983">Powell's Books (USA)</a></li>
-    <li><a
-    href="http://www.amazon.com/gp/product/0596514980?ie=UTF8&tag=reaworhas-20&linkCode=as2&camp=1789&creative=9325&creativeASIN=0596514980">Amazon (USA)</a><img src="http://www.assoc-amazon.com/e/ir?t=reaworhas-20&l=as2&o=1&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></li>
+    <li><a href="/buy/powells-us">Powell's Books (USA)</a></li>
+    <li><a href="/buy/amazon-us">Amazon (USA)</a><img src="http://www.assoc-amazon.com/e/ir?t=reaworhas-20&l=as2&o=1&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></li>
+    <li><a href="/buy/amazon-de">Amazon (Deutschland)</a><img src="http://www.assoc-amazon.de/e/ir?t=reaworhas09-21&l=as2&o=3&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></li>
+    <li><a href="/buy/amazon-ca">Amazon (Canada)</a><img src="http://www.assoc-amazon.ca/e/ir?t=reaworhas02-20&l=as2&o=15&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+    <li><a href="/buy/amazon-uk">Amazon (UK)</a><img src="http://www.assoc-amazon.co.uk/e/ir?t=reaworhas-21&l=as2&o=2&a=0596514980" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
   </ul>
 
   <h2>What's that creature on the cover?</h2>
@@ -42,7 +44,9 @@ O'Sullivan, Don Stewart, and John Goerzen</div></div>
     href="http://en.wikipedia.org/wiki/Hercules_beetle">Hercules
     beetle</a>.  These beetles are among the largest in the world.
     They are also, in proportion to their size, the strongest
-    animals on Earth, able to lift up to 850 times their own weight.</p>
+    animals on Earth, able to lift up to 850 times their own weight.
+    Needless to say, we like the association with a creature that has
+    such a high power-to-weight ratio.</p>
       
 </div>
 {% endblock %}
