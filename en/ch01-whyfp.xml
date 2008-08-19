@@ -8,7 +8,7 @@
 
     <para id="x_Jx">Haskell is a deep language, and we think that learning it is
       a hugely rewarding experience.  We will focus on three elements
-      as we explain why we think it worthwhile. The first is
+      as we explain why. The first is
       <emphasis>novelty</emphasis>: we invite you to think about
       programming from a different and valuable perspective.  The
       second is <emphasis>power</emphasis>: we'll show you how to
@@ -25,90 +25,87 @@
 	programming offers us a profoundly different way to
 	think about software.</para>
 
-      <para id="x_Lx">In Haskell, we de-emphasise code that modifies variables
-	or objects.  Instead, we focus on functions that take
-	immutable values as input and produce new values as output.
-	Given a fixed input, one of these functions will always return
-	the same result.  This is a core idea behind functional
-	programming.</para>
+      <para id="x_Lx">In Haskell, we de-emphasise code that modifies
+	data.  Instead, we focus on functions that take immutable
+	values as input and produce new values as output. Given the
+	same inputs, these functions always return the same results.
+	This is a core idea behind functional programming.</para>
 
-      <para id="x_Mx">Along with not modifying data, Haskell functions don't
-	usually talk to the external world.  They don't read or write
-	files; initiate or respond to network connections; or make
-	robot arms move.</para>
+      <para id="x_Mx">Along with not modifying data, our Haskell
+	functions usually don't talk to the external world; we call
+	these functions <emphasis>pure</emphasis>.  We make a strong
+	distinction between pure code and the parts of our programs
+	that read or write files, communicate over network
+	connections, or make robot arms move.  This makes it easier to
+	organize, reason about, and test our programs.</para>
 
-      <para id="x_Nx">We abandon some ideas that might seem fundamental, such as
-	repeating an action using a looping construct.  We have other,
-	more effective ways, to perform repetitive tasks.</para>
+      <para id="x_Nx">We abandon some ideas that might seem
+	fundamental, such as having a <code>for</code> loop built into
+	the language.  We have other, more flexible, ways to perform
+	repetitive tasks.</para>
 
-      <para id="x_Ox">Even the way in which we evaluate expressions is different
-	in Haskell.  We defer every computation until its result is
-	actually needed: Haskell is a <emphasis>lazy</emphasis>
-	language. This isn't just a matter of moving work around: it
-	deeply affects how we write programs.</para>
+      <para id="x_Ox">Even the way in which we evaluate expressions is
+	different in Haskell.  We defer every computation until its
+	result is actually needed: Haskell is a
+	<emphasis>lazy</emphasis> language. Laziness is not merely a
+	matter of moving work around: it profoundly affects how we
+	write programs.</para>
 
     </sect2>
 
     <sect2>
       <title>Power</title>
 
-      <para id="x_Px">Throughout this book, we're going to show you how
+      <para id="x_Px">Throughout this book, we will show you how
 	Haskell's alternatives to the features of traditional
-	languages are more powerful, more flexible, and safer. Haskell
-	is positively crammed full of cutting edge ideas about how to
-	create great software.</para>
+	languages are powerful, flexible, and lead to reliable code.
+	Haskell is positively crammed full of cutting edge ideas about
+	how to create great software.</para>
 
-      <para id="x_Qx">Perhaps surprisingly, when we place some restrictions on
-	how we create code, we find that it's actually becomes
-	<emphasis>easier</emphasis> to write and read.  Every useful
-	Haskell program talks to the outside world, and this is easy
-	to do.  But the language rigorously
-	<emphasis>isolates</emphasis> that code: there's a strong
-	division between code that is exposed to the outside world,
-	and code that is not.  Code that may have side effects even
-	<emphasis>looks</emphasis> different from normal code.</para>
+      <para id="x_Rx">Since pure code has no dealings with the outside
+	world, and the data it works with is never modified, the kinds
+	of nasty surprise in which one piece of code invisibly
+	corrupts data used by another are very rare. Whatever context
+	we use a pure function in, it will behave consistently.</para>
 
-      <para id="x_Rx">Since most of our Haskell code doesn't have any dealings
-	with the outside world, and can't modify any data, it tends to
-	be easy to understand and to reuse.  The kinds of nasty
-	surprises in which one piece of code invisibly corrupts data
-	used by another simply don't occur.  Whatever setting we use a
-	function in, it will behave consistently.</para>
+      <para id="x_Sx">Pure code is easier to test than code that deals
+	with the outside world.  When a function only responds to its
+	visible inputs, we can easily state properties of its
+	behaviour that should always be true.  We can automatically
+	test that those properties hold for a huge body of random
+	inputs, and when our tests pass, we move on.  We still use
+	traditional techniques to test code that must interact with
+	files, networks, or exotic hardware.  Since there is much less
+	of this impure code than we would find in a traditional
+	language, we gain much more assurance that our software is
+	solid.</para>
 
-      <para id="x_Sx">Code that lacks side effects is easy to test.  When a
-	function only responds to its visible inputs, we can state a
-	property of its behaviour that should always be true,
-	automatically test that the property holds for a huge body of
-	random inputs, and move on.  We can still unit test code that
-	must interact with files, networks, or exotic hardware, but we
-	get much better assurance that our software is solid.</para>
-
-      <para id="x_Tx">Lazy evaluation has some spooky effects.  Let's say we
-	want to find the <emphasis>k</emphasis> least-valued elements
-	of an unsorted list.  In a traditional language, the obvious
-	approach would be to sort the list and take the first
-	<emphasis>k</emphasis> elements, but this approach is
-	expensive.  For efficiency, we would instead write a special
-	function that takes these values in one pass, and it would
-	have to perform some moderately complex book-keeping.  In
-	Haskell, the sort-then-take approach actually makes
-	performance sense: laziness ensures that the list will only be
-	sorted enough to find the three minimal elements.</para>
+      <para id="x_Tx">Lazy evaluation has some spooky effects.  Let's
+	say we want to find the <emphasis>k</emphasis> least-valued
+	elements of an unsorted list.  In a traditional language, the
+	obvious approach would be to sort the list and take the first
+	<emphasis>k</emphasis> elements, but this is expensive.  For
+	efficiency, we would instead write a special function that
+	takes these values in one pass, and it would have to perform
+	some moderately complex book-keeping.  In Haskell, the
+	sort-then-take approach actually performs well: laziness
+	ensures that the list will only be sorted enough to find the
+	<emphasis>k</emphasis> minimal elements.</para>
 
       <para id="x_Ux">Better yet, our Haskell code that operates so efficiently
 	is tiny, and uses standard library functions.</para>
 
       &KMinima.hs:minima;
       
-      <para id="x_Vx">It can take a while to adjust to develop an intuitive feel
+      <para id="x_Vx">It can take a while to develop an intuitive feel
 	for when lazy evaluation is important, but when we exploit it,
 	the resulting code is often clean, brief, and
 	efficient.</para>
 
-      <para id="x_Wx">As the above example shows, an important aspect of
-	Haskell's power lies in the compactness of the code we write.
-	Compared to working in popular traditional languages, we often
-	write Haskell code with a tenfold reduction in code size, in
+      <para id="x_Wx">As the above example shows, an important aspect
+	of Haskell's power lies in the compactness of the code we
+	write. Compared to working in popular traditional languages,
+	when we develop in Haskell we often write much less code, in
 	substantially less time, and with fewer bugs.</para>
     </sect2>
 
@@ -119,10 +116,10 @@
 	Haskell programming, and that you will be able to successfully
 	write small programs within a matter of hours or days.</para>
 
-      <para id="x_Yx">Of course, programming in Haskell differs in huge ways
-	from working in other languages, so mastering both the
-	language and functional programming techniques does indeed
-	require plenty of thought and practice.</para>
+      <para id="x_Yx">Since effective programming in Haskell differs
+	greatly from other languages, you should expect that mastering
+	both the language itself and functional programming techniques
+	will require plenty of thought and practice.</para>
 
       <para id="x_Zx">Harking back to our own days of getting started with
 	Haskell, the good news is that the fun begins early: it's
@@ -130,27 +127,28 @@
 	in which so many commonplace ideas are different or missing,
 	and to figure out how to write simple programs.</para>
 
-      <para id="x_ax">For us, the initial pleasure lasted as our experience grew
-	and our understanding deepened.  In other languages, it's
-	difficult to see any connection between abstract mathematics
-	and programming.  In Haskell, not only have we imported some
-	ideas from mathematics and put them to work, we've found that
-	they're both surprisingly easy to pick up and a delight to
-	deal with as we program.</para>
+      <para id="x_ax">For us, the initial pleasure lasted as our
+	experience grew and our understanding deepened.  In other
+	languages, it's difficult to see any connection between
+	science and the nuts-and-bolts of programming. In Haskell, we
+	have imported some ideas from abstract mathematics and put
+	them to work.  Even better, we find that not only are these
+	ideas easy to pick up, they have a practical payoff in helping
+	us to write more compact, reusable code.</para>
 
       <para id="x_bx">Furthermore, we won't be putting any <quote>brick
 	  walls</quote> in your way: there are no especially difficult
 	or gruesome techniques in this book that you must master in
 	order to be able to program effectively.</para>
 
-      <para id="x_cx">That being said, Haskell is a rigorous language: it will
-	make you do more of your thinking up front than other
-	languages.  It can take a little while to adjust to doing much
-	of your debugging before you ever run your code, to satisfy
-	the compiler that your program makes sense.  But we think that
-	you'll be astonished and pleased by the number of times your
-	Haskell programs simply work on the first try
-	afterwards.</para>
+      <para id="x_cx">That being said, Haskell is a rigorous language:
+	it will make you perform more of your thinking up front.  It
+	can take a little while to adjust to debugging much of your
+	code before you ever run it, in response to the compiler
+	telling you that something about your program does not make
+	sense.  Even with years of experience, we remain astonished and
+	pleased by how often our Haskell programs simply work on the
+	first try, once we fix those compilation errors.</para>
 
     </sect2>
   </sect1>
@@ -168,7 +166,7 @@
       functional programming and Haskell to solve realistic problems.
       This is a hands-on book: every chapter contains dozens of code
       samples, and many contain complete applications.  Here are a few
-      examples of the libraries, techniques and tools we'll show you
+      examples of the libraries, techniques and tools that we'll show you
       how to develop.</para>
 
     <itemizedlist>
@@ -178,9 +176,10 @@
 	  database.</para>
       </listitem>
       <listitem>
-	<para id="x_ex">Test your code in a new and powerful way.
-	  Understand which parts of your code are actually being
-	  covered by your tests.</para>
+	<para id="x_ex">Test your code in an intuitive and powerful
+	  way.  Describe properties that ought to be true, then let
+	  the QuickCheck library generate test cases
+	  automatically.</para>
       </listitem>
       <listitem>
 	<para id="x_fx">Take a grainy phone camera snapshot of a barcode, and
@@ -188,25 +187,24 @@
 	  library or bookseller's web site.</para>
       </listitem>
       <listitem>
-	<para id="x_gx">Write code that thrives on the web.  Exchange data with
-	servers and clients written in other languages using JSON
-	notation.  Develop a highly concurrent web server.</para>
+	<para id="x_gx">Write code that thrives on the web.  Exchange
+	  data with servers and clients written in other languages
+	  using JSON notation.  Develop a concurrent link
+	  checker.</para>
       </listitem>
     </itemizedlist>
 
     <sect2>
       <title>A little bit about you</title>
 
-      <para id="x_hx">What do we think you'll need to know before reading this
+      <para id="x_hx">What will you need to know before reading this
 	book?  We expect that you already know how to program, but if
-	you've never done any functional programming, that's fine.  If
-	you've programmed in an expressive language like Python or
-	Ruby, we think you'll pick Haskell up quite easily.</para>
+	you've never used a functional language, that's fine.</para>
 
-      <para id="x_ix">No matter what your level of experience, we've tried to
-	anticipate your needs: we go out of our way to explain new and
-	potentially tricky ideas in depth, usually with examples and
-	images to drive our points home.</para>
+      <para id="x_ix">No matter what your level of experience is, we
+	have tried to anticipate your needs: we go out of our way to
+	explain new and potentially tricky ideas in depth, usually
+	with examples and images to drive our points home.</para>
 
       <para id="x_P">As a new Haskell programmer, you'll inevitably
 	start out writing quite a bit of code by hand for which you
@@ -217,7 +215,7 @@
 
       <para id="x_jx">Of course, there will always be a few bumps along the
 	road.  If you start out anticipating an occasional surprise or
-	difficulty along with the fun stuff, you'll have the best
+	difficulty along with the fun stuff, you will have the best
 	experience.  Any rough patches you might hit won't last
 	long.</para>
 
@@ -242,84 +240,84 @@
       <emphasis>default</emphasis>, not the only option.  Haskell also
       supports the more traditional models of procedural code and
       strict evaluation.  Additionally, although the focus of the
-      language is squarely on writing strongly typed programs, it is
+      language is squarely on writing statically typed programs, it is
       possible (though rarely seen) to write Haskell code in a
       dynamically typed manner.</para>
 
     <sect2>
       <title>Compared to traditional static languages</title>
 
-      <para id="x_nx">Statically typed languages have been the mainstay of the
-	programming world for decades.  Although Haskell is a
-	statically typed language, its notion of what types are for,
-	and what we can do with them, is much more flexible and
-	powerful than traditional languages.</para>
+      <para id="x_nx">Languages that use simple static type systems
+	have been the mainstay of the programming world for decades.
+	Haskell is statically typed, but its notion of what types are
+	for, and what we can do with them, is much more flexible and
+	powerful than traditional languages.  Types make a major
+	contribution to the brevity, clarity, and efficiency of
+	Haskell programs.</para>
 
-      <para id="x_ox">In addition, Haskell's type system is often unobtrusive: a
-	Haskell compiler will automatically infer the type of an
-	expression or function if we don't provide it.  Compared to
-	traditional static languages, to which we must spoon feed
-	large amounts of type information, the combination of power
-	and inference in Haskell's type system significantly reduces
-	the clutter and redundancy of our code.</para>
+      <para id="x_ox">Although powerful, Haskell's type system is
+	often also unobtrusive.  If we omit explicit type information,
+	a Haskell compiler will automatically infer the type of an
+	expression or function. Compared to traditional static
+	languages, to which we must spoon-feed large amounts of type
+	information, the combination of power and inference in
+	Haskell's type system significantly reduces the clutter and
+	redundancy of our code.</para>
 
-      <para id="x_px">Several of Haskell's other features combine to further
-	increase the amount of work we can fit into a screenful of
-	text. As a result, it is not unusual for a Haskell program to
-	require one tenth the number of lines of code as an equivalent
-	written in a traditional language.  With this come
-	improvements in development time and agility: we can create
-	reliable code quickly, and easily refactor it in response to
-	changing requirements.</para>
+      <para id="x_px">Several of Haskell's other features combine to
+	further increase the amount of work we can fit into a
+	screenful of text.  This brings improvements in development
+	time and agility: we can create reliable code quickly, and
+	easily refactor it in response to changing
+	requirements.</para>
 
-      <para id="x_qx">These productivity improvements are sometimes accompanied
-	by a performance penalty when it comes to running code.  It is
-	not unusual for a Haskell program to run at a half to a
-	quarter the speed of a comparable program written in a
-	traditional language.</para>
+      <para id="x_qx">Sometimes, Haskell programs may run more slowly
+	than similar programs written in C or C++.  For most of the
+	code we write, Haskell's large advantages in productivity and
+	reliability outweigh any small performance
+	disadvantage.</para>
 
-      <para id="x_rx">However, a substantial and increasing number of Haskell
-	programs perform as well as (sometimes better than) their
-	traditional counterparts.  In part, this is due to advances in
-	Haskell compilers and libraries, where progress is rapid and
-	improvements benefit the entire community.  Also, Haskell's
-	huge edge in developer productivity gives us more
-	opportunities to focus on algorithmic improvements.</para>
+      <para>Multicore processors are now ubiquitous, but they remain
+	notoriously difficult to program using traditional techniques.
+	Haskell provides unique technologies to make multicore
+	programming more tractable.  It supports parallel programming,
+	software transactional memory for reliable concurrency, and
+	scales to hundreds of thousands of concurrent threads.</para>
     </sect2>
 
     <sect2>
       <title>Compared to modern dynamic languages</title>
 
-      <para id="x_sx">Over the past decade, dynamically typed and interpreted
+      <para id="x_sx">Over the past decade, dynamically typed, interpreted
 	languages have become increasingly popular.  They offer
 	substantial benefits in developer productivity.  Although this
-	typically comes at the cost of a huge performance hit, for
+	often comes at the cost of a huge performance hit, for
 	many programming tasks productivity trumps performance, or
 	performance isn't a significant factor in any case.</para>
 
       <para id="x_tx">Brevity is one area in which Haskell and dynamically typed
-	languages perform similarly: in each case, you write much less
+	languages perform similarly: in each case, we write much less
 	code to solve a problem than in a traditional language.
 	Programs are often around the same size in dynamically typed
 	languages and Haskell.</para>
 
-      <para id="x_ux">When we consider runtime performance, Haskell almost
-	always has a huge advantage.  Code compiled by &GHC; is
-	typically between 20 and 60 times faster than code run through
-	a dynamic language's interpreter.  &GHC; also provides an
-	interpreter, so you can run scripts without compiling
-	them.</para>
+      <para id="x_ux">When we consider runtime performance, Haskell
+	almost always has a huge advantage.  Code compiled by the
+	Glasgow Haskell Compiler (&GHC;) is typically between 20 and
+	60 times faster than code run through a dynamic language's
+	interpreter.  &GHC; also provides an interpreter, so you can
+	run scripts without compiling them.</para>
 
-      <para id="x_vx">Another big differentiator between dynamically typed
-	languages and Haskell lies in the philosophy around types.  A
+      <para id="x_vx">Another big difference between dynamically typed
+	languages and Haskell lies in their philosophies around types.  A
 	major reason for the popularity of dynamically typed languages
 	is that only rarely do we need to explicitly mention types.
 	Through automatic type inference, Haskell offers the same
 	advantage.</para>
 
-      <para id="x_wx">However, beyond this surface level the differences run
+      <para id="x_wx">Beyond this surface similarity, the differences run
 	deep.  In a dynamically typed language, we can create
-	constructs that are difficult or impossible to express in a
+	constructs that are difficult to express in a
 	statically typed language.  However, the same is true in
 	reverse: with a type system as powerful as Haskell's, we can
 	structure a program in a way that would be unmanageable or
@@ -336,9 +334,7 @@
 	are more beneficial.  Two of us have years of experience
 	programming in dynamically typed languages.  We love working
 	with them; we still use them every day; but usually, we prefer
-	Haskell.  In our experience, Haskell starts to outshine a
-	dynamically typed language once a project grows to a handful
-	of thousands of lines of code.</para>
+	Haskell.</para>
     </sect2>
 
     <sect2>
@@ -346,24 +342,57 @@
 
       <para id="x_zx">Here are just a few examples of large software systems
 	that have been created in Haskell.  Some of these are open
-	source, while others are commercial products.</para>
+	source, while others are proprietary products.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para id="x_Ay">Innumerable compilers and compiler-related
-	    tools</para>
+	  <para id="x_By">ASIC and FPGA design software (Lava,
+	    products from Bluespec Inc.)</para>
 	</listitem>
 	<listitem>
-	  <para id="x_By">Chip design software</para>
+	  <para id="x_Cy">Music composition software (Haskore)</para>
 	</listitem>
 	<listitem>
-	  <para id="x_Cy">A toolkit for music composition</para>
+	  <para id="x_Ay">Compilers and compiler-related tools (most
+	    notably &GHC;)</para>
 	</listitem>
 	<listitem>
-	  <para id="x_Dy">Distributed revision control</para>
+	  <para id="x_Dy">Distributed revision control (Darcs)</para>
 	</listitem>
 	<listitem>
-	  <para id="x_Ey">Secure web middleware</para>
+	  <para id="x_Ey">Web middleware (HAppS, products from Galois
+	    Inc.)</para>
+	</listitem>
+      </itemizedlist>
+
+      <para> is a sample of some of the companies using Haskell in
+	late 2008, taken from the <ulink
+	  url="http://www.haskell.org/haskellwiki/Haskell_in_industry">Haskell 
+	  wiki</ulink>.</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>ABN AMRO is an international bank. It uses Haskell in
+	    investment banking, to measure the counterparty risk on
+	    portfolios of financial derivatives. </para>
+	</listitem>
+	<listitem>
+	  <para>Anygma is a startup company.  It develops multimedia
+	    content creation tools using Haskell.</para>
+	</listitem>
+	<listitem>
+	  <para>Amgen is a biotech company. It creates mathematical
+	    models and other complex applications in Haskell.</para>
+	</listitem>
+	<listitem>
+	  <para>Bluespec is an ASIC and FPGA design software vendor.
+	    Its products are developed in Haskell, and the chip design
+	    languages that its products provide are influenced by
+	    Haskell.</para>
+	</listitem>
+	<listitem>
+	  <para>Eaton uses Haskell for the design and verification of
+	    hydraulic hybrid vehicle systems.</para>
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -381,15 +410,12 @@
 
       <itemizedlist>
 	<listitem>
-	  <para id="x_Hy">It compiles to efficient native code on all major
+	  <para id="x_Hy">Compiles to efficient native code on all major
 	    modern operating systems and CPU architectures</para>
 	</listitem>
 	<listitem>
 	  <para id="x_Iy">Easy deployment of compiled binaries, unencumbered by
 	    licensing restrictions</para>
-	</listitem>
-	<listitem>
-	  <para id="x_Jy">Interactive interpreter and debugger</para>
 	</listitem>
 	<listitem>
 	  <para id="x_Ky">Code coverage analysis</para>
@@ -404,6 +430,9 @@
 	<listitem>
 	  <para id="x_Ny">Massively scalable support for concurrent and
 	    multicore programming</para>
+	</listitem>
+	<listitem>
+	  <para id="x_Jy">Interactive interpreter and debugger</para>
 	</listitem>
       </itemizedlist>
 
@@ -469,18 +498,18 @@
   <sect1>
     <title>A brief sketch of Haskell's history</title>
 
-    <para id="x_by">The history that led to the development of Haskell is rooted
-      in mathematics and computer science research.</para>
+    <para id="x_by">The development of Haskell is rooted in
+      mathematics and computer science research.</para>
 
     <sect2>
       <title>Prehistory</title>
 
-      <para id="x_cy">A few decades before modern computers were invented, the
-	mathematician Alonzo Church developed a language named the
-	lambda calculus.  He intended it as a tool for investigating
-	the foundations of mathematics.  The first person to
-	successfully capture the idea of using the lambda calculus to
-	write software was John McCarthy, who created Lisp in
+      <para id="x_cy">A few decades before modern computers were
+	invented, the mathematician Alonzo Church developed a language
+	called the lambda calculus.  He intended it as a tool for
+	investigating the foundations of mathematics.  The first
+	person to realize the practical connection between programming
+	and the lambda calculus was John McCarthy, who created Lisp in
 	1958.</para>
 
       <para id="x_dy">During the 1960s, computer scientists began to recognise
@@ -498,7 +527,7 @@
 
       <para id="x_fy">The 1970s saw the emergence of lazy evaluation as a novel
 	strategy.  David Turner developed SASL and KRC, while Rod
-	Burstall and John Darlington developed a NPL and Hope.  NPL,
+	Burstall and John Darlington developed NPL and Hope.  NPL,
 	KRC and ML influenced the development of several more
 	languages in the 1980s, including Lazy ML, Clean, and
 	Miranda.</para>
@@ -512,55 +541,57 @@
 	dozen languages.  Concerned by this diffusion of effort, a
 	number of researchers decided to form a committee to design a
 	common language.  After three years of work, the committee
-	published the Haskell 1.0 specification in 1990.</para>
+	published the Haskell 1.0 specification in 1990.  It named the
+	language after Haskell Curry, an influential logician.</para>
 
-      <para id="x_hy">We are generally blind to the tired cliche of
-	<quote>design by committee</quote> except when a
-	counterexample is thrown our way, and the work of the Haskell
-	committee is a beautiful example of the best a committee can
-	do.  They produced an elegant, considered language design, and
-	succeeded in unifying the fractured efforts of their research
-	community.  Of the thicket of lazy functional languages that
-	existed in 1990, only Clean and Haskell still exist.</para>
+      <para id="x_hy">Many people are rightfully suspicious of
+	<quote>design by committee</quote>, but the work of the
+	Haskell committee is a beautiful example of the best work a
+	committee can do.  They produced an elegant, considered
+	language design, and succeeded in unifying the fractured
+	efforts of their research community.  Of the thicket of lazy
+	functional languages that existed in 1990, only Haskell is
+	still actively used.</para>
     
-      <para id="x_iy">Since its publication in 1990, the Haskell language
-	standard has seen five revisions, most recently in 1998.
-	Researchers have built around half a dozen implementations of
-	the language. Of those, about half are still under active
-	development.</para>
+      <para id="x_iy">Since its publication in 1990, the Haskell
+	language standard has seen five revisions, most recently in
+	1998. A number of Haskell implementations have been written,
+	and several are still actively developed.</para>
 
-      <para id="x_jy">During the 1990s, Haskell served two main purposes.  On
-	one side, it gave language researchers a stable way to
-	experiment with making lazy functional programs run
-	efficiently.  Other researchers explored how to construct
-	programs using lazy functional techniques.</para>
+      <para id="x_jy">During the 1990s, Haskell served two main
+	purposes.  On one side, it gave language researchers a stable
+	language in which to experiment with making lazy functional
+	programs run efficiently.  Other researchers explored how to
+	construct programs using lazy functional techniques.  Still
+	others used it as a teaching language.</para>
     </sect2>
 
     <sect2>
       <title>The modern era</title>
 
-      <para id="x_ky">While these basic explorations of the 1990s proceeded,
-	Haskell remained firmly an academic affair.  The informal
-	slogan of those inside the community was to <quote>avoid
-	  success at all costs</quote>. Few outsiders had heard of the
-	language (or even functional programming) at all.</para>
+      <para id="x_ky">While these basic explorations of the 1990s
+	proceeded, Haskell remained firmly an academic affair.  The
+	informal slogan of those inside the community was to
+	<quote>avoid success at all costs</quote>. Few outsiders had
+	heard of the language at all.  Indeed, functional programming
+	as a field was quite obscure.</para>
 
-      <para id="x_ly">During this time, the mainstream programming world was
-	experimenting with relatively small tweaks: from programming
-	in C, to C++, to Java.  Meanwhile, on the fringes, programmers
-	were beginning to tinker with new, more expressive languages.
-	Guido van Rossum designed Python, and Yukihiro Matsumoto
-	developed Ruby.</para>
+      <para id="x_ly">During this time, the mainstream programming
+	world experimented with relatively small tweaks: from
+	programming in C, to C++, to Java.  Meanwhile, on the fringes,
+	programmers were beginning to tinker with new, more dynamic
+	languages. Guido van Rossum designed Python; Larry Wall
+	created Perl; and Yukihiro Matsumoto developed Ruby.</para>
 
-      <para id="x_my">As these newer languages began to seep into wider use,
-	they spread some crucial ideas. The first was that programmers
-	are perfectly capable of working in expressive languages; in
-	fact, they flourish.  The second was in part a byproduct of
-	the rapid growth in raw computing power of that era: it's
-	often smart to sacrifice some execution performance in
-	exchange for a big increase in programmer productivity.
-	Finally, the creators of these languages explicitly credited
-	functional programming as a source of inspiration.</para>
+      <para id="x_my">As these newer languages began to seep into
+	wider use, they spread some crucial ideas. The first was that
+	programmers are not merely capable of working in expressive
+	languages; in fact, they flourish.  The second was in part a
+	byproduct of the rapid growth in raw computing power of that
+	era: it's often smart to sacrifice some execution performance
+	in exchange for a big increase in programmer productivity.
+	Finally, several of these languages borrowed from functional
+	programming.</para>
       
       <para id="x_ny">Over the past half a decade, Haskell has successfully
 	escaped from academia, buoyed in part by the visibility of
@@ -587,9 +618,9 @@
           <para id="x_Vl"><ulink
 	      url="http://www.haskell.org/ghc/docs/latest/html/libraries/index.html">The 
 	      Haskell Hierarchical Libraries reference</ulink>
-	    provides the reference to the standard library that comes
-	    with your compiler.  This is probably the top item in the
-	    bookmarks for many Haskell programmers.</para>
+	    provides the documentation for the standard library that comes
+	    with your compiler.  This is one of the most valuable
+	    online assets for Haskell programmers.</para>
         </listitem>
 
         <listitem>
@@ -612,9 +643,11 @@
 
         <listitem>
           <para id="x_Yl"><ulink
-	      url="http://haskell.org/hoogle/">Hoogle</ulink> is the
-	    Haskell API search engine.  It can find functions for you
-	    by name or by type.</para>
+	      url="http://haskell.org/hoogle/">Hoogle</ulink> and
+	    <ulink
+	      url="http://holumbus.fh-wedel.de/hayoo/hayoo.html">Hayoo</ulink> 
+	    are Haskell API search engines.  They can search for
+	    functions by name or by type.</para>
         </listitem>
 
       </itemizedlist>
@@ -625,7 +658,7 @@
       <para id="x_Zl">
         If you're looking for a Haskell library to use for a
         particular task, or an application written in Haskell, check
-        out the resources in this section.
+        out the following resources.
       </para>
       <itemizedlist>
         <listitem>
