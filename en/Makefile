@@ -142,7 +142,7 @@ svn: beta
 	cp beta.xml book-svn/book.xml
 	cp figs/*.png book-svn/figs
 	svn add -q book-svn/figs/*.png
-	svn ci -m 'Author snapshot from darcs' book-svn
+	svn ci -m 'Author snapshot from darcs.  orm:commitpdf' book-svn
 
 websup: $(extras-web)
 
