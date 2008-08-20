@@ -353,11 +353,118 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <title>Completed Code</title>
       <para id="x_OM">
         Here is the completed <literal>num.hs</literal>, which was used with
-        the &ghci; examples at the beginning of this chapter.
+        the &ghci; examples at the beginning of this chapter.  Let's
+        look at this code one piece at a time.
       </para>
-      &num.hs:all;
+      &num.hs:beginning;
+      <para>
+        In this section of code, we define an <literal>Op</literal>
+        that is identical to the one we used before.  We also define
+        <literal>SymbolicManip</literal>, which is similar to what we
+        used before.  In this version, we now support unary arithmetic
+        operations (those which take only one parameter) such as
+        <literal>abs</literal> or <literal>cos</literal>.  Next we
+        define our instance of &Num;.
+      </para>
+      &num.hs:numinstance;
+      <para>
+        This is pretty straightforward and also similar to our earlier
+        code.  Note that earlier we weren't able to properly support
+        <literal>abs</literal>, but now with the
+        <literal>UnaryArith</literal> constructor, we can.  Next we
+        define some more instances.
+      </para>
+      &num.hs:moreinstances;
+      <para>
+        This section of code defines some fairly straightforward
+        instances of &Fractional; and &Floating;.  Now let's work on
+        converting our expressions to strings for display.
+      </para>
+      &num.hs:prettyShow;
+      <para>
+        We start by defining a function
+        <literal>prettyShow</literal>.  It renders an expression using
+        conventional style.  The algorithm is fairly simple: bare
+        numbers and symbols are rendered bare; binary arithmetic is
+        rendered with the two sides plus the operator in the middle,
+        and of course we handle the unary operators as well.
+        <literal>op2str</literal> simply converts an
+        <literal>Op</literal> to a &String;.  In
+        <literal>simpleParen</literal>, we have a quite conservative
+        algorithm that adds parenthesis to keep precedence clear in
+        the result.  Finally, we make <literal>SymbolicManip</literal>
+        an instance of &Show; and use <literal>prettyShow</literal> to
+        accomplish that.  Now let's implement an algorithm that
+        converts an expression to s string in RPN format.
+      </para>
+      &num.hs:rpnShow;
+      <para>
+        Fans of RPN will note how much simpler this algorithm is
+        compared to the algorithm to render with conventional
+        notation.  In particular, we didn't have to worry about where
+        to add parenthesis, because RPN can, by definition, only be
+        evaluated one way.  Next, let's see how we might implement a
+        function to do some rudimentary simplification on expressions.
+      </para>
+      &num.hs:simplify;
+      <para>
+        This function is pretty simple.  For certain binary arithmetic
+        operations -- for instance, multiplying any value by 1 -- we
+        are able to easily simplify the situation.  We begin by
+        obtaining simplified versions of both sides of the calculation
+        (this is where recursion hits) and then simplify the result.
+        We have little to do with unary operators, so we just simplify
+        the expression they act upon.
+      </para>
+      <para>
+        From here on, we will add support for units of measure to our
+        established library.  This will let us represent quantities
+        such as "5 meters".  We start, as before, by defining a type.
+      </para>
+      &num.hs:units;
+      <para>
+        So, a <literal>Units</literal> contains a number and a label.
+        The label is itself a <literal>SymbolicManip</literal>.  Next,
+        it will probably come as no surprise to see an instance of
+        &Num; for <literal>Units</literal>.
+      </para>
+      &num.hs:unitsnum;
+      <para>
+        Now it may become clear why we use a
+        <literal>SymbolicManip</literal> instead of a &String; to
+        store the unit of measure.  As calculations such as
+        multiplication occur, the unit of measure also changes.  For
+        instance, if we multiply 5 meters by 2 meters, we obtain 10
+        square meters.  We force the units for addition to match, and
+        implement subtraction in terms of addition.  Let's look at
+        more typeclass instances for <literal>Units</literal>.
+      </para>
+      &num.hs:unitsinst;
+      <para>
+        We didn't supply implementations for every function, but quite
+        a few have been defined.  Now let's define a few utility
+        functions for working with units.
+      </para>
+      &num.hs:unitsutil;
+      <para>
+        First, we have <literal>units</literal>, which makes it easy
+        to craft simple expressions.  It's faster to say
+        <literal>units 5 "m"</literal> than <literal>Units 5 (Symbol
+        "m")</literal>.  We also have a corresponding
+        <literal>dropUnits</literal>, which discards the unit of
+        measure and returns the embedded bare &Num;.  Finally, we
+        define some functions for use by our earlier instances to
+        convert between degrees and radians.  Next, we just define a
+        &Show; instance for <literal>Units</literal>.
+      </para>
+      &num.hs:unitsshow;
+      <para>
+        That was simple.  For one last piece, we define a variable
+        <literal>test</literal> to experiment with.
+      </para>
+      &num.hs:test;
       <para id="x_PM">
-        Here we have done what we set out to accomplish: implemented more
+        So, looking back over all this code, we have done what we set out to accomplish: implemented more
         instances for <literal>SymbolicManip</literal>.  We have also
         introduced another type called <literal>Units</literal> which stores
         a number and a unit of measure.  We implement several show-like
@@ -366,7 +473,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       </para>
       <para id="x_QM">
         There is one other point that this example drives home.  Every language
-        even those with objects and overloading, has
+        -- even those with objects and overloading -- has
         some parts of the language that are special in some way.  In Haskell,
         the "special" bits are extremely small.  We have just developed a new
         representation for something as fundamental as a number, and it has

@@ -1,4 +1,4 @@
-{-- snippet all --}
+{-- snippet beginning --}
 -- ch14/num.hs
 
 import Data.List
@@ -23,7 +23,8 @@ data SymbolicManip a =
         | BinaryArith Op (SymbolicManip a) (SymbolicManip a)
         | UnaryArith String (SymbolicManip a)
           deriving (Eq)
-
+{-- /snippet beginning --}
+{-- snippet numinstance --}
 {- SymbolicManip will be an instance of Num.  Define how the Num
 operations are handled over a SymbolicManip.  This will implement things
 like (+) for SymbolicManip. -}
@@ -35,7 +36,8 @@ instance Num a => Num (SymbolicManip a) where
     abs a = UnaryArith "abs" a
     signum _ = error "signum is unimplemented"
     fromInteger i = Number (fromInteger i)
-
+{-- /snippet numinstance --}
+{-- snippet moreinstances --}
 {- Make SymbolicManip an instance of Fractional -}
 instance (Fractional a) => Fractional (SymbolicManip a) where
     a / b = BinaryArith Div a b
@@ -61,7 +63,8 @@ instance (Floating a) => Floating (SymbolicManip a) where
     asinh a = UnaryArith "asinh" a
     acosh a = UnaryArith "acosh" a
     atanh a = UnaryArith "atanh" a
-
+{-- /snippet moreinstances --}
+{-- snippet prettyShow --}
 {- Show a SymbolicManip as a String, using conventional
 algebraic notation -}
 prettyShow :: (Show a, Num a) => SymbolicManip a -> String
@@ -99,7 +102,8 @@ simpleParen x@(UnaryArith _ _) = prettyShow x
 {- Showing a SymbolicManip calls the prettyShow function on it -}
 instance (Show a, Num a) => Show (SymbolicManip a) where
     show a = prettyShow a
-    
+{-- /snippet prettyShow --}
+{-- snippet rpnShow --}
 {- Show a SymbolicManip using RPN.  HP calculator users may
 find this familiar. -}
 rpnShow :: (Show a, Num a) => SymbolicManip a -> String
@@ -112,7 +116,8 @@ rpnShow i =
         join :: [a] -> [[a]] -> [a]
         join delim l = concat (intersperse delim l)
     in join " " (toList i)
-
+{-- /snippet rpnShow --}
+{-- snippet simplify --}
 {- Perform some basic algebraic simplifications on a SymbolicManip. -}
 simplify :: (Num a) => SymbolicManip a -> SymbolicManip a
 simplify (BinaryArith op ia ib) = 
@@ -131,16 +136,18 @@ simplify (BinaryArith op ia ib) =
                 _ -> BinaryArith op sa sb
 simplify (UnaryArith op a) = UnaryArith op (simplify a)
 simplify x = x
+{-- /snippet simplify --}
 --------------------------------------------------
 -- Units of measure support
 --------------------------------------------------
-
+{-- snippet units --}
 {- New data type: Units.  A Units type contains a number
 and a SymbolicManip, which represents the units of measure.
 A simple label would be something like (Symbol "m") -}
 data Num a => Units a = Units a (SymbolicManip a)
            deriving (Eq)
-
+{-- /snippet units --}
+{-- snippet unitsnum --}
 {- Implement Units for Num.  We don't know how to convert between
 arbitrary units, so we generate an error if we try to add numbers with
 different units.  For multiplication, generate the appropriate
@@ -148,14 +155,15 @@ new units. -}
 instance (Num a) => Num (Units a) where
     (Units xa ua) + (Units xb ub) 
         | ua == ub = Units (xa + xb) ua
-        | otherwise = error "Mis-matched units in add"
+        | otherwise = error "Mis-matched units in add or subtract"
     (Units xa ua) - (Units xb ub) = (Units xa ua) + (Units (xb * (-1)) ub)
     (Units xa ua) * (Units xb ub) = Units (xa * xb) (ua * ub)
     negate (Units xa ua) = Units (negate xa) ua
     abs (Units xa ua) = Units (abs xa) ua
     signum (Units xa _) = Units (signum xa) (Number 1)
     fromInteger i = Units (fromInteger i) (Number 1)
-
+{-- /snippet unitsnum --}
+{-- snippet unitsinst --}
 {- Make Units an instance of Fractional -}
 instance (Fractional a) => Fractional (Units a) where
     (Units xa ua) / (Units xb ub) = Units (xa / xb) (ua / ub)
@@ -201,7 +209,8 @@ instance (Floating a) => Floating (Units a) where
     asinh = error "asinh not yet implemented in Units"
     acosh = error "acosh not yet implemented in Units"
     atanh = error "atanh not yet implemented in Units"
-
+{-- /snippet unitsinst --}
+{-- snippet unitsutil --}
 {- A simple function that takes a number and a String and returns an
 appropriate Units type to represent the number and its unit of measure -}
 units :: (Num z) => z -> String -> Units z
@@ -211,20 +220,20 @@ units a b = Units a (Symbol b)
 dropUnits :: (Num z) => Units z -> z
 dropUnits (Units x _) = x
                                                     
+{- Utilities for the Unit implementation -}
+deg2rad x = 2 * pi * x / 360
+rad2deg x = 360 * x / (2 * pi)
+{-- /snippet unitsutil --}
+{-- snippet unitsshow --}
 {- Showing units: we show the numeric component, an underscore,
 then the prettyShow version of the simplified units -}
 instance (Show a, Num a) => Show (Units a) where
     show (Units xa ua) = show xa ++ "_" ++ prettyShow (simplify ua)
-
-{- Utilities for the Unit implementation -}
-deg2rad x = 2 * pi * x / 360
-rad2deg x = 360 * x / (2 * pi)
-
+{-- /snippet unitsshow --}
 --------------------------------------------------
 -- Things to play with
 --------------------------------------------------
-
+{-- snippet test --}
 test :: (Num a) => a
 test = 2 * 5 + 3
-{-- /snippet all --}
-
+{-- /snippet test --}
