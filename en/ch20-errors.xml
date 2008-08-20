@@ -84,6 +84,17 @@
         successful, just as <literal>divBy</literal> does when it
         calls itself.
       </para>
+      <tip>
+        <para>Alert readers will note that you could use a monadic
+        implementation of the above, like so:
+        </para>
+        &divby2m.hs:all;
+        <para>
+          We will be avoiding the monadic implementation in this
+          chapter for simplicity, but wanted to point out that it
+          exists.
+        </para>
+      </tip>
       <sect3 id="errors.maybe.laziness">
         <title>Loss and Preservation of Laziness</title>
         <para id="x_Jz">
