@@ -71,7 +71,7 @@
       <para id="x_Sx">Pure code is easier to test than code that deals
 	with the outside world.  When a function only responds to its
 	visible inputs, we can easily state properties of its
-	behaviour that should always be true.  We can automatically
+	behavior that should always be true.  We can automatically
 	test that those properties hold for a huge body of random
 	inputs, and when our tests pass, we move on.  We still use
 	traditional techniques to test code that must interact with
