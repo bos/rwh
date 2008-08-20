@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="webclient" revision="alpha;beta">
+<chapter id="webclient">
   <title>Extended Example: Web Client Programming</title>
   <para id="x_Xk">
     By this point, you've seen how to interact with a database, parse

@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="monads" revision="alpha;beta">
+<chapter id="monads">
   <title>Monads</title>
 
   <sect1>

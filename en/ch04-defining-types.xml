@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="deftypes" revision="alpha;beta">
+<chapter id="deftypes">
   <title>Defining Types, Streamlining Functions</title>
 
   <sect1 id="deftypes.data">

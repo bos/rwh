@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="concurrent" revision="alpha;beta">
+<chapter id="concurrent">
   <title>Concurrent and multicore programming</title>
 
   <para id="x_X31">As we write this book, the landscape of CPU architecture is

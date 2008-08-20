@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="barcode" revision="alpha;beta">
+<chapter id="barcode">
   <title>Barcode recognition</title>
 
   <para id="x_ET">In this chapter, we'll make use of the image parsing library

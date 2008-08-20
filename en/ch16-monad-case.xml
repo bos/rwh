@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="monadcase" revision="alpha;beta">
+<chapter id="monadcase">
   <title>Programming with monads</title>
 
   <sect1 id="monadcase.urlencoded">

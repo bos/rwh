@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="library" revision="alpha;beta">
+<chapter id="library">
   <title>Writing a library: working with JSON data</title>
 
   <sect1>

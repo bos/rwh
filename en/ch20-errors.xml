@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="errors" revision="alpha;beta">
+<chapter id="errors">
   <title>Error handling</title>
 
   <para id="x_xy">

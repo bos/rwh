@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="parsec" revision="alpha;beta">
+<chapter id="parsec">
   <title>Using Parsec</title>
   <para id="x_DJ">
     The task of parsing a file, or data of various types, is a common

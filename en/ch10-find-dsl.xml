@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="find" revision="alpha;beta">
+<chapter id="find">
   <title>I/O case study: a library for searching the
     filesystem</title>
 

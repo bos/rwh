@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="stm" revision="alpha;beta">
+<chapter id="stm">
   <title>Software transactional memory</title>
 
   <para>In the traditional threaded model of concurrent programming,

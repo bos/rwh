@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="ffi" revision="alpha;beta">
+<chapter id="ffi">
   <title>Interfacing with C: the FFI</title>
 
 <!-- introduction to why FFIs exist -->

@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="bloomfilter" revision="alpha;beta">
+<chapter id="bloomfilter">
   <title>Advanced library design: building a Bloom filter</title>
 
   <sect1>

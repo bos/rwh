@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="gui" revision="alpha;beta">
+<chapter id="gui">
   <title>GUI Programming with gtk2hs</title>
   <para id="x_Bw">
     Throughout this book, we have been developing simple text-based
