@@ -1,11 +1,9 @@
 {-- snippet all --}
--- ch20/divby2.hs
+-- ch20/divby2m.hs
 
 divBy :: Integral a => a -> [a] -> Maybe [a]
-divBy _ [] = Just []
-divBy _ (0:_) = Nothing
-divBy numerator (denom:xs) =
-    case divBy numerator xs of
-      Nothing -> Nothing
-      Just results -> Just ((numerator `div` denom) : results)
+divBy numerator denominators = 
+    mapM (numerator `safeDiv`) denominators
+    where safeDiv _ 0 = Nothing
+          safeDiv x y = x `div` y
 {-- /snippet all --}
