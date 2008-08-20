@@ -85,7 +85,7 @@
         calls itself.
       </para>
       <tip>
-        <para>Alert readers will note that you could use a monadic
+        <para>You may note that you could use a monadic
         implementation of the above, like so:
         </para>
         &divby2m.hs:all;
