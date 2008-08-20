@@ -82,6 +82,7 @@ instance (Storable a) => Hashable [a] where
 {-- /snippet hashList --}
 
 {-- snippet hash2 --}
+hash2 :: (Hashable a) => a -> Word64 -> Word64
 hash2 k salt = hashSalt salt k
 
 instance (Hashable a, Hashable b) => Hashable (a,b) where
@@ -99,9 +100,17 @@ hashByteString salt bs = Strict.useAsCStringLen bs $ \(ptr, len) ->
 instance Hashable Strict.ByteString where
     hashSalt salt bs = unsafePerformIO $ hashByteString salt bs
 
+rechunk :: Lazy.ByteString -> [Strict.ByteString]
+rechunk s
+    | Lazy.null s = []
+    | otherwise   = let (pre,suf) = Lazy.splitAt chunkSize s
+                    in  repack pre : rechunk suf
+    where repack    = Strict.concat . Lazy.toChunks
+          chunkSize = 64 * 1024
+
 instance Hashable Lazy.ByteString where
     hashSalt salt bs = unsafePerformIO $
-                       foldM hashByteString salt (Lazy.toChunks bs)
+                       foldM hashByteString salt (rechunk bs)
 {-- /snippet hashSB --}
 
 {-

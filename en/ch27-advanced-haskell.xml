@@ -608,6 +608,17 @@
 
       &Hash.hs:hashSB;
 
+      <para>Since a lazy <type>ByteString</type> is represented as a
+	series of chunks, we must be careful with the boundaries
+	between those chunks.  The string <code>"foobar"</code> can be
+	represented in five different ways, for example
+	<code>["fo","obar"]</code> or <code>["foob","ar"]</code>. This
+	is invisible to most users of the type, but not to us since we
+	use the underlying chunks directly.  Our
+	<function>rechunk</function> function ensures that the chunks
+	we pass to the C hashing code are a uniform 64KB in size, so
+	that we will give consistent hash values no matter where the
+	original chunk boundaries lie.</para>
     </sect2>
 
     <sect2>
