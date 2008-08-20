@@ -18,6 +18,8 @@
 <!ENTITY False "<literal>False</literal>">
 <!ENTITY FilePath "<literal>FilePath</literal>">
 <!ENTITY Float "<literal>Float</literal>">
+<!ENTITY Fractional "<literal>Fractional</literal>">
+<!ENTITY Floating "<literal>Floating</literal>">
 <!ENTITY GHC "<application>GHC</application>">
 <!ENTITY Handle "<literal>Handle</literal>">
 <!ENTITY IConnection "<literal>IConnection</literal>">
