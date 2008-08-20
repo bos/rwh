@@ -1,4 +1,4 @@
-<appendix id="escapes" revision="alpha;beta">
+<appendix id="escapes">
   <title>Characters, strings, and escaping rules</title>
 
   <para id="x_YI">This appendix covers the escaping rules used to represent
