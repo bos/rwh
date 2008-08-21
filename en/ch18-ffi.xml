@@ -589,7 +589,7 @@ for constants to be filled in via CPP.
 
 <para>
 Running this code through hsc2hs, as before, generates a Haskell file with
-the following binding code produced (with <codE>LINE</code> pragmas removed
+the following binding code produced (with <code>LINE</code> pragmas removed
 for brevity):
 </para>
 
