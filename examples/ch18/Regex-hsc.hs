@@ -14,7 +14,7 @@ import Foreign.C.Types
 -- which can be bitwise-or'd together, using '(Data.Bits..|.)'
 --
 newtype PCREOption = PCREOption { unPCREOption :: CInt }
-    deriving (Eq,Ord,Show,Read)
+    deriving (Eq,Show)
 {-- /snippet newtype --}
 
 {-- snippet constants --}
