@@ -1,11 +1,10 @@
+:load DataSequence
 --# simple
-:m +Data.Sequence
 Seq.empty
 Seq.singleton 1
 
 --# list
 let a = Seq.fromList [1,2,3]
-Seq.toList a
 
 --# ugly
 1 Seq.<| Seq.singleton 2
