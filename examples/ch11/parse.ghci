@@ -1,12 +1,12 @@
---# uncons
-L8.uncons (L8.pack "foo")
-L8.uncons L8.empty
-
 --# parse
 :load Parse
 :type parse (identity 1) undefined
 parse (identity 1) undefined
 parse (identity "foo") undefined
+
+--# uncons
+L8.uncons (L8.pack "foo")
+L8.uncons L8.empty
 
 --# id.fail
 
