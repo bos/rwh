@@ -1,231 +1,308 @@
 <appendix id="install">
-  <title>Installing GHC</title>
+  <title>Installing GHC and Haskell libraries</title>
 
   <para id="x_l">We are providing the instructions below based on our
-    experience installing &GHC; in mid-2007.  Installation
-    instructions inevitably become dated quickly; please bear this in
-    mind as you read.</para>
+    experience installing &GHC; and other software in late 2008.
+    Installation instructions inevitably become dated quickly; please
+    bear this in mind as you read.</para>
 
-  <remark>We will update these instructions for GHC 6.8.2 when time
-    permits.</remark>
+  <sect1>
+    <title>Installing GHC</title>
+    <para id="x_m">Because &GHC; runs on a large number of platforms,
+      we focus on a handful of the most popular.</para>
 
-  <para id="x_m">Because &GHC; runs on a large number of platforms,
-    we've focused on a handful of the most popular.</para>
+    <sect2 id="install.win">
+      <title>Windows</title>
 
-  <sect1 id="install.win">
-    <title>Windows</title>
+      <para id="x_n">The prebuilt binary packages of &GHC; should work
+	on Windows Vista and XP (even Windows 2000). We have installed
+	&GHC; 6.8.3 under Windows XP Service Pack 2; here are the
+	steps we followed.</para>
 
-    <para id="x_n">The prebuilt binary packages of &GHC; should work
-      on versions of Windows as old as ME, and on all newer versions
-      (NT, 2000, XP, and Vista).  We have installed &GHC; 6.6.1 under
-      Windows XP Service Pack 2; here are the steps we
-      followed.</para>
+      <note>
+	<title>How much room does GHC need?</title>
 
-    <note>
-      <title>How much room does GHC need?</title>
-
-      <para id="x_o">On Windows, &GHC; requires almost 340MB of disk
-	space.</para>
-    </note>
+	<para id="x_o">On Windows, &GHC; requires about 400MB of disk
+	  space.  The exact amount will vary from release to
+	  release.</para>
+      </note>
   
-    <para id="x_p">Our first step is to visit the &GHC; <ulink
-	url="http://www.haskell.org/ghc/download.html">download
-	page</ulink>, and follow the link to the current stable
-      release.  Scroll down to the section entitled <quote>Binary
-	packages</quote>, and then again to the subsection for
-      Windows.  Download the installer; in our case, it's named
-      <filename>ghc-6.6.1-i386-windows.exe</filename>.</para>
+      <para id="x_p">Our first step is to visit the &GHC; <ulink
+	  url="http://www.haskell.org/ghc/download.html">download
+	  page</ulink>, and follow the link to the current stable
+	release.  Scroll down to the section entitled <quote>Binary
+	  packages</quote>, and then again to the subsection for
+	Windows.  Download the installer; in our case, it's named
+	<filename>ghc-6.8.3-i386-windows.exe</filename>.</para>
 
-    <informalfigure>
-      <graphic fileref="figs/win32-download.png"/>
-    </informalfigure>
+      <informalfigure>
+	<graphic fileref="figs/win32-download.png"/>
+      </informalfigure>
 
-    <para id="x_q">After the installer has downloaded, double-clicking
-      on it starts the installation process.  This involves stepping
-      through a normal Windows installer wizard.</para>
+      <para id="x_q">After the installer has downloaded,
+	double-clicking on it starts the installation process.  This
+	involves stepping through a normal Windows installer
+	wizard.</para>
 
-    <informalfigure>
-      <graphic fileref="figs/win32-wizard1.png"/>
-    </informalfigure>
+      <informalfigure>
+	<graphic fileref="figs/win32-wizard1.png"/>
+      </informalfigure>
 
-    <para id="x_r">Once the installer has finished, the Start Menu's
-      <quote>All Programs</quote> submenu should have a &GHC; folder,
-      inside of which you'll find an icon that you can use to run
-      &ghci;.</para>
+      <para id="x_r">Once the installer has finished, the Start Menu's
+	<quote>All Programs</quote> submenu should have a &GHC;
+	folder, inside of which you'll find an icon that you can use
+	to run &ghci;.</para>
 
-    <informalfigure>
-      <graphic fileref="figs/win32-start-menu.png"/>
-    </informalfigure>
+      <informalfigure>
+	<graphic fileref="figs/win32-start-menu.png"/>
+      </informalfigure>
 
-    <para id="x_s">Clicking on the &ghci; icon brings up a normal
-      Windows console window, running &ghci;.</para>
+      <para id="x_s">Clicking on the &ghci; icon brings up a normal
+	Windows console window, running &ghci;.</para>
 
-    <informalfigure>
-      <graphic fileref="figs/win32-ghci.png"/>
-    </informalfigure>
+      <informalfigure>
+	<graphic fileref="figs/win32-ghci.png"/>
+      </informalfigure>
 
-    <note>
-      <title>Updating your search path</title>
+      <note>
+	<title>Updating your search path</title>
 
-      <para id="x_t">The &GHC; installer automatically modifies your
-	user account's <envar>PATH</envar> environment variable so
-	that commands like &ghc; will be present in the command
-	shell's search path (i.e. you can type a &GHC; command name
-	without typing its complete path).  This change will not take
-	effect until you log out and back in again.</para>
-    </note>
-  </sect1>
+	<para id="x_t">The &GHC; installer automatically modifies your
+	  user account's <envar>PATH</envar> environment variable so
+	  that commands like &ghc; will be present in the command
+	  shell's search path (i.e. you can type a &GHC; command name
+	  without typing its complete path).  This change will take
+	  effect the next time you open a command shell.</para>
+      </note>
+    </sect2>
 
-  <sect1 id="install.mac">
-    <title>Mac OS X</title>
+    <sect2 id="install.mac">
+      <title>Mac OS X</title>
 
-    <para id="x_u">Installing &GHC; on Mac OS X takes several steps,
-      as &GHC; does not yet have a standard OS X installer.  We have
-      installed &GHC; 6.6.1 under Mac OS X 10.4, on an Intel-based
-      MacBook.  We're not regular Mac users, and had never tried
-      installing &GHC; on OS X before, and everything worked for us on
-      the first try, so take heart if these instructions seem
-      daunting.  The process is neither difficult nor especially
-      time-consuming.</para>
+      <para id="x_u">We have installed &GHC; 6.8.3 under Mac OS X 10.5
+	(Leopard), on an Intel-based MacBook.  Before installing
+	&GHC;, the Xcode development system must already be
+	installed.</para>
 
-    <para id="x_v">Our first step is to visit the &GHC; <ulink
-	url="http://www.haskell.org/ghc/download.html">download
-	page</ulink>, and follow the link to the current stable
-      release.  Scroll down to the section entitled <quote>Binary
-	packages</quote>, and then again to the subsection for Mac OS
-      X.  There are four components to download, all of which are
-      necessary.</para>
+      <para id="x_A1">The Xcode software installer may have come
+	bundled on a DVD with your Mac.  If not (or you can't find
+	it), you should be able to download it from Apple.  Once
+	you've finished installing Xcode, continue on to download
+	&GHC; itself.</para>
 
-    <itemizedlist>
-      <listitem>
-	<para id="x_w">Apple's Xcode development software.  This
-	  provides compiler toolchain support that &GHC; needs.</para>
-      </listitem>
-      <listitem>
-	<para id="x_x">The <filename>GNUreadline</filename> framework
-	  provides flexible command line editing.</para>
-      </listitem>
-      <listitem>
-	<para id="x_y">The <filename>GMP</filename> framework is
-	  required for arbitrary-precision integer support.</para>
-      </listitem>
-      <listitem>
-	<para id="x_z">The &GHC; package itself.  This will not work
-	  unless both of the preceding frameworks are
-	  installed.</para>
-      </listitem>
-    </itemizedlist>
+      <para id="x_v">Visit the &GHC; <ulink
+	  url="http://www.haskell.org/ghc/download.html">download
+	  page</ulink>, and follow the link to the current stable
+	release.  Scroll down to the section entitled <quote>Binary
+	  packages</quote>, and then again to the subsection for Mac
+	OS X.  There is a single installer package available. Download
+	and run it.</para>
 
-    <para id="x_A1">The Xcode software installer may have come bundled
-      on a DVD with your Mac.  If not (or you can't find it), you can
-      download it from Apple and install it.  Once you've finished
-      installing Xcode, continue on to download the remaining three
-      packages.</para>
+      <tip>
+	<title>Terminal at your fingertips yet?</title>
 
-    <para id="x_B1">After these downloads complete, you'll have three
-      archive icons on your desktop.</para>
+	<para id="x_F1">Since most of your interactions with &GHC;
+	  will be through a &Terminal; window, this might be a good
+	  time to add the &Terminal; application to your dock, if you
+	  haven't already done so.  You can find it in the system's
+	  <filename>/Applications/Utilities</filename> folder.</para>
+      </tip>
 
-    <informalfigure>
-      <graphic fileref="figs/osx-archives.png"/>
-    </informalfigure>
+      <para id="x_I1">The installation process should take a minute or
+	two.  Finally, you should be able to successfully run the
+	&ghci; command from your shell prompt.</para>
 
-    <para id="x_C1">Double click on each one to unpack it, giving you
-      three folders.</para>
+      <informalfigure>
+	<graphic fileref="figs/osx-ghci.png"/>
+      </informalfigure>
 
-    <informalfigure>
-      <graphic fileref="figs/osx-folders.png"/>
-    </informalfigure>
+      <sect3>
+	<title>Alternatives</title>
 
-    <para id="x_D1">Open a <application>Finder</application> window
-      with
-	<keycombo>
-	<keycap function="command">command</keycap>
-	<keycap>n</keycap>
-	</keycombo>.  In the left sidebar, click on your system's main
-      hard disk icon (often named <quote>Macintosh HD</quote>).  In
-      the main portion of the window, double click on
-      <filename>System</filename> to open that folder, then on
-      <filename>Library</filename>.  Select the
-      <filename>GMP.framework</filename> and
-      <filename>GNUreadline.framework</filename> folders on your
-      desktop, and drag them onto the <filename>Frameworks</filename>
-      folder in the Finder window that is visiting
-      <filename>/System/Library</filename>.  If the Finder refuses to
-      install them because you don't have permission, it will probably
-      display an <quote>Authenticate</quote> button in the alert it
-      displays. Click it, enter your password, and installation can
-      proceed.</para>
+	<para>Both the MacPorts and Fink projects provide builds of
+	  &GHC;.</para>
+      </sect3>
+    </sect2>
 
-    <informalfigure>
-      <graphic fileref="figs/osx-folders.png"/>
-    </informalfigure>
-
-    <para id="x_E1">With the prerequisites in place, you can turn to
-      installing &GHC;. You'll need to open a &Terminal; window (you
-      can find it in
-      <filename>/Applications/Utilities</filename>).</para>
-
-    <tip>
-      <title>Terminal at your fingertips yet?</title>
-
-      <para id="x_F1">Since most of your interactions with &GHC; will
-	be through a &Terminal; window, this might be a good time to
-	add the &Terminal; application to your dock, if you haven't
-	already done so.</para>
-    </tip>
-
-    <informalfigure>
-      <graphic fileref="figs/osx-ghc-install.png"/>
-    </informalfigure>
-
-    <para id="x_G1">Inside the &Terminal; window, change directory to
-      <filename>Desktop/ghc-6.6.1</filename>, and run
-      <userinput>./configure</userinput> to set up the command line
-      installer.  This configures &GHC; to install to
-      <filename>/usr/local</filename>.  When the
-      <command>configure</command> script finishes, run
-      <userinput>sudo make install</userinput>, and type your password
-      when you are prompted for it.</para>
-
-    <para id="x_H1">The installation process should take a minute or
-      two.  If you don't already have
-      <filename>/usr/local/bin</filename> in your shell's search path,
-      add it.</para>
-
-    <para id="x_I1">Finally, you should be able to successfully run
-      the &ghci; command from your shell prompt.</para>
-
-    <informalfigure>
-      <graphic fileref="figs/osx-ghci.png"/>
-    </informalfigure>
-
-  </sect1>
-
-  <sect1 id="install.debian">
-    <title>Ubuntu and Debian Linux</title>
+    <sect2 id="install.debian">
+      <title>Ubuntu and Debian Linux</title>
       
-    <remark>FIXME: actual content.</remark>
+      <para>Under both Ubuntu and Debian, you can install a minimal
+	working version of &GHC; by running <command>sudo aptitude
+	  install ghc6</command> from a shell prompt.</para>
+
+      <para>These distros maintain a small core &GHC; package, which
+	is insufficient for much practical development. However, they
+	make a number of additional prebuilt packages available. To
+	see a complete list of these prebuilt packages, run
+	<command>apt-cache search libghc6</command>.  We recommend
+	that you install at least the <code>mtl</code> package, using
+	<command>sudo aptitude install
+	  libghc6-mtl-dev</command>.</para>
+
+      <para>Since you will probably want to profile the performance of
+	your Haskell programs at some point, you should also install
+	the <code>ghc6-prof</code> package.</para>
+    </sect2>
+
+    <sect2 id="install.fedora">
+      <title>Fedora Linux</title>
+      
+      <para id="x_J1">&GHC; is available as a standard Fedora binary
+	package.  From a shell, all you need to do is run the
+	following command:</para>
+      
+<screen><userinput>sudo yum -y install ghc ghc-doc ghc683-prof</userinput></screen>
+
+      <para>The base package, containing the &ghc; and &ghci; commands
+	and libraries, is <filename>ghc</filename>.  The
+	<filename>ghc-doc</filename> package contains the &GHC; user
+	guide, and command and library documentation.  The
+	<filename>ghc683-prof</filename> package contains
+	profiling-capable versions of the standard libraries (note:
+	its version number may have changed by the time you read
+	this).</para>
+
+      <para id="x_K1">Once installation has finished, you should be
+	able to run &ghci; from the shell immediately.  You won't need
+	to change your shell's search path, or set any environment
+	variables.</para>
+    </sect2>
+
+    <sect2>
+      <title>FreeBSD</title>
+
+      <para>Under FreeBSD, run the following commands:</para>
+<screen><prompt>$</prompt> <userinput>cd /usr/ports/lang/ghc</userinput>
+<prompt>$</prompt> <userinput>sudo make install clean</userinput>
+</screen>
+
+      <para>This will download and build &GHC; from source.  You
+	should expect the process to take several hours.</para>
+    </sect2>
   </sect1>
 
-  <sect1 id="install.fedora">
-    <title>Fedora Linux</title>
-      
-    <para id="x_J1">&GHC; is available as a standard Fedora binary
-      package.  From a shell, all you need to do is run
-      <userinput>sudo yum -y install ghc ghc-doc
-	ghc661-prof</userinput>.  The base package, containing the
-      &ghc; and &ghci; commands and libraries, is
-      <filename>ghc</filename>.  The <filename>ghc-doc</filename>
-      package contains the &GHC; user guide, and command and library
-      documentation.  The <filename>ghc661-prof</filename> package
-      contains profiling-capable versions of the standard libraries
-      (note: its version number may have changed by the time you read
-      this).</para>
+  <sect1>
+    <title>Installing Haskell software</title>
 
-    <para id="x_K1">Once installation has finished, you should be able
-      to run &ghci; from the shell immediately.  You won't need to
-      change your shell's search path, or set any environment
-      variables.</para>
+    <para>Almost all Haskell libraries are distributed using a
+      standard packaging system named Cabal.  You can find hundreds of
+      Haskell open source libraries and programs, all of which use
+      Cabal, at <ulink
+	url="http://hackage.haskell.org/">http://hackage.haskell.org/</ulink>, 
+      the home of the Hackage code repository.</para>
+
+    <sect2>
+      <title>Automated download and installation with cabal</title>
+
+      <para>A command named <command>cabal</command> automates the job
+	of downloading, building, and installing a Haskell package. It
+	also figures out what dependencies a particular library needs,
+	and either makes sure that they are installed already, or
+	downloads and builds those first.  You can install any Haskell
+	package with a single <command>cabal install
+	  <replaceable>mypackage</replaceable></command>
+	command.</para>
+
+      <para>The <command>cabal</command> command is not bundled with
+	&GHC;, so at least as of version 6.8.3 of &GHC;, you will have
+	to download and build <command>cabal</command>
+	yourself.</para>
+
+      <sect3>
+	<title>Installing cabal</title>
+
+	<para>To build the <command>cabal</command> command, download
+	  the sources for the following four packages from <ulink
+	    url="http://hackage.haskell.org/">http://hackage.haskell.org/</ulink></para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para><code>Cabal</code></para>
+	  </listitem>
+	  <listitem>
+	    <para><code>HTTP</code></para>
+	  </listitem>
+	  <listitem>
+	    <para><code>zlib</code></para>
+	  </listitem>
+	  <listitem>
+	    <para><code>cabal-install</code></para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>Follow the instructions in <xref
+	linkend="install.pkg.manual"/> below to manually build each of
+	  the four packages above, making sure that you leave
+	  <code>cabal-install</code> until last.</para>
+
+	<para>After you install the <code>cabal-install</code>
+	  package, the <code>$HOME/.cabal/bin</code> directory will
+	  contain the <command>cabal</command> command.  You can
+	  either move it somewhere more convenient or add that
+	  directory to your shell's search path.</para>
+      </sect3>
+
+      <sect3>
+	<title>Updating cabal's package list</title>
+
+	<para>After installing <command>cabal</command>, and
+	  periodically thereafter, you should download a fresh list of
+	  packages from Hackage.  You can do so as follows:</para>
+
+<screen><prompt>$</prompt> <userinput>cabal update</userinput></screen>
+      </sect3>
+
+      <sect3>
+	<title>Installing a library or program</title>
+
+	<para>To install some executable or library, just run the
+	  following command:</para>
+
+<screen><prompt>$</prompt> <userinput>cabal install -p <replaceable>mypackage</replaceable></userinput></screen>
+      </sect3>
+    </sect2>
+
+    <sect2 id="install.pkg.manual">
+      <title>Building packages by hand</title>
+
+      <para>If you download a tarball from Hackage, it will arrive in
+	source form.  Unpack the tarball, and go into the newly
+	created directory in a command shell.  The process to build
+	and install it is simple, consisting of three
+	commmands:</para> 
+
+      <orderedlist>
+	<listitem>
+	  <para>Configure for system-wide installation (i.e. available
+	    to all users):</para>
+	  <screen><prompt>$</prompt> <userinput>runghc Setup configure -p</userinput></screen>
+	  <para>Alternatively, configure to install only for
+	    yourself:</para>
+	  <screen><prompt>$</prompt> <userinput>runghc Setup configure --user --prefix=$HOME -p</userinput></screen>
+	</listitem>
+	<listitem>
+	  <para>Build (this will build each source file twice, with
+	    and without profiling support):</para>
+	  <screen><prompt>$</prompt> <userinput>runghc Setup build</userinput></screen>
+	</listitem>
+	<listitem>
+	  <para>Install if you chose system-wide configuration
+	    above:</para>
+	  <screen><prompt>$</prompt> <userinput>sudo runghc Setup install</userinput></screen>
+	  <para>Alternatively, if you chose configuration for yourself
+	    only:</para>
+	  <screen><prompt>$</prompt> <userinput>runghc Setup install</userinput></screen>
+	</listitem>
+      </orderedlist>
+
+      <para>If you build by hand, you will frequently find that the
+	configuration step fails because some other library must be
+	installed first.  You may find yourself needing to download
+	and build several packages before you can make progress on the
+	one you really want.  This is why we recommend using the
+	<command>cabal</command> command instead.</para>
+    </sect2>
   </sect1>
 </appendix>
 

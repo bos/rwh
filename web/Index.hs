@@ -66,7 +66,7 @@ chapters = [
  , ch "bloomfilter" "Advanced library design: building a Bloom filter" $ Beta "2008-06-21"
  , ch "sockets" "Network programming" $ Beta "2008-06-21"
  , ch "stm" "Software transactional memory" $ Beta "2008-08-17"
- , app "install" "Installing GHC" $ Beta "2008-01-21"
+ , app "install" "Installing GHC and Haskell libraries" $ Beta "2008-08-22"
  , app "escapes" "Characters, strings, and escaping rules" $ Beta "2008-01-21"
  , app "web" "Web site and comment system usage and policies" $
    Beta "2008-01-21"
