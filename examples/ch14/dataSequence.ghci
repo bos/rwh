@@ -1,4 +1,5 @@
 --# simple
+:m +Data.Sequence
 Seq.empty
 Seq.singleton 1
 
