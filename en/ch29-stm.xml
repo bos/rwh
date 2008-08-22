@@ -3,7 +3,7 @@
 <chapter id="stm">
   <title>Software transactional memory</title>
 
-  <para>In the traditional threaded model of concurrent programming,
+  <para id="x_dL1">In the traditional threaded model of concurrent programming,
     when we share data among threads, we keep it consistent using
     locks, and we notify threads of changes using condition variables.
     Haskell's <type>MVar</type> mechanism improves somewhat upon these
@@ -11,24 +11,24 @@
 
   <itemizedlist>
     <listitem>
-      <para>Race conditions due to forgotten locks</para>
+      <para id="x_eL1">Race conditions due to forgotten locks</para>
     </listitem>
     <listitem>
-      <para>Deadlocks resulting from inconsistent lock ordering</para>
+      <para id="x_fL1">Deadlocks resulting from inconsistent lock ordering</para>
     </listitem>
     <listitem>
-      <para>Corruption caused by uncaught exceptions</para>
+      <para id="x_gL1">Corruption caused by uncaught exceptions</para>
     </listitem>
     <listitem>
-      <para>Lost wakeups induced by omitted notifications</para>
+      <para id="x_hL1">Lost wakeups induced by omitted notifications</para>
     </listitem>
   </itemizedlist>
 
-  <para>These problems frequently affect even the smallest concurrent
+  <para id="x_iL1">These problems frequently affect even the smallest concurrent
     programs, but the difficulties they pose become far worse in
     larger code bases, or under heavy load.</para>
 
-  <para>For instance, a program with a few big locks is somewhat
+  <para id="x_jL1">For instance, a program with a few big locks is somewhat
     tractable to write and debug, but contention for those locks will
     clobber us under heavy load. If we react with finer-grained
     locking, it becomes <emphasis>far</emphasis> harder to keep our
@@ -38,7 +38,7 @@
   <sect1>
     <title>The basics</title>
 
-    <para>Software transactional memory (STM) gives us a few simple,
+    <para id="x_kL1">Software transactional memory (STM) gives us a few simple,
       but powerful, tools with which we can address most of these
       problems. We execute a block of actions using the &atomically;
       combinator. Once we enter the block, other threads cannot see
@@ -48,22 +48,22 @@
 
     <itemizedlist>
       <listitem>
-	<para>If no other thread concurrently modified the same data
+	<para id="x_lL1">If no other thread concurrently modified the same data
 	  as us, all of our modifications will simultaneously become
 	  visible to other threads.</para>
       </listitem>
       <listitem>
-	<para>Otherwise, our modifications are discarded without being
+	<para id="x_mL1">Otherwise, our modifications are discarded without being
 	  performed, and our block of actions is automatically
 	  restarted.</para>
       </listitem>
     </itemizedlist>
 
-    <para>This all-or-nothing nature of an &atomically; block is
+    <para id="x_nL1">This all-or-nothing nature of an &atomically; block is
       referred to as <emphasis>atomic</emphasis>, hence the name of
       the combinator.</para>
 
-    <para>Atomicity and isolation work together to give every thread a
+    <para id="x_oL1">Atomicity and isolation work together to give every thread a
       <emphasis>consistent</emphasis> view of our program's shared,
       mutable state.  If you have used databases that support
       transactions, you should find that working with STM feels quite
@@ -72,45 +72,45 @@
   <sect1>
     <title>Some simple examples</title>
 
-    <para>To explore the world of STM, let's start with a few simple
+    <para id="x_pL1">To explore the world of STM, let's start with a few simple
       functions, and refine them as we learn more about the API. In a
       multi-player role playing game, a player's character will have
       some state such as health, possessions, and money.</para>
 
-    <para>The STM API is provided by the <code>stm</code> package, and
+    <para id="x_qL1">The STM API is provided by the <code>stm</code> package, and
       its modules are in the <code>Control.Concurrent.STM</code>
       hierarchy.</para>
 
       &GameInventory.hs:import;
 
-    <para>The <type>TVar</type> parameterized type is a mutable
+    <para id="x_rL1">The <type>TVar</type> parameterized type is a mutable
       variable that we can read or write inside an
       <function>atomically</function> block.  For simplicity, we
       represent a player's inventory as a list of items. Notice, too,
       that we use &newtype; declarations so that we cannot
       accidentally confuse wealth with health.</para>
 
-    <para>To perform a basic transfer of money from one
+    <para id="x_sL1">To perform a basic transfer of money from one
       <type>Balance</type> to another, all we have to do is adjust the
       values in each <type>TVar</type>.</para>
 
     &GameInventory.hs:basicTransfer;
 
-    <para>Let's write a small function to try this out.</para>
+    <para id="x_tL1">Let's write a small function to try this out.</para>
 
     &GameInventory.hs:transferTest;
 
-    <para>If we run this in &ghci;, it behaves as we should
+    <para id="x_uL1">If we run this in &ghci;, it behaves as we should
       expect.</para>
 
     &gameInventory.ghci:transferTest;
     
-    <para>The properties of atomicity and isolation guarantee that if
+    <para id="x_vL1">The properties of atomicity and isolation guarantee that if
       another thread sees a change in <code>bob</code>'s balance, they
       will also be able to see the modification of
       <code>alice</code>'s balance.</para>
 
-    <para>Even in a concurrent program, we strive to keep as much of
+    <para id="x_wL1">Even in a concurrent program, we strive to keep as much of
       our code as possible purely functional.  This makes our code
       easier both to reason about and to test.  It also gives the
       underlying STM engine less work to do, since the data involved
@@ -120,11 +120,11 @@
 
     &GameInventory.hs:removeInv;
 
-    <para>The result uses <type>Maybe</type> so that we can tell
+    <para id="x_xL1">The result uses <type>Maybe</type> so that we can tell
       whether the item was actually present in the player's
       inventory.</para>
 
-    <para>Here is a transactional function to give an item to another
+    <para id="x_yL1">Here is a transactional function to give an item to another
       player.  It is slightly complicated by the need to determine
       whether the donor actually <emphasis>has</emphasis> the item in
       question.</para>
@@ -135,14 +135,14 @@
   <sect1>
     <title>STM and safety</title>
 
-    <para>If we are to provide atomic, isolated transactions, it is
+    <para id="x_zL1">If we are to provide atomic, isolated transactions, it is
       critical that we cannot either deliberately or accidentally escape
       from an &atomically; block.  Haskell's type system enforces this
       on our behalf, via the &STM; monad.</para>
 
     &gameInventory.ghci:atomically;
 
-    <para>The &atomically; block takes an action in the &STM; monad,
+    <para id="x_AM1">The &atomically; block takes an action in the &STM; monad,
       executes it, and makes its result available to us in the &IO;
       monad.  This is the monad in which all transactional code
       executes.  For instance, the functions that we have seen for
@@ -151,12 +151,12 @@
 
     &gameInventory.ghci:stm;
 
-    <para>This is also true of the transactional functions we defined
+    <para id="x_BM1">This is also true of the transactional functions we defined
       earlier.</para>
 
     &GameInventory.hs:types;
 
-    <para>The &STM; monad does not let us perform I/O or manipulate
+    <para id="x_CM1">The &STM; monad does not let us perform I/O or manipulate
       non-transactional mutable state, such as <type>MVar</type>
       values.  This lets us avoid operations that might violate the
       transactional guarantees.</para>
@@ -165,7 +165,7 @@
   <sect1>
     <title>Retrying a transaction</title>
 
-    <para>The API of our <function>maybeGiveItem</function> function
+    <para id="x_DM1">The API of our <function>maybeGiveItem</function> function
       is somewhat awkward.  It only gives an item if the character
       actually possesses it, which is reasonable, but by returning a
       <type>Bool</type>, it complicates the code of its callers.  Here
@@ -175,11 +175,11 @@
 
     &GameInventory.hs:maybeSellItem;
 
-    <para>Not only do we have to check whether the item was given, we
+    <para id="x_EM1">Not only do we have to check whether the item was given, we
       have to propagate an indication of success back to our caller.
       The complexity thus cascades outwards.</para>
 
-    <para>There is a more elegant way to handle transactions that
+    <para id="x_FM1">There is a more elegant way to handle transactions that
       cannot succeed.  The STM API provides a &retry; action which
       will immediately terminate an &atomically; block that cannot
       proceed.  As the name suggests, when this occurs, execution of
@@ -189,7 +189,7 @@
 
     &GameInventory.hs:giveItem;
 
-    <para>Our <function>basicTransfer</function> from earlier had a
+    <para id="x_GM1">Our <function>basicTransfer</function> from earlier had a
       different kind of flaw: it did not check the sender's balance to
       see if they had sufficient money to transfer. We
       can use &retry; to correct this, while keeping the function's
@@ -197,18 +197,18 @@
 
     &GameInventory.hs:transfer;
 
-    <para>Now that we are using &retry;, our item sale function
+    <para id="x_HM1">Now that we are using &retry;, our item sale function
       becomes dramatically simpler.</para>
 
     &GameInventory.hs:sellItem;
 
-    <para>Its behavior is slightly different from our earlier
+    <para id="x_IM1">Its behavior is slightly different from our earlier
       function.  Instead of immediately returning &False; if the
       seller doesn't have the item, it will block (if necessary) until
       both the seller has the item and the buyer has enough money to
       pay for it.</para>
 
-    <para>The beauty of STM lies in the cleanliness of the code it
+    <para id="x_JM1">The beauty of STM lies in the cleanliness of the code it
       lets us write.  We can take two functions that work correctly,
       and use them to create a third that will also behave
       itself, all with minimal effort.</para>
@@ -216,14 +216,14 @@
     <sect2>
       <title>What happens when we retry?</title>
 
-      <para>The &retry; function doesn't just make our code cleaner:
+      <para id="x_KM1">The &retry; function doesn't just make our code cleaner:
 	its underlying behavior seems nearly magical. When we call it,
 	it doesn't restart our transaction immediately.  Instead,
 	it blocks our thread until one or more of the variables that
 	we touched before calling &retry; is changed by another
 	thread.</para>
 
-      <para>For instance, if we invoke <function>transfer</function>
+      <para id="x_LM1">For instance, if we invoke <function>transfer</function>
 	with insufficient funds, &retry; will <emphasis>automatically
 	  wait</emphasis> until our balance changes before it starts
 	the &atomically; block again.  The same happens with our new
@@ -236,26 +236,26 @@
   <sect1>
     <title>Choosing between alternatives</title>
 
-    <para>We don't always want to restart an &atomically; action if it
+    <para id="x_MM1">We don't always want to restart an &atomically; action if it
       calls &retry; or fails due to concurrent modification by another
       thread.  For instance, our new <function>sellItem</function>
       function will retry indefinitely as long as we are missing
       either the item or enough money, but we might prefer to just try
       the sale once.</para>
 
-    <para>The &orElse; combinator lets us perform a
+    <para id="x_NM1">The &orElse; combinator lets us perform a
       <quote>backup</quote> action if the main one fails.</para>
 
     &gameInventory.ghci:orElse;
 
-    <para>If <function>sellItem</function> fails, then &orElse; will
+    <para id="x_OM1">If <function>sellItem</function> fails, then &orElse; will
       invoke the <code>return False</code> action, causing our sale
       function to return immediately.</para>
 
     <sect2>
       <title>Using higher order code with transactions</title>
 
-      <para>Imagine that we'd like to be a little more ambitious, and
+      <para id="x_PM1">Imagine that we'd like to be a little more ambitious, and
 	buy the first item from a list that is both in the possession
 	of the seller and affordable to us, but do nothing if we
 	cannot afford something right now.  We could of course write
@@ -263,17 +263,17 @@
 
       &GameInventory.hs:crummyList;
 
-      <para>This function suffers from the familiar problem of
+      <para id="x_QM1">This function suffers from the familiar problem of
 	muddling together what we want to do with how we ought to do
 	it.  A little inspection suggests that there are two patterns
 	buried in this code which we can use in reusable forms.</para>
 
-      <para>The first of these is to make a transaction fail
+      <para id="x_RM1">The first of these is to make a transaction fail
 	immediately, instead of retrying.</para>
 
       &GameInventory.hs:maybeSTM;
 
-      <para>Secondly, we want to try an action over successive
+      <para id="x_SM1">Secondly, we want to try an action over successive
 	elements of a list, stopping at the first that succeeds, or
 	performing a &retry; if every one fails. Conveniently for us,
 	&STM; is an instance of the <type>MonadPlus</type>
@@ -281,13 +281,13 @@
 
       &STMPlus.hs:instance;
 
-      <para>The <code>Control.Monad</code> module defines the
+      <para id="x_TM1">The <code>Control.Monad</code> module defines the
 	<function>msum</function> function as follows, which is
 	exactly what we need.</para>
 
       &STMPlus.hs:msum;
 
-      <para>We now have a few key pieces of machinery that will help
+      <para id="x_UM1">We now have a few key pieces of machinery that will help
       us to write a much clearer version of our function.</para>
 
       &GameInventory.hs:shoppingList;
@@ -298,13 +298,13 @@
   <sect1>
     <title>I/O and STM</title>
 
-    <para>The &STM; monad forbids us from performing arbitrary I/O
+    <para id="x_VM1">The &STM; monad forbids us from performing arbitrary I/O
       actions because they can break the guarantees of atomicity and
       isolation that the monad provides.  Of course the need to
       perform I/O still arises; we just have to treat it very
       carefully.</para>
 
-    <para>Most often, we will need to perform some I/O action as a
+    <para id="x_WM1">Most often, we will need to perform some I/O action as a
       result of a decision we made inside an &atomically; block.  In
       these cases, the right thing to do is usually to return a piece
       of data from &atomically;, which will tell the caller in the
@@ -313,7 +313,7 @@
 
     &STMIO.hs:someTransaction;
 
-    <para>We occasionally need to perform an I/O operation from within
+    <para id="x_XM1">We occasionally need to perform an I/O operation from within
       &STM;.  For instance, reading immutable data from a file that
       must exist does not violate the &STM; guarantees of isolation or
       atomicity.  In these cases, we can use
@@ -323,11 +323,11 @@
 
     &stm.ghci:unsafeIOToSTM;
 
-    <para>The &IO; action that we execute must not start another
+    <para id="x_YM1">The &IO; action that we execute must not start another
       &atomically; transaction.  If a thread tries to nest
       transactions, the runtime system will throw an exception.</para>
 
-    <para>Since the type system can't help us to ensure that our &IO;
+    <para id="x_ZM1">Since the type system can't help us to ensure that our &IO;
       code is doing something sensible, we will be safest if we limit
       our use of <function>unsafeIOToSTM</function> as much as
       possible.  Here is a typical error that can arise with &IO;
@@ -335,13 +335,13 @@
 
     &STMIO.hs:bad;
 
-    <para>If the <function>mightRetry</function> block causes our
+    <para id="x_aM1">If the <function>mightRetry</function> block causes our
       transaction to restart, we will call
       <function>launchTorpedoes</function> more than once.  Indeed, we
       can't predict how many times it will be called, since the
       runtime system handles retries for us.  The solution is not to
       perform these kinds of non-idempotent<footnote>
-	<para>An idempotent action gives the same result every time it
+	<para id="x_bM1">An idempotent action gives the same result every time it
 	  is invoked, no matter how many times this occurs.</para>
       </footnote> I/O operations inside a transaction.</para>
   </sect1>
@@ -349,7 +349,7 @@
   <sect1>
     <title>Communication between threads</title>
 
-    <para>As well as the basic <type>TVar</type> type, the
+    <para id="x_cM1">As well as the basic <type>TVar</type> type, the
       <code>stm</code> package provides two types that are more useful
       for communicating between threads.  A <type>TMVar</type> is the
       STM equivalent of an <type>MVar</type>: it can hold either
@@ -361,7 +361,7 @@
   <sect1>
     <title>A concurrent web link checker</title>
     
-    <para>As a practical example of using STM, we will develop a
+    <para id="x_dM1">As a practical example of using STM, we will develop a
       program that checks an HTML file for broken links, that is, URLs
       that either point to bad web pages or dead servers.  This is a
       good problem to address via concurrency: if we try to talk to a
@@ -370,7 +370,7 @@
       can still get useful work done while one or two are stuck
       talking to slow or dead servers.</para>
 
-    <para>We can't simply create one thread per URL, because that may
+    <para id="x_eM1">We can't simply create one thread per URL, because that may
       overburden either our CPU or our network connection if (as we
       expect) most of the links are live and responsive.  Instead, we
       use a fixed number of worker threads, which fetch URLs to
@@ -378,48 +378,48 @@
 
     &Check.hs:top;
 
-    <para>Our &main; function provides the top-level scaffolding for
+    <para id="x_fM1">Our &main; function provides the top-level scaffolding for
       our program.</para>
 
     &Check.hs:main;
 
-    <para>When we are in the &IO; monad, we can create new
+    <para id="x_gM1">When we are in the &IO; monad, we can create new
       <type>TVar</type> values using the <code>newTVarIO</code>
       function.  There are also counterparts for creating
       <type>TMVar</type> and <type>TChan</type> values.</para>
 
-    <para>Notice that we use the <function>printf</function> function
+    <para id="x_hM1">Notice that we use the <function>printf</function> function
       to print a report at the end.  Unlike its counterpart in C, the
       Haskell <function>printf</function> function can check its
       argument types, and their number, at runtime.</para>
 
     &printf.ghci:printf;
 
-    <para>Try evaluating <code>printf "%d" True</code> at the &ghci;
+    <para id="x_iM1">Try evaluating <code>printf "%d" True</code> at the &ghci;
       prompt, and see what happens.</para>
 
-    <para>Supporting &main; are several short functions.</para>
+    <para id="x_jM1">Supporting &main; are several short functions.</para>
 
     &Check.hs:modifyTVar_;
 
-    <para>The <function>forkTimes</function> function starts a number
+    <para id="x_kM1">The <function>forkTimes</function> function starts a number
       of identical worker threads, and decreases the
       <quote>alive</quote> count each time a thread exits.  We use a
       <function>finally</function> combinator to ensure that the count
       is always decremented, no matter how the thread
       terminates.</para>
 
-    <para>Next, the <function>writeBadLinks</function> function prints
+    <para id="x_lM1">Next, the <function>writeBadLinks</function> function prints
       each broken or dead link to <code>stdout</code>.</para>
 
     &Check.hs:writeBadLinks;
 
-    <para>We use the <function>forever</function> combinator above,
+    <para id="x_mM1">We use the <function>forever</function> combinator above,
       which repeats an action endlessly.</para>
 
     &printf.ghci:forever;
 
-    <para>Our <function>waitFor</function> function uses
+    <para id="x_nM1">Our <function>waitFor</function> function uses
       <function>check</function>, which calls
       <function>retry</function> if its argument evaluates to
       <code>False</code>.</para>
@@ -429,14 +429,14 @@
     <sect2>
       <title>Checking a link</title>
 
-      <para>Here is our function to check the state of a link.  This
+      <para id="x_oM1">Here is our function to check the state of a link.  This
 	code is similar to the podcatcher that we developed in
 	<xref linkend="webclient"/>, with a few small
 	differences.</para>
 
       &Check.hs:getStatus;
 
-      <para>We follows a HTTP redirect response just a few times, to
+      <para id="x_pM1">We follows a HTTP redirect response just a few times, to
 	avoid endless redirect loops.  To determine whether a URL is
 	valid, we use the HTTP standard's HEAD verb, which uses less
 	bandwidth than a full GET.</para>
@@ -445,7 +445,7 @@
     <sect2>
       <title>Worker threads</title>
 
-      <para>Each worker thread reads a task off the shared queue.  It
+      <para id="x_qM1">Each worker thread reads a task off the shared queue.  It
 	either checks the given URL or exits.</para>
 
       &Check.hs:worker;
@@ -454,7 +454,7 @@
     <sect2>
       <title>Finding links</title>
 
-      <para>We structure our link finding around a state monad
+      <para id="x_rM1">We structure our link finding around a state monad
 	transformer stacked on the &IO; monad. Our state tracks links
 	that we have already seen (so we don't check a repeated link
 	more than once), the total number of links we have
@@ -463,18 +463,18 @@
 
       &Check.hs:Job;
 
-      <para>Strictly speaking, for a small standalone program, we
+      <para id="x_sM1">Strictly speaking, for a small standalone program, we
 	don't need the &newtype; wrapper, but we include it here as an
 	example of good practice (it only costs a few lines of code,
 	anyway).</para>
 
-      <para>The &main; function maps <function>checkURLs</function>
+      <para id="x_tM1">The &main; function maps <function>checkURLs</function>
 	over each input file, so <function>checkURLs</function> only
 	needs to read a single file.</para>
 
       &Check.hs:checkURLs;
 
-      <para>Our <function>extractLinks</function> function doesn't
+      <para id="x_uM1">Our <function>extractLinks</function> function doesn't
 	attempt to properly parse a HTML or text file.  Instead, it
 	looks for strings that appear to be URLs, and treats them as
 	<quote>good enough</quote>.</para>
@@ -486,44 +486,44 @@
     <sect2 id="stm.urlcheck.parseArgs">
       <title>Command line parsing</title>
 
-      <para>To parse our command line arguments, we use the
+      <para id="x_vM1">To parse our command line arguments, we use the
 	<code>System.Console.GetOpt</code> module.  It provides useful
 	code for parsing arguments, but it is slightly involved to
 	use.</para>
 
       &Check.hs:parseArgs;
 
-      <para>The <function>getOpt</function> function takes three
+      <para id="x_wM1">The <function>getOpt</function> function takes three
 	arguments.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para>An argument ordering, which specifies whether options
+	  <para id="x_xM1">An argument ordering, which specifies whether options
 	    can be mixed with other arguments (<code>Permute</code>,
 	    which we use above) or must appear before them.</para>
 	</listitem>
 	<listitem>
-	  <para>A list of option definitions.  Each consists of a list
+	  <para id="x_yM1">A list of option definitions.  Each consists of a list
 	    of short names for the option, a list of long names for
 	    the option, a description of the option (e.g. whether it
 	    accepts an argument), and an explanation for users.</para>
 	</listitem>
 	<listitem>
-	  <para>A list of the arguments and options, as returned by
+	  <para id="x_zM1">A list of the arguments and options, as returned by
 	    <function>getArgs</function>.</para>
 	</listitem>
       </itemizedlist>
 
-      <para>The function returns a triple which consists of the parsed
+      <para id="x_AN1">The function returns a triple which consists of the parsed
 	options, the remaining arguments, and any error messages that
 	arose.</para>
 
-      <para>We use the <type>Flag</type> algebraic data type to
+      <para id="x_BN1">We use the <type>Flag</type> algebraic data type to
 	represent the options our program can accept.</para>
 
       &Check.hs:options;
 
-      <para>Our <varname>options</varname> list describes each option
+      <para id="x_CN1">Our <varname>options</varname> list describes each option
 	that we accept.  Each description must be able to create a
 	<type>Flag</type> value.  Take a look at our uses of
 	<code>NoArg</code> and <code>ReqArg</code> above.  These are
@@ -534,7 +534,7 @@
 
       <itemizedlist>
 	<listitem>
-	  <para>The <code>NoArg</code> constructor accepts a parameter
+	  <para id="x_DN1">The <code>NoArg</code> constructor accepts a parameter
 	    that will represent this option.  In our case, if a user
 	    invokes our program with <option>-h</option> or
 	    <option>--help</option>, we will use the value
@@ -542,7 +542,7 @@
 	</listitem>
 
 	<listitem>
-	  <para>The <code>ReqArg</code> constructor accepts a function
+	  <para id="x_EN1">The <code>ReqArg</code> constructor accepts a function
 	    that maps a required argument to a value.  Its second
 	    argument is used when printing help.  Here, we convert a
 	    string into an integer, and pass it to our
@@ -551,7 +551,7 @@
 	</listitem>
 
 	<listitem>
-	  <para>The <code>OptArg</code> constructor is similar to the
+	  <para id="x_FN1">The <code>OptArg</code> constructor is similar to the
 	    <code>ReqArg</code> constructor, but it permits the use of
 	    options that can be used without arguments.</para>
 	</listitem>
@@ -561,12 +561,12 @@
     <sect2>
       <title>Pattern guards</title>
 
-      <para>We sneaked one last language extension into our definition
+      <para id="x_GN1">We sneaked one last language extension into our definition
 	of <function>parseArgs</function>.  Pattern guards let us
 	write more concise guard expressions.  They are enabled via
 	the <code>PatternGuards</code> language extension.</para>
 
-      <para>A pattern guard has three components: a pattern, a
+      <para id="x_HN1">A pattern guard has three components: a pattern, a
 	<code>&lt;-</code> symbol, and an expression.  The expression
 	is evaluated and matched against the pattern.  If it matches,
 	any variables present in the pattern are bound.  We can mix
@@ -575,7 +575,7 @@
 
       &PatternGuard.hs:testme;
 
-      <para>In the above example, we return a value from the alist
+      <para id="x_IN1">In the above example, we return a value from the alist
 	<varname>xs</varname> if its associated key
 	<varname>x</varname> is present, provided the value is greater
 	than 3.  The above definition is equivalent to the
@@ -583,7 +583,7 @@
 
       &PatternGuard.hs:testme_noguards;
 
-      <para>Pattern guards let us <quote>collapse</quote> a collection
+      <para id="x_JN1">Pattern guards let us <quote>collapse</quote> a collection
 	of guards and &case; expressions into a single guard, allowing
 	us to write more succinct and descriptive guards.</para>
     </sect2>
@@ -592,7 +592,7 @@
   <sect1>
     <title>Practical aspects of STM</title>
 
-    <para>We have so far been quiet about the specific benefits that
+    <para id="x_KN1">We have so far been quiet about the specific benefits that
       STM gives us.  Most obvious is how well it
       <emphasis>composes</emphasis>: to add code to a transaction, we
       just use our usual monadic building blocks, &bind; and &bind_;.
@@ -607,7 +607,7 @@
       functions give us some beautiful ways to structure our
       code.</para>
 
-    <para>Code that uses STM will not deadlock, but it is possible for
+    <para id="x_LN1">Code that uses STM will not deadlock, but it is possible for
       threads to starve each other to some degree.  A long-running
       transaction can cause another transaction to &retry; often
       enough that it will make comparatively little progress.  To
@@ -617,7 +617,7 @@
     <sect2>
       <title>Getting comfortable with giving up control</title>
 
-      <para>Whether with concurrency or memory management, there will
+      <para id="x_MN1">Whether with concurrency or memory management, there will
 	be times when we must retain control: some software must make
 	solid guarantees about latency or memory footprint, so we will
 	be forced to spend the extra time and effort managing and
@@ -625,7 +625,7 @@
 	of software, garbage collection and STM will do more than well
 	enough.</para>
 
-      <para>STM is not a complete panacea.  It is useful to compare it
+      <para id="x_NN1">STM is not a complete panacea.  It is useful to compare it
 	with the use of garbage collection for memory management. When
 	we abandon explicit memory management in favour of garbage
 	collection, we give up control in return for safer code.
@@ -637,7 +637,7 @@
     <sect2>
       <title>Using invariants</title>
 
-      <para>STM cannot eliminate certain classes of bug.  For
+      <para id="x_ON1">STM cannot eliminate certain classes of bug.  For
 	instance, if we withdraw money from an account in one
 	&atomically; block, return to the &IO; monad, then deposit it
 	to another account in a different &atomically; block, our code
@@ -646,20 +646,20 @@
 
       &GameInventory.hs:bogusSale;
 
-      <para>In concurrent programs, these kinds of programs are
+      <para id="x_PN1">In concurrent programs, these kinds of programs are
 	notoriously difficult to find and reproduce.  For instance,
 	the inconsistency that we describe above will usually only
 	occur for a brief period of time.  Problems like this often
 	refuse to show up during development, instead only occurring
 	in the field, under heavy load.</para>
 
-      <para>The <function>alwaysSucceeds</function> function let us
+      <para id="x_QN1">The <function>alwaysSucceeds</function> function let us
 	define an <emphasis>invariant</emphasis>, a property of our
 	data that must always be true.</para>
 
       &stm.ghci:alwaysSucceeds;
 
-      <para>When we create an invariant, it will immediately be
+      <para id="x_RN1">When we create an invariant, it will immediately be
 	checked.  To fail, the invariant must raise an
 	exception.  More interestingly, the invariant will
 	subsequently be checked automatically at the end of
@@ -669,24 +669,24 @@
 	we will get immediate feedback as soon as one of our
 	invariants is violated.</para>
 
-      <para>For instance, here are a few functions to populate our
+      <para id="x_SN1">For instance, here are a few functions to populate our
 	game world from the beginning of this chapter with
 	players.</para>
 
       &GameInventory.hs:newPlayer;
 
-      <para>This function returns an invariant that we can use to
+      <para id="x_TN1">This function returns an invariant that we can use to
 	ensure that the world's money balance is always
 	consistent: the balance at any point in time should be the
 	same as at the creation of the world.</para>
 
       &GameInventory.hs:consistentBalance;
 
-      <para>Let's write a small function that exercises this.</para>
+      <para id="x_UN1">Let's write a small function that exercises this.</para>
 
       &GameInventory.hs:tryBogusSale;
 
-      <para>If we run it in &ghci;, it should detect the inconsistency
+      <para id="x_VN1">If we run it in &ghci;, it should detect the inconsistency
 	caused by our incorrect use of &atomically; in the
 	<function>bogusTransfer</function> function we wrote.</para>
 

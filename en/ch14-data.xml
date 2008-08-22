@@ -28,7 +28,7 @@
       An association list is just a normal list containing (key, value)
       tuples.  The type of a list of mappings from UID to username might be
       <literal>[(Integer, String)]</literal>.  We could use just about any
-      type<footnote><para>The type we use for the key must be a
+      type<footnote><para id="x_qF1">The type we use for the key must be a
       member of the &Eq; typeclass.</para>
       </footnote>for both the key and the value.
     </para>
@@ -81,7 +81,7 @@ mail:x:8:8:mail:/var/mail:/bin/sh
 news:x:9:9:news:/var/spool/news:/bin/sh
 jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     </programlisting>
-    <para>
+    <para id="x_rF1">
       Its fields are separated by colons, and include a username,
       numeric user ID, numeric group ID, full name, home directory,
       and shell.  No field may contain an internal colon.
@@ -94,7 +94,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <type>Map</type> type with behavior that is similar to
       association lists, but has much better performance.</para>
 
-    <para>
+    <para id="x_sF1">
       Maps give us the same capabilities as hash tables do in other
       languages.  Internally, a map is implemented as a balanced
       binary tree.  Compared to a hash table, this is a much more
@@ -105,7 +105,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       efficiently, but our choices for specific tasks are often
       different their counterparts in imperative languages.</para>
 
-    <para>Some functions in the <code>Data.Map</code> module have the
+    <para id="x_tF1">Some functions in the <code>Data.Map</code> module have the
       same names as those in the Prelude. Therefore, we will import it
       with <literal>import qualified Data.Map as Map</literal> and use
       <literal>Map.<replaceable>name</replaceable></literal> to refer
@@ -357,7 +357,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         look at this code one piece at a time.
       </para>
       &num.hs:beginning;
-      <para>
+      <para id="x_uF1">
         In this section of code, we define an <literal>Op</literal>
         that is identical to the one we used before.  We also define
         <literal>SymbolicManip</literal>, which is similar to what we
@@ -367,7 +367,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         define our instance of &Num;.
       </para>
       &num.hs:numinstance;
-      <para>
+      <para id="x_vF1">
         This is pretty straightforward and also similar to our earlier
         code.  Note that earlier we weren't able to properly support
         <literal>abs</literal>, but now with the
@@ -375,13 +375,13 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         define some more instances.
       </para>
       &num.hs:moreinstances;
-      <para>
+      <para id="x_wF1">
         This section of code defines some fairly straightforward
         instances of &Fractional; and &Floating;.  Now let's work on
         converting our expressions to strings for display.
       </para>
       &num.hs:prettyShow;
-      <para>
+      <para id="x_xF1">
         We start by defining a function
         <literal>prettyShow</literal>.  It renders an expression using
         conventional style.  The algorithm is fairly simple: bare
@@ -398,7 +398,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         converts an expression to s string in RPN format.
       </para>
       &num.hs:rpnShow;
-      <para>
+      <para id="x_yF1">
         Fans of RPN will note how much simpler this algorithm is
         compared to the algorithm to render with conventional
         notation.  In particular, we didn't have to worry about where
@@ -407,7 +407,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         function to do some rudimentary simplification on expressions.
       </para>
       &num.hs:simplify;
-      <para>
+      <para id="x_zF1">
         This function is pretty simple.  For certain binary arithmetic
         operations -- for instance, multiplying any value by 1 -- we
         are able to easily simplify the situation.  We begin by
@@ -416,20 +416,20 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         We have little to do with unary operators, so we just simplify
         the expression they act upon.
       </para>
-      <para>
+      <para id="x_AG1">
         From here on, we will add support for units of measure to our
         established library.  This will let us represent quantities
         such as "5 meters".  We start, as before, by defining a type.
       </para>
       &num.hs:units;
-      <para>
+      <para id="x_BG1">
         So, a <literal>Units</literal> contains a number and a label.
         The label is itself a <literal>SymbolicManip</literal>.  Next,
         it will probably come as no surprise to see an instance of
         &Num; for <literal>Units</literal>.
       </para>
       &num.hs:unitsnum;
-      <para>
+      <para id="x_CG1">
         Now it may become clear why we use a
         <literal>SymbolicManip</literal> instead of a &String; to
         store the unit of measure.  As calculations such as
@@ -440,13 +440,13 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         more typeclass instances for <literal>Units</literal>.
       </para>
       &num.hs:unitsinst;
-      <para>
+      <para id="x_DG1">
         We didn't supply implementations for every function, but quite
         a few have been defined.  Now let's define a few utility
         functions for working with units.
       </para>
       &num.hs:unitsutil;
-      <para>
+      <para id="x_EG1">
         First, we have <literal>units</literal>, which makes it easy
         to craft simple expressions.  It's faster to say
         <literal>units 5 "m"</literal> than <literal>Units 5 (Symbol
@@ -458,7 +458,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         &Show; instance for <literal>Units</literal>.
       </para>
       &num.hs:unitsshow;
-      <para>
+      <para id="x_FG1">
         That was simple.  For one last piece, we define a variable
         <literal>test</literal> to experiment with.
       </para>
@@ -485,7 +485,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
         up new types and make them automatically be 
         first-class features of the system.
       </para>
-      <para>
+      <para id="x_GG1">
         Remember our &ghci; examples at the beginning of the chapter?  All of
         them were made with the code in this example.  You might want
         to try them out for yourself and see how they work.
@@ -496,7 +496,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para>Extend the <function>prettyShow</function> function
+	    <para id="x_HG1">Extend the <function>prettyShow</function> function
 	      to remove unnecessary parentheses.</para>
 	  </question>
 	</qandaentry>
@@ -530,7 +530,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
     <para id="x_Kq">From inspecting the code, we can see that the cost of
       creating a new list depends on the length of the initial
       list<footnote>
-	<para>Non-strict evaluation makes the cost calculation more
+	<para id="x_IG1">Non-strict evaluation makes the cost calculation more
 	  subtle.  We only pay for an append if we actually use the
 	  resulting list.  Even then, we only pay for as much as we
 	  actually use.</para>
@@ -733,7 +733,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 	different monoid.</para>
 
       <para id="x_nq">Monoids are ubiquitous in Haskell<footnote>
-	  <para>Indeed, monoids are ubiquitous throughout programming.
+	  <para id="x_JG1">Indeed, monoids are ubiquitous throughout programming.
 	    The difference is that in Haskell, we recognize them, and
 	    talk about them.</para>
 	</footnote>.  The <type>Monoid</type> typeclass is defined in
@@ -783,7 +783,7 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 	  linkend="monadcase.writer.dlist"/>.</para>
 
       <tip>
-	<para>As with the rules for functors, Haskell cannot check the
+	<para id="x_KG1">As with the rules for functors, Haskell cannot check the
 	  rules for monoids on our behalf.  If we're defining a
 	  <type>Monoid</type> instance, we can easily write QuickCheck
 	  properties to give us high statistical confidence that our
@@ -795,53 +795,53 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
   <sect1 id="data.seq">
     <title>General purpose sequences</title>
 
-    <para>Both Haskell's built-in list type and the <type>DList</type>
+    <para id="x_LG1">Both Haskell's built-in list type and the <type>DList</type>
       type that we defined above have poor performance characteristics
       under some circumstances.  The <code>Data.Sequence</code> module
       defines a <type>Seq</type> container type that gives good
       performance for a wider variety of operations.</para>
 
-    <para>As with other modules, <code>Data.Sequence</code> is
+    <para id="x_MG1">As with other modules, <code>Data.Sequence</code> is
       intended to be used via qualified import.</para>
 
     &DataSequence.hs:import1;
 
-    <para>We can construct an empty <type>Seq</type> using
+    <para id="x_NG1">We can construct an empty <type>Seq</type> using
       <function>empty</function>, and a single-element container using
       <function>singleton</function>.</para>
 
     &dataSequence.ghci:simple;
 
-    <para>We can create a <type>Seq</type> from a list using
+    <para id="x_OG1">We can create a <type>Seq</type> from a list using
       <function>fromList</function>.</para>
 
     &dataSequence.ghci:list;
 
-    <para>The <code>Data.Sequence</code> module provides some
+    <para id="x_PG1">The <code>Data.Sequence</code> module provides some
       constructor functions in the form of operators. When we perform
       a qualified import, we must qualify the name of an operator in
       our code, which is ugly.</para>
 
     &dataSequence.ghci:ugly;
 
-    <para>If we import the operators explicitly, we can avoid the need
+    <para id="x_QG1">If we import the operators explicitly, we can avoid the need
       to qualify them.</para>
 
     &DataSequence.hs:import2;
 
-    <para>By removing the qualification from the operator, we improve
+    <para id="x_RG1">By removing the qualification from the operator, we improve
       the readability of our code.</para>
 
     &dataSequence.ghci:nice;
 
-    <para>A useful way to remember the <function>(&lt;|)</function>
+    <para id="x_SG1">A useful way to remember the <function>(&lt;|)</function>
       and <function>(|&gt;)</function> functions is that the
       <quote>arrow</quote> points to the element we're adding to the
       <code>Seq</code>.  The element will be added on the side to which the
       arrow points: <function>(&lt;|)</function> adds on the left,
       <function>(|&gt;)</function> on the right.</para>
 
-    <para>Both adding on the left and adding on the right are
+    <para id="x_TG1">Both adding on the left and adding on the right are
       constant-time operations.  Appending two <code>Seq</code>s is
       also cheap, occurring in time proportional to the logarithm of
       whichever is shorter.  To append, we use the
@@ -849,27 +849,27 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
     &dataSequence.ghci:append;
 
-    <para>If we want to create a list from a <type>Seq</type>, we must
+    <para id="x_UG1">If we want to create a list from a <type>Seq</type>, we must
       use the <code>Data.Foldable</code> module, which is best
       imported qualified.</para>
 
     &DataSequence.hs:import3;
 
-    <para>This module defines a typeclass, <type>Foldable</type>,
+    <para id="x_VG1">This module defines a typeclass, <type>Foldable</type>,
       which <type>Seq</type> implements.</para>
 
     &dataSequence.ghci:toList;
 
-    <para>If we want to fold over a <type>Seq</type>, we use the fold
+    <para id="x_WG1">If we want to fold over a <type>Seq</type>, we use the fold
       functions from the <code>Data.Foldable</code> module.</para>
 
     &dataSequence.ghci:foldl;
 
-    <para>The <code>Data.Sequence</code> module provides a number of
+    <para id="x_XG1">The <code>Data.Sequence</code> module provides a number of
       other useful list-like functions.  Its documentation is very
       thorough, giving time bounds for each operation.</para>
 
-    <para>If <type>Seq</type> has so many desirable characteristics,
+    <para id="x_YG1">If <type>Seq</type> has so many desirable characteristics,
       why is it not the default sequence type?  Lists are simpler and
       have less overhead, and so quite often they are good enough for
       the task at hand.  They are also well suited to a lazy setting,

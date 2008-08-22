@@ -84,7 +84,7 @@
       types&emdash;and returns a <literal>Bool</literal>.
     </para>
     <note>
-      <para>
+      <para id="x_vD1">
         The keywoard to define a typeclass in Haskell is
         <literal>class</literal>.  Unfortunately, this may be
         confusing for those of you coming from an object-oriented
@@ -1130,7 +1130,7 @@ class  Eq a  where
       function.  We will get a compilation error in such a situation.
     </para>
 
-    <para>When we automatically derive an instance of some typeclass,
+    <para id="x_wD1">When we automatically derive an instance of some typeclass,
       the types that we refer to in our &data; declaration must
       also be instances of that typeclass (manually or automatically).</para>
 
@@ -1314,7 +1314,7 @@ class  Eq a  where
     <sect2>
       <title>Relaxing some restrictions on typeclasses</title>
 
-      <para>Normally, we cannot write an instance of a typeclass for a
+      <para id="x_xD1">Normally, we cannot write an instance of a typeclass for a
 	specialized version of a polymorphic type.  The
 	<type>[Char]</type> type is the polymorphic type
 	<type>[a]</type> specialized to the type <type>Char</type>. We
@@ -1322,7 +1322,7 @@ class  Eq a  where
 	an instance of a typeclass.  This is highly inconvenient,
 	since strings are ubiquitous in real code.</para>
 
-      <para>The <code>TypeSynonymInstances</code> language extension
+      <para id="x_yD1">The <code>TypeSynonymInstances</code> language extension
 	removes this restriction, permitting us to write such
 	instances.</para>
 
@@ -1337,7 +1337,7 @@ class  Eq a  where
 
       &SimpleClass.hs:Foo;
     
-      <para>If we apply <function>foo</function> to a
+      <para id="x_zD1">If we apply <function>foo</function> to a
 	<type>String</type>, the compiler will use the
 	<type>String</type>-specific implementation.  Even though we
 	have an instance of <type>Foo</type> for <type>[a]</type> and
@@ -1394,14 +1394,14 @@ class  Eq a  where
 	<function>showList</function> renders a list using square
 	brackets and commas.</para>
 
-      <para>The instance of <type>Show</type> for <type>[a]</type> is
+      <para id="x_AE1">The instance of <type>Show</type> for <type>[a]</type> is
 	implemented using <function>showList</function>.  The instance
 	of <type>Show</type> for <type>Char</type> provides a
 	special implementation of <function>showList</function> that
 	uses double quotes and escapes non-ASCII-printable
 	characters.</para>
 
-      <para>As a result, if someone applies <function>show</function>
+      <para id="x_BE1">As a result, if someone applies <function>show</function>
 	to a <type>[Char]</type> value, the implementation of
 	<function>showList</function> will be chosen, and it will
 	correctly render the string using quotes.</para>
@@ -1429,20 +1429,20 @@ class  Eq a  where
     <note>
       <title>The type and newtype keywords</title>
 
-      <para>Although their names are similar, the &type; and &newtype;
+      <para id="x_CE1">Although their names are similar, the &type; and &newtype;
 	keywords have different purposes.  The &type; keyword gives us
 	another way of referring to a type, like a nickname for a
 	friend.  Both we and the compiler know that
 	<type>[Char]</type> and <type>String</type> names refer to the
 	same type.</para>
 
-      <para>In contrast, the &newtype; keyword exists to
+      <para id="x_DE1">In contrast, the &newtype; keyword exists to
 	<emphasis>hide</emphasis> the nature of a type.  Consider a
 	<type>UniqueID</type> type.</para>
 
       &Newtype.hs:UniqueID;
 
-      <para>The compiler treats <type>UniqueID</type> as a different
+      <para id="x_EE1">The compiler treats <type>UniqueID</type> as a different
 	type from <type>Int</type>.  As a user of a
 	<type>UniqueID</type>, we know only that we have a unique
 	identifier; we cannot see that it is implemented as an
@@ -1469,7 +1469,7 @@ class  Eq a  where
       &newtype;'s value constructor to create a new value, or to
       pattern match on an existing value.</para>
 
-    <para>If a &newtype; does not use automatic deriving to expose the
+    <para id="x_FE1">If a &newtype; does not use automatic deriving to expose the
       underlying type's implementation of a typeclass, we are free to
       either write a new instance or leave the typeclass
       unimplemented.</para>
@@ -1641,7 +1641,7 @@ class  Eq a  where
 	us, the library authors, the liberty to change our internal
 	representation if we need to.</para>
 
-      <para>If we export the data constructor, clients are likely to
+      <para id="x_GE1">If we export the data constructor, clients are likely to
 	start depending on it, for instance by using it in patterns.
 	If we later wish to change the innards of our type, we'll risk
 	breaking any code that uses the constructor.</para>

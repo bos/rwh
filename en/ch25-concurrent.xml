@@ -42,7 +42,7 @@
       streams data back out.</para>
 
     <note>
-      <para>Many traditional languages further blur the already
+      <para id="x_jJ1">Many traditional languages further blur the already
 	indistinct boundary between concurrent and parallel
 	programming, because they force programmers to use the same
 	primitives to construct both kinds of program.</para>
@@ -461,7 +461,7 @@
 	  <type>Chan</type> types.</para>
       </tip>
 
-      <para>The <code>!</code> pattern above is simple to use, but it
+      <para id="x_kJ1">The <code>!</code> pattern above is simple to use, but it
 	is not always sufficient to ensure that our data is
 	evaluated.  For a more complete approach, see <xref
 	linkend="concurrent.strategies"/> below.</para>
@@ -711,7 +711,7 @@ number of cores: 4</screen>
 	while it runs, and executes on one core.  This limits the
 	performance improvement we can hope to see from using multiple
 	cores<footnote>
-	  <para>As we write this book, the garbage collector is being
+	  <para id="x_lJ1">As we write this book, the garbage collector is being
 	    retooled to use multiple cores, but we cannot yet predict
 	    its future effect.</para>
 	</footnote>.</para>
@@ -763,14 +763,14 @@ number of cores: 4</screen>
     <sect2>
       <title>Normal form and head normal form</title>
 
-      <para>The familiar <function>seq</function> function evaluates
+      <para id="x_mJ1">The familiar <function>seq</function> function evaluates
 	an expression to what we call <emphasis>head normal
 	  form</emphasis> (abbreviated HNF).  It stops once it reaches
 	the outermost constructor (the <quote>head</quote>). This is
 	distinct from <emphasis>normal form</emphasis> (NF), in which
 	an expression is completely evaluated.</para>
 
-      <para>You will also hear Haskell programmers refer to
+      <para id="x_nJ1">You will also hear Haskell programmers refer to
 	<emphasis>weak</emphasis> head normal form (WHNF).  For normal
 	data, weak head normal form is the same as head normal form.
 	The difference only arises for functions, and is too abstruse
@@ -920,7 +920,7 @@ number of cores: 4</screen>
 	  <function>par</function> or <function>pseq</function>, we
 	  don't need to return a meaningful value.</para>
 
-	<para>Of course, in many cases we will need to force the
+	<para id="x_oJ1">Of course, in many cases we will need to force the
 	  evaluation of individual elements of the list, too.  Below,
 	  we will discuess a typeclass-based solution to this
 	  problem.</para>
@@ -1208,7 +1208,7 @@ Sorted all 700000 elements.
       useful, Haskell equivalent.  To focus our attention, we will
       look at the processing of web server log files, which tend to be
 	both huge and plentiful<footnote>
-	  <para>The genesis of this idea comes from Tim Bray.</para>
+	  <para id="x_pJ1">The genesis of this idea comes from Tim Bray.</para>
 	</footnote>.</para>
 
     <para id="x_P61">As an example, here is a log entry for a page visit recorded

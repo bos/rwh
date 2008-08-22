@@ -293,7 +293,7 @@
 
     &BetterPredicate.hs:Predicate;
 
-    <para>Our <type>Predicate</type> type is just a synonym for a
+    <para id="x_zE1">Our <type>Predicate</type> type is just a synonym for a
       function of four arguments.  It will save us a little keyboard
       work and screen space.</para>
 
@@ -400,14 +400,14 @@
       then returns to a caller that tries to open another file before
       any of the accumulated garbage file handles is closed.</para>
       
-      <para>To make matters worse, any subsequent error will be caused
+      <para id="x_AF1">To make matters worse, any subsequent error will be caused
       by data that is no longer reachable from within the program, and
       has yet to be garbage collected.  Such a bug is thus dependent
       on the structure of the program, the contents of the filesystem,
       and how close the current run of the program is to triggering
       the garbage collector.</para>
 
-    <para>This sort of problem is easy to overlook during development,
+    <para id="x_BF1">This sort of problem is easy to overlook during development,
       and when it later occurs in the field (as these awkward problems
       always seem to do), it will be much harder to diagnose.</para>
 
@@ -495,7 +495,7 @@
       some code that will help us to write more concise
       predicates.</para>
 
-    <para>Sometimes, this kind of library is referred to as an
+    <para id="x_CF1">Sometimes, this kind of library is referred to as an
       <emphasis>embedded domain specific language</emphasis>: we use
       our programming language's native facilities (hence
       <emphasis>embedded</emphasis>) to write code that lets us solve
@@ -623,7 +623,7 @@
 	in the wrong place in Haskell, however, and we lose the
 	concision that partial application gives.</para>
 
-      <para>We can recover some of that conciseness via combinators.
+      <para id="x_DF1">We can recover some of that conciseness via combinators.
 	For instance, <function>forM</function> was not added to the
 	<code>Control.Monad</code> module until 2007. Prior to that,
 	people wrote <code>flip mapM</code> instead.</para>

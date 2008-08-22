@@ -787,7 +787,7 @@ $ <userinput>runhaskell csv9.hs &lt; test.csv</userinput>
 
     &JSONParsec.hs:p_value;
 
-    <para>The <function>choice</function> combinator allows us to
+    <para id="x_xG1">The <function>choice</function> combinator allows us to
       represent this kind of ladder-of-alternatives as a list.  It
       returns the result of the first parser to succeed.</para>
 

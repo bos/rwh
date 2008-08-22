@@ -119,7 +119,7 @@
       <sect3>
 	<title>Alternatives</title>
 
-	<para>Both the MacPorts and Fink projects provide builds of
+	<para id="x_WN1">Both the MacPorts and Fink projects provide builds of
 	  &GHC;.</para>
       </sect3>
     </sect2>
@@ -127,11 +127,11 @@
     <sect2 id="install.debian">
       <title>Ubuntu and Debian Linux</title>
       
-      <para>Under both Ubuntu and Debian, you can install a minimal
+      <para id="x_XN1">Under both Ubuntu and Debian, you can install a minimal
 	working version of &GHC; by running <command>sudo aptitude
 	  install ghc6</command> from a shell prompt.</para>
 
-      <para>These distros maintain a small core &GHC; package, which
+      <para id="x_YN1">These distros maintain a small core &GHC; package, which
 	is insufficient for much practical development. However, they
 	make a number of additional prebuilt packages available. To
 	see a complete list of these prebuilt packages, run
@@ -140,7 +140,7 @@
 	<command>sudo aptitude install
 	  libghc6-mtl-dev</command>.</para>
 
-      <para>Since you will probably want to profile the performance of
+      <para id="x_ZN1">Since you will probably want to profile the performance of
 	your Haskell programs at some point, you should also install
 	the <code>ghc6-prof</code> package.</para>
     </sect2>
@@ -154,7 +154,7 @@
       
 <screen><userinput>sudo yum -y install ghc ghc-doc ghc683-prof</userinput></screen>
 
-      <para>The base package, containing the &ghc; and &ghci; commands
+      <para id="x_aN1">The base package, containing the &ghc; and &ghci; commands
 	and libraries, is <filename>ghc</filename>.  The
 	<filename>ghc-doc</filename> package contains the &GHC; user
 	guide, and command and library documentation.  The
@@ -172,12 +172,12 @@
     <sect2>
       <title>FreeBSD</title>
 
-      <para>Under FreeBSD, run the following commands:</para>
+      <para id="x_bN1">Under FreeBSD, run the following commands:</para>
 <screen><prompt>$</prompt> <userinput>cd /usr/ports/lang/ghc</userinput>
 <prompt>$</prompt> <userinput>sudo make install clean</userinput>
 </screen>
 
-      <para>This will download and build &GHC; from source.  You
+      <para id="x_cN1">This will download and build &GHC; from source.  You
 	should expect the process to take several hours.</para>
     </sect2>
   </sect1>
@@ -185,7 +185,7 @@
   <sect1>
     <title>Installing Haskell software</title>
 
-    <para>Almost all Haskell libraries are distributed using a
+    <para id="x_dN1">Almost all Haskell libraries are distributed using a
       standard packaging system named Cabal.  You can find hundreds of
       Haskell open source libraries and programs, all of which use
       Cabal, at <ulink
@@ -195,7 +195,7 @@
     <sect2>
       <title>Automated download and installation with cabal</title>
 
-      <para>A command named <command>cabal</command> automates the job
+      <para id="x_eN1">A command named <command>cabal</command> automates the job
 	of downloading, building, and installing a Haskell package. It
 	also figures out what dependencies a particular library needs,
 	and either makes sure that they are installed already, or
@@ -204,7 +204,7 @@
 	  <replaceable>mypackage</replaceable></command>
 	command.</para>
 
-      <para>The <command>cabal</command> command is not bundled with
+      <para id="x_fN1">The <command>cabal</command> command is not bundled with
 	&GHC;, so at least as of version 6.8.3 of &GHC;, you will have
 	to download and build <command>cabal</command>
 	yourself.</para>
@@ -212,31 +212,31 @@
       <sect3>
 	<title>Installing cabal</title>
 
-	<para>To build the <command>cabal</command> command, download
+	<para id="x_gN1">To build the <command>cabal</command> command, download
 	  the sources for the following four packages from <ulink
 	    url="http://hackage.haskell.org/">http://hackage.haskell.org/</ulink></para>
 
 	<itemizedlist>
 	  <listitem>
-	    <para><code>Cabal</code></para>
+	    <para id="x_hN1"><code>Cabal</code></para>
 	  </listitem>
 	  <listitem>
-	    <para><code>HTTP</code></para>
+	    <para id="x_iN1"><code>HTTP</code></para>
 	  </listitem>
 	  <listitem>
-	    <para><code>zlib</code></para>
+	    <para id="x_jN1"><code>zlib</code></para>
 	  </listitem>
 	  <listitem>
-	    <para><code>cabal-install</code></para>
+	    <para id="x_kN1"><code>cabal-install</code></para>
 	  </listitem>
 	</itemizedlist>
 
-	<para>Follow the instructions in <xref
+	<para id="x_lN1">Follow the instructions in <xref
 	linkend="install.pkg.manual"/> below to manually build each of
 	  the four packages above, making sure that you leave
 	  <code>cabal-install</code> until last.</para>
 
-	<para>After you install the <code>cabal-install</code>
+	<para id="x_mN1">After you install the <code>cabal-install</code>
 	  package, the <code>$HOME/.cabal/bin</code> directory will
 	  contain the <command>cabal</command> command.  You can
 	  either move it somewhere more convenient or add that
@@ -246,7 +246,7 @@
       <sect3>
 	<title>Updating cabal's package list</title>
 
-	<para>After installing <command>cabal</command>, and
+	<para id="x_nN1">After installing <command>cabal</command>, and
 	  periodically thereafter, you should download a fresh list of
 	  packages from Hackage.  You can do so as follows:</para>
 
@@ -256,7 +256,7 @@
       <sect3>
 	<title>Installing a library or program</title>
 
-	<para>To install some executable or library, just run the
+	<para id="x_oN1">To install some executable or library, just run the
 	  following command:</para>
 
 <screen><prompt>$</prompt> <userinput>cabal install -p <replaceable>mypackage</replaceable></userinput></screen>
@@ -266,7 +266,7 @@
     <sect2 id="install.pkg.manual">
       <title>Building packages by hand</title>
 
-      <para>If you download a tarball from Hackage, it will arrive in
+      <para id="x_pN1">If you download a tarball from Hackage, it will arrive in
 	source form.  Unpack the tarball, and go into the newly
 	created directory in a command shell.  The process to build
 	and install it is simple, consisting of three
@@ -274,29 +274,29 @@
 
       <orderedlist>
 	<listitem>
-	  <para>Configure for system-wide installation (i.e. available
+	  <para id="x_qN1">Configure for system-wide installation (i.e. available
 	    to all users):</para>
 	  <screen><prompt>$</prompt> <userinput>runghc Setup configure -p</userinput></screen>
-	  <para>Alternatively, configure to install only for
+	  <para id="x_rN1">Alternatively, configure to install only for
 	    yourself:</para>
 	  <screen><prompt>$</prompt> <userinput>runghc Setup configure --user --prefix=$HOME -p</userinput></screen>
 	</listitem>
 	<listitem>
-	  <para>Build (this will build each source file twice, with
+	  <para id="x_sN1">Build (this will build each source file twice, with
 	    and without profiling support):</para>
 	  <screen><prompt>$</prompt> <userinput>runghc Setup build</userinput></screen>
 	</listitem>
 	<listitem>
-	  <para>Install if you chose system-wide configuration
+	  <para id="x_tN1">Install if you chose system-wide configuration
 	    above:</para>
 	  <screen><prompt>$</prompt> <userinput>sudo runghc Setup install</userinput></screen>
-	  <para>Alternatively, if you chose configuration for yourself
+	  <para id="x_uN1">Alternatively, if you chose configuration for yourself
 	    only:</para>
 	  <screen><prompt>$</prompt> <userinput>runghc Setup install</userinput></screen>
 	</listitem>
       </orderedlist>
 
-      <para>If you build by hand, you will frequently find that the
+      <para id="x_vN1">If you build by hand, you will frequently find that the
 	configuration step fails because some other library must be
 	installed first.  You may find yourself needing to download
 	and build several packages before you can make progress on the

@@ -125,7 +125,7 @@
 
     &countEntries.ghci:countEntries;
 
-    <para>We use a <type>WriterT</type> on top of <type>IO</type>
+    <para id="x_RJ1">We use a <type>WriterT</type> on top of <type>IO</type>
       because there is no <type>IOT</type> monad transformer.
       Whenever we use the <type>IO</type> monad with one or more monad
       transformers, <type>IO</type> will always be at the bottom of
@@ -240,7 +240,7 @@
       <type>ReaderT</type> or <type>WriterT</type> on top, but
       <type>IO</type> must be on the bottom.</para>
 
-    <para>Even a small stack of monad transformers quickly develops an
+    <para id="x_SJ1">Even a small stack of monad transformers quickly develops an
       unwieldy type name.  We can use a &type; alias to reduce the lengths
       of the type signatures that we write.</para>
 
@@ -347,7 +347,7 @@
       <qandaset defaultlabel="number">
 	<qandaentry>
 	  <question>
-	    <para>Modify the <type>App</type> type synonym to swap the
+	    <para id="x_TJ1">Modify the <type>App</type> type synonym to swap the
 	      order of <type>ReaderT</type> and <type>WriterT</type>.
 	      What effect does this have on the
 	      <function>runApp</function> execution function?</para>
@@ -356,7 +356,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Add the <type>WriterT</type> transformer to the
+	    <para id="x_UJ1">Add the <type>WriterT</type> transformer to the
 	      <type>App</type> monad transformer stack.  Modify
 	      <function>runApp</function> to work with this new
 	      setup.</para>
@@ -365,7 +365,7 @@
 
 	<qandaentry>
 	  <question>
-	    <para>Rewrite the <function>constrainedCount</function>
+	    <para id="x_VJ1">Rewrite the <function>constrainedCount</function>
 	      function to record results using the
 	      <type>WriterT</type> transformer in your new
 	      <type>App</type> stack.</para>
@@ -830,7 +830,7 @@
 	these costs vanish, but that degree of sophistication is not
 	yet widely available.</para>
 
-      <para>There are relatively simple techniques to avoid some of
+      <para id="x_WJ1">There are relatively simple techniques to avoid some of
 	these costs, though we lack space to do more than mention them
 	by name. For instance, by using a continuation monad, we can
 	avoid the constant wrapping and unwrapping in &bind;, only
@@ -885,7 +885,7 @@
 	hacker of monad transformers, it is well worth looking
 	at.</para>
 
-      <para>The quadratic instances definition is actually a problem
+      <para id="x_XJ1">The quadratic instances definition is actually a problem
 	with the approach of using monad transformers. There have been
 	many other approaches put forward for composing monads that
 	don't have this problem, but none of them seem as convenient

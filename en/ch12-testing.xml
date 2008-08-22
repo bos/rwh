@@ -51,7 +51,7 @@ test its behaviour.
     </para>
 
     <para id="x_zp">
-First, we import the QuickCheck library<footnote><para>
+First, we import the QuickCheck library<footnote><para id="x_UF1">
 Throughout this chapter we'll use QuickCheck 1.0 (classic QuickCheck). It
 should be kept in mind that a some functions may differ in later releases of
 the library. </para></footnote>, and any other modules we need:
@@ -313,7 +313,7 @@ the specification, and ensuring it behaves as required.
      
     &Arbitrary.hs:ternary;
      
-    <para>
+    <para id="x_VF1">
      we can write an <type>Arbitrary</type> instance for the
      <type>Ternary</type> type by defining a function that picks elements
      from a list of the possible values of <type>Ternary</type> type: </para>
@@ -350,7 +350,7 @@ the specification, and ensuring it behaves as required.
       union and concatenation variants.
     </para>
       
-    <para>
+    <para id="x_WF1">
       First, though, we need to write an instance for generating random
       characters &emdash; QuickCheck doesn't have a default instance for
       characters, due to the abundance of different text encodings we might

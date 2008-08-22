@@ -92,7 +92,7 @@
         <literal>getDirectoryContents</literal>, refer to <xref
           linkend="glob"/>.
       </para>
-      <para>
+      <para id="x_fJ1">
         Is the <literal>filter (`notElem` [".", ".."])</literal> part
         confusing?  That could got also be written as <literal>filter
         (\c -> not $ elem c [".", ".."])</literal>.  The backticks in
@@ -454,7 +454,7 @@ data TimeDiff = TimeDiff
         <literal>FileStatus</literal> type returned by
         <literal>getFileStatus</literal>.
       </para>
-      <para>
+      <para id="x_gJ1">
         The functions such as <literal>accessTime</literal> return
         data in a POSIX-specific type called
         <literal>EpochTime</literal>, which se convert to a

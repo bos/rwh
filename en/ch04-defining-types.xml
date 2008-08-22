@@ -33,7 +33,7 @@
       As we've already mentioned, a type name, and hence a type
       constructor, must start with a capital letter.</para>
 
-    <para>The <code>Book</code> that follows is the name of the
+    <para id="x_pB1">The <code>Book</code> that follows is the name of the
       <emphasis>value constructor</emphasis> (sometimes called a data
       constructor).  We use this to create a value of the
       <type>BookInfo</type> type.  A value constructor's name must
@@ -60,7 +60,7 @@
 
     &BookStore.hs:MagazineInfo;
 
-    <para>Even though this <type>MagazineInfo</type> type has the same
+    <para id="x_qB1">Even though this <type>MagazineInfo</type> type has the same
       structure as our <type>BookInfo</type> type, Haskell treats the
       types as distinct because their type and value constructors have
       different names.</para>
@@ -105,7 +105,7 @@
 
     &bookstore.ghci:valueType;
 
-    <para>Remember that if we want to define a new variable inside
+    <para id="x_rB1">Remember that if we want to define a new variable inside
       &ghci;, the syntax is slightly different from that of a Haskell
       source file: we need to put a &let; in front.</para>
 
@@ -186,7 +186,7 @@
       <type>BookRecord</type> as a synonym for the tuple
       <type>(BookInfo, BookReview)</type>.  A type synonym only
       creates a new name that refers to an existing type<footnote>
-	<para>If you are familiar with C or C++, it is analogous to a
+	<para id="x_sB1">If you are familiar with C or C++, it is analogous to a
 	  <code>typedef</code>.</para>
       </footnote>.  We still use the same value constructors to create
       a value of the type.</para>
@@ -267,20 +267,20 @@
 
       &Distinction.hs:tuples;
 
-      <para>Since they have different names, two algebraic data types
+      <para id="x_tB1">Since they have different names, two algebraic data types
 	have distinct types, even if they are otherwise structurally
 	equivalent.</para>
 
       &Distinction.hs:data;
 
-      <para>This lets us bring the type system to bear in writing
+      <para id="x_uB1">This lets us bring the type system to bear in writing
 	programs with fewer bugs.  With the tuples we defined above,
 	we could conveivably pass a description of a whale to a
 	function expecting a chair, and the type system could not help
 	us.  With the algebraic data types, there is no such
 	possibility of confusion.</para>
 
-      <para>Here is a more subtle example.  Consider the following
+      <para id="x_vB1">Here is a more subtle example.  Consider the following
 	representations of a two-dimensional vector.</para>
 
       &AlgebraicVector.hs:types;
@@ -390,7 +390,7 @@
 
 	&Roygbiv.hs:Roygbiv;
 
-	<para>We can try these out in &ghci;.</para>
+	<para id="x_wB1">We can try these out in &ghci;.</para>
 
 	&roygbiv.ghci:using;
 
@@ -502,12 +502,12 @@
       uses the right hand side of that equation as the result of the
       function application.</para>
 
-    <para>Here is a slightly more extended example.  This function
+    <para id="x_xB1">Here is a slightly more extended example.  This function
       adds together the elements of a list.</para>
 
     &add.hs:sumList;
 
-    <para>Let us step through the evaluation of <code>sumList
+    <para id="x_yB1">Let us step through the evaluation of <code>sumList
 	[1,2]</code>. The list notation <code>[1,2]</code> is
       shorthand for the expression <code>(1:(2:[]))</code>. We begin
       by trying to match the pattern in the first equation of the
@@ -520,7 +520,7 @@
       pattern.  We say that the pattern <emphasis>matches</emphasis>,
       or that the match <emphasis>succeeds</emphasis>.</para>
 
-    <para>The variables <varname>x</varname> and <varname>xs</varname>
+    <para id="x_zB1">The variables <varname>x</varname> and <varname>xs</varname>
       are now <quote>bound to</quote> the constructor's arguments, so
       <varname>x</varname> is given the value <code>1</code>, and
       <code>xs</code> the value <code>2:[]</code>.</para>
@@ -809,7 +809,7 @@
 
     &BookStore.hs:customer2;
 
-    <para>If we use this form, we can vary the order in which we list
+    <para id="x_AC1">If we use this form, we can vary the order in which we list
       fields.  Here, we have moved the name and address fields
       from their positions in the declaration of the type.</para>
 
@@ -969,7 +969,7 @@ data CalendarTime = CalendarTime {
 
     &Tree.hs:Tree;
 
-    <para>A binary tree is either a node with two children, which are
+    <para id="x_BC1">A binary tree is either a node with two children, which are
       themselves binary trees, or an empty value.</para>
 
     <para id="x_Zg">This time, let's search for insight by comparing our
@@ -1060,7 +1060,7 @@ data CalendarTime = CalendarTime {
       distinguish between a recoverable error and a problem so severe
       that it really should terminate our program.</para>
 
-    <para>As we have already seen, a pattern matching failure causes a
+    <para id="x_CC1">As we have already seen, a pattern matching failure causes a
       similar unrecoverable error.</para>
 
     &error.ghci:myError;
@@ -1422,12 +1422,12 @@ data CalendarTime = CalendarTime {
 	matches the value <varname>apple</varname> or
 	<varname>orange</varname>.</para>
 
-      <para>It is easier to spot the mistake if we rewrite
+      <para id="x_DC1">It is easier to spot the mistake if we rewrite
 	the code in an equational style.</para>
 
       &BogusPattern.hs:equational;
 
-      <para>Now can you see the problem?  Here, it is more obvious
+      <para id="x_EC1">Now can you see the problem?  Here, it is more obvious
 	<varname>apple</varname> does not refer to the top level value
 	named <varname>apple</varname>: it is a local pattern
 	variable.</para>
@@ -1480,7 +1480,7 @@ data CalendarTime = CalendarTime {
 
     &BadTree.hs:nodesAreSame;
 
-    <para>In this example, we use pattern matching to ensure that we
+    <para id="x_FC1">In this example, we use pattern matching to ensure that we
       are looking at values of the right shape, and a guard to compare
       pieces of them.</para>
 
@@ -1500,12 +1500,12 @@ data CalendarTime = CalendarTime {
       variables mentioned in the pattern with which it is associated
       are bound and can be used.</para>
 
-    <para>Here is a reworked version of our <function>lend</function>
+    <para id="x_GC1">Here is a reworked version of our <function>lend</function>
       function that uses guards.</para>
 
     &Lending.hs:lend3;
 
-    <para>The special-looking guard expression
+    <para id="x_HC1">The special-looking guard expression
       <varname>otherwise</varname> is simply a variable bound to the
       value <code>True</code>, to aid readability.</para>
 
@@ -1534,7 +1534,7 @@ data CalendarTime = CalendarTime {
     <qandaset defaultlabel="number">
       <qandaentry>
 	<question>
-	  <para>Write a function that computes the number of elements
+	  <para id="x_IC1">Write a function that computes the number of elements
 	    in a list.  To test it, ensure that it gives the same
 	    answers as the standard <function>length</function>
 	    function.</para>
@@ -1543,7 +1543,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Add a type signature for your function to your source
+	  <para id="x_JC1">Add a type signature for your function to your source
 	    file.  To test it, load the source file into &ghci;
 	    again.</para>
 	</question>
@@ -1551,7 +1551,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Write a function that computes the mean of a list,
+	  <para id="x_KC1">Write a function that computes the mean of a list,
 	    i.e. the sum of all elements in the list divided by its
 	    length.  (You may need to use the
 	    <function>fromIntegral</function> function to convert the
@@ -1562,7 +1562,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Turn a list into a palindrome, i.e. it should read the
+	  <para id="x_LC1">Turn a list into a palindrome, i.e. it should read the
 	    same both backwards and forwards.  For example, given the
 	    list <code>[1,2,3]</code>, your function should return
 	    <code>[1,2,3,3,2,1]</code>.</para>
@@ -1571,14 +1571,14 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Write a function that determines whether its input
+	  <para id="x_MC1">Write a function that determines whether its input
 	    list is a palindrome.</para>
 	</question>
       </qandaentry>
 
       <qandaentry>
 	<question>
-	  <para>Create a function that sorts a list of lists based on
+	  <para id="x_NC1">Create a function that sorts a list of lists based on
 	    the length of each sublist.  (You may want to look at the
 	    <function>sortBy</function> function from the
 	    <code>Data.List</code> module.)</para>
@@ -1587,12 +1587,12 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Define a function that joins a list of lists together
+	  <para id="x_OC1">Define a function that joins a list of lists together
 	    using a separator value.</para>
 
 	  &Intersperse.hs:intersperse;
 
-	  <para>The separator should appear between elements of the
+	  <para id="x_PC1">The separator should appear between elements of the
 	    list, but should not follow the last element.  Your
 	    function should behave as follows.</para>
 
@@ -1603,7 +1603,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Using the binary tree type that we defined earlier in
+	  <para id="x_QC1">Using the binary tree type that we defined earlier in
 	    this chapter, write a function that will determine the
 	    height of the tree.  The height is the largest number of
 	    hops from the root to an <code>Empty</code>. For example,
@@ -1616,7 +1616,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Consider three two-dimensional points
+	  <para id="x_RC1">Consider three two-dimensional points
 	    <emphasis>a</emphasis>, <emphasis>b</emphasis>, and
 	    <emphasis>c</emphasis>.  If we look at the angle formed by
 	    the line segment from <emphasis>a</emphasis> to
@@ -1630,14 +1630,14 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Write a function that calculates the turn made by
+	  <para id="x_SC1">Write a function that calculates the turn made by
 	    three 2D points and returns a <type>Direction</type>.</para>
 	</question>
       </qandaentry>
 
       <qandaentry>
 	<question>
-	  <para>Define a function that takes a list of 2D points and
+	  <para id="x_TC1">Define a function that takes a list of 2D points and
 	    computes the direction of each successive triple.  Given
 	    a list of points <code>[a,b,c,d,e]</code>, it should begin
 	    by computing the turn made by <code>[a,b,c]</code>, then
@@ -1649,7 +1649,7 @@ data CalendarTime = CalendarTime {
 
       <qandaentry>
 	<question>
-	  <para>Using the code from the preceding three exercises,
+	  <para id="x_UC1">Using the code from the preceding three exercises,
 	    implement Graham's scan algorithm for the convex hull of a
 	    set of 2D points. You can find good description of what a
 	    <ulink

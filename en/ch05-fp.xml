@@ -33,7 +33,7 @@
   <sect1 id="fp.framework">
     <title>A simple command line framework</title>
 
-    <para>In most of this chapter, we will concern ourselves with code
+    <para id="x_VC1">In most of this chapter, we will concern ourselves with code
       that has no interaction with the outside world.  To maintain our
       focus on practical code, we will begin by developing a gateway
       between our <quote>pure</quote> code and the outside world. Our
@@ -43,7 +43,7 @@
 
     &InteractWith.hs:main;
 
-    <para>This is all we need to write simple, but complete, file
+    <para id="x_WC1">This is all we need to write simple, but complete, file
       processing programs.  This is a complete program.  We can
       compile it to an executable named
       <filename>InteractWith</filename> as follows.</para>
@@ -52,7 +52,7 @@
 [1 of 1] Compiling Main             ( InteractWith.hs, InteractWith.o )
 Linking InteractWith ...</screen>
 
-    <para>If we run this program from the shell or command prompt, it
+    <para id="x_XC1">If we run this program from the shell or command prompt, it
       will accept two file names: the name of a file to read, and the
       name of a file to write.</para>
 
@@ -64,7 +64,7 @@ hello world
 <prompt>$</prompt> <userinput>cat hello-out.txt</userinput>
 hello world</screen>
 
-    <para>Some of the notation in our source file is new.  The &do;
+    <para id="x_YC1">Some of the notation in our source file is new.  The &do;
       keyword introduces a block of <emphasis>actions</emphasis> that
       can cause effects in the real world, such as reading or writing
       a file.  The <code>&lt;-</code> operator is the equivalent of
@@ -73,7 +73,7 @@ hello world</screen>
       details of notation, and I/O in general, in <xref
       linkend="io"/>.</para>
 
-    <para>When we want to test a function that cannot talk to the
+    <para id="x_ZC1">When we want to test a function that cannot talk to the
       outside world, we simply replace the name
       <function>id</function> in the code above with the name of the
       function we want to test.  Whatever our function does, it will
@@ -125,14 +125,14 @@ hello world</screen>
 
     &SplitLines.hs:splitLines.type;
 
-    <para>Our function's type signature indicates that it accepts a
+    <para id="x_aC1">Our function's type signature indicates that it accepts a
       single string, the contents of a file with some unknown
       line ending convention.  It returns a list of strings,
       representing each line from the file.</para>
 
     &SplitLines.hs:splitLines;
 
-    <para>Before we dive into detail, notice first how we have
+    <para id="x_bC1">Before we dive into detail, notice first how we have
       organized our code.  We have presented the important pieces of
       code first, keeping the definition of
       <function>isLineTerminator</function> until later. Because we
@@ -157,7 +157,7 @@ hello world</screen>
       return or newline at a time, examining one element of the list
       at a time is good enough for our needs.</para>
 
-    <para>The first equation of <function>splitLines</function>
+    <para id="x_cC1">The first equation of <function>splitLines</function>
       indicates that if we match an empty string, we have no further
       work to do.</para>
 
@@ -167,7 +167,7 @@ hello world</screen>
       remainder of the string.  The suffix will include the line
       terminator, if any is present.</para>
 
-    <para>The <quote><code>pre :</code></quote> expression tells us
+    <para id="x_dC1">The <quote><code>pre :</code></quote> expression tells us
       that we should add the <varname>pre</varname> value to the front
       of the list of lines.  We then use a &case; expression to
       inspect the suffix, so we can decide what to do next.  The
@@ -224,20 +224,20 @@ hello world</screen>
 
     &splitlines.ghci:cons;
 
-    <para>This sort of experimenting with &ghci; is a helpful way to
+    <para id="x_eC1">This sort of experimenting with &ghci; is a helpful way to
       understand and debug the behavior of a piece of code.  It has
       an even more important benefit that is almost accidental in
       nature.  It can be tricky to test complicated code from
       &ghci;, so we will tend to write smaller functions.  This can
       further help the readability of our code.</para>
 
-    <para>This style of creating and reusing small, powerful pieces of
+    <para id="x_fC1">This style of creating and reusing small, powerful pieces of
       code is a fundamental part of functional programming.</para>
 
     <sect2>
       <title>A line ending conversion program</title>
 
-      <para>Let's hook our <function>splitLines</function> function
+      <para id="x_gC1">Let's hook our <function>splitLines</function> function
 	into the little framework we wrote earlier.  Make a copy of
 	the <filename>Interact.hs</filename> source file; let's call
 	the new file <filename>FixLines.hs</filename>.  Add the
@@ -250,7 +250,7 @@ hello world</screen>
 
       &SplitLines.hs:fixLines;
 
-      <para>If we replace the <function>id</function> function with
+      <para id="x_hC1">If we replace the <function>id</function> function with
 	<function>fixLines</function>, we can compile an executable
 	that will convert a text file to our system's native line
 	ending.</para>
@@ -259,7 +259,7 @@ hello world</screen>
 [1 of 1] Compiling Main             ( FixLines.hs, FixLines.o )
 Linking FixLines ...</screen>
 
-      <para>If you are on a Windows system, find and download a text
+      <para id="x_iC1">If you are on a Windows system, find and download a text
 	file that was created on a Unix system (for example <ulink
 	  url="http://www.gnu.org/licenses/gpl-3.0.txt">gpl-3.0.txt</ulink>). 
 	Open it in the standard Notepad text editor.  The lines should
@@ -268,7 +268,7 @@ Linking FixLines ...</screen>
 	just created, and open the output file in Notepad.  The line
 	endings should now be fixed up.</para>
 
-      <para>On Unix-like systems, the standard pagers and editors hide
+      <para id="x_jC1">On Unix-like systems, the standard pagers and editors hide
 	Windows line endings.  This makes it more difficult to verify
 	that <command>FixLines</command> is actually eliminating
 	them.  Here are a few commands that should help.</para>
@@ -324,14 +324,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
     &infix.ghci:infix;
 
-    <para>We see a more pronounced improvement with some useful functions from the
+    <para id="x_kC1">We see a more pronounced improvement with some useful functions from the
       <code>Data.List</code> module.
       The <function>isPrefixOf</function> function tells us if one list
       matches the beginning of another.</para>
 
     &infix.ghci:isPrefixOf;
 
-    <para>The <function>isInfixOf</function> and
+    <para id="x_lC1">The <function>isInfixOf</function> and
     <function>isSuffixOf</function> functions match anywhere in a list
     and at its end, respectively.</para>
 
@@ -402,7 +402,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &ch05.list.ghci:length;
 
-      <para>If you need to determine whether a list is empty, use the
+      <para id="x_mC1">If you need to determine whether a list is empty, use the
 	<function>null</function> function.</para>
 
       &ch05.list.ghci:null;
@@ -434,7 +434,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       
       &ch05.list.ghci:head.empty;
     
-      <para>Try each of the above functions in &ghci;.  Which ones
+      <para id="x_nC1">Try each of the above functions in &ghci;.  Which ones
 	crash when given an empty list?</para>
 
     </sect2>
@@ -662,7 +662,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       <para id="x_d7">Haskell's type system makes it an interesting challenge to
 	write functions that take variable numbers of
 	arguments<footnote>
-	  <para>Unfortunately, we do not have room to address that
+	  <para id="x_oC1">Unfortunately, we do not have room to address that
 	    challenge in this book.</para>
 	</footnote>.  So
 	if we want to zip three lists together, we call
@@ -722,7 +722,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
 	<qandaentry>
 	  <question>
-	    <para>Using the command framework from <xref
+	    <para id="x_pC1">Using the command framework from <xref
 	    linkend="fp.framework"/>, write a program that prints the
 	    first word of each line of its input.</para>
 	  </question>
@@ -730,7 +730,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
 	<qandaentry>
 	  <question>
-	    <para>Write a program that transposes the text in a file.
+	    <para id="x_qC1">Write a program that transposes the text in a file.
 	      For instance, it should convert
 	      <code>"hello\nworld\n"</code> to
 	      <code>"hw\neo\nlr\nll\nod\n"</code>.</para>
@@ -1032,7 +1032,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	  constructor, so there's no need to perform a match to
 	  see what its value really is.</para>
 
-	<para>As a matter of style, it is fine to use wild cards for
+	<para id="x_rC1">As a matter of style, it is fine to use wild cards for
 	  well known simple types like lists and <type>Maybe</type>.
 	  For more complicated or less familiar types, it can be safer
 	  and more readable to name constructors explicitly. </para>
@@ -1126,7 +1126,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	<quote>and</quote>; and <function>(.|.)</function> provides
 	bitwise <quote>or</quote>.</para>
 
-      <para>Once again, our <function>helper</function> function is
+      <para id="x_sC1">Once again, our <function>helper</function> function is
 	tail recursive.  We've turned the two variables we updated on
 	every loop iteration in Java into accumulator parameters.
 	When our recursion terminates on the end of the input list, we
@@ -1406,7 +1406,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	This is convenient for testing, but we will never use
 	<function>foldl</function> in practice.</para>
 
-      <para>The reason has to do with Haskell's non-strict evaluation.
+      <para id="x_tC1">The reason has to do with Haskell's non-strict evaluation.
 	If we apply <code>foldl (+) [1,2,3]</code>, it evaluates to
 	the expression <code>(((0 + 1) + 2) + 3)</code>.  We can see
 	this occur if we revisit the way in which the function gets
@@ -1414,7 +1414,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &Fold.hs:foldl.expand.noid;
 
-      <para>The final expression will not be evaluated to
+      <para id="x_uC1">The final expression will not be evaluated to
 	<code>6</code> until its value is demanded.  Before it is
 	evaluated, it must be stored as a thunk.  Not surprisingly, a
 	thunk is more expensive to store than a single number, and the
@@ -1423,7 +1423,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	more computationally expensive than evaluating it immediately.
 	We thus end up paying both in space and in time.</para>
 
-      <para>When &GHC; is evaluating a thunked expression, it uses an
+      <para id="x_vC1">When &GHC; is evaluating a thunked expression, it uses an
 	internal stack to do so.  Because a thunked expression could
 	potentially be infinitely large, &GHC; places a fixed limit on
 	the maximum size of this stack.  Thanks to this limit, we can
@@ -1432,7 +1432,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &thunky.ghci:sum;
 
-      <para>From looking at the expansion above, we can surmise that
+      <para id="x_wC1">From looking at the expansion above, we can surmise that
 	this creates a thunk that consists of 1000 integers and 999
 	applications of <function>(+)</function>.  That's a lot of
 	memory and effort to represent a single number! With a larger
@@ -1441,18 +1441,18 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	
       &thunky.ghci:overflow;
 
-      <para>On small expressions, <function>foldl</function> will work
+      <para id="x_xC1">On small expressions, <function>foldl</function> will work
 	correctly but slowly, due to the thunking overhead that it
 	incurs. We refer to this invisible thunking as a
 	<emphasis>space leak</emphasis>, because our code is operating
 	normally, but using far more memory than it should.</para>
 
-      <para>On larger expressions, code with a space leak will simply
+      <para id="x_yC1">On larger expressions, code with a space leak will simply
 	fail, as above.  A space leak with <code>foldl</code> is a
 	classic roadblock for new Haskell programmers. Fortunately,
 	this is easy to avoid.</para>
 
-      <para>The <code>Data.List</code> module defines a function named
+      <para id="x_zC1">The <code>Data.List</code> module defines a function named
 	<function>foldl'</function> that is similar to
 	<function>foldl</function>, but does not build up thunks.  The
 	difference in behavior between the two is immediately
@@ -1460,7 +1460,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &thunky.ghci:strict;
 
-      <para>Due to the thunking behavior of
+      <para id="x_AD1">Due to the thunking behavior of
 	<function>foldl</function>, it is wise to avoid this function
 	in real programs: even if it doesn't fail outright, it will be
 	unnecessarily inefficient. Instead, import
@@ -1548,14 +1548,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
 	    <itemizedlist>
 	      <listitem>
-		<para><function>any</function></para>
-		<para><function>cycle</function></para>
-		<para><function>words</function></para>
-		<para><function>unlines</function></para>
+		<para id="x_BD1"><function>any</function></para>
+		<para id="x_CD1"><function>cycle</function></para>
+		<para id="x_DD1"><function>words</function></para>
+		<para id="x_ED1"><function>unlines</function></para>
 	      </listitem>
 	    </itemizedlist>
 
-	    <para>For those functions where you can use either
+	    <para id="x_FD1">For those functions where you can use either
 	      <function>foldl'</function> or
 	      <function>foldr</function>, which is more
 	      appropriate in each case?</para>
@@ -1589,7 +1589,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       <quote>lambda</quote> functions, in a nod to their heritage in
       the lambda calculus.  We introduce an anonymous function with a
       backslash character, <code>\</code>, pronounced <emphasis>lambda</emphasis><footnote>
-	<para>The backslash was chosen for its visual
+	<para id="x_GD1">The backslash was chosen for its visual
 	  resemblance to the Greek letter lambda,
 	  <code>&#x03bb;</code>.  Although &GHC; can accept Unicode
 	  input, it correctly treats <code>&#x03bb;</code> as a
@@ -1748,7 +1748,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       that has exactly the same type and behavior as the helper and
       lambda in our earlier definitions.</para>
 
-    <para>Partial function application is named
+    <para id="x_HD1">Partial function application is named
       <emphasis>currying</emphasis>, after the logician Haskell
       Curry (for whom the Haskell language is named).</para>
 
@@ -1800,7 +1800,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &partial.ghci:lower.string;
 
-      <para>If we use this style, we can further improve the
+      <para id="x_ID1">If we use this style, we can further improve the
 	readability of our earlier <function>isInAny3</function>
 	function.</para>
 
@@ -1932,33 +1932,33 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       matches the type of parameter that the function on the left can
       accept.</para>
 
-    <para>As an example, let's solve a simple puzzle: counting the
+    <para id="x_JD1">As an example, let's solve a simple puzzle: counting the
       number of words in a string that begin with a capital
       letter.</para>
 
     &suffix.ghci:dotty;
 
-    <para>We can understand what this composed function does by
+    <para id="x_KD1">We can understand what this composed function does by
       examining its pieces.  The <function>(.)</function> function is
       right associative, so we will proceed from right to left.</para>
 
     &suffix.ghci:words.type;
 
-    <para>The <function>words</function> function has a result type of
+    <para id="x_LD1">The <function>words</function> function has a result type of
       <type>[String]</type>, so whatever is on the left side of
       <function>(.)</function> must accept a compatible
       argument.</para>
 
     &suffix.ghci:capped.type;
 
-    <para>This function returns <code>True</code> if a word begins
+    <para id="x_MD1">This function returns <code>True</code> if a word begins
       with a capital letter (try it in &ghci;), so <code>filter
 	(isUpper . head)</code> returns a list of <type>String</type>s
       containing only words that begin with capital letters.</para>
 
     &suffix.ghci:capfilt.type;
 
-    <para>Since this expression returns a list, all that remains is
+    <para id="x_ND1">Since this expression returns a list, all that remains is
       calculate the length of the list, which we do with another
       composition.</para>
 
@@ -1973,7 +1973,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 #define DLT_EN3MB       2       /* Experimental Ethernet (3Mb) */
 #define DLT_AX25        3       /* Amateur Radio AX.25 */</programlisting>
 
-    <para>Our goal is to extract names such as <code>DLT_EN10MB</code>
+    <para id="x_OD1">Our goal is to extract names such as <code>DLT_EN10MB</code>
       and <code>DLT_AX25</code>.</para>
 
       &dlts.hs:dlts;
@@ -2096,14 +2096,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
   <sect1 id="fp.seq">
     <title>Space leaks and strict evaluation</title>
 
-    <para>The <function>foldl</function> function that we discussed
+    <para id="x_PD1">The <function>foldl</function> function that we discussed
       earlier is not the only place where space leaks can arise in
       Haskell code.  We will use it to illustrate how non-strict
       evaluation can sometimes be problematic, and how to solve the
       difficulties that can arise.</para>
 
     <tip>
-      <para>It is perfectly reasonable to skip this section until you
+      <para id="x_QD1">It is perfectly reasonable to skip this section until you
 	encounter a space leak <quote>in the wild</quote>.  Provided
 	you use <function>foldr</function> if you are generating a
 	list, and <function>foldl'</function> instead of
@@ -2114,7 +2114,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
     <sect2>
       <title>Avoiding space leaks with seq</title>
 
-      <para>We refer to an expression that is not evaluated lazily as
+      <para id="x_RD1">We refer to an expression that is not evaluated lazily as
 	<emphasis>strict</emphasis>, so <function>foldl'</function> is
 	a strict left fold. It bypasses Haskell's usual non-strict
 	evaluation through the use of a special function named
@@ -2122,13 +2122,13 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &Fold.hs:strict;
 
-      <para>This <function>seq</function> function has a peculiar
+      <para id="x_SD1">This <function>seq</function> function has a peculiar
 	type, hinting that it is not playing by the usual
 	rules.</para>
 
       &thunky.ghci:seq;
 
-      <para>It operates as follows: when a <function>seq</function>
+      <para id="x_TD1">It operates as follows: when a <function>seq</function>
 	expression is evaluated, it forces its first argument to be
 	evaluated, then returns its second argument.  It doesn't
 	actually do anything with the first argument:
@@ -2138,55 +2138,55 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       &Fold.hs:step1;
 
-      <para>This expands as follows.</para>
+      <para id="x_UD1">This expands as follows.</para>
 
       &Fold.hs:step2;
 
-      <para>The use of <function>seq</function> forcibly evaluates
+      <para id="x_VD1">The use of <function>seq</function> forcibly evaluates
 	<varname>new</varname> to <code>3</code>, and returns its
 	second argument.</para>
 
       &Fold.hs:step3;
 
-      <para>We end up with the following result.</para>
+      <para id="x_WD1">We end up with the following result.</para>
 
       &Fold.hs:step4;
 
-      <para>Thanks to <function>seq</function>, there are no thunks in
+      <para id="x_XD1">Thanks to <function>seq</function>, there are no thunks in
 	sight.</para>
     </sect2>
 
     <sect2>
       <title>Learning to use seq</title>
 
-      <para>Without some direction, there is an element of mystery
+      <para id="x_YD1">Without some direction, there is an element of mystery
 	to using <function>seq</function> effectively.
 	Here are some useful rules for using it well.</para>
 
-      <para>To have any effect, a <function>seq</function>
+      <para id="x_ZD1">To have any effect, a <function>seq</function>
 	expression must be the first thing evaluated in an
 	expression.</para>
 
       &Fold.hs:hiddenInside;
 
-      <para>To strictly evaluate several values, chain
+      <para id="x_aD1">To strictly evaluate several values, chain
 	applications of <function>seq</function> together.</para>
 
       &Fold.hs:chained;
 
-      <para>A common mistake is to try to use <function>seq</function>
+      <para id="x_bD1">A common mistake is to try to use <function>seq</function>
 	with two unrelated expressions.</para>
 
       &Fold.hs:badExpression;
 
-      <para>Here, the apparent intention is to evaluate <code>step
+      <para id="x_cD1">Here, the apparent intention is to evaluate <code>step
 	  zero x</code> strictly.  Since the expression is duplicated
 	in the body of the function, strictly evaluating the first
 	instance of it will have no effect on the second.  The use of
 	&let; from the definition of <function>foldl'</function> above
 	shows how to achieve this effect correctly.</para>
 
-      <para>When evaluating an expression, <function>seq</function>
+      <para id="x_dD1">When evaluating an expression, <function>seq</function>
 	stops as soon as it reaches a constructor.  For simple types
 	like numbers, this means that it will evaluate them
 	completely.  Algebraic data types are a different story.
@@ -2199,12 +2199,12 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	inside the pair, since it immediately hits the pair's
 	constructor.</para>
 
-      <para>If necessary, we can use normal functional programming
+      <para id="x_eD1">If necessary, we can use normal functional programming
 	techniques to work around these limitations.</para>
 
       &Fold.hs:strictPair;
       
-      <para>It is important to understand that
+      <para id="x_fD1">It is important to understand that
 	<function>seq</function> isn't free: it has to perform a check
 	at runtime to see if an expression has been evaluated. Use it
 	sparingly.  For instance, while our
@@ -2215,7 +2215,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	If we were to measure its performance in the inner loop of a
 	benchmark, we might find it to slow the program down.</para>
 
-      <para>Aside from its performance cost if overused,
+      <para id="x_gD1">Aside from its performance cost if overused,
 	<function>seq</function> is not a miracle cure-all for memory
 	consumption problems.  Just because you
 	<emphasis>can</emphasis> evaluate something strictly doesn't
@@ -2223,7 +2223,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	<function>seq</function> may do nothing at all; move existing
 	space leaks around; or introduce new leaks.</para>
 
-      <para>The best guides to whether <function>seq</function> is
+      <para id="x_hD1">The best guides to whether <function>seq</function> is
 	necessary, and how well it is working, are performance
 	measurement and profiling, which we will cover in <xref
 	  linkend="profiling"/>.  From a base of empirical

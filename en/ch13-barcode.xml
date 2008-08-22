@@ -31,7 +31,7 @@
 
     <itemizedlist>
       <listitem>
-	<para>The first two digits describe the <emphasis>number
+	<para id="x_XF1">The first two digits describe the <emphasis>number
 	    system</emphasis>.  This can either indicate the
 	  nationality of the manufacturer, or describe one of a few
 	  other categories, such as ISBN (book identifier)
@@ -39,19 +39,19 @@
       </listitem>
 
       <listitem>
-	<para>The next five digits are a manufacturer ID, assigned by
+	<para id="x_YF1">The next five digits are a manufacturer ID, assigned by
 	  a country's numbering authority.</para>
       </listitem>
 
       <listitem>
-	<para>The five digits that follow are a product ID, assigned
+	<para id="x_ZF1">The five digits that follow are a product ID, assigned
 	  by the manufacturer.  (Smaller manufacturers may have a
 	  longer manufacturer ID and shorter product ID, but they
 	  still add up to ten digits.)</para>
       </listitem>
 
       <listitem>
-	<para>The last digit is a <emphasis>check digit</emphasis>,
+	<para id="x_aF1">The last digit is a <emphasis>check digit</emphasis>,
 	  allowing a scanner to validate the digit string it
 	  scans.</para>
       </listitem>
@@ -122,7 +122,7 @@
   <sect1 id="barcode.array">
     <title>Introducing arrays</title>
 
-    <para>Before we continue, here are all of the imports that we will
+    <para id="x_bF1">Before we continue, here are all of the imports that we will
       be using in the remainder of this chapter.</para>
 
     &Barcode.hs:imports;
@@ -209,13 +209,13 @@
     <sect2>
       <title>Arrays and laziness</title>
 
-      <para>The list that we use to populate the array must contain at
+      <para id="x_cF1">The list that we use to populate the array must contain at
 	least as many elements as are in the array.  If we do not
 	provide enough elements, we'll get an error at runtime.  When
 	the error will occur depends on the nature of the
 	array.</para>
 
-      <para>Here, we are using an array type that is non-strict in its
+      <para id="x_dF1">Here, we are using an array type that is non-strict in its
 	elements.  If we provide a list of three values to an array
 	that we specify as containing more than three elements, the
 	remaining elements will undefined.  We will not get
@@ -223,7 +223,7 @@
 
       &array.ghci:lazy;
 
-      <para>Haskell also provides strict arrays, which behave
+      <para id="x_eF1">Haskell also provides strict arrays, which behave
 	differently.  We will discuss the tradeoffs between the two
 	kinds of array much later, in <xref
 	  linkend="bloomfilter.uarray"/>.</para>
@@ -520,7 +520,7 @@
 	to convert the colour data into monochrome.  An intermediate
 	step is to convert the data to greyscale.  There's a simple,
 	widely used formula<footnote>
-	  <para>The formula originates in ITU-R Recommendation
+	  <para id="x_fF1">The formula originates in ITU-R Recommendation
 	    601.</para>
 	</footnote> for converting an RGB image into a greyscale
 	image, based on the perceived brightness of each colour
@@ -664,13 +664,13 @@
 
       &Barcode.hs:runLength;
 
-      <para>The <function>group</function> function takes sequences of
+      <para id="x_gF1">The <function>group</function> function takes sequences of
 	identical elements in a list, and groups them into
 	sublists.</para>
 
       &barcode.ghci:group;
 
-      <para>Our <function>runLength</function> function represents
+      <para id="x_hF1">Our <function>runLength</function> function represents
 	each group as a pair of its length and first element.</para>
 
       &barcode.ghci:runLength;
@@ -742,14 +742,14 @@
     <sect2>
       <title>List comprehensions</title>
 
-      <para>The new notation that we introduced in the previous
+      <para id="x_iF1">The new notation that we introduced in the previous
 	example is an example of a <emphasis>list
 	comprehension</emphasis>, which creates a list from one or
 	more other lists.</para>
 
       &listcomp.ghci:listcomp;
 
-      <para>The expression on the left of the vertical bar is
+      <para id="x_jF1">The expression on the left of the vertical bar is
 	evaluated for each combination of <emphasis>generator
 	  expressions</emphasis> on the right. A generator expression
 	binds a variable on the left of a &larrow; to an element of
@@ -758,24 +758,24 @@
 	for the first element of the first list, we evaluate every
 	element of the second, and so on.</para>
 
-      <para>In addition to generators, we can also specify guards on
+      <para id="x_kF1">In addition to generators, we can also specify guards on
 	the right of a list comprehension.  A guard is a
 	<type>Bool</type> expression.  If it evaluates to
 	<code>False</code>, that element is skipped over.</para>
 
       &listcomp.ghci:evens;
 
-      <para>We can also bind local variables using a &let;
+      <para id="x_lF1">We can also bind local variables using a &let;
 	expression.</para>
 
       &listcomp.ghci:vowels;
 
-      <para>If a pattern match fails in a generator expression, no
+      <para id="x_mF1">If a pattern match fails in a generator expression, no
 	error occurs.  Instead, that list element is skipped.</para>
 
       &listcomp.ghci:pattern;
 
-      <para>List comprehensions are powerful and concise.  As a
+      <para id="x_nF1">List comprehensions are powerful and concise.  As a
 	result, they can be difficult to read.  When used with care,
 	they can make our code easier to follow.</para>
 
@@ -898,7 +898,7 @@
 	in the barcode.  The digits in each sublist are ordered by
 	match quality.</para>
 
-      <para>Here is the remainder of the definition of our
+      <para id="x_oF1">Here is the remainder of the definition of our
 	function.</para>
 
       &Barcode.hs:candidateDigits;
@@ -1427,7 +1427,7 @@
       added vertical space, small function bodies, and type signatures
       make the code far more readable, so we generally avoided
       <quote>golfing</quote> functions after we wrote them<footnote>
-	<para>Our use of the word <quote>golf</quote> comes from a
+	<para id="x_pF1">Our use of the word <quote>golf</quote> comes from a
 	  game originally played by Perl hackers, in which programmers
 	  try to create the smallest piece of code for some purpose.
 	  The code with the fewest (key)strokes wins.</para>

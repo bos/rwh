@@ -162,7 +162,7 @@ Loading package base ... linking ... done.
 
     &basics.ghci:module;
 
-    <para>We can now use the functionality of the
+    <para id="x_tA1">We can now use the functionality of the
       <code>Data.Ratio</code> module, which lets us work with rational
       numbers (fractions).</para>
   </sect1>
@@ -232,7 +232,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:neg.better;
 
-      <para>This avoids a parsing ambiguity.  When we apply a function
+      <para id="x_uA1">This avoids a parsing ambiguity.  When we apply a function
 	in Haskell, we write the name of the function, followed by its
 	argument, for example <code>f 3</code>.  If we did not need to
 	wrap a negative number in parentheses, we would have two
@@ -302,23 +302,23 @@ Loading package base ... linking ... done.
 	the problem, and hinting at a possible change we could make
 	that might fix the problem.</para>
 
-      <para>Here is a more detailed breakdown of the error
+      <para id="x_vA1">Here is a more detailed breakdown of the error
 	message.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para><quote><code>No instance for (Num Bool)</code></quote>
+	  <para id="x_wA1"><quote><code>No instance for (Num Bool)</code></quote>
 	    tells us that &ghci; is trying to treat the numeric value
 	    <type>1</type> as having a <type>Bool</type> type, but it
 	    cannot.</para>
 	</listitem>
 	<listitem>
-	  <para><quote><code>arising from the literal
+	  <para id="x_xA1"><quote><code>arising from the literal
 		`1'</code></quote> indicates that it was our use of
 	    the number <code>1</code> that caused the problem.</para>
 	</listitem>
 	<listitem>
-	  <para><quote><code>In the definition of `it'</code></quote>
+	  <para id="x_yA1"><quote><code>In the definition of `it'</code></quote>
 	    refers to a &ghci; short cut that we will revisit in a few
 	    pages.</para>
 	</listitem>
@@ -636,7 +636,7 @@ Loading package base ... linking ... done.
 
       &basics.ghci:cons;
 
-      <para>You might be tempted to try writing <code>[1,2]:3</code>
+      <para id="x_zA1">You might be tempted to try writing <code>[1,2]:3</code>
 	to add an element to the end of a list, but &ghci; will reject
 	this with an error message, because the first argument of
 	<function>(:)</function> must be an element, and the second
@@ -666,7 +666,7 @@ Loading package base ... linking ... done.
 
     &basics.ghci:newline;
     
-    <para>The <function>putStrLn</function> function prints a
+    <para id="x_AB1">The <function>putStrLn</function> function prints a
       string.</para>
 
     <para id="x_Q2">Haskell makes a distinction between single
@@ -682,12 +682,12 @@ Loading package base ... linking ... done.
 
     &basics.ghci:work;
 
-    <para>The empty string is written <code>""</code>, and is a
+    <para id="x_BB1">The empty string is written <code>""</code>, and is a
       synonym for <code>[]</code>.</para>
 
     &basics.ghci:emptystring;
 
-    <para>Since a string is a list of characters, we can use the regular
+    <para id="x_CB1">Since a string is a list of characters, we can use the regular
       list operators to construct new strings.</para>
 
     &basics.ghci:newstring;
@@ -783,7 +783,7 @@ Loading package base ... linking ... done.
 
     &types.ghci:ratio;
 
-    <para>For convenience, &ghci; lets us abbreviate many commands, so
+    <para id="x_DB1">For convenience, &ghci; lets us abbreviate many commands, so
       we can write <command>:m</command> instead of
       <command>:module</command> to load a module.</para>
 
@@ -819,12 +819,12 @@ Loading package base ... linking ... done.
       evaluate the expression; it only checks its type and prints
       that.</para>
 
-    <para>Why are the types reported for these two expressions
+    <para id="x_EB1">Why are the types reported for these two expressions
       different?</para>
 
     &types.ghci:different;
 
-    <para>Haskell has several numeric types. For example, a literal
+    <para id="x_FB1">Haskell has several numeric types. For example, a literal
       number such as <literal>1</literal> could, depending on the
       context in which it appears, be an integer or a floating point
       value.  When we force &ghci; to evaluate the expression <code>3
@@ -840,7 +840,7 @@ Loading package base ... linking ... done.
   <sect1>
     <title>A simple program</title>
 
-    <para>Let's take a small leap ahead, and write a small program
+    <para id="x_GB1">Let's take a small leap ahead, and write a small program
       that counts the number of lines in its input.  Don't expect to
       understand this yet; it's just fun to get our hands dirty.  In a
       text editor, enter the following code into a file, and save it
@@ -848,20 +848,20 @@ Loading package base ... linking ... done.
 
     &WC.hs:main;
 
-    <para>Find or create a text file; let's call it
+    <para id="x_HB1">Find or create a text file; let's call it
       <filename>quux.txt</filename><footnote>
-	<para>Incidentally, what do these cities have in
+	<para id="x_IB1">Incidentally, what do these cities have in
 	  common?</para>
       </footnote>.</para>
 
     &ch02-cat;
 
-    <para>From a shell or command prompt, run the following
+    <para id="x_JB1">From a shell or command prompt, run the following
       command.</para>
 
     &ch02-wc;
 
-    <para>We have successfully written a simple program that interacts
+    <para id="x_KB1">We have successfully written a simple program that interacts
       with the real world!  In the chapters that follow, we will
       successively fill the gaps in our understanding until we can
       write programs of our own.</para>
@@ -877,63 +877,63 @@ Loading package base ... linking ... done.
 	    &ghci;.  What are their types?</para>
 	  <itemizedlist>
 	    <listitem>
-	      <para><code>5 + 8</code></para>
+	      <para id="x_LB1"><code>5 + 8</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>3 * 5 + 8</code></para>
+	      <para id="x_MB1"><code>3 * 5 + 8</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>2 + 4</code></para>
+	      <para id="x_NB1"><code>2 + 4</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>(+) 2 4</code></para>
+	      <para id="x_OB1"><code>(+) 2 4</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>sqrt 16</code></para>
+	      <para id="x_PB1"><code>sqrt 16</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>succ 6</code></para>
+	      <para id="x_QB1"><code>succ 6</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>succ 7</code></para>
+	      <para id="x_RB1"><code>succ 7</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>pred 9</code></para>
+	      <para id="x_SB1"><code>pred 9</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>pred 8</code></para>
+	      <para id="x_TB1"><code>pred 8</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>sin (pi / 2)</code></para>
+	      <para id="x_UB1"><code>sin (pi / 2)</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>truncate pi</code></para>
+	      <para id="x_VB1"><code>truncate pi</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>round 3.5</code></para>
+	      <para id="x_WB1"><code>round 3.5</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>round 3.4</code></para>
+	      <para id="x_XB1"><code>round 3.4</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>floor 3.7</code></para>
+	      <para id="x_YB1"><code>floor 3.7</code></para>
 	    </listitem>
 	    <listitem>
-	      <para><code>ceiling 3.3</code></para>
+	      <para id="x_ZB1"><code>ceiling 3.3</code></para>
 	    </listitem>
 	  </itemizedlist>
 	</question>
       </qandaentry>
       <qandaentry>
 	<question>
-	  <para>From &ghci;, type <command>:?</command> to print some
+	  <para id="x_aB1">From &ghci;, type <command>:?</command> to print some
 	    help.  Define a variable, such as <code>let x = 1</code>,
 	    then type <code>:show bindings</code>.  What do you see?</para>
 	</question>
       </qandaentry>
       <qandaentry>
 	<question>
-	  <para>The <function>words</function> function counts the
+	  <para id="x_bB1">The <function>words</function> function counts the
 	    number of words in a string.  Modify the
 	    <filename>WC.hs</filename> example to count the number of
 	    words in a file.</para>
@@ -941,7 +941,7 @@ Loading package base ... linking ... done.
       </qandaentry>
       <qandaentry>
 	<question>
-	  <para>Modify the <filename>WC.hs</filename> example again,
+	  <para id="x_cB1">Modify the <filename>WC.hs</filename> example again,
 	    to print the number of characters in a file.</para>
 	</question>
       </qandaentry>

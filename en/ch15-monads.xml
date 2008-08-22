@@ -257,7 +257,7 @@
 	since it throws an exception that callers either cannot catch
 	or will not expect.</para>
 
-      <para>Even if you know that right now you're executing in a
+      <para id="x_ZG1">Even if you know that right now you're executing in a
 	monad that has &fail; do something more sensible, we still
 	recommend avoiding it.  It's far too easy to cause yourself a
 	problem later when you refactor your code and forget that a
@@ -415,7 +415,7 @@
 
       &Logger.hs:record.type;
 
-      <para>Since recording occurs in the plumbing of our monad, our
+      <para id="x_aG1">Since recording occurs in the plumbing of our monad, our
 	action's result supplies no information.</para>
 
       <para id="x_aX">Usually, a monad will provide one or more helper
@@ -669,7 +669,7 @@
 
     &Logger.hs:record;
 
-    <para>The result of this action is <code>()</code>, so that's the
+    <para id="x_bG1">The result of this action is <code>()</code>, so that's the
       value we put in the result slot.</para>
 
     <para id="x_LY">Let's begin our <code>Monad</code> instance with &return;,
@@ -796,7 +796,7 @@
 
       <itemizedlist>
 	<listitem>
-	  <para>On the positive side, the behaviours of success and
+	  <para id="x_cG1">On the positive side, the behaviours of success and
 	    failure are automatically customised to our needs, based
 	    on the monad we're calling <function>lookup</function>
 	    from.  Better yet, <function>lookup</function> itself
@@ -807,21 +807,21 @@
 	    <type>Maybe</type>.</para>
 	</listitem>
 	<listitem>
-	  <para>The hitch is, of course, that using &fail; in the
+	  <para id="x_dG1">The hitch is, of course, that using &fail; in the
 	    wrong monad throws a bothersome exception.  We have
 	    already warned against the use of &fail;, so we will not
 	    repeat ourselves here.</para>
 	</listitem>
       </itemizedlist>
 
-      <para>In practice, <emphasis>everyone</emphasis> uses
+      <para id="x_eG1">In practice, <emphasis>everyone</emphasis> uses
 	<type>Maybe</type> as the result type for
 	<function>lookup</function>.  The result type of such a
 	conceptually simple function provides generality where it is
 	not needed: <function>lookup</function> should have been
 	written to return <type>Maybe</type>.</para>
 
-      <para>Let's set aside the API question, and deal with the
+      <para id="x_fG1">Let's set aside the API question, and deal with the
 	ugliness of our code.  We can make more sensible use of
 	<type>Maybe</type>'s status as a monad.</para>
 
@@ -1024,14 +1024,14 @@
     <sect2>
       <title>Putting the list monad to work</title>
 
-      <para>Here is a simple brute force constraint solver.  Given an
+      <para id="x_gG1">Here is a simple brute force constraint solver.  Given an
 	integer, it finds all pairs of positive integers that, when
 	multiplied, give that value (this is the constraint being
 	solved).</para>
 
       &MultiplyTo.hs:multiplyTo;
 
-      <para>Let's try this in &ghci;.</para>
+      <para id="x_hG1">Let's try this in &ghci;.</para>
 
       &multiplyTo.ghci:multiplyTo;
 
@@ -1183,12 +1183,12 @@
 	rare, to mix <emphasis>both</emphasis> &do; notation and
 	&bind; in a single function.</para>
 
-      <para>The &rbind; function shows up frequently whether or not we
+      <para id="x_iG1">The &rbind; function shows up frequently whether or not we
 	use &do; notiation.  It is a flipped version of &bind;.</para>
 
       &cartesian.ghci:rbind;
 
-      <para>It comes in handy if we want to compose monadic functions
+      <para id="x_jG1">It comes in handy if we want to compose monadic functions
 	in the usual Haskell right-to-left style.</para>
 
       &CartesianProduct.hs:wordCount;
@@ -1240,7 +1240,7 @@
 
       &SimpleState.hs:SimpleState;
 
-      <para>Our monad is a function that transforms one state into
+      <para id="x_kG1">Our monad is a function that transforms one state into
 	another, yielding a result when it does so.  Because of this,
 	the state monad is sometimes called the state transformer
 	monad.</para>
@@ -1335,7 +1335,7 @@
 	a &newtype; wrapper at the same time, the extra wrapping and
 	unwrapping would have made our code harder to follow.</para>
 
-      <para>In order to define a <code>Monad</code> instance, we have
+      <para id="x_lG1">In order to define a <code>Monad</code> instance, we have
 	to provide a proper type constructor as well as definitions
 	for &bind; and &return;. This leads us to the
 	<emphasis>real</emphasis> definition of
@@ -1386,7 +1386,7 @@
 	case, we wired the type of the state we were manipulating
 	directly into the <type>Parse</type> type.</para>
 
-      <para>The <type>State</type> monad, by contrast, accepts any
+      <para id="x_mG1">The <type>State</type> monad, by contrast, accepts any
 	type of state as a parameter.  We supply the type of the
 	state, to give e.g. <type>State ByteString</type>.</para>
 
@@ -1829,7 +1829,7 @@
       the knowledge that our <quote>do what I mean</quote> intuitions
       won't be violated when we use properly written monads.</para>
 
-    <para>Incidentally, a Haskell compiler cannot guarantee that a
+    <para id="x_nG1">Incidentally, a Haskell compiler cannot guarantee that a
       monad actually follows the monad laws.  It is the responsibility
       of a monad's author to satisfy&emdash;or, preferably, prove
       to&emdash;themselves that their code follows the laws.</para>

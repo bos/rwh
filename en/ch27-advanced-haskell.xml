@@ -608,7 +608,7 @@
 
       &Hash.hs:hashSB;
 
-      <para>Since a lazy <type>ByteString</type> is represented as a
+      <para id="x_cL1">Since a lazy <type>ByteString</type> is represented as a
 	series of chunks, we must be careful with the boundaries
 	between those chunks.  The string <code>"foobar"</code> can be
 	represented in five different ways, for example

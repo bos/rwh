@@ -277,7 +277,7 @@
 	reliability outweigh any small performance
 	disadvantage.</para>
 
-      <para>Multicore processors are now ubiquitous, but they remain
+      <para id="x_mA1">Multicore processors are now ubiquitous, but they remain
 	notoriously difficult to program using traditional techniques.
 	Haskell provides unique technologies to make multicore
 	programming more tractable.  It supports parallel programming,
@@ -365,33 +365,33 @@
 	</listitem>
       </itemizedlist>
 
-      <para> is a sample of some of the companies using Haskell in
+      <para id="x_nA1"> is a sample of some of the companies using Haskell in
 	late 2008, taken from the <ulink
 	  url="http://www.haskell.org/haskellwiki/Haskell_in_industry">Haskell 
 	  wiki</ulink>.</para>
 
       <itemizedlist>
 	<listitem>
-	  <para>ABN AMRO is an international bank. It uses Haskell in
+	  <para id="x_oA1">ABN AMRO is an international bank. It uses Haskell in
 	    investment banking, to measure the counterparty risk on
 	    portfolios of financial derivatives. </para>
 	</listitem>
 	<listitem>
-	  <para>Anygma is a startup company.  It develops multimedia
+	  <para id="x_pA1">Anygma is a startup company.  It develops multimedia
 	    content creation tools using Haskell.</para>
 	</listitem>
 	<listitem>
-	  <para>Amgen is a biotech company. It creates mathematical
+	  <para id="x_qA1">Amgen is a biotech company. It creates mathematical
 	    models and other complex applications in Haskell.</para>
 	</listitem>
 	<listitem>
-	  <para>Bluespec is an ASIC and FPGA design software vendor.
+	  <para id="x_rA1">Bluespec is an ASIC and FPGA design software vendor.
 	    Its products are developed in Haskell, and the chip design
 	    languages that its products provide are influenced by
 	    Haskell.</para>
 	</listitem>
 	<listitem>
-	  <para>Eaton uses Haskell for the design and verification of
+	  <para id="x_sA1">Eaton uses Haskell for the design and verification of
 	    hydraulic hybrid vehicle systems.</para>
 	</listitem>
       </itemizedlist>

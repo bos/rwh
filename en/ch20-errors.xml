@@ -85,11 +85,11 @@
         calls itself.
       </para>
       <tip>
-        <para>You may note that you could use a monadic
+        <para id="x_YJ1">You may note that you could use a monadic
         implementation of the above, like so:
         </para>
         &divby2m.hs:all;
-        <para>
+        <para id="x_ZJ1">
           We will be avoiding the monadic implementation in this
           chapter for simplicity, but wanted to point out that it
           exists.
@@ -591,7 +591,7 @@
         Thus far, we have talked in detail about handling exceptions.
         There is another piece to the puzzle: throwing
         exceptions<footnote>
-	  <para>In some other languages, throwing an exception is
+	  <para id="x_aJ1">In some other languages, throwing an exception is
 	    referred to as <emphasis>raising</emphasis> it.</para>
 	</footnote>.  In
         the examples we have visited so far in this chapter, the
@@ -655,7 +655,7 @@
 	generate a <type>Typeable</type> instance, we had to enable
 	the <code>DeriveDataTypeable</code> language
 	extension<footnote>
-	  <para>
+	  <para id="x_bJ1">
 	    It is possible to derive <type>Typeable</type> instances
 	    by hand, but that is cumbersome.</para>
 	</footnote>.</para>
@@ -696,7 +696,7 @@
       </para>
       &dynexc.hs:throwSql;
       <tip>
-        <para>As a reminder, <literal>evaluate</literal> is like
+        <para id="x_cJ1">As a reminder, <literal>evaluate</literal> is like
         &return; but forces the evaluation of its argument.
       </para></tip>
 
@@ -761,7 +761,7 @@
 
     <itemizedlist>
       <listitem>
-	<para>If we stick with the <type>ErrorT</type> interfaces, we
+	<para id="x_dJ1">If we stick with the <type>ErrorT</type> interfaces, we
 	  can both throw and catch exceptions within this
 	  monad.</para>
       </listitem>
@@ -782,7 +782,7 @@
     <note>
       <title>Do not confuse ErrorT with regular exceptions</title>
 
-      <para>If we use the <function>throw</function> function from
+      <para id="x_eJ1">If we use the <function>throw</function> function from
 	<code>Control.Exception</code> inside <type>ErrorT</type> (or
 	if we use <function>error</function> or
 	<code>undefined</code>), we will <emphasis>still</emphasis> be

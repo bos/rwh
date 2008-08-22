@@ -71,7 +71,7 @@
 
     &MovieReview.hs:liftedReview;
 
-    <para>We still have some repetition here, but it is dramatically
+    <para id="x_oG1">We still have some repetition here, but it is dramatically
       reduced, and also more difficult to remove.</para>
   </sect1>
 
@@ -85,7 +85,7 @@
       libraries.  We could write variants up to whatever number we
       pleased, but that would amount to drudgery.</para>
 
-    <para>If we had a constructor or pure function that took, say, ten
+    <para id="x_pG1">If we had a constructor or pure function that took, say, ten
       parameters, and decided to stick with the standard libraries you
       might think we'd be out of luck.</para>
 
@@ -132,7 +132,7 @@
 
     &ap.ghci:types;
 
-    <para>In fact, <function>ap</function> is usually defined as
+    <para id="x_qG1">In fact, <function>ap</function> is usually defined as
       either <code>liftM2 id</code> or <code>liftM2 ($)</code>.</para>
 
   </sect1>
@@ -211,7 +211,7 @@
       list; or something more appropriate for some other exotic instance
       of <type>MonadPlus</type>.</para>
 
-    <para>For small functions, such as those we present above, there's
+    <para id="x_rG1">For small functions, such as those we present above, there's
       little benefit to using <function>mplus</function>.  The
       advantage lies in more complex code and in code that is
       independent of the monad in which it executes.  Even if you
@@ -464,7 +464,7 @@
 
       &randomSupply.ghci:getStdRandom;
 
-      <para>We can use <function>random</function> to get back a new
+      <para id="x_sG1">We can use <function>random</function> to get back a new
 	<type>StdGen</type> when they give us a random number.  And we
 	can use <function>randoms</function> to get an infinite list
 	of random numbers.  But how do we get both an infinite list of
@@ -701,13 +701,13 @@
     <sect2>
       <title>Programming to a monad's interface</title>
       
-      <para>Here is a simple function that fetches two values from
+      <para id="x_tG1">Here is a simple function that fetches two values from
 	our <type>Supply</type> monad, formats them as a string, and
 	returns them.</para>
 
       &Supply.hs:showTwo;
 
-      <para>This code is tied by its result type to our
+      <para id="x_uG1">This code is tied by its result type to our
 	<type>Supply</type> monad.  We can easily generalize to any
 	monad that implements our <type>MonadSupply</type> interface
 	by modifying our function's type.  Notice that the body of the
@@ -1024,7 +1024,7 @@
 	with a monad that compresses files as it writes them
 	out.</para>
 
-      <para>Defining a monad's interface through a typeclass has a
+      <para id="x_vG1">Defining a monad's interface through a typeclass has a
 	further benefit.  It lets other people hide our implementation
 	in a &newtype; wrapper, and automatically derive instances of
 	just the typeclasses they want to expose.</para>
@@ -1162,7 +1162,7 @@
 	</qandaentry>
 	<qandaentry>
 	  <question>
-	    <para>In a form-encoded string, the same key may appear
+	    <para id="x_wG1">In a form-encoded string, the same key may appear
 	      several times, with or without values, e.g.
 	      <code>key&amp;key=1&amp;key=2</code>.  What type might
 	      you use to represent the values associated with a key in

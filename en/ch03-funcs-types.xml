@@ -165,7 +165,7 @@
 	<quote>duck typing</quote> is common, where an object acts
 	enough like another to be used as a substitute for
 	it<footnote>
-	  <para><quote>If it walks like a duck, and quacks like a
+	  <para id="x_dB1"><quote>If it walks like a duck, and quacks like a
 	      duck, then let's call it a duck.</quote></para>
 	</footnote>.  Fortunately, Haskell's system of
 	<emphasis>typeclasses</emphasis>, which we will cover in <xref
@@ -199,7 +199,7 @@
 	times until the compiler gives us the <quote>all
 	  clear</quote>.</para>
 
-      <para>A helpful analogy to understand the value of static typing
+      <para id="x_eB1">A helpful analogy to understand the value of static typing
 	is to look at it as putting pieces into a jigsaw puzzle. In
 	Haskell, if a piece has the wrong shape, it simply won't fit.
 	In a dynamically typed language, all the pieces are 1x1
@@ -329,7 +329,7 @@
 
     &ch03.basics.ghci:types;
 
-    <para>The combination of <code>::</code> and the type after it is
+    <para id="x_fB1">The combination of <code>::</code> and the type after it is
       called a <emphasis>type signature</emphasis>.</para>
   </sect1>
 
@@ -445,7 +445,7 @@
 
     &usingtypes.ghci:listlist;
 
-    <para>The type of this expression is a list of lists of
+    <para id="x_gB1">The type of this expression is a list of lists of
       <type>Bool</type>.</para>
 
     <note>
@@ -687,7 +687,7 @@
       only accepts a highly restricted subset of Haskell: most
       importantly, the syntax it uses for defining functions is not
       the same as we use in a Haskell source file<footnote>
-	<para>The environment in which &ghci; operates is called the
+	<para id="x_hB1">The environment in which &ghci; operates is called the
 	  &IO; monad.  In <xref
 	  linkend="io"/>, we will cover the &IO; monad in depth, and
 	  the seemingly arbitrary restrictions that &ghci; places on
@@ -818,7 +818,7 @@
 	<emphasis>continues</emphasis> an existing definition, instead
 	of starting a new one.  Don't omit the indentation!</para>
 
-      <para>You might wonder where the variable name
+      <para id="x_iB1">You might wonder where the variable name
 	<varname>xs</varname> comes from in the Haskell function. This
 	is a common naming pattern for lists: you can read the
 	<code>s</code> as a suffix, so the name is essentially
@@ -918,12 +918,12 @@
 
       &myDrop.hs:myDrop2;
 
-      <para>The length of this version makes it more difficult to
+      <para id="x_jB1">The length of this version makes it more difficult to
 	read.  We will usually break an &if; expression across several
 	lines to keep the predicate and each of the branches easier to
 	follow.</para>
 
-      <para>For comparison, here is a Python equivalent of the Haskell
+      <para id="x_kB1">For comparison, here is a Python equivalent of the Haskell
 	<function>myDrop</function>.  The two are structured
 	similarly: each decrements a counter while removing an element
 	from the head of the list.</para>
@@ -993,7 +993,7 @@
 
       <para id="x_gm">Non-strict evaluation is often referred to as
 	<emphasis>lazy evaluation</emphasis><footnote>
-	  <para>The terms <quote>non-strict</quote> and
+	  <para id="x_lB1">The terms <quote>non-strict</quote> and
 	    <quote>lazy</quote> have slightly different technical
 	    meanings, but we won't go into the details of the
 	    distinction here.</para>
@@ -1067,19 +1067,19 @@
 	  non-strict evaluation builds this capability into the
 	  language.</para>
 
-	<para>In Haskell, we can easily define a new function that
+	<para id="x_mB1">In Haskell, we can easily define a new function that
 	  short circuits.</para>
 
 	&shortCircuit.hs:newOr;
 
-	<para>If we write an expression like <code>newOr True (length
+	<para id="x_nB1">If we write an expression like <code>newOr True (length
 	    [1..] &gt; 0)</code>, it will not evaluate its second
 	  argument.  (This is just as well: that expression tries to
 	  compute the length of an infinite list.  If it were
 	  evaluated, it would hang &ghci;, looping infinitely until we
 	  killed it.)</para>
 
-	<para>Were we to write a comparable function in, say, Python,
+	<para id="x_oB1">Were we to write a comparable function in, say, Python,
 	  strict evaluation would bite us: both arguments would be
 	  evaluated before being passed to <function>newOr</function>,
 	  and we would not be able to avoid the infinite loop on the

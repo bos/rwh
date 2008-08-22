@@ -5,7 +5,7 @@
 
 <!-- introduction to why FFIs exist -->
 
-<para>
+<para id="x_yG1">
 Programming languages do not exist in perfect isolation. They inhabit an
 ecosystem of tools and libraries, built up over decades, and often written in
 a range of programming languages. Good engineering practice suggests we reuse
@@ -24,7 +24,7 @@ expressions.
 
 <!-- dicuss the foreign function interface standard -->
 
-<para>
+<para id="x_zG1">
 Binding one language to another is a non-trivial task. The binding language
 needs to understand the calling conventions, type system, data structures,
 memory allocation mechanisms and linking strategy of the target language,
@@ -33,7 +33,7 @@ both languages, so that both languages can understand the data that
 passes between them.
 </para>
 
-<para>
+<para id="x_AH1">
 For Haskell, this technology stack is specified by <ulink url="http://www.cse.unsw.edu.au/~chak/haskell/ffi/">the Foreign Function Interface addendum</ulink> to
 the Haskell report. The FFI report describes how to correctly bind Haskell
 and C together, and how to extend bindings to other languages. The
@@ -41,14 +41,14 @@ standard is designed to be portable, so that FFI bindings will work reliably
 across Haskell implementations, operating systems and C compilers.
 </para>
 
-<para>
+<para id="x_BH1">
 All implementations of Haskell support the FFI, and it is a key technology
 when using Haskell in a new field. Instead of reimplementing the standard
 libraries in a domain, we just bind to existing ones written in languages
 other than Haskell.
 </para>
 
-<para>
+<para id="x_CH1">
 The FFI adds a new dimension of flexibility to the language: if we need to
 access raw hardware for some reason (say we're programming new hardware, or
 implementing an operating system), the FFI lets us get access to that
@@ -62,14 +62,14 @@ let's look at what the FFI actually means for writing code.
 <sect1>
   <title>Foreign language bindings: the basics</title>
 
-<para>
+<para id="x_DH1">
 The most common operation we'll want to do, unsurprisingly, is to call a C
 function from Haskell. So let's do that, by binding to some functions
 from the standard C math library. We'll put the binding in a source file, and
 then compile it into a Haskell binary that makes use of the C code.
 </para>
 
-<para>
+<para id="x_EH1">
 To start with, we need to enable the foreign function interface extension, as
 the FFI addendum support isn't enabled by default. We do this, as always, via
 a <code>LANGUAGE</code> pragma at the top of our source file:
@@ -77,7 +77,7 @@ a <code>LANGUAGE</code> pragma at the top of our source file:
 
 &SimpleFFI.hs:pragma;
 
-<para>
+<para id="x_FH1">
 The <code>LANGUAGE</code> pragmas indicate which extensions to Haskell 98 a
 module uses. We bring just the FFI extension in play this time. It is important
 to track which extensions to the language you need. Fewer extensions generally
@@ -87,7 +87,7 @@ thanks to standardization, despite changes to the language's syntax, type system
 core libraries.
 </para>
 
-<para>
+<para id="x_GH1">
 The next step is to import the <code>Foreign</code> modules, which provide
 useful types (such as pointers, numerical types, arrays) and utility
 functions (such as <code>malloc</code> and <code>alloca</code>), for writing
@@ -96,14 +96,14 @@ bindings to other languages:
 
 &SimpleFFI.hs:imports;
 
-<para>
+<para id="x_HH1">
 For extensive work with foreign libraries, a good knowledge of the
 <code>Foreign</code> modules is essential. Other useful modules include
 <code>Foreign.C.String</code>, <code>Foreign.Ptr</code> and
 <code>Foreign.Marshal.Array</code>.
 </para>
 
-<para>
+<para id="x_IH1">
 Now we can get down to work calling C functions. To do this, we need
 to know three things: the name of the C function, its type, and its
 associated header file. Additionally, for code that isn't provided by the
@@ -114,7 +114,7 @@ declaration, like so:
 
 &SimpleFFI.hs:binding;
 
-<para>
+<para id="x_JH1">
 This defines a new Haskell function, <code>c_sin</code>, whose concrete
 implementation is in C, via the <code>sin</code> function. When
 <code>c_sin</code> is called, a call to the actual <code>sin</code> will be
@@ -124,7 +124,7 @@ returns its results back to Haskell. The result is then wrapped up as a
 Haskell value of type <code>CDouble</code>.
 </para>
 
-<para>
+<para id="x_KH1">
 A common idiom when writing FFI bindings is to expose the C function with the
 prefix "c_", distinguishing it from more user friendly, higher level
 functions. The raw C function is specified by the <code>math.h</code> header,
@@ -133,7 +133,7 @@ where it is declared to have the type:
 
 &math.c:type;
 
-<para>
+<para id="x_LH1">
 When writing the binding, the programmer has to translate C type signatures
 like this into their Haskell FFI equivalents, making sure that the data
 representations match up. For example, <code>double</code> in C corresponds
@@ -146,7 +146,7 @@ C compiler warnings, and more likely, it will end with with a runtime crash. At
 worst the error will silently go unnoticed until some critical failure
 occurs. So make sure you use the correct FFI types, and don't be wary of
 using QuickCheck to test your C code via the bindings.
-<footnote><para>Some more advanced binding tools provide greater degrees of
+<footnote><para id="x_MH1">Some more advanced binding tools provide greater degrees of
 type checking. For example, <code>c2hs</code> is able to parse the C
 header, and generate the binding definition for you, and is especially
 suited for large projects where the full API is specified. 
@@ -154,7 +154,7 @@ suited for large projects where the full API is specified.
 </footnote>
 </para>
 
-<para> 
+<para id="x_NH1"> 
 The most important primitive C types are represented in Haskell with the
 somewhat intuitive names (for signed and unsigned types) <code>CChar</code>, <code>CUChar</code>, <code>CInt</code>,
 <code>CUInt</code>, <code>CLong</code>, <code>CULong</code>,
@@ -167,7 +167,7 @@ Haskell-side representation types for C, as we'll see later.
 <sect2>
   <title>Be careful of side effects</title>
 
-<para>
+<para id="x_OH1">
 One point to note is that we bound <code>sin</code> as a pure function in Haskell, 
 one with no side effects. That's fine in this case, since the <code>sin</code>
 function in C is referentially transparent. By binding pure C functions to
@@ -182,7 +182,7 @@ as "reentrant".  Pure, threadsafe C code, while rare, is a valuable
 commodity. It is the easiest flavor of C to use from Haskell.
 </para>
 
-<para>
+<para id="x_PH1">
 Of course, code with side effects is more common in imperative languages,
 where the explicit sequencing of statements encourages the use of effects. It
 is much more common in C for functions to return different values, given the
@@ -203,7 +203,7 @@ FFI binding with a transactional lock, or duplicating the underlying C state.
 <sect2>
   <title>A high level wrapper</title>
 
-<para>
+<para id="x_QH1">
 With the foreign imports out of the way, the next step is to convert the C
 types we pass to and receive from the foreign language call into native Haskell
 types, wrapping the binding so it appears as a normal Haskell function:
@@ -211,7 +211,7 @@ types, wrapping the binding so it appears as a normal Haskell function:
 
 &SimpleFFI.hs:highlevel;
 
-<para>
+<para id="x_RH1">
 The main thing to remember when writing convenient wrappers over
 bindings like this is to convert input and output back to normal
 Haskell types correctly. To convert between floating point values, we can use
@@ -227,7 +227,7 @@ transformation is, and on what functions are available on the source
 and destination types.
 </para>
 
-<para>
+<para id="x_SH1">
 We can now proceed to use the bound function in a program. For
 example, we can apply the C <code>sin</code> function to a Haskell list of
 tenths:
@@ -235,7 +235,7 @@ tenths:
 
 &SimpleFFI.hs:use;
 
-<para>
+<para id="x_TH1">
 This simple program prints each result as it is computed.
 Putting the complete binding in the file <code>SimpleFFI.hs</code> we can run
 it in <code>GHCi</code>:
@@ -257,7 +257,7 @@ $ ghci SimpleFFI.hs
 0.8414709848078964
 </screen>
 
-<para>
+<para id="x_UH1">
 Alternatively, we can compile the code to an executable, dynamically linked
 against the corresponding C library:
 </para>
@@ -268,7 +268,7 @@ against the corresponding C library:
 Linking SimpleFFI ...
 </screen>
 
-<para>
+<para id="x_VH1">
 and then run that:
 </para>
 
@@ -287,7 +287,7 @@ $ ./SimpleFFI
 0.8414709848078964
 </screen>
 
-<para>
+<para id="x_WH1">
 We're well on our way now, with a full program, statically linked against
 C, which interleaves C and Haskell code, and passes data across the language
 boundary.  Simple bindings like the above are almost trivial, as the standard
@@ -312,7 +312,7 @@ memory management and type safety.
 
 <!-- motivate regular expressions -->
 
-<para>
+<para id="x_XH1">
 As we've seen in previous sections, Haskell programs have something of a bias
 towards lists as a foundational data structure.  List functions are a core
 part of the base library, and convenient syntax for constructing and taking
@@ -323,7 +323,7 @@ standard library to favour polymorphic list operations at the expense of
 string-specific operations.
 </para>
 
-<para>
+<para id="x_YH1">
 Indeed, many common tasks can be solved via regular-expression-based
 string processing, yet support for regular expressions isn't part of the
 Haskell <literal>Prelude</literal>. So let's look at how we'd take an
@@ -332,7 +332,7 @@ convenient Haskell binding to it, giving us useful regular expressions for
 Haskell.
 </para>
 
-<para>
+<para id="x_ZH1">
 PCRE itself is a ubiquitous C library implementing Perl-style regular expressions.
 It is widely available, and preinstalled on many systems. If not, it can be
 found at <ulink url="http://www.pcre.org/">http://www.pcre.org/</ulink>. In the following
@@ -345,7 +345,7 @@ machine.
 <sect2>
   <title>Simple tasks: using the C preprocessor</title>
 
-<para>
+<para id="x_aH1">
 The simplest task when setting out to write a new FFI binding from Haskell to C
 is to bind constants defined in C headers to equivalent Haskell
 values. For example, PCRE provides a set of flags for modifying how the core
@@ -355,7 +355,7 @@ newlines).  These flags appear as numeric constants in the PCRE header files:
 
 &PCRE.h:constants;
 
-<para>
+<para id="x_bH1">
 To export these values to Haskell we need to insert them into a Haskell
 source file somehow. One obvious way to do this is by using the C
 preprocessor to substitute definitions from C into the Haskell source, which we
@@ -366,7 +366,7 @@ source file:
 
 &Enum1.hs:cpp;
 
-<para>
+<para id="x_cH1">
 The file is processed with the preprocessor in a similar manner to C source
 (with CPP run for us by the Haskell compiler, when it spots the
 <code>LANGUAGE</code> pragma), resulting in program output:
@@ -377,7 +377,7 @@ The file is processed with the preprocessor in a similar manner to C source
 [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 </screen>
   
-<para>  
+<para id="x_dH1">  
 However, relying on CPP is a rather fragile approach. The C preprocessor
 isn't aware it is processing a Haskell source file, and will happily include
 text, or transform source, in such a way as to make our Haskell code invalid.
@@ -386,7 +386,7 @@ risk substituting unwanted symbols, or inserting C type information and
 prototypes into the Haskell source, resulting in a broken mess.
 </para>
   
-<para>
+<para id="x_eH1">
 To solve these problems, the binding preprocessor <code>hsc2hs</code> is
 distributed with GHC. It provides a convenient syntax for including C binding
 information in Haskell, as well as letting us safely operate with headers.
@@ -399,7 +399,7 @@ It is the tool of choice for the majority of Haskell FFI bindings.
 Binding Haskell to C with hsc2hs
   </title>
 
-<para>
+<para id="x_fH1">
 To use hsc2hs as an intelligent binding tool for Haskell, we need to create
 an <code>.hsc</code> file, <code>Regex.hsc</code>, which will hold the Haskell source for our
 binding, along with hsc2hs processing rules, C headers and C type
@@ -408,7 +408,7 @@ information. To start off, we need some pragmas and imports:
 
 &Regex-hsc.hs:headers;
 
-<para>
+<para id="x_gH1">
 The module begins with a typical preamble for an FFI binding: enable CPP,
 enable the foreign function interface syntax, declare a module name, and then
 import some things from the base library. The unusual item is the final line,
@@ -422,7 +422,7 @@ where we include the C header for PCRE. This wouldn't be valid in a
    Adding type safety to PCRE
   </title>
 
-<para>
+<para id="x_hH1">
 Next we need a type to represent PCRE compile-time flags. In C, these are
 integer flags to the <code>compile</code> function, so we could just use
 <code>CInt</code> to represent them. All we know about the flags is that
@@ -430,7 +430,7 @@ they're C numeric constants, so <code>CInt</code> is the appropriate
 representation.
 </para>
 
-<para>
+<para id="x_iH1">
 As a Haskell library writer though, this feels sloppy. The type of values
 that can be used as regex flags contains fewer values than <code>CInt</code>
 allows for.  Nothing would prevent the end user passing illegal integer
@@ -442,7 +442,7 @@ its runtime representation as a numeric value. If we can do this, we can
 statically prevent a class of bugs relating to misuse of flags.
 </para>
 
-<para>
+<para id="x_jH1">
 Adding such a layer of type safety is relatively easy, and a great use case for
 <code>newtype</code>, the type introduction declaration.
 What <code>newtype</code> lets us do is create a type with an identical
@@ -455,14 +455,14 @@ or to pass flags to functions expecting integers. We get to use the Haskell type
 system to introduce a layer of type safety to the C PCRE API.
 </para>
 
-<para>
+<para id="x_kH1">
 To do this, we define a <code>newtype</code> for PCRE compile time options,
 whose representation is actually that of a <code>CInt</code> value, like so:
 </para>
 
 &Regex-hsc.hs:newtype;
 
-<para>
+<para id="x_lH1">
 The type name is <code>PCREOption</code>, and it has a single constructor,
 also named <code>PCREOption</code>, which lifts a <code>CInt</code> value
 into a new type by wrapping it in a constructor. We can also happily define
@@ -481,13 +481,13 @@ abstractly from the source module, ensuring users can't construct their own
 Binding to constants
   </title>
 
-<para>
+<para id="x_mH1">
 Now we've pulled in the required modules, turned on the language features we
 need, and defined a type to represent PCRE options, we need to actually
 define some Haskell values corresponding to those PCRE constants.
 </para>
 
-<para>
+<para id="x_nH1">
 We can do this in two ways with hsc2hs. The first way is to use the
 <code>#const</code> keyword hsc2hs provides. This lets us name constants to
 be provided by the C preprocessor. We can bind to the constants manually, by
@@ -496,7 +496,7 @@ listing the CPP symbols for them using the <code>#const</code> keyword:
 
 &Regex-hsc-const.hs:constoptions;
 
-<para>
+<para id="x_oH1">
 This introduces three new constants on the Haskell side,
 <code>caseless</code>, <code>dollar_endonly</code> and <code>dotall</code>,
 corresponding to the similarly named C definitions. We immediately wrap the
@@ -504,7 +504,7 @@ constants in a newtype constructor, so they're exposed to the programmer as
 abstract <code>PCREOption</code> types only.
 </para>
 
-<para>
+<para id="x_pH1">
 This is the first step, creating a <code>.hsc</code> file. We now need to
 actually create a Haskell source file, with the C preprocessing done. Time
 to run <code>hsc2hs</code> over the <code>.hsc</code> file:
@@ -514,14 +514,14 @@ to run <code>hsc2hs</code> over the <code>.hsc</code> file:
 $ hsc2hs Regex.hsc
 </screen>
 
-<para>
+<para id="x_qH1">
 This creates a new output file, <code>Regex.hs</code>, where the CPP
 variables have been expanded, yielding valid Haskell code:
 </para>
 
 &Regex-hsc-const-generated.hs:generatedconsts;
 
-<para>
+<para id="x_rH1">
 Notice also how the original line in the <code>.hsc</code> is listed next
 to each expanded definition via the <code>LINE</code> pragma. The compiler
 uses this information to report errors in terms of their source, in the
@@ -542,7 +542,7 @@ interactive>:1:0:
     No instance for (Num PCREOption)
 </screen>
 
-<para>
+<para id="x_sH1">
 So things are working as expected. The values are opaque, we get type errors
 if we try to break the abstraction, and we can unwrap them and operate on
 them if needed. The <code>unPCREOption</code> accessor is used to unwrap the
@@ -557,7 +557,7 @@ further.
 Automating the binding
   </title>
 
-<para>
+<para id="x_tH1">
 Clearly, manually listing all the C defines, and wrapping them is tedious,
 and error prone. The work of wrapping all the literals in
 <code>newtype</code> constructors is also annoying. This kind of binding is
@@ -565,13 +565,13 @@ such a common task that <code>hsc2hs</code> provides convenient syntax to
 automate it: the <code>#enum</code> construct.
 </para>
 
-<para>
+<para id="x_uH1">
 We can replace our list of top level bindings with the equivalent:
 </para>
 
 &Regex-hsc.hs:constants;
 
-<para>
+<para id="x_vH1">
 This is much more concise! The <code>#enum</code> construct gives us three
 fields to work with. The first is the name of the type we'd like the C
 defines to be treated as. This lets us pick something other than just
@@ -579,7 +579,7 @@ defines to be treated as. This lets us pick something other than just
 construct.
 </para>
 
-<para>
+<para id="x_wH1">
 The second field is an optional constructor to place in front of the symbols.
 This is specifically for the case we want to construct <code>newtype</code>
 values, and where much of the grunt work is saved. The final part of the
@@ -587,7 +587,7 @@ values, and where much of the grunt work is saved. The final part of the
 for constants to be filled in via CPP.
 </para>
 
-<para>
+<para id="x_xH1">
 Running this code through hsc2hs, as before, generates a Haskell file with
 the following binding code produced (with <code>LINE</code> pragmas removed
 for brevity):
@@ -595,7 +595,7 @@ for brevity):
 
 &Regex.hs:result;
 
-<para>
+<para id="x_yH1">
 Perfect. Now we can do something in Haskell with these values. Our aim here
 is to treat flags as abstract types, not as bit fields in integers in C.
 Passing multiple flags in C would be done by bitwise or-ing multiple flags 
@@ -606,7 +606,7 @@ This is achievable with a simple fold: </para>
 
 &Regex.hs:bitwise;
 
-<para>
+<para id="x_zH1">
 This simple loop starts with an initial value of 0, unpacks each flag, and
 uses bitwise-or, <code>(.|.)</code> on the underlying <code>CInt</code>, to
 combine each value with the loop accumulator. The final accumulated state is
@@ -614,7 +614,7 @@ then wrapped up in the
 <code>PCREOption</code> constructor.
 </para>
 
-<para>
+<para id="x_AI1">
 Let's turn now to actually compiling some regular expressions.
 </para>
   
@@ -625,7 +625,7 @@ Let's turn now to actually compiling some regular expressions.
 <sect1>
   <title>Passing string data between Haskell and C</title>
 
-<para>
+<para id="x_BI1">
 The next task is to write a binding to the PCRE regular expression
 <code>compile</code> function. Let's look at its type, straight from the
 <code>pcre.h</code> header file:
@@ -633,13 +633,13 @@ The next task is to write a binding to the PCRE regular expression
 
 &PCRE-compile.h:pcre_compile;
 
-<para>
+<para id="x_CI1">
 This function compiles a regular expression pattern into some internal
 format, taking the pattern as an argument, along with some flags, and some
 variables for returning status information.
 </para>
 
-<para>
+<para id="x_DI1">
 We need to work out what Haskell types to represent each argument with. Most
 of these types are covered by equivalents defined for us by the FFI standard,
 and available in <code>Foreign.C.Types</code>. The first argument, the
@@ -652,7 +652,7 @@ can pass the <code>newtype</code> safely. The other arguments are a little
 more complicated and require some work to construct and take apart.
 </para>
 
-<para>
+<para id="x_EI1">
 The third argument, a pointer to a C string, will be used as a reference  to
 any error message generated when compiling the expression. The value of the
 pointer will be modified by the C function to point to a custom error string.
@@ -667,7 +667,7 @@ Word8</code>.
 <note>
   <title>A note about pointers</title>
 
-<para>
+<para id="x_FI1">
 Once we have a Haskell <code>Ptr</code> value handy, we can do various
 pointer-like things with it. We can compare it for equality with the null
 pointer, represented with the special <code>nullPtr</code> constant. We can
@@ -681,7 +681,7 @@ handy.
 </para>
 </note>
 
-<para>
+<para id="x_GI1">
 The question then is how to represent the abstract <code>pcre</code> pointer
 returned when we compile the regular expression. We need to find a Haskell
 type that is as abstract as the C type. Since the C type is treated
@@ -694,7 +694,7 @@ We can use a type synonym to remember the binding:
 
 &PCRE-compile.hs:unit;
 
-<para>
+<para id="x_HI1">
 That is, the foreign data is some unknown, opaque object, and we'll just
 treat it as a pointer to <code>()</code>, knowing full well that we'll never
 actually dereference that pointer. This gives us the following foreign import
@@ -710,7 +710,7 @@ functionally equivalent:
     Typed pointers
   </title>
 
-<para>
+<para id="x_II1">
 
 We can increase safety in the binding futher by using a "typed" pointer,
 instead of using the <code>()</code> type. That is, a unique type, distinct
@@ -722,21 +722,21 @@ data type:
 
 &PCRE-nullary.hs:nullary;
 
-<para>
+<para id="x_JI1">
 This requires the <code>EmptyDataDecls</code> language extension. This type
 clearly contains no values! We can only ever construct pointers to such
 values, as there are no concrete values (other than bottom) that have this
 type.
 </para>
 
-<para>
+<para id="x_KI1">
 We can also achieve the same thing, without requiring a language extension, 
 using a recursive <code>newtype</code>:
 </para>
 
 &PCRE-recursive.hs:nullary;
 
-<para>
+<para id="x_LI1">
 Again, we can't really do anything with a value of this type, as it has no
 runtime representation. Using typed pointers in these ways is just
 another way to add safety to a Haskell layer over what C provides. What would require
@@ -746,7 +746,7 @@ binding. If this code compiles, the type checker has given us a proof that
 the PCRE objects returned by C are never dereferenced on the Haskell side.
 </para>
 
-<para>
+<para id="x_MI1">
 We have the foreign import declaration sorted out now, the next step is to
 marshal data into the right form, so that we can finally call the C code.
 </para>
@@ -762,7 +762,7 @@ marshal data into the right form, so that we can finally call the C code.
     Memory management: let the garbage collector do the work
   </title>
 
-<para>
+<para id="x_NI1">
 One question that isn't resolved yet is how to manage the memory associated
 with the abstract <code>PCRE</code> structure returned by the C library. The
 caller didn't have to allocate it: the library took care of that by
@@ -770,13 +770,13 @@ allocating memory on the C side. At some point though we'll need to
 deallocate it. This, again, is an opportunity to abstract the tedium of using
 the C library by hiding the complexity inside the Haskell binding.  </para>
 
-<para>
+<para id="x_OI1">
 We'll use the Haskell garbage collector to automatically deallocate the C
 structure once it is no longer in use. To do this, we'll make use of Haskell
 garbage collector finalizers, and the <code>ForeignPtr</code> type.
 </para>
 
-<para>
+<para id="x_PI1">
 We don't want users to have to manually deallocate the <code>Ptr PCRE</code>
 value returned by the foreign call. The PCRE library specifically states that
 structures are allocated on the C side with <code>malloc</code>, and need to be freed
@@ -789,21 +789,21 @@ the Haskell garbage collector an arbitrary function that is to deallocate the C 
 it notices that the Haskell data is done with.
 </para>
 
-<para>
+<para id="x_QI1">
 We have two tools at our disposal here, the opaque <code>ForeignPtr</code>
 data type, and the <code>newForeignPtr</code> function, which has type:
 </para>
 
 &ForeignPtr.hs:newForeignPtr;
 
-<para>
+<para id="x_RI1">
 The function takes two arguments, a finalizer to run when the data goes out
 of scope, and a pointer to the associated C data. It returns a new managed
 pointer which will have its finalizer run once the garbage collector decides
 the data is no longer in use. What a lovely abstraction!
 </para>
 
-<para>
+<para id="x_SI1">
 These finalizable pointers are appropriate whenever a C library requires the
 user to explicitly deallocate, or otherwise clean up a resource, when it is
 no longer in use. It is a simple piece of equipment that goes a long way
@@ -811,7 +811,7 @@ towards making the C library binding more natural, more functional, in
 flavor.
 </para>
 
-<para>
+<para id="x_TI1">
 So with this in mind, we can hide the manually managed <code>Ptr PCRE</code>
 type inside a automatically managed data structure, yielding us the
 data type used to represent regular expressions that users will see:
@@ -819,7 +819,7 @@ data type used to represent regular expressions that users will see:
 
 &PCRE-compile.hs:data;
 
-<para>
+<para id="x_UI1">
 This new <code>Regex</code> data types consists of two parts. The first is
 an abstract <code>ForeignPtr</code>, that we'll use to manage the underlying
 <code>PCRE</code> data allocated in C. The second component is a strict
@@ -837,7 +837,7 @@ itself in a meaningful way.
     A high level interface: marshalling data
   </title>
 
-<para>
+<para id="x_VI1">
 The challenge when writing FFI bindings, once the Haskell types have been
 decided upon, is to convert regular data types a Haskell programmer will be
 familiar with into low level pointers to arrays and other C types. What would
@@ -845,7 +845,7 @@ an ideal Haskell interface to regular expression compilation look like?
 We have some design intuitions to guide us.
 </para>
 
-<para>
+<para id="x_WI1">
 For starters, the act of compilation should be a referentially transparent
 operation: passing the same regex string will yield functionally the same
 compiled pattern each time, although the C library will give us observably
@@ -857,7 +857,7 @@ interface will be easy to use (as it won't require complicated state to be
 initialized before it can be used).
 </para>
 
-<para>
+<para id="x_XI1">
 Despite being pure, the function can still fail. If the regular expression
 input provided by the user is ill-formed an error string is returned. A good
 data type to represent optional failure with an error value, is
@@ -867,7 +867,7 @@ function in a familiar, foundational Haskell type like this is another useful
 step to make the binding more idiomatic.
 </para>
 
-<para>
+<para id="x_YI1">
 For the user supplied parameters, we've already decided to pass compilation
 flags in as a list. We can choose to pass the input regular expression either
 as an efficient <code>ByteString</code>, or as a regular <code>String</code>.
@@ -877,7 +877,7 @@ compilation success with a value or failure with an error string, would be:
 
 &PCRE-compile.hs:compiletype;
 
-<para>
+<para id="x_ZI1">
 The input is a <code>ByteString</code>, available from the
 <code>Data.ByteString.Char8</code> module (and we'll import this
 <code>qualified</code> to avoid name clashes), containing the regular
@@ -891,7 +891,7 @@ expression.
 <sect2>
   <title>Mashalling ByteStrings</title>
 
-<para>
+<para id="x_aI1">
 Given this type, we can sketch out the <code>compile</code> function: the
 high level interface to the raw C binding. At its heart, it will call
 <code>c_pcre_compile</code>. Before it does that, it has to marshal the
@@ -904,7 +904,7 @@ which copies the input <code>ByteString</code> into a null-terminated C array
 
 &ForeignPtr.hs:useAsCString;
 
-<para>
+<para id="x_bI1">
 This function takes a <code>ByteString</code> as input. The second
 argument is a user-defined function that will run with the resulting
 <code>CString</code>. We see here another useful idiom:
@@ -914,14 +914,14 @@ which we can then pass to C as a pointer. Our burden then is to supply it
 with a chunk of code to call C.
 </para>
 
-<para>
+<para id="x_cI1">
 Code in this style is often written in a dangling "do-block" notation. The
 following pseudocode illustrates this structure:
 </para>
 
 &DoBlock.hs:doblock;
 
-<para>
+<para id="x_dI1">
 The second argument here is an anonymous function, a lambda, with a monadic
 "do" block for a body. It is common to use the simple <code>($)</code>
 application operator to avoid the need for parentheses when delimiting the
@@ -934,7 +934,7 @@ parameters like this.
 <sect2>
   <title>Allocating local C data: the Storable class</title>
 
-<para> 
+<para id="x_eI1"> 
 We can happily marshal <code>ByteString</code> data to C compatible types,
 but the <code>pcre_compile</code> function also needs some pointers and
 arrays in which to place its other return values. These should only exist
@@ -944,7 +944,7 @@ short-lifetime C data can be created with the <code>alloca</code> function:
 
 &ForeignPtr.hs:alloc;
 
-<para>
+<para id="x_fI1">
 This function takes a code block accepting a pointer to some C type as an
 argument and arranges to call that function with the unitialised data of the
 right shape, allocated freshly. The allocation mechanism mirrors local stack
@@ -959,7 +959,7 @@ use! Haskell will know what to allocate based on the functions we use on that
 data.
 </para>
 
-<para>
+<para id="x_gI1">
 To allocate a pointer to a <code>CString</code>, for example, which will be
 updated to point to a particular <code>CString</code> by the called
 function, we would call <code>alloca</code>, in pseudocode as:
@@ -967,7 +967,7 @@ function, we would call <code>alloca</code>, in pseudocode as:
 
 &DoBlock.hs:alloc;
 
-<para>
+<para id="x_hI1">
 This locally allocates a <code>Ptr CString</code> and applies
 the code block to that pointer, which then calls a C function to modify the
 pointer contents. Finally, we dereference the pointer with the
@@ -975,7 +975,7 @@ pointer contents. Finally, we dereference the pointer with the
 <code>CString</code>.
 </para>
 
-<para>
+<para id="x_iI1">
 We can now put it all together, to complete our high level PCRE compilation
 wrapper.
 </para>
@@ -985,7 +985,7 @@ wrapper.
 <sect2>
   <title>Putting it all together</title>
 
-<para>
+<para id="x_jI1">
 We've decided what Haskell type to represent the C function with, what the
 result data will be represented by, and how its memory will be managed. We've
 chosen a representation for flags to the <code>pcre_compile</code> function,
@@ -998,7 +998,7 @@ Haskell:
 
 <!-- woot, the dreaded unsafePerformIO -->
 
-<para>
+<para id="x_kI1">
 That's it! Let's carefully walk through the details here, since it is rather
 dense. The first thing that stands out is the use of
 <code>unsafePerformIO</code>, a rather infamous function, with a very unusual
@@ -1007,7 +1007,7 @@ type, imported from the ominous <code>System.IO.Unsafe</code>:
 
 &ForeignPtr.hs:unsafePerformIO;
 
-<para>
+<para id="x_lI1">
 This function does something odd: it takes an IO value and converts it to a
 pure one! After warning about the danger of effects for so long, here we have
 the very enabler of dangerous effects in one line. Used unwisely, this
@@ -1019,7 +1019,7 @@ nuclear missiles from our Fibonacci sequences.  So why does this function
 exist at all?
 </para>
 
-<para>
+<para id="x_mI1">
 It exists precisely to enable Haskell to bind to C code that we know to
 be referentially transparent, but can't prove the case to the Haskell type
 system.  It lets us say to the compiler, "I know what I'm doing - this code
@@ -1033,7 +1033,7 @@ that.
 
 <!-- say more about the risks and benefits ? -->
 
-<para>
+<para id="x_nI1">
 The argument to <code>unsafePerformIO</code> is the actual body of our
 compilation function, which consists of four parts: marshalling Haskell data
 to C form; calling into the C library; checking the return values; and
@@ -1042,7 +1042,7 @@ finally, constructing a Haskell value from the results.
 
 <!-- the wrapper -->
 
-<para>
+<para id="x_oI1">
 We marshal with <code>useAsCString</code> and <code>alloca</code>, setting
 up the data we need to pass to C, and use <code>combineOptions</code>,
 developed previously, to collapse the list of flags into a single
@@ -1052,7 +1052,7 @@ results. We use <code>nullPtr</code> for the character encoding table, which
 is unused in this case.
 </para>
 
-<para>
+<para id="x_pI1">
 The result returned from the C call is a pointer to the abstract
 <code>PCRE</code> structure. We then test this against the
 <code>nullPtr</code>. If there was a problem with the regular expression, 
@@ -1062,7 +1062,7 @@ then unpack that to a normal Haskell list with the library function,
 <code>Left err</code>, indicating failure to the caller.
 </para>
 
-<para>
+<para id="x_qI1">
 If the call succeeded, however, we allocate a new storage-managed pointer,
 with the C function using a <code>ForeignPtr</code>. The special value
 <code>finalizerFree</code> is bound as the finalizer for this data, which
@@ -1072,7 +1072,7 @@ data. This is then wrapped as an opaque
 <code>Right</code>, and returned to the user. And now we're done!
 </para>
 
-<para>
+<para id="x_rI1">
 We need to process our source file with hsc2hs, and then load the function in GHCi.
 However, doing this results in an error on the first attempt:
 </para>
@@ -1089,7 +1089,7 @@ the missing library using the -L/path/to/object/dir and -lmissinglibname
 flags, or simply by naming the relevant files on the GHCi command line.
 </screen>
 
-<para>
+<para id="x_sI1">
 A little scary. However, this is just because we didn't link the
 C library we wanted to call to the Haskell code.  Assuming the PCRE library has
 been installed on the system in the default library location, we can let
@@ -1109,7 +1109,7 @@ Right (Regex 0x0000000002888860 "a.*b[xy]+(foo?)")
 Left "nothing to repeat"
 </screen>
 
-<para>
+<para id="x_tI1">
 The regular expressions are packed into byte strings and marshalled to C,
 where they are compiled by the PCRE library. The result is then handed back
 to Haskell, where we display the structure using the default
@@ -1125,7 +1125,7 @@ expressions.
 <sect1>
     <title>Matching on strings</title>
 
-<para>
+<para id="x_uI1">
 The second part of a good regular expression library is the matching
 function. Given a compiled regular expression, this function does
 the matching of the compiled regex against some input, indicating whether it
@@ -1135,7 +1135,7 @@ is <code>pcre_exec</code>, which has type:
 
 &PCRE-compile.h:pcre_exec;
 
-<para>
+<para id="x_vI1">
 The most important arguments are the input <code>pcre</code> pointer
 structure, which we obtained from <code>pcre_compile</code>, and the subject
 string. The other flags let us provide book keeping structures, and space for
@@ -1145,7 +1145,7 @@ declaration:
 
 &RegexExec.hs:pcreexec;
 
-<para>
+<para id="x_wI1">
 We use the same method as before to create typed pointers for
 the <code>PCREExtra</code> structure, and a <code>newtype</code> to
 represent flags passed at regex execution time. This lets us ensure users
@@ -1155,7 +1155,7 @@ don't pass compile time flags incorrectly at regex runtime.
 <sect2>
   <title>Extracting information about the pattern</title>
 
-<para>
+<para id="x_xI1">
 The main complication involved in calling <code>pcre_exec</code> is the
 array of <code>int</code> pointers used to hold the offsets of matching
 substrings found by the pattern matcher. These offsets are held in an
@@ -1169,7 +1169,7 @@ type for the binding to <code>pcre_fullinfo</code> as:
 
 &RegexExec.hs:pcrefullinfo;
 
-<para>
+<para id="x_yI1">
 The most important arguments to this function are the compiled regular
 expression, and the <code>PCREInfo</code> flag, indicating which information
 we're interested in. In this case, we care about the captured pattern count.
@@ -1181,14 +1181,14 @@ pointer to a location to store the information about the pattern (whose size
 depends on the flag argument passed in!).
 </para>
 
-<para>
+<para id="x_zI1">
 Calling <code>pcre_fullinfo</code> to determine the captured pattern count
 is pretty easy:
 </para>
 
 &RegexExec.hs:captured;
 
-<para>
+<para id="x_AJ1">
 This takes a raw PCRE pointer and allocates space for the <code>CInt</code>
 count of the matched patterns. We then call the information function and
 peek into the result structure, finding a <code>CInt</code>. Finally, we
@@ -1202,14 +1202,14 @@ user.
 <sect2>
   <title>Pattern matching with substrings</title>
 
-<para>
+<para id="x_BJ1">
 Let's now write the regex matching function. The Haskell type for matching
 is similar to that for compiling regular expressions:
 </para>
 
 &RegexExec.hs:exectype;
 
-<para>
+<para id="x_CJ1">
 This function is how users will match strings against compiled regular
 expressions. Again, the main design point is that it is a pure function.
 Matching is a pure function: given the same input regular expression and
@@ -1218,7 +1218,7 @@ this information to the user via the type signature, indicating no side
 effects will occure when you call this function.
 </para>
 
-<para>
+<para id="x_DJ1">
 The arguments are a compiled <code>Regex</code>, a strict
 <code>ByteString</code>, containing the input data, and a list of
 flags that modify the regular expression engine's behaviour at runtime. The result is
@@ -1232,7 +1232,7 @@ the subject string. We'll need to loop over this result vector, reading
 offsets, and building <code>ByteString</code> slices as we go.
 </para>
 
-<para>
+<para id="x_EJ1">
 The implementation of the match wrapper can be broken into three parts.  At
 the top level, our function takes apart the compiled <code>Regex</code>
 structure, yielding the underlying <code>PCRE</code> pointer:
@@ -1240,7 +1240,7 @@ structure, yielding the underlying <code>PCRE</code> pointer:
 
 &RegexExec.hs:matchtop;
 
-<para>
+<para id="x_FJ1">
 As it is pure, we can use <code>unsafePerformIO</code> to hide any allocation
 effects internally. After pattern matching on the <code>PCRE</code> type, we
 need to take apart the <code>ForeignPtr</code> that hides our C-allocated raw
@@ -1256,7 +1256,7 @@ function, that takes some arbitrary value of the required type (and we can
 use the <code>undefined</code> value here to do our type dispatch).
 </para>
 
-<para>
+<para id="x_GJ1">
 The next step is to allocate an offset vector of the size we computed, to
 convert the input <code>ByteString</code> into a pointer to a C
 <code>char</code> array. Finally, we call <code>pcre_exec</code> with all the
@@ -1267,7 +1267,7 @@ required arguments:
 
 <!-- matching -->
 
-<para>
+<para id="x_HJ1">
 For the offset vector, we use <code>allocaBytes</code> to control exactly
 the size of the allocated array. It is like <code>alloca</code>, but rather
 than using the <code>Storable</code> class to determine the required size,
@@ -1282,7 +1282,7 @@ Haskell is often just solving a type puzzle!
 
 <!-- taking substrings -->
 
-<para>
+<para id="x_IJ1">
 We then just call <code>c_pcre_exec</code> with the raw PCRE pointer, the
 input string pointer at the correct offset, its length, and the result vector
 pointer. A status code is returned, and, finally, we analyse the result:
@@ -1290,7 +1290,7 @@ pointer. A status code is returned, and, finally, we analyse the result:
   
 &RegexExec.hs:results;
 
-<para>
+<para id="x_JJ1">
 If the result value was less than zero, then there was an error, or no match,
 so we return <code>Nothing</code> to the user. Otherwise, we need a loop
 peeking pairs of offsets from the offset vector (via <code>peekElemOff</code>).
@@ -1301,7 +1301,7 @@ portion. The loop runs until it has extracted the number of substrings we
 were told were found by the matcher.
 </para>
 
-<para>
+<para id="x_KJ1">
 The substrings are accumulated in a tail recursive loop, building up a
 reverse list of each string. Before returning the substrings of the user,
 we need to flip that list around and wrap it in a successful
@@ -1313,7 +1313,7 @@ we need to flip that list around and wrap it in a successful
 <sect2>
   <title>The real deal: compiling and matching regular expressions</title>
 
-<para>
+<para id="x_LJ1">
 If we take this function, its surrounding hsc2hs definitions and data
 wrappers, and process it with hsc2hs, we can load the resulting Haskell file
 in GHCi and try out our code (we need to import
@@ -1330,7 +1330,7 @@ compile :: ByteString -> [PCREOption] -> Either String Regex
 match :: Regex -> ByteString -> Maybe [ByteString]
 </screen>
 
-<para>
+<para id="x_MJ1">
 Things seem to be in order. Now let's try some compilation and matching.
 First, something easy:
 </para>
@@ -1346,7 +1346,7 @@ Nothing
 Just ["the quick brown fox"]
 </screen>
 
-<para>
+<para id="x_NJ1">
 (We could also avoid the <code>pack</code> calls by using the
 <code>OverloadedStrings</code> extensions). Or we can be more adventurous:
 </para>
@@ -1357,13 +1357,13 @@ Just ["the quick brown fox"]
 Just ["abxyzpqrrrabbxyyyypqAzz"]
 </screen>
 
-<para>
+<para id="x_OJ1">
 That's pretty awesome. The full power of Perl regular expressions, in Haskell at your fingertips.
 </para>
 
 <!-- summaries: how well does it integrate into Haskell: pattern guards -->
 
-<para>
+<para id="x_PJ1">
 In this chapter we've looked at how to declare bindings that let Haskell code
 call C functions, how to marshal different data types between the two
 languages, how to allocate memory at a low level (by allocating locally, or
@@ -1374,7 +1374,7 @@ constructing new bindings. The result is a natural Haskell API, that is
 actually implemented primarily in C.
 </para>
 
-<para>
+<para id="x_QJ1">
 The majority of FFI tasks fall into the above categories. Other advanced
 techniques that we are unable to cover include: linking Haskell into C
 programs, registering callbacks from one language to another, and the

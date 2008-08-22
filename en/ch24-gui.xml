@@ -7,7 +7,7 @@
     tools.  While these are often ideal interfaces, sometimes a
     graphical user interface (GUI) is required.  There are several GUI
     toolkits available for Haskell.  In this chapter, we will look at
-    one of the, gtk2hs.<footnote><para>Several alternatives also
+    one of the, gtk2hs.<footnote><para id="x_hJ1">Several alternatives also
     exist.  Alongside gtk2hs, wxHaskell is also a prominent
     cross-platform GUI toolkit.</para>
     </footnote>
@@ -116,7 +116,7 @@
         up padding rules, and structure the entire description in a
         hierarchical way.
       </para>
-      <para>
+      <para id="x_iJ1">
         Glade saves the widget descriptions into an XML file.  Our program
         loads this XML file at runtime.  We load the widgets by asking
         the Glade runtime library to load a widget with a specific

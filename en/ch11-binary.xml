@@ -203,7 +203,7 @@
       we already have eight different spots that we will need to
       modify, just to pass a three-tuple around.</para>
 
-    <para>This approach makes even a small body of code difficult to
+    <para id="x_EF1">This approach makes even a small body of code difficult to
       change.  The problem lies with our use of pattern matching to
       pull values out of each pair: we have embedded the knowledge
       that we are always working with pairs straight into our code.
@@ -226,7 +226,7 @@
       <function>string</function> and <function>offset</function>
       instead.</para>
 
-    <para>We have given our parsing state a name.  When we name
+    <para id="x_FF1">We have given our parsing state a name.  When we name
       something, it can become easier to reason about.  For example,
       we can now look at parsing as a kind of function: it consumes a
       parsing state, and produces both a new parsing state and some
@@ -235,13 +235,13 @@
 
     &Parse.hs:simpleParse;
 
-    <para>To provide more help to our users, we would like to
+    <para id="x_GF1">To provide more help to our users, we would like to
       report an error message if parsing fails.  This only requires a
       minor tweak to the type of our parser.</para>
 
     &Parse.hs:betterParse;
 
-    <para>In order to future-proof our code, it is best if we do not
+    <para id="x_HF1">In order to future-proof our code, it is best if we do not
       expose the implementation of our parser to our users.  When we
       explicitly used pairs for state earlier, we found ourselves in
       trouble almost immediately, once we considered extending the
@@ -251,7 +251,7 @@
 
     &Parse.hs:Parse;
 
-    <para>Remember that the &newtype; definition is just a
+    <para id="x_IF1">Remember that the &newtype; definition is just a
       compile-time wrapper around a function, so it has no run-time
       overhead.  When we want to use the function, we will apply the
       <function>runParser</function> accessor.</para>
@@ -307,27 +307,27 @@
     <sect2>
       <title>Record syntax, updates, and pattern matching</title>
 
-      <para>Record syntax is useful for more than just accessor
+      <para id="x_JF1">Record syntax is useful for more than just accessor
 	functions: we can use it to copy and partly change an existing
 	value.  In use, the notation looks like this.</para>
 
       &Parse.hs:modifyOffset;
 
-      <para>This creates a new <type>ParseState</type> value identical
+      <para id="x_KF1">This creates a new <type>ParseState</type> value identical
 	to <varname>initState</varname>, but with its
 	<code>offset</code> field set to whatever value we specify for
 	<code>newOffset</code>.</para>
 
       &parse.ghci:modifyOffset;
 
-      <para>We can set as many fields as we want inside the curly
+      <para id="x_LF1">We can set as many fields as we want inside the curly
 	braces, separating them using commas.</para>
     </sect2>
 
     <sect2>
       <title>A more interesting parser</title>
 
-      <para>Let's focus now on writing a parser that does something
+      <para id="x_MF1">Let's focus now on writing a parser that does something
 	meaningful.  We're not going to get too ambitious yet: all we
 	want to do is parse a single byte.</para>
 
@@ -336,12 +336,12 @@
       <para id="x_cR">There are a number of new functions in our
 	definition.</para>
 
-      <para>The <function>L8.uncons</function> function takes the
+      <para id="x_NF1">The <function>L8.uncons</function> function takes the
 	first element from a <type>ByteString</type>.</para>
 
       &parse.ghci:uncons;
 
-      <para>Our <function>getState</function> function retrieves the
+      <para id="x_OF1">Our <function>getState</function> function retrieves the
 	current parsing state, while <function>putState</function>
 	replaces it.  The <function>bail</function> function
 	terminates parsing and reports an error.  The
@@ -440,7 +440,7 @@
     <sect2>
       <title>Chaining parsers together</title>
 
-      <para>The <function>(==&gt;)</function> function serves a
+      <para id="x_PF1">The <function>(==&gt;)</function> function serves a
 	similar purpose to our earlier
 	<function>(&gt;&gt;?)</function> function: it is
 	<quote>glue</quote> that lets us chain functions
@@ -455,13 +455,13 @@
 	two <type>Parse</type> values to produce a third, it must
 	return a function, in a wrapper.</para>
 
-      <para>The function doesn't really <quote>do</quote> much: it
+      <para id="x_QF1">The function doesn't really <quote>do</quote> much: it
 	just creates a <emphasis>closure</emphasis> to remember the
 	values of <varname>firstParser</varname> and
 	<varname>secondParser</varname>.</para>
 
       <tip>
-	<para>A closure is simply the pairing of a function with its
+	<para id="x_RF1">A closure is simply the pairing of a function with its
 	  <emphasis>environment</emphasis>, the bound variables that
 	  it can see.  Closures are commonplace in Haskell.  For
 	  instance, the section <function>(+5)</function> is a
@@ -472,7 +472,7 @@
 	  passed.</para>
       </tip>
 
-      <para>This closure will not be unwrapped and applied until we
+      <para id="x_SF1">This closure will not be unwrapped and applied until we
 	apply <function>parse</function>.  At that point, it will be
 	applied with a <type>ParseState</type>.  It will apply
 	<varname>firstParser</varname> and inspect its result.  If
@@ -938,7 +938,7 @@
       have developed in this chapter can be further simplified by the
       use of monads.</para>
 
-    <para>For efficiently parsing binary data represented as a
+    <para id="x_TF1">For efficiently parsing binary data represented as a
       <type>ByteString</type>, a number of packages are available via
       the Hackage package database.  At the time of writing, the most
       popular is named <code>binary</code>, which is easy to use and

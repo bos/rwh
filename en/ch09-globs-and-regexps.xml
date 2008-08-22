@@ -7,16 +7,16 @@
   <sect1 id="glob.bytestring">
     <title>Efficient file processing</title>
 
-    <para>This simple microbenchmark reads a text file full of
+    <para id="x_HE1">This simple microbenchmark reads a text file full of
       numbers, and prints their sum.</para>
 
     &SumFile.hs:main;
 
-    <para>Although the <type>String</type> type is the default used
+    <para id="x_IE1">Although the <type>String</type> type is the default used
       for reading and writing files, it is not efficient, so a simple
       program like this will perform badly.</para>
 
-    <para>A <type>String</type> is represented as a list of
+    <para id="x_JE1">A <type>String</type> is represented as a list of
       <type>Char</type> values; each element of a list is allocated
       individually, and has some book-keeping overhead. These factors
       affect the memory consumption and performance of a program that
@@ -25,26 +25,26 @@
       as Python can outperform Haskell code that uses
       <type>String</type> by an order of magnitude.</para>
 
-    <para>The <code>bytestring</code> library provides a fast, cheap
+    <para id="x_KE1">The <code>bytestring</code> library provides a fast, cheap
       alternative to the <type>String</type> type. Code written with
       <code>bytestring</code> can often match or exceed the
       performance and memory footprint of C, while maintaining
       Haskell's expressivity and conciseness.</para>
 
-    <para>The library supplies two modules.  Each defines functions
+    <para id="x_LE1">The library supplies two modules.  Each defines functions
       that are nearly drop-in replacements for their
       <type>String</type> counterparts.</para>
 
     <itemizedlist>
       <listitem>
-	<para>The <code>Data.ByteString</code> module defines a
+	<para id="x_ME1">The <code>Data.ByteString</code> module defines a
 	  <emphasis>strict</emphasis> type named
 	  <type>ByteString</type>.  This represents a string of binary
 	  or text data in a single array.</para>
       </listitem>
 
       <listitem>
-	<para>The <code>Data.ByteString.Lazy</code> module provides a
+	<para id="x_NE1">The <code>Data.ByteString.Lazy</code> module provides a
 	  <emphasis>lazy</emphasis> type, also named
 	  <type>ByteString</type>.  This represents a string of data
 	  as a list of <emphasis>chunks</emphasis>, arrays of up to
@@ -52,7 +52,7 @@
       </listitem>
     </itemizedlist>
 
-    <para>Each <type>ByteString</type> type performs better under
+    <para id="x_OE1">Each <type>ByteString</type> type performs better under
       particular circumstances.  For streaming a large quantity
       (hundreds of megabytes to terabytes) of data, the lazy
       <type>ByteString</type> type is usually best.  Its chunk size is
@@ -60,31 +60,31 @@
       collector can quickly discard chunks of streamed data that are
       no longer being used.</para>
 
-    <para>The strict <type>ByteString</type> type performs best for
+    <para id="x_PE1">The strict <type>ByteString</type> type performs best for
       applications that are less concerned with memory footprint, or
       that need to access data randomly.</para>
 
     <sect2>
       <title>Binary I/O and qualified imports</title>
 
-      <para>Let's develop a small function to illustrate some of the
+      <para id="x_QE1">Let's develop a small function to illustrate some of the
 	<code>ByteString</code> API.  We will determine if a file is
 	an ELF object file: this is the format used for executables on
 	almost all modern Unix-like systems.</para>
 
-      <para>This is a simple matter of looking at the first four bytes
+      <para id="x_RE1">This is a simple matter of looking at the first four bytes
 	in the file, and seeing if they match a specific sequence of
 	bytes.  A byte sequence that identifies a file's type is often
 	known as a <emphasis>magic number</emphasis>.</para>
 
       &ElfMagic.hs:hasElfMagic;
 
-      <para>We import the <code>ByteString</code> modules using
+      <para id="x_SE1">We import the <code>ByteString</code> modules using
 	Haskell's <emphasis>qualified import</emphasis> syntax, the
 	<code>import qualified</code> that we see above. This lets us
 	refer to a module with a name of our choosing.</para>
 
-      <para>For instance, when we want to refer to the lazy
+      <para id="x_TE1">For instance, when we want to refer to the lazy
 	<code>ByteString</code> module's <function>take</function>
 	function, we must write <function>L.take</function>, since we
 	imported the module under the name <code>L</code>.  	If we
@@ -92,13 +92,13 @@
 	<function>take</function> we want, the compiler will report an
 	error.</para>
 
-      <para>We will always use qualified import syntax with the
+      <para id="x_UE1">We will always use qualified import syntax with the
 	<code>ByteString</code> modules, because they provide many
 	functions that have the same names as Prelude
 	functions.</para>
 
       <tip>
-	<para>Qualified imports make it easy to switch between
+	<para id="x_VE1">Qualified imports make it easy to switch between
 	  <type>ByteString</type> types. All you should need to do is
 	  modify an <code>import</code> declaration at the top of your
 	  source file; the rest of your code will probably not need
@@ -106,7 +106,7 @@
 	  to see which is best suited to your application's needs</para>
       </tip>
 
-      <para>Whether or not we use qualified imports, we can always use
+      <para id="x_WE1">Whether or not we use qualified imports, we can always use
 	the entire name of a module to identify something
 	unambiguously.  For instance, both
 	<function>Data.ByteString.Lazy.length</function> and
@@ -114,13 +114,13 @@
 	do <function>Prelude.sum</function> and
 	<function>sum</function>.</para>
 
-      <para>The lazy and strict <code>ByteString</code> modules are
+      <para id="x_XE1">The lazy and strict <code>ByteString</code> modules are
 	intended for binary I/O.  The Haskell data type for
 	representing bytes is <type>Word8</type>; if we need to refer
 	to it by name, we import it from the <code>Data.Word</code>
 	module.</para>
 
-      <para>The <function>L.pack</function> function takes a list of
+      <para id="x_YE1">The <function>L.pack</function> function takes a list of
 	<type>Word8</type> values, and packs them into a lazy
 	<type>ByteString</type>.  (The <function>L.unpack</function>
 	function performs the reverse conversion.)  Our
@@ -128,13 +128,13 @@
 	first four bytes of a <code>ByteString</code> against a magic
 	number.</para>
 
-      <para>We are writing in classic Haskell style, where our
+      <para id="x_ZE1">We are writing in classic Haskell style, where our
 	<function>hasElfMagic</function> function does not perform
 	I/O.  Here is the function that uses it on a file.</para>
 
       &ElfMagic.hs:isElfFile;
       
-      <para>The <function>L.readFile</function> function is the lazy
+      <para id="x_aE1">The <function>L.readFile</function> function is the lazy
 	<type>ByteString</type> equivalent of
 	<function>readFile</function>.  It operates lazily, reading
 	the file as data is demanded.  It is also efficient, reading
@@ -147,7 +147,7 @@
     <sect2>
       <title>Text I/O</title>
 
-      <para>For convenience, the <code>bytestring</code> library
+      <para id="x_bE1">For convenience, the <code>bytestring</code> library
 	provides two other modules with limited text I/O capabilities,
 	<code>Data.ByteString.Char8</code> and
 	<code>Data.ByteString.Lazy.Char8</code>.  These expose
@@ -155,27 +155,27 @@
 	<type>Word8</type>.</para>
 
       <warning>
-	<para>The functions in these modules only work with byte-sized
+	<para id="x_cE1">The functions in these modules only work with byte-sized
 	  <type>Char</type> values, so they are only suitable for use
 	  with ASCII and some European character sets.  Values above
 	  255 are truncated.</para>
       </warning>
 
-      <para>The character-oriented <code>bytestring</code> modules
+      <para id="x_dE1">The character-oriented <code>bytestring</code> modules
 	provide useful functions for text processing.  Here is a file
 	that contains monthly stock prices for a well-known Internet
 	company from mid-2008.</para>
 
       &highestClose.ghci:readFile;
 
-      <para>How can we find the highest closing price from a series of
+      <para id="x_eE1">How can we find the highest closing price from a series of
 	entries like this?  Closing prices are in the fourth
 	comma-separated column.  This function obtains a closing price
 	from one line of data.</para>
 
       &HighestClose.hs:closing;
 
-      <para>Since this function is written in point-free style, we
+      <para id="x_fE1">Since this function is written in point-free style, we
 	read from right to left.  The <function>L.split</function>
 	function splits a lazy <type>ByteString</type> into a list of
 	them, every time it finds a matching character.  The
@@ -186,25 +186,25 @@
 
       &HighestClose.hs:readPrice;
 
-      <para>We use the <function>L.readInt</function> function, which
+      <para id="x_gE1">We use the <function>L.readInt</function> function, which
 	parses an integer.  It returns both the integer and the
 	remainder of the string once a run of digits is consumed. Our
 	definition is slightly complicated by
 	<function>L.readInt</function> returning <code>Nothing</code>
 	if parsing fails.</para>
 
-      <para>Our function for finding the highest closing price is
+      <para id="x_hE1">Our function for finding the highest closing price is
 	straightforward.</para>
 
       &HighestClose.hs:highestClose;
 
-      <para>We use one trick to work around the fact that we cannot
+      <para id="x_iE1">We use one trick to work around the fact that we cannot
 	supply an empty list to the <function>maximum</function>
 	function.</para>
 
       &highestClose.ghci:maximum;
 
-      <para>Since we do not want our code to throw an exception if we
+      <para id="x_jE1">Since we do not want our code to throw an exception if we
 	have no stock data, the <code>(Nothing:)</code> expression
 	ensures that the list of <type>Maybe Int</type> values that we
 	supply to <function>maximum</function> will never be
@@ -212,11 +212,11 @@
 
       &highestClose.ghci:maxList;
 
-      <para>Does our function work?</para>
+      <para id="x_kE1">Does our function work?</para>
 
       &highestClose.ghci:highestClose;
 
-      <para>Since we have separated our I/O from our logic, we can
+      <para id="x_lE1">Since we have separated our I/O from our logic, we can
 	test the no-data case without having to create an empty
 	file.</para>
 
@@ -314,17 +314,17 @@
     <para id="x_LF">In this section, we will be assume that you are
       already familiar with regular expressions by way of some other
       language, such as Python, Perl, or Java<footnote>
-	<para>If you are not acquainted with regular expressions, we
+	<para id="x_mE1">If you are not acquainted with regular expressions, we
 	  recommend Jeffrey Friedl's book <emphasis>Mastering Regular
 	    Expressions</emphasis>.</para>
       </footnote>.</para>
     <note>
-      <para>For brevity, we will abbreviate <quote>regular
+      <para id="x_nE1">For brevity, we will abbreviate <quote>regular
 	  expression</quote> as <emphasis>regexp</emphasis> from here
 	on.</para>
     </note>
 
-    <para>Rather than introduce regexps as something new, we will
+    <para id="x_oE1">Rather than introduce regexps as something new, we will
       focus on what's different about regexp handling in Haskell,
       compared to other languages. Haskell's regular expression
       matching libraries are a lot more expressive than those of other
@@ -458,7 +458,7 @@
 	<classname role="module">Text.Regex.Base.Context</classname>
 	module.</para>
 
-      <para>This ability to make a function polymorphic in its result
+      <para id="x_pE1">This ability to make a function polymorphic in its result
 	type is an unusual feature for a statically typed language.</para>
 
     </sect2>
@@ -668,7 +668,7 @@
 
     &GlobRegex.hs:matchesGlob;
 
-    <para>You may have noticed that most of the names that we have
+    <para id="x_qE1">You may have noticed that most of the names that we have
       used for variables so far have been short.  As a rule of thumb,
       descriptive variable names are more useful in longer function
       definitions, as they aid readability.  For a two-line function,
@@ -743,7 +743,7 @@
 
     &append.hs:append;
 
-    <para>In a strict language, if we evaluate <code>"foo" ++
+    <para id="x_rE1">In a strict language, if we evaluate <code>"foo" ++
 	"bar"</code>, the entire list is constructed, then returned.
       Non-strict evaluation defers much of the work until it is
       needed.</para>
@@ -776,7 +776,7 @@
 
     &Glob.hs:module;
 
-    <para>We specify that <function>namesMatching</function> is the
+    <para id="x_sE1">We specify that <function>namesMatching</function> is the
       only name that users of our <code>Glob</code> module will be
       able to see.</para>
 
@@ -800,18 +800,18 @@
 
     &filepath.ghci:join;
 
-    <para>The name of the
+    <para id="x_tE1">The name of the
       <function>dropTrailingPathSeparator</function> function is
       perfectly descriptive.</para>
 
     &filepath.ghci:dropTrailingPathSeparator;
 
-    <para>The <function>splitFileName</function> function splits a
+    <para id="x_uE1">The <function>splitFileName</function> function splits a
       path at the last slash.</para>
 
     &filepath.ghci:splitFileName;
 
-    <para>Using <code>System.FilePath</code> together with the
+    <para id="x_vE1">Using <code>System.FilePath</code> together with the
       <classname role="module">System.Directory</classname> module, we
       can write a portable <function>namesMatching</function> function
       that will run on both Unix-like and Windows systems.</para>
@@ -904,7 +904,7 @@
 
     &Glob.hs:listMatches;
 
-    <para>The <function>listPlain</function> function returns either
+    <para id="x_wE1">The <function>listPlain</function> function returns either
       an empty or singleton list, depending on whether the single name
       it's passed exists.</para>
 
@@ -940,7 +940,7 @@
 
     &handle.ghci:type.const;
 
-    <para>We use <function>const</function> to write an exception
+    <para id="x_xE1">We use <function>const</function> to write an exception
       handler that ignores the exception it is passed.  Instead, it
       causes our code to return an empty list if we catch an
       exception.</para>
@@ -1064,7 +1064,7 @@
 	      function.</para>
 
 	    <tip>
-	      <para>You may find the amount of work involved to be
+	      <para id="x_yE1">You may find the amount of work involved to be
 		surprisingly large.  Don't worry; we will introduce
 		more concise and sophisticated ways of dealing with
 		errors in later chapters.</para>

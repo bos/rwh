@@ -82,7 +82,7 @@
 
     &SimpleJSON.hs:getters;
 
-    <para>The <function>truncate</function> function turns a floating
+    <para id="x_iD1">The <function>truncate</function> function turns a floating
       point or rational number into an integer by dropping the digits
       after the decimal point.</para>
 
@@ -140,7 +140,7 @@
 
     &Exporting.hs:ExportAll;
     
-    <para>To export no names at all (which is rarely useful), we write
+    <para id="x_jD1">To export no names at all (which is rarely useful), we write
       an empty export list using a pair of parentheses.</para>
 
     &Exporting.hs:ExportNone;
@@ -221,7 +221,7 @@
     <para id="x_ei">We pass &ghc; a new option,
       <option>-o</option>, which takes one argument: this is the name
       of the executable that &ghc; should create<footnote>
-	<para>Memory aid: <option>-o</option> stands for
+	<para id="x_kD1">Memory aid: <option>-o</option> stands for
 	  <quote>output</quote> or <quote>object file</quote>.</para>
       </footnote>.  Here, we've decided
       to name the program <filename>simple</filename>.  On Windows,
@@ -304,7 +304,7 @@
       to write code that will fail to compile due to straightforward
       type errors.</para>
 
-    <para>When we omit explicit type information, we force the
+    <para id="x_lD1">When we omit explicit type information, we force the
       compiler to figure out our intentions.  It will infer types that
       are logical and consistent, but perhaps not at all what we
       meant.  If we and the compiler unknowingly disagree about what
@@ -381,7 +381,7 @@
       can we build a library that is useful for rendering data in a
       variety of situations?</para>
 
-    <para>We would like to produce output that is suitable either for
+    <para id="x_mD1">We would like to produce output that is suitable either for
       human consumption (e.g. for debugging) or for machine
       processing.  Libraries that perform this job are referred to as
       <emphasis>pretty printers</emphasis>.  There already exist
@@ -390,20 +390,20 @@
       we will gain into both library design and functional programming
       techniques.</para>
 
-    <para>We will call our generic pretty printing module
+    <para id="x_nD1">We will call our generic pretty printing module
       <code>Prettify</code>, so our code will go into a source file
       named <filename>Prettify.hs</filename>.</para>
 
     <note>
       <title>Naming</title>
 
-      <para>In our <code>Prettify</code> module, we will base our
+      <para id="x_oD1">In our <code>Prettify</code> module, we will base our
 	names on those used by several established Haskell pretty
 	printing libraries.  This will give us a degree of
 	compatibility with existing mature libraries.</para>
     </note>
 
-    <para>To make sure that <code>Prettify</code> meets practical
+    <para id="x_pD1">To make sure that <code>Prettify</code> meets practical
       needs, we write a new JSON renderer that uses the
       <code>Prettify</code> API. After we're done, we'll go back and
       fill in the details of the <code>Prettify</code> module.</para>
@@ -485,7 +485,7 @@
     <note>
       <title>Point-free style</title>
 
-      <para>This style of writing a definition exclusively as a
+      <para id="x_qD1">This style of writing a definition exclusively as a
 	composition of other functions is called <emphasis>point-free
 	  style</emphasis>.  The use of the word <quote>point</quote>
 	is not related to the <quote><code>.</code></quote> character
@@ -495,7 +495,7 @@
 	<emphasis>point-free</emphasis> expression makes no mention of
 	the values that it operates on.</para>
 
-      <para>Contrast the point-free definition of
+      <para id="x_rD1">Contrast the point-free definition of
 	<function>string</function> above with this
 	<quote>pointy</quote> version, which uses a variable
 	<varname>s</varname> to refer to the value on which it
@@ -614,7 +614,7 @@
       <varname role="type">a</varname>, and it returns a value of type
       <type>Doc</type>.</para>
 
-    <para>Notice that although our type signature mentions four
+    <para id="x_sD1">Notice that although our type signature mentions four
       parameters, we have only listed three in the definition of the
       function.  We are simply following the same rule that lets us
       simplify a definiton like <code>myLength xs = length xs</code>
@@ -629,12 +629,12 @@
 
     &PrettyStub.hs:fsep;
 
-    <para>By now, you should be able to define your own stubs in
+    <para id="x_tD1">By now, you should be able to define your own stubs in
       <filename>Prettify.hs</filename>, by following the examples we
       have supplied.  We will not explicitly define any more
       stubs.</para>
 
-    <para>The <function>punctuate</function> function will also live
+    <para id="x_uD1">The <function>punctuate</function> function will also live
       in our <code>Prettify</code> module, and we can define it in
       terms of functions for which we've already written stubs.</para>
 
