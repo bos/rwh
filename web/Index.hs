@@ -61,7 +61,7 @@ chapters = [
  , ch "webclient" "Web client programming" $ Beta "2008-06-21"
  , ch "gui" "GUI programming" $ Beta "2008-06-21"
  , ch "concurrent" "Basic concurrent and parallel programming" $ Beta "2008-06-21"
- , ch "profiling" "Profiling and tuning for performance" Unpublished
+ , ch "profiling" "Profiling and tuning for performance" $ Beta "2008-08-22"
  , ch "bloomfilter" "Advanced library design: building a Bloom filter" $ Beta "2008-06-21"
  , ch "sockets" "Network programming" $ Beta "2008-06-21"
  , ch "stm" "Software transactional memory" $ Beta "2008-08-17"
