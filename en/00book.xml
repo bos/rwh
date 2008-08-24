@@ -7,36 +7,35 @@
 
 <!-- Chapters. -->
 
-<!ENTITY ch00     SYSTEM "ch00-preface.xml">
-<!ENTITY ch01     SYSTEM "ch01-whyfp.xml">
-<!ENTITY ch02     SYSTEM "ch02-starting.xml">
-<!ENTITY ch03     SYSTEM "ch03-funcs-types.xml">
-<!ENTITY ch04     SYSTEM "ch04-defining-types.xml">
-<!ENTITY ch05     SYSTEM "ch05-fp.xml">
-<!ENTITY ch06     SYSTEM "ch06-library.xml">
-<!ENTITY ch07     SYSTEM "ch07-typeclasses.xml">
-<!ENTITY ch08     SYSTEM "ch08-io.xml">
-<!ENTITY ch09     SYSTEM "ch09-globs-and-regexps.xml">
-<!ENTITY ch10     SYSTEM "ch10-find-dsl.xml">
-<!ENTITY ch11     SYSTEM "ch11-binary.xml">
-<!ENTITY ch12     SYSTEM "ch12-testing.xml">
-<!ENTITY ch13     SYSTEM "ch13-barcode.xml">
-<!ENTITY ch14     SYSTEM "ch14-data.xml">
-<!ENTITY ch15     SYSTEM "ch15-monads.xml">
-<!ENTITY ch16     SYSTEM "ch16-monad-case.xml">
-<!ENTITY ch17     SYSTEM "ch17-parsec.xml">
-<!ENTITY ch18     SYSTEM "ch18-ffi.xml">
-<!ENTITY ch19     SYSTEM "ch19-monad-trans.xml">
-<!ENTITY ch20     SYSTEM "ch20-errors.xml">
-<!ENTITY ch21     SYSTEM "ch21-systems.xml">
-<!ENTITY ch22     SYSTEM "ch22-databases.xml">
-<!ENTITY ch23     SYSTEM "ch23-webclient.xml">
-<!ENTITY ch24     SYSTEM "ch24-gui.xml">
-<!ENTITY ch25     SYSTEM "ch25-concurrent.xml">
-<!ENTITY ch26     SYSTEM "ch26-profiling.xml">
-<!ENTITY ch27     SYSTEM "ch27-advanced-haskell.xml">
-<!ENTITY ch28     SYSTEM "ch28-sockets.xml">
-<!ENTITY ch29     SYSTEM "ch29-stm.xml">
+<!ENTITY ch00     SYSTEM "ch00-whyfp.xml">
+<!ENTITY ch01     SYSTEM "ch01-starting.xml">
+<!ENTITY ch02     SYSTEM "ch02-funcs-types.xml">
+<!ENTITY ch03     SYSTEM "ch03-defining-types.xml">
+<!ENTITY ch04     SYSTEM "ch04-fp.xml">
+<!ENTITY ch05     SYSTEM "ch05-library.xml">
+<!ENTITY ch06     SYSTEM "ch06-typeclasses.xml">
+<!ENTITY ch07     SYSTEM "ch07-io.xml">
+<!ENTITY ch08     SYSTEM "ch08-globs-and-regexps.xml">
+<!ENTITY ch09     SYSTEM "ch09-find-dsl.xml">
+<!ENTITY ch10     SYSTEM "ch10-binary.xml">
+<!ENTITY ch11     SYSTEM "ch11-testing.xml">
+<!ENTITY ch12     SYSTEM "ch12-barcode.xml">
+<!ENTITY ch13     SYSTEM "ch13-data.xml">
+<!ENTITY ch14     SYSTEM "ch14-monads.xml">
+<!ENTITY ch15     SYSTEM "ch15-monad-case.xml">
+<!ENTITY ch16     SYSTEM "ch16-parsec.xml">
+<!ENTITY ch17     SYSTEM "ch17-ffi.xml">
+<!ENTITY ch18     SYSTEM "ch18-monad-trans.xml">
+<!ENTITY ch19     SYSTEM "ch19-errors.xml">
+<!ENTITY ch20     SYSTEM "ch20-systems.xml">
+<!ENTITY ch21     SYSTEM "ch21-databases.xml">
+<!ENTITY ch22     SYSTEM "ch22-webclient.xml">
+<!ENTITY ch23     SYSTEM "ch23-gui.xml">
+<!ENTITY ch24     SYSTEM "ch24-concurrent.xml">
+<!ENTITY ch25     SYSTEM "ch25-profiling.xml">
+<!ENTITY ch26     SYSTEM "ch26-advanced-haskell.xml">
+<!ENTITY ch27     SYSTEM "ch27-sockets.xml">
+<!ENTITY ch28     SYSTEM "ch28-stm.xml">
 
 <!-- Appendices. -->
 
@@ -75,13 +74,13 @@
       </author>
 
       <author>
-        <firstname>Don</firstname>
-        <surname>Stewart</surname>
+        <firstname>John</firstname>
+        <surname>Goerzen</surname>
       </author>
 
       <author>
-        <firstname>John</firstname>
-        <surname>Goerzen</surname>
+        <firstname>Don</firstname>
+        <surname>Stewart</surname>
       </author>
 
     </authorgroup>
@@ -95,8 +94,8 @@
       <year>2007</year>
       <year>2008</year>
       <holder>Bryan O'Sullivan</holder>
-      <holder>Don Stewart</holder>
       <holder>John Goerzen</holder>
+      <holder>Don Stewart</holder>
     </copyright>
 
     <!-- XXX -->
@@ -140,7 +139,6 @@
   &ch26;
   &ch27;
   &ch28;
-  &ch29;
 
   &appA;
   &appB;
