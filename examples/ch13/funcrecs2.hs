@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch14/funcrecs2.hs 
-
 data FuncRec =
     FuncRec {name :: String,
              calc :: Int -> Int,

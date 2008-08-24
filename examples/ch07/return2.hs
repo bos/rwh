@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/return2.hs
-
 import Data.Char(toUpper)
 
 isYes :: String -> Bool

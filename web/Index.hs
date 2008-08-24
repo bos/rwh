@@ -33,8 +33,7 @@ ch = Entry Chapter
 app = Entry Appendix
 
 chapters = [
-   pr "preface" "Preface" Unpublished
- , ch "whyfp" "Why functional programming? Why Haskell?" $ Beta "2008-04-30"
+   pr "whyfp" "Why functional programming? Why Haskell?" $ Beta "2008-04-30"
  , ch "starting" "Getting started" $ Beta "2008-01-21"
  , ch "funcstypes" "Types and functions" $ Beta "2008-01-21"
  , ch "deftypes" "Defining types, streamlining functions" $ Beta "2008-01-21"

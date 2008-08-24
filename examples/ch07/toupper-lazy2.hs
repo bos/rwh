@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/toupper-lazy2.hs
-
 import System.IO
 import Data.Char(toUpper)
 

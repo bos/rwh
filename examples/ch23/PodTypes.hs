@@ -1,5 +1,4 @@
 {-- snippet all --}
--- ch24/PodTypes.hs
 module PodTypes where
 
 data Podcast =

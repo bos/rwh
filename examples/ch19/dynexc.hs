@@ -1,6 +1,4 @@
 {-- snippet sqlerror --}
--- ch20/dynexc.hs
-
 {-# LANGUAGE DeriveDataTypeable #-}
 
 import Data.Dynamic

@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch23/PodMain.hs
-
 module Main where
 
 import PodDownload

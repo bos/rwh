@@ -1,6 +1,4 @@
 {-- snippet beginning --}
--- ch14/num.hs
-
 import Data.List
 
 --------------------------------------------------

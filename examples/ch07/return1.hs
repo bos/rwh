@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/return1.hs
-
 import Data.Char(toUpper)
 
 isGreen :: IO Bool

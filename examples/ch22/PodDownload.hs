@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch23/PodDownload.hs
-
 module PodDownload where
 import PodTypes
 import PodDB

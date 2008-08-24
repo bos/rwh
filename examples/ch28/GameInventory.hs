@@ -1,5 +1,4 @@
 {-- snippet import --}
--- file: GameInventory.hs
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 import Control.Concurrent.STM

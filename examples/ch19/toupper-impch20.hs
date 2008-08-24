@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/toupper-impch20.hs
-
 import System.IO
 import System.IO.Error
 import Data.Char(toUpper)

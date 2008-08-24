@@ -1,6 +1,4 @@
 {-- snippet Predicate --}
--- file: BetterPredicate.hs
-
 import Control.Monad (filterM)
 import System.Directory (Permissions(..), getModificationTime, getPermissions)
 import System.Time (ClockTime(..))

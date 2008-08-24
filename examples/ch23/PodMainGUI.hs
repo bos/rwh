@@ -1,6 +1,4 @@
 {-- snippet imports --}
--- ch24/PodMainGUI.hs
-
 module PodMainGUI where
 
 import PodDownload

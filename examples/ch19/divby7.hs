@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby7.hs
-
 data DivByError a = DivBy0
                  | ForbiddenDenominator a
                    deriving (Eq, Read, Show)

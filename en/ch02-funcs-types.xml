@@ -149,7 +149,7 @@
 	expressions whose types don't match, and reject our code with
 	an error message before we run it.</para>
 
-      &ch03.basics.ghci:error;
+      &ch02.basics.ghci:error;
 
       <para id="x_CN">This error message is of a kind we've seen
 	before. The compiler has inferred that the type of the
@@ -327,7 +327,7 @@
       <code>::</code> and the type that follows, a Haskell compiler
       will infer the type of the expression.</para>
 
-    &ch03.basics.ghci:types;
+    &ch02.basics.ghci:types;
 
     <para id="x_fB1">The combination of <code>::</code> and the type after it is
       called a <emphasis>type signature</emphasis>.</para>
@@ -672,7 +672,7 @@
       type signature: the type of the function's result will begin
       with <type>IO</type>.</para>
 
-    &ch03.basics.ghci:readFile;
+    &ch02.basics.ghci:readFile;
 
     <para id="x_Tm">Haskell's type system prevents us from accidentally mixing
       pure and impure code.</para>

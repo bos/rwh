@@ -1,8 +1,6 @@
 import Prelude hiding (Functor(..))
 
 {-- snippet Tree --}
--- file: TreeMap.hs
-
 data Tree a = Node (Tree a) (Tree a)
             | Leaf a
               deriving (Show)

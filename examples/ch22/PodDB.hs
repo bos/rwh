@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch23/PodDB.hs
-
 module PodDB where
 
 import Database.HDBC

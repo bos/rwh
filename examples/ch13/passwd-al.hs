@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch14/passwd-al.hs
-
 import Data.List
 import System.IO
 import Control.Monad(when)

@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/toupper-lazy3.hs
-
 import Data.Char(toUpper)
 
 main = do 

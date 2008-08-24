@@ -1,6 +1,4 @@
 {-- snippet type --}
--- file: GlobRegex.hs
-
 module GlobRegex
     (
       globToRegex

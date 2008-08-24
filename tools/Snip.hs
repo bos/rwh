@@ -10,6 +10,7 @@ import Data.Char (isSpace)
 import Snippet (Snippet(..), parseSnippets)
 import System.Directory (createDirectoryIfMissing)
 import System.Environment (getArgs)
+import System.FilePath (joinPath, splitDirectories, takeExtension)
 import System.IO (putStrLn)
 import Util (baseName, suffix)
 -- Don't use lazy ByteStrings, due to the bug in "lines".
@@ -58,8 +59,14 @@ snipFile tgtDir fileName = do
     let (start, end) = markers fileName
     snips <- parseSnippets start end `liftM` B.readFile fileName
     let name = baseName fileName
+        sfx = takeExtension fileName
     forM_ snips $ \(Snippet snip content) -> do
-        forM_ (programListing name snip content) $ \(entity, listing) -> do
+        let fixie | sfx == ".hs" =
+                      B.append (B.pack $ "-- file: " ++ shortName ++ "\n")
+                               content
+                  | otherwise    = content
+            shortName = joinPath . reverse . take 2 . reverse . splitDirectories $ fileName
+        forM_ (programListing name snip fixie) $ \(entity, listing) -> do
             let outName = entity ++ ".xml"
             putStrLn ("<!ENTITY " ++ entity ++ " SYSTEM " ++ show outName ++ ">")
             B.writeFile (tgtDir ++ '/' : outName) listing

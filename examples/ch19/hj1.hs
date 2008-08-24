@@ -1,5 +1,4 @@
 {-- snippet all --}
--- ch20/hj1.hs
 import Control.Exception
 
 catchIt :: Exception -> Maybe ()

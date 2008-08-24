@@ -1,5 +1,4 @@
 {-- snippet Foo --}
--- file: ValidFunctor.hs
 data Foo a = Foo a
            
 instance Functor Foo where

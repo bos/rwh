@@ -59,8 +59,6 @@ astral n = smallHex (a + 0xd800) <> smallHex (b + 0xdc00)
 {-- /snippet astral --}
 
 {-- snippet string --}
--- file: PrettyJSON.hs
-
 string :: String -> Doc
 string = enclose '"' '"' . hcat . map oneChar
 {-- /snippet string --}

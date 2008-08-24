@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch28/syslogtcpserver.hs
-
 import Data.Bits
 import Network.Socket
 import Network.BSD

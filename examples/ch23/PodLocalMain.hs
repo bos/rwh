@@ -1,5 +1,4 @@
 {-- snippet all --}
--- ch24/PodLocalMain.hs
 module Main where
 
 import qualified PodMainGUI

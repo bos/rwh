@@ -1,5 +1,4 @@
 {-- snippet all --}
--- ch24/PodCabalMain.hs
 module Main where
 
 import qualified PodMainGUI

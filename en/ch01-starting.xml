@@ -854,12 +854,12 @@ Loading package base ... linking ... done.
 	  common?</para>
       </footnote>.</para>
 
-    &ch02-cat;
+    &ch01-cat;
 
     <para id="x_JB1">From a shell or command prompt, run the following
       command.</para>
 
-    &ch02-wc;
+    &ch01-wc;
 
     <para id="x_KB1">We have successfully written a simple program that interacts
       with the real world!  In the chapters that follow, we will

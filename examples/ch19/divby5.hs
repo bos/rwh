@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby5.hs
-
 divBy :: Integral a => a -> [a] -> Maybe [a]
 divBy = divByGeneric
 

@@ -13,8 +13,6 @@ module SimpleJSON
 {-- /snippet module --}
 
 {-- snippet JValue --}
--- file: SimpleJSON.hs
-
 data JValue = JString String
             | JNumber Double
             | JBool Bool

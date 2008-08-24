@@ -1,5 +1,3 @@
--- ch17/csv3.hs
-
 import Text.ParserCombinators.Parsec
 
 csvFile = endBy line eol

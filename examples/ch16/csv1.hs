@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch17/csv1.hs
-
 import Text.ParserCombinators.Parsec
 
 {- A CSV file contains 0 or more lines, each of which is terminated

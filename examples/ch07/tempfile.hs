@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/tempfile.hs
-
 import System.IO
 import System.Directory(getTemporaryDirectory, removeFile)
 import System.IO.Error(catch)

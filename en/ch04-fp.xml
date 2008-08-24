@@ -386,7 +386,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       the sections that follow, we will explicitly mention those that
       are only in <code>Data.List</code>.</para>
       
-    &ch05.list.ghci:Data.List;
+    &ch04.list.ghci:Data.List;
 
     <para id="x_t6">Because none of these functions is complex or takes more
       than about three lines of Haskell to write, we'll be brief in
@@ -400,39 +400,39 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       <para id="x_v6">The <function>length</function> function tells us how many
 	elements are in a list.</para>
 
-      &ch05.list.ghci:length;
+      &ch04.list.ghci:length;
 
       <para id="x_mC1">If you need to determine whether a list is empty, use the
 	<function>null</function> function.</para>
 
-      &ch05.list.ghci:null;
+      &ch04.list.ghci:null;
 
       <para id="x_w6">To access the first element of a list, we use the
 	<function>head</function> function.</para>
 
-      &ch05.list.ghci:head;
+      &ch04.list.ghci:head;
 
       <para id="x_x6">The converse, <function>tail</function>, returns all
 	<emphasis>but</emphasis> the head of a list.</para>
 
-      &ch05.list.ghci:tail;
+      &ch04.list.ghci:tail;
 
       <para id="x_y6">Another function, <function>last</function>, returns the
 	very last element of a list.</para>
 
-      &ch05.list.ghci:last;
+      &ch04.list.ghci:last;
 
       <para id="x_z6">The converse of <function>last</function> is
 	<function>init</function>, which returns a list of all but the
 	last element of its input.</para>
 
-      &ch05.list.ghci:init;
+      &ch04.list.ghci:init;
 
       <para id="x_A7">Several of the functions above behave poorly on
 	empty lists, so be careful if you don't know whether or not a
 	list is empty.  What form does their misbehavior take?</para>
       
-      &ch05.list.ghci:head.empty;
+      &ch04.list.ghci:head.empty;
     
       <para id="x_nC1">Try each of the above functions in &ghci;.  Which ones
 	crash when given an empty list?</para>
@@ -518,22 +518,22 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       <para id="x_K7">Haskell's name for the <quote>append</quote> function is
 	<function>(++)</function>.</para>
 
-      &ch05.list.ghci:append;
+      &ch04.list.ghci:append;
 
       <para id="x_L7">The <function>concat</function> function takes a list of
 	lists, all of the same type, and concatenates them
 	into a single list.</para>
 
-      &ch05.list.ghci:concat;
+      &ch04.list.ghci:concat;
 
       <para id="x_M7">It removes one level of nesting.</para>
 
-      &ch05.list.ghci:concat.multi;
+      &ch04.list.ghci:concat.multi;
 
       <para id="x_N7">The <function>reverse</function> function returns the
 	elements of a list in reverse order.</para>
 
-      &ch05.list.ghci:reverse;
+      &ch04.list.ghci:reverse;
 
       <para id="x_O7">For lists of <type>Bool</type>, the
 	<function>and</function> and <function>or</function> functions
@@ -541,7 +541,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	cousins,<function>(&amp;&amp;)</function> and
 	<function>(||)</function>, over lists.</para>
 
-      &ch05.list.ghci:and.or;
+      &ch04.list.ghci:and.or;
 
       <para id="x_P7">They have more useful cousins, <function>all</function>
 	and <function>any</function>, which operate on lists of any
@@ -551,7 +551,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	<function>any</function> returns <code>True</code> if the
 	predicate succeeds on at least one element of the list.</para>
 
-      &ch05.list.ghci:all.any;
+      &ch04.list.ghci:all.any;
 
     </sect2>
 
@@ -565,14 +565,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	drops <emphasis>k</emphasis> elements from the start of the
 	list.</para>
 
-      &ch05.list.ghci:take.drop;
+      &ch04.list.ghci:take.drop;
 
       <para id="x_R7">The <function>splitAt</function> function
 	combines the functions of <function>take</function> and
 	<function>drop</function>, returning a pair of the input list,
 	split at the given index.</para>
 
-      &ch05.list.ghci:splitAt;
+      &ch04.list.ghci:splitAt;
 
       <para id="x_S7">The <function>takeWhile</function> and
 	<function>dropWhile</function> functions take predicates:
@@ -582,7 +582,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	elements from the list as long as the predicate returns
 	<code>True</code>.</para>
       
-      &ch05.list.ghci:takeWhile.dropWhile;
+      &ch04.list.ghci:takeWhile.dropWhile;
 
       <para id="x_T7">Just as <function>splitAt</function> <quote>tuples
 	  up</quote> the results of <function>take</function> and
@@ -597,7 +597,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	predicate fails, while <function>span</function> consumes
 	while its predicate succeeds.</para>
 
-      &ch05.list.ghci:break.span;
+      &ch04.list.ghci:break.span;
 
     </sect2>
 
@@ -609,13 +609,13 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	is present in a list.  It has a companion function,
 	<function>notElem</function>.</para>
 
-      &ch05.list.ghci:elem;
+      &ch04.list.ghci:elem;
       
       <para id="x_W7">For a more general search, <function>filter</function>
 	takes a predicate, and returns every element of the list on
 	which the predicate succeeds.</para>
 
-      &ch05.list.ghci:filter;
+      &ch04.list.ghci:filter;
 
       <para id="x_X7">In <code>Data.List</code>, three predicates,
 	<function>isPrefixOf</function>,
@@ -628,17 +628,17 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	whether its left argument matches the beginning of its right
 	argument.</para>
 
-      &ch05.list.ghci:isPrefixOf;
+      &ch04.list.ghci:isPrefixOf;
 
       <para id="x_Z7">The <function>isInfixOf</function> function indicates
 	whether its left argument is a sublist of its right.</para>
 
-      &ch05.list.ghci:isInfixOf;
+      &ch04.list.ghci:isInfixOf;
 
       <para id="x_a7">The operation of <function>isSuffixOf</function> shouldn't
 	need any explanation.</para>
 
-      &ch05.list.ghci:isSuffixOf;
+      &ch04.list.ghci:isSuffixOf;
       
     </sect2>
 
@@ -650,14 +650,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	resulting list is the same length as the shorter of the two
 	inputs.</para>
 
-      &ch05.list.ghci:zip;
+      &ch04.list.ghci:zip;
 
       <para id="x_c7">More useful is <function>zipWith</function>, which takes
 	two lists and applies a function to each pair of elements,
 	generating a list that is the same length as the shorter of
 	the two.</para>
 
-      &ch05.list.ghci:zipWith;
+      &ch04.list.ghci:zipWith;
 
       <para id="x_d7">Haskell's type system makes it an interesting challenge to
 	write functions that take variable numbers of
@@ -681,14 +681,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	<function>unlines</function> always places a newline on the
 	end of its result.</para>
 
-      &ch05.list.ghci:unlines;
+      &ch04.list.ghci:unlines;
 
       <para id="x_f7">The <function>words</function> function splits an input
 	string on any white space.  Its counterpart,
 	<function>unwords</function>, uses a single space to join a
 	list of words.</para>
 
-      &ch05.list.ghci:words.unwords;
+      &ch04.list.ghci:words.unwords;
     </sect2>
 
     <sect2>
@@ -702,7 +702,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      yours never fail.  As a hint, you might want to consider
 	      using the following types.</para>
 
-	    &ch05.exercises.hs:safe;
+	    &ch04.exercises.hs:safe;
 
 	  </question>
 	</qandaentry>
@@ -715,7 +715,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      list on every element for which the predicate returns
 	      <function>False</function>.</para>
 
-	    &ch05.exercises.hs:splitWith;
+	    &ch04.exercises.hs:splitWith;
 
 	  </question>
 	</qandaentry>
@@ -988,7 +988,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	about what <function>map</function> does by simply inspecting
 	its type.</para>
 
-      &ch05.map.ghci:type;
+      &ch04.map.ghci:type;
 
       <para id="x_O8">The signature tells us that <function>map</function> takes
 	two arguments.  The first is a function that takes a value of
@@ -1042,7 +1042,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	ourselves some assurance that it behaves similarly to the
 	standard <function>map</function>.</para>
 
-      &ch05.map.ghci:inuse;
+      &ch04.map.ghci:inuse;
 
       <para id="x_S8">This pattern of spotting a repeated idiom, then
 	abstracting it so we can reuse (and write less!) code, is a
@@ -1066,14 +1066,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 
       <para id="x_V8">Let's see that in action.</para>
 
-      &ch05.filter.ghci:oddList;
+      &ch04.filter.ghci:oddList;
 
       <para id="x_W8">Once again, this idiom is so common that the
 	Prelude defines a function, <function>filter</function>, which
 	we have already introduced.  It removes the need for
 	boilerplate code to recurse over the list.</para>
 
-      &ch05.filter.ghci:filter;
+      &ch04.filter.ghci:filter;
 
       <para id="x_X8">The <function>filter</function> function takes a
 	predicate and applies it to every element in its input list,
@@ -1479,17 +1479,17 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      <function>asInt</function> function from <xref
 		linkend="fp.tailrecursion"/>.</para>
 
-	    &ch05.exercises.hs:asInt_fold;
+	    &ch04.exercises.hs:asInt_fold;
 
 	    <para id="x_S9">Your function should behave as follows.</para>
 
-	    &ch05.exercises.ghci:asInt_fold;
+	    &ch04.exercises.ghci:asInt_fold;
 
 	    <para id="x_T9">Extend your function to handle the following kinds
 	      of exceptional conditions by calling
 	      <function>error</function>.</para>
 
-	    &ch05.exercises.ghci:asInt_fold.errors;
+	    &ch04.exercises.ghci:asInt_fold.errors;
 	  </question>
 	</qandaentry>
 
@@ -1499,8 +1499,8 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      <function>error</function>, so its callers cannot handle
 	      errors.  Rewrite it to fix this problem.</para>
 
-	    &ch05.exercises.hs:asInt_either;
-	    &ch05.exercises.ghci:asInt_either;
+	    &ch04.exercises.hs:asInt_either;
+	    &ch04.exercises.ghci:asInt_either;
 
 	  </question>
 	</qandaentry>
@@ -1510,7 +1510,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      concatenates a list of lists into a single list, and has
 	      the following type.</para>
 
-	    &ch05.exercises.hs:concat;
+	    &ch04.exercises.hs:concat;
 
 	    <para id="x_W9">Write your own definition of
 	      <function>concat</function> using
@@ -1533,7 +1533,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	      function, <function>groupBy</function>, which has the
 	      following type.</para>
 
-	    &ch05.exercises.hs:groupBy;
+	    &ch04.exercises.hs:groupBy;
 
 	    <para id="x_a9">Use &ghci; to load the <code>Data.List</code> module
 	      and figure out what <function>groupBy</function> does,
@@ -1672,7 +1672,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       used for what seems to be two purposes in the type signature of
       a function.</para>
 
-    &ch05.list.ghci:dropWhile;
+    &ch04.list.ghci:dropWhile;
 
     <para id="x_p9">It looks like the <code>-&gt;</code> is separating
       the arguments to <function>dropWhile</function> from each other,
@@ -1689,7 +1689,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       returns a function that takes one argument. Here's a perfectly
       valid Haskell expression.</para>
 
-    &ch05.list.ghci:dropWhile.isSpace;
+    &ch04.list.ghci:dropWhile.isSpace;
 
     <para id="x_s9">Well, <emphasis>that</emphasis> looks useful.  The
       value <code>dropWhile isSpace</code> is a function that strips
@@ -1697,7 +1697,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       example, we can use it as an argument to a higher order
       function.</para>
 
-    &ch05.list.ghci:dropWhile.isSpace.use;
+    &ch04.list.ghci:dropWhile.isSpace.use;
 
     <para id="x_t9">Every time we supply an argument to a function, we can
       <quote>chop</quote> an element off the front of its type
@@ -1705,7 +1705,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       to see what we mean; this is a function that zips three lists
       into a list of three-tuples.</para>
 
-    &ch05.list.ghci:zip3;
+    &ch04.list.ghci:zip3;
 
     <para id="x_u9">If we apply <function>zip3</function> with just
       one argument, we get a function that accepts two arguments.  No
@@ -1713,7 +1713,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       first argument will always be the fixed value we
       specified.</para>
 
-    &ch05.list.ghci:zip3foo;
+    &ch04.list.ghci:zip3foo;
     
     <para id="x_v9">When we pass fewer arguments to a function than the function
       can accept, we call this <emphasis>partial
@@ -1728,7 +1728,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
     <para id="x_x9">This applies just as well if we fix two arguments, giving us
       a function of just one argument.</para>
 
-    &ch05.list.ghci:zip3foobar;
+    &ch04.list.ghci:zip3foobar;
 
     <para id="x_y9">Partial function application lets us avoid writing
       tiresome throwaway functions.  It's often more useful for this

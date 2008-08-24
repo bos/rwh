@@ -1125,7 +1125,7 @@
       the timing variation from run to run is small.  We have created
       a plausible-looking microbenchmark.</para>
 
-    &ch27-timing-1;
+    &ch26-timing-1;
 
     <sect2>
       <title>Profile-driven performance tuning</title>
@@ -1141,7 +1141,7 @@
 	updating the filesystem's idea of when we last edited the
 	source file.</para>
 
-      &ch27-prof-1;
+      &ch26-prof-1;
 
       <para id="x_GA1">Our <function>doubleHash</function> function immediately
 	leaps out as a huge time and memory sink.</para>
@@ -1176,7 +1176,7 @@
 	the code that it produces after performing all of its
 	high-level optimisations.</para>
 
-      &ch27-ddump-simpl-1;
+      &ch26-ddump-simpl-1;
 
       <para id="x_MA1">The file thus produced is about a thousand lines long.
 	Most of the names in it are mangled somewhat from their
@@ -1186,7 +1186,7 @@
 	might start exactly at the right spot from a Unix
 	shell.</para>
 
-      &ch27-less;
+      &ch26-less;
 
       <para id="x_NA1">It can be difficult to start reading the output of &GHC;'s
 	simplifier.  There are many automatically generated names, and
@@ -1201,7 +1201,7 @@
 	<function>doubleHash</function>, we will arrive at a section
 	that looks something like this.</para>
 
-      &ch27-loop-1;
+      &ch26-loop-1;
 
       <para id="x_PA1">This is the body of the list comprehension.  It may seem
 	daunting, but we can look through it piece by piece and find
@@ -1306,13 +1306,13 @@
 	a 6-line function into an 8-line function.  What effect does
 	our change have on Core output?</para>
 
-      &ch27-loop-2;
+      &ch26-loop-2;
 
       <para id="x_hA1">Our new function has compiled down to a simple counting
 	loop.  This is very encouraging, but how does it actually
 	perform?</para>
 
-      &ch27-prof-2;
+      &ch26-prof-2;
 
       <para id="x_iA1">Our tweak has improved performance by about 11%.  This is
 	a good result for such a small change.</para>

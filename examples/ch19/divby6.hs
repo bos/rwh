@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby6.hs
-
 divBy :: Integral a => a -> [a] -> Either String [a]
 divBy _ [] = Right []
 divBy _ (0:_) = Left "divBy: division by 0"

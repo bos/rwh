@@ -1,6 +1,4 @@
 {-- snippet closing --}
--- file: HighestClose.hs
-
 import qualified Data.ByteString.Lazy.Char8 as L
 
 closing = readPrice . (!!4) . L.split ','

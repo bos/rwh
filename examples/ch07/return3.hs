@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/return3.hs
-
 returnTest :: IO ()
 returnTest =
     do one <- return 1

@@ -1,6 +1,4 @@
 {-- snippet hasElfMagic --}
--- file: ElfMagic.hs
-
 import qualified Data.ByteString.Lazy as L
 
 hasElfMagic :: L.ByteString -> Bool

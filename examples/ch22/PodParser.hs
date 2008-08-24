@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch23/PodParser.hs
-
 module PodParser where
 
 import PodTypes

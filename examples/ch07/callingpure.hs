@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch08/callingpure.hs
-
 name2reply :: String -> String
 name2reply name =
     "Pleased to meet you, " ++ name ++ ".\n" ++

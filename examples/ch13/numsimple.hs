@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch14/numsimple.hs
-
 -- The "operators" that we're going to support
 data Op = Plus | Minus | Mul | Div | Pow
         deriving (Eq, Show)

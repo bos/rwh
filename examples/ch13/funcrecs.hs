@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch14/funcrecs.hs
-
 {- | Our usual CustomColor type to play with -}
 data CustomColor =
   CustomColor {red :: Int,

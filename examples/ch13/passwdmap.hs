@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch14/passwdmap.hs
-
 import Data.List
 import qualified Data.Map as Map
 import System.IO

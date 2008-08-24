@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby4.hs
-
 divBy :: Integral a => a -> [a] -> Maybe [a]
 divBy _ [] = return []
 divBy _ (0:_) = fail "division by zero in divBy"

@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby3.hs
-
 divBy :: Integral a => a -> [a] -> [Maybe a]
 divBy numerator denominators =
     map worker denominators

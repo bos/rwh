@@ -12,13 +12,14 @@ Description:
   The snippets program pulls named snippets out of Haskell source
   code, formatting them as DocBook XML entities.
 Cabal-version:     >= 1.2
+Build-type: Simple
 
 Flag splitBase
   Description:     Choose the new, split-up base package.
 
 Executable snippets
   if flag(splitBase)
-    Build-depends: base, bytestring, directory, mtl, regex-posix, unix
+    Build-depends: base, bytestring, directory, filepath, mtl, regex-posix, unix
   else
     Build-depends: base, mtl, regex-posix, unix
   Main-Is: Snip.hs

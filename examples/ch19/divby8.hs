@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch20/divby8.hs
-
 {-# LANGUAGE FlexibleContexts #-}
 
 import Control.Monad.Error

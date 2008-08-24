@@ -17,8 +17,6 @@ double num = undefined
 {-- /snippet stubs --}
 
 {-- snippet append --}
--- file: Prettify.hs
-
 (<>) :: Doc -> Doc -> Doc
 a <> b = undefined
 

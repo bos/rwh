@@ -1,5 +1,4 @@
 {-- snippet all --}
--- ch20/hj2.hs
 import Control.Exception
 
 handler :: ArithException -> IO ()

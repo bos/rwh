@@ -1,6 +1,4 @@
 {-- snippet all --}
--- ch17/csv9.hs
-
 import Text.ParserCombinators.Parsec
 
 csvFile = endBy line eol
