@@ -62,7 +62,7 @@ snipFile tgtDir fileName = do
         sfx = takeExtension fileName
     forM_ snips $ \(Snippet snip content) -> do
         let fixie | sfx == ".hs" =
-                      B.append (B.pack $ "-- file: " ++ shortName ++ "\n")
+                      B.append (B.pack $ "<lineannotation>-- file: " ++ shortName ++ "</lineannotation>\n")
                                content
                   | otherwise    = content
             shortName = joinPath . reverse . take 2 . reverse . splitDirectories $ fileName
