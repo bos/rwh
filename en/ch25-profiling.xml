@@ -387,7 +387,7 @@ This produces the graph, in the file <code>A.ps</code>:
 <!-- -hc raw heap info -->
 
 <informalfigure>
-<graphic fileref="figs/ch26-heap-hc.png"/>
+<graphic fileref="figs/ch25-heap-hc.png"/>
 </informalfigure>
 
 <para id="x_TK1">
@@ -411,7 +411,7 @@ Which yields the following graph:
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch26-heap-hy.png"/>
+<graphic fileref="figs/ch25-heap-hy.png"/>
 </informalfigure>
 
 <para id="x_VK1">
@@ -434,7 +434,7 @@ Our final graphic reveals the full story of what is going on:
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch26-heap-hd.png"/>
+<graphic fileref="figs/ch25-heap-hd.png"/>
 </informalfigure>
 
 <para id="x_XK1">
@@ -521,7 +521,7 @@ Generating the heap profile, we see all the allocation is now in <code>mean</cod
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch26-stack.png"/>
+<graphic fileref="figs/ch25-stack.png"/>
 </informalfigure>
 
 <para id="x_eK1">

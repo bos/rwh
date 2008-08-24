@@ -639,7 +639,7 @@ script can then be compiled and executed:
     </para>
 
   <informalfigure>
-  <graphic fileref="figs/ch12-hpc-round1.png"/>
+  <graphic fileref="figs/ch11-hpc-round1.png"/>
   </informalfigure>
 
 <para id="x_t21">
@@ -649,7 +649,7 @@ tested, and code that was executed simply bold.
   </para>
 
   <informalfigure>
-  <graphic fileref="figs/ch12-coverage-screen.png"/>
+  <graphic fileref="figs/ch11-coverage-screen.png"/>
   </informalfigure>
   
 <para id="x_u21">
@@ -690,7 +690,7 @@ statistics improves to 52 percent of the code base:
 </para>
 
   <informalfigure>
-  <graphic fileref="figs/ch12-hpc-round2.png"/>
+  <graphic fileref="figs/ch11-hpc-round2.png"/>
   </informalfigure>
 
 <para id="x_y21">
