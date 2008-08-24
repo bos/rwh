@@ -1,6 +1,6 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
-<chapter id="whyfp">
+<preface id="whyfp">
   <title>Why functional programming?  Why Haskell?</title>
 
   <sect1>
@@ -743,7 +743,7 @@
       </itemizedlist>
     </sect2>
   </sect1>
-</chapter>
+</preface>
 
 <!--
 local variables: 
