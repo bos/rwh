@@ -21,7 +21,7 @@ Executable snippets
   if flag(splitBase)
     Build-depends: base, bytestring, directory, filepath, mtl, regex-posix, unix
   else
-    Build-depends: base, mtl, regex-posix, unix
+    Build-depends: base, FilePath, mtl, regex-posix, unix
   Main-Is: Snip.hs
   Other-Modules:
       Snippet

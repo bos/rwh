@@ -3,9 +3,6 @@ myDrop :: Int -> [a] -> [a]
 {-- /snippet myDrop.type --}
 
 {-- snippet myDrop --}
--- this is a comment, which continues until the end of the line
-
--- and this is the function definition
 myDrop n xs = if n <= 0 || null xs
               then xs
               else myDrop (n - 1) (tail xs)
