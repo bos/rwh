@@ -768,11 +768,11 @@
     <sect2>
       <title>Thank you to our reviewers</title>
 
-      <para>We developed this book in the open, posting chapters to
-	our web site as we completed them.  Readers submitted feedback
-	using a web application that we developed.  By the time we
-	finished writing the book, about 800 people had submitted
-	nearly 8,000 comments.</para>
+      <para>We developed this book in the open, posting drafts of
+	chapters to our web site as we completed them. Readers then
+	submitted feedback using a web application that we developed.
+	By the time we finished writing the book, about 800 people had
+	submitted nearly 8,000 comments, an astounding figure.</para>
 
       <para>We deeply appreciate the time that so many people
 	volunteered to help us to improve our book.  Their
@@ -781,7 +781,7 @@
 
       <para>The breadth and depth of the comments we received have
 	profoundly improved the quality of this book.  Nevertheless,
-	all errors and omissions of course ours.</para>
+	all errors and omissions are, of course, ours.</para>
 
       <para>The following people each contributed over 1% of the total
 	number of review comments that we received.  We would like to
@@ -812,7 +812,7 @@
 	William N. Halchin.
       </para>
 
-      <para>We would also like to thank those who individually
+      <para>We are also grateful to the people below, each of whom
 	contributed at least 0.2% of all comments.</para>
 
       <para>
@@ -891,8 +891,8 @@
 	Wouter Swierstra.
       </para>
 
-      <para>Finally, we would like to thank the following people, many
-	of whom submitted a number of comments.</para>
+      <para>We would like to acknowledge the following
+	people, many of whom submitted a number of comments.</para>
 
       <para>
 	Abhishek Dasgupta,
@@ -1308,8 +1308,8 @@
 	Zohar Kelrich.
       </para>
 
-      <para>We would also like to thank those readers who submitted
-	over 800 comments anonymously.</para>
+      <para>Finally, we wish to thank those readers who submitted over
+	800 comments anonymously.</para>
     </sect2>
   </sect1>
 </preface>
