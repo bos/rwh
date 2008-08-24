@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch23/PodDownload.hs
+-- ch24/PodDownload.hs
 
 module PodDownload where
 import PodTypes

@@ -1,5 +1,5 @@
 {-- snippet all --}
--- ch23/PodDB.hs
+-- ch24/PodDB.hs
 
 module PodDB where
 
@@ -23,7 +23,7 @@ of data consistency for us:
 
 * castid and epid both are unique primary keys and must never be duplicated
 * castURL also is unique
-* In the episodes table, for a given podcast (epcast), there must be only
+* In the spidoes table, for a given podcast (epcast), there must be only
   one instance of each given URL or episode ID
 -}
 prepDB :: IConnection conn => conn -> IO ()

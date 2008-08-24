@@ -1,0 +1,10 @@
+:load CountEntries
+
+--# runWriterT
+:type runWriterT
+:type execWriterT
+
+--# countEntries
+:type countEntries ".."
+:type execWriterT (countEntries "..")
+take 4 `liftM` execWriterT (countEntries "..")

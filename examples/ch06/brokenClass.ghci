@@ -1,0 +1,6 @@
+:set -i../ch06
+--# load
+:load BrokenClass
+
+--# use
+toJValue [("foo","bar")]
