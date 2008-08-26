@@ -208,7 +208,6 @@ class  Eq a  where
       functions necessary for that typeclass.
     </para>
     <para id="x_HB">
-      <remark>FIXME: rearrange? see comments</remark>
       Recall our attempt to create a test for equality over a
       <literal>Color</literal> type back in <xref
       linkend="typeclasses.need"/>.
@@ -349,9 +348,6 @@ class  Eq a  where
       </para>
 
       &read.hs:read;
-
-      <remark>FIXME: have we already explained main, do, and
-        type annotations on expressions?</remark>
 
       <para id="x_VB">
         This is a simple example of &read; and &show; together.  Notice that

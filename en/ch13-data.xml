@@ -145,10 +145,6 @@ jgoerzen:x:1000:1000:John Goerzen,,,:/home/jgoerzen:/bin/bash
 
   <sect1 id="data.funcs">
     <title>Functions Are Data, Too</title>
-    <remark>FIXME: reviewers wanted better examples, perhaps based on
-      CustomColor instead of something returning a tuple.  Think of
-      one.
-    </remark>
     <para id="x_rL">
       Part of Haskell's power is the ease with which it lets us create and manipulate functions.  Let's take a look at a
       record that stores a function as one of its fields:

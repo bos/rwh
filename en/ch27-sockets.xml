@@ -17,9 +17,7 @@
       In this chapter, we will discuss these lower-level tools.
       Network communication is a broad topic with entire books devoted
       to it.  In this chapter, we will show you how to use Haskell to
-      apply low-level network knowledge you already have.  If you need
-      a background on network programming, we suggest <remark>FIXME:
-      insert reference to an appropriate book</remark>.
+      apply low-level network knowledge you already have.
     </para>
     <para id="x_Qd">
       Haskell's networking functions almost always correspond directly

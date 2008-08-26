@@ -182,7 +182,7 @@
     </sect2>
   </sect1>
 
-  <sect1>
+  <sect1 id="installing.haskell.software">
     <title>Installing Haskell software</title>
 
     <para id="x_dN1">Almost all Haskell libraries are distributed using a

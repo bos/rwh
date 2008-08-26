@@ -315,7 +315,6 @@ Welcome to Haskell, John!
         automatic parallelism for the pure parts of your code --
         something of a holy grail for computing.
       </para>
-      <remark>FIXME: discussion of the problem of logging from pure code</remark>
       <para id="x_YN">
         For more discussion on this topic, refer to <xref
         linkend="io.sideeffects"/>.</para>
@@ -324,7 +323,6 @@ Welcome to Haskell, John!
 
   <sect1 id="io.files">
     <title>Working With Files and Handles</title>
-    <remark>FIXME: deleting files, renaming them, directory contents</remark>
     <para id="x_VC">
       So far,  you've seen how to interact with the user at the
       computer's terminal.  Of course, you'll
@@ -873,7 +871,6 @@ Which could be expressed as this Haskell literal:
         completely transparently to you.  And since you have what looks like&emdash;and, really, is&emdash;a pure &String;, you can pass it to pure (non-&IO;)
         code.
       </para>
-      <remark>FIXME: suggestion for a graphic from Eric Lavigne: Following Peter's (2007-09-27) comment, with which I strongly agree, I suggest a picture that uses colored boxes to represent lines in the file: red for no longer in scope, green for line being used right now, and yellow for not yet accessed. Explain that a Haskell program can be doing something with the green block while the red blocks are no longer taking up memory (due to garbage collection) and the yellow blocks haven't been read from the file yet (due to laziness).</remark>
       <para id="x_dD">
         Let's take a quick look at an example.  Back in
         <xref linkend="io.files"/>, you saw an imperative program
@@ -1139,8 +1136,8 @@ $ <userinput>runghc toupper-lazy4.hs &lt; input.txt</userinput>
       broader Haskell language.
     </para>
     <para id="x_HE">
-      You may recall from <remark>FIXME: add ref</remark> that Haskell is a
-      pure language.  That is, if you give a certain function a specific
+      Since Haskell is a pure language, 
+      if you give a certain function a specific
       argument, the function will return the same result every time you give
       it that argument.  Moreover, the function will not change anything
       about the program's overall state.
@@ -1372,7 +1369,6 @@ Data: Done!
 
   <sect1 id="io.imperative">
     <title>Is Haskell Really Imperative?</title>
-    <remark>FIXME: I don't really like this explanation</remark>
     <para id="x_cE">
       These &do; blocks may look a lot like an imperative language.  After
       all, you're giving commands to run in sequence most of the time.
