@@ -1,4 +1,4 @@
-:set -i../ch06
+:set -i../ch05
 --# load
 :load BrokenClass
 

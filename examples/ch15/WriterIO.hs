@@ -10,7 +10,7 @@ import SafeHello
 
 {-- snippet Event --}
 data Event = Open FilePath IOMode
-           | PutStr String String
+           | Put String String
            | Close String
            | GetContents String
              deriving (Show)
@@ -28,6 +28,6 @@ runWriterIO = runWriter . runW
 
 instance MonadHandle FilePath WriterIO where
     openFile path mode = tell [Open path mode] >> return path
-    hPutStr h str = tell [PutStr h str]
+    hPutStr h str = tell [Put h str]
     hClose h = tell [Close h]
     hGetContents h = tell [GetContents h] >> return ""

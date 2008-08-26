@@ -1,3 +1,4 @@
+{-- snippet IO --}
 {-# LANGUAGE FunctionalDependencies, MultiParamTypeClasses #-}
 
 import MonadHandle
@@ -7,7 +8,8 @@ import System.IO (IOMode(..))
 import Control.Monad.Trans (MonadIO(..), MonadTrans(..))
 import System.Directory (removeFile)
 
-{-- snippet IO --}
+import SafeHello
+
 instance MonadHandle System.IO.Handle IO where
     openFile = System.IO.openFile
     hPutStr = System.IO.hPutStr

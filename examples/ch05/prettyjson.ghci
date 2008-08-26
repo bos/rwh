@@ -15,7 +15,7 @@ replicate 5 "foo"
 7 .&. 2   :: Int
 
 --# compact
-let value = jvalue (JObject [("f", JNumber 1), ("q", JBool True)])
+let value = renderJValue (JObject [("f", JNumber 1), ("q", JBool True)])
 :type value
 putStrLn (compact value)
 

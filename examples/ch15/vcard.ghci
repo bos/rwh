@@ -1,12 +1,10 @@
 :load VCard
 
 --# simple
-
-personalPhone twalumba
-personalPhone albulena
-businessPhones nils
+onePersonalPhone twalumba
+onePersonalPhone albulena
+allBusinessPhones nils
 
 --# lookupM
-
 lookupM Home twalumba :: Maybe Phone
 lookupM Business nils :: [Phone]

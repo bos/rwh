@@ -17,6 +17,7 @@
 import Control.Concurrent (forkIO)
 import Control.Concurrent.STM
 import Control.Exception (catch, finally)
+import Control.Monad.Error
 import Control.Monad.State
 import Data.Char (isControl)
 import Data.List (nub)
@@ -87,9 +88,11 @@ modifyTVar_ :: TVar a -> (a -> a) -> STM ()
 modifyTVar_ tv f = readTVar tv >>= writeTVar tv . f
 
 forkTimes :: Int -> TVar Int -> IO () -> IO ()
-forkTimes k alive act = replicateM_ k . forkIO $ act
-                        `finally`
-                        (atomically $ modifyTVar_ alive (subtract 1))
+forkTimes k alive act =
+  replicateM_ k . forkIO $
+    act
+    `finally`
+    (atomically $ modifyTVar_ alive (subtract 1))
 {-- /snippet modifyTVar_ --}
 
 {-- snippet writeBadLinks --}
@@ -125,15 +128,41 @@ getStatus = chase (5 :: Int)
                      Nothing -> bail "bad URL"
                      Just url -> chase (n-1) url
             (a,b,c) -> return . Right $ a * 100 + b * 10 + c
-
-    getHead uri = simpleHTTP request
-      where
-          request = Request { rqURI = uri,
-                              rqMethod = HEAD,
-                              rqHeaders = [],
-                              rqBody = "" }
     bail = return . Left
+
+getHead :: URI -> IO (Result Response)
+getHead uri = simpleHTTP Request { rqURI = uri,
+                                   rqMethod = HEAD,
+                                   rqHeaders = [],
+                                   rqBody = "" }
 {-- /snippet getStatus --}
+
+{-- snippet getStatusE --}
+getStatusE = runErrorT . chase (5 :: Int)
+  where
+    chase :: Int -> URI -> ErrorT String IO Int
+    chase 0 _ = throwError "too many redirects"
+    chase n u = do
+      r <- embedEither show =<< liftIO (getHead u)
+      case rspCode r of
+        (3,_,_) -> do
+            u'  <- embedMaybe (show r)  $ findHeader HdrLocation r
+            url <- embedMaybe "bad URL" $ parseURI u'
+            chase (n-1) url
+        (a,b,c) -> return $ a*100 + b*10 + c
+
+-- This function is defined in Control.Arrow.
+left :: (a -> c) -> Either a b -> Either c b
+left f (Left x)  = Left (f x)
+left _ (Right x) = Right x
+
+-- Some handy embedding functions.
+embedEither :: (MonadError e m) => (s -> e) -> Either s a -> m a
+embedEither f = either (throwError . f) return
+
+embedMaybe :: (MonadError e m) => e -> Maybe a -> m a
+embedMaybe err = maybe (throwError err) return
+{-- /snippet getStatusE --}
 
 {-- snippet worker --}
 worker :: TChan String -> TChan Task -> TVar Int -> IO ()

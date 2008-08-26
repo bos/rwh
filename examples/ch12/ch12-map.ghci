@@ -1,4 +1,4 @@
-:set -i../ch12 -i../ch11
+:set -i../ch11 -i../ch10
 
 :load Barcode
 

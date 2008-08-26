@@ -56,7 +56,7 @@ transfer qty fromBal toBal = do
 transferTest :: STM (Gold, Gold)
 {-- snippet transferTest --}
 transferTest = do
-  alice <- newTVar 12
+  alice <- newTVar (12 :: Gold)
   bob   <- newTVar 4
   basicTransfer 3 alice bob
   liftM2 (,) (readTVar alice) (readTVar bob)
@@ -74,7 +74,8 @@ maybeGiveItem item fromInv toInv = do
     Nothing      -> return False
     Just newList -> do
       writeTVar fromInv newList
-      readTVar toInv >>= writeTVar toInv . (item :)
+      destItems <- readTVar toInv
+      writeTVar toInv (item : destItems)
       return True
 {-- /snippet maybeGiveItem --}
 
@@ -141,6 +142,11 @@ shoppingList list buyer seller = maybeSTM . msum $ map sellOne list
 maybeSTM :: STM a -> STM (Maybe a)
 maybeSTM m = (Just `liftM` m) `orElse` return Nothing
 {-- /snippet maybeSTM --}
+
+{-- snippet maybeM --}
+maybeM :: MonadPlus m => m a -> m (Maybe a)
+maybeM m = (Just `liftM` m) `mplus` return Nothing
+{-- /snippet maybeM --}
 
 {-- snippet bogusSale --}
 bogusTransfer qty fromBal toBal = do

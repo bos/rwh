@@ -1,4 +1,6 @@
-:load CountEntries
+:load CountEntriesT
+:m +Control.Monad.Writer
+null `liftM` execWriterT (countEntries "..")
 
 --# runWriterT
 :type runWriterT

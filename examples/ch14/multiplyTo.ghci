@@ -1,3 +1,5 @@
+:load MultiplyTo
+
 --# multiplyTo
 multiplyTo 8
 multiplyTo 100

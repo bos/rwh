@@ -1,4 +1,4 @@
-:set -i../ch11
+:set -i../ch10
 
 :load PNM
 --# Maybe
@@ -13,4 +13,3 @@
 :type fmap
 :module +Control.Monad
 :type liftM
-on	

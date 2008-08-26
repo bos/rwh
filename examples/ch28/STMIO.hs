@@ -11,9 +11,7 @@ stmTransaction :: STM (IO a)
 stmTransaction = return someAction
 
 doSomething :: IO a
-doSomething = do
-  ioAction <- atomically stmTransaction
-  join ioAction
+doSomething = join (atomically stmTransaction)
 {-- /snippet someTransaction --}
 
 launchTorpedoes = undefined

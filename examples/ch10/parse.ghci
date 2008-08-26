@@ -27,6 +27,6 @@ parse (chr <$> fromIntegral <$> parseByte) input
 
 --# modifyOffset
 let before = ParseState (L8.pack "foo") 0
-let after = modifyOffset myState 3
+let after = modifyOffset before 3
 before
 after
