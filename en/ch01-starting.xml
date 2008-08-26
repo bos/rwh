@@ -779,7 +779,7 @@ Loading package base ... linking ... done.
     <para id="x_e2">Rational numbers don't look quite the same as
       integers.  To construct a rational number, we use the
       <function>(%)</function> operator.  The numerator is on the
-      left, the demoninator on the right.</para>
+      left, the denominator on the right.</para>
 
     &types.ghci:ratio;
 
