@@ -38,13 +38,17 @@
   <sect1>
     <title>The basics</title>
 
-    <para id="x_kL1">Software transactional memory (STM) gives us a few simple,
-      but powerful, tools with which we can address most of these
-      problems. We execute a block of actions using the &atomically;
-      combinator. Once we enter the block, other threads cannot see
-      any modifications we make until we exit: our execution is
-      <emphasis>isolated</emphasis>. Upon exit, only one of the
-      following things can occur.</para>
+    <para id="x_kL1">Software transactional memory (STM) gives us a
+      few simple, but powerful, tools with which we can address most
+      of these problems. We execute a block of actions as a
+      transaction using the &atomically; combinator. Once we enter the
+      block, other threads cannot see any modifications we make until
+      we exit, nor can our thread see any changes made by other
+      threads.  These two properties mean that our execution is
+      <emphasis>isolated</emphasis>.</para>
+
+    <para>Upon exit from a transaction, exactly one of the following
+      things will occur.</para>
 
     <itemizedlist>
       <listitem>
@@ -59,27 +63,25 @@
       </listitem>
     </itemizedlist>
 
-    <para id="x_nL1">This all-or-nothing nature of an &atomically; block is
-      referred to as <emphasis>atomic</emphasis>, hence the name of
-      the combinator.</para>
-
-    <para id="x_oL1">Atomicity and isolation work together to give every thread a
-      <emphasis>consistent</emphasis> view of our program's shared,
-      mutable state.  If you have used databases that support
+    <para id="x_nL1">This all-or-nothing nature of an &atomically;
+      block is referred to as <emphasis>atomic</emphasis>, hence the
+      name of the combinator.  If you have used databases that support
       transactions, you should find that working with STM feels quite
       familiar.</para>
   </sect1>
   <sect1>
     <title>Some simple examples</title>
 
-    <para id="x_pL1">To explore the world of STM, let's start with a few simple
-      functions, and refine them as we learn more about the API. In a
-      multi-player role playing game, a player's character will have
-      some state such as health, possessions, and money.</para>
+    <para id="x_pL1">In a multi-player role playing game, a player's
+      character will have some state such as health, possessions, and
+      money.  To explore the world of STM, let's start with a few
+      simple functions and types based around working with some
+      character state for a game.  We will refine our code as we learn
+      more about the API.</para>
 
-    <para id="x_qL1">The STM API is provided by the <code>stm</code> package, and
-      its modules are in the <code>Control.Concurrent.STM</code>
-      hierarchy.</para>
+    <para id="x_qL1">The STM API is provided by the <code>stm</code>
+      package, and its modules are in the
+      <code>Control.Concurrent.STM</code> hierarchy.</para>
 
       &GameInventory.hs:import;
 
@@ -263,10 +265,10 @@
 
       &GameInventory.hs:crummyList;
 
-      <para id="x_QM1">This function suffers from the familiar problem of
-	muddling together what we want to do with how we ought to do
-	it.  A little inspection suggests that there are two patterns
-	buried in this code which we can use in reusable forms.</para>
+      <para id="x_QM1">This function suffers from the familiar problem
+	of muddling together what we want to do with how we ought to
+	do it.  A little inspection suggests that there are two
+	reusable patterns buried in this code.</para>
 
       <para id="x_RM1">The first of these is to make a transaction fail
 	immediately, instead of retrying.</para>
@@ -288,10 +290,19 @@
       &STMPlus.hs:msum;
 
       <para id="x_UM1">We now have a few key pieces of machinery that will help
-      us to write a much clearer version of our function.</para>
+	us to write a much clearer version of our function.</para>
 
       &GameInventory.hs:shoppingList;
 
+      <para>Since <type>STM</type> is an instance of the
+	<type>MonadPlus</type> typeclass, we can generalize
+	<function>maybeSTM</function> to work over any
+	<type>MonadPlus</type>.</para>
+
+      &GameInventory.hs:maybeM;
+
+      <para>This gives us a function that is useful in a greater
+	variety of situations.</para>
     </sect2>
   </sect1>
 
@@ -429,17 +440,28 @@
     <sect2>
       <title>Checking a link</title>
 
-      <para id="x_oM1">Here is our function to check the state of a link.  This
-	code is similar to the podcatcher that we developed in
+      <para id="x_oM1">Here is a naive function to check the state of
+	a link.  This code is similar to the podcatcher that we
+	developed in
 	<xref linkend="webclient"/>, with a few small
 	differences.</para>
 
       &Check.hs:getStatus;
 
-      <para id="x_pM1">We follows a HTTP redirect response just a few times, to
+      <para id="x_pM1">We follow a HTTP redirect response just a few times, to
 	avoid endless redirect loops.  To determine whether a URL is
 	valid, we use the HTTP standard's HEAD verb, which uses less
 	bandwidth than a full GET.</para>
+
+      <para>This code has the classic <quote>marching off the left of
+	  the screen</quote> style that we have learned to be wary of.
+	Here is a rewrite that offers greater clarity via the
+	<type>ErrorT</type> monad transformer and a few generally
+	useful functions.</para>
+
+      &Check.hs:getStatusE;
+
+      <para>You might notice that, for once, we are explicitly using </para>
     </sect2>
 
     <sect2>
@@ -595,15 +617,24 @@
     <para id="x_KN1">We have so far been quiet about the specific benefits that
       STM gives us.  Most obvious is how well it
       <emphasis>composes</emphasis>: to add code to a transaction, we
-      just use our usual monadic building blocks, &bind; and &bind_;.
-      The &STM; monad prevents us from accidentally performing
+      just use our usual monadic building blocks, &bind; and
+      &bind_;.</para>
+
+    <para>The notion of composability is critical to building modular
+      software.  If we take two pieces of code that individually work
+      correctly, the composition of the two should also be correct.
+      While normal threaded programming makes composability
+      impossible, STM restores it as a key assumption that we can rely
+      upon.</para>
+
+    <para>The &STM; monad prevents us from accidentally performing
       non-transactional I/O actions.  We don't need to worry about
       lock ordering, since our code contains no locks.  We can forget
       about lost wakeups, since we don't have condition variables.  If
       an exception is thrown, we can either catch it using
       <function>catchSTM</function>, or be bounced out of our
       transaction, leaving our state untouched. Finally,
-      the<function>retry</function> and <function>orElse</function>
+      the <function>retry</function> and <function>orElse</function>
       functions give us some beautiful ways to structure our
       code.</para>
 
@@ -646,16 +677,16 @@
 
       &GameInventory.hs:bogusSale;
 
-      <para id="x_PN1">In concurrent programs, these kinds of programs are
+      <para id="x_PN1">In concurrent programs, these kinds of problems are
 	notoriously difficult to find and reproduce.  For instance,
 	the inconsistency that we describe above will usually only
 	occur for a brief period of time.  Problems like this often
 	refuse to show up during development, instead only occurring
 	in the field, under heavy load.</para>
 
-      <para id="x_QN1">The <function>alwaysSucceeds</function> function let us
-	define an <emphasis>invariant</emphasis>, a property of our
-	data that must always be true.</para>
+      <para id="x_QN1">The <function>alwaysSucceeds</function>
+	function lets us define an <emphasis>invariant</emphasis>, a
+	property of our data that must always be true.</para>
 
       &stm.ghci:alwaysSucceeds;
 
