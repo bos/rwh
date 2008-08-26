@@ -747,10 +747,32 @@
   <sect1>
     <title>Acknowledgments</title>
 
+    <para>This book would not exist without the Haskell community: an
+      anarchic, hopeful cabal of artists, theoreticians and engineers,
+      who for twenty years have worked to create a better, bug-free
+      programming world. The people of the Haskell community are
+      unique in their combination of friendliness and intellectual
+      depth.</para>
+
+    <para>We wish to thank our editor, Mike Loukides, and the
+      production team at O'Reilly for all of their advice and
+      assistance.</para>
+
     <sect2>
       <title>Bryan</title>
 
-      <para>XXX</para>
+      <para>Simon Peyton Jones took a chance on a college student who
+	emailed him out of the blue in early 1994. Interning for him
+	over that summer remains a highlight of my professional life.
+	With his generosity, boundless energy, and drive to
+	collaborate, he inspires the whole Haskell community.</para>
+
+      <para>My children, Cian and Ruairi, always stood ready to help
+	me to unwind with wonderful, madcap little-boy games.</para>
+
+      <para>I owe a great debt to my wife, Shannon, for her love,
+	wisdom, and support during the long gestation of this
+	book.</para>
     </sect2>
 
     <sect2>
@@ -762,7 +784,21 @@
     <sect2>
       <title>Don</title>
 
-      <para>XXX</para>
+      <para>Before all else, I'd like to thank my amazing
+	co-conspirators, John and Bryan, for encouragment, advice and
+	motivation.</para>
+
+      <para>My colleagues at Galois, Inc., who daily wield Haskell in
+	the real world, provided regular feedback and war stories, and
+	helped ensured a steady supply of espresso.</para>
+
+      <para>My PhD supervisor, Manuel Chakravarty, and the PLS
+	research group, who provided encouragement, vision and energy,
+	and showed me that a rigorous, foundational approach to
+	programming can make the impossible happen.</para>
+
+      <para>And, finally, Suzie Allen, for her insight, patience and
+	love.</para>
     </sect2>
 
     <sect2>
