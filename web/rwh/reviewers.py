@@ -52,7 +52,7 @@ def fixup(s):
 total = 0
 for r in c.fetchall():
     r = r[0].decode('utf-8')
-    if r in ("Bryan O'Sullivan", 'John Goerzen'):
+    if r in ("Bryan O'Sullivan", 'John Goerzen', 'Don Stewart'):
         continue
     total += 1
     m = mappings.get(r.lower())
@@ -72,7 +72,7 @@ for (lo,hi) in cohorts:
     hi = total * hi
     for r in [n for n in reviewers if lo <= n[1] < hi]:
         if r[1] > 3:
-            print '%s (%d),' % (fixup(r[0]), r[1])
+            print '%s,' % fixup(r[0])
     print
 
 lo = total * .002
