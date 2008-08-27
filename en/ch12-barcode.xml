@@ -395,15 +395,40 @@
       too far, which causes adjacent bars to blur together.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-angled.jpg"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-bad-angled.jpg"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Barcode image distorted by perspective, due to photo
+	    being taken from an angle.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-too-near.jpg"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-bad-too-near.jpg"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Barcode image blurred by being taken from inside the
+	    focal length of the camera lens, causing bars to run
+	    together.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-bad-too-far.jpg"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-bad-too-far.jpg"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Barcode image contains insufficient detail, due to
+	    poor resolution of camera lens and CCD.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
   </sect1>
 
@@ -603,7 +628,14 @@
       is crop it down to the barcode.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-photo.jpg"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-barcode-photo.jpg"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Barcode photo, somewhat blurry and dim.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
 
     <para id="x_ZU">The encoded digit string, 9780132114677, is printed below
@@ -614,7 +646,14 @@
       offer barcode image generation for free.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-generated.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-barcode-generated.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Automatically generated image of the same barcode.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
 
     <para id="x_aU">We've chosen a row from the captured image, and stretched it
@@ -623,7 +662,16 @@
       the two are aligned.</para>
 
     <informalfigure>
-      <graphic fileref="figs/ch12-barcode-example.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch12-barcode-example.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Photographic and generated images of barcode
+	    juxtaposed to illustrate the variation in bar brightness
+	    and resolution.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
 
     <para id="x_bU">The luminance-converted row from the photo is in the dark

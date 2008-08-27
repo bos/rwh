@@ -638,9 +638,18 @@ script can then be compiled and executed:
       browser, we can see some pretty graphs of the code coverage:
     </para>
 
-  <informalfigure>
-  <graphic fileref="figs/ch11-hpc-round1.png"/>
-  </informalfigure>
+    <informalfigure>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch11-hpc-round1.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Revised coverage for module Prettify2: 52% of top
+	    level definitions (up from 42%), 23% of alternatives, 18%
+	    of expressions.</phrase>
+	</textobject>
+      </mediaobject>
+    </informalfigure>
 
 <para id="x_t21">
 Not too bad. Clicking through to the pretty module itself, we see the
@@ -649,7 +658,16 @@ tested, and code that was executed simply bold.
   </para>
 
   <informalfigure>
-  <graphic fileref="figs/ch11-coverage-screen.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch11-coverage-screen.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Screenshot of annotated coverage output, displaying
+	    the Monoid instance for Doc in bold yellow (not tested),
+	    and other code nearby in bold (was executed).</phrase>
+	</textobject>
+      </mediaobject>
   </informalfigure>
   
 <para id="x_u21">
@@ -690,7 +708,16 @@ statistics improves to 52 percent of the code base:
 </para>
 
   <informalfigure>
-  <graphic fileref="figs/ch11-hpc-round2.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch11-hpc-round2.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Coverage for module Prettify2: 42% of top level
+	    definitions, 23% of alternatives, 18% of
+	    expressions.</phrase>
+	</textobject>
+      </mediaobject>
   </informalfigure>
 
 <para id="x_y21">

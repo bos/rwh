@@ -387,7 +387,17 @@ This produces the graph, in the file <code>A.ps</code>:
 <!-- -hc raw heap info -->
 
 <informalfigure>
-<graphic fileref="figs/ch25-heap-hc.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/ch25-heap-hc.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>The heap profile graph rises in a gently
+	      decreasing curve in thr first half of the program's run,
+	      drops abruptly, then trails off during the remaining
+	      third.</phrase>
+	  </textobject>
+	</mediaobject>
 </informalfigure>
 
 <para id="x_TK1">
@@ -411,7 +421,18 @@ Which yields the following graph:
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch25-heap-hy.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/ch25-heap-hy.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Heap profiling curve, broken down by data type.
+	      Values of unknown type account for half of the first
+	      phase, with Double and lists split.  The second phase is
+	      one third black holes, the rest split between Double and
+	      lists.</phrase>
+	  </textobject>
+	</mediaobject>
 </informalfigure>
 
 <para id="x_VK1">
@@ -434,7 +455,15 @@ Our final graphic reveals the full story of what is going on:
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch25-heap-hd.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/ch25-heap-hd.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>The graph is similar in shape, but reveals the
+	      unknown values to be lists.</phrase>
+	  </textobject>
+	</mediaobject>
 </informalfigure>
 
 <para id="x_XK1">
@@ -521,7 +550,16 @@ Generating the heap profile, we see all the allocation is now in <code>mean</cod
 </para>
 
 <informalfigure>
-<graphic fileref="figs/ch25-stack.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/ch25-stack.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Graph of stack usage.  The curve is shaped like a
+	    hump, with mean representing 80%, and GHC.Real.CAF the
+	    other 20%.</phrase>
+	</textobject>
+      </mediaobject>
 </informalfigure>
 
 <para id="x_eK1">

@@ -127,7 +127,15 @@
         our application's main screen:
       </para>
       <informalfigure>
-        <graphic fileref="figs/gui-glade-3.png"/>
+        <mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/gui-glade-3.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of Glade, showing components of the
+	      graphical user interface.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
       <para id="x_Qw">
         In the downloadable material available for this book, you can
@@ -326,7 +334,15 @@
     </para>
 
     <informalfigure>
-      <graphic fileref="figs/gui-pod-mainwin.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/gui-pod-mainwin.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Screenshot of the main window of the podcatcher
+	    application.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
   </sect1>
 
@@ -375,7 +391,14 @@
       Here's what the dialog box looks like:
     </para>
     <informalfigure>
-      <graphic fileref="figs/gui-pod-addwin.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/gui-pod-addwin.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Screenshot of the add-a-podcast window.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
   </sect1>
 
@@ -470,7 +493,15 @@
       Here's what the final result looks like after running an update:
     </para>
     <informalfigure>
-      <graphic fileref="figs/gui-update-complete.png"/>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="figs/gui-update-complete.png"/>
+	</imageobject>
+	<textobject>
+	  <phrase>Screenshot of a dialog box displaying the words
+	    <quote>update complete</quote>.</phrase>
+	</textobject>
+      </mediaobject>
     </informalfigure>
   </sect1>
   

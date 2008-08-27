@@ -36,7 +36,15 @@
 	<filename>ghc-6.8.3-i386-windows.exe</filename>.</para>
 
       <informalfigure>
-	<graphic fileref="figs/win32-download.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/win32-download.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of Firefox, displaying the GHC download
+	      page.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
 
       <para id="x_q">After the installer has downloaded,
@@ -45,7 +53,15 @@
 	wizard.</para>
 
       <informalfigure>
-	<graphic fileref="figs/win32-wizard1.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/win32-wizard1.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of the GHC installation wizard on
+	    Windows.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
 
       <para id="x_r">Once the installer has finished, the Start Menu's
@@ -54,14 +70,30 @@
 	to run &ghci;.</para>
 
       <informalfigure>
-	<graphic fileref="figs/win32-start-menu.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/win32-start-menu.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of the Windows XP start menu, showing
+	      the GHC submenu.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
 
       <para id="x_s">Clicking on the &ghci; icon brings up a normal
 	Windows console window, running &ghci;.</para>
 
       <informalfigure>
-	<graphic fileref="figs/win32-ghci.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/win32-ghci.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of the ghci interpreter running on
+	      Windows.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
 
       <note>
@@ -113,7 +145,15 @@
 	&ghci; command from your shell prompt.</para>
 
       <informalfigure>
-	<graphic fileref="figs/osx-ghci.png"/>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figs/osx-ghci.png"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Screenshot of the ghci interpreter running in a
+	      Terminal window on Mac OS X.</phrase>
+	  </textobject>
+	</mediaobject>
       </informalfigure>
 
       <sect3>
