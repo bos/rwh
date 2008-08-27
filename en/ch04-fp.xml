@@ -2103,6 +2103,8 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
       difficulties that can arise.</para>
 
     <tip>
+      <title>Do you need to know all of this right now?</title>
+
       <para id="x_QD1">It is perfectly reasonable to skip this section until you
 	encounter a space leak <quote>in the wild</quote>.  Provided
 	you use <function>foldr</function> if you are generating a

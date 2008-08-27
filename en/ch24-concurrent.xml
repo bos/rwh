@@ -41,12 +41,10 @@
       in, crunches it for a while (with little further I/O), then
       streams data back out.</para>
 
-    <note>
-      <para id="x_jJ1">Many traditional languages further blur the already
-	indistinct boundary between concurrent and parallel
-	programming, because they force programmers to use the same
-	primitives to construct both kinds of program.</para>
-    </note>
+    <para id="x_jJ1">Many traditional languages further blur the
+      already indistinct boundary between concurrent and parallel
+      programming, because they force programmers to use the same
+      primitives to construct both kinds of program.</para>
 
     <para id="x_c31">In this chapter, we will concern ourselves with concurrent
       and parallel programs that operate within the boundaries of a

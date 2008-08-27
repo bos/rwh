@@ -84,6 +84,7 @@
       types&emdash;and returns a <literal>Bool</literal>.
     </para>
     <note>
+      <title>When is a class not a class?</title>
       <para id="x_vD1">
         The keywoard to define a typeclass in Haskell is
         <literal>class</literal>.  Unfortunately, this may be
@@ -319,6 +320,7 @@ class  Eq a  where
         that's needed.
       </para>
       <note>
+	<title>The Show typeclass</title>
         <para id="x_kp">&Show; is usually used to define a &String;
         representation for data that is useful for a machine to parse
         back with &Read;.  Haskell programmers generally write custom
@@ -363,6 +365,7 @@ class  Eq a  where
         provided an explicit type.
       </para>
       <tip>
+	<title>A note about defaulting</title>
         <para id="x_lp">In most cases, if the explicit &Double; type annotation
         were omitted, the compiler would refuse to guess a
         common type and simply give an error.  The fact that it could
@@ -422,6 +425,7 @@ class  Eq a  where
         leading spaces, which is common practice in Haskell programs.
       </para>
       <tip>
+	<title>Read is not widely used</title>
         <para id="x_mp">
           While it is possible to build sophisticated parsers using
           the &Read; typeclass, many people find it easier to do so using
@@ -447,6 +451,7 @@ class  Eq a  where
         make it so.
       </para>
       <tip>
+	<title>Parsing large strings</title>
         <para id="x_np">
           String handling in Haskell is normally lazy, so &read; and
           &show; can be used on quite large data structures without
@@ -1104,6 +1109,7 @@ class  Eq a  where
     &colorderived.hs:all;
 
     <note>
+      <title>Which types can be automatically derived?</title>
       <para id="x_HN">The Haskell standard requires compilers to be
 	able to automatically derive instances of these specific
 	typeclasses. This automation is not available for other
@@ -1298,6 +1304,7 @@ class  Eq a  where
 	<code>bork</code>.</para>
 
       <note>
+	<title>When do overlapping instances matter?</title>
 	<para id="x_G01">As we mentioned earlier, we can scatter instances of a
 	  typeclass across several modules.  &GHC; does not complain
 	  about the mere existence of overlapping instances.  Instead,

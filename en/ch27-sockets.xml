@@ -100,6 +100,7 @@
         terminate the program.
       </para>
       <note>
+	<title>In case of problems</title>
         <para id="x_rk">Getting <literal>bind: permission denied</literal> when
         testing this?  Make sure you use a port number greater than
         1024.  Some operating systems only allow the

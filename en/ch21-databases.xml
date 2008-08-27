@@ -300,6 +300,7 @@
         discuss that in the next section.
       </para>
       <note>
+	<title>Using replaceable parameters</title>
         <para id="x_jc">
           Replaceable parameters only work for parts of the queries
           where the server is expecting a value, such as a WHERE
@@ -353,6 +354,7 @@
       </para>
       &query.ghci:executeMany;
       <note>
+	<title>More efficient execution</title>
         <para id="x_pc">
           On the server, most databases will have an optimization that
           they can apply to <literal>executeMany</literal> so that they only have to compile

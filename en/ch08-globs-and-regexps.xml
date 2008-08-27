@@ -318,11 +318,10 @@
 	  recommend Jeffrey Friedl's book <emphasis>Mastering Regular
 	    Expressions</emphasis>.</para>
       </footnote>.</para>
-    <note>
-      <para id="x_nE1">For brevity, we will abbreviate <quote>regular
-	  expression</quote> as <emphasis>regexp</emphasis> from here
-	on.</para>
-    </note>
+
+    <para id="x_nE1">For brevity, we will abbreviate <quote>regular
+	expression</quote> as <emphasis>regexp</emphasis> from here
+      on.</para>
 
     <para id="x_oE1">Rather than introduce regexps as something new, we will
       focus on what's different about regexp handling in Haskell,
@@ -399,6 +398,7 @@
       &regexp.ghci:list.string;
 
       <note>
+	<title>Watch out for String results</title>
 	<para id="x_UF">If you want a result that's a plain
 	  <type>String</type>, beware.  Since
 	  <function>(=~)</function> returns an empty string to signify
@@ -528,6 +528,7 @@
 	suggests, this package provides POSIX regexp semantics.</para>
 
       <note>
+	<title>Perl and POSIX regular expressions</title>
 	<para id="x_jF">If you're coming to Haskell from a language
 	  like Perl, Python, or Java, and you've used regular
 	  expressions in one of those languages, you should be aware
@@ -590,6 +591,7 @@
       <function>globToRegex'</function> function.</para>
 
     <note>
+      <title>Using a value before defining it</title>
       <para id="x_rF">Haskell does not require that a value or function be
 	declared or defined in a source file before it's used.  It's
 	perfectly normal for a definition to come
@@ -856,6 +858,8 @@
       all of the matching directories.</para>
 
     <note>
+      <title>Things to watch out for</title>
+
       <para id="x_nG">The <classname
 	  role="module">System.FilePath</classname> module can be a
 	little tricky.  Above is a case in point; the
