@@ -47,7 +47,7 @@
       threads.  These two properties mean that our execution is
       <emphasis>isolated</emphasis>.</para>
 
-    <para>Upon exit from a transaction, exactly one of the following
+    <para id="x_SO1">Upon exit from a transaction, exactly one of the following
       things will occur.</para>
 
     <itemizedlist>
@@ -294,14 +294,14 @@
 
       &GameInventory.hs:shoppingList;
 
-      <para>Since <type>STM</type> is an instance of the
+      <para id="x_TO1">Since <type>STM</type> is an instance of the
 	<type>MonadPlus</type> typeclass, we can generalize
 	<function>maybeSTM</function> to work over any
 	<type>MonadPlus</type>.</para>
 
       &GameInventory.hs:maybeM;
 
-      <para>This gives us a function that is useful in a greater
+      <para id="x_UO1">This gives us a function that is useful in a greater
 	variety of situations.</para>
     </sect2>
   </sect1>
@@ -453,7 +453,7 @@
 	valid, we use the HTTP standard's HEAD verb, which uses less
 	bandwidth than a full GET.</para>
 
-      <para>This code has the classic <quote>marching off the left of
+      <para id="x_VO1">This code has the classic <quote>marching off the left of
 	  the screen</quote> style that we have learned to be wary of.
 	Here is a rewrite that offers greater clarity via the
 	<type>ErrorT</type> monad transformer and a few generally
@@ -461,7 +461,7 @@
 
       &Check.hs:getStatusE;
 
-      <para>You might notice that, for once, we are explicitly using </para>
+      <para id="x_WO1">You might notice that, for once, we are explicitly using </para>
     </sect2>
 
     <sect2>
@@ -620,14 +620,14 @@
       just use our usual monadic building blocks, &bind; and
       &bind_;.</para>
 
-    <para>The notion of composability is critical to building modular
+    <para id="x_XO1">The notion of composability is critical to building modular
       software.  If we take two pieces of code that individually work
       correctly, the composition of the two should also be correct.
       While normal threaded programming makes composability
       impossible, STM restores it as a key assumption that we can rely
       upon.</para>
 
-    <para>The &STM; monad prevents us from accidentally performing
+    <para id="x_YO1">The &STM; monad prevents us from accidentally performing
       non-transactional I/O actions.  We don't need to worry about
       lock ordering, since our code contains no locks.  We can forget
       about lost wakeups, since we don't have condition variables.  If

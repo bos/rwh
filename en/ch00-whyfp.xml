@@ -747,34 +747,34 @@
   <sect1>
     <title>Acknowledgments</title>
 
-    <para>This book would not exist without the Haskell community: an
+    <para id="x_wN1">This book would not exist without the Haskell community: an
       anarchic, hopeful cabal of artists, theoreticians and engineers,
       who for twenty years have worked to create a better, bug-free
       programming world. The people of the Haskell community are
       unique in their combination of friendliness and intellectual
       depth.</para>
 
-    <para>We wish to thank our editor, Mike Loukides, and the
+    <para id="x_xN1">We wish to thank our editor, Mike Loukides, and the
       production team at O'Reilly for all of their advice and
       assistance.</para>
 
     <sect2>
       <title>Bryan</title>
 
-      <para>I had a great deal of fun working with John and Don. Their
+      <para id="x_yN1">I had a great deal of fun working with John and Don. Their
 	independence, good nature, and formidable talent made the
 	writing process remarkably smooth.</para>
 
-      <para>Simon Peyton Jones took a chance on a college student who
+      <para id="x_zN1">Simon Peyton Jones took a chance on a college student who
 	emailed him out of the blue in early 1994. Interning for him
 	over that summer remains a highlight of my professional life.
 	With his generosity, boundless energy, and drive to
 	collaborate, he inspires the whole Haskell community.</para>
 
-      <para>My children, Cian and Ruairi, always stood ready to help
+      <para id="x_AO1">My children, Cian and Ruairi, always stood ready to help
 	me to unwind with wonderful, madcap little-boy games.</para>
 
-      <para>Finally, of course, I owe a great debt to my wife,
+      <para id="x_BO1">Finally, of course, I owe a great debt to my wife,
 	Shannon, for her love, wisdom, and support during the long
 	gestation of this book.</para>
     </sect2>
@@ -782,53 +782,53 @@
     <sect2>
       <title>John</title>
 
-      <para>XXX</para>
+      <para id="x_CO1">XXX</para>
     </sect2>
 
     <sect2>
       <title>Don</title>
 
-      <para>Before all else, I'd like to thank my amazing
+      <para id="x_DO1">Before all else, I'd like to thank my amazing
 	co-conspirators, John and Bryan, for encouragment, advice and
 	motivation.</para>
 
-      <para>My colleagues at Galois, Inc., who daily wield Haskell in
+      <para id="x_EO1">My colleagues at Galois, Inc., who daily wield Haskell in
 	the real world, provided regular feedback and war stories, and
 	helped ensured a steady supply of espresso.</para>
 
-      <para>My PhD supervisor, Manuel Chakravarty, and the PLS
+      <para id="x_FO1">My PhD supervisor, Manuel Chakravarty, and the PLS
 	research group, who provided encouragement, vision and energy,
 	and showed me that a rigorous, foundational approach to
 	programming can make the impossible happen.</para>
 
-      <para>And, finally, thanks to Suzie, for her insight, patience and
+      <para id="x_GO1">And, finally, thanks to Suzie, for her insight, patience and
         love.</para>
     </sect2>
 
     <sect2>
       <title>Thank you to our reviewers</title>
 
-      <para>We developed this book in the open, posting drafts of
+      <para id="x_HO1">We developed this book in the open, posting drafts of
 	chapters to our web site as we completed them. Readers then
 	submitted feedback using a web application that we developed.
 	By the time we finished writing the book, about 800 people had
 	submitted over 7,500 comments, an astounding figure.</para>
 
-      <para>We deeply appreciate the time that so many people
+      <para id="x_IO1">We deeply appreciate the time that so many people
 	volunteered to help us to improve our book.  Their
 	encouragement and enthusiasm over the 15 months we spent
 	writing made the process a pleasure.</para>
 
-      <para>The breadth and depth of the comments we received have
+      <para id="x_JO1">The breadth and depth of the comments we received have
 	profoundly improved the quality of this book.  Nevertheless,
 	all errors and omissions are, of course, ours.</para>
 
-      <para>The following people each contributed over 1% of the total
+      <para id="x_KO1">The following people each contributed over 1% of the total
 	number of review comments that we received.  We would like to
 	thank them for their care in providing us with so much
 	detailed feedback.</para>
 
-      <para>
+      <para id="x_LO1">
 	Alex Stangl,
 	Andrew Bromage,
 	Brent Yorgey,
@@ -852,10 +852,10 @@
 	William N. Halchin.
       </para>
 
-      <para>We are also grateful to the people below, each of whom
+      <para id="x_MO1">We are also grateful to the people below, each of whom
 	contributed at least 0.2% of all comments.</para>
 
-      <para>
+      <para id="x_NO1">
 	Achim Schneider,
 	Adam Jones,
 	Alexander Semenov,
@@ -935,10 +935,10 @@
 	Wouter Swierstra.
       </para>
 
-      <para>We would like to acknowledge the following
+      <para id="x_OO1">We would like to acknowledge the following
 	people, many of whom submitted a number of comments.</para>
 
-      <para>
+      <para id="x_PO1">
 	Aaron Hall,
 	Abhishek Dasgupta,
 	Adam Copp,
@@ -1408,7 +1408,7 @@
 	Zohar Kelrich.
       </para>
 
-      <para>Finally, we wish to thank those readers who submitted over
+      <para id="x_QO1">Finally, we wish to thank those readers who submitted over
 	800 comments anonymously.</para>
     </sect2>
   </sect1>

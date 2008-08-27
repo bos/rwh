@@ -80,7 +80,7 @@
         the generic interface, and a driver for your specific database.  You
         can obtain the generic HDBC package, and all of the other
         drivers, from <ulink
-        url="http://hackage.haskell.org/">Hackage</ulink><footnote><para>For more
+        url="http://hackage.haskell.org/">Hackage</ulink><footnote><para id="x_RO1">For more
         information on installing Haskell software, please refer to
         <xref
         linkend="installing.haskell.software"/>.</para></footnote>.
