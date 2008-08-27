@@ -1162,6 +1162,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
     <sect2 id="fp.foldl">
       <title>The left fold</title>
 
+      <para>Here is the definition of <function>foldl</function>.</para>
       &Fold.hs:foldl;
 
       <para id="x_h8">The <function>foldl</function> function takes a
@@ -1549,8 +1550,14 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
 	    <itemizedlist>
 	      <listitem>
 		<para id="x_BD1"><function>any</function></para>
+	      </listitem>
+	      <listitem>
 		<para id="x_CD1"><function>cycle</function></para>
+	      </listitem>
+	      <listitem>
 		<para id="x_DD1"><function>words</function></para>
+	      </listitem>
+	      <listitem>
 		<para id="x_ED1"><function>unlines</function></para>
 	      </listitem>
 	    </itemizedlist>

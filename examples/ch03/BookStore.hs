@@ -1,6 +1,4 @@
 {-- snippet BookInfo --}
--- Save as BookStore.hs
-
 data BookInfo = Book Int String [String]
                 deriving (Show)
 {-- /snippet BookInfo --}

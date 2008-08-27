@@ -249,6 +249,14 @@
 
     &bookstore.ghci:billingInfo;
 
+    <para>The <code>No instance</code> error message arose because we
+      did not supply an argument to the <code>Invoice</code>
+      constructor.  As a result, we were trying to print the
+      <code>Invoice</code> constructor itself.  That constructor
+      requires an argument and returns a value, so it is a function.
+      We cannot print functions in Haskell, which is ultimately why
+      the interpreter complained.</para>
+
     <sect2>
       <title>Tuples, algebraic data types, and when to use
 	each</title>
