@@ -126,7 +126,7 @@ Haskell value of type <code>CDouble</code>.
 
 <para id="x_KH1">
 A common idiom when writing FFI bindings is to expose the C function with the
-prefix "c_", distinguishing it from more user friendly, higher level
+prefix "c_", distinguishing it from more user-friendly, higher level
 functions. The raw C function is specified by the <code>math.h</code> header,
 where it is declared to have the type:
 </para>
@@ -710,6 +710,22 @@ functionally equivalent:
     Typed pointers
   </title>
 
+<note>
+  <title>A note about safety</title>
+
+<para>
+When making a foreign import declaration, we can optionally specify a
+"safety" level to use when making the call, using either the
+<code>safe</code> or <code>unsafe</code> keyword. A safe call is less
+efficient, but guarantees that the Haskell system can be safely called into
+from C. An "unsafe" call has far less overhead, but the C code that is called
+must not call back into Haskell.  By default foreign imports are "safe", but
+in practice it is rare for C code to call back into Haskell, so for
+efficiency we mostly use "unsafe" calls.
+</para>
+
+</note>
+
 <para id="x_II1">
 
 We can increase safety in the binding futher by using a "typed" pointer,
@@ -813,7 +829,7 @@ flavor.
 
 <para id="x_TI1">
 So with this in mind, we can hide the manually managed <code>Ptr PCRE</code>
-type inside a automatically managed data structure, yielding us the
+type inside an automatically managed data structure, yielding us the
 data type used to represent regular expressions that users will see:
 </para>
 
@@ -868,7 +884,7 @@ step to make the binding more idiomatic.
 </para>
 
 <para id="x_YI1">
-For the user supplied parameters, we've already decided to pass compilation
+For the user-supplied parameters, we've already decided to pass compilation
 flags in as a list. We can choose to pass the input regular expression either
 as an efficient <code>ByteString</code>, or as a regular <code>String</code>.
 An appropriate type signature, then, for referentially transparent
@@ -882,7 +898,7 @@ The input is a <code>ByteString</code>, available from the
 <code>Data.ByteString.Char8</code> module (and we'll import this
 <code>qualified</code> to avoid name clashes), containing the regular
 expression, and a list of flags (or the empty list if there are no flags to
-pass). The result is either an error string, or a new, compiled. regular
+pass). The result is either an error string, or a new, compiled regular
 expression.
 </para>
 
@@ -1029,6 +1045,15 @@ matcher every time. However, proving that to the compiler is beyond the
 Haskell type system, so we're forced to assert that
 this code is pure. Using <code>unsafePerformIO</code> allows us to do just
 that.
+</para>
+
+<para>
+However, if we know the C code is pure, why don't we just declare it as such,
+by giving it a pure type in the import declaration? For the reason that we
+have to allocate local memory for the C function to work with, which must be
+done in the IO monad, as it is a local side effect. Those effects won't
+escape the code surrounding the foreign call, though, so when wrapped, we use
+<code>unsafePerformIO</code> to reintroduce purity.
 </para>
 
 <!-- say more about the risks and benefits ? -->
@@ -1338,11 +1363,12 @@ First, something easy:
 <screen>
 <prompt>*Regex> </prompt><userinput>:m + Data.ByteString.Char8</userinput>
 <prompt>*Regex Data.ByteString.Char8> </prompt><userinput>let Right r = compile (pack "the quick brown fox") []</userinput>
-<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "the quick brown fox")</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "the quick brown fox") []</userinput>
 Just ["the quick brown fox"]
-<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "The Quick Brown Fox")</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "The Quick Brown Fox") []</userinput>
 Nothing
-<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "What do you know about the quick brown fox?")</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "What
+  do you know about the quick brown fox?") []</userinput>
 Just ["the quick brown fox"]
 </screen>
 
@@ -1353,8 +1379,11 @@ Just ["the quick brown fox"]
 
 <screen>
 <prompt>*Regex Data.ByteString.Char8> </prompt><userinput>let Right r = compile (pack "a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz") []</userinput>
-<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "abxyzpqrrrabbxyyyypqAzz")</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "abxyzpqrrrabbxyyyypqAzz") []</userinput>
 Just ["abxyzpqrrrabbxyyyypqAzz"]
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>let Right r = compile (pack "^([^!]+)!(.+)=apquxz\\.ixr\\.zzz\\.ac\\.uk$") []</userinput>
+<prompt>*Regex Data.ByteString.Char8> </prompt><userinput>match r (pack "abc!pqr=apquxz.ixr.zzz.ac.uk") []</userinput>
+Just ["abc!pqr=apquxz.ixr.zzz.ac.uk","abc","pqr"]
 </screen>
 
 <para id="x_OJ1">
