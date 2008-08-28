@@ -1,7 +1,7 @@
 <!-- vim: set filetype=docbkxml shiftwidth=2 autoindent expandtab tw=77 : -->
 
 <chapter id="profiling">
-  <title>Profiling and optimisation</title>
+  <title>Profiling and optimization</title>
 
 <para id="x_qJ1">
 Haskell is a high level language. A really high level language. We can spend
@@ -19,20 +19,19 @@ However, this is a book about real world programming, and in the real world,
 code runs on stock hardware with limited resources. Our programs will have
 time and space requirements that we may need to enforce. As such, we need a
 good knowledge of how our program data is represented, the precise consequences
-of using lazy or strict evaluation strategies, and techniques for analysing and
-controlling space and time behaviour.
+of using lazy or strict evaluation strategies, and techniques for analyzing and
+controlling space and time behavior.
 </para>
 
 <para id="x_sJ1">
 In this chapter we'll look at typical space and time problems a Haskell
 programmer might encounter, and how to methodically analyse, understand and
-address them. To do this we'll use time and space profiling, and collect
-runtime statistics, as well as reasoning about how strict or lazy evaluation
-strategies affect behaviour. We'll also look at the impact of compiler
-optimisations on performance, and the use of advanced optimisation techniques
-that become feasible in a purely functional language. So let's begin with a
-classic challenge: squashing excessive memory usage in some inoccuous looking
-code.
+address them. To do this we'll use investigate a range of techniques: time
+and space profiling, runtime statistics, and reasoning about strict and lazy
+evaluation. We'll also look at the impact of compiler optimizations on
+performance, and the use of advanced optimization techniques that become
+feasible in a purely functional language. So let's begin with a challenge:
+squashing unexpected memory usage in some inoccuous looking code.
 </para>
 
 <sect1>
@@ -47,7 +46,7 @@ we'll stress that the particular algorithm we're implementing is irrelevant
 here), it is representative of real code we might find in any Haskell
 program: typically concise list manipulation code, and heavy use of standard
 library functions. It also illustrates several common performance trouble
-spots that can catch out the unwary: </para>
+spots that can catch out the unwary.</para>
 
 &A.hs:naive;
 
@@ -58,8 +57,8 @@ Haskell version of <function>printf</function>, for formatted text output.
 The program then reads a numeric literal from the command line, using that to
 build a list of floating point values, whose mean value we compute by
 dividing the list sum by its length. The result is printed as a string. Let's
-compile this source to native code (with optimisations on) and run it with
-the standard <code>time</code> command to see how it performs:
+compile this source to native code (with optimizations on) and run it with
+the <code>time</code> command to see how it performs:
 </para>
 
 <!-- flags to the runtime system -->
@@ -82,8 +81,7 @@ Linking A ...
 <para id="x_vJ1">
 It worked well for small numbers, but the program really started to struggle
 with input size of ten million. From this alone we know something's not quite
-right, but it's unclear what resources are being used. Let's investigate, and
-see what we can find out about this program's behaviour.
+right, but it's unclear what resources are being used. Let's investigate.
 </para>
 
 <sect2>
@@ -93,16 +91,16 @@ see what we can find out about this program's behaviour.
 To get access to that kind of information, GHC lets us pass flags directly to
 the Haskell runtime, using the special <code>+RTS</code> and
 <code>-RTS</code> flags to delimit arguments reserved for the runtime system.
-The application itself won't see those flags as they're immediately consumed 
+The application itself won't see those flags, as they're immediately consumed 
 by the Haskell runtime system.
 </para>
 
 <para id="x_xJ1">  
 In particular, we can ask the runtime system to gather memory and garbage
 collector performance numbers with the <code>-s</code> flag (as well as
-controlling the number of OS threads with <code>-N</code>, or tweaking the
-stack and heaps sizes). We'll also use runtime flags to enabling different
-varieties of profiling. The complete set of runtime flags the Haskell
+control the number of OS threads with <code>-N</code>, or tweak the
+stack and heap sizes). We'll also use runtime flags to enable different
+varieties of profiling. The complete set of flags the Haskell
 runtime accepts is documented in the
 <ulink
 url="http://www.haskell.org/ghc/docs/latest/html/users_guide/">GHC User's Guide</ulink>:
@@ -110,7 +108,7 @@ url="http://www.haskell.org/ghc/docs/latest/html/users_guide/">GHC User's Guide<
 
 <para id="x_yJ1">
 So let's run the program with statistic reporting enabled, via <code>+RTS -sstderr</code>,
-yielding this result:
+yielding this result.
 </para>
 
 <screen>
@@ -144,10 +142,10 @@ yielding this result:
 When using <code>-sstderr</code>, our program's performance numbers are
 printed to the standard error stream, giving us a lot of information about
 what our program was doing. In particular, it tells us how much time was
-spent in garbage collection, and what the maximum live memory in use was. It
+spent in garbage collection, and what the maximum live memory usage was. It
 turns out that to compute the mean of a list of 10 million elements our
-program used a maximum of 742 megabytes to the heap, and spent 96.9% of its time
-doing garbage collection! In total, only 3.1% of the program's runtime was
+program used a maximum of 742 megabytes on the heap, and spent 96.9% of its time
+doing garbage collection! In total, only 3.1% of the program's running time was
 spent doing productive work.
 </para>
 
@@ -163,9 +161,9 @@ list in constant space?
   <title>Time profiling</title>
 
 <para id="x_BK1">
-GHC, thankfully, comes with several tools to analysing a program's time and
+GHC, thankfully, comes with several tools to analyze a program's time and
 space usage. In particular, we can compile a program with profiling enabled,
-which when run, yields useful information about what resources each function
+which, when run, yields useful information about what resources each function
 was using. Profiling proceeds in three steps: compiling the program for
 profiling; running it with particular profiling modes enabled; and inspecting
 the resulting statistics.
@@ -175,10 +173,10 @@ the resulting statistics.
 To compile our program for basic time and allocation profiling, we use the
 <code>-prof</code> flag.  We also need to tell the profiling code which
 functions we're interested in profiling, by adding "cost centres" to them.  A
-cost center is a location in the program we'd like to collect statistics about,
-and GHC will generate code to compute the cost of evaluation the expression
-at each location. Cost centres can be added manually to any expression, using
-the <code>SCC</code> pragma: </para>
+cost centre is a location in the program we'd like to collect statistics about,
+and GHC will generate code to compute the cost of evaluating the expression
+at each location. Cost centres can be added manually to instrument any
+expression, using the <code>SCC</code> pragma: </para>
 
 &SCC.hs:scc;
 
@@ -202,11 +200,11 @@ cost of evaluation was. To get accurate numbers for these values, known as
 
 <para id="x_FK1">
 Compiling our example program for profiling then (using the
-<code>-no-recomp</code> flag to to force full recompilation):
+<code>-fforce-recomp</code> flag to to force full recompilation):
 </para>
 
 <screen>
-<prompt>$ </prompt><userinput>ghc -O2 --make A.hs -prof -auto-all -caf-all -no-recomp</userinput>
+<prompt>$ </prompt><userinput>ghc -O2 --make A.hs -prof -auto-all -caf-all -fforce-recomp</userinput>
 [1 of 1] Compiling Main             ( A.hs, A.o )
 Linking A ...
 </screen>
@@ -214,7 +212,7 @@ Linking A ...
 <para id="x_GK1">
 We can now run this annotated program with time profiling enabled (and we'll
 use a smaller input size for the time being, as the program now has
-additional profiling overheads):
+additional profiling overhead):
 </para>
 
 <screen>
@@ -227,11 +225,12 @@ Use `+RTS -Ksize' to increase it.
 <para id="x_HK1">
 The program ran out of stack space! This is the main complication to be aware
 of when using profiling: adding cost centres to a program modifies how it is
-optimised, possibly changing its runtime behaviour, as each expression now
+optimized, possibly changing its runtime behavior, as each expression now
 has additional code associated with it to track the evaluation steps. In a
 sense, observing the program executing modifies how it executes. In this
-case, it is simple to proceed, we use the GHC runtime flag, <code>-K</code>,
-to set an arbitrarily large stack limit for our program: </para>
+case, it is simple to proceed -- we use the GHC runtime flag, <code>-K</code>,
+to set a larger stack limit for our program (with the usual suffixes
+to indicate magnitude): </para>
 
 <screen>
 <prompt>$ </prompt><userinput>time ./A 1e6 +RTS -p -K100M</userinput>
@@ -241,7 +240,7 @@ to set an arbitrarily large stack limit for our program: </para>
 
 <para id="x_IK1">
 The runtime will dump its profiling information into a file,
-<code>A.prof</code>, named after the binary that was executed, which
+<code>A.prof</code> (named after the binary that was executed) which
 contains the following information:
 </para>
 
@@ -275,11 +274,11 @@ MAIN        MAIN            1           0   0.0    0.0   100.0  100.0
 </screen>
 
 <para id="x_JK1">
-This gives us a view into the program's runtime behaviour. We can see the
+This gives us a view into the program's runtime behavior. We can see the
 program's name and the flags we ran it with. The "total time" is time actually
 spent executing code from the runtime system's point of view, and the total
 allocation is the number of bytes allocated during the entire program run (not
-the maximum live memory, which was around 700M).
+the maximum live memory, which was around 700MB).
 </para>
 
 <para id="x_KK1">
@@ -289,16 +288,16 @@ structured as a call graph (for example, we can see that
 <function>mean</function> was called from <function>main</function>. The
 "individual" and "inherited" columns give us the resources a cost centre was
 responsible for on its own, and what it and its children were responsible for.
-Additionally, we see the one-off costs of evaluating constants, (such as the
-floating point values in the large list, and the list itself), assigned to top
+Additionally, we see the one-off costs of evaluating constants (such as the
+floating point values in the large list, and the list itself) assigned to top
 level CAFs.
 </para>
 
 <para id="x_LK1">
 What conclusions can we draw from this information? We can see that the
 majority of time is spent in two CAFs, one related to computing the sum, and
-another for floating point numbers. These alone accounts for nearly all
-allocations that occured during the program run. Combined with our earlier
+another for floating point numbers. These alone account for nearly all
+allocations that occurred during the program run. Combined with our earlier
 observation about garbage collector stress, it begins to look like the list
 node allocations, containing floating point values, are causing a problem.
 </para>
@@ -306,7 +305,7 @@ node allocations, containing floating point values, are causing a problem.
 <para id="x_MK1">
 For simple performance hot spot identification, particularly in large programs
 where we might have little idea where time is being spent, the initial time
-profile can narrow down to a particular problematic module and top level
+profile can highlight a particular problematic module and top level
 function, which is often enough to reveal the trouble spot. Once we've narrowed
 down the code to a problematic section, such as our example here, we can use
 more sophisticated profiling tools to extract more information.
@@ -320,7 +319,7 @@ more sophisticated profiling tools to extract more information.
 <para id="x_NK1">
 Beyond basic time and allocation statistics, GHC is able to generate graphs
 of memory usage of the heap, over the program's lifetime. This is perfect for
-revealing "space leaks", where memory is retained unneccessarily, leading to
+revealing "space leaks", where memory is retained unnecessarily, leading to
 the kind of heavy garbage collector activity we see in our example.
 </para>
 
@@ -330,14 +329,14 @@ time profile, namely, compile with <code>-prof -auto-all -caf-all</code>, but
 when we execute the program, we'll ask the runtime system to gather more
 detailed heap use statistics. We can break down the heap use information in
 several ways: via cost-centre, via module, by constructor, by data type, each
-with their own insights. Heap profiling produces a log to a file,
+with its own insights. Heap profiling <code>A.hs</code> logs to a file
 <code>A.hp</code>, with raw data which is in turn processed by the tool
 <code>hp2ps</code>, which generates a PostScript-based, graphical
-visualisation of the heap over time.
+visualization of the heap over time.
 </para>
 
 <para id="x_PK1">
-To extract a standard heap profile from our program, we compile run it with
+To extract a standard heap profile from our program, we run it with
 the <code>-hc</code> runtime flag:
 </para>
 
@@ -370,10 +369,11 @@ END_SAMPLE 0.24
 
 <para id="x_RK1">
 Samples are taken at regular intervals during the program run. We can
-increase the frequency of samples by using <code>-iN</code>, where N is the
-fraction of a second to sample at. Obviously, the more we sample, the more
-accurate the results, but the slower our program will run. We can now render
-the heap profile as a graph, using the <code>hp2ps</code> tool:
+increase the heap sampling frequency by using <code>-iN</code>, where N is the
+number of seconds (e.g. 0.01) between heap size samples. Obviously, the more
+we sample, the more accurate the results, but the slower our program will
+run. We can now render the heap profile as a graph, using the
+<code>hp2ps</code> tool:
 </para>
 
 <screen>
@@ -439,9 +439,11 @@ Which yields the following graph:
 The most interesting things to notice here are large parts of the heap devoted
 to values of list type (the <code>[]</code> band), and heap-allocated
 <code>Double</code> values. There's also some heap allocated data of unknown
-type. Finally, let's break it down by what constructors are being allocated,
-using the <code>-hd</code> flag:
+type (represented as data of type "*"). Finally, let's break it down by what
+constructors are being allocated, using the <code>-hd</code> flag:
 </para>
+
+<!-- TODO explain BLACKHOLE -->
 
 <screen>
 <prompt>$ </prompt><userinput>time ./A 1e6 +RTS -hd -p -K100M</userinput>
@@ -467,14 +469,14 @@ Our final graphic reveals the full story of what is going on:
 </informalfigure>
 
 <para id="x_XK1">
-A lot of work is going into allocating list nodes containing double precision
+A lot of work is going into allocating list nodes containing double-precision
 floating point values. Haskell lists are lazy, so the full million element
 list is built up over time. Crucially, though, it is not being deallocated as it is
 traversed, leading to increasingly large resident memory use. Finally, a bit
-over half our way through the program run, the program finally finishes
+over halfway through the program run, the program finally finishes
 summing the list, and starts calculating the length. If we look at the
 original fragment for <code>mean</code>, we can see exactly why that memory
-is being retained.
+is being retained:
 </para>
 
 &Fragment.hs:fragment;
@@ -508,21 +510,21 @@ approaches, we'll try a fold first:
 &B.hs:fold;
 
 <para id="x_aK1">
-Now, instead of taking the sum of the list, and retaining the list till we can
-take its length,  we left-fold over the list accumulating the intermediate sum
-and length values in a pair (and we must left fold, since a right fold would
-take us to the end of the list and work backwards, which is exactly not what
-we need in this case).
+Now, instead of taking the sum of the list, and retaining the list until we can
+take its length,  we left-fold over the list, accumulating the intermediate sum
+and length values in a pair (and we must left-fold, since a right-fold would
+take us to the end of the list and work backwards, which is exactly what
+we're trying to avoid).
 </para>
 
 <para id="x_bK1">
 The body of our loop is the <function>k</function> function, which takes the
 intermediate loop state, and the current element, and returns a new state with
 the length increased by one, and the sum increased by the current element. When
-we run this, however, we get surprising results: </para>
+we run this, however, we get a stack overflow: </para>
 
 <screen>
-<prompt>$ </prompt><userinput>ghc -O2 --make B.hs -no-recomp</userinput>
+<prompt>$ </prompt><userinput>ghc -O2 --make B.hs -fforce-recomp</userinput>
 <prompt>$ </prompt><userinput>time ./B 1e6</userinput>
 Stack space overflow: current size 8388608 bytes.
 Use `+RTS -Ksize' to increase it.
@@ -537,7 +539,7 @@ allocation figures:
 </para>
 
 <screen>
-<prompt>$ </prompt><userinput>ghc -O2 --make B.hs -prof -auto-all -caf-all -no-recomp</userinput>
+<prompt>$ </prompt><userinput>ghc -O2 --make B.hs -prof -auto-all -caf-all -fforce-recomp</userinput>
 [1 of 1] Compiling Main             ( B.hs, B.o )
 Linking B ...
 <prompt>$ </prompt><userinput>time ./B 1e6 +RTS -i0.001 -hc -p -K100M</userinput>
@@ -572,9 +574,9 @@ leak due to excessive laziness.
     <title>Strictness and tail recursion</title>
 
 <para id="x_fK1">
-The problem is that our left fold, <function>foldl</function> is too lazy.
+The problem is that our left-fold, <function>foldl</function>, is too lazy.
 What we want is a tail recursive loop, which can be implemented effectively
-as a <code>goto</code>, where no state is left on the stack. In this case
+as a <code>goto</code>, with no state left on the stack. In this case
 though, rather than fully reducing the tuple state at each step, a long chain
 of thunks is being created, that only towards the end of the program is
 evaluated.  At no point do we demand reduction of the loop state, so the
@@ -625,6 +627,8 @@ the tuple.
 </para>
 </sect2>
 
+<!-- do we need to explain seq elsewhere? -->
+
 <sect2>
   <title>Adding strictness</title>
 
@@ -649,7 +653,7 @@ Linking D ...
 </screen>
 
 <para id="x_mK1">
-If we run this, with allocation statistics enabled, we get the satisifying
+If we run this, with allocation statistics enabled, we get the satisfying
 result:
 </para>
 
@@ -696,11 +700,14 @@ strictly. The result is a program that runs in constant space, and does so quick
 <para id="x_oK1">
 There are a number of other ways we could have addressed the strictness issue
 here. For deep strictness, we can use the <code>rnf</code> function, part of
-the parallel strategies library, which unlike <code>seq</code> reduces to
-normal form (hence its name). Such a "deep seq" fold we can write as:
+the parallel strategies library (along with <code>using</code>), which unlike
+<code>seq</code> reduces to the fully evaluated "normal form" (hence its
+name). Such a "deep seq" fold we can write as:
 </para>
 
 &E.hs:fold;
+
+<!-- more info on rnf/ whnf -->
 
 <para id="x_pK1">
 We change the implementation of <code>foldl'</code> to reduce the state to
@@ -718,8 +725,9 @@ can no longer rely on defaulting to set the length type.
   <title>Bang patterns</title>
 
 <para id="x_qK1">
-Perhaps the cheapest way, syntactically to add required strictness to code
-that's excessively lazy is via "bang patterns", a language extension
+Perhaps the cheapest way, syntactically, to add required strictness to code
+that's excessively lazy is via "bang patterns" (whose name comes from
+pronunciation of the "!" character as "bang"), a language extension
 introduced with the following pragma:
 </para>
 
@@ -729,7 +737,8 @@ introduced with the following pragma:
 With bang patterns, we can hint at strictness on any binding form, making the
 function strict in that variable. Much as explicit type annotations can
 guide type inference, bang patterns can help guide strictness inference.
-We can now rewrite the loop state to be simply:
+Bang patterns are a language extension, and are enabled with the
+<code>BangPatterns</code> language pragma.  We can now rewrite the loop state to be simply:
 </para>
 
 &F.hs:fold;
@@ -770,7 +779,7 @@ runs in constant space:
 </screen>
 
 <para id="x_tK1">
-In large projects, when we investigating memory allocation hot spots, bang
+In large projects, when we are investigating memory allocation hot spots, bang
 patterns are the cheapest way to speculatively modify the strictness
 properties of some code, as they're syntactically less invasive than other
 methods.
@@ -783,8 +792,8 @@ methods.
 
 <para id="x_uK1">
 Strict data types are another effective way to provide strictness information
-to the compiler. By default, Haskell data types are fully lazy, but it is
-easy enough to to add strictness information to the fields of a data type
+to the compiler. By default, Haskell data types are lazy, but it is
+easy enough to add strictness information to the fields of a data type
 that then propagate through the program. We can declare a new strict pair
 type, for example:
 </para>
@@ -799,7 +808,7 @@ form. We can now rewrite our loop as:
 &G.hs:fold;
 
 <para id="x_wK1">
-This implementation again has the same efficient, constant space behaviour.
+This implementation again has the same efficient, constant space behavior.
 At this point, to squeeze the last drops of performance out of this code,
 though, we have to dive a bit deeper.
 </para>
@@ -816,23 +825,24 @@ though, we have to dive a bit deeper.
 <para id="x_xK1">
 Besides looking at runtime profiling data, one sure way of determining
 exactly what your program is doing is to look at the final program source after
-the compiler is done optimising it, particularly in the case of Haskell
+the compiler is done optimizing it, particularly in the case of Haskell
 compilers, which can perform very aggressive transformations on the code. GHC
-uses "a simple functional language", known as Core, as the compiler
-intermediate representation. It is essentially a subset of Haskell, augmented
-with unboxed data types (these are raw machine types, directly corresponding
-to primitive data types in languages like C), suitable for code generation.
-GHC optimises Haskell by transformation, repeatedly rewriting the source into
-more and more efficient forms. The Core representation is the final version
-of your program, and the one that will be executed on the machine. In other
-words, Core has the final say, and if all out performance is your goal, it is
+uses what is humorously referred to as "a simple functional language", known as
+Core, as the compiler intermediate representation. It is essentially a subset
+of Haskell, augmented with unboxed data types (raw machine types,
+directly corresponding to primitive data types in languages like C), suitable
+for code generation.  GHC optimizes Haskell by transformation, repeatedly
+rewriting the source into more and more efficient forms. The Core
+representation is the final functional version
+of your program, before translation to low level imperative code. In other
+words, Core has the final say, and if all-out performance is your goal, it is
 worth understanding.
 </para>
 
 <para id="x_yK1">
-To view the Core our Haskell program we compile with the
-<code>-ddump-simpl</code> flag, or use the <code>ghc-core</code> core tool, a
-third party utility that lets us view Core in a pager. So let's look at the
+To view the Core version of our Haskell program we compile with the
+<code>-ddump-simpl</code> flag, or use the <code>ghc-core</code> tool, a
+third-party utility that lets us view Core in a pager. So let's look at the
 representation of our final <code>fold</code> using strict data types, in
 Core form:
 </para>
@@ -842,7 +852,7 @@ Core form:
 </screen>
 
 <para id="x_zK1">
-A screenful of text is generated, which if we look carefully at, we'll see a
+A screenful of text is generated. If we look carefully at, we'll see a
 loop (here, cleaned up slightly for clarity):
 </para>
 
@@ -860,7 +870,7 @@ lgo = \ n xs s ->
 
 <para id="x_AL1">
 This is the final version of our <code>foldl'</code>, and tells us a lot
-about the next steps for optimisation. The fold itself has been entirely
+about the next steps for optimization. The fold itself has been entirely
 inlined, yielding an explicit recursive loop over the list. The loop state,
 our strict pair, has disappeared entirely, and the function now takes its 
 length and sum accumulators as direct arguments along with the list.
@@ -874,28 +884,28 @@ involved keeping the sum on the heap. However, the length of the list, since
 we gave no explicit type annotation, has been inferred to be a heap-allocated
 <code>Integer</code>, with requires a non-primitive <code>plusInteger</code>
 to perform addition. If it is algorithmically sound to use a <code>Int</code>
-instead, we can replace <code>Integer</code> with it, and GHC will then be
-able to use a raw machine <code>int</code> for the length. We can hope for an
-improvement in time and space by ensuring both loop components are unboxed,
-and kept in registers.
+instead, we can replace <code>Integer</code> with it, via a type annotation,
+and GHC will then be able to use a raw machine <code>Int#</code> for the
+length. We can hope for an improvement in time and space by ensuring both
+loop components are unboxed, and kept in registers.
 </para>
 
 <para id="x_CL1">
 The base case of the loop, its end, yields an unboxed pair (a pair allocated
 only in registers), storing the final length of the list, and the accumulated
-sum. Notice that the return type is a a heap-allocated <code>Double</code>
+sum. Notice that the return type is a heap-allocated <code>Double</code>
 value, indicated by the <code>D#</code> constructor, which lifts a raw double
-value onto the heap, and again this has implications for performance, as GHC
-will need to check there is sufficient heap space available before it can
+value onto the heap. Again this has implications for performance, as GHC
+will need to check that there is sufficient heap space available before it can
 allocate and return from the loop.
 </para>
 
 <para id="x_DL1">
 We can avoid this final heap check by having GHC return an unboxed
 <code>Double#</code> value, which can be achieved by using a custom pair type
-in the loop. In addition, can can enable an optimisation GHC provides, that
-unboxes the strict fields of a data type, which will ensure the new pair data
-type is stored entirely in registers. This optimisation is turned on with
+in the loop. In addition, GHC provides an optimiztion that unboxes the strict
+fields of a data type, ensuring the fields of the new pair type will be
+stored in registers. This optimization is turned on with
 <code>-funbox-strict-fields</code>.
 </para>
 
@@ -908,7 +918,7 @@ pair type with one whose fields are fixed as <code>Int</code> and
 &H.hs:fold;
 
 <para id="x_FL1">
-Compiling this with optimisations on, and <code>-funbox-strict-fields -ddump-simpl</code>,
+Compiling this with optimizations on, and <code>-funbox-strict-fields -ddump-simpl</code>,
 we get a tighter inner loop in Core:
 </para>
 
@@ -927,7 +937,7 @@ Now the pair we use to represent the loop state is represented and returned as
 unboxed primitive types, and will be kept in registers. The final version now
 only allocates heap memory for the list nodes, as the list is lazily demanded.
 If we compile and run this tuned version, we can compare the allocation and time 
-performance against our original program, with the full input size:
+performance against our original program:
 </para>
 
 <screen>
@@ -963,17 +973,16 @@ performance against our original program, with the full input size:
 While our original program, when operating on a list of 10 million elements,
 took more than a minute to run, and allocated more than 700 megabytes of memory,
 the final version, using a simple higher order fold, and a strict data type, 
-runs in around half a second, and allocates a total of 1 megabyte. Something of
-an improvement!
+runs in around half a second, and allocates a total of 1 megabyte.  Quite an improvement!
 </para>
 
 <para id="x_IL1">
-The general rules we can learn from the profiling and optimisation process are:
+The general rules we can learn from the profiling and optimization process are:
 </para>
 
   <itemizedlist>
     <listitem>
-      <para id="x_JL1">Compile to native code, with optimisations on</para>
+      <para id="x_JL1">Compile to native code, with optimizations on</para>
     </listitem>
     <listitem>
       <para id="x_KL1">When in doubt, use runtime statistics, and time profiling</para>
@@ -989,7 +998,7 @@ The general rules we can learn from the profiling and optimisation process are:
         <code>Double</code> and similar types)</para>
     </listitem>
     <listitem>
-      <para id="x_OL1">Use data types closer to the machine representation (prefer
+      <para id="x_OL1">Use data types with simpler machine representations (prefer
         <code>Int</code> over <code>Integer</code>)</para>
     </listitem>
 
@@ -997,7 +1006,7 @@ The general rules we can learn from the profiling and optimisation process are:
 
 <para id="x_PL1">
 These simple strategies are enough to identify and squash untoward memory use
-issues, and when used wisely, can avoid them occuring in the first place.
+issues, and when used wisely, can avoid them occurring in the first place.
 </para>
 
 </sect1>
@@ -1010,36 +1019,38 @@ The final bottleneck in our program is the lazy list itself. While we can
 avoid allocating it all at once, there is still memory traffic each time
 around the loop, as we demand the next cons cell in the list, allocate it to
 the heap, operate on it, and continue. The list type is also polymorphic, so
-the elements of the list must be represented as heap allocated
+the elements of the list will be represented as heap allocated
 <code>Double</code> values.
 </para>
 
 <para id="x_RL1">
 What we'd like to do is eliminate the list entirely, keeping just the next
 element we need in a register. Perhaps surprisingly, GHC is able to transform
-the list program into a listless version, using an optimisation known as
-deforestation, which refers to a general class of optimisations that involve
+the list program into a listless version, using an optimization known as
+deforestation, which refers to a general class of optimizations that involve
 eliminating intermediate data structures. Due to the absence of side effects,
 a Haskell compiler can be extremely aggressive when rearranging code,
-reordering and transforming code wholesale at times. The specific
-deforestation optimisation we can use here is stream fusion.
+reordering and transforming wholesale at times. The specific
+deforestation optimization we will use here is stream fusion.
 </para>
 
 <para id="x_SL1">
-This optimisation transforms recursive list generation and transformation
+This optimization transforms recursive list generation and transformation
 functions into non-recursive <code>unfolds</code>. When an
 <code>unfold</code> appears next to a <code>fold</code>, the structure between
 them is then eliminated entirely, yielding a single, tight loop, with no heap
-allocation. The optimisation isn't enabled by default, but is enabled by a
-number of data structure libraries, which provide "rewrite rules", custom
-optimisations the compiler applies to functions the library exports. 
-</para>
+allocation. The optimization isn't enabled by default, and it can radically
+change the complexity of a piece of code, but is enabled by a number of data
+structure libraries, which provide "rewrite rules", custom optimizations the
+compiler applies to functions the library exports.  </para>
 
 <para id="x_TL1">
 We'll use the <code>uvector</code> library, which provides a suite of
 list-like operations that use stream fusion to remove intermediate data
-structures. Rewriting our program to use streams is straight forward:
+structures. Rewriting our program to use streams is straightforward:
 </para>
+
+<!-- update to use list stream-fusion library -->
 
 &I.hs:fold;
 
@@ -1059,7 +1070,7 @@ fold = \ n s t ->
 
 <para id="x_VL1">
 This is really the optimal result! Our lists have been entirely fused away,
-yielding a tight loop where list generation is interleaved with acumulation,
+yielding a tight loop where list generation is interleaved with accumulation,
 and all input and output variables are kept in registers. Running this,
 we see another improvement bump in performance, with runtime falling by
 another order of magnitude:
@@ -1075,27 +1086,27 @@ $ time ./I 1e7
     <title>Tuning the generated assembly</title>
 
 <para id="x_WL1">
-Given that our Core is now optimal, the only step left to take, to optimise this
-program further, is by looking directly at the assembly. Of course, there
+Given that our Core is now optimal, the only step left to take this
+program further is to look directly at the assembly. Of course, there
 are only small gains left to make at this point. To view the generated
 assembly, we can use a tool like <code>ghc-core</code>, or generate assembly
 to standard output with the <code>-ddump-asm</code> flag to GHC. We have few
 levers available to adjust the generated assembly, but we may choose between
 the C and native code backends to GHC, and, if we choose the C backend, which
-optimisation flags to pass to GCC. Particularly with floating point code, it
+optimization flags to pass to GCC. Particularly with floating point code, it
 is sometimes useful to compile via C, and enable specific high performance C
-compiler optimisations.  
+compiler optimizations.  
 </para>
 
 <para id="x_XL1">
-For example, we can squeeze our the last drops of performance
+For example, we can squeeze out the last drops of performance
 from our final fused loop code by using <code>-funbox-strict-fields -fvia-C -optc-O2</code>, which
-cuts the running time in half again (as the C compiler is able to optimise
+cuts the running time in half again (as the C compiler is able to optimize
 away some redundant move instructions in the program's inner loop):
 </para>
 
 <screen>
-<prompt>$ </prompt><userinput>ghc -no-recomp --make -O2 -funbox-strict-fields -fvia-C -optc-O2 I.hs</userinput>
+<prompt>$ </prompt><userinput>ghc -fforce-recomp --make -O2 -funbox-strict-fields -fvia-C -optc-O2 I.hs</userinput>
 [1 of 1] Compiling Main             ( I.hs, I.o )
 Linking I ...
 <prompt>$ </prompt><userinput>time ./I 1e7</userinput>
@@ -1104,7 +1115,7 @@ Linking I ...
 </screen>
 
 <para id="x_YL1">
-Inspecting the final assembly (via <code>-keep-tmp-files</code>), we
+Inspecting the final x86_64 assembly (via <code>-keep-tmp-files</code>), we
 see the generated loop contains only six instructions:
 </para>
 
@@ -1119,13 +1130,13 @@ go:
 </screen>
 
 <para id="x_ZL1">
-We've effectively massaged the program through multiple source level
-optimisations, all the way to the final assembly. There's no where else to go from
-here. Optimising code to this level is very rarely necessarily, of course,
-and typically makes sense when writing low level libraries, or optimising
-particularly important code, where all algorithm choices have already
-determined. For day to day code, choosing better algorithms is always a more
-effective strategy, but it's useful to know we can optimise down to the metal
+We've effectively massaged the program through multiple source-level
+optimizations, all the way to the final assembly. There's nowhere else to go from
+here. Optimising code to this level is very rarely necessary, of course,
+and typically only makes sense when writing low level libraries, or optimizing
+particularly important code, where all algorithm choices have already been
+determined. For day-to-day code, choosing better algorithms is always a more
+effective strategy, but it's useful to know we can optimize down to the metal
 if necessary.
 </para>
 
@@ -1137,7 +1148,7 @@ if necessary.
 <para id="x_aL1">
 In this chapter we've looked at a suite of tools and techniques you can use to
 track down and identify problematic areas of your code, along with a variety of
-conventions that can go a long way towards keeping code lean and efficient.
+conventions that can go a long way towards keeping your code lean and efficient.
 The goal is really to program in such a way that you have good knowledge of
 what your code is doing, at all levels from source, through the compiler, to
 the metal, and be able to focus in on particular levels when requirements demand.
@@ -1147,7 +1158,7 @@ the metal, and be able to focus in on particular levels when requirements demand
 By sticking to simple rules, choosing the right data structures, and avoiding
 the traps of the unwary, it is perfectly possible to reliably achieve high
 performance from your Haskell code, while being able to develop at a very
-high level. A balance of productivity and ruthless efficiency.
+high level. The result is a sweet balance of productivity and ruthless efficiency.
 </para>
 
 </sect2>
