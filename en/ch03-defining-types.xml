@@ -249,7 +249,7 @@
 
     &bookstore.ghci:billingInfo;
 
-    <para>The <code>No instance</code> error message arose because we
+    <para id="x_bO1">The <code>No instance</code> error message arose because we
       did not supply an argument to the <code>Invoice</code>
       constructor.  As a result, we were trying to print the
       <code>Invoice</code> constructor itself.  That constructor

@@ -713,7 +713,7 @@ functionally equivalent:
 <note>
   <title>A note about safety</title>
 
-<para>
+<para id="x_dO1">
 When making a foreign import declaration, we can optionally specify a
 "safety" level to use when making the call, using either the
 <code>safe</code> or <code>unsafe</code> keyword. A safe call is less
@@ -1047,7 +1047,7 @@ this code is pure. Using <code>unsafePerformIO</code> allows us to do just
 that.
 </para>
 
-<para>
+<para id="x_eO1">
 However, if we know the C code is pure, why don't we just declare it as such,
 by giving it a pure type in the import declaration? For the reason that we
 have to allocate local memory for the C function to work with, which must be

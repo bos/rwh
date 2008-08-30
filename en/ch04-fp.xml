@@ -1162,7 +1162,7 @@ gpl-3.0.txt: ASCII English text, with CRLF line terminators</screen>
     <sect2 id="fp.foldl">
       <title>The left fold</title>
 
-      <para>Here is the definition of <function>foldl</function>.</para>
+      <para id="x_cO1">Here is the definition of <function>foldl</function>.</para>
       &Fold.hs:foldl;
 
       <para id="x_h8">The <function>foldl</function> function takes a
